@@ -1,4 +1,4 @@
-package com.example.entities;
+package com.ccp.entities;
 
 import javax.persistence.*;
 
