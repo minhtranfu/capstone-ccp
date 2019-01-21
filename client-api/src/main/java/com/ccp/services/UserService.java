@@ -1,7 +1,7 @@
-package com.example.services;
+package com.ccp.services;
 
 
-import com.example.utils.DBUtils;
+import com.ccp.utils.DBUtils;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;

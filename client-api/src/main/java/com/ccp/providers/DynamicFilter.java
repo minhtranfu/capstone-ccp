@@ -1,4 +1,4 @@
-package com.example.providers;
+package com.ccp.providers;
 
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;

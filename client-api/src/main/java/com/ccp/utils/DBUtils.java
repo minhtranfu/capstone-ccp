@@ -1,4 +1,4 @@
-package com.example.utils;
+package com.ccp.utils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
