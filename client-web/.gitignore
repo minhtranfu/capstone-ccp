@@ -1,0 +1,29 @@
+.jekyll-metadata
+.htaccess
+.sass-cache
+_site/
+_drafts/
+package-lock.json
+yarn.lock
+
+# Logs
+logs
+*.log
+
+# Dependency directory
+# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
+node_modules
+
+# Build
+dist
+
+# IntelliJ
+.idea
+/*.iml
+
+# Coverage reports
+/.nyc-coverage
+/.nyc-coverage-temp
+/lint-report.html
+/.nyc_output/
+
