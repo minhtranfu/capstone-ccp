@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, AsyncStorage, Button } from "react-native";
 import { isSignedIn } from "../../config/auth";
-import RequireLogin from "../RequireLogin";
+import RequireLogin from "../Login/RequireLogin";
 import Loading from "../../components/Loading";
 
 class Notification extends Component {
@@ -21,27 +21,18 @@ class Notification extends Component {
 
   render() {
     const { checkedSignIn, signedIn } = this.state;
-    console.log(signedIn);
+    const { navigation } = this.props;
     if (!checkedSignIn) {
       return <Loading />;
     }
     if (signedIn) {
       return (
         <View style={styles.container}>
-          <Text>Notification! </Text>
+          <Text>Notification</Text>
         </View>
       );
     } else {
-      return (
-        <View style={styles.container}>
-          <Button
-            title="Go to settings"
-            onPress={() => this.props.navigation.navigate("Settings")}
-          >
-            Please login
-          </Button>
-        </View>
-      );
+      return <RequireLogin navigation={navigation} title={"Notification"} />;
     }
   }
 }

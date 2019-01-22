@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View, Text, StyleSheet, Animated, Image } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import PropTypes from "prop-types";
-import { Header, Left, Right, Button, Body } from "./Header";
+import { Header, Left, Right, Button, Body } from "./AnimatedHeader";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";

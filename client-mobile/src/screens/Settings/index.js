@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { isSignedIn, onSignIn } from "../../config/auth";
-import RequireLogin from "../RequireLogin";
+import RequireLogin from "../Login/RequireLogin";
+import Login from "../Login";
 import Loading from "../../components/Loading";
 
 class Settings extends Component {
@@ -25,11 +26,7 @@ class Settings extends Component {
       return <Loading />;
     }
     if (signedIn) {
-      return (
-        <View style={styles.container}>
-          <Text>Settings! </Text>
-        </View>
-      );
+      return <Login />;
     } else {
       return (
         <View style={styles.container}>

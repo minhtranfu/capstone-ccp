@@ -12,7 +12,7 @@ import Item from "../Discover/components/Item";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import Title from "../../components/Title";
-import { Button } from "../../components/Header";
+import { Button } from "../../components/AnimatedHeader";
 
 class EquipmentDetail extends Component {
   renderSuggestionItem = ({ item }) => {

@@ -8,7 +8,7 @@ class Body extends React.PureComponent {
     const titleStyle = [
       {
         color: colors.primaryColor,
-        fontSize: fontSize.medium,
+        fontSize: fontSize.bodyText,
         fontWeight: "600"
       }
     ];

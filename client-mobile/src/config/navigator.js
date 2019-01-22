@@ -18,7 +18,6 @@ import Requester from "../screens/Equipment/Requester";
 import RequesterPost from "../screens/Equipment/RequesterPost";
 import AddEquipment from "../screens/Equipment/AddEquipment";
 import Notification from "../screens/Notification";
-import RequireLogin from "../screens/RequireLogin";
 import Login from "../screens/Login";
 import ButtonWithIcon from "../components/ButtonWithIcon";
 

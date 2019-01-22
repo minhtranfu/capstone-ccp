@@ -37,8 +37,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: colors.primaryColor,
     borderRadius: 10,
-    height: 44,
-    flex: 1
+    height: 44
   },
   textWrapper: {
     flex: 1,
