@@ -1,11 +1,47 @@
 .section-search {
-  background: url(http://thepviet.net/wp-content/themes/buildme/images/assets/footer_bg.png);
-  padding: 50px 0;
+  background: url("https://images.pexels.com/photos/313032/pexels-photo-313032.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260");
+  padding: 80px 0;
   background-position: bottom;
+  background-attachment: fixed;
+  position: relative;
+}
+.section-search::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0,0,0,.4);
 }
 .navbar-brand {
   line-height: 40px;
 }
 nav.navbar {
   box-shadow: 0 0 5px rgba(0,0,0,.17);
+}
+.nav-tabs .nav-link {
+  cursor: pointer;
+}
+
+// Fade animation css for react transition group
+.fade-enter {
+  opacity: 0;
+  z-index: 1;
+}
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+.fade-exit {
+  opacity: 1;
+  display: none;
+}
+.fade-exit-active {
+  opacity: 0.01;
+  transition: opacity 500ms ease-in;
+}
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
 }

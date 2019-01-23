@@ -10,7 +10,7 @@ class Image extends PureComponent {
                 scroll
                 throttle={500}
                 minHeight="210px"
-                placeholder={<Skeleton/>}
+                placeholder={<Skeleton height={210}/>}
             >
                 <img {...props}/>
             </LazyLoad>

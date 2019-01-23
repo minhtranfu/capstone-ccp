@@ -12,7 +12,7 @@ class Login extends PureComponent {
                             <input type="text" className="form-control" name="username" id="username" placeholder="Username"/>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="username">Mật khẩu:</label>
+                            <label htmlFor="password">Mật khẩu:</label>
                             <input type="password" className="form-control" name="password" id="password" placeholder="********"/>
                         </div>
                         <div className="form-group text-center">
