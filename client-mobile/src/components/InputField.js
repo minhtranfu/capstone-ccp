@@ -38,7 +38,8 @@ class InputField extends Component {
       inputType,
       customWrapperStyle,
       autoFocus,
-      placeholder
+      placeholder,
+      autoCapitalize
     } = this.props;
     const { secureInput } = this.state;
     const fontSize = labelTextSize || fontSize.bodyText;
@@ -63,6 +64,7 @@ class InputField extends Component {
           placeholderTextColor={inputColor}
           autoCorrect={false}
           autoFocus={autoFocus}
+          autoCapitalize={autoCapitalize}
           style={[
             styles.inputField,
             { color: inputColor, borderBottomColor: borderBottom }

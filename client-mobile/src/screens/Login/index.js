@@ -9,10 +9,12 @@ import {
   Dimensions
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
+import { FontAwesome } from "@expo/vector-icons";
 
 import Header from "../../components/Header";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
+import CircleIcon from "./CircleIcon";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
@@ -42,6 +44,7 @@ class Login extends Component {
             <InputField
               label={"EMAIL ADDRESS"}
               placeholder={"Username"}
+              autoCapitalize={"none"}
               labelTextSize={fontSize.secondaryText}
               labelColor={colors.white}
               textColor={colors.white}
@@ -72,6 +75,20 @@ class Login extends Component {
             <Text style={styles.textOr}>Or Sign in with</Text>
             <View style={styles.divider} />
           </View>
+          <View style={styles.circleWrapper}>
+            <CircleIcon name="facebook" />
+            <CircleIcon name="twitter" />
+            <CircleIcon name="google-plus" />
+          </View>
+          <Text style={[styles.text, { marginVertical: 10 }]}>
+            Don't Have an Account?
+          </Text>
+          <Button
+            text={"Register Now"}
+            wrapperStyle={styles.wrapperStyle}
+            buttonStyle={styles.buttonStyle}
+            textStyle={styles.textStyle}
+          />
         </View>
       </View>
     );
@@ -83,6 +100,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   overlay: {
+    flex: 1,
     ...StyleSheet.absoluteFillObject,
     width: width,
     height: height,
@@ -90,11 +108,12 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   formWrapper: {
-    width: width - width / 3
+    width: width,
+    paddingHorizontal: 15
   },
   text: {
     color: colors.white,
-    fontSize: fontSize.caption,
+    fontSize: fontSize.secondaryText,
     fontWeight: "500"
   },
   logo: {
@@ -109,7 +128,7 @@ const styles = StyleSheet.create({
   dividerWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    marginHorizontal: 70,
+    marginHorizontal: 30,
     marginVertical: 10
   },
   divider: {
@@ -119,7 +138,7 @@ const styles = StyleSheet.create({
   },
   textOr: {
     color: colors.white,
-    fontSize: fontSize.caption,
+    fontSize: fontSize.secondaryText,
     paddingHorizontal: 8
   },
   wrapperStyle: {
@@ -127,12 +146,15 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   buttonStyle: {
-    backgroundColor: colors.lightYellow,
-    width: width / 2 + 100
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: colors.white,
+    width: width - 30
   },
-  textStyle: {
-    fontSize: fontSize.secondaryText,
-    color: colors.dark
+  circleWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center"
   }
 });
 
