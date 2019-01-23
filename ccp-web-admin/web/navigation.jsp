@@ -85,7 +85,7 @@
                 <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                 </li>
                 <li class="divider"></li>
-                <li><a href="${pageContext.request.contextPath}/user/login.jsp"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                <li><a href="${pageContext.request.contextPath}/staff/login.jsp"><i class="fa fa-sign-out fa-fw"></i>Logout</a>
                 </li>
             </ul>
             <!-- /.dropdown-user -->
@@ -113,10 +113,13 @@
                 </li>
 
                 <li>
-                    <a href="${pageContext.request.contextPath}/user/index.jsp"><i class="fa fa-user fa-fw"></i>User</a>
+                    <a href="${pageContext.request.contextPath}/staff/index.jsp"><i class="fa fa-user-plus fa-fw"></i>Staff</a>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/equipment/index.jsp"><i class="fa fa-table fa-fw"></i>Equipment</a>
+                    <a href="${pageContext.request.contextPath}/contractor/index.jsp"><i class="fa fa-user fa-fw"></i>Contractor</a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/equipment_type/index.jsp"><i class="fa fa-table fa-fw"></i>Equipment Type</a>
                 </li>
             </ul>
         </div>

@@ -15,8 +15,19 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">User Manage </h1>
+                <h1 class="page-header">Staff Manage </h1>
             </div>
+
+
+            <!-- /.col-lg-12 -->
+        </div>
+        <div class="row">
+            <div class="col-lg-10">
+            </div>
+            <div class="col-lg-2">
+                <a href="create.jsp" class="link btn btn-default spacing">Create Staff</a>
+            </div>
+
             <!-- /.col-lg-12 -->
         </div>
         <!-- /.row -->
@@ -24,7 +35,7 @@
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        User Data
+                        Staff Information
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
@@ -43,7 +54,7 @@
                             </thead>
                             <tbody>
                             <tr class="">
-                                <td>Trident</td>
+                                <td><a href="detail.jsp" class="link">Trident</a></td>
                                 <td>Internet Explorer 4.0</td>
                                 <td>Win 95+</td>
                                 <td class="center">4</td>
