@@ -3,7 +3,6 @@ import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, Ca
 import classnames from 'classnames';
 import {
     CSSTransition,
-    TransitionGroup,
 } from 'react-transition-group';
 
 import Step1 from './Step1';
