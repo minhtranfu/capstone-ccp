@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="client-api:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="ccp-app-api.war">
+      <element id="artifact" artifact-name="client-api:war exploded" />
+    </root>
+  </artifact>
+</component>

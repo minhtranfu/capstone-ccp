@@ -9,7 +9,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
-@Provider
+//@Provider
 public class LogFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
     public void filter(ContainerRequestContext reqContext) throws IOException {

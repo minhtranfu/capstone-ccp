@@ -1,21 +1,28 @@
 package com.ccp.services;
 
 
+import com.ccp.entities.Equipment;
 import com.ccp.utils.DBUtils;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import java.awt.*;
 
 @Path("/equipments")
+@Produces(MediaType.APPLICATION_JSON)
 public class EquipmentService {
     private static EntityManager manager = DBUtils.getEntityManager();
         @GET
-        @Path("{path:.*}")
-        public String getResponse(@PathParam("path") String path) {
-            return "dummy-response for " + path;
+        @Path("{id}")
+        public Equipment getEquipment(@PathParam("id") String id) {
+			return new Equipment("dummy description");
         }
+
+
 //    @GET
 //    @Path("/types")
 //    @Produces(MediaType.APPLICATION_JSON)
