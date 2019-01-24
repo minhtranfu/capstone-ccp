@@ -9,6 +9,7 @@ public class GeneralEquipmentTypeEntity {
 	private String name;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;

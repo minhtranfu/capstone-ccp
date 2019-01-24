@@ -15,10 +15,11 @@ public class EquipmentEntity {
 	private Integer equipmentTypeId;
 	private Integer constructorId;
 	private Integer constructionId;
-	private Integer locationId;
-	private Collection<DescriptionImageEntity> descriptionImagesById;
+	private LocationEntity location;
+	private Collection<DescriptionImageEntity> descriptionImages;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;
@@ -108,48 +109,25 @@ public class EquipmentEntity {
 		this.constructionId = constructionId;
 	}
 
-	@Basic
-	@Column(name = "location_id", nullable = true)
-	public Integer getLocationId() {
-		return locationId;
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "location_id")
+
+	public LocationEntity getLocation() {
+		return location;
 	}
 
-	public void setLocationId(Integer locationId) {
-		this.locationId = locationId;
+	public void setLocation(LocationEntity locationById) {
+		this.location = locationById;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		EquipmentEntity that = (EquipmentEntity) o;
-
-		if (id != that.id) return false;
-		if (name != null ? !name.equals(that.name) : that.name != null) return false;
-		if (dailyPrice != null ? !dailyPrice.equals(that.dailyPrice) : that.dailyPrice != null) return false;
-		if (deliveryPrice != null ? !deliveryPrice.equals(that.deliveryPrice) : that.deliveryPrice != null)
-			return false;
-		if (description != null ? !description.equals(that.description) : that.description != null) return false;
-		if (status != null ? !status.equals(that.status) : that.status != null) return false;
-		if (equipmentTypeId != null ? !equipmentTypeId.equals(that.equipmentTypeId) : that.equipmentTypeId != null)
-			return false;
-		if (constructorId != null ? !constructorId.equals(that.constructorId) : that.constructorId != null)
-			return false;
-		if (constructionId != null ? !constructionId.equals(that.constructionId) : that.constructionId != null)
-			return false;
-		if (locationId != null ? !locationId.equals(that.locationId) : that.locationId != null) return false;
-
-		return true;
-	}
 
 
 	@OneToMany(mappedBy = "equipmentByEquipmentId")
-	public Collection<DescriptionImageEntity> getDescriptionImagesById() {
-		return descriptionImagesById;
+	public Collection<DescriptionImageEntity> getDescriptionImages() {
+		return descriptionImages;
 	}
 
-	public void setDescriptionImagesById(Collection<DescriptionImageEntity> descriptionImagesById) {
-		this.descriptionImagesById = descriptionImagesById;
+	public void setDescriptionImages(Collection<DescriptionImageEntity> descriptionImagesById) {
+		this.descriptionImages = descriptionImagesById;
 	}
 }

@@ -4,13 +4,14 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "equipment_type", schema = "capstone_ccp", catalog = "")
-@NamedQuery(name = "EquipmentTypeEntity.getAllEquipmentType",query = "select p from EquipmentTypeEntity p")
+@NamedQuery(name = "EquipmentTypeEntity.getAllEquipmentType", query = "select p from EquipmentTypeEntity p")
 public class EquipmentTypeEntity {
 	private long id;
 	private String name;
 	private Integer generalEquipmentTypeId;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;

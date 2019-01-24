@@ -5,11 +5,13 @@ import javax.persistence.*;
 @Entity
 @Table(name = "admin", schema = "capstone_ccp", catalog = "")
 public class AdminEntity {
+	long getId;
 	private long id;
 	private String name;
 	private Integer accountId;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;

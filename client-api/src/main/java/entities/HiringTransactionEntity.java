@@ -18,6 +18,7 @@ public class HiringTransactionEntity {
 	private Integer hiringTimeRangeId;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;

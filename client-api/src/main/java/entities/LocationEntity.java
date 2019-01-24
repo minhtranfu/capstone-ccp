@@ -11,6 +11,7 @@ public class LocationEntity {
 	private Double latitude;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;

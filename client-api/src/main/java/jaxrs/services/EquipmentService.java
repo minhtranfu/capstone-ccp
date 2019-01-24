@@ -1,7 +1,7 @@
 package jaxrs.services;
 
-import dao.EquipmentDAO;
-import dao.EquipmentTypeDAO;
+import daos.EquipmentDAO;
+import daos.EquipmentTypeDAO;
 import entities.EquipmentEntity;
 import entities.EquipmentTypeEntity;
 import utils.CommonUtils;
@@ -26,11 +26,15 @@ public class EquipmentService {
 		return CommonUtils.responseFilterOk(EquipmentDAO.getInstance().findByID(id));
 	}
 
+
 	@POST
 	public Response postEquipment(EquipmentEntity equipmentEntity) {
+		//remove id
 		equipmentEntity.setId(0);
+
 		equipmentDAO.persist(equipmentEntity);
-		return CommonUtils.addFilterHeader(Response.accepted(equipmentEntity)).build();
+		Response.ResponseBuilder builder = Response.status(Response.Status.CREATED).entity(equipmentEntity);
+		return CommonUtils.addFilterHeader(builder).build();
 	}
 
 	@PUT

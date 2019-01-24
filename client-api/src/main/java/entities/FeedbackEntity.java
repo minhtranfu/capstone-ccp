@@ -15,6 +15,7 @@ public class FeedbackEntity {
 	private Integer feedbackTypeId;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;

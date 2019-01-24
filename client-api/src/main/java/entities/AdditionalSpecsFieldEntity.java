@@ -5,12 +5,13 @@ import javax.persistence.*;
 @Entity
 @Table(name = "additional_specs_field", schema = "capstone_ccp", catalog = "")
 public class AdditionalSpecsFieldEntity {
+	long getId;
 	private long id;
 	private String name;
 	private String dataType;
 	private Integer equipmentTypeId;
 
-	@Id
+	@Id @GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;

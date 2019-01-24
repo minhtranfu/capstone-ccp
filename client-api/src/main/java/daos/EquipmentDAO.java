@@ -1,8 +1,7 @@
-package dao;
+package daos;
 
 import entities.EquipmentEntity;
 
-import javax.enterprise.context.RequestScoped;
 import java.util.logging.Logger;
 
 public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {

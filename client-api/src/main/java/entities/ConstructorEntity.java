@@ -12,6 +12,7 @@ public class ConstructorEntity {
 	private String thumbnailImage;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;

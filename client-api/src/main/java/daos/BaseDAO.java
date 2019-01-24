@@ -1,7 +1,6 @@
-package dao;
+package daos;
 
 
-import org.hibernate.Session;
 import utils.DBUtils;
 
 import javax.persistence.EntityManager;
