@@ -1,9 +1,16 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, AsyncStorage, Button } from "react-native";
+import { connect } from "react-redux";
+
 import { isSignedIn } from "../../config/auth";
 import RequireLogin from "../Login/RequireLogin";
 import Loading from "../../components/Loading";
-
+@connect(state => {
+  console.log(state.auth);
+  return {
+    auth: state.auth.userIsLoggin
+  };
+})
 class Notification extends Component {
   constructor(props) {
     super(props);
@@ -13,26 +20,19 @@ class Notification extends Component {
     };
   }
 
-  componentDidMount() {
-    isSignedIn()
-      .then(res => this.setState({ signedIn: res, checkedSignIn: true }))
-      .catch(err => alert("An error occurred"));
-  }
-
   render() {
     const { checkedSignIn, signedIn } = this.state;
-    const { navigation } = this.props;
-    if (!checkedSignIn) {
-      return <Loading />;
-    }
-    if (signedIn) {
+    const { navigation, auth } = this.props;
+    console.log("Notification", auth);
+
+    if (auth) {
       return (
         <View style={styles.container}>
           <Text>Notification</Text>
         </View>
       );
     } else {
-      return <RequireLogin navigation={navigation} title={"Notification"} />;
+      return <RequireLogin navigation={navigation} />;
     }
   }
 }

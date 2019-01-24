@@ -13,10 +13,12 @@ import Settings from "../screens/Settings";
 import Search from "../screens/Search";
 import Profile from "../screens/Profile";
 import Equipment from "../screens/Equipment";
+import MyEquipment from "../screens/MyEquipment";
+import AddEquipment from "../screens/MyEquipment/AddEquipment";
 import EquipmentDetail from "../screens/EquipmentDetail";
 import Requester from "../screens/Equipment/Requester";
 import RequesterPost from "../screens/Equipment/RequesterPost";
-import AddEquipment from "../screens/Equipment/AddEquipment";
+// import AddEquipment from "../screens/Equipment/AddEquipment";
 import Notification from "../screens/Notification";
 import Login from "../screens/Login";
 import ButtonWithIcon from "../components/ButtonWithIcon";
@@ -72,27 +74,40 @@ const SearchStack = createStackNavigator(
   }
 );
 
-const RequesterStack = createStackNavigator(
+const AddNewEquipmentStack = createStackNavigator(
   {
-    Request: Requester,
-    Post: RequesterPost,
     AddEquipment: AddEquipment
   },
   {
-    headerMode: "none"
+    headerMode: "none",
+    initialRouteName: "AddEquipment"
   }
 );
 
 const EquipmentStack = createStackNavigator(
   {
-    Equipment: Equipment,
-    Requests: RequesterStack
+    Equipment: MyEquipment,
+    AddNewEquipment: AddNewEquipmentStack
   },
   {
     mode: "modal",
     headerMode: "none"
   }
 );
+
+EquipmentStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = true;
+
+  let routeName = navigation.state.routes[navigation.state.index].routeName;
+
+  if (routeName == "AddNewEquipment") {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarVisible
+  };
+};
 
 const NotificationStack = createStackNavigator(
   {
@@ -111,6 +126,7 @@ const TabNavigator = createBottomTabNavigator(
       screen: () => null, // Empty screen
       navigationOptions: () => ({
         title: "",
+        tabBarOnPress: () => null,
         tabBarIcon: <ButtonWithIcon /> // Plus button component
       })
     },

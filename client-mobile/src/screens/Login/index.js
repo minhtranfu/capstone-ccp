@@ -6,9 +6,11 @@ import {
   Image,
   KeyboardAvoidingView,
   ScrollView,
-  Dimensions
+  Dimensions,
+  AsyncStorage
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
+import { connect } from "react-redux";
 import { FontAwesome } from "@expo/vector-icons";
 
 import Header from "../../components/Header";
@@ -16,22 +18,39 @@ import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 import CircleIcon from "./CircleIcon";
 
+import { logIn } from "../../redux/actions/auth";
+import { onSignIn } from "../../config/auth";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
 const { width, height } = Dimensions.get("window");
 
+@connect(
+  state => {
+    return {};
+  },
+  dispatch => ({
+    fetchLogin: () => {
+      dispatch(logIn());
+    }
+  })
+)
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
 
+  _signIn = () => {
+    this.props.fetchLogin();
+    this.props.navigation.navigate("Settings");
+  };
+
   render() {
     return (
       <View style={styles.container}>
         <Image
-          source={require("../../../assets/images/excavator2.png")}
+          source={require("../../../assets/images/excavator3.png")}
           resizeMode={"cover"}
           style={{ width: width, height: height }}
         />
@@ -68,6 +87,7 @@ class Login extends Component {
             wrapperStyle={styles.wrapperStyle}
             buttonStyle={styles.buttonStyle}
             textStyle={styles.textStyle}
+            onPress={this._signIn}
           />
           <Text style={styles.text}>Forgot your password?</Text>
           <View style={styles.dividerWrapper}>

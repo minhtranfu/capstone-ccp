@@ -19,9 +19,12 @@ class Right extends React.PureComponent {
         {this.props.hasRight ? <Button.Profile /> : null}
         {this.props.hasFavorite ? <Button.Favorite /> : null}
         {this.props.hasAdd ? <Button.Add onPress={this.props.onPress} /> : null}
+        {this.props.hasClose ? (
+          <Button.Close navigation={this.props.navigation} />
+        ) : null}
       </View>
     );
   }
 }
 
-export default Right;
+export default withNavigation(Right);

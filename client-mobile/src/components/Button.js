@@ -7,6 +7,7 @@ import {
   TouchableNativeFeedback,
   Text
 } from "react-native";
+import { withNavigation } from "react-navigation";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
@@ -50,4 +51,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Button;
+export default withNavigation(Button);

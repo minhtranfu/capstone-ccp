@@ -52,6 +52,7 @@ class ParallaxList extends Component {
         hasRight={this.props.hasRight}
         hasFavorite={this.props.hasFavorite}
         hasAdd={this.props.hasAdd}
+        hasClose={this.props.hasClose}
         onPress={this.props.onPress}
       />
     </AnimatedHeader>

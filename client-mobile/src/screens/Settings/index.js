@@ -1,10 +1,25 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
-import { isSignedIn, onSignIn } from "../../config/auth";
+import { StyleSheet, Text, View, Button, AsyncStorage } from "react-native";
+import { connect } from "react-redux";
+
+import { logOut } from "../../redux/actions/auth";
+import { isSignedIn, onSignOut } from "../../config/auth";
 import RequireLogin from "../Login/RequireLogin";
 import Login from "../Login";
 import Loading from "../../components/Loading";
 
+@connect(
+  state => {
+    return {
+      auth: state.auth.userIsLoggin
+    };
+  },
+  dispatch => ({
+    fetchLogout: () => {
+      dispatch(logOut());
+    }
+  })
+)
 class Settings extends Component {
   constructor(props) {
     super(props);
@@ -14,30 +29,22 @@ class Settings extends Component {
     };
   }
 
-  componentDidMount() {
-    isSignedIn()
-      .then(res => this.setState({ signedIn: res, checkedSignIn: true }))
-      .catch(err => alert("An error occurred"));
-  }
   render() {
     const { checkedSignIn, signedIn } = this.state;
-    console.log(signedIn);
-    if (!checkedSignIn) {
-      return <Loading />;
-    }
-    if (signedIn) {
-      return <Login />;
-    } else {
+    const { auth } = this.props;
+    if (auth) {
       return (
-        <View style={styles.container}>
+        <View style={styles.container} key={signedIn}>
           <Button
-            title="Login"
+            title="Logout"
             onPress={() => {
-              onSignIn, this.props.navigation.navigate("Discover");
+              this.props.fetchLogout();
             }}
           />
         </View>
       );
+    } else {
+      return <Login navigation={this.props.navigation} />;
     }
   }
 }

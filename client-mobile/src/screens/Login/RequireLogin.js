@@ -24,9 +24,6 @@ class RequireLogin extends Component {
         forceInset={{ bottom: "never", top: "always" }}
         style={styles.container}
       >
-        <Header>
-          <Text style={styles.title}>{title}</Text>
-        </Header>
         <View style={styles.contentWrapper}>
           <Image
             source={require("../../../assets/images/intro.png")}

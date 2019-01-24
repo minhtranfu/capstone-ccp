@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, View, Image } from "react-native";
-import { withNavigation } from "react-navigation";
+import { withNavigation, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 
 import colors from "../../config/colors";
@@ -46,6 +46,23 @@ const Favorite = () => (
   </TouchableOpacity>
 );
 
+const backAction = NavigationActions.back({
+  key: "Equipment"
+});
+
+const Close = ({ navigation }) => (
+  <TouchableOpacity
+    onPress={() => {
+      navigation.goBack();
+    }}
+  >
+    <Image
+      source={require("../../../assets/icons/favorite_ic.png")}
+      style={{ width: 26, height: 26 }}
+    />
+  </TouchableOpacity>
+);
+
 const Back = ({ onPress, navigation }) => {
   return (
     <TouchableOpacity
@@ -83,5 +100,6 @@ export default {
   Back,
   Favorite,
   Profile,
-  Add
+  Add,
+  Close
 };
