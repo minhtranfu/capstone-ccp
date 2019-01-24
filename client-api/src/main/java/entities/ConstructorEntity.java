@@ -1,6 +1,7 @@
 package entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "constructor", schema = "capstone_ccp", catalog = "")
@@ -8,8 +9,21 @@ public class ConstructorEntity {
 	private long id;
 	private String name;
 	private String email;
-	private String phonenumber;
+	private String phoneNumber;
 	private String thumbnailImage;
+//	private List<EquipmentEntity> equipments;
+//
+//	@OneToMany(cascade =
+//			{CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH},
+//			orphanRemoval = false,
+//	mappedBy = "constructor")
+//	public List<EquipmentEntity> getEquipments() {
+//		return equipments;
+//	}
+//
+//	public void setEquipments(List<EquipmentEntity> equipments) {
+//		this.equipments = equipments;
+//	}
 
 	@Id
 	@GeneratedValue
@@ -43,13 +57,13 @@ public class ConstructorEntity {
 	}
 
 	@Basic
-	@Column(name = "phonenumber", nullable = true, length = 45)
-	public String getPhonenumber() {
-		return phonenumber;
+	@Column(name = "phone_number", nullable = true, length = 45)
+	public String getPhoneNumber() {
+		return phoneNumber;
 	}
 
-	public void setPhonenumber(String phonenumber) {
-		this.phonenumber = phonenumber;
+	public void setPhoneNumber(String phonenumber) {
+		this.phoneNumber = phonenumber;
 	}
 
 	@Basic
@@ -72,7 +86,7 @@ public class ConstructorEntity {
 		if (id != that.id) return false;
 		if (name != null ? !name.equals(that.name) : that.name != null) return false;
 		if (email != null ? !email.equals(that.email) : that.email != null) return false;
-		if (phonenumber != null ? !phonenumber.equals(that.phonenumber) : that.phonenumber != null) return false;
+		if (phoneNumber != null ? !phoneNumber.equals(that.phoneNumber) : that.phoneNumber != null) return false;
 		if (thumbnailImage != null ? !thumbnailImage.equals(that.thumbnailImage) : that.thumbnailImage != null)
 			return false;
 

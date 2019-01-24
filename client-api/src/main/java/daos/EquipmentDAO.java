@@ -18,7 +18,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 				instance = new EquipmentDAO();
 			}
 		}
-		return new EquipmentDAO();
+		return instance;
 	}
 
 

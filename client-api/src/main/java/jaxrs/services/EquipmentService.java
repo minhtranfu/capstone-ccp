@@ -1,7 +1,10 @@
 package jaxrs.services;
 
+import daos.ConstructorDAO;
 import daos.EquipmentDAO;
 import daos.EquipmentTypeDAO;
+import dtos.MessageDTO;
+import entities.ConstructorEntity;
 import entities.EquipmentEntity;
 import entities.EquipmentTypeEntity;
 import utils.CommonUtils;
@@ -18,6 +21,7 @@ public class EquipmentService {
 
 	private static final EquipmentDAO equipmentDAO = new EquipmentDAO();
 	private static final EquipmentTypeDAO equipmentTypeDAO = new EquipmentTypeDAO();
+	private static final ConstructorDAO constructorDAO = new ConstructorDAO();
 
 
 	@GET
@@ -32,9 +36,46 @@ public class EquipmentService {
 		//remove id
 		equipmentEntity.setId(0);
 
+
+		//check for constructor id
+		if (equipmentEntity.getConstructor() == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("constructor is null"));
+			return CommonUtils.addFilterHeader(responseBuilder).build();
+
+		}
+		long constructorId = equipmentEntity.getConstructor().getId();
+
+		ConstructorEntity foundConstructor = constructorDAO.findByID(constructorId);
+		if (foundConstructor == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("constructor not found"));
+			return CommonUtils.addFilterHeader(responseBuilder).build();
+		}
+
+
+		//check for equipment type
+
+		if (equipmentEntity.getEquipmentType() == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("equipment_type is null"));
+			return CommonUtils.addFilterHeader(responseBuilder).build();
+
+		}
+		long equipmentTypeId = equipmentEntity.getEquipmentType().getId();
+
+		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByID(equipmentTypeId);
+		if (foundEquipmentType == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("equipment_type not found"));
+			return CommonUtils.addFilterHeader(responseBuilder).build();
+		}
+
+
+		equipmentEntity.setConstructor(foundConstructor);
+		equipmentEntity.setEquipmentType(foundEquipmentType);
+
 		equipmentDAO.persist(equipmentEntity);
 		Response.ResponseBuilder builder = Response.status(Response.Status.CREATED).entity(equipmentEntity);
 		return CommonUtils.addFilterHeader(builder).build();
+
+
 	}
 
 	@PUT
@@ -43,8 +84,6 @@ public class EquipmentService {
 		equipmentDAO.merge(equipmentEntity);
 		return CommonUtils.responseFilterOk(Response.accepted(equipmentEntity));
 	}
-
-
 
 
 	@GET

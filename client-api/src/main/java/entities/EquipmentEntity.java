@@ -12,8 +12,9 @@ public class EquipmentEntity {
 	private Integer deliveryPrice;
 	private String description;
 	private String status;
-	private Integer equipmentTypeId;
-	private Integer constructorId;
+	private EquipmentTypeEntity equipmentType;
+
+	private ConstructorEntity constructor;
 	private Integer constructionId;
 	private LocationEntity location;
 	private Collection<DescriptionImageEntity> descriptionImages;
@@ -79,24 +80,25 @@ public class EquipmentEntity {
 		this.status = status;
 	}
 
-	@Basic
-	@Column(name = "equipment_type_id", nullable = true)
-	public Integer getEquipmentTypeId() {
-		return equipmentTypeId;
+	@ManyToOne
+	@JoinColumn(name = "equipment_type_id")
+	public EquipmentTypeEntity getEquipmentType() {
+		return equipmentType;
 	}
 
-	public void setEquipmentTypeId(Integer equipmentTypeId) {
-		this.equipmentTypeId = equipmentTypeId;
+	public void setEquipmentType(EquipmentTypeEntity equipmentType) {
+		this.equipmentType = equipmentType;
 	}
 
-	@Basic
-	@Column(name = "constructor_id", nullable = true)
-	public Integer getConstructorId() {
-		return constructorId;
+
+	@ManyToOne()
+	@JoinColumn(name = "constructor_id", insertable = false, updatable = false)
+	public ConstructorEntity getConstructor() {
+		return constructor;
 	}
 
-	public void setConstructorId(Integer constructorId) {
-		this.constructorId = constructorId;
+	public void setConstructor(ConstructorEntity constructor) {
+		this.constructor = constructor;
 	}
 
 	@Basic
@@ -111,7 +113,6 @@ public class EquipmentEntity {
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "location_id")
-
 	public LocationEntity getLocation() {
 		return location;
 	}
