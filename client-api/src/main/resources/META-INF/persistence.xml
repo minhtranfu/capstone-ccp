@@ -6,8 +6,6 @@
                       transaction-type="RESOURCE_LOCAL">
 
         <class>entities.Equipment</class>
-        <class>entities.EquipmentTypeInfo</class>
-        <class>entities.EquipmentType</class>
         <properties>
 
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
