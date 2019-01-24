@@ -1,6 +1,7 @@
 package dao;
 
 
+import org.hibernate.Session;
 import utils.DBUtils;
 
 import javax.persistence.EntityManager;
@@ -42,6 +43,7 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T,PK>{
 		entityManager.getTransaction().commit();
 
 	}
+
 
 	public List<T> getAll(String queryName) {
 		EntityManager entityManager = DBUtils.getEntityManager();
