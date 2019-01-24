@@ -1,4 +1,4 @@
-package com.ccp.utils;
+package utils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -24,7 +24,7 @@ public class DBUtils {
                 }
             }
         }
-//        emf = Persistence.createEntityManagerFactory(PERSISTANCE_NAME);
+
         return emf.createEntityManager();
     }
 }

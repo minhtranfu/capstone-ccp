@@ -1,4 +1,4 @@
-package com.ccp.providers;
+package jaxrs.providers;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;

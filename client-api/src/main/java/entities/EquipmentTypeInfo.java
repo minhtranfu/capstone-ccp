@@ -1,8 +1,8 @@
-package com.ccp.entities;
+package entities;
 
 import javax.persistence.*;
 
-//@Entity
+@Entity
 @Table(name="equipment_type_info")
 public class EquipmentTypeInfo {
     @Id
