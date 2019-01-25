@@ -31,6 +31,25 @@ public class EquipmentEntity {
 	private List<AvailableTimeRangeEntity> availableTimeRanges;
 	private Collection<DescriptionImageEntity> descriptionImages;
 
+
+	public EquipmentEntity() {
+	}
+
+	public EquipmentEntity(long id, String name, Integer dailyPrice, Integer deliveryPrice, String description, String status, EquipmentTypeEntity equipmentType, ConstructorEntity constructor, Integer constructionId, LocationEntity location, List<AvailableTimeRangeEntity> availableTimeRanges, Collection<DescriptionImageEntity> descriptionImages) {
+		this.id = id;
+		this.name = name;
+		this.dailyPrice = dailyPrice;
+		this.deliveryPrice = deliveryPrice;
+		this.description = description;
+		this.status = status;
+		this.equipmentType = equipmentType;
+		this.constructor = constructor;
+		this.constructionId = constructionId;
+		this.location = location;
+		this.availableTimeRanges = availableTimeRanges;
+		this.descriptionImages = descriptionImages;
+	}
+
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)

@@ -10,6 +10,16 @@ public class LocationEntity {
 	private Double longitude;
 	private Double latitude;
 
+
+	public LocationEntity() {
+	}
+
+	public LocationEntity(String query, Double longitude, Double latitude) {
+		this.query = query;
+		this.longitude = longitude;
+		this.latitude = latitude;
+	}
+
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)

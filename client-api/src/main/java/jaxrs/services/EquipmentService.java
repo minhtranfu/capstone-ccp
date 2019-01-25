@@ -3,16 +3,19 @@ package jaxrs.services;
 import daos.ConstructorDAO;
 import daos.EquipmentDAO;
 import daos.EquipmentTypeDAO;
+import dtos.EquipmentDTO;
 import dtos.MessageDTO;
 import entities.ConstructorEntity;
 import entities.EquipmentEntity;
 import entities.EquipmentTypeEntity;
+import entities.LocationEntity;
 import utils.CommonUtils;
 import utils.DBUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +33,8 @@ public class EquipmentService {
 			@QueryParam("lat") double latitude,
 			@QueryParam("long") double longitude,
 			@QueryParam("begin_date") Date beginDate,
-			@QueryParam("end_date") Date endDate) {
+			@QueryParam("end_date") Date endDate,
+			@QueryParam("lquery") @DefaultValue("") String locationQuery) {
 
 		if (beginDate == null || endDate == null) {
 			// return all
@@ -39,7 +43,13 @@ public class EquipmentService {
 
 		}
 		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(beginDate, endDate);
-		return CommonUtils.responseFilterOk(equipmentEntities);
+		List<EquipmentDTO> result = new ArrayList<EquipmentDTO>();
+
+		for (EquipmentEntity equipmentEntity : equipmentEntities) {
+			EquipmentDTO equipmentDTO = new EquipmentDTO(equipmentEntity, new LocationEntity(locationQuery, longitude, latitude));
+			result.add(equipmentDTO);
+		}
+		return CommonUtils.responseFilterOk(result);
 	}
 
 	@GET
