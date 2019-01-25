@@ -46,6 +46,13 @@
             <artifactId>hibernate-entitymanager</artifactId>
             <version>4.0.1.Final</version>
         </dependency>
+
+        <!--for testing jpa query by ide-->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.2.4.Final</version>
+        </dependency>
     </dependencies>
 
     <build>

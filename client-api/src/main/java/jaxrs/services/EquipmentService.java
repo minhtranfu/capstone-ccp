@@ -25,14 +25,22 @@ public class EquipmentService {
 	private static final ConstructorDAO constructorDAO = new ConstructorDAO();
 
 
-//	@GET
-//	public Response searchEquipment(
-//			@QueryParam("lat") double latitude,
-//			@QueryParam("long") double longitude,
-//			@QueryParam("begin_date") Date beginDate,
-//			@QueryParam("end_date") Date endDate) {
-//
-//	}
+	@GET
+	public Response searchEquipment(
+			@QueryParam("lat") double latitude,
+			@QueryParam("long") double longitude,
+			@QueryParam("begin_date") Date beginDate,
+			@QueryParam("end_date") Date endDate) {
+
+		if (beginDate == null || endDate == null) {
+			// return all
+			List<EquipmentEntity> equipmentEntities = equipmentDAO.getAll("EquipmentEntity.getAll");
+			return CommonUtils.responseFilterOk(equipmentEntities);
+
+		}
+		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(beginDate, endDate);
+		return CommonUtils.responseFilterOk(equipmentEntities);
+	}
 
 	@GET
 	@Path("{id:\\d+}")

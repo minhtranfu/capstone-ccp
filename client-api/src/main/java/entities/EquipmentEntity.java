@@ -1,11 +1,20 @@
 package entities;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "equipment", schema = "capstone_ccp")
+
+@NamedQueries({
+		@NamedQuery(name = "EquipmentEntity.searchEquipment", query = "select e from EquipmentEntity  e where exists (select t from e.availableTimeRanges t where t.beginDate <= :curBeginDate and :curBeginDate <= :curEndDate  and  :curEndDate <= t.endDate)"),
+		@NamedQuery(name = "EquipmentEntity.getAll",query = "select  e from EquipmentEntity e")
+})
+
 public class EquipmentEntity {
 	private long id;
 	private String name;
@@ -115,6 +124,7 @@ public class EquipmentEntity {
 	}
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name = "location_id")
 	public LocationEntity getLocation() {
 		return location;
