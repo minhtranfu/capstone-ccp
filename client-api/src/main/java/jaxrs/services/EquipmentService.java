@@ -13,6 +13,7 @@ import utils.DBUtils;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.List;
 
 @Path("/equipments")
@@ -23,6 +24,15 @@ public class EquipmentService {
 	private static final EquipmentTypeDAO equipmentTypeDAO = new EquipmentTypeDAO();
 	private static final ConstructorDAO constructorDAO = new ConstructorDAO();
 
+
+//	@GET
+//	public Response searchEquipment(
+//			@QueryParam("lat") double latitude,
+//			@QueryParam("long") double longitude,
+//			@QueryParam("begin_date") Date beginDate,
+//			@QueryParam("end_date") Date endDate) {
+//
+//	}
 
 	@GET
 	@Path("{id:\\d+}")
@@ -82,7 +92,9 @@ public class EquipmentService {
 	@Path("{id:\\d+}")
 	public Response updateEquipmentById(EquipmentEntity equipmentEntity) {
 		equipmentDAO.merge(equipmentEntity);
-		return CommonUtils.responseFilterOk(Response.accepted(equipmentEntity));
+		Response.ResponseBuilder builder = Response.status(Response.Status.OK).entity(equipmentEntity);
+
+		return CommonUtils.addFilterHeader(builder).build();
 	}
 
 

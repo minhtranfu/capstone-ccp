@@ -15,9 +15,8 @@ public class EquipmentDTO extends EquipmentEntity {
 	}
 
 	public double getDistance() {
-		// TODO: 1/24/19 calculate distance
 
-		return -1;
+		return calculateDistance(this.currentLocation, getLocation());
 	}
 
 	public void setDistance(double distance) {
@@ -30,5 +29,11 @@ public class EquipmentDTO extends EquipmentEntity {
 
 	public void setCurrentLocation(LocationEntity currentLocation) {
 		this.currentLocation = currentLocation;
+	}
+
+	public static double calculateDistance(LocationEntity location1, LocationEntity location2) {
+		// TODO: 1/24/19 calculate distance
+		return Math.sqrt(Math.pow(location1.getLatitude() - location2.getLatitude(), 2)
+				+ Math.pow(location1.getLongitude() - location2.getLongitude(), 2));
 	}
 }

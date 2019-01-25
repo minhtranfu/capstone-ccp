@@ -1,6 +1,8 @@
 package entities;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 import java.sql.Timestamp;
 
 @Entity
@@ -10,8 +12,9 @@ public class AvailableTimeRangeEntity {
 	private long id;
 	private Timestamp beginDate;
 	private Timestamp endDate;
-	private Integer equipmentId;
+	private EquipmentEntity equipment;
 
+	@XmlTransient
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -43,29 +46,14 @@ public class AvailableTimeRangeEntity {
 		this.endDate = endDate;
 	}
 
-	@Basic
-	@Column(name = "equipment_id", nullable = true)
-	public Integer getEquipmentId() {
-		return equipmentId;
+
+	@XmlTransient
+	@ManyToOne(fetch = FetchType.LAZY)
+	public EquipmentEntity getEquipment() {
+		return equipment;
 	}
 
-	public void setEquipmentId(Integer equipmentId) {
-		this.equipmentId = equipmentId;
+	public void setEquipment(EquipmentEntity equipment) {
+		this.equipment = equipment;
 	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		AvailableTimeRangeEntity that = (AvailableTimeRangeEntity) o;
-
-		if (id != that.id) return false;
-		if (beginDate != null ? !beginDate.equals(that.beginDate) : that.beginDate != null) return false;
-		if (endDate != null ? !endDate.equals(that.endDate) : that.endDate != null) return false;
-		if (equipmentId != null ? !equipmentId.equals(that.equipmentId) : that.equipmentId != null) return false;
-
-		return true;
-	}
-
 }

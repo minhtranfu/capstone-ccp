@@ -2,6 +2,7 @@ package daos;
 
 import entities.EquipmentEntity;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
@@ -11,6 +12,10 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 	private static EquipmentDAO instance;
 	private static Object LOCK = new Object();
+
+//	public List<EquipmentDAO> searchEquipment() {
+//
+//	}
 
 	public static EquipmentDAO getInstance() {
 		synchronized (LOCK) {

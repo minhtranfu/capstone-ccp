@@ -2,6 +2,7 @@ package entities;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "equipment", schema = "capstone_ccp")
@@ -17,6 +18,8 @@ public class EquipmentEntity {
 	private ConstructorEntity constructor;
 	private Integer constructionId;
 	private LocationEntity location;
+
+	private List<AvailableTimeRangeEntity> availableTimeRanges;
 	private Collection<DescriptionImageEntity> descriptionImages;
 
 	@Id
@@ -122,6 +125,15 @@ public class EquipmentEntity {
 	}
 
 
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "equipment_id")
+	public List<AvailableTimeRangeEntity> getAvailableTimeRanges() {
+		return availableTimeRanges;
+	}
+
+	public void setAvailableTimeRanges(List<AvailableTimeRangeEntity> availableTimeRanges) {
+		this.availableTimeRanges = availableTimeRanges;
+	}
 
 	@OneToMany(mappedBy = "equipmentByEquipmentId")
 	public Collection<DescriptionImageEntity> getDescriptionImages() {
