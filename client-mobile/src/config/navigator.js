@@ -15,6 +15,8 @@ import Profile from "../screens/Profile";
 import Equipment from "../screens/Equipment";
 import MyEquipment from "../screens/MyEquipment";
 import AddEquipment from "../screens/MyEquipment/AddEquipment";
+import AddDuration from "../screens/MyEquipment/AddEquipment/AddDuration";
+import AddImage from "../screens/MyEquipment/AddEquipment/AddImage";
 import EquipmentDetail from "../screens/EquipmentDetail";
 import Requester from "../screens/Equipment/Requester";
 import RequesterPost from "../screens/Equipment/RequesterPost";
@@ -76,7 +78,9 @@ const SearchStack = createStackNavigator(
 
 const AddNewEquipmentStack = createStackNavigator(
   {
-    AddEquipment: AddEquipment
+    AddEquipment: AddEquipment,
+    AddDuration: AddDuration,
+    AddImage: AddImage
   },
   {
     headerMode: "none",
@@ -91,7 +95,8 @@ const EquipmentStack = createStackNavigator(
   },
   {
     mode: "modal",
-    headerMode: "none"
+    headerMode: "none",
+    initialRouteName: "Equipment"
   }
 );
 

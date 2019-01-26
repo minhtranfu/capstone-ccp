@@ -4,3 +4,9 @@ export const LOGIN_SUCCESS = "@@auth/LOGIN_SUCCESS";
 export const LOGIN_FAIL = "@@auth/LOGIN_FAIL";
 
 export const LOGOUT_SUCCESS = "@@auth/LOGOUT_SUCCESS";
+
+//EQUIPMENT
+export const EQUIPMENTS_LIST_SUCCESS = "@@equip/EQUIPMENTS_LIST_SUCCESS";
+
+//EQUIPMENT DETAIL
+export const EQUIPMENT_DETAIL_SUCCESS = "@@equip/EQUIPMENTS_LIST_SUCCESS";

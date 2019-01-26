@@ -17,23 +17,18 @@ const width = Dimensions.get("window").width;
 const mockData = [
   {
     id: 1,
-    name: "Beef"
+    name: "Java",
+    value: "java"
   },
   {
     id: 2,
-    name: "Rich Fish"
+    name: "Javascript",
+    value: "javascrtip"
   },
   {
     id: 3,
-    name: "Lamb"
-  },
-  {
-    id: 4,
-    name: "Pasta"
-  },
-  {
-    id: 5,
-    name: "Veal"
+    name: "C#",
+    value: "c#"
   }
 ];
 
@@ -69,12 +64,18 @@ class CustomModal extends Component {
               <Picker
                 selectedValue={this.state.pickerValue}
                 style={{ width: width }}
-                onValueChange={(itemValue, itemIndex) =>
-                  this.setState({ pickerValue: itemValue })
-                }
+                onValueChange={(itemValue, itemIndex) => {
+                  this.setState({ pickerValue: itemValue });
+                  this.props.onSelectValue(itemValue);
+                }}
               >
-                <Picker.Item label="Java" value="java" />
-                <Picker.Item label="JavaScript" value="js" />
+                {mockData.map(item => (
+                  <Picker.Item
+                    key={item.id}
+                    label={item.name}
+                    value={item.name}
+                  />
+                ))}
               </Picker>
             </View>
           </View>
@@ -130,13 +131,14 @@ const styles = StyleSheet.create({
   label: {
     fontSize: fontSize.secondaryText,
     color: colors.secondaryColor,
-    fontWeight: "bold"
+    fontWeight: "bold",
+    marginTop: 5
   },
   placeholder: {
     fontSize: fontSize.caption,
     color: colors.secondaryColorOpacity,
     marginBottom: 5,
-    marginTop: 10
+    marginTop: 15
   },
   divider: {
     backgroundColor: "#D8D8D8",

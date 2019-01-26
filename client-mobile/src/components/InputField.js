@@ -39,7 +39,9 @@ class InputField extends Component {
       customWrapperStyle,
       autoFocus,
       placeholder,
-      autoCapitalize
+      autoCapitalize,
+      placeholderTextColor,
+      ...others
     } = this.props;
     const { secureInput } = this.state;
     const fontSize = labelTextSize || fontSize.bodyText;
@@ -47,7 +49,7 @@ class InputField extends Component {
     const inputColor = textColor || colors.white;
     const borderBottom = borderBottomColor || "transparent";
     return (
-      <View style={[styles.wrapper, customWrapperStyle]}>
+      <View style={[styles.container, customWrapperStyle]}>
         <Text style={[styles.label, { fontSize, color }]}>{label}</Text>
         {inputType === "password" ? (
           <Touchable
@@ -61,7 +63,7 @@ class InputField extends Component {
         ) : null}
         <TextInput
           placeholder={placeholder}
-          placeholderTextColor={inputColor}
+          placeholderTextColor={placeholderTextColor}
           autoCorrect={false}
           autoFocus={autoFocus}
           autoCapitalize={autoCapitalize}
@@ -70,6 +72,7 @@ class InputField extends Component {
             { color: inputColor, borderBottomColor: borderBottom }
           ]}
           secureTextEntry={secureInput}
+          {...others}
         />
       </View>
     );

@@ -1,20 +1,46 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Animated, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  Image,
+  TouchableOpacity
+} from "react-native";
 import { SafeAreaView } from "react-navigation";
 import MapView, { Marker } from "react-native-maps";
+import { Ionicons } from "@expo/vector-icons";
+import { connect } from "react-redux";
 
 import CustomFlatList from "../../components/CustomFlatList";
 import ParallaxList from "../../components/ParallaxList";
 import Loading from "../../components/Loading";
-import { itemDetail, discoverData } from "../../config/mockData";
+import { itemDetail, discoverData, detail } from "../../config/mockData";
 import Item from "../Discover/components/Item";
+import { getEquipmentDetail } from "../../redux/actions/equipment";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import Title from "../../components/Title";
 import { Button } from "../../components/AnimatedHeader";
 
+@connect(
+  state => {
+    console.log(state.equipment.detail);
+    return {};
+  },
+  dispatch => ({
+    fetchGetEquipmentDetail: id => {
+      dispatch(getEquipmentDetail(id));
+    }
+  })
+)
 class EquipmentDetail extends Component {
+  componentDidMount() {
+    const { id } = this.props.navigation.state.params;
+    this.props.fetchGetEquipmentDetail(id);
+  }
+
   renderSuggestionItem = ({ item }) => {
     return (
       <Item
@@ -27,28 +53,58 @@ class EquipmentDetail extends Component {
     );
   };
   renderScrollItem = () => {
+    const { images, author, availableFrom, availableTo } = itemDetail;
     const {
-      images,
       name,
-      author,
-      description,
+      constructor,
       location,
-      availableFrom,
-      availableTo
-    } = itemDetail;
+      available,
+      availableTimeRanges,
+      status,
+      dailyPrice,
+      deliveryPrice,
+      description
+    } = detail.data;
     console.log(images);
     return (
       <View>
         <View style={styles.textWrapper}>
           <Text style={styles.header}>{name}</Text>
-          <Text style={styles.header}>{author}</Text>
-        </View>
-        <View style={styles.textWrapper}>
-          <Text style={{ color: colors.secondaryColorOpacity }}>Available</Text>
-          <Text style={styles.text}>
-            {availableFrom}-{availableTo}
+          <Text style={{ color: colors.secondaryColorOpacity }}>
+            {status.toUpperCase()}
           </Text>
         </View>
+        <Text style={styles.text}>Constructor: {constructor.name}</Text>
+        <Text style={styles.text}>Phone: {constructor.phoneNumber}</Text>
+        <Title title={"Time Range Available"} />
+        {availableTimeRanges.map((item, index) => (
+          <TouchableOpacity key={index} style={styles.rowWrapper}>
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "center"
+              }}
+            >
+              <Text style={{ marginBottom: 10 }}>From: {item.beginDate}</Text>
+              <Text>To: {item.endDate}</Text>
+            </View>
+            <Ionicons
+              name={"ios-arrow-forward"}
+              size={24}
+              style={{ marginRight: 15 }}
+            />
+          </TouchableOpacity>
+        ))}
+        <Title title={"Pricing"} />
+        <View style={styles.rowWrapper}>
+          <Text>Daily price</Text>
+          <Text style={{ marginRight: 15 }}>{dailyPrice}$/day</Text>
+        </View>
+        <View style={styles.rowWrapper}>
+          <Text>Delivery price</Text>
+          <Text style={{ marginRight: 15 }}>{deliveryPrice}$/day</Text>
+        </View>
+
         <Title title={"Description"} />
         <Text style={styles.description}>{description}</Text>
 
@@ -69,7 +125,9 @@ class EquipmentDetail extends Component {
           }}
         />
         <Title title={"Location"} />
-        <Text style={[styles.text, { paddingVertical: 5 }]}>{location}</Text>
+        <Text style={[styles.text, { paddingVertical: 5 }]}>
+          {location.query}
+        </Text>
         <MapView
           style={styles.mapWrapper}
           initialRegion={{
@@ -99,14 +157,15 @@ class EquipmentDetail extends Component {
 
   render() {
     const { id } = this.props.navigation.state.params;
+
     return (
       <SafeAreaView style={styles.container}>
-        {itemDetail ? (
+        {detail ? (
           <View>
             <ParallaxList
-              title={itemDetail.name}
+              title={detail.data.name}
               removeTitle={true}
-              background={"a"}
+              hasThumbnail={true}
               hasLeft={true}
               hasFavorite={true}
               scrollElement={<Animated.ScrollView />}
@@ -114,20 +173,18 @@ class EquipmentDetail extends Component {
             />
             <View
               style={{
-                backgroundColor: "red",
                 position: "fixed",
                 zIndex: 1,
                 bottom: 0,
                 height: 50,
                 flexDirection: "row",
                 justifyContent: "space-between",
-                alignItems: "center"
+                alignItems: "center",
+                borderTopWidth: 1,
+                borderTopColor: colors.secondaryColorOpacity
               }}
             >
-              <Text>
-                {itemDetail.prices[0].price}/ per{" "}
-                {itemDetail.prices[0].duration}
-              </Text>
+              <Text style={styles.text}>{detail.data.dailyPrice}$/day</Text>
               <Text>CHECK AVAILABILITY</Text>
             </View>
           </View>
@@ -150,6 +207,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     justifyContent: "space-between",
     alignItems: "center"
+  },
+  rowWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginLeft: 15,
+    marginTop: 10,
+    marginBottom: 5
   },
   header: {
     color: colors.secondaryColor,

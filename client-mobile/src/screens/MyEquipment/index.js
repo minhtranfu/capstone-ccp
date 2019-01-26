@@ -1,11 +1,13 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
+import { View, Text, StyleSheet, Animated, Dimensions } from "react-native";
 import { SafeAreaView } from "react-navigation";
 
 import ParallaxList from "../../components/ParallaxList";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+
+const { width, height } = Dimensions.get("window");
 
 class MyEquipment extends Component {
   constructor(props) {

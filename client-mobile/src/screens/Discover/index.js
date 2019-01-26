@@ -59,7 +59,10 @@ class Discover extends Component {
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView
+        style={styles.container}
+        forceInset={{ bottom: "never", top: "always" }}
+      >
         <ParallaxList
           title={"Discover"}
           hasLeft={false}

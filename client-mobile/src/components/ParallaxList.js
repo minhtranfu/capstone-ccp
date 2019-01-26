@@ -110,7 +110,7 @@ class ParallaxList extends Component {
             this.props.removeTitle ? null : (
               <View key={Math.random()}>{this.renderHeader()}</View>
             ),
-            this.props.background ? (
+            this.props.hasThumbnail ? (
               <View key={Math.random()}>{this.renderBackground()}</View>
             ) : null,
             this.props.renderScrollItem ? (
