@@ -18,7 +18,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 const store = configureStore(INITIAL_STATE);
 
-const ROOT_ELEMENT_ID_AS_DEFINED_IN_INDEX_HTML = 'example-app';
+const ROOT_ELEMENT_ID_AS_DEFINED_IN_INDEX_HTML = 'app-root';
 
 ReactDOM.render(
   <AppContainer>

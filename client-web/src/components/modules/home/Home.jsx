@@ -4,11 +4,45 @@ import EquipmentCard from '../../common/EquipmentCard';
 import Helmet from 'react-helmet-async';
 
 class Home extends PureComponent {
-    render() {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            products: [],
+        };
+    }
+
+    _loadData = async () => {
+        await new Promise(rosolve => {
+            setTimeout(rosolve(), 1000);
+        });
+
         const product = {
             id: 1,
-            name: 'asda asddas asdsad asdsd',
+            image: 'http://4.bp.blogspot.com/-Hzr2v5MOp6k/U9zAYcmArGI/AAAAAAAABOQ/AFFdqFT8AYo/s1600/xe_lu_rung_5.jpg',
+            name: 'Tên thiết bị',
+            location: 'Bình Tân, HCM',
+            timeRange: {
+                start_at: '2019-01-01',
+                end_at: '2019-02-01',
+            }
         };
+        const products = [];
+        for (let i = 0; i < 12; i++) {
+            products.push(product);
+        }
+
+        this.setState({
+            products
+        });
+    };
+
+    componentDidMount() {
+        this._loadData();
+    }
+
+    render() {
+        const { products } = this.state;
 
         return (
             <div>
@@ -25,14 +59,7 @@ class Home extends PureComponent {
                         <div className="col-md-12">
                             <h3>Kết quả phù hợp</h3>
                         </div>
-                        <EquipmentCard className="col-md-4" product={product}/>
-                        <EquipmentCard className="col-md-4" product={product}/>
-                        <EquipmentCard className="col-md-4" product={product}/>
-                        <EquipmentCard className="col-md-4" product={product}/>
-                        <EquipmentCard className="col-md-4" product={product}/>
-                        <EquipmentCard className="col-md-4" product={product}/>
-                        <EquipmentCard className="col-md-4" product={product}/>
-                        <EquipmentCard className="col-md-4" product={product}/>
+                        {products && products.map(product => <EquipmentCard className="col-md-4" product={product}/>)}
                     </div>
                 </div>
             </div>

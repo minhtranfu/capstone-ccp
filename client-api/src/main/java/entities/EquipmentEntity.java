@@ -1,13 +1,20 @@
 package entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "equipment", schema = "capstone_ccp")
-@JsonIgnoreProperties(ignoreUnknown = true)
+
+@NamedQueries({
+		@NamedQuery(name = "EquipmentEntity.searchEquipment", query = "select e from EquipmentEntity  e where exists (select t from e.availableTimeRanges t where t.beginDate <= :curBeginDate and :curBeginDate <= :curEndDate  and  :curEndDate <= t.endDate)"),
+		@NamedQuery(name = "EquipmentEntity.getAll",query = "select  e from EquipmentEntity e")
+})
+
 public class EquipmentEntity {
 	private long id;
 	private String name;
@@ -20,12 +27,15 @@ public class EquipmentEntity {
 	private ConstructorEntity constructor;
 	private Integer constructionId;
 	private LocationEntity location;
+
+	private List<AvailableTimeRangeEntity> availableTimeRanges;
 	private Collection<DescriptionImageEntity> descriptionImages;
+
 
 	public EquipmentEntity() {
 	}
 
-	public EquipmentEntity(long id, String name, Integer dailyPrice, Integer deliveryPrice, String description, String status, EquipmentTypeEntity equipmentType, ConstructorEntity constructor, Integer constructionId, LocationEntity location, Collection<DescriptionImageEntity> descriptionImages) {
+	public EquipmentEntity(long id, String name, Integer dailyPrice, Integer deliveryPrice, String description, String status, EquipmentTypeEntity equipmentType, ConstructorEntity constructor, Integer constructionId, LocationEntity location, List<AvailableTimeRangeEntity> availableTimeRanges, Collection<DescriptionImageEntity> descriptionImages) {
 		this.id = id;
 		this.name = name;
 		this.dailyPrice = dailyPrice;
@@ -36,6 +46,7 @@ public class EquipmentEntity {
 		this.constructor = constructor;
 		this.constructionId = constructionId;
 		this.location = location;
+		this.availableTimeRanges = availableTimeRanges;
 		this.descriptionImages = descriptionImages;
 	}
 
@@ -132,6 +143,7 @@ public class EquipmentEntity {
 	}
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name = "location_id")
 	public LocationEntity getLocation() {
 		return location;
@@ -142,6 +154,15 @@ public class EquipmentEntity {
 	}
 
 
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "equipment_id")
+	public List<AvailableTimeRangeEntity> getAvailableTimeRanges() {
+		return availableTimeRanges;
+	}
+
+	public void setAvailableTimeRanges(List<AvailableTimeRangeEntity> availableTimeRanges) {
+		this.availableTimeRanges = availableTimeRanges;
+	}
 
 	@OneToMany(mappedBy = "equipmentByEquipmentId")
 	public Collection<DescriptionImageEntity> getDescriptionImages() {

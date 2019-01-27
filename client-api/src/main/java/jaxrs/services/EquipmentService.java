@@ -1,51 +1,66 @@
 package jaxrs.services;
 
+import entities.AdditionalSpecsFieldEntity;
 import daos.ConstructorDAO;
 import daos.EquipmentDAO;
 import daos.EquipmentTypeDAO;
+import dtos.EquipmentDTO;
 import dtos.MessageDTO;
-import entities.AdditionalSpecsFieldEntity;
 import entities.ConstructorEntity;
 import entities.EquipmentEntity;
 import entities.EquipmentTypeEntity;
+import entities.LocationEntity;
 import utils.CommonUtils;
 import utils.DBUtils;
 
-import javax.persistence.EntityManager;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Path("/equipments")
+@Produces(MediaType.APPLICATION_JSON)
 public class EquipmentService {
-    private static EntityManager manager = DBUtils.getEntityManager();
 
-    @GET
-    @Path("/types")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getEquipmentTypes() {
-        List<EquipmentType> resultList = manager.createQuery("SELECT et FROM EquipmentType et WHERE et.isActive = 1", EquipmentType.class).getResultList();
-        return CommonUtils.responseFilter(resultList);
-    }
+	private static final EquipmentDAO equipmentDAO = new EquipmentDAO();
+	private static final EquipmentTypeDAO equipmentTypeDAO = new EquipmentTypeDAO();
+	private static final ConstructorDAO constructorDAO = new ConstructorDAO();
 
-    @GET
-    @Path("/types/{id : \\d+}/infos")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getEquipmentTypeInfos(@PathParam("id") int id) {
+
+	@GET
+	public Response searchEquipment(
+			@QueryParam("lat") double latitude,
+			@QueryParam("long") double longitude,
+			@QueryParam("begin_date") Date beginDate,
+			@QueryParam("end_date") Date endDate,
+			@QueryParam("lquery") @DefaultValue("") String locationQuery) {
+
+		if (beginDate == null || endDate == null) {
+			// return all
+			List<EquipmentEntity> equipmentEntities = equipmentDAO.getAll("EquipmentEntity.getAll");
+			return CommonUtils.responseFilterOk(equipmentEntities);
+
+		}
+		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(beginDate, endDate);
+		List<EquipmentDTO> result = new ArrayList<EquipmentDTO>();
+
+		for (EquipmentEntity equipmentEntity : equipmentEntities) {
+			EquipmentDTO equipmentDTO = new EquipmentDTO(equipmentEntity, new LocationEntity(locationQuery, longitude, latitude));
+			result.add(equipmentDTO);
+		}
+		return CommonUtils.responseFilterOk(result);
+	}
 
 	@GET
 	@Path("{id:\\d+}")
-	public EquipmentEntity getEquipment(@PathParam("id") long id) {
-		return EquipmentDAO.getInstance().findByID(id);
+	public Response getEquipment(@PathParam("id") long id) {
+		return CommonUtils.responseFilterOk(EquipmentDAO.getInstance().findByID(id));
 	}
 
 
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
 	public Response postEquipment(EquipmentEntity equipmentEntity) {
 		//remove id
 		equipmentEntity.setId(0);
@@ -54,7 +69,7 @@ public class EquipmentService {
 		//check for constructor id
 		if (equipmentEntity.getConstructor() == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("constructor is null"));
-			return responseBuilder.build();
+			return CommonUtils.addFilterHeader(responseBuilder).build();
 
 		}
 		long constructorId = equipmentEntity.getConstructor().getId();
@@ -62,7 +77,7 @@ public class EquipmentService {
 		ConstructorEntity foundConstructor = constructorDAO.findByID(constructorId);
 		if (foundConstructor == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("constructor not found"));
-			return responseBuilder.build();
+			return CommonUtils.addFilterHeader(responseBuilder).build();
 		}
 
 
@@ -70,7 +85,7 @@ public class EquipmentService {
 
 		if (equipmentEntity.getEquipmentType() == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("equipment_type is null"));
-			return responseBuilder.build();
+			return CommonUtils.addFilterHeader(responseBuilder).build();
 
 		}
 		long equipmentTypeId = equipmentEntity.getEquipmentType().getId();
@@ -78,7 +93,7 @@ public class EquipmentService {
 		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByID(equipmentTypeId);
 		if (foundEquipmentType == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("equipment_type not found"));
-			return responseBuilder.build();
+			return CommonUtils.addFilterHeader(responseBuilder).build();
 		}
 
 
@@ -87,29 +102,28 @@ public class EquipmentService {
 
 		equipmentDAO.persist(equipmentEntity);
 		Response.ResponseBuilder builder = Response.status(Response.Status.CREATED).entity(equipmentEntity);
-		return builder.build();
+		return CommonUtils.addFilterHeader(builder).build();
+
 
 	}
 
-//	@PUT
-//	@Path("{id:\\d+}")
-//	public Response updateEquipmentById(EquipmentEntity equipmentEntity) {
-//		equipmentDAO.merge(equipmentEntity);
-//		return CommonUtils.responseFilterOk(Response.accepted(equipmentEntity));
-//	}
+	@PUT
+	@Path("{id:\\d+}")
+	public Response updateEquipmentById(EquipmentEntity equipmentEntity) {
+		equipmentDAO.merge(equipmentEntity);
+		Response.ResponseBuilder builder = Response.status(Response.Status.OK).entity(equipmentEntity);
+
+		return CommonUtils.addFilterHeader(builder).build();
+	}
 
 
 	@GET
 	@Path("/types")
 	public List<EquipmentTypeEntity> getEquipmentTypes() {
-//		return "asdasdadsadasd";
-//        List<EquipmentType> resultList = manager.createQuery("SELECT et FROM EquipmentType et WHERE et.isActive = 1", EquipmentType.class).getResultList();
-
-
 		DBUtils.getEntityManager().createNamedQuery("EquipmentTypeEntity.getAllEquipmentType").getResultList();
 		List<EquipmentTypeEntity> result = equipmentTypeDAO.getAll("EquipmentTypeEntity.getAllEquipmentType");
-		return result;
 	}
+		return result;
 
 	@GET
 	@Path("/types/{id : \\d+}/specs")
