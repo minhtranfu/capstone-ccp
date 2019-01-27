@@ -1,89 +1,78 @@
 package jaxrs.providers;
 
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerResponse;
-import com.sun.jersey.spi.container.ContainerResponseFilter;
-import com.sun.jersey.spi.container.ResourceFilter;
+//import com.sun.jersey.spi.container.ContainerRequest;
+//import com.sun.jersey.spi.container.ContainerResponse;
+//import com.sun.jersey.spi.container.ResourceFilter;
 //import com.sun.jersey.spi.container.ResourceFilter;
 
-import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.*;
 //import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
-//@Provider
-//public class CorsFilter implements ContainerResponseFilter, ContainerRequestFilter {
-//
-//    public void filter(ContainerRequestContext requestContext,
-//                       ContainerResponseContext responseContext) throws IOException {
-//        responseContext.getHeaders().add(
-//                "Access-Control-Allow-Origin", "*");
-//        responseContext.getHeaders().add(
-//                "Access-Control-Allow-Credentials", "true");
-//        responseContext.getHeaders().add(
-//                "Access-Control-Allow-Headers",
-//                "origin, content-type, accept, authorization");
-//        responseContext.getHeaders().add(
-//                "Access-Control-Allow-Methods",
-//                "GET, POST, PUT, DELETE, OPTIONS, HEAD");
-//    }
-//
-//    public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-//
-//    }
-//}
-
 @Provider
-public class CorsFilter implements ContainerResponseFilter, ResourceFilter {
-//    public ContainerRequest filter(ContainerRequest containerRequest) {
-//        // Do something with the incoming request here
-//        return containerRequest;
-//    }
-//
-//    public ContainerResponse filter(ContainerRequest containerRequest, ContainerResponse containerResponse) {
-//        // Do something with the outgoing response here
-//        return containerResponse;
-//    }
+@PreMatching
+public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
-    public void filter(ContainerRequestContext containerRequestContext) throws IOException {
+    /**
+     * Method for ContainerRequestFilter.
+     */
+//    @Override
+    public void filter(ContainerRequestContext request) throws IOException {
 
+        // If it's a preflight request, we abort the request with
+        // a 200 status, and the CORS headers are added in the
+        // response filter method below.
+        if (isPreflightRequest(request)) {
+            request.abortWith(Response.ok().build());
+            return;
+        }
     }
 
-    public void filter(ContainerRequestContext containerRequestContext, ContainerResponseContext containerResponseContext) throws IOException {
-        containerResponseContext.getHeaders().add(
-                "Access-Control-Allow-Origin", "*");
-        containerResponseContext.getHeaders().add(
-                "Access-Control-Allow-Credentials", "true");
-        containerResponseContext.getHeaders().add(
-                "Access-Control-Allow-Headers",
-                "origin, content-type, accept, authorization");
-        containerResponseContext.getHeaders().add(
-                "Access-Control-Allow-Methods",
-                "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+    /**
+     * A preflight request is an OPTIONS request
+     * with an Origin header.
+     */
+    private static boolean isPreflightRequest(ContainerRequestContext request) {
+        return request.getHeaderString("Origin") != null
+                && request.getMethod().equalsIgnoreCase("OPTIONS");
     }
 
-    public com.sun.jersey.spi.container.ContainerRequestFilter getRequestFilter() {
-        return null;
-    }
+    /**
+     * Method for ContainerResponseFilter.
+     */
+//    @Override
+    public void filter(ContainerRequestContext request, ContainerResponseContext response)
+            throws IOException {
 
-    public com.sun.jersey.spi.container.ContainerResponseFilter getResponseFilter() {
-        return this;
-    }
+        // if there is no Origin header, then it is not a
+        // cross origin request. We don't do anything.
+        if (request.getHeaderString("Origin") == null) {
+            return;
+        }
 
-    public ContainerResponse filter(ContainerRequest containerRequest, ContainerResponse containerResponse) {
+        // If it is a preflight request, then we add all
+        // the CORS headers here.
+        if (isPreflightRequest(request)) {
+            response.getHeaders().add("Access-Control-Allow-Credentials", "true");
+            response.getHeaders().add("Access-Control-Allow-Methods",
+                    "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+            response.getHeaders().add("Access-Control-Allow-Headers",
+                    "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With," +
+                            "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
+                    // Whatever other non-standard/safe headers (see list above)
+                    // you want the client to be able to send to the server,
+                    // put it in this list. And remove the ones you don't want.
+//                    "X-Requested-With, Authorization, " +
+//                            "Accept-Version, Content-MD5, CSRF-Token"
+            );
+        }
 
-        containerResponse.getHttpHeaders().add(
-                "Access-Control-Allow-Origin", "*");
-        containerResponse.getHttpHeaders().add(
-                "Access-Control-Allow-Credentials", "true");
-        containerResponse.getHttpHeaders().add(
-                "Access-Control-Allow-Headers",
-                "origin, content-type, accept, authorization");
-        containerResponse.getHttpHeaders().add(
-                "Access-Control-Allow-Methods",
-                "GET, POST, PUT, DELETE, OPTIONS, HEAD");
-        System.out.println("asdasdasd asdsad asdasdsadasdsad");
-        return containerResponse;
+        // Cross origin requests can be either simple requests
+        // or preflight request. We need to add this header
+        // to both type of requests. Only preflight requests
+        // need the previously added headers.
+        response.getHeaders().add("Access-Control-Allow-Origin", "*");
     }
 }

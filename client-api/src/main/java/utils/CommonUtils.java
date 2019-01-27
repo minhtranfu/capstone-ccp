@@ -3,7 +3,7 @@ package utils;
 import javax.ws.rs.core.Response;
 
 public class CommonUtils {
-    public static Response responseFilter(Object data) {
+    public static Response responseFilterOk(Object data) {
         return Response.ok(data).header(
                 "Access-Control-Allow-Origin", "*")
                 .header(

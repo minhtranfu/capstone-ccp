@@ -1,7 +1,13 @@
 package jaxrs.services;
 
-import entities.EquipmentType;
-import entities.EquipmentTypeInfo;
+import daos.ConstructorDAO;
+import daos.EquipmentDAO;
+import daos.EquipmentTypeDAO;
+import dtos.MessageDTO;
+import entities.AdditionalSpecsFieldEntity;
+import entities.ConstructorEntity;
+import entities.EquipmentEntity;
+import entities.EquipmentTypeEntity;
 import utils.CommonUtils;
 import utils.DBUtils;
 
@@ -31,8 +37,87 @@ public class EquipmentService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEquipmentTypeInfos(@PathParam("id") int id) {
 
-        List<EquipmentTypeInfo> resultList = manager.createQuery("SELECT eti FROM EquipmentTypeInfo eti WHERE eti.equipmentTypeId = ? ORDER BY eti.weight", EquipmentTypeInfo.class).setParameter(1, id).getResultList();
+	@GET
+	@Path("{id:\\d+}")
+	public EquipmentEntity getEquipment(@PathParam("id") long id) {
+		return EquipmentDAO.getInstance().findByID(id);
+	}
 
-        return CommonUtils.responseFilter(resultList);
-    }
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response postEquipment(EquipmentEntity equipmentEntity) {
+		//remove id
+		equipmentEntity.setId(0);
+
+
+		//check for constructor id
+		if (equipmentEntity.getConstructor() == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("constructor is null"));
+			return responseBuilder.build();
+
+		}
+		long constructorId = equipmentEntity.getConstructor().getId();
+
+		ConstructorEntity foundConstructor = constructorDAO.findByID(constructorId);
+		if (foundConstructor == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("constructor not found"));
+			return responseBuilder.build();
+		}
+
+
+		//check for equipment type
+
+		if (equipmentEntity.getEquipmentType() == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("equipment_type is null"));
+			return responseBuilder.build();
+
+		}
+		long equipmentTypeId = equipmentEntity.getEquipmentType().getId();
+
+		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByID(equipmentTypeId);
+		if (foundEquipmentType == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("equipment_type not found"));
+			return responseBuilder.build();
+		}
+
+
+		equipmentEntity.setConstructor(foundConstructor);
+		equipmentEntity.setEquipmentType(foundEquipmentType);
+
+		equipmentDAO.persist(equipmentEntity);
+		Response.ResponseBuilder builder = Response.status(Response.Status.CREATED).entity(equipmentEntity);
+		return builder.build();
+
+	}
+
+//	@PUT
+//	@Path("{id:\\d+}")
+//	public Response updateEquipmentById(EquipmentEntity equipmentEntity) {
+//		equipmentDAO.merge(equipmentEntity);
+//		return CommonUtils.responseFilterOk(Response.accepted(equipmentEntity));
+//	}
+
+
+	@GET
+	@Path("/types")
+	public List<EquipmentTypeEntity> getEquipmentTypes() {
+//		return "asdasdadsadasd";
+//        List<EquipmentType> resultList = manager.createQuery("SELECT et FROM EquipmentType et WHERE et.isActive = 1", EquipmentType.class).getResultList();
+
+
+		DBUtils.getEntityManager().createNamedQuery("EquipmentTypeEntity.getAllEquipmentType").getResultList();
+		List<EquipmentTypeEntity> result = equipmentTypeDAO.getAll("EquipmentTypeEntity.getAllEquipmentType");
+		return result;
+	}
+
+	@GET
+	@Path("/types/{id : \\d+}/specs")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<AdditionalSpecsFieldEntity> getEquipmentTypeSpecs(@PathParam("id") int id) {
+
+        List<AdditionalSpecsFieldEntity> resultList = DBUtils.getEntityManager().createQuery("SELECT eti FROM AdditionalSpecsFieldEntity eti WHERE eti.equipmentTypeId = ?", AdditionalSpecsFieldEntity.class).setParameter(1, id).getResultList();
+
+		return resultList;
+	}
 }
