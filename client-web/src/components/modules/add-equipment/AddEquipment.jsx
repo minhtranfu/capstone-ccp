@@ -6,80 +6,154 @@ import {
 } from 'react-transition-group';
 
 import Step1 from './Step1';
+import Step2 from './Step2';
+import Step3 from './Step3';
+
+import ccpApiService from '../../../services/domain/ccp-api-service';
 
 class AddEquipment extends Component {
     constructor(props) {
         super(props);
 
-        this.toggle = this.toggle.bind(this);
         this.state = {
-            activeTab: '1'
+            activeStep: 0,
+            data: {},
         };
+
+        this.data = {
+            constructor: {
+                id: 1,
+            }, // Todo: Get constructorId from user data
+        };
+
+        this.steps = [
+            {
+                name: 'General Information',
+                component: Step1,
+            },
+            {
+                name: 'Specs Information',
+                component: Step2,
+            },
+            {
+                name: 'More Information',
+                component: Step3,
+            }
+        ]
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
+    toggle = tab => {
+        if (this.state.activeStep !== tab) {
             this.setState({
-                activeTab: tab
+                activeStep: tab
             });
         }
+    };
+
+    _handleStepDone = async result => {
+        this.data = {
+            ...this.data,
+            ...result.data
+        };
+
+        let { activeStep } = this.state;
+        if (activeStep < this.steps.length - 1) {
+            activeStep++;
+            this.setState({
+                activeStep
+            });
+            return;
+        }
+
+        const { equipmentTypeId } = this.data;
+        this.data.equipmentType = {
+            id: equipmentTypeId,
+        };
+        this.data.equipmentTypeId = undefined;
+
+        const data = await ccpApiService.postEquipment(this.data);
+        if (data && data.id) {
+            this.setState({
+                equipmentId: data.id,
+            });
+        }
+    };
+
+    _handleBackStep = () => {
+        let { activeStep } = this.state;
+        
+        if (activeStep == 0) {
+            return;
+        }
+
+        activeStep--;
+        this.setState({
+            activeStep,
+        });
     }
+
+    _renderSteps = () => {
+        const tabs = [];
+        const tabPanes = [];
+
+        this.steps.forEach((step, index) => {
+
+            tabs.push(
+                <NavItem key={index}>
+                    <NavLink
+                        className={classnames({ active: this.state.activeStep === index })}
+                        onClick={() => { this.toggle(index); }}
+                    >
+                        {step.name}
+                    </NavLink>
+                </NavItem>
+            );
+
+            tabPanes.push(
+                <TabPane tabId={index} className="p-1" key={index}>
+                    <CSSTransition
+                        in={this.state.activeStep === index}
+                        timeout={500}
+                        classNames="fade"
+                    >
+                        <Row>
+                            <Col sm="12">
+                                <step.component onStepDone={this._handleStepDone} onBackStep={this._handleBackStep} currentState={this.state.data} />
+                            </Col>
+                        </Row>
+                    </CSSTransition>
+                </TabPane>
+            )
+        });
+
+        return (
+            <div>
+                {this.state.equipmentId && 
+                    <Redirect to={`/equip-detail/${this.state.equipmentId}`} />
+                }
+                <Nav tabs>
+                    {tabs}
+                </Nav>
+                <TabContent activeTab={this.state.activeStep}>
+                    {tabPanes}
+                </TabContent>
+            </div>
+        );
+    };
+
     render() {
         return (
-            <div className="container py-5">
-                <Nav tabs>
-                    <NavItem>
-                        <NavLink
-                            className={classnames({ active: this.state.activeTab === '1' })}
-                            onClick={() => { this.toggle('1'); }}
-                        >
-                            Step 1
-                        </NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink
-                            className={classnames({ active: this.state.activeTab === '2' })}
-                            onClick={() => { this.toggle('2'); }}
-                        >
-                            Next step
-                        </NavLink>
-                    </NavItem>
-                </Nav>
-                <TabContent activeTab={this.state.activeTab}>
-
-                    <TabPane tabId="1" className="p-1">
-                        <CSSTransition
-                            in={this.state.activeTab == 1}
-                            unmountOnExit
-                            timeout={500}
-                            classNames="fade"
-                        >
-                            <Row>
-                                <Col sm="12">
-                                    <Step1 />
-                                </Col>
-                            </Row>
-                        </CSSTransition>
-                    </TabPane>
-
-                    <TabPane tabId="2" className="p-1">
-                        <CSSTransition
-                            in={this.state.activeTab == 2}
-                            timeout={500}
-                            classNames="fade"
-                        >
-                            <Row>
-                                <Col sm="12">
-                                    <Step1 />
-                                </Col>
-                            </Row>
-                        </CSSTransition>
-                    </TabPane>
-                </TabContent>
+            <div className="container pb-5">
+                <div className="row">
+                    <div className="col-12">
+                        <h2 className="my-4">Post equipment</h2>
+                        <hr />
+                    </div>
+                </div>
+                {this._renderSteps()}
             </div >
         );
     }
 }
 
-// export default connect()(AddEquipment);
 export default AddEquipment;

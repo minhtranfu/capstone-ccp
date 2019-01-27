@@ -9,9 +9,9 @@ export function fetchEquipmentTypes() {
   );
 }
 
-export function fetchEquipmentTypeInfos(typeId) {
+export function fetchEquipmentTypeSpecs(typeId) {
   return loadEntity(
     ENTITY_KEY.EQUIPMENT_TYPE_INFOS,
-    CcpApiService.getEquipmentTypeInfos(typeId)
+    CcpApiService.getEquipmentTypeSpecs(typeId)
   );
 }
