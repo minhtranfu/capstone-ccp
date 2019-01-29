@@ -56,7 +56,7 @@ public class FeedbackEntity {
 	}
 
 	@Basic
-	@Column(name = "to_constructor_id", nullable = true)
+	@Column(name = "to_contractor_id", nullable = true)
 	public Integer getToConstructorId() {
 		return toConstructorId;
 	}
@@ -66,7 +66,7 @@ public class FeedbackEntity {
 	}
 
 	@Basic
-	@Column(name = "from_constructor_id", nullable = true)
+	@Column(name = "from_contractor_id", nullable = true)
 	public Integer getFromConstructorId() {
 		return fromConstructorId;
 	}

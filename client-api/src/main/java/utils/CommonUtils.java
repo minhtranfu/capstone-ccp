@@ -4,16 +4,7 @@ import javax.ws.rs.core.Response;
 
 public class CommonUtils {
     public static Response responseFilterOk(Object data) {
-        return Response.ok(data).header(
-                "Access-Control-Allow-Origin", "*")
-                .header(
-                        "Access-Control-Allow-Credentials", "true")
-                .header(
-                        "Access-Control-Allow-Headers",
-                        "origin, content-type, accept, authorization")
-                .header(
-                        "Access-Control-Allow-Methods",
-                        "GET, POST, PUT, DELETE, OPTIONS, HEAD").build();
+		return addFilterHeader(Response.ok(data)).build();
     }
 
     public static Response.ResponseBuilder addFilterHeader(Response.ResponseBuilder responseBuilder) {
@@ -28,4 +19,9 @@ public class CommonUtils {
 						"Access-Control-Allow-Methods",
 						"GET, POST, PUT, DELETE, OPTIONS, HEAD");
     }
+
+	public static Response responseFilterBadRequest(Object data) {
+		return addFilterHeader(Response.status(Response.Status.BAD_REQUEST)).entity(data).build();
+	}
+
 }

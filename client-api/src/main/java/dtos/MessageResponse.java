@@ -1,9 +1,9 @@
 package dtos;
 
-public class MessageDTO {
+public class MessageResponse {
 	private String message;
 
-	public MessageDTO(String message) {
+	public MessageResponse(String message) {
 		this.message = message;
 	}
 

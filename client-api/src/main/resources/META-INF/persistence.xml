@@ -5,32 +5,30 @@
     <persistence-unit name="CAPSTONE_CCP"
                       transaction-type="RESOURCE_LOCAL">
 
-        <!--<class>entities.AdditionalSpecsFieldEntity</class>-->
-        <!--<class>entities.AdditionalSpecsValueEntity</class>-->
-        <!--<class>entities.AdminEntity</class>-->
-        <!--<class>entities.AdminAccountEntity</class>-->
-        <!--<class>entities.AvailableTimeRangeEntity</class>-->
-        <!--<class>entities.ConstructionEntity</class>-->
-        <!--<class>entities.ConstructorEntity</class>-->
-        <!--<class>entities.DescriptionImageEntity</class>-->
-        <!--<class>entities.EquipmentEntity</class>-->
-        <!--<class>entities.EquipmentTypeEntity</class>-->
-        <!--<class>entities.FeedbackEntity</class>-->
-        <!--<class>entities.FeedbackTypeEntity</class>-->
-        <!--<class>entities.GeneralEquipmentTypeEntity</class>-->
-        <!--<class>entities.HiringTimeRangeEntity</class>-->
-        <!--<class>entities.HiringTransactionEntity</class>-->
-        <!--<class>entities.LocationEntity</class>-->
-        <!--<class>entities.NotificationEntity</class>-->
-        <!--<class>entities.StaffEntity</class>-->
-        <!--<class>entities.SubscriptionEntity</class>-->
+        <class>entities.AdditionalSpecsFieldEntity</class>
+        <class>entities.AdditionalSpecsValueEntity</class>
+        <class>entities.AdminUserEntity</class>
+        <class>entities.AdminAccountEntity</class>
+        <class>entities.AvailableTimeRangeEntity</class>
+        <class>entities.ConstructionEntity</class>
+        <class>entities.ContractorEntity</class>
+        <class>entities.DescriptionImageEntity</class>
+        <class>entities.EquipmentEntity</class>
+        <class>entities.EquipmentTypeEntity</class>
+        <class>entities.FeedbackEntity</class>
+        <class>entities.FeedbackTypeEntity</class>
+        <class>entities.GeneralEquipmentTypeEntity</class>
+        <class>entities.HiringTransactionEntity</class>
+        <class>entities.NotificationEntity</class>
+        <class>entities.SubscriptionEntity</class>
+        <class>entities.CartRequestEntity</class>
         <properties>
 
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/capstone_ccp" />
             <property name="javax.persistence.jdbc.user" value="root" />
             <property name="javax.persistence.jdbc.password" value="12345678" />
-            <property name="hbm2ddl.auto" value="validate" />
+            <property name="hbm2ddl.auto" value="create" />
             <property name="openjpa.Log" value="openjpa.jdbc.SQL=trace"/>
 
 

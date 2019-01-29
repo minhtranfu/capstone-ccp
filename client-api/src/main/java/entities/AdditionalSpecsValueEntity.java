@@ -5,11 +5,10 @@ import javax.persistence.*;
 @Entity
 @Table(name = "additional_specs_value", schema = "capstone_ccp", catalog = "")
 public class AdditionalSpecsValueEntity {
-	long getId;
 	private long id;
 	private String value;
-	private Integer additionalSpecsFieldId;
-	private Integer equipmentId;
+	private AdditionalSpecsFieldEntity additionalSpecsField;
+	private EquipmentEntity equipment;
 
 	@Id
 	@GeneratedValue
@@ -32,40 +31,24 @@ public class AdditionalSpecsValueEntity {
 		this.value = value;
 	}
 
-	@Basic
-	@Column(name = "additional_specs_field_id", nullable = true)
-	public Integer getAdditionalSpecsFieldId() {
-		return additionalSpecsFieldId;
+
+	@ManyToOne
+	@JoinColumn(name = "additional_specs_field_id")
+	public AdditionalSpecsFieldEntity getAdditionalSpecsField() {
+		return additionalSpecsField;
 	}
 
-	public void setAdditionalSpecsFieldId(Integer additionalSpecsFieldId) {
-		this.additionalSpecsFieldId = additionalSpecsFieldId;
+	public void setAdditionalSpecsField(AdditionalSpecsFieldEntity additionalSpecsField) {
+		this.additionalSpecsField = additionalSpecsField;
 	}
 
-	@Basic
-	@Column(name = "equipment_id", nullable = true)
-	public Integer getEquipmentId() {
-		return equipmentId;
+	@ManyToOne
+	@JoinColumn(name = "equipment_id")
+	public EquipmentEntity getEquipment() {
+		return equipment;
 	}
 
-	public void setEquipmentId(Integer equipmentId) {
-		this.equipmentId = equipmentId;
+	public void setEquipment(EquipmentEntity equipment) {
+		this.equipment = equipment;
 	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		AdditionalSpecsValueEntity that = (AdditionalSpecsValueEntity) o;
-
-		if (id != that.id) return false;
-		if (value != null ? !value.equals(that.value) : that.value != null) return false;
-		if (additionalSpecsFieldId != null ? !additionalSpecsFieldId.equals(that.additionalSpecsFieldId) : that.additionalSpecsFieldId != null)
-			return false;
-		if (equipmentId != null ? !equipmentId.equals(that.equipmentId) : that.equipmentId != null) return false;
-
-		return true;
-	}
-
 }

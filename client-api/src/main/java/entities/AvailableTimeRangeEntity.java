@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "available_time_range", schema = "capstone_ccp", catalog = "")
 public class AvailableTimeRangeEntity {
-	long getId;
 	private long id;
 	private Timestamp beginDate;
 	private Timestamp endDate;

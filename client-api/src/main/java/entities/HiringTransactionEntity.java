@@ -1,6 +1,10 @@
 package entities;
 
+
 import javax.persistence.*;
+import java.security.AllPermission;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "hiring_transaction", schema = "capstone_ccp", catalog = "")
@@ -9,13 +13,24 @@ public class HiringTransactionEntity {
 	private String status;
 	private Integer dailyPrice;
 	private Integer deliveryPrice;
-	private Integer hiringTimeRange;
-	private Integer supplierId;
-	private Integer requesterId;
-	private Integer supplierLocationId;
-	private Integer requesterLocationId;
-	private Integer equipmentId;
-	private Integer hiringTimeRangeId;
+	private Timestamp createdTime;
+	private Timestamp updatedTime;
+	private Date beginDate;
+	private Date endDate;
+
+	private String equipmentAddress;
+	private double equipmentLatitude;
+	private double equipmentLongitude;
+
+	private String requesterAddress;
+	private double requesterLatitude;
+	private double requesterLongitude;
+
+	private boolean isDeleted;
+
+
+	private EquipmentEntity equipment;
+	private ContractorEntity requester;
 
 	@Id
 	@GeneratedValue
@@ -58,101 +73,134 @@ public class HiringTransactionEntity {
 		this.deliveryPrice = deliveryPrice;
 	}
 
-	@Basic
-	@Column(name = "hiring_time_range", nullable = true)
-	public Integer getHiringTimeRange() {
-		return hiringTimeRange;
+
+	@ManyToOne
+	@JoinColumn(name = "requester_id")
+	public ContractorEntity getRequester() {
+		return requester;
 	}
 
-	public void setHiringTimeRange(Integer hiringTimeRange) {
-		this.hiringTimeRange = hiringTimeRange;
-	}
-
-	@Basic
-	@Column(name = "supplier_id", nullable = true)
-	public Integer getSupplierId() {
-		return supplierId;
-	}
-
-	public void setSupplierId(Integer supplierId) {
-		this.supplierId = supplierId;
+	public void setRequester(ContractorEntity requester) {
+		this.requester = requester;
 	}
 
 	@Basic
-	@Column(name = "requester_id", nullable = true)
-	public Integer getRequesterId() {
-		return requesterId;
+	@Column(name = "created_time")
+	public Timestamp getCreatedTime() {
+		return createdTime;
 	}
 
-	public void setRequesterId(Integer requesterId) {
-		this.requesterId = requesterId;
-	}
-
-	@Basic
-	@Column(name = "supplier_location_id", nullable = true)
-	public Integer getSupplierLocationId() {
-		return supplierLocationId;
-	}
-
-	public void setSupplierLocationId(Integer supplierLocationId) {
-		this.supplierLocationId = supplierLocationId;
+	public void setCreatedTime(Timestamp createdTime) {
+		this.createdTime = createdTime;
 	}
 
 	@Basic
-	@Column(name = "requester_location_id", nullable = true)
-	public Integer getRequesterLocationId() {
-		return requesterLocationId;
+	@Column(name = "updated_time")
+	public Timestamp getUpdatedTime() {
+		return updatedTime;
 	}
 
-	public void setRequesterLocationId(Integer requesterLocationId) {
-		this.requesterLocationId = requesterLocationId;
+
+	public void setUpdatedTime(Timestamp updatedTime) {
+		this.updatedTime = updatedTime;
+	}
+	@Basic
+	@Column(name = "begin_date")
+	public Date getBeginDate() {
+		return beginDate;
+	}
+
+
+	public void setBeginDate(Date beginDate) {
+		this.beginDate = beginDate;
+	}
+	@Basic
+	@Column(name = "end_date")
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 
 	@Basic
-	@Column(name = "equipment_id", nullable = true)
-	public Integer getEquipmentId() {
-		return equipmentId;
+	@Column(name = "equipment_address")
+	public String getEquipmentAddress() {
+		return equipmentAddress;
 	}
 
-	public void setEquipmentId(Integer equipmentId) {
-		this.equipmentId = equipmentId;
+	public void setEquipmentAddress(String equipmentAddress) {
+		this.equipmentAddress = equipmentAddress;
+	}
+@Basic
+@Column(name = "equipment_lat")
+	public double getEquipmentLatitude() {
+		return equipmentLatitude;
+	}
+
+	public void setEquipmentLatitude(double equipmentLatitude) {
+		this.equipmentLatitude = equipmentLatitude;
+	}
+@Basic
+@Column(name = "equipment_long")
+	public double getEquipmentLongitude() {
+		return equipmentLongitude;
+	}
+
+	public void setEquipmentLongitude(double equipmentLongitude) {
+		this.equipmentLongitude = equipmentLongitude;
 	}
 
 	@Basic
-	@Column(name = "hiring_time_range_id", nullable = true)
-	public Integer getHiringTimeRangeId() {
-		return hiringTimeRangeId;
+	@Column(name = "requester_address")
+	public String getRequesterAddress() {
+		return requesterAddress;
 	}
 
-	public void setHiringTimeRangeId(Integer hiringTimeRangeId) {
-		this.hiringTimeRangeId = hiringTimeRangeId;
+	public void setRequesterAddress(String requesterAddress) {
+		this.requesterAddress = requesterAddress;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
 
-		HiringTransactionEntity that = (HiringTransactionEntity) o;
-
-		if (id != that.id) return false;
-		if (status != null ? !status.equals(that.status) : that.status != null) return false;
-		if (dailyPrice != null ? !dailyPrice.equals(that.dailyPrice) : that.dailyPrice != null) return false;
-		if (deliveryPrice != null ? !deliveryPrice.equals(that.deliveryPrice) : that.deliveryPrice != null)
-			return false;
-		if (hiringTimeRange != null ? !hiringTimeRange.equals(that.hiringTimeRange) : that.hiringTimeRange != null)
-			return false;
-		if (supplierId != null ? !supplierId.equals(that.supplierId) : that.supplierId != null) return false;
-		if (requesterId != null ? !requesterId.equals(that.requesterId) : that.requesterId != null) return false;
-		if (supplierLocationId != null ? !supplierLocationId.equals(that.supplierLocationId) : that.supplierLocationId != null)
-			return false;
-		if (requesterLocationId != null ? !requesterLocationId.equals(that.requesterLocationId) : that.requesterLocationId != null)
-			return false;
-		if (equipmentId != null ? !equipmentId.equals(that.equipmentId) : that.equipmentId != null) return false;
-		if (hiringTimeRangeId != null ? !hiringTimeRangeId.equals(that.hiringTimeRangeId) : that.hiringTimeRangeId != null)
-			return false;
-
-		return true;
+	@Basic
+	@Column(name = "requester_lat")
+	public double getRequesterLatitude() {
+		return requesterLatitude;
 	}
 
+	public void setRequesterLatitude(double requesterLatitude) {
+		this.requesterLatitude = requesterLatitude;
+	}
+
+	@Basic
+	@Column(name = "requester_long")
+	public double getRequesterLongitude() {
+		return requesterLongitude;
+	}
+
+	public void setRequesterLongitude(double requesterLongitude) {
+		this.requesterLongitude = requesterLongitude;
+	}
+
+	@Basic
+	@Column(name = "is_deleted")
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		isDeleted = deleted;
+	}
+
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "equipment_id")
+	public EquipmentEntity getEquipment() {
+		return equipment;
+	}
+
+	public void setEquipment(EquipmentEntity equipment) {
+		this.equipment = equipment;
+	}
 }

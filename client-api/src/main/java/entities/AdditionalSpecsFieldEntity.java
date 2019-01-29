@@ -5,11 +5,14 @@ import javax.persistence.*;
 @Entity
 @Table(name = "additional_specs_field", schema = "capstone_ccp", catalog = "")
 public class AdditionalSpecsFieldEntity {
-	long getId;
 	private long id;
 	private String name;
 	private String dataType;
-	private Integer equipmentTypeId;
+	private EquipmentTypeEntity equipmentType;
+	private boolean isDeleted;
+
+
+
 
 	@Id @GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -41,15 +44,27 @@ public class AdditionalSpecsFieldEntity {
 		this.dataType = dataType;
 	}
 
-	@Basic
-	@Column(name = "equipment_type_id", nullable = true)
-	public Integer getEquipmentTypeId() {
-		return equipmentTypeId;
+
+	@ManyToOne
+	@JoinColumn(name = "equipment_type_id")
+	public EquipmentTypeEntity getEquipmentType() {
+		return equipmentType;
 	}
 
-	public void setEquipmentTypeId(Integer equipmentTypeId) {
-		this.equipmentTypeId = equipmentTypeId;
+	public void setEquipmentType(EquipmentTypeEntity equipmentType) {
+		this.equipmentType = equipmentType;
 	}
+
+	@Basic
+	@Column(name = "is_deleted")
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		isDeleted = deleted;
+	}
+
 
 	@Override
 	public boolean equals(Object o) {
@@ -61,7 +76,7 @@ public class AdditionalSpecsFieldEntity {
 		if (id != that.id) return false;
 		if (name != null ? !name.equals(that.name) : that.name != null) return false;
 		if (dataType != null ? !dataType.equals(that.dataType) : that.dataType != null) return false;
-		if (equipmentTypeId != null ? !equipmentTypeId.equals(that.equipmentTypeId) : that.equipmentTypeId != null)
+		if (equipmentType != null ? !equipmentType.equals(that.equipmentType) : that.equipmentType != null)
 			return false;
 
 		return true;

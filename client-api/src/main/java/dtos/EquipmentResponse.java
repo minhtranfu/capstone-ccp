@@ -5,13 +5,12 @@ import entities.*;
 import java.util.Collection;
 import java.util.List;
 
-public class EquipmentDTO {
+public class EquipmentResponse {
 	private EquipmentEntity equipmentEntity;
-	private double distance;
-	private LocationEntity currentLocation;
 
+	private LocationDTO currentLocation;
 
-	public EquipmentDTO(EquipmentEntity equipmentEntity, LocationEntity currentLocation) {
+	public EquipmentResponse(EquipmentEntity equipmentEntity, LocationDTO currentLocation) {
 		this.equipmentEntity = equipmentEntity;
 		this.currentLocation = currentLocation;
 	}
@@ -25,22 +24,20 @@ public class EquipmentDTO {
 	}
 
 	public double getDistance() {
-		return calculateDistance(this.currentLocation, equipmentEntity.getLocation());
+		return calculateDistance(this.currentLocation,
+				new LocationDTO(equipmentEntity.getAddress(), equipmentEntity.getLatitude(), equipmentEntity.getLongitude()));
 	}
 
-	public void setDistance(double distance) {
-		this.distance = distance;
-	}
 
-	public LocationEntity getCurrentLocation() {
+	public LocationDTO getCurrentLocation() {
 		return currentLocation;
 	}
 
-	public void setCurrentLocation(LocationEntity currentLocation) {
+	public void setCurrentLocation(LocationDTO currentLocation) {
 		this.currentLocation = currentLocation;
 	}
 
-	public  double calculateDistance(LocationEntity location1, LocationEntity location2) {
+	public  double calculateDistance(LocationDTO location1, LocationDTO location2) {
 		// TODO: 1/24/19 calculate distance
 
 

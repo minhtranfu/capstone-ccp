@@ -1,7 +1,7 @@
 package daos;
 
-import entities.ConstructorEntity;
+import entities.ContractorEntity;
 
-public class ConstructorDAO extends BaseDAO<ConstructorEntity, Long> {
+public class ConstructorDAO extends BaseDAO<ContractorEntity, Long> {
 
 }

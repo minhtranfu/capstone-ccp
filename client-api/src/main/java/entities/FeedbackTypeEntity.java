@@ -8,6 +8,7 @@ public class FeedbackTypeEntity {
 	private long id;
 	private String name;
 
+	private boolean isDeleted;
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -29,17 +30,13 @@ public class FeedbackTypeEntity {
 		this.name = name;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		FeedbackTypeEntity that = (FeedbackTypeEntity) o;
-
-		if (id != that.id) return false;
-		if (name != null ? !name.equals(that.name) : that.name != null) return false;
-
-		return true;
+	@Basic
+	@Column(name = "is_deleted")
+	public boolean isDeleted() {
+		return isDeleted;
 	}
 
+	public void setDeleted(boolean deleted) {
+		isDeleted = deleted;
+	}
 }

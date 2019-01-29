@@ -8,7 +8,8 @@ import javax.persistence.*;
 public class EquipmentTypeEntity {
 	private long id;
 	private String name;
-	private Integer generalEquipmentTypeId;
+	private GeneralEquipmentTypeEntity generalEquipment;
+	private boolean isDeleted;
 
 	@Id
 	@GeneratedValue
@@ -31,29 +32,24 @@ public class EquipmentTypeEntity {
 		this.name = name;
 	}
 
+	@ManyToOne
+	@JoinColumn(name = "general_equipment_type_id")
+	public GeneralEquipmentTypeEntity getGeneralEquipment() {
+		return generalEquipment;
+	}
+
+	public void setGeneralEquipment(GeneralEquipmentTypeEntity generalEquipment) {
+		this.generalEquipment = generalEquipment;
+	}
+
+
 	@Basic
-	@Column(name = "general_equipment_type_id", nullable = true)
-	public Integer getGeneralEquipmentTypeId() {
-		return generalEquipmentTypeId;
+	@Column(name = "is_deleted")
+	public boolean isDeleted() {
+		return isDeleted;
 	}
 
-	public void setGeneralEquipmentTypeId(Integer generalEquipmentTypeId) {
-		this.generalEquipmentTypeId = generalEquipmentTypeId;
+	public void setDeleted(boolean deleted) {
+		isDeleted = deleted;
 	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		EquipmentTypeEntity that = (EquipmentTypeEntity) o;
-
-		if (id != that.id) return false;
-		if (name != null ? !name.equals(that.name) : that.name != null) return false;
-		if (generalEquipmentTypeId != null ? !generalEquipmentTypeId.equals(that.generalEquipmentTypeId) : that.generalEquipmentTypeId != null)
-			return false;
-
-		return true;
-	}
-
 }

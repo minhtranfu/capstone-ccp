@@ -25,6 +25,6 @@ public class DBUtils {
             }
         }
 
-        return emf.createEntityManager();
+        return Persistence.createEntityManagerFactory(PERSISTANCE_NAME).createEntityManager();
     }
 }

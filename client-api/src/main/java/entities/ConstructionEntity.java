@@ -7,11 +7,16 @@ import javax.persistence.*;
 public class ConstructionEntity {
 	private long id;
 	private String name;
-	private Integer locationId;
+	private String address;
+	private double longitude;
+	private double latitude;
+	private boolean isDeleted;
+
 
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
+
 	public long getId() {
 		return id;
 	}
@@ -31,27 +36,46 @@ public class ConstructionEntity {
 	}
 
 	@Basic
-	@Column(name = "location_id", nullable = true)
-	public Integer getLocationId() {
-		return locationId;
+	@Column(name = "address", nullable = true, length = 255)
+	public String getAddress() {
+		return address;
 	}
 
-	public void setLocationId(Integer locationId) {
-		this.locationId = locationId;
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
 
-		ConstructionEntity that = (ConstructionEntity) o;
-
-		if (id != that.id) return false;
-		if (name != null ? !name.equals(that.name) : that.name != null) return false;
-		if (locationId != null ? !locationId.equals(that.locationId) : that.locationId != null) return false;
-
-		return true;
+	@Basic
+	@Column(name = "long")
+	public double getLongitude() {
+		return longitude;
 	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+	@Basic
+	@Column(name = "lat")
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	@Basic
+	@Column(name = "is_deleted")
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		isDeleted = deleted;
+	}
+
 
 }

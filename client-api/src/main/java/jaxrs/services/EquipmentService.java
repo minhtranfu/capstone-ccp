@@ -1,15 +1,12 @@
 package jaxrs.services;
 
-import entities.AdditionalSpecsFieldEntity;
 import daos.ConstructorDAO;
 import daos.EquipmentDAO;
 import daos.EquipmentTypeDAO;
-import dtos.EquipmentDTO;
-import dtos.MessageDTO;
-import entities.ConstructorEntity;
-import entities.EquipmentEntity;
-import entities.EquipmentTypeEntity;
-import entities.LocationEntity;
+import dtos.EquipmentResponse;
+import dtos.LocationDTO;
+import dtos.MessageResponse;
+import entities.*;
 import utils.CommonUtils;
 import utils.DBUtils;
 
@@ -44,11 +41,13 @@ public class EquipmentService {
 
 		}
 		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(beginDate, endDate);
-		List<EquipmentDTO> result = new ArrayList<EquipmentDTO>();
+		List<EquipmentResponse> result = new ArrayList<EquipmentResponse>();
 
 		for (EquipmentEntity equipmentEntity : equipmentEntities) {
-			EquipmentDTO equipmentDTO = new EquipmentDTO(equipmentEntity, new LocationEntity(locationQuery, longitude, latitude));
-			result.add(equipmentDTO);
+			EquipmentResponse equipmentResponse = new EquipmentResponse(equipmentEntity
+					, new LocationDTO(locationQuery, longitude, latitude)
+			);
+			result.add(equipmentResponse);
 		}
 		return CommonUtils.responseFilterOk(result);
 	}
@@ -57,6 +56,35 @@ public class EquipmentService {
 	@Path("{id:\\d+}")
 	public Response getEquipment(@PathParam("id") long id) {
 		return CommonUtils.responseFilterOk(EquipmentDAO.getInstance().findByID(id));
+	}
+	@PUT
+	@Path("{id:\\d+}")
+	public Response updateEquipmentById(@PathParam("id") long id,  EquipmentEntity equipmentEntity) {
+
+
+		if (equipmentEntity == null) {
+			return CommonUtils.responseFilterBadRequest(new MessageResponse("No id"));
+		}
+		equipmentEntity.setId(id);
+		EquipmentEntity foundEquipment = equipmentDAO.findByID(id);
+		if (foundEquipment == null) {
+			return CommonUtils.responseFilterBadRequest(new MessageResponse("Not found equipment with id=" + id));
+		}
+
+		//delete all children of the old equipment
+		foundEquipment.deleteAllAvailableTimeRange();
+		equipmentDAO.merge(foundEquipment);
+		//todo delete image
+		//todo delete location
+		//todo delete construction
+
+
+
+
+		//add all children from new equipment
+		equipmentDAO.merge(equipmentEntity);
+		Response.ResponseBuilder builder = Response.status(Response.Status.OK).entity(equipmentEntity);
+		return CommonUtils.addFilterHeader(builder).build();
 	}
 
 
@@ -68,15 +96,15 @@ public class EquipmentService {
 
 		//check for constructor id
 		if (equipmentEntity.getConstructor() == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("constructor is null"));
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor is null"));
 			return CommonUtils.addFilterHeader(responseBuilder).build();
 
 		}
 		long constructorId = equipmentEntity.getConstructor().getId();
 
-		ConstructorEntity foundConstructor = constructorDAO.findByID(constructorId);
+		ContractorEntity foundConstructor = constructorDAO.findByID(constructorId);
 		if (foundConstructor == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("constructor not found"));
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor not found"));
 			return CommonUtils.addFilterHeader(responseBuilder).build();
 		}
 
@@ -84,7 +112,7 @@ public class EquipmentService {
 		//check for equipment type
 
 		if (equipmentEntity.getEquipmentType() == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("equipment_type is null"));
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipment_type is null"));
 			return CommonUtils.addFilterHeader(responseBuilder).build();
 
 		}
@@ -92,7 +120,7 @@ public class EquipmentService {
 
 		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByID(equipmentTypeId);
 		if (foundEquipmentType == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageDTO("equipment_type not found"));
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipment_type not found"));
 			return CommonUtils.addFilterHeader(responseBuilder).build();
 		}
 
@@ -107,31 +135,26 @@ public class EquipmentService {
 
 	}
 
-	@PUT
-	@Path("{id:\\d+}")
-	public Response updateEquipmentById(EquipmentEntity equipmentEntity) {
-		equipmentDAO.merge(equipmentEntity);
-		Response.ResponseBuilder builder = Response.status(Response.Status.OK).entity(equipmentEntity);
-
-		return CommonUtils.addFilterHeader(builder).build();
-	}
 
 
 	@GET
 	@Path("/types")
-	public List<EquipmentTypeEntity> getEquipmentTypes() {
+	public Response getEquipmentTypes() {
+//        List<EquipmentType> resultList = manager.createQuery("SELECT et FROM EquipmentType et WHERE et.isActive = 1", EquipmentType.class).getResultList();
+
+
 		DBUtils.getEntityManager().createNamedQuery("EquipmentTypeEntity.getAllEquipmentType").getResultList();
 		List<EquipmentTypeEntity> result = equipmentTypeDAO.getAll("EquipmentTypeEntity.getAllEquipmentType");
+		return CommonUtils.responseFilterOk(result);
 	}
-		return result;
-
-	@GET
-	@Path("/types/{id : \\d+}/specs")
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<AdditionalSpecsFieldEntity> getEquipmentTypeSpecs(@PathParam("id") int id) {
-
-        List<AdditionalSpecsFieldEntity> resultList = DBUtils.getEntityManager().createQuery("SELECT eti FROM AdditionalSpecsFieldEntity eti WHERE eti.equipmentTypeId = ?", AdditionalSpecsFieldEntity.class).setParameter(1, id).getResultList();
-
-		return resultList;
-	}
+//
+//	@GET
+//	@Path("/types/{id : \\d+}/fields")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response getEquipmentTypeInfos(@PathParam("id") int id) {
+//
+//        List<AdditionalSpecsFieldEntity> resultList = DBUtils.getEntityManager().createQuery("SELECT eti FROM AdditionalSpecsFieldEntity eti WHERE eti.equipmentType = ?", AdditionalSpecsFieldEntity.class).setParameter(1, id).getResultList();
+//
+//		return CommonUtils.responseFilterOk(resultList);
+//	}
 }

@@ -1,7 +1,7 @@
 package jaxrs.services;
 
 import daos.ConstructorDAO;
-import entities.ConstructorEntity;
+import entities.ContractorEntity;
 import utils.CommonUtils;
 
 import javax.ws.rs.GET;
@@ -17,9 +17,10 @@ public class ConstructorService {
 	@GET
 	@Path("{id}")
 	public Response getConstructorById(@PathParam("id") long id) {
-		ConstructorEntity constructor = constructorDAO.findByID(id);
+		ContractorEntity constructor = constructorDAO.findByID(id);
 		return CommonUtils.responseFilterOk(constructor);
 	}
+
 
 	
 }

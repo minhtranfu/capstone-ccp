@@ -1,9 +1,7 @@
 package entities;
 
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
@@ -12,7 +10,7 @@ import java.util.List;
 
 @NamedQueries({
 		@NamedQuery(name = "EquipmentEntity.searchEquipment", query = "select e from EquipmentEntity  e where exists (select t from e.availableTimeRanges t where t.beginDate <= :curBeginDate and :curBeginDate <= :curEndDate  and  :curEndDate <= t.endDate)"),
-		@NamedQuery(name = "EquipmentEntity.getAll",query = "select  e from EquipmentEntity e")
+		@NamedQuery(name = "EquipmentEntity.getAll", query = "select  e from EquipmentEntity e")
 })
 
 public class EquipmentEntity {
@@ -22,11 +20,21 @@ public class EquipmentEntity {
 	private Integer deliveryPrice;
 	private String description;
 	private String status;
+	private String thumbnailImage;
+
+	private Boolean isDeleted;
+	private Timestamp createdTime;
+	private Timestamp updatedTime;
+
+
+	private String address;
+	private Double latitude;
+	private Double longitude;
+
 	private EquipmentTypeEntity equipmentType;
 
-	private ConstructorEntity constructor;
+	private ContractorEntity constructor;
 	private Integer constructionId;
-	private LocationEntity location;
 
 	private List<AvailableTimeRangeEntity> availableTimeRanges;
 	private Collection<DescriptionImageEntity> descriptionImages;
@@ -35,20 +43,6 @@ public class EquipmentEntity {
 	public EquipmentEntity() {
 	}
 
-	public EquipmentEntity(long id, String name, Integer dailyPrice, Integer deliveryPrice, String description, String status, EquipmentTypeEntity equipmentType, ConstructorEntity constructor, Integer constructionId, LocationEntity location, List<AvailableTimeRangeEntity> availableTimeRanges, Collection<DescriptionImageEntity> descriptionImages) {
-		this.id = id;
-		this.name = name;
-		this.dailyPrice = dailyPrice;
-		this.deliveryPrice = deliveryPrice;
-		this.description = description;
-		this.status = status;
-		this.equipmentType = equipmentType;
-		this.constructor = constructor;
-		this.constructionId = constructionId;
-		this.location = location;
-		this.availableTimeRanges = availableTimeRanges;
-		this.descriptionImages = descriptionImages;
-	}
 
 	@Id
 	@GeneratedValue
@@ -123,12 +117,12 @@ public class EquipmentEntity {
 
 
 	@ManyToOne()
-	@JoinColumn(name = "constructor_id", insertable = false, updatable = false)
-	public ConstructorEntity getConstructor() {
+	@JoinColumn(name = "contractor_id", insertable = false, updatable = false)
+	public ContractorEntity getConstructor() {
 		return constructor;
 	}
 
-	public void setConstructor(ConstructorEntity constructor) {
+	public void setConstructor(ContractorEntity constructor) {
 		this.constructor = constructor;
 	}
 
@@ -142,17 +136,6 @@ public class EquipmentEntity {
 		this.constructionId = constructionId;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-	@NotFound(action = NotFoundAction.IGNORE)
-	@JoinColumn(name = "location_id")
-	public LocationEntity getLocation() {
-		return location;
-	}
-
-	public void setLocation(LocationEntity locationById) {
-		this.location = locationById;
-	}
-
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "equipment_id")
@@ -164,7 +147,96 @@ public class EquipmentEntity {
 		this.availableTimeRanges = availableTimeRanges;
 	}
 
-	@OneToMany(mappedBy = "equipmentByEquipmentId")
+	public void addAvailableTimeRange(AvailableTimeRangeEntity availableTimeRangeEntity) {
+		this.availableTimeRanges.add(availableTimeRangeEntity);
+		availableTimeRangeEntity.setEquipment(this);
+	}
+
+	public void deleteAvailableTimeRange(AvailableTimeRangeEntity availableTimeRangeEntity) {
+		this.availableTimeRanges.remove(availableTimeRangeEntity);
+		availableTimeRangeEntity.setEquipment(null);
+	}
+
+
+	public void deleteAllAvailableTimeRange() {
+		for (AvailableTimeRangeEntity availableTimeRange : availableTimeRanges) {
+			availableTimeRange.setEquipment(null);
+		}
+		this.availableTimeRanges.clear();
+	}
+
+
+	@Basic
+	@Column(name = "thumbnail_image")
+	public String getThumbnailImage() {
+		return thumbnailImage;
+	}
+
+	public void setThumbnailImage(String thumbnailImage) {
+		this.thumbnailImage = thumbnailImage;
+	}
+
+	@Basic
+	@Column(name = "is_deleted",nullable = true)
+	public Boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		isDeleted = deleted;
+	}
+
+	@Basic
+	@Column(name = "created_time")
+	public Timestamp getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(Timestamp createdTime) {
+		this.createdTime = createdTime;
+	}
+
+	@Basic
+	@Column(name = "updated_time")
+	public Timestamp getUpdatedTime() {
+		return updatedTime;
+	}
+
+	public void setUpdatedTime(Timestamp updatedTime) {
+		this.updatedTime = updatedTime;
+	}
+
+	@Basic
+	@Column(name = "address")
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	@Basic
+	@Column(name = "lat")
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	@Basic
+	@Column(name = "long")
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+	@OneToMany(mappedBy = "equipment")
 	public Collection<DescriptionImageEntity> getDescriptionImages() {
 		return descriptionImages;
 	}

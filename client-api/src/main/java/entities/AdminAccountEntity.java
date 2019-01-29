@@ -5,7 +5,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "admin_account", schema = "capstone_ccp", catalog = "")
 public class AdminAccountEntity {
-	long getId;
 	private long id;
 	private String username;
 	private String password;
