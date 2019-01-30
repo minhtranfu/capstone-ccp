@@ -1,5 +1,7 @@
 package utils;
 
+import dtos.MessageResponse;
+
 import javax.ws.rs.core.Response;
 
 public class CommonUtils {
@@ -24,4 +26,9 @@ public class CommonUtils {
 		return addFilterHeader(Response.status(Response.Status.BAD_REQUEST)).entity(data).build();
 	}
 
+
+
+	public static Response responseError(Response.Status status, String message) {
+		return Response.status(status).entity(new MessageResponse(message)).build();
+	}
 }

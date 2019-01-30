@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @Table(name = "hiring_transaction", schema = "capstone_ccp", catalog = "")
 public class HiringTransactionEntity {
 	private long id;
-	private String status;
+	private Status status;
 	private Integer dailyPrice;
 	private Integer deliveryPrice;
 	private Timestamp createdTime;
@@ -44,12 +44,13 @@ public class HiringTransactionEntity {
 	}
 
 	@Basic
+	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = true, length = 45)
-	public String getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 
@@ -198,7 +199,7 @@ public class HiringTransactionEntity {
 	}
 
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne()
 	@JoinColumn(name = "equipment_id")
 	public EquipmentEntity getEquipment() {
 		return equipment;
@@ -206,5 +207,12 @@ public class HiringTransactionEntity {
 
 	public void setEquipment(EquipmentEntity equipment) {
 		this.equipment = equipment;
+	}
+
+
+	public enum Status {
+		PENDING,
+		ACCEPTED,
+		DENIED
 	}
 }

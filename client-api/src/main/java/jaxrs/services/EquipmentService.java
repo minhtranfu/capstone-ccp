@@ -1,6 +1,6 @@
 package jaxrs.services;
 
-import daos.ConstructorDAO;
+import daos.ContractorDAO;
 import daos.EquipmentDAO;
 import daos.EquipmentTypeDAO;
 import dtos.EquipmentResponse;
@@ -23,7 +23,7 @@ public class EquipmentService {
 
 	private static final EquipmentDAO equipmentDAO = new EquipmentDAO();
 	private static final EquipmentTypeDAO equipmentTypeDAO = new EquipmentTypeDAO();
-	private static final ConstructorDAO constructorDAO = new ConstructorDAO();
+	private static final ContractorDAO CONTRACTOR_DAO = new ContractorDAO();
 
 
 	@GET
@@ -104,7 +104,7 @@ public class EquipmentService {
 		}
 		long constructorId = equipmentEntity.getContractor().getId();
 
-		ContractorEntity foundConstructor = constructorDAO.findByID(constructorId);
+		ContractorEntity foundConstructor = CONTRACTOR_DAO.findByID(constructorId);
 		if (foundConstructor == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor not found"));
 			return CommonUtils.addFilterHeader(responseBuilder).build();

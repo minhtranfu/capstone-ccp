@@ -39,4 +39,10 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	}
 
 
+	public boolean validateEquipmentAvailable(Date beginDate, Date endDate) {
+
+		// TODO: 1/30/19 validate this
+		return true;
+	}
+
 }

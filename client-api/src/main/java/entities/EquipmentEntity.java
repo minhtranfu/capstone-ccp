@@ -245,4 +245,6 @@ public class EquipmentEntity {
 	public void setDescriptionImages(Collection<DescriptionImageEntity> descriptionImagesById) {
 		this.descriptionImages = descriptionImagesById;
 	}
+
+
 }
