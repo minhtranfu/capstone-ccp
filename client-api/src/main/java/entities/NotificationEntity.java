@@ -45,7 +45,7 @@ public class NotificationEntity {
 	}
 
 	@Basic
-	@Column(name = "created_time", nullable = true)
+	@Column(name = "created_time", insertable=false, updatable = false)
 	public Timestamp getCreatedTime() {
 		return createdTime;
 	}

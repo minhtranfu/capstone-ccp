@@ -25,7 +25,7 @@ public class ContractorEntity {
 	@OneToMany(cascade =
 			{CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH},
 			orphanRemoval = false,
-	mappedBy = "constructor")
+	mappedBy = "contractor")
 	public List<EquipmentEntity> getEquipments() {
 		return equipments;
 	}
@@ -98,7 +98,7 @@ public class ContractorEntity {
 
 
 	@Basic
-	@Column(name = "created_time")
+	@Column(name = "created_time", insertable=false, updatable = false)
 	public Timestamp getCreatedTime() {
 		return createdTime;
 	}
@@ -109,7 +109,7 @@ public class ContractorEntity {
 	}
 
 	@Basic
-	@Column(name = "updated_time")
+@Column(name = "updated_time", insertable=false, updatable = false)
 	public Timestamp getUpdatedTime() {
 		return updatedTime;
 	}

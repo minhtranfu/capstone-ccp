@@ -85,7 +85,7 @@ public class HiringTransactionEntity {
 	}
 
 	@Basic
-	@Column(name = "created_time")
+	@Column(name = "created_time", insertable = false, updatable = false)
 	public Timestamp getCreatedTime() {
 		return createdTime;
 	}
@@ -95,7 +95,7 @@ public class HiringTransactionEntity {
 	}
 
 	@Basic
-	@Column(name = "updated_time")
+	@Column(name = "updated_time", insertable = false, updatable = false)
 	public Timestamp getUpdatedTime() {
 		return updatedTime;
 	}
@@ -104,6 +104,7 @@ public class HiringTransactionEntity {
 	public void setUpdatedTime(Timestamp updatedTime) {
 		this.updatedTime = updatedTime;
 	}
+
 	@Basic
 	@Column(name = "begin_date")
 	public Date getBeginDate() {
@@ -114,6 +115,7 @@ public class HiringTransactionEntity {
 	public void setBeginDate(Date beginDate) {
 		this.beginDate = beginDate;
 	}
+
 	@Basic
 	@Column(name = "end_date")
 	public Date getEndDate() {
@@ -133,8 +135,9 @@ public class HiringTransactionEntity {
 	public void setEquipmentAddress(String equipmentAddress) {
 		this.equipmentAddress = equipmentAddress;
 	}
-@Basic
-@Column(name = "equipment_lat")
+
+	@Basic
+	@Column(name = "equipment_lat")
 	public double getEquipmentLatitude() {
 		return equipmentLatitude;
 	}
@@ -142,8 +145,9 @@ public class HiringTransactionEntity {
 	public void setEquipmentLatitude(double equipmentLatitude) {
 		this.equipmentLatitude = equipmentLatitude;
 	}
-@Basic
-@Column(name = "equipment_long")
+
+	@Basic
+	@Column(name = "equipment_long")
 	public double getEquipmentLongitude() {
 		return equipmentLongitude;
 	}
@@ -184,7 +188,7 @@ public class HiringTransactionEntity {
 	}
 
 	@Basic
-	@Column(name = "is_deleted")
+	@Column(name = "is_deleted", insertable = false, updatable = false)
 	public boolean isDeleted() {
 		return isDeleted;
 	}

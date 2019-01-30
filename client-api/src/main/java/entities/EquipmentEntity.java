@@ -33,7 +33,7 @@ public class EquipmentEntity {
 
 	private EquipmentTypeEntity equipmentType;
 
-	private ContractorEntity constructor;
+	private ContractorEntity contractor;
 	private Integer constructionId;
 
 	private List<AvailableTimeRangeEntity> availableTimeRanges;
@@ -54,6 +54,7 @@ public class EquipmentEntity {
 	public void setId(long id) {
 		this.id = id;
 	}
+
 
 	@Basic
 	@Column(name = "name", nullable = true, length = 255)
@@ -117,13 +118,13 @@ public class EquipmentEntity {
 
 
 	@ManyToOne()
-	@JoinColumn(name = "contractor_id", insertable = false, updatable = false)
-	public ContractorEntity getConstructor() {
-		return constructor;
+	@JoinColumn(name = "contractor_id")
+	public ContractorEntity getContractor() {
+		return contractor;
 	}
 
-	public void setConstructor(ContractorEntity constructor) {
-		this.constructor = constructor;
+	public void setContractor(ContractorEntity constructor) {
+		this.contractor = constructor;
 	}
 
 	@Basic
@@ -177,7 +178,7 @@ public class EquipmentEntity {
 	}
 
 	@Basic
-	@Column(name = "is_deleted",nullable = true)
+	@Column(name = "is_deleted", insertable = false, updatable = false)
 	public Boolean isDeleted() {
 		return isDeleted;
 	}
@@ -187,7 +188,7 @@ public class EquipmentEntity {
 	}
 
 	@Basic
-	@Column(name = "created_time")
+	@Column(name = "created_time", insertable = false, updatable = false)
 	public Timestamp getCreatedTime() {
 		return createdTime;
 	}
@@ -197,7 +198,7 @@ public class EquipmentEntity {
 	}
 
 	@Basic
-	@Column(name = "updated_time")
+@Column(name = "updated_time", insertable=false, updatable = false)
 	public Timestamp getUpdatedTime() {
 		return updatedTime;
 	}
@@ -227,7 +228,7 @@ public class EquipmentEntity {
 	}
 
 	@Basic
-	@Column(name = "long")
+	@Column(name = "`long`")
 	public Double getLongitude() {
 		return longitude;
 	}

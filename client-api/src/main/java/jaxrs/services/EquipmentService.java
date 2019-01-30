@@ -55,7 +55,7 @@ public class EquipmentService {
 	@GET
 	@Path("{id:\\d+}")
 	public Response getEquipment(@PathParam("id") long id) {
-		return CommonUtils.responseFilterOk(EquipmentDAO.getInstance().findByID(id));
+		return Response.ok(EquipmentDAO.getInstance().findByID(id)).build();
 	}
 	@PUT
 	@Path("{id:\\d+}")
@@ -83,7 +83,9 @@ public class EquipmentService {
 
 		//add all children from new equipment
 		equipmentDAO.merge(equipmentEntity);
-		Response.ResponseBuilder builder = Response.status(Response.Status.OK).entity(equipmentEntity);
+		Response.ResponseBuilder builder = Response.status(Response.Status.OK).entity(
+				equipmentDAO.findByID(equipmentEntity.getId())
+		);
 		return CommonUtils.addFilterHeader(builder).build();
 	}
 
@@ -95,12 +97,12 @@ public class EquipmentService {
 
 
 		//check for constructor id
-		if (equipmentEntity.getConstructor() == null) {
+		if (equipmentEntity.getContractor() == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor is null"));
 			return CommonUtils.addFilterHeader(responseBuilder).build();
 
 		}
-		long constructorId = equipmentEntity.getConstructor().getId();
+		long constructorId = equipmentEntity.getContractor().getId();
 
 		ContractorEntity foundConstructor = constructorDAO.findByID(constructorId);
 		if (foundConstructor == null) {
@@ -125,11 +127,13 @@ public class EquipmentService {
 		}
 
 
-		equipmentEntity.setConstructor(foundConstructor);
+		equipmentEntity.setContractor(foundConstructor);
 		equipmentEntity.setEquipmentType(foundEquipmentType);
 
 		equipmentDAO.persist(equipmentEntity);
-		Response.ResponseBuilder builder = Response.status(Response.Status.CREATED).entity(equipmentEntity);
+		Response.ResponseBuilder builder = Response.status(Response.Status.CREATED).entity(
+				equipmentDAO.findByID(equipmentEntity.getId())
+		);
 		return CommonUtils.addFilterHeader(builder).build();
 
 

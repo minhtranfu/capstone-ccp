@@ -44,7 +44,7 @@ public class EquipmentTypeEntity {
 
 
 	@Basic
-	@Column(name = "is_deleted")
+	@Column(name = "is_deleted", insertable = false, updatable = false)
 	public boolean isDeleted() {
 		return isDeleted;
 	}

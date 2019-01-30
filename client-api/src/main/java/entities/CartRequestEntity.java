@@ -79,7 +79,7 @@ public class CartRequestEntity {
 	}
 
 	@Basic
-	@Column(name = "created_time", nullable = true)
+	@Column(name = "created_time", insertable=false, updatable = false)
 	public Timestamp getCreatedTime() {
 		return createdTime;
 	}
@@ -89,7 +89,7 @@ public class CartRequestEntity {
 	}
 
 	@Basic
-	@Column(name = "updated_time", nullable = true)
+@Column(name = "updated_time", insertable=false, updatable = false)
 	public Timestamp getUpdatedTime() {
 		return updatedTime;
 	}
