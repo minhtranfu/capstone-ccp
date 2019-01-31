@@ -35,7 +35,7 @@ class MyEquipment extends Component {
           removeTitle={true}
           hasLeft={false}
           hasAdd={true}
-          onPress={() => this.props.navigation.navigate("AddNewEquipment")}
+          onPress={() => this.props.navigation.navigate("AddEquipment")}
           scrollElement={<Animated.ScrollView />}
           renderScrollItem={this.renderScrollItem}
         />

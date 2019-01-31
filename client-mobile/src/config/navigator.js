@@ -11,6 +11,7 @@ import colors from "./colors";
 import Discover from "../screens/Discover";
 import Settings from "../screens/Settings";
 import Search from "../screens/Search";
+import SearchResult from "../screens/Search/SearchResult";
 import Profile from "../screens/Profile";
 import Equipment from "../screens/Equipment";
 import MyEquipment from "../screens/MyEquipment";
@@ -37,7 +38,9 @@ const EquipmentDetailStack = createStackNavigator(
 const DiscoverStack = createStackNavigator(
   {
     Discover: Discover,
-    Detail: EquipmentDetail
+    Detail: EquipmentDetail,
+    Search: Search,
+    Result: SearchResult
   },
   {
     headerMode: "none"

@@ -2,14 +2,14 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-navigation";
 
-class Search extends Component {
+class SearchResult extends Component {
   render() {
     return (
       <SafeAreaView
         style={styles.container}
         forceInset={{ bottom: "never", top: "always" }}
       >
-        <Text>Search! </Text>
+        <Text>SearchResult! </Text>
       </SafeAreaView>
     );
   }
@@ -24,4 +24,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Search;
+export default SearchResult;

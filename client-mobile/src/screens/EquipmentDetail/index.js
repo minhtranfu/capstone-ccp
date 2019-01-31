@@ -11,6 +11,8 @@ import { SafeAreaView } from "react-navigation";
 import MapView, { Marker } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import { connect } from "react-redux";
+import DateTimePicker from "react-native-modal-datetime-picker";
+import Calendar from "react-native-calendar-select";
 
 import CustomFlatList from "../../components/CustomFlatList";
 import ParallaxList from "../../components/ParallaxList";
@@ -18,6 +20,7 @@ import Loading from "../../components/Loading";
 import { itemDetail, discoverData, detail } from "../../config/mockData";
 import Item from "../Discover/components/Item";
 import { getEquipmentDetail } from "../../redux/actions/equipment";
+import ModalCalendar from "./ModalCalendar";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
@@ -36,10 +39,62 @@ import { Button } from "../../components/AnimatedHeader";
   })
 )
 class EquipmentDetail extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      modalVisible: false,
+      selectedDate: "",
+      startDate: "",
+      endDate: "",
+      minDate: "",
+      maxDate: ""
+    };
+  }
+
   componentDidMount() {
     const { id } = this.props.navigation.state.params;
     this.props.fetchGetEquipmentDetail(id);
   }
+
+  setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
+  }
+
+  selectDate = date => {
+    this.setState(() => ({
+      selectedDate: date
+    }));
+  };
+
+  confirmDate = ({ startDate, endDate, startMoment, endMoment }) => {
+    this.setState({
+      startDate,
+      endDate
+    });
+  };
+
+  openCalendar = () => {
+    this.calendar && this.calendar.open();
+  };
+
+  handleRangeDate = dates => {
+    let minDate = new Date(Math.min.apply(null, dates));
+    let maxDate = new Date(Math.max.apply(null, dates));
+    this.setState({ minDate: minDate, maxDate: maxDate });
+  };
+
+  handleFormatDate = date => {
+    year = date.getFullYear();
+    month = date.getMonth() + 1;
+    dt = date.getDate();
+    if (dt < 10) {
+      dt = "0" + dt;
+    }
+    if (month < 10) {
+      month = "0" + month;
+    }
+    return year + "-" + month + "-" + dt;
+  };
 
   renderSuggestionItem = ({ item }) => {
     return (
@@ -52,6 +107,7 @@ class EquipmentDetail extends Component {
       />
     );
   };
+
   renderScrollItem = () => {
     const { images, author, availableFrom, availableTo } = itemDetail;
     const {
@@ -78,22 +134,19 @@ class EquipmentDetail extends Component {
         <Text style={styles.text}>Phone: {constructor.phoneNumber}</Text>
         <Title title={"Time Range Available"} />
         {availableTimeRanges.map((item, index) => (
-          <TouchableOpacity key={index} style={styles.rowWrapper}>
+          <View key={index} style={styles.rowWrapper}>
             <View
               style={{
                 flexDirection: "column",
                 justifyContent: "center"
               }}
             >
-              <Text style={{ marginBottom: 10 }}>From: {item.beginDate}</Text>
-              <Text>To: {item.endDate}</Text>
+              <Text style={{ marginBottom: 10 }}>
+                From: {new Date(item.beginDate).toDateString()}
+              </Text>
+              <Text>To: {new Date(item.endDate).toDateString()}</Text>
             </View>
-            <Ionicons
-              name={"ios-arrow-forward"}
-              size={24}
-              style={{ marginRight: 15 }}
-            />
-          </TouchableOpacity>
+          </View>
         ))}
         <Title title={"Pricing"} />
         <View style={styles.rowWrapper}>
@@ -156,8 +209,33 @@ class EquipmentDetail extends Component {
   };
 
   render() {
+    console.log(new Date().toLocaleDateString());
     const { id } = this.props.navigation.state.params;
-
+    let customI18n = {
+      w: ["", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"],
+      weekday: [
+        "",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      text: {
+        start: "Check in",
+        end: "Check out",
+        date: "Date",
+        save: "Save",
+        clear: "Reset"
+      },
+      date: "DD / MM" // date format
+    };
+    // optional property, too.
+    let color = {
+      subColor: "#f0f0f0"
+    };
     return (
       <SafeAreaView style={styles.container}>
         {detail ? (
@@ -185,7 +263,32 @@ class EquipmentDetail extends Component {
               }}
             >
               <Text style={styles.text}>{detail.data.dailyPrice}$/day</Text>
-              <Text>CHECK AVAILABILITY</Text>
+              {/* <ModalCalendar
+                visible={this.state.modalVisible}
+                handleModalVisible={this.setModalVisible}
+                dates={detail.data.availableTimeRanges}
+                onSelectDate={this.selectDate}
+              /> */}
+              <TouchableOpacity
+                style={styles.rowWrapper}
+                onPress={this.openCalendar}
+              >
+                <Text>CHECK AVAILABILIT</Text>
+              </TouchableOpacity>
+              <Calendar
+                i18n="en"
+                ref={calendar => {
+                  this.calendar = calendar;
+                }}
+                customI18n={customI18n}
+                color={color}
+                format="YYYY-MM-DD"
+                minDate={this.handleFormatDate(new Date())}
+                maxDate="2019-03-12"
+                startDate={this.state.startDate}
+                endDate={this.state.endDate}
+                onConfirm={this.confirmDate}
+              />
             </View>
           </View>
         ) : (

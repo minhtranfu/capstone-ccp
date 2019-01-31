@@ -7,7 +7,7 @@ import {
   Dimensions,
   ScrollView
 } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { SafeAreaView, NavigationActions } from "react-navigation";
 import { ImagePicker, Permissions } from "expo";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -58,12 +58,14 @@ class AddEquipment extends Component {
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "never", top: "always" }}
+        forceInset={{ bottom: "always", top: "always" }}
       >
         <View style={styles.topWrapper}>
           <TouchableOpacity
             style={{ marginLeft: 15 }}
-            onPress={() => this.props.navigation.goBack()}
+            onPress={() =>
+              this.props.navigation.dispatch(NavigationActions.back())
+            }
           >
             <AntDesign name="close" size={30} />
           </TouchableOpacity>
@@ -85,8 +87,8 @@ class AddEquipment extends Component {
             returnKeyType={"next"}
           />
           <InputField
-            label={"Weight"}
-            placeholder={"Input your equipment weight"}
+            label={"Daily price"}
+            placeholder={"Input your equipment Daily price"}
             labelTextSize={fontSize.secondaryText}
             labelColor={colors.secondaryColor}
             textColor={colors.secondaryColor}
@@ -96,11 +98,12 @@ class AddEquipment extends Component {
             inputType="text"
             onChangeText={value => this.setState({ weight: value })}
             value={weight}
+            keyboardType={"numeric"}
             returnKeyType={"next"}
           />
           <InputField
-            label={"Color"}
-            placeholder={"Input your equipment color"}
+            label={"Delivery price"}
+            placeholder={"Input your equipment Delivery price"}
             labelTextSize={fontSize.secondaryText}
             labelColor={colors.secondaryColor}
             textColor={colors.secondaryColor}
@@ -109,6 +112,7 @@ class AddEquipment extends Component {
             customWrapperStyle={{ marginBottom: 20, marginHorizontal: 15 }}
             inputType="text"
             onChangeText={value => this.setState({ color: value })}
+            keyboardType={"numeric"}
             value={color}
           />
           <CustomModal

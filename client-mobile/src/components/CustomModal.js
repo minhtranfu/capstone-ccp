@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     fontSize: fontSize.caption,
-    color: colors.secondaryColorOpacity,
+    color: colors.secondaryColor,
     marginBottom: 5,
     marginTop: 15
   },
