@@ -89,7 +89,8 @@ const styles = StyleSheet.create({
   },
   inputField: {
     borderBottomWidth: 1,
-    paddingVertical: 5
+    paddingTop: 5,
+    paddingBottom: 30
   },
   showButton: {
     position: "absolute",

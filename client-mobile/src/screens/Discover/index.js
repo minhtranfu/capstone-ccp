@@ -66,8 +66,8 @@ class Discover extends Component {
         <ParallaxList
           title={"Discover"}
           hasLeft={false}
-          hasRight={true}
-          hasFavoraite={false}
+          hasSearch={true}
+          onRightPress={() => this.props.navigation.navigate("Search")}
           scrollElement={<Animated.ScrollView />}
           renderScrollItem={this.renderItem}
         />

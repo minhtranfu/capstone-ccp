@@ -13,8 +13,7 @@ const styles = StyleSheet.create({
     height: 44,
     flexDirection: "row",
     backgroundColor: "transparent",
-    alignItems: "center",
-    justifyContent: "center"
+    alignItems: "center"
   }
 });
 

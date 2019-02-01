@@ -50,10 +50,11 @@ class ParallaxList extends Component {
       />
       <Right
         hasRight={this.props.hasRight}
+        hasSearch={this.props.hasSearch}
         hasFavorite={this.props.hasFavorite}
         hasAdd={this.props.hasAdd}
         hasClose={this.props.hasClose}
-        onPress={this.props.onPress}
+        onPress={this.props.onRightPress}
       />
     </AnimatedHeader>
   );

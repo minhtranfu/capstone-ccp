@@ -6,6 +6,7 @@ import {
   createSwitchNavigator,
   createAppContainer
 } from "react-navigation";
+import DismissableStackNav from "../Utils/Navigator";
 import colors from "./colors";
 
 import Discover from "../screens/Discover";
@@ -15,8 +16,9 @@ import SearchResult from "../screens/Search/SearchResult";
 import Profile from "../screens/Profile";
 import Equipment from "../screens/Equipment";
 import MyEquipment from "../screens/MyEquipment";
-import AddEquipment from "../screens/MyEquipment/AddEquipment";
+import AddDetail from "../screens/MyEquipment/AddEquipment/AddDetail";
 import AddDuration from "../screens/MyEquipment/AddEquipment/AddDuration";
+import AddDurationText from "../screens/MyEquipment/AddEquipment/AddDurationText";
 import AddImage from "../screens/MyEquipment/AddEquipment/AddImage";
 import EquipmentDetail from "../screens/EquipmentDetail";
 import Requester from "../screens/Equipment/Requester";
@@ -79,15 +81,16 @@ const SearchStack = createStackNavigator(
   }
 );
 
-const AddNewEquipmentStack = createStackNavigator(
+const AddNewEquipmentStack = DismissableStackNav(
   {
-    AddEquipment: AddEquipment,
+    AddDetail: AddDetail,
     AddDuration: AddDuration,
+    AddDurationText: AddDurationText,
     AddImage: AddImage
   },
   {
     headerMode: "none",
-    initialRouteName: "AddEquipment"
+    initialRouteName: "AddDetail"
   }
 );
 

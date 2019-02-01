@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView, NavigationActions } from "react-navigation";
 import { ImagePicker, Permissions } from "expo";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 
 import CustomModal from "../../../components/CustomModal";
 import InputField from "../../../components/InputField";
@@ -26,23 +26,23 @@ const config = {
   image: "https://ak4.picdn.net/shutterstock/videos/6731134/thumb/1.jpg"
 };
 
-class AddEquipment extends Component {
+class AddDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
       equipmentImage: config.image,
       pickerValue: "Select an option",
       name: null,
-      weight: null,
+      dailyPrice: null,
       type: null,
       generalType: null,
-      color: null
+      deliveryPrice: null
     };
   }
 
   isNextEnabled = () => {
-    const { name, weight, type, generalType, color } = this.state;
-    if (name && weight && type && generalType && color) {
+    const { name, dailyPrice, type, generalType, deliveryPrice } = this.state;
+    if (name && dailyPrice && type && generalType && deliveryPrice) {
       return false;
     }
     return true;
@@ -52,8 +52,21 @@ class AddEquipment extends Component {
     this.setState({ pickerValue: itemValue });
   };
 
+  handlePassValue = () => {
+    const { name, dailyPrice, type, generalType, deliveryPrice } = this.state;
+
+    const data = {
+      name: name,
+      dailyPrice: dailyPrice,
+      deliveryPrice: deliveryPrice,
+      type: type,
+      generalType: generalType
+    };
+    return data;
+  };
+
   render() {
-    const { name, weight, type, generalType, color } = this.state;
+    const { name, dailyPrice, type, generalType, deliveryPrice } = this.state;
     const disable = this.isNextEnabled();
     return (
       <SafeAreaView
@@ -96,8 +109,8 @@ class AddEquipment extends Component {
             borderBottomColor={colors.secondaryColorOpacity}
             customWrapperStyle={{ marginBottom: 20, marginHorizontal: 15 }}
             inputType="text"
-            onChangeText={value => this.setState({ weight: value })}
-            value={weight}
+            onChangeText={value => this.setState({ dailyPrice: value })}
+            value={dailyPrice}
             keyboardType={"numeric"}
             returnKeyType={"next"}
           />
@@ -111,9 +124,9 @@ class AddEquipment extends Component {
             borderBottomColor={colors.secondaryColorOpacity}
             customWrapperStyle={{ marginBottom: 20, marginHorizontal: 15 }}
             inputType="text"
-            onChangeText={value => this.setState({ color: value })}
+            onChangeText={value => this.setState({ deliveryPrice: value })}
             keyboardType={"numeric"}
-            value={color}
+            value={deliveryPrice}
           />
           <CustomModal
             label={"Select your categories"}
@@ -132,11 +145,15 @@ class AddEquipment extends Component {
             ]}
             disabled={disable}
             onPress={() =>
-              disable ? null : this.props.navigation.navigate("AddDuration")
+              disable
+                ? null
+                : this.props.navigation.navigate("AddDurationText", {
+                    data: this.handlePassValue()
+                  })
             }
           >
-            <Text style={styles.text}>Next</Text>
-            <Text>></Text>
+            <Text style={[styles.text, { marginRight: 10 }]}>Next</Text>
+            <Ionicons name="ios-arrow-forward" size={24} />
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -202,4 +219,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default AddEquipment;
+export default AddDetail;

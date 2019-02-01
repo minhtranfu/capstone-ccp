@@ -1,11 +1,21 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { ImagePicker, Permissions } from "expo";
-import { SafeAreaView } from "react-navigation";
+import { SafeAreaView, NavigationActions } from "react-navigation";
+import { connect } from "react-redux";
+import { addNewEquipment } from "../../../redux/actions/equipment";
 
 import Header from "../../../components/Header";
 import Button from "../../../components/Button";
 
+@connect(
+  state => ({
+    equipment: state.equipment.equipment
+  }),
+  dispatch => ({
+    addEquipment: data => dispatch(addNewEquipment(data))
+  })
+)
 class AddImage extends Component {
   constructor(props) {
     super(props);
@@ -39,7 +49,26 @@ class AddImage extends Component {
     }
   };
 
+  handleAddNewEquipment = () => {
+    const { descriptionImages, thumbnailImage } = this.state;
+    const { data } = this.props.navigation.state.params;
+    const contractor = {
+      constructionId: 1,
+      descriptionImages: descriptionImages,
+      constractor: {
+        id: 1
+      },
+      thumbnailImage: [thumbnailImage],
+      address: "340 Nguyen Tat Thanh"
+    };
+    const newData = Object.assign({}, data, contractor);
+    console.log("Submit", newData);
+    this.props.addEquipment(newData);
+  };
+
   render() {
+    const { data } = this.props.navigation.state.params;
+    console.log(data);
     return (
       <SafeAreaView
         style={styles.container}
@@ -76,7 +105,12 @@ class AddImage extends Component {
               />
             ))
           : null}
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            this.props.navigation.dismiss();
+            this.handleAddNewEquipment();
+          }}
+        >
           <Text>Submit</Text>
         </TouchableOpacity>
       </SafeAreaView>

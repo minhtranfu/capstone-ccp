@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, View, Image } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { withNavigation, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 
@@ -96,10 +97,17 @@ const Add = ({ onPress }) => (
   </TouchableOpacity>
 );
 
+const Search = ({ onPress }) => (
+  <TouchableOpacity onPress={onPress}>
+    <Ionicons name={"ios-search"} size={20} />
+  </TouchableOpacity>
+);
+
 export default {
   Back,
   Favorite,
   Profile,
   Add,
+  Search,
   Close
 };

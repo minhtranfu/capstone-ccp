@@ -11,3 +11,18 @@ export function getEquipmentDetail(id) {
     });
   };
 }
+
+export function addNewEquipment(data) {
+  console.log("actions", data);
+  return {
+    type: Actions.ADD_EQUIPMENT,
+    payload: data
+  };
+}
+
+export function removeEquipment(id) {
+  return {
+    type: Actions.REMOVE_EQUIPMENT,
+    id
+  };
+}
