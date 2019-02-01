@@ -63,7 +63,7 @@ public class EquipmentService {
 
 
 		if (equipmentEntity == null) {
-			return CommonUtils.responseFilterBadRequest(new MessageResponse("No id"));
+			return CommonUtils.responseFilterBadRequest(new MessageResponse("no equipment information"));
 		}
 		equipmentEntity.setId(id);
 		EquipmentEntity foundEquipment = equipmentDAO.findByID(id);
@@ -71,13 +71,15 @@ public class EquipmentService {
 			return CommonUtils.responseFilterBadRequest(new MessageResponse("Not found equipment with id=" + id));
 		}
 
+		//delete status
+		equipmentEntity.setStatus(null);
+
 		//delete all children of the old equipment
 		foundEquipment.deleteAllAvailableTimeRange();
 		equipmentDAO.merge(foundEquipment);
 		//todo delete image
 		//todo delete location
 		//todo delete construction
-
 
 
 
@@ -95,6 +97,9 @@ public class EquipmentService {
 		//remove id
 		equipmentEntity.setId(0);
 
+
+		//remove status
+		equipmentEntity.setStatus(null);
 
 		//check for constructor id
 		if (equipmentEntity.getContractor() == null) {
@@ -151,14 +156,60 @@ public class EquipmentService {
 		List<EquipmentTypeEntity> result = equipmentTypeDAO.getAll("EquipmentTypeEntity.getAllEquipmentType");
 		return CommonUtils.responseFilterOk(result);
 	}
-//
-//	@GET
-//	@Path("/types/{id : \\d+}/fields")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response getEquipmentTypeInfos(@PathParam("id") int id) {
-//
-//        List<AdditionalSpecsFieldEntity> resultList = DBUtils.getEntityManager().createQuery("SELECT eti FROM AdditionalSpecsFieldEntity eti WHERE eti.equipmentType = ?", AdditionalSpecsFieldEntity.class).setParameter(1, id).getResultList();
-//
-//		return CommonUtils.responseFilterOk(resultList);
-//	}
+
+
+	@PUT
+	@Path("{id:\\d+}/status")
+	public Response updateEquipmentStatus(@PathParam("id") long id, EquipmentEntity entity) {
+
+		EquipmentEntity foundEquipment = equipmentDAO.findByID(id);
+		if (foundEquipment == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("id not found!")).build();
+		}
+		EquipmentEntity.Status status = entity.getStatus();
+		switch (status) {
+			case AVAILABLE:
+				if (foundEquipment.getStatus() != EquipmentEntity.Status.WAITING_FOR_RETURNING) {
+					return Response.status(Response.Status.BAD_REQUEST).entity
+							(new MessageResponse("Invalid! Current status is " + foundEquipment.getStatus()))
+							.build();
+				}
+				break;
+			case WAITING_FOR_DELIVERY:
+				if (foundEquipment.getStatus() != EquipmentEntity.Status.AVAILABLE) {
+					return Response.status(Response.Status.BAD_REQUEST).entity
+							(new MessageResponse("Invalid! Current status is " + foundEquipment.getStatus()))
+							.build();
+				}
+				break;
+			case DELIVERING:
+				if (foundEquipment.getStatus() != EquipmentEntity.Status.WAITING_FOR_DELIVERY) {
+					return Response.status(Response.Status.BAD_REQUEST).entity
+							(new MessageResponse("Invalid! Current status is " + foundEquipment.getStatus()))
+							.build();
+				}
+				break;
+			case RENTING:
+				if (foundEquipment.getStatus() != EquipmentEntity.Status.DELIVERING) {
+					return Response.status(Response.Status.BAD_REQUEST).entity
+							(new MessageResponse("Invalid! Current status is " + foundEquipment.getStatus()))
+							.build();
+				}
+				break;
+			case WAITING_FOR_RETURNING:
+				// TODO: 2/1/19 change this status by system not user
+				if (foundEquipment.getStatus() != EquipmentEntity.Status.RENTING) {
+					return Response.status(Response.Status.BAD_REQUEST).entity
+							(new MessageResponse("Invalid! Current status is " + foundEquipment.getStatus()))
+							.build();
+				}
+				break;
+
+		}
+
+		foundEquipment.setStatus(entity.getStatus());
+		equipmentDAO.merge(foundEquipment);
+		return Response.ok(equipmentDAO.findByID(id)).build();
+
+	}
 }

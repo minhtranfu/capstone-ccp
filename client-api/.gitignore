@@ -92,4 +92,4 @@ buildNumber.properties
 # End of https://www.gitignore.io/api/maven,intellij,java-web
 
 #Custom gitignore
-client-api/.idea/dataSources
+.idea/dataSources/*

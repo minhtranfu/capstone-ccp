@@ -19,7 +19,7 @@ public class EquipmentEntity {
 	private Integer dailyPrice;
 	private Integer deliveryPrice;
 	private String description;
-	private String status;
+	private Status status;
 	private String thumbnailImage;
 
 	private Boolean isDeleted;
@@ -97,12 +97,13 @@ public class EquipmentEntity {
 	}
 
 	@Basic
-	@Column(name = "status", nullable = true, length = 45)
-	public String getStatus() {
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = true, length = 45, insertable = false)
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 
@@ -247,4 +248,11 @@ public class EquipmentEntity {
 	}
 
 
+	public enum Status{
+		AVAILABLE,
+		WAITING_FOR_DELIVERY,
+		DELIVERING,
+		RENTING,
+		WAITING_FOR_RETURNING
+	}
 }
