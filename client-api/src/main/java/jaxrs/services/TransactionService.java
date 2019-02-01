@@ -106,6 +106,27 @@ public class TransactionService {
 		return Response.status(Response.Status.OK).entity(new MessageResponse("Transaction deleted!")).build();
 	}
 
+	@PUT
+	@Path("{id:\\d+}")
+	public Response approveTransaction(@PathParam("id") long id ,HiringTransactionEntity entity) {
+
+		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByID(id);
+		if (foundTransaction == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("id not found!")).build();
+		}
+
+		if (entity.getStatus() == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Status incorrect!")).build();
+		}
+		if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Transaction is already "+foundTransaction.getStatus())).build();
+
+		}
+		foundTransaction.setStatus(entity.getStatus());
+		hiringTransactionDAO.merge(foundTransaction);
+		return Response.status(Response.Status.OK).entity(hiringTransactionDAO.findByID(id)).build();
+	}
+
 
 
 

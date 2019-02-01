@@ -8,6 +8,7 @@ public class AdminAccountEntity {
 	private long id;
 	private String username;
 	private String password;
+	private long adminUserId;
 
 	@Id
 	@GeneratedValue
@@ -40,19 +41,12 @@ public class AdminAccountEntity {
 		this.password = password;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		AdminAccountEntity that = (AdminAccountEntity) o;
-
-		if (id != that.id) return false;
-		if (username != null ? !username.equals(that.username) : that.username != null) return false;
-		if (password != null ? !password.equals(that.password) : that.password != null) return false;
-
-		return true;
+	@Column(name = "admin_user_id")
+	public long getAdminUserId() {
+		return adminUserId;
 	}
 
-
+	public void setAdminUserId(long adminUserId) {
+		this.adminUserId = adminUserId;
+	}
 }
