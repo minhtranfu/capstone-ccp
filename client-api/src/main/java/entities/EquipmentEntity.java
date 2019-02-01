@@ -178,7 +178,7 @@ public class EquipmentEntity {
 	}
 
 	@Basic
-	@Column(name = "is_deleted", insertable = false, updatable = false)
+	@Column(name = "is_deleted", insertable=false)
 	public Boolean isDeleted() {
 		return isDeleted;
 	}

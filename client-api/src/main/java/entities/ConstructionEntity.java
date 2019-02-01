@@ -68,7 +68,7 @@ public class ConstructionEntity {
 	}
 
 	@Basic
-	@Column(name = "is_deleted", insertable = false, updatable = false)
+	@Column(name = "is_deleted", insertable=false)
 	public boolean isDeleted() {
 		return isDeleted;
 	}

@@ -8,6 +8,7 @@ import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 import utils.CommonUtils;
+import utils.DBUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -89,6 +90,23 @@ public class TransactionService {
 		}
 		return Response.ok(foundTransaction).build();
 	}
+
+	@DELETE
+	@Path("{id:\\d+}")
+	public Response cancelTransaction(@PathParam("id") long id) {
+		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByID(id);
+		if (foundTransaction == null) {
+			return Response.status(Response.Status.NOT_FOUND).entity(new MessageResponse("id not found!")).build();
+		}
+
+
+		foundTransaction.setDeleted(true);
+		hiringTransactionDAO.merge(foundTransaction);
+
+		return Response.status(Response.Status.OK).entity(new MessageResponse("Transaction deleted!")).build();
+	}
+
+
 
 
 }

@@ -1,6 +1,8 @@
 package entities;
 
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.security.AllPermission;
 import java.sql.Date;
@@ -8,6 +10,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "hiring_transaction", schema = "capstone_ccp", catalog = "")
+@Where(clause = "is_deleted=0")
 public class HiringTransactionEntity {
 	private long id;
 	private Status status;
@@ -189,7 +192,7 @@ public class HiringTransactionEntity {
 	}
 
 	@Basic
-	@Column(name = "is_deleted", insertable = false, updatable = false)
+	@Column(name = "is_deleted", insertable = false)
 	public boolean isDeleted() {
 		return isDeleted;
 	}
