@@ -6,38 +6,43 @@ import java.io.Serializable;
 @Entity
 @Table(name = "admin_user")
 public class AdminUserEntity implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private String id;
-
+    private Integer id;
     @Column(name = "name")
     private String name;
     @Column(name = "is_male")
-    private boolean is_male;
+    private boolean isMale;
     @Column(name = "phone", length = 10)
     private String phone;
     @Column(name = "email")
     private String email;
     @Column(name = "role_id")
-    private Integer role_id;
+    private Integer roleId;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private AdminAccountEntity adminAccountEntity;
 
     public AdminUserEntity() {
     }
 
-    public AdminUserEntity(String name, boolean is_male, String phone, String email, Integer role_id) {
+    public AdminUserEntity(String name, boolean isMale, String phone, String email, Integer roleId, AdminAccountEntity adminAccountEntity) {
         this.name = name;
-        this.is_male = is_male;
+        this.isMale = isMale;
         this.phone = phone;
         this.email = email;
-        this.role_id = role_id;
+        this.roleId = roleId;
+        this.adminAccountEntity = adminAccountEntity;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -49,12 +54,12 @@ public class AdminUserEntity implements Serializable {
         this.name = name;
     }
 
-    public boolean isIs_male() {
-        return is_male;
+    public boolean isMale() {
+        return isMale;
     }
 
-    public void setIs_male(boolean is_male) {
-        this.is_male = is_male;
+    public void setMale(boolean male) {
+        isMale = male;
     }
 
     public String getPhone() {
@@ -73,11 +78,32 @@ public class AdminUserEntity implements Serializable {
         this.email = email;
     }
 
-    public Integer getRole_id() {
-        return role_id;
+    public Integer getRoleId() {
+        return roleId;
     }
 
-    public void setRole_id(Integer role_id) {
-        this.role_id = role_id;
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+    public AdminAccountEntity getAdminAccountEntity() {
+        return adminAccountEntity;
+    }
+
+    public void setAdminAccountEntity(AdminAccountEntity adminAccountEntity) {
+        this.adminAccountEntity = adminAccountEntity;
+    }
+
+    @Override
+    public String toString() {
+        return "AdminUserEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", isMale=" + isMale +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", roleId=" + roleId +
+                ", adminAccountEntity=" + adminAccountEntity +
+                '}';
     }
 }

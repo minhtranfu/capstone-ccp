@@ -1,5 +1,6 @@
 package com.ccp.webadmin.services;
 
+import com.ccp.webadmin.entities.AdditionalSpecialFieldEntity;
 import com.ccp.webadmin.entities.EquipmentTypeEntity;
 import com.ccp.webadmin.entities.GeneralEquipmentTypeEntity;
 import org.springframework.stereotype.Service;
@@ -8,15 +9,15 @@ import java.util.List;
 
 @Service
 public interface AdditionalSpecialFieldService {
-    boolean existsEquipmentTypeByGeneralEquipmentType(GeneralEquipmentTypeEntity generalEquipmentTypeEntity);
+    boolean existsAdditionalSpecialFieldByEquipmentType(EquipmentTypeEntity equipmentTypeEntity);
 
-    List<EquipmentTypeEntity> findAll();
+    List<AdditionalSpecialFieldEntity> findAll();
 
-    List<EquipmentTypeEntity> findByGeneralEquipmentType(GeneralEquipmentTypeEntity generalEquipmentTypeEntity);
+    List<AdditionalSpecialFieldEntity> findByEquipmentType(EquipmentTypeEntity equipmentTypeEntity);
 
-    EquipmentTypeEntity findEquipmentTypeById(Integer id);
+    AdditionalSpecialFieldEntity findById(Integer id);
 
-    void save(EquipmentTypeEntity equipmentTypeEntity);
+    void save(AdditionalSpecialFieldEntity additionalSpecialFieldEntity);
 
     void deleteById(Integer id);
 

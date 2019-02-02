@@ -23,6 +23,10 @@ public class AdditionalSpecialFieldEntity implements Serializable {
     public AdditionalSpecialFieldEntity() {
     }
 
+    public AdditionalSpecialFieldEntity(EquipmentTypeEntity equipmentTypeEntity) {
+        this.equipmentTypeEntity = equipmentTypeEntity;
+    }
+
     public AdditionalSpecialFieldEntity(String name, String dataType, EquipmentTypeEntity equipmentTypeEntity) {
         this.name = name;
         this.dataType = dataType;

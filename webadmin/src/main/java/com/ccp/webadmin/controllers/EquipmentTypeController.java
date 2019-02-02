@@ -3,6 +3,7 @@ package com.ccp.webadmin.controllers;
 import com.ccp.webadmin.entities.EquipmentTypeEntity;
 import com.ccp.webadmin.entities.GeneralEquipmentTypeEntity;
 import com.ccp.webadmin.repositories.EquipmentTypeRepository;
+import com.ccp.webadmin.services.AdditionalSpecialFieldService;
 import com.ccp.webadmin.services.EquipmentTypeService;
 import com.ccp.webadmin.services.GeneralEquipmentTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,14 @@ public class EquipmentTypeController {
 
     private final GeneralEquipmentTypeService generalEquipmentTypeService;
     private final EquipmentTypeService equipmentTypeService;
+    private final AdditionalSpecialFieldService additionalSpecialFieldService;
+
 
     @Autowired
-    public EquipmentTypeController(GeneralEquipmentTypeService generalEquipmentTypeService, EquipmentTypeService equipmentTypeService) {
+    public EquipmentTypeController(GeneralEquipmentTypeService generalEquipmentTypeService, EquipmentTypeService equipmentTypeService, AdditionalSpecialFieldService additionalSpecialFieldService) {
         this.generalEquipmentTypeService = generalEquipmentTypeService;
         this.equipmentTypeService = equipmentTypeService;
+        this.additionalSpecialFieldService = additionalSpecialFieldService;
     }
 
     @GetMapping({"", "/", "/index"})
@@ -37,6 +41,7 @@ public class EquipmentTypeController {
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("equipmentType", equipmentTypeService.findEquipmentTypeById(id));
         model.addAttribute("generalEquipmentTypes", generalEquipmentTypeService.findAll());
+        model.addAttribute("additionalSpecialField", additionalSpecialFieldService.findByEquipmentType(equipmentTypeService.findEquipmentTypeById(id)));
         return "equipment_type/detail";
     }
 
@@ -49,15 +54,17 @@ public class EquipmentTypeController {
 
     @PostMapping("/saveProcess")
     public String saveProcess(
-            @Valid @ModelAttribute("e") EquipmentTypeEntity equipmentTypeEntity,
+            @Valid @ModelAttribute("equipmentType") EquipmentTypeEntity equipmentTypeEntity,
             BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("generalEquipmentTypes", generalEquipmentTypeService.findAll());
-            return "equipment_type/detail";
+            long id = equipmentTypeEntity.getId();
+            return "equipment_type/detail/" + id;
         }
         model.addAttribute("generalEquipmentTypes", generalEquipmentTypeService.findAll());
         equipmentTypeService.save(equipmentTypeEntity);
-        return "redirect:detail";
+        long id = equipmentTypeEntity.getId();
+        return "redirect:detail/" +  id;
     }
 
     @GetMapping("/delete")

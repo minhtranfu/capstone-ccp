@@ -13,11 +13,15 @@ public class GeneralEquipmentTypeEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "is_delete")
+    private boolean is_delete;
+
     public GeneralEquipmentTypeEntity() {
     }
 
-    public GeneralEquipmentTypeEntity(String name) {
+    public GeneralEquipmentTypeEntity(String name, boolean is_delete) {
         this.name = name;
+        this.is_delete = is_delete;
     }
 
     public Integer getId() {
@@ -34,5 +38,13 @@ public class GeneralEquipmentTypeEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isIs_delete() {
+        return is_delete;
+    }
+
+    public void setIs_delete(boolean is_delete) {
+        this.is_delete = is_delete;
     }
 }

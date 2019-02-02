@@ -1,10 +1,12 @@
 package com.ccp.webadmin.services.impl;
 
+import com.ccp.webadmin.entities.AdditionalSpecialFieldEntity;
 import com.ccp.webadmin.entities.EquipmentTypeEntity;
 import com.ccp.webadmin.entities.GeneralEquipmentTypeEntity;
 import com.ccp.webadmin.repositories.AdditionalSpecialFieldRepository;
 import com.ccp.webadmin.repositories.EquipmentTypeRepository;
 import com.ccp.webadmin.repositories.GeneralEquipmentTypeRepository;
+import com.ccp.webadmin.services.AdditionalSpecialFieldService;
 import com.ccp.webadmin.services.EquipmentTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class AdditionalSpeacialFieldImpl implements EquipmentTypeService {
+public class AdditionalSpeacialFieldImpl implements AdditionalSpecialFieldService {
 
     private final EquipmentTypeRepository equipmentTypeRepository;
     private final AdditionalSpecialFieldRepository additionalSpecialFieldRepository;
@@ -24,32 +26,32 @@ public class AdditionalSpeacialFieldImpl implements EquipmentTypeService {
     }
 
     @Override
-    public boolean existsEquipmentTypeByGeneralEquipmentType(GeneralEquipmentTypeEntity generalEquipmentTypeEntity) {
-        return equipmentTypeRepository.existsEquipmentTypeEntitiesByGeneralEquipmentType(generalEquipmentTypeEntity);
+    public boolean existsAdditionalSpecialFieldByEquipmentType(EquipmentTypeEntity equipmentTypeEntity) {
+        return additionalSpecialFieldRepository.existsAdditionalSpecialFieldEntityByEquipmentTypeEntity(equipmentTypeEntity);
     }
 
     @Override
-    public List<EquipmentTypeEntity> findAll() {
-        return equipmentTypeRepository.findAll();
+    public List<AdditionalSpecialFieldEntity> findAll() {
+        return additionalSpecialFieldRepository.findAll();
     }
 
     @Override
-    public List<EquipmentTypeEntity> findByGeneralEquipmentType(GeneralEquipmentTypeEntity generalEquipmentTypeEntity) {
-        return equipmentTypeRepository.findAllByGeneralEquipmentType(generalEquipmentTypeEntity);
+    public List<AdditionalSpecialFieldEntity> findByEquipmentType(EquipmentTypeEntity equipmentTypeEntity) {
+        return additionalSpecialFieldRepository.findAllByEquipmentTypeEntity(equipmentTypeEntity);
     }
 
     @Override
-    public EquipmentTypeEntity findEquipmentTypeById(Integer id) {
-        return equipmentTypeRepository.findById(id).get();
+    public AdditionalSpecialFieldEntity findById(Integer id) {
+        return additionalSpecialFieldRepository.findById(id).get();
     }
 
     @Override
-    public void save(EquipmentTypeEntity equipmentTypeEntity) {
-        equipmentTypeRepository.save(equipmentTypeEntity);
+    public void save(AdditionalSpecialFieldEntity additionalSpecialFieldEntity) {
+        additionalSpecialFieldRepository.save(additionalSpecialFieldEntity);
     }
 
     @Override
     public void deleteById(Integer id) {
-        equipmentTypeRepository.deleteById(id);
+        additionalSpecialFieldRepository.deleteById(id);
     }
 }

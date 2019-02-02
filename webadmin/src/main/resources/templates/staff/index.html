@@ -47,25 +47,30 @@
                             <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Fullname</th>
                                 <th>Gender</th>
                                 <th>Phone Number</th>
                                 <th>Email</th>
-                                <th>Detail</th>
+                                <th>Role</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="staff,iter : ${staffs}">
+                            <tr th:each="item,iter : ${staffs}">
                                 <td th:text="${iter.index + 1}"></td>
-                                <td th:text="${staff.name}"></td>
-                                <td th:switch="${staff.is_male}">
+                                <td><a th:href="@{/staff/detail/{id}(id = ${item.id})}">
+                                    <span th:text="${item.username}" class="link"></span></a>
+                                </td>
+                                <td th:text="${item.account.name}"></td>
+                                <td th:switch="${item.account.male}">
                                     <span th:case="true">Male</span>
                                     <span th:case="false">Female</span>
                                 </td>
-                                <td th:text="${staff.phone}"></td>
-                                <td th:text="${staff.email}"></td>
-                                <td>
-                                    <a th:href="@{/staff/detail/{id}(id = ${staff.id})}">Detail</a>
+                                <td th:text="${item.account.phone}"></td>
+                                <td th:text="${item.account.email}"></td>
+                                <td th:switch="${item.account.roleId}">
+                                    <span th:case="1">Admin</span>
+                                    <span th:case="2">Staff</span>
                                 </td>
                             </tr>
                             </tbody>

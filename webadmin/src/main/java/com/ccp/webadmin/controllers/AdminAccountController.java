@@ -1,12 +1,17 @@
 package com.ccp.webadmin.controllers;
 
+import com.ccp.webadmin.entities.AdminAccountEntity;
 import com.ccp.webadmin.entities.AdminUserEntity;
+import com.ccp.webadmin.entities.EquipmentTypeEntity;
 import com.ccp.webadmin.repositories.AdminAccountRepository;
 import com.ccp.webadmin.services.AdminAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("staff")
@@ -27,34 +32,26 @@ public class AdminAccountController {
 
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
-        model.addAttribute("staff", adminAccountService.findStaffById(id));
-        return "staff/index";
+        model.addAttribute("staff", adminAccountService.findById(id));
+        return "staff/detail";
     }
 
-//    @GetMapping("create")
-//    public String showAddPersonPage(Model model) {
-//
-//        StaffEntity staff = new StaffEntity();
-//        model.addAttribute("staff", staff);
-//        return "staff/create";
-//    }
-//
-//    @PostMapping("create")
-//    public String savePerson(Model model,
-//                             @ModelAttribute("staffForm") StaffEntity staff) {
-//
-//        String firstName = staff.get();
-//        String lastName = staff.getLastName();
-//
-//        if (firstName != null && firstName.length() > 0 //
-//                && lastName != null && lastName.length() > 0) {
-//            StaffEntity newPerson = new StaffEntity(firstName, lastName);
-//            persons.add(newPerson);
-//
-//            return "redirect:/personList";
-//        }
-//
-//        model.addAttribute("errorMessage", errorMessage);
-//        return "addPerson";
-//    }
+    @GetMapping("/create")
+    public String create(Model model) {
+        model.addAttribute("staff", new AdminAccountEntity());
+        return "staff/create";
+    }
+
+    @PostMapping("/saveProcess")
+    public String saveProcess(
+            @Valid @ModelAttribute("staff") AdminAccountEntity adminAccountEntity,
+            BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            Integer id = adminAccountEntity.getId();
+            return "staff/detail/" + id;
+        }
+        adminAccountService.save(adminAccountEntity);
+        Integer id = adminAccountEntity.getId();
+        return "redirect:detail/" +  id;
+    }
 }

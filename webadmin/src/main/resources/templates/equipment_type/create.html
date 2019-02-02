@@ -19,7 +19,7 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Staff Information</h1>
+                <h1 class="page-header">Create New Equipment Type</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -35,9 +35,20 @@
                             <div class="col-lg-6">
                                 <form th:action="@{/equipment_type/saveProcess}" method="post" th:object="${equipmentType}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{id}"><br>
-                                    Name: <input th:field="*{name}"><br>
+                                    <div class="form-group">
+                                    Name: <input th:field="*{name}" class="form-control"><br>
+                                    </div>
+                                    <div class="form-group">
+                                    <select th:field="*{generalEquipmentType}" class="form-control">
+                                        <option th:each="generalEquipmentType : ${generalEquipmentTypes}"
+                                                th:value="${generalEquipmentType.id}"
+                                                th:text="${generalEquipmentType.name}">
+                                        </option>
+                                    </select><br/>
+                                    </div>
                                     <span th:errors="*{name}" style="color: red"></span><br>
-                                    <input type="Submit" class="btn btn-default">
+                                    <input type="Submit" class="btn btn-default"/>
+                                    <input type="Reset" class="btn btn-default"/>
                                 </form>
 
                             </div>

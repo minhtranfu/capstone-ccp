@@ -19,7 +19,7 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Create New Equipment Type Category</h1>
+                <h1 class="page-header">Additional Special Field Information</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -33,14 +33,13 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-6">
-                                <form th:action="@{/general_equipment_type/saveProcess}" method="post" th:object="${generalEquipmentType}" enctype="multipart/form-data">
+                                <form th:action="@{/additional_special_field/saveProcess}" method="post" th:object="${additionalSpecialField}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{id}"><br>
                                     Name: <input th:field="*{name}" class="form-control"><br>
-                                    <span th:errors="*{name}" style="color: red"></span><br>
-                                    <input type="Submit" class="btn btn-default"/>
-                                    <input type="Reset" class="btn btn-default"/>
+                                    Data Type: <input th:field="*{dataType}" class="form-control"><br>
+                                    Equipment Type <input th:field="*{equipmentTypeEntity.name}" readonly="true" class="form-control"><br>
+                                    <input type="Submit" class="btn btn-default">
                                 </form>
-
                             </div>
                             <!-- /.col-lg-6 (nested) -->
                             <div class="col-lg-6">

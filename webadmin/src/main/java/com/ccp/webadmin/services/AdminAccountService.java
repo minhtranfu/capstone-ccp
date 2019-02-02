@@ -13,10 +13,12 @@ import java.util.Optional;
 
 @Service
 public interface AdminAccountService {
-    List<AdminUserEntity> findAll();
+    List<AdminAccountEntity> findAll();
 
-    AdminUserEntity findStaffById(Integer id);
+    AdminAccountEntity findById(Integer id);
 
-    void saveProduct(AdminAccountEntity adminAccountEntity);
+    void save(AdminAccountEntity adminAccountEntity);
+
+    void deleteById(Integer id);
 
 }
