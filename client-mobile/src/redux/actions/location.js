@@ -1,3 +1,5 @@
+import { GOOGLE_MAPS_KEY } from "../../config/apiKey";
+
 function getCurrLocation() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -36,4 +38,21 @@ export const getLatLongByAddress = async stringAddress => {
     });
 
   if (latLong) return latLong;
+};
+
+export const autoCompleteSearch = async (stringAddress, lat, long) => {
+  const address = encodeURIComponent(stringAddress);
+
+  const autoComplete = await fetch(
+    `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${address}&location=${(lat,
+    long)}&language=vi&key=${GOOGLE_MAPS_KEY}`
+  )
+    .then(res => res.json())
+    .then(res => {
+      const predictions = res.predictions;
+      const autocomplete = predictions.map(item => item.description);
+      return autocomplete ? autocomplete : [];
+    });
+
+  if (autoComplete) return autoComplete;
 };

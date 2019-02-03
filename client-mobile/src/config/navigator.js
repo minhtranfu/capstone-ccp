@@ -21,6 +21,7 @@ import AddDuration from "../screens/MyEquipment/AddEquipment/AddDuration";
 import AddDurationText from "../screens/MyEquipment/AddEquipment/AddDurationText";
 import AddImage from "../screens/MyEquipment/AddEquipment/AddImage";
 import EquipmentDetail from "../screens/EquipmentDetail";
+import Transaction from "../screens/EquipmentDetail/Transaction";
 import Requester from "../screens/Equipment/Requester";
 import RequesterPost from "../screens/Equipment/RequesterPost";
 // import AddEquipment from "../screens/Equipment/AddEquipment";
@@ -41,6 +42,7 @@ const DiscoverStack = createStackNavigator(
   {
     Discover: Discover,
     Detail: EquipmentDetail,
+    Transaction: Transaction,
     Search: Search,
     Result: SearchResult
   },

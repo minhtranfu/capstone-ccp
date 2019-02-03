@@ -42,8 +42,15 @@ class MyEquipment extends Component {
     };
   }
 
+  getEquipmentOnTransaction = equipmentList => {
+    const data = equipmentList.filter(item => item.status === "pending");
+    console.log(data);
+    return data ? data : [];
+  };
+
   renderScrollItem = () => {
     const { equipment } = this.props;
+    const equipmentTransaction = this.getEquipmentOnTransaction(equipment);
     return (
       <View style={styles.scrollWrapper}>
         <Text>Listing</Text>
@@ -53,6 +60,17 @@ class MyEquipment extends Component {
               label={"Status"}
               onSelectValue={value => this.setState({ status: value })}
             />
+
+            {equipmentTransaction ? (
+              <View>
+                <Text>On Waiting</Text>
+                {equipmentTransaction.map(item => (
+                  <TouchableOpacity>
+                    <Text>{item.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : null}
             {equipment.map((item, index) => (
               <View
                 key={index}

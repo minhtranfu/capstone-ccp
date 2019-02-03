@@ -59,7 +59,8 @@ class AddImage extends Component {
         id: 1
       },
       thumbnailImage: [thumbnailImage],
-      address: "340 Nguyen Tat Thanh"
+      address: "340 Nguyễn Tất Thành, Quận 4, Hồ Chí Minh, Việt Nam",
+      status: "available"
     };
     const newData = Object.assign({}, data, contractor);
     console.log("Submit", newData);

@@ -20,6 +20,14 @@ export function addNewEquipment(data) {
   };
 }
 
+export function updateEquipment(id, status) {
+  console.log(status);
+  return {
+    type: Actions.UPDATE_EQUIPMENT,
+    payload: { id, status }
+  };
+}
+
 export function removeEquipment(id) {
   return {
     type: Actions.REMOVE_EQUIPMENT,

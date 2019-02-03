@@ -25,7 +25,16 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
         equipment: [...state.equipment, newEquipment]
       };
     }
-
+    case Actions.UPDATE_EQUIPMENT: {
+      console.log(payload.status);
+      return {
+        equipment: state.equipment.map(item => {
+          if (item.id === payload.id)
+            return Object.assign({}, item, { status: payload.status });
+          return item;
+        })
+      };
+    }
     case Actions.REMOVE_EQUIPMENT:
       return {
         equipment: state.equipment.filter(x => x.id !== action.id)

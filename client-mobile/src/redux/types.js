@@ -6,6 +6,7 @@ export const LOGIN_FAIL = "@@auth/LOGIN_FAIL";
 export const LOGOUT_SUCCESS = "@@auth/LOGOUT_SUCCESS";
 
 //EQUIPMENT
+export const UPDATE_EQUIPMENT = "@@equip/UPDATE_EQUIPMENT";
 export const ADD_EQUIPMENT = "@@equip/ADD_EQUIPMENT";
 export const REMOVE_EQUIPMENT = "@@equip/REMOVE_EQUIPMENT";
 export const EQUIPMENTS_LIST_SUCCESS = "@@equip/EQUIPMENTS_LIST_SUCCESS";

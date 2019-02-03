@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   Image
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+
 import colors from "../config/colors";
+import fontSize from "../config/fontSize";
 
 class SearchBar extends Component {
   constructor() {
     super();
-
     this.state = {
       keyword: ""
     };
@@ -19,67 +21,76 @@ class SearchBar extends Component {
 
   render() {
     const { keyword } = this.state;
-    const { anonymous } = this.props;
+    const {
+      onPress,
+      renderRightButton,
+      renderLeftButton,
+      clearButtonMode,
+      onSubmitEditing,
+      handleOnChangeText
+    } = this.props;
 
     return (
-      <View style={[styles.searchWrapper, this.props.style]}>
-        <TouchableOpacity style={styles.buttonWrapper}>
-          <Image
-            source={{ uri: "https://i.imgur.com/MMJSDpJ.png" }}
-            style={styles.image}
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={text => this.setState({ keyword: text })}
-            placeholder="Search"
-            placeholderTextColor={"#FFFFFF4D"}
-            autoCorrect={false}
-            returnKeyType="search"
-            onSubmitEditing={() =>
-              anonymous
-                ? navigationService.navigate("SearchResultScreenWithSignIn", {
-                    keyword
-                  })
-                : navigationService.navigate("SearchResultScreen", { keyword })
-            }
-          />
-        </TouchableOpacity>
+      <View style={[styles.container, this.props.style]}>
+        <View style={styles.textInputContainer}>
+          {renderLeftButton ? renderLeftButton() : null}
+          <View
+            style={[
+              styles.buttonWrapper,
+              renderLeftButton ? { marginLeft: 5 } : null,
+              renderRightButton ? { marginRight: 5 } : null
+            ]}
+          >
+            <Ionicons name="ios-search" size={20} />
+            <TextInput
+              style={styles.input}
+              onChangeText={text => {
+                this.setState({ keyword: text });
+                handleOnChangeText(text);
+              }}
+              placeholder="Search"
+              placeholderTextColor={colors.secondaryColorOpacity}
+              autoCorrect={false}
+              returnKeyType="search"
+              clearButtonMode={
+                clearButtonMode ? clearButtonMode : "while-editing"
+              }
+              onSubmitEditing={onSubmitEditing}
+            />
+          </View>
+          {renderRightButton ? renderRightButton() : null}
+        </View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  icon: {
-    paddingTop: 3
-  },
-  searchWrapper: {
-    flexDirection: "row",
-    backgroundColor: "#00000023",
-    borderRadius: 8,
+  container: {
     flex: 1,
+    marginHorizontal: 15
+  },
+  textInputContainer: {
     height: 32,
-    marginHorizontal: 15,
-    paddingHorizontal: 5,
+    flexDirection: "row",
     alignItems: "center"
   },
   buttonWrapper: {
+    flex: 1,
+    backgroundColor: "#00000023",
+    borderRadius: 8,
+    paddingHorizontal: 5,
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    marginRight: 5
   },
   input: {
     flex: 1,
     height: 32,
+    paddingLeft: 5,
     backgroundColor: "transparent",
-    color: colors.white,
-    fontSize: 15,
-    lineHeight: 32
-  },
-  image: {
-    width: 24,
-    height: 16,
-    marginRight: 10,
-    marginLeft: 5
+    color: colors.secondaryColor,
+    fontSize: fontSize.bodyText
   }
 });
 

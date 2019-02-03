@@ -30,7 +30,9 @@ import { Button } from "../../components/AnimatedHeader";
 @connect(
   state => {
     console.log(state.equipment.detail);
-    return {};
+    return {
+      equipment: state.equipment.equipment
+    };
   },
   dispatch => ({
     fetchGetEquipmentDetail: id => {
@@ -66,10 +68,16 @@ class EquipmentDetail extends Component {
     }));
   };
 
-  confirmDate = ({ startDate, endDate, startMoment, endMoment }) => {
+  confirmDate = ({ startDate, endDate }) => {
     this.setState({
       startDate,
       endDate
+    });
+    const { id } = this.props.navigation.state.params;
+    const equipment = this.props.equipment.find(item => item.id === id);
+    this.props.navigation.navigate("Transaction", {
+      equipment: equipment,
+      id: id
     });
   };
 
@@ -110,18 +118,32 @@ class EquipmentDetail extends Component {
 
   renderScrollItem = () => {
     const { images, author, availableFrom, availableTo } = itemDetail;
+    // const {
+    //   name,
+    //   constructor,
+    //   location,
+    //   available,
+    //   availableTimeRanges,
+    //   status,
+    //   dailyPrice,
+    //   deliveryPrice,
+    //   description
+    // } = detail.data;
+    const { id } = this.props.navigation.state.params;
+    console.log(id);
+    const dataFlow = this.props.equipment.find(item => item.id === id);
+    console.log(dataFlow);
     const {
       name,
       constructor,
-      location,
+      address,
       available,
       availableTimeRanges,
       status,
       dailyPrice,
       deliveryPrice,
       description
-    } = detail.data;
-    console.log(images);
+    } = dataFlow;
     return (
       <View>
         <View style={styles.textWrapper}>
@@ -178,9 +200,7 @@ class EquipmentDetail extends Component {
           }}
         />
         <Title title={"Location"} />
-        <Text style={[styles.text, { paddingVertical: 5 }]}>
-          {location.query}
-        </Text>
+        <Text style={[styles.text, { paddingVertical: 5 }]}>{address}</Text>
         <MapView
           style={styles.mapWrapper}
           initialRegion={{
@@ -270,10 +290,10 @@ class EquipmentDetail extends Component {
                 onSelectDate={this.selectDate}
               /> */}
               <TouchableOpacity
-                style={styles.rowWrapper}
+                style={styles.checkAvailability}
                 onPress={this.openCalendar}
               >
-                <Text>CHECK AVAILABILIT</Text>
+                <Text style={{ fontWeight: "bold" }}>CHECK AVAILABILITY</Text>
               </TouchableOpacity>
               <Calendar
                 i18n="en"
@@ -333,6 +353,15 @@ const styles = StyleSheet.create({
     color: colors.secondaryColor,
     fontSize: fontSize.secondaryText,
     paddingLeft: 15
+  },
+  checkAvailability: {
+    marginRight: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 180,
+    height: 35,
+    borderRadius: 5,
+    backgroundColor: colors.primaryColor
   },
   image: {
     width: 120,
