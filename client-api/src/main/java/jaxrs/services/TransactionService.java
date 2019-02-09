@@ -7,12 +7,11 @@ import dtos.MessageResponse;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
-import utils.CommonUtils;
-import utils.DBUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("transactions")
 @Produces(MediaType.APPLICATION_JSON)
@@ -108,7 +107,9 @@ public class TransactionService {
 
 	@PUT
 	@Path("{id:\\d+}")
-	public Response approveTransaction(@PathParam("id") long id ,HiringTransactionEntity entity) {
+	public Response approveTransaction(@PathParam("id") long id , HiringTransactionEntity entity) {
+
+		// TODO: 2/9/19 if approved, auto deny all intersected requests
 
 		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByID(id);
 		if (foundTransaction == null) {
@@ -126,6 +127,26 @@ public class TransactionService {
 		hiringTransactionDAO.merge(foundTransaction);
 		return Response.status(Response.Status.OK).entity(hiringTransactionDAO.findByID(id)).build();
 	}
+
+	@GET
+	@Path("supplier/{id}")
+	public Response getReceivedTransactionAsSupplier(@PathParam("id") long supplierId) {
+
+
+		//validate supplierId
+		ContractorEntity foundContractor = contractorDAO.findByID(supplierId);
+		if (foundContractor == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("supplier id not found!")).build();
+		}
+
+		List<HiringTransactionEntity> hiringTransactionsBySupplierId = hiringTransactionDAO.getHiringTransactionsBySupplierId(supplierId);
+
+		return Response.ok(hiringTransactionsBySupplierId).build();
+
+	}
+
+
+
 
 
 

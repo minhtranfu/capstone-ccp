@@ -212,4 +212,6 @@ public class EquipmentService {
 		return Response.ok(equipmentDAO.findByID(id)).build();
 
 	}
+
+
 }

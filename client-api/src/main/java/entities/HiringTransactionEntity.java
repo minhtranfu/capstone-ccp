@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "hiring_transaction", schema = "capstone_ccp", catalog = "")
 @Where(clause = "is_deleted=0")
+@NamedQuery(name = "HiringTransactionEntity.getTransactionBySupplierId",query = "select e from HiringTransactionEntity  e where e.equipment.contractor.id = :supplierId")
 public class HiringTransactionEntity {
 	private long id;
 	private Status status;
