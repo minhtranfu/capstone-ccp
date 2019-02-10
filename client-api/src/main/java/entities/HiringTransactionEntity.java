@@ -11,7 +11,11 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "hiring_transaction", schema = "capstone_ccp", catalog = "")
 @Where(clause = "is_deleted=0")
-@NamedQuery(name = "HiringTransactionEntity.getTransactionBySupplierId",query = "select e from HiringTransactionEntity  e where e.equipment.contractor.id = :supplierId")
+@NamedQueries({
+		@NamedQuery(name = "HiringTransactionEntity.getTransactionBySupplierId", query = "select e from HiringTransactionEntity  e where e.equipment.contractor.id = :supplierId")
+		, @NamedQuery(name = "HiringTransactionEntity.getTransactionsByRequesterId", query = "select e from HiringTransactionEntity  e where e.requester.id = :requesterId")
+}
+)
 public class HiringTransactionEntity {
 	private long id;
 	private Status status;

@@ -13,4 +13,11 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 				.setParameter("supplierId", supplierId)
 				.getResultList();
 	}
+
+	public List<HiringTransactionEntity> getHiringTransactionsByRequesterId(long requesterId) {
+		EntityManager entityManager = DBUtils.getEntityManager();
+		return entityManager.createNamedQuery("HiringTransactionEntity.getTransactionsByRequesterId")
+				.setParameter("requesterId", requesterId)
+				.getResultList();
+	}
 }

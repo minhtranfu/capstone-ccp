@@ -129,7 +129,7 @@ public class TransactionService {
 	}
 
 	@GET
-	@Path("supplier/{id}")
+	@Path("supplier/{id:\\d+}")
 	public Response getReceivedTransactionAsSupplier(@PathParam("id") long supplierId) {
 
 
@@ -145,6 +145,19 @@ public class TransactionService {
 
 	}
 
+
+	@GET
+	@Path("requester/{id:\\d+}")
+	public Response getSentTransactionsAsRequester(@PathParam("id") long requesterId) {
+		ContractorEntity foundContractor = contractorDAO.findByID(requesterId);
+		if (foundContractor == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("requester id not found!")).build();
+		}
+
+		List<HiringTransactionEntity> transactionsByRequesterId = hiringTransactionDAO.getHiringTransactionsByRequesterId(requesterId);
+
+		return Response.ok(transactionsByRequesterId).build();
+	}
 
 
 
