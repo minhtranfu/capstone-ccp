@@ -22,6 +22,7 @@
         <class>entities.NotificationEntity</class>
         <class>entities.SubscriptionEntity</class>
         <class>entities.CartRequestEntity</class>
+        <class>entities.TransactionDateChangeRequestEntity</class>
         <properties>
 
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />

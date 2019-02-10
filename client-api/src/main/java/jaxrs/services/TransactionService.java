@@ -3,10 +3,12 @@ package jaxrs.services;
 import daos.ContractorDAO;
 import daos.EquipmentDAO;
 import daos.HiringTransactionDAO;
+import daos.TransactionDateChangeRequestDAO;
 import dtos.MessageResponse;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
+import entities.TransactionDateChangeRequestEntity;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -20,6 +22,7 @@ public class TransactionService {
 	private static final HiringTransactionDAO hiringTransactionDAO = new HiringTransactionDAO();
 	private static final EquipmentDAO equipmentDAO = new EquipmentDAO();
 	private static final ContractorDAO contractorDAO = new ContractorDAO();
+	private static final TransactionDateChangeRequestDAO transactionDateChangeRequestDAO = new TransactionDateChangeRequestDAO();
 
 
 	@POST
@@ -159,8 +162,63 @@ public class TransactionService {
 		return Response.ok(transactionsByRequesterId).build();
 	}
 
+	@POST
+	@Path("{id:\\d+}/adjustDateRequests")
+	public Response requestChangingHiringDate(@PathParam("id") long transactionId, TransactionDateChangeRequestEntity transactionDateChangeRequestEntity) {
+
+		//remove id
+		transactionDateChangeRequestEntity.setId(0);
+
+		// TODO: 2/10/19 validate authority
+		
+		
+		// validate transaction id
+
+		HiringTransactionEntity transactionEntity = hiringTransactionDAO.findByID(transactionId);
+		if (transactionEntity == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("transaction id not found!")).build();
+		}
+
+		// TODO: 2/10/19 validate if there's no other pending request
+
+		boolean isValidated = transactionDateChangeRequestDAO.validateNewRequest(transactionId);
+
+		if (!isValidated) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("this transaction already has another pending request!")).build();
+		}
 
 
+		//leave validateing timerange when contractor approve
+
+		//  1/30/19 set status to pending
+		transactionDateChangeRequestEntity.setStatus(TransactionDateChangeRequestEntity.Status.PENDING);
+
+		//set transaction id
+		transactionDateChangeRequestEntity.setHiringTransactionEntity(transactionEntity);
+		// TODO: 2/10/19 post new request
+		transactionDateChangeRequestDAO.persist(transactionDateChangeRequestEntity);
+
+		// TODO: 2/10/19 notify to supplier
+		return Response.ok(transactionDateChangeRequestDAO.findByID(transactionDateChangeRequestEntity.getId())).build();
+
+	}
+
+	@GET
+	@Path("{id:\\d+}/adjustDateRequests")
+	public Response getRequestedForChangingHiringDate(@PathParam("id") long transactionId) {
+		// TODO: 2/10/19 validate authority
+
+
+		// validate transaction id
+
+		HiringTransactionEntity transactionEntity = hiringTransactionDAO.findByID(transactionId);
+		if (transactionEntity == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("transaction id not found!")).build();
+		}
+
+		List<TransactionDateChangeRequestEntity> results = transactionDateChangeRequestDAO.getRequestsByTransactionId(transactionId);
+		return Response.ok(results).build();
+	}
 
 
 

@@ -53,7 +53,7 @@ public class HiringTransactionEntity {
 
 	@Basic
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = true, length = 45)
+	@Column(name = "status", nullable = false, length = 45)
 	public Status getStatus() {
 		return status;
 	}

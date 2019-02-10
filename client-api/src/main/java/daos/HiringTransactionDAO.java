@@ -20,4 +20,6 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 				.setParameter("requesterId", requesterId)
 				.getResultList();
 	}
+
+
 }
