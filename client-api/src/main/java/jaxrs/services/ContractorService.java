@@ -9,16 +9,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-@Path("constructors")
-public class ConstructorService {
+@Path("contractors")
+public class ContractorService {
 
 	private static final ContractorDAO CONTRACTOR_DAO = new ContractorDAO();
 
 	@GET
 	@Path("{id}")
-	public Response getConstructorById(@PathParam("id") long id) {
-		ContractorEntity constructor = CONTRACTOR_DAO.findByID(id);
-		return CommonUtils.responseFilterOk(constructor);
+	public Response getContractorById(@PathParam("id") long id) {
+		ContractorEntity contractor = CONTRACTOR_DAO.findByID(id);
+		return CommonUtils.responseFilterOk(contractor);
 	}
 
 

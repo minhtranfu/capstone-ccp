@@ -67,7 +67,9 @@ public class TransactionService {
 
 		// todo  1/30/19 validate equipment is available at that date
 
-		if (!equipmentDAO.validateEquipmentAvailable(hiringTransactionEntity.getBeginDate()
+		if (!equipmentDAO.validateEquipmentAvailable(
+				foundEquipment.getId(),
+				hiringTransactionEntity.getBeginDate()
 				, hiringTransactionEntity.getEndDate())) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new
 					MessageResponse("equipment not available on that date!")).build();
@@ -111,7 +113,7 @@ public class TransactionService {
 
 	@PUT
 	@Path("{id:\\d+}")
-	public Response approveTransaction(@PathParam("id") long id , HiringTransactionEntity entity) {
+	public Response approveTransaction(@PathParam("id") long id, HiringTransactionEntity entity) {
 
 		// TODO: 2/9/19 if approved, auto deny all intersected requests
 
@@ -124,7 +126,7 @@ public class TransactionService {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Status incorrect!")).build();
 		}
 		if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Transaction is already "+foundTransaction.getStatus())).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Transaction is already " + foundTransaction.getStatus())).build();
 
 		}
 		foundTransaction.setStatus(entity.getStatus());
@@ -165,14 +167,15 @@ public class TransactionService {
 
 	@POST
 	@Path("{id:\\d+}/adjustDateRequests")
-	public Response requestChangingHiringDate(@PathParam("id") long transactionId, TransactionDateChangeRequestEntity transactionDateChangeRequestEntity) {
+	public Response requestChangingHiringDate(@PathParam("id") long transactionId,
+											  TransactionDateChangeRequestEntity transactionDateChangeRequestEntity) {
 
 		//remove id
 		transactionDateChangeRequestEntity.setId(0);
 
 		// TODO: 2/10/19 validate authority
-		
-		
+
+
 		// validate transaction id
 
 		HiringTransactionEntity transactionEntity = hiringTransactionDAO.findByID(transactionId);
@@ -180,7 +183,12 @@ public class TransactionService {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("transaction id not found!")).build();
 		}
 
-		// TODO: 2/10/19 validate if there's no other pending request
+		// validate transaction status must be ACCEPTED
+		if (transactionEntity.getStatus() != HiringTransactionEntity.Status.ACCEPTED) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("transaction status must be ACCEPTED to adjust date!")).build();
+
+		}
+		// validate if there's no other pending request
 
 		boolean isValidated = transactionDateChangeRequestDAO.validateNewRequest(transactionId);
 
@@ -196,10 +204,11 @@ public class TransactionService {
 
 		//set transaction id
 		transactionDateChangeRequestEntity.setHiringTransactionEntity(transactionEntity);
-		// TODO: 2/10/19 post new request
 		transactionDateChangeRequestDAO.persist(transactionDateChangeRequestEntity);
 
 		// TODO: 2/10/19 notify to supplier
+
+
 		return Response.ok(transactionDateChangeRequestDAO.findByID(transactionDateChangeRequestEntity.getId())).build();
 
 	}
@@ -222,7 +231,7 @@ public class TransactionService {
 	}
 
 	@DELETE
-	@Path("{id:\\d+}/adjustDateRequests/")
+	@Path("{id:\\d+}/adjustDateRequests")
 	public Response cancelRequestForChangingHiringDate(@PathParam("id") long transactionId) {
 		// TODO: 2/10/19 validate authority
 
@@ -234,10 +243,22 @@ public class TransactionService {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("transaction id not found!")).build();
 		}
 
+//		TransactionDateChangeRequestEntity foundAdjustDateRequest = transactionDateChangeRequestDAO.findByID(requestId);
+//		if (foundAdjustDateRequest == null) {
+//			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Request Id not found!")).build();
+//		}
+//
+//		if (foundAdjustDateRequest.getStatus() != TransactionDateChangeRequestEntity.Status.PENDING) {
+//			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Request status is not PENDING!")).build();
+//		}
+//
+//		foundAdjustDateRequest.setIsDeleted(true);
+//		transactionDateChangeRequestDAO.merge(foundAdjustDateRequest);
+
 		//validate if existing pending request
 		List<TransactionDateChangeRequestEntity> pendingRequestByTransactionId = transactionDateChangeRequestDAO.getPendingRequestByTransactionId(transactionId);
 		if (pendingRequestByTransactionId.size() < 1) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("No previous pending request to delete!")).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("No previous PENDING request to delete!")).build();
 		}
 
 		TransactionDateChangeRequestEntity transactionDateChangeRequestEntity = pendingRequestByTransactionId.get(0);
@@ -249,6 +270,41 @@ public class TransactionService {
 
 	}
 
+	@PUT
+	@Path("{id:\\d+}/adjustDateRequests")
+	public Response approveRequestForChangingHiringDate(@PathParam("id") long transactionId
+			, TransactionDateChangeRequestEntity entity) {
+		HiringTransactionEntity foundHiringTransaction = hiringTransactionDAO.findByID(transactionId);
+		if (foundHiringTransaction == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("transaction id not found!")).build();
+		}
+
+		//validate if existing pending request
+		List<TransactionDateChangeRequestEntity> pendingRequestByTransactionId = transactionDateChangeRequestDAO.getPendingRequestByTransactionId(transactionId);
+		if (pendingRequestByTransactionId.size() < 1) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("No previous PENDING request!")).build();
+		}
+
+		if (entity.getStatus() == TransactionDateChangeRequestEntity.Status.PENDING) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Status body must not be PENDING")).build();
+
+		}
+
+
+		TransactionDateChangeRequestEntity foundAdjustDateRequest = pendingRequestByTransactionId.get(0);
+		//todo validate timerange
+
+		if (!equipmentDAO.validateEquipmentAvailable(foundHiringTransaction.getEquipment().getId()
+				, foundAdjustDateRequest.getRequestedBeginDate(),
+				foundAdjustDateRequest.getRequestedEndDate())) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Equipment is not available on requested day!")).build();
+
+		}
+
+		foundAdjustDateRequest.setStatus(entity.getStatus());
+		transactionDateChangeRequestDAO.merge(foundAdjustDateRequest);
+		return Response.ok(foundAdjustDateRequest).build();
+	}
 
 
 }
