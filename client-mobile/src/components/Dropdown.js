@@ -19,13 +19,13 @@ const width = Dimensions.get("window").width;
 class Dropdown extends Component {
   static propTypes = {
     defaultText: PropTypes.string,
-    options: PropTypes.arrayOf([
+    options: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number,
         name: PropTypes.string,
         value: PropTypes.string
       })
-    ]).isRequired
+    ).isRequired
   };
 
   constructor(props) {
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    borderBottomWidth: 0.5,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: colors.grayWhite,
     paddingBottom: 10
   },
@@ -144,13 +144,13 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: fontSize.secondaryText,
-    color: colors.text,
-    fontWeight: "500",
+    color: colors.text68,
+    fontWeight: "400",
     marginTop: 5
   },
   placeholder: {
     fontSize: fontSize.bodyText,
-    color: colors.text68,
+    color: colors.text,
     fontWeight: "400",
     marginBottom: 5,
     marginTop: 15
@@ -170,7 +170,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderTopWidth: StyleSheet.hairlineWidth,
     borderColor: colors.secondaryColorOpacity,
     paddingVertical: 15
   }

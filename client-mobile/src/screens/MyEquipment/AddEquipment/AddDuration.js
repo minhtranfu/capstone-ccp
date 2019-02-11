@@ -176,7 +176,9 @@ class AddDuration extends Component {
             <Text>Go Back</Text>
           </TouchableOpacity>
         </Header>
-        <Text> Select your available time range </Text>
+        <Text style={{ fontSize: fontSize.h4, fontWeight: "500", color: colors.text }}>
+          Time range
+        </Text>
         <ScrollView>
           <View style={{ flex: 1, padding: 4 }}>{newArray}</View>
         </ScrollView>

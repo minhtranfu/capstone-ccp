@@ -82,10 +82,7 @@ class AddImage extends Component {
     const { data } = this.props.navigation.state.params;
     console.log(data);
     return (
-      <SafeAreaView
-        style={styles.container}
-        forceInset={{ bottom: "never", top: "always" }}
-      >
+      <SafeAreaView style={styles.container}>
         <Header
           renderLeftButton={() => (
             <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
@@ -93,9 +90,11 @@ class AddImage extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text>Add Image</Text>
+          <Text style={{ fontSize: fontSize.h4, fontWeight: "500", color: colors.text }}>
+            Upload images
+          </Text>
         </Header>
-        <ScrollView>
+        <ScrollView style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 15}}>
           <Button
             buttonStyle={styles.buttonStyle}
             text={"Add Thumbnail Image"}
@@ -131,7 +130,7 @@ class AddImage extends Component {
               this.handleAddNewEquipment();
             }}
           >
-            <Text style={styles.text}>Submit</Text>
+            <Text style={styles.textEnable}>Submit</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -145,21 +144,18 @@ const styles = StyleSheet.create({
   },
   landscapeImg: {
     marginHorizontal: 15,
-    height: 300
+    height: 200
   },
   bottomWrapper: {
     backgroundColor: "transparent",
-    position: "absolute",
     zIndex: 1,
-    bottom: 15,
-    right: 15,
     justifyContent: "center",
     alignItems: "flex-end"
   },
   buttonWrapper: {
     marginRight: 15,
     width: 80,
-    height: 40,
+    paddingVertical: 8,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
@@ -167,7 +163,12 @@ const styles = StyleSheet.create({
   },
   buttonEnable: {
     backgroundColor: colors.primaryColor
-  }
+  },
+  textEnable: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: 'white',
+  },
 });
 
 export default AddImage;

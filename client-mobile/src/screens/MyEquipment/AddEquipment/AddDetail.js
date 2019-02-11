@@ -30,7 +30,7 @@ const config = {
 const DROPDOWN_TYPES_OPTIONS = [
   {
     id: 0,
-    name: "Select your type",
+    name: "Select a type",
     value: "all"
   },
   {
@@ -40,7 +40,7 @@ const DROPDOWN_TYPES_OPTIONS = [
   },
   {
     id: 2,
-    name: "Xe UI",
+    name: "Xe Ủi",
     value: "xe ui"
   }
 ];
@@ -48,7 +48,7 @@ const DROPDOWN_TYPES_OPTIONS = [
 const DROPDOWN_CATEGORIES_OPTIONS = [
   {
     id: 0,
-    name: "Select your categories",
+    name: "Select a category",
     value: "all"
   },
   {
@@ -58,7 +58,7 @@ const DROPDOWN_CATEGORIES_OPTIONS = [
   },
   {
     id: 2,
-    name: "May Moc",
+    name: "Máy móc",
     value: "maymoc"
   }
 ];
@@ -121,11 +121,11 @@ class AddDetail extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text style={{ fontSize: fontSize.h4, fontWeight: "500" }}>
+          <Text style={{ fontSize: fontSize.h4, fontWeight: "500", color: colors.text }}>
             Add Detail
           </Text>
         </Header>
-        <ScrollView style={styles.scrollWrapper}>
+        <ScrollView style={styles.scrollWrapper} contentContainerStyle={{paddingTop: 20}}>
           <InputField
             label={"Equipment Name"}
             placeholder={"Input your equipment name"}
@@ -137,7 +137,7 @@ class AddDetail extends Component {
           />
           <InputField
             label={"Daily price"}
-            placeholder={"Input your equipment Daily price"}
+            placeholder={"$"}
             customWrapperStyle={{ marginBottom: 20 }}
             inputType="text"
             onChangeText={value => this.setState({ dailyPrice: value })}
@@ -147,7 +147,7 @@ class AddDetail extends Component {
           />
           <InputField
             label={"Delivery price"}
-            placeholder={"Input your equipment Delivery price"}
+            placeholder={"$"}
             customWrapperStyle={{ marginBottom: 20 }}
             inputType="text"
             onChangeText={value => this.setState({ deliveryPrice: value })}
@@ -155,14 +155,14 @@ class AddDetail extends Component {
             value={deliveryPrice}
           />
           <Dropdown
-            label={"Select your categories"}
-            defaultText={"Select your categories"}
+            label={"Category"}
+            defaultText={DROPDOWN_CATEGORIES_OPTIONS[0].name}
             onSelectValue={value => this.setState({ categories: value })}
             options={DROPDOWN_CATEGORIES_OPTIONS}
           />
           <Dropdown
-            label={"Select your types"}
-            defaultText={"Select your types"}
+            label={"Type"}
+            defaultText={DROPDOWN_TYPES_OPTIONS[0].name}
             onSelectValue={value => this.setState({ type: value })}
             options={DROPDOWN_TYPES_OPTIONS}
           />
@@ -187,8 +187,9 @@ class AddDetail extends Component {
             </Text>
             <Ionicons
               name="ios-arrow-forward"
-              size={24}
-              color={disable ? "white" : colors.secondaryColor}
+              size={23}
+              color={"white"}
+              style={{marginTop: 3}}
             />
           </TouchableOpacity>
         </View>
@@ -217,40 +218,34 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     zIndex: 1,
     justifyContent: "center",
-    alignItems: "flex-end"
-  },
-  title: {
-    fontSize: fontSize.h3,
-    color: colors.secondaryColor,
-    fontWeight: "bold",
-    marginBottom: 20
-  },
-  textEnable: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "bold",
-    color: colors.secondaryColor,
-    paddingRight: 5
-  },
-  textDisable: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "bold",
-    color: colors.white,
-    paddingRight: 5
+    alignItems: "flex-end",
   },
   buttonWrapper: {
     marginRight: 15,
+    paddingVertical: 5,
     width: 80,
-    height: 40,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row"
   },
+  textEnable: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: 'white',
+    marginRight: 8,
+  },
+  textDisable: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: colors.white,
+    marginRight: 8,
+  },
   buttonEnable: {
     backgroundColor: colors.primaryColor
   },
   buttonDisable: {
-    backgroundColor: "gray"
+    backgroundColor: colors.text25,
   }
 });
 

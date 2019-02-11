@@ -7,7 +7,7 @@ import {
   Animated
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 
 import Header from "../../../components/Header";
 import InputField from "../../../components/InputField";
@@ -64,13 +64,15 @@ class AddDurationText extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text>Add Duration</Text>
+          <Text style={{ fontSize: fontSize.h4, fontWeight: "500", color: colors.text }}>
+            Available time range
+          </Text>
         </Header>
-        <ScrollView>
+        <ScrollView contentContainerStyle={{paddingHorizontal: 15}}>
           <InputField
             label={"From"}
-            placeholder={"Input your start date"}
-            customWrapperStyle={{ marginBottom: 20, marginHorizontal: 15 }}
+            placeholder={"dd-mm-yyyy"}
+            customWrapperStyle={{ marginBottom: 20 }}
             inputType="text"
             onChangeText={value => this.setState({ startDate: value })}
             value={startDate}
@@ -78,8 +80,8 @@ class AddDurationText extends Component {
           />
           <InputField
             label={"To"}
-            placeholder={"Input your end date"}
-            customWrapperStyle={{ marginBottom: 20, marginHorizontal: 15 }}
+            placeholder={"dd-mm-yyyy"}
+            customWrapperStyle={{ marginBottom: 20 }}
             inputType="text"
             onChangeText={value => this.setState({ endDate: value })}
             value={endDate}
@@ -97,8 +99,13 @@ class AddDurationText extends Component {
               })
             }
           >
-            <Text style={styles.text}>Next</Text>
-            <Feather name="chevron-right" size={24} />
+            <Text style={styles.textEnable}>Next</Text>
+            <Ionicons
+              name="ios-arrow-forward"
+              size={23}
+              color={"white"}
+              style={{marginTop: 3}}
+            />
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -112,27 +119,30 @@ const styles = StyleSheet.create({
   },
   bottomWrapper: {
     backgroundColor: "transparent",
-    position: "absolute",
     zIndex: 1,
-    bottom: 15,
-    right: 15,
     justifyContent: "center",
     alignItems: "flex-end"
   },
   buttonWrapper: {
     marginRight: 15,
     width: 80,
-    height: 40,
+    paddingVertical: 5,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row"
   },
+  textEnable: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: 'white',
+    marginRight: 8,
+  },
   buttonEnable: {
     backgroundColor: colors.primaryColor
   },
   buttonDisable: {
-    backgroundColor: "gray"
+    backgroundColor: colors.text25,
   }
 });
 

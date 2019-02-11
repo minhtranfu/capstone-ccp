@@ -200,11 +200,13 @@ class MyEquipmentScreen extends Component {
         <Header
           renderRightButton={() => (
             <TouchableOpacity onPress={this._handleAddPress}>
-              <Feather name="plus-circle" size={24} />
+              <Feather name="plus" size={22} />
             </TouchableOpacity>
           )}
         >
-          <Text style={styles.title}>My Equipment</Text>
+          <Text style={{ fontSize: fontSize.h4, fontWeight: "500", color: colors.text }}>
+            My Equipment
+          </Text>
         </Header>
         {myEquipment && myEquipment.data ? (
           <ScrollView
@@ -227,7 +229,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flex: 0,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+    paddingTop: 20,
   },
   equipmentItemContainer: {
     paddingVertical: 8

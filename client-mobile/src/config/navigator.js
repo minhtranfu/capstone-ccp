@@ -6,7 +6,7 @@ import {
   createSwitchNavigator,
   createAppContainer
 } from "react-navigation";
-import DismissableStackNav from "../utils/Navigator";
+import DismissableStackNav from "../Utils/DismissableStackNav";
 import colors from "./colors";
 
 import Discover from "../screens/Discover";
