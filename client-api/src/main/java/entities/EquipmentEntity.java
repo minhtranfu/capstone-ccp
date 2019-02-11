@@ -248,6 +248,7 @@ public class EquipmentEntity {
 	}
 
 
+
 	public enum Status{
 		AVAILABLE,
 		WAITING_FOR_DELIVERY,

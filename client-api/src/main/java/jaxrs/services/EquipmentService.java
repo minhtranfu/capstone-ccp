@@ -8,7 +8,6 @@ import dtos.LocationDTO;
 import dtos.MessageResponse;
 import entities.*;
 import utils.CommonUtils;
-import utils.DBUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -57,9 +56,10 @@ public class EquipmentService {
 	public Response getEquipment(@PathParam("id") long id) {
 		return Response.ok(EquipmentDAO.getInstance().findByID(id)).build();
 	}
+
 	@PUT
 	@Path("{id:\\d+}")
-	public Response updateEquipmentById(@PathParam("id") long id,  EquipmentEntity equipmentEntity) {
+	public Response updateEquipmentById(@PathParam("id") long id, EquipmentEntity equipmentEntity) {
 
 
 		if (equipmentEntity == null) {
@@ -76,11 +76,23 @@ public class EquipmentService {
 
 		//delete all children of the old equipment
 		foundEquipment.deleteAllAvailableTimeRange();
+		// validate time range begin end correct
+		if (!equipmentDAO.validateBeginEndDate(equipmentEntity.getAvailableTimeRanges())) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("beginDate > endDate !!!"));
+			return responseBuilder.build();
+		}
+
+		// validate time range not intersect !!!
+		if (!equipmentDAO.validateNoIntersect(equipmentEntity.getAvailableTimeRanges())) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("TimeRanges must not be intersect !!!"));
+			return responseBuilder.build();
+		}
 		equipmentDAO.merge(foundEquipment);
+
+
 		//todo delete image
 		//todo delete location
 		//todo delete construction
-
 
 
 		//add all children from new equipment
@@ -104,7 +116,7 @@ public class EquipmentService {
 		//check for constructor id
 		if (equipmentEntity.getContractor() == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor is null"));
-			return CommonUtils.addFilterHeader(responseBuilder).build();
+			return responseBuilder.build();
 
 		}
 		long constructorId = equipmentEntity.getContractor().getId();
@@ -112,25 +124,36 @@ public class EquipmentService {
 		ContractorEntity foundConstructor = CONTRACTOR_DAO.findByID(constructorId);
 		if (foundConstructor == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor not found"));
-			return CommonUtils.addFilterHeader(responseBuilder).build();
+			return responseBuilder.build();
 		}
 
 
 		//check for equipment type
 
 		if (equipmentEntity.getEquipmentType() == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipment_type is null"));
-			return CommonUtils.addFilterHeader(responseBuilder).build();
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType is null"));
+			return responseBuilder.build();
 
 		}
 		long equipmentTypeId = equipmentEntity.getEquipmentType().getId();
 
 		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByID(equipmentTypeId);
 		if (foundEquipmentType == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipment_type not found"));
-			return CommonUtils.addFilterHeader(responseBuilder).build();
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType not found"));
+			return responseBuilder.build();
 		}
 
+		//validate time range begin end correct
+		if (!equipmentDAO.validateBeginEndDate(equipmentEntity.getAvailableTimeRanges())) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("TimeRange: beginDate must <= endDate !!!"));
+			return responseBuilder.build();
+		}
+
+		//validate time range not intersect !!!
+		if (!equipmentDAO.validateNoIntersect(equipmentEntity.getAvailableTimeRanges())) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("TimeRanges must not be intersect !!!"));
+			return responseBuilder.build();
+		}
 
 		equipmentEntity.setContractor(foundConstructor);
 		equipmentEntity.setEquipmentType(foundEquipmentType);

@@ -31,10 +31,22 @@ public class TransactionService {
 		hiringTransactionEntity.setId(0);
 		//  check equipment id
 
+		if (hiringTransactionEntity.getBeginDate() == null || hiringTransactionEntity.getEndDate() == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Missing data!")).build();
+
+		}
+		// TODO: 1/30/19 check not null for other data
+
+
 		EquipmentEntity foundEquipment = equipmentDAO.findByID(hiringTransactionEntity.getEquipment().getId());
 		if (foundEquipment == null) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Equipment id not found!")).build();
 		}
+
+
+
+
+
 
 
 		// check requester id
@@ -43,8 +55,11 @@ public class TransactionService {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Requester id not found!")).build();
 		}
 
-		// TODO: 1/30/19 check not null for other data
 
+		//validate begindate enddate
+		if (hiringTransactionEntity.getBeginDate().after(hiringTransactionEntity.getEndDate())) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("beginDate>endDate")).build();
+		}
 
 		//  1/30/19 check requester activation
 		if (!foundRequester.isActivated()) {
