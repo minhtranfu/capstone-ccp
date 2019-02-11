@@ -1,9 +1,13 @@
 package jaxrs.services;
 
 import daos.EquipmentTypeDAO;
+import dtos.MessageResponse;
+import entities.EquipmentTypeEntity;
+import entities.GeneralEquipmentTypeEntity;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -17,5 +21,16 @@ public class EquipmentTypeService {
 	public Response getAllEquipmentTypes() {
 
 		return Response.ok(equipmentTypeDAO.getAllEquipmentTypes()).build();
+	}
+
+	@GET
+	@Path("{id:\\d+}")
+	public Response getEquipmentTypeById(@PathParam("id") long id) {
+		EquipmentTypeEntity foundEquipmentTypeEntity = equipmentTypeDAO.findByID(id);
+		if (foundEquipmentTypeEntity == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Id not found!!")).build();
+		}
+
+		return Response.ok(foundEquipmentTypeEntity).build();
 	}
 }
