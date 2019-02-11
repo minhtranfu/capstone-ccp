@@ -11,7 +11,7 @@ class EquipmentItem extends Component {
     id: PropTypes.number,
     imageURL: PropTypes.string,
     construction: PropTypes.string,
-    price: PropTypes.string
+    price: PropTypes.number
   };
 
   constructor(props) {

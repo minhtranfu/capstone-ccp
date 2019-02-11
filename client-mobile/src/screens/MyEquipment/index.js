@@ -96,7 +96,7 @@ const DROPDOWN_OPTIONS = [
 
 @connect(
   state => {
-    console.log("myEquipment", state.equipment.listSupplierEquipment);
+    console.log(state.equipment);
     return {
       equipment: state.equipment.list,
       myEquipment: state.equipment.listSupplierEquipment
@@ -115,7 +115,8 @@ class MyEquipmentScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: ""
+      status: "",
+      loading: true
     };
   }
 
@@ -159,21 +160,21 @@ class MyEquipmentScreen extends Component {
                       title={status.title}
                       code={status.code}
                     />
-                    {equipmentList.map((equipment, index) => (
+                    {equipmentList.map((item, index) => (
                       <EquipmentItem
                         onPress={() =>
                           this.props.navigation.navigate("MyEquipmentDetail", {
-                            id: equipment.id
+                            id: item.id
                           })
                         }
                         key={`eq_${index}`}
-                        id={equipment.id}
-                        name={equipment.name}
+                        id={item.id}
+                        name={item.equipment.name}
                         imageURL={
                           "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
                         }
-                        status={equipment.status}
-                        price={equipment.dailyPrice}
+                        status={item.status}
+                        price={item.dailyPrice}
                       />
                     ))}
                   </View>
@@ -190,30 +191,28 @@ class MyEquipmentScreen extends Component {
 
   render() {
     const { myEquipment } = this.props;
+    const { loading } = this.state;
     return (
       <SafeAreaView
         style={styles.container}
         forceInset={{ bottom: "never", top: "always" }}
       >
-        {myEquipment ? (
-          <View>
-            <Header
-              renderRightButton={() => (
-                <TouchableOpacity onPress={this._handleAddPress}>
-                  <Feather name="plus-circle" size={24} />
-                </TouchableOpacity>
-              )}
-            >
-              <Text style={styles.title}>My Equipment</Text>
-            </Header>
-
-            <ScrollView
-              style={{ flex: 1 }}
-              contentContainerStyle={styles.scrollContent}
-            >
-              {this._renderContent()}
-            </ScrollView>
-          </View>
+        <Header
+          renderRightButton={() => (
+            <TouchableOpacity onPress={this._handleAddPress}>
+              <Feather name="plus-circle" size={24} />
+            </TouchableOpacity>
+          )}
+        >
+          <Text style={styles.title}>My Equipment</Text>
+        </Header>
+        {myEquipment && myEquipment.data ? (
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {this._renderContent()}
+          </ScrollView>
         ) : (
           <Loading />
         )}
