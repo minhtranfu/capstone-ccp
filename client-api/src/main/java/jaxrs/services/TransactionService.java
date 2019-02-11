@@ -9,6 +9,7 @@ import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 import entities.TransactionDateChangeRequestEntity;
+import utils.DBUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -205,7 +206,7 @@ public class TransactionService {
 
 	@GET
 	@Path("{id:\\d+}/adjustDateRequests")
-	public Response getRequestedForChangingHiringDate(@PathParam("id") long transactionId) {
+	public Response getRequestForChangingHiringDate(@PathParam("id") long transactionId) {
 		// TODO: 2/10/19 validate authority
 
 
@@ -218,6 +219,34 @@ public class TransactionService {
 
 		List<TransactionDateChangeRequestEntity> results = transactionDateChangeRequestDAO.getRequestsByTransactionId(transactionId);
 		return Response.ok(results).build();
+	}
+
+	@DELETE
+	@Path("{id:\\d+}/adjustDateRequests/")
+	public Response cancelRequestForChangingHiringDate(@PathParam("id") long transactionId) {
+		// TODO: 2/10/19 validate authority
+
+
+		// validate transaction id
+
+		HiringTransactionEntity foundHiringTransaction = hiringTransactionDAO.findByID(transactionId);
+		if (foundHiringTransaction == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("transaction id not found!")).build();
+		}
+
+		//validate if existing pending request
+		List<TransactionDateChangeRequestEntity> pendingRequestByTransactionId = transactionDateChangeRequestDAO.getPendingRequestByTransactionId(transactionId);
+		if (pendingRequestByTransactionId.size() < 1) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("No previous pending request to delete!")).build();
+		}
+
+		TransactionDateChangeRequestEntity transactionDateChangeRequestEntity = pendingRequestByTransactionId.get(0);
+		transactionDateChangeRequestEntity.setIsDeleted(true);
+		transactionDateChangeRequestDAO.merge(transactionDateChangeRequestEntity);
+
+		return Response.ok(new MessageResponse("Pending request deleted successfully!")).build();
+
+
 	}
 
 

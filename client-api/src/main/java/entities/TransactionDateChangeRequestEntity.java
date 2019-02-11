@@ -10,8 +10,9 @@ import java.sql.Timestamp;
 @Table(name = "transaction_date_change_request", schema = "capstone_ccp", catalog = "")
 @Where(clause = "is_deleted = 0")
 @NamedQueries({
-		@NamedQuery(name = "TransactionDateChangeRequestEntity.countExistingRequest", query = "select count(e) from TransactionDateChangeRequestEntity e where e.hiringTransactionEntity.id=:transactionId and e.status='PENDING'")
+		@NamedQuery(name = "TransactionDateChangeRequestEntity.countExistingPendingRequest", query = "select count(e) from TransactionDateChangeRequestEntity e where e.hiringTransactionEntity.id=:transactionId and e.status='PENDING'")
 		, @NamedQuery(name = "TransactionDateChangeRequestEntity.getRequestsByTransactionId", query = "select e from TransactionDateChangeRequestEntity e where e.hiringTransactionEntity.id=:transactionId")
+		,@NamedQuery(name = "TransactionDateChangeRequestEntity.getPendingRequestByTransactionId",query = "select e from TransactionDateChangeRequestEntity e where e.hiringTransactionEntity.id=:transactionId and e.status='PENDING'")
 })
 public class TransactionDateChangeRequestEntity {
 	private long id;
@@ -20,7 +21,7 @@ public class TransactionDateChangeRequestEntity {
 	private Timestamp createdTime;
 	private Timestamp updatedTime;
 	private Status status;
-	private Byte isDeleted;
+	private boolean isDeleted;
 	private HiringTransactionEntity hiringTransactionEntity;
 
 	@Id
@@ -87,11 +88,11 @@ public class TransactionDateChangeRequestEntity {
 
 	@Basic
 	@Column(name = "is_deleted", insertable = false)
-	public Byte getIsDeleted() {
+	public boolean getIsDeleted() {
 		return isDeleted;
 	}
 
-	public void setIsDeleted(Byte isDeleted) {
+	public void setIsDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
 

@@ -9,9 +9,9 @@ import java.util.List;
 public class TransactionDateChangeRequestDAO extends BaseDAO<TransactionDateChangeRequestEntity, Long> {
 	public boolean validateNewRequest(long transactionId) {
 		EntityManager entityManager = DBUtils.getEntityManager();
-		Long count = (Long) entityManager.createNamedQuery("TransactionDateChangeRequestEntity.countExistingRequest")
+		int count =  entityManager.createNamedQuery("TransactionDateChangeRequestEntity.getPendingRequestByTransactionId")
 				.setParameter("transactionId", transactionId)
-				.getSingleResult();
+				.getResultList().size();
 		return count == 0;
 	}
 
@@ -23,7 +23,14 @@ public class TransactionDateChangeRequestDAO extends BaseDAO<TransactionDateChan
 				.setParameter("transactionId", transactionId)
 				.getResultList();
 
+	}
+	public List<TransactionDateChangeRequestEntity> getPendingRequestByTransactionId(long transactionId) {
 
+
+		EntityManager entityManager = DBUtils.getEntityManager();
+		return entityManager.createNamedQuery("TransactionDateChangeRequestEntity.getPendingRequestByTransactionId")
+				.setParameter("transactionId", transactionId)
+				.getResultList();
 
 	}
 }
