@@ -1,12 +1,23 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView
+} from "react-native";
 import { ImagePicker, Permissions } from "expo";
 import { SafeAreaView, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 import { addNewEquipment } from "../../../redux/actions/equipment";
+import { Feather } from "@expo/vector-icons";
 
 import Header from "../../../components/Header";
 import Button from "../../../components/Button";
+
+import colors from "../../../config/colors";
+import fontSize from "../../../config/fontSize";
 
 @connect(
   state => ({
@@ -75,45 +86,54 @@ class AddImage extends Component {
         style={styles.container}
         forceInset={{ bottom: "never", top: "always" }}
       >
-        <Header>
-          <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-            <Text>Go Back</Text>
-          </TouchableOpacity>
-        </Header>
-        <Image
-          source={{ uri: this.state.thumbnailImage || "" }}
-          style={styles.landscapeImg}
-          resizeMode={"cover"}
-        />
-        <Button
-          buttonStyle={styles.buttonStyle}
-          text={"Add Thumbnail Image"}
-          onPress={this.handleAddThumbnailImage}
-        />
-        <Text>Add another image (Optional)</Text>
-        <Button
-          buttonStyle={styles.buttonStyle}
-          text={"Add Description Image"}
-          onPress={this.handleAddDescriptionImage}
-        />
-        {this.state.descriptionImages.length > 0
-          ? this.state.descriptionImages.map((item, index) => (
-              <Image
-                key={index}
-                source={{ uri: item }}
-                style={styles.landscapeImg}
-                resizeMode={"cover"}
-              />
-            ))
-          : null}
-        <TouchableOpacity
-          onPress={() => {
-            this.props.navigation.dismiss();
-            this.handleAddNewEquipment();
-          }}
+        <Header
+          renderLeftButton={() => (
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+              <Feather name="arrow-left" size={24} />
+            </TouchableOpacity>
+          )}
         >
-          <Text>Submit</Text>
-        </TouchableOpacity>
+          <Text>Add Image</Text>
+        </Header>
+        <ScrollView>
+          <Button
+            buttonStyle={styles.buttonStyle}
+            text={"Add Thumbnail Image"}
+            onPress={this.handleAddThumbnailImage}
+          />
+          <Image
+            source={{ uri: this.state.thumbnailImage || "" }}
+            style={styles.landscapeImg}
+            resizeMode={"cover"}
+          />
+          <Text>Add another image (Optional)</Text>
+          <Button
+            buttonStyle={styles.buttonStyle}
+            text={"Add Description Image"}
+            onPress={this.handleAddDescriptionImage}
+          />
+          {this.state.descriptionImages.length > 0
+            ? this.state.descriptionImages.map((item, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: item }}
+                  style={styles.landscapeImg}
+                  resizeMode={"cover"}
+                />
+              ))
+            : null}
+        </ScrollView>
+        <View style={styles.bottomWrapper}>
+          <TouchableOpacity
+            style={[styles.buttonWrapper, styles.buttonEnable]}
+            onPress={() => {
+              this.props.navigation.dismiss();
+              this.handleAddNewEquipment();
+            }}
+          >
+            <Text style={styles.text}>Submit</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
@@ -121,13 +141,32 @@ class AddImage extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    flex: 1
   },
   landscapeImg: {
-    width: 100,
-    height: 50
+    marginHorizontal: 15,
+    height: 300
+  },
+  bottomWrapper: {
+    backgroundColor: "transparent",
+    position: "absolute",
+    zIndex: 1,
+    bottom: 15,
+    right: 15,
+    justifyContent: "center",
+    alignItems: "flex-end"
+  },
+  buttonWrapper: {
+    marginRight: 15,
+    width: 80,
+    height: 40,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row"
+  },
+  buttonEnable: {
+    backgroundColor: colors.primaryColor
   }
 });
 

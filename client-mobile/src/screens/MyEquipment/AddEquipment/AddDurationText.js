@@ -7,7 +7,7 @@ import {
   Animated
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 import Header from "../../../components/Header";
 import InputField from "../../../components/InputField";
@@ -57,20 +57,19 @@ class AddDurationText extends Component {
     const timeRange = { startDate, endDate };
     return (
       <SafeAreaView style={styles.container}>
-        <Header>
-          <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-            <Text>Back</Text>
-          </TouchableOpacity>
+        <Header
+          renderLeftButton={() => (
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+              <Feather name="arrow-left" size={24} />
+            </TouchableOpacity>
+          )}
+        >
+          <Text>Add Duration</Text>
         </Header>
         <ScrollView>
           <InputField
             label={"From"}
             placeholder={"Input your start date"}
-            labelTextSize={fontSize.secondaryText}
-            labelColor={colors.secondaryColor}
-            textColor={colors.secondaryColor}
-            placeholderTextColor={colors.secondaryColorOpacity}
-            borderBottomColor={colors.secondaryColorOpacity}
             customWrapperStyle={{ marginBottom: 20, marginHorizontal: 15 }}
             inputType="text"
             onChangeText={value => this.setState({ startDate: value })}
@@ -80,11 +79,6 @@ class AddDurationText extends Component {
           <InputField
             label={"To"}
             placeholder={"Input your end date"}
-            labelTextSize={fontSize.secondaryText}
-            labelColor={colors.secondaryColor}
-            textColor={colors.secondaryColor}
-            placeholderTextColor={colors.secondaryColorOpacity}
-            borderBottomColor={colors.secondaryColorOpacity}
             customWrapperStyle={{ marginBottom: 20, marginHorizontal: 15 }}
             inputType="text"
             onChangeText={value => this.setState({ endDate: value })}
@@ -104,7 +98,7 @@ class AddDurationText extends Component {
             }
           >
             <Text style={styles.text}>Next</Text>
-            <Ionicons name="ios-arrow-forward" size={24} />
+            <Feather name="chevron-right" size={24} />
           </TouchableOpacity>
         </View>
       </SafeAreaView>

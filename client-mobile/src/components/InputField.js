@@ -31,32 +31,27 @@ class InputField extends Component {
   render() {
     const {
       label,
-      labelTextSize,
-      labelColor,
-      textColor,
-      borderBottomColor,
+      labelStyle,
+      placeholderStyle,
       inputType,
       customWrapperStyle,
       autoFocus,
       placeholder,
       autoCapitalize,
       placeholderTextColor,
+      showLabelStyle,
       ...others
     } = this.props;
     const { secureInput } = this.state;
-    const fontSize = labelTextSize || fontSize.bodyText;
-    const color = labelColor || colors.white;
-    const inputColor = textColor || colors.white;
-    const borderBottom = borderBottomColor || "transparent";
     return (
       <View style={[styles.container, customWrapperStyle]}>
-        <Text style={[styles.label, { fontSize, color }]}>{label}</Text>
+        <Text style={[styles.label, labelStyle]}>{label}</Text>
         {inputType === "password" ? (
           <Touchable
             style={styles.showButton}
             onPress={this.toggleShowPassword}
           >
-            <Text style={[styles.label, { color }]}>
+            <Text style={[styles.showLabel, showLabelStyle]}>
               {secureInput ? "Show" : "Hide"}
             </Text>
           </Touchable>
@@ -67,10 +62,7 @@ class InputField extends Component {
           autoCorrect={false}
           autoFocus={autoFocus}
           autoCapitalize={autoCapitalize}
-          style={[
-            styles.inputField,
-            { color: inputColor, borderBottomColor: borderBottom }
-          ]}
+          style={[styles.placeholder, placeholderStyle]}
           secureTextEntry={secureInput}
           {...others}
         />
@@ -84,13 +76,26 @@ const styles = StyleSheet.create({
     flex: 1
   },
   label: {
-    fontWeight: "700",
-    marginBottom: 10
+    fontSize: fontSize.secondaryText,
+    color: colors.text68,
+    fontWeight: "400",
+    marginTop: 5
   },
-  inputField: {
-    borderBottomWidth: 1,
-    paddingTop: 5,
-    paddingBottom: 30
+  showLabel: {
+    fontSize: fontSize.caption,
+    color: colors.primaryColor,
+    fontWeight: "300",
+    marginTop: 5
+  },
+  placeholder: {
+    fontSize: fontSize.bodyText,
+    color: colors.text,
+    fontWeight: "400",
+    marginBottom: 5,
+    marginTop: 15,
+    paddingBottom: 5,
+    borderBottomColor: colors.secondaryColorOpacity,
+    borderBottomWidth: StyleSheet.hairlineWidth
   },
   showButton: {
     position: "absolute",

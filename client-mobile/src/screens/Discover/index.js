@@ -67,6 +67,7 @@ class Discover extends Component {
           title={"Discover"}
           hasLeft={false}
           hasSearch={true}
+          hasCart={true}
           onRightPress={() => this.props.navigation.navigate("Search")}
           scrollElement={<Animated.ScrollView />}
           renderScrollItem={this.renderItem}

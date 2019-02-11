@@ -14,6 +14,8 @@ const HEADER_HEIGHT = 44;
 
 class ParallaxList extends Component {
   nativeScroll = new Animated.Value(0);
+
+  //default value scroll animated
   scroll = new Animated.Value(0);
   navOpacity = this.nativeScroll.interpolate({
     inputRange: [0, 40, 50],

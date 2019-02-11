@@ -5,36 +5,113 @@ import {
   StyleSheet,
   Animated,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  ScrollView
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-import { AntDesign } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
-import { removeEquipment } from "../../redux/actions/equipment";
+import {
+  removeEquipment,
+  listEquipmentBySupplierId
+} from "../../redux/actions/equipment";
 import ParallaxList from "../../components/ParallaxList";
-import CustomModal from "../../components/CustomModal";
+import Dropdown from "../../components/Dropdown";
 import Button from "../../components/Button";
+import EquipmentItem from "./components/EquipmentItem";
+import EquipmentStatus from "./components/EquipmentStatus";
+import Header from "../../components/Header";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+import Loading from "../../components/Loading";
 
 const { width, height } = Dimensions.get("window");
 
+const EQUIPMENT_STATUSES = [
+  {
+    code: "PENDING",
+    title: "Pending" // On Waiting,
+  },
+  {
+    code: "DELIVERED",
+    title: "Delivered"
+  },
+  {
+    code: "AVAILABLE",
+    title: "Available"
+  },
+  {
+    code: "ACCEPTED",
+    title: "Accepted"
+  },
+  {
+    code: "DENIED",
+    title: "Denied"
+  },
+  {
+    code: "WAITING_FOR_RETURNING",
+    title: "Waiting for returning"
+  }
+];
+
+const DROPDOWN_OPTIONS = [
+  {
+    id: 0,
+    name: "All Statuses",
+    value: "all"
+  },
+  {
+    id: 1,
+    name: "Available",
+    value: "AVAILABLE"
+  },
+  {
+    id: 2,
+    name: "Delivered",
+    value: "DELIVERED"
+  },
+  {
+    id: 3,
+    name: "Pending",
+    value: "PENDING"
+  },
+  {
+    id: 4,
+    name: "Accepted",
+    value: "ACCEPTED"
+  },
+  {
+    id: 5,
+    name: "Denied",
+    value: "DENIED"
+  },
+  {
+    id: 6,
+    name: "Waiting to returning",
+    value: "waiting"
+  }
+];
+
 @connect(
   state => {
-    console.log(state.equipment.equipment);
+    console.log("myEquipment", state.equipment.listSupplierEquipment);
     return {
-      equipment: state.equipment.equipment
+      equipment: state.equipment.list,
+      myEquipment: state.equipment.listSupplierEquipment
     };
   },
   dispatch => ({
     fetchRemoveEquipment: id => {
       dispatch(removeEquipment(id));
+    },
+    fetchListMyEquipment: id => {
+      dispatch(listEquipmentBySupplierId(id));
     }
   })
 )
-class MyEquipment extends Component {
+class MyEquipmentScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -42,82 +119,104 @@ class MyEquipment extends Component {
     };
   }
 
-  getEquipmentOnTransaction = equipmentList => {
-    const data = equipmentList.filter(item => item.status === "pending");
-    console.log(data);
-    return data ? data : [];
+  componentDidMount() {
+    this.props.fetchListMyEquipment(13);
+  }
+
+  _handleAddPress = () => {
+    this.props.navigation.navigate("AddDetail");
   };
 
-  renderScrollItem = () => {
-    const { equipment } = this.props;
-    const equipmentTransaction = this.getEquipmentOnTransaction(equipment);
+  _getEquipementByStatus = status => {
+    const { myEquipment } = this.props;
+    return myEquipment.data.filter(item => item.status === status) || [];
+  };
+
+  _renderContent = () => {
+    const { myEquipment } = this.props;
     return (
       <View style={styles.scrollWrapper}>
-        <Text>Listing</Text>
-        {equipment.length > 0 ? (
+        {myEquipment.data.length > 0 ? (
           <View>
-            <CustomModal
-              label={"Status"}
+            <Dropdown
+              label={"Filter"}
+              defaultText={"All Statuses"}
               onSelectValue={value => this.setState({ status: value })}
+              options={DROPDOWN_OPTIONS}
+              isHorizontal={true}
             />
+            <View>
+              {EQUIPMENT_STATUSES.map((status, idx) => {
+                const equipmentList = this._getEquipementByStatus(status.code);
+                //Hide section if there is no equipment
+                if (equipmentList.length === 0) return null;
 
-            {equipmentTransaction ? (
-              <View>
-                <Text>On Waiting</Text>
-                {equipmentTransaction.map(item => (
-                  <TouchableOpacity>
-                    <Text>{item.name}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            ) : null}
-            {equipment.map((item, index) => (
-              <View
-                key={index}
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between"
-                }}
-              >
-                <Text>{item.name}</Text>
-                <TouchableOpacity
-                  onPress={() => this.props.fetchRemoveEquipment(item.id)}
-                >
-                  <Text>Remove</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
+                // Otherwise, display the whole list
+                return (
+                  <View key={`sec_${idx}`}>
+                    <EquipmentStatus
+                      count={equipmentList.length}
+                      title={status.title}
+                      code={status.code}
+                    />
+                    {equipmentList.map((equipment, index) => (
+                      <EquipmentItem
+                        onPress={() =>
+                          this.props.navigation.navigate("MyEquipmentDetail", {
+                            id: equipment.id
+                          })
+                        }
+                        key={`eq_${index}`}
+                        id={equipment.id}
+                        name={equipment.name}
+                        imageURL={
+                          "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+                        }
+                        status={equipment.status}
+                        price={equipment.dailyPrice}
+                      />
+                    ))}
+                  </View>
+                );
+              })}
+            </View>
           </View>
         ) : (
           <Text>No Data</Text>
         )}
-        <TouchableOpacity
-          style={{ flexDirection: "row", alignItems: "center" }}
-          onPress={() => this.props.navigation.navigate("AddDetail")}
-        >
-          <AntDesign name={"plus"} size={20} />
-          <Text>List another equipment</Text>
-        </TouchableOpacity>
       </View>
     );
   };
 
   render() {
+    const { myEquipment } = this.props;
     return (
       <SafeAreaView
         style={styles.container}
         forceInset={{ bottom: "never", top: "always" }}
       >
-        <ParallaxList
-          title={"Equipment"}
-          opacity={1}
-          removeTitle={true}
-          hasLeft={false}
-          hasAdd={true}
-          onRightPress={() => this.props.navigation.navigate("AddDetail")}
-          scrollElement={<Animated.ScrollView />}
-          renderScrollItem={this.renderScrollItem}
-        />
+        {myEquipment ? (
+          <View>
+            <Header
+              renderRightButton={() => (
+                <TouchableOpacity onPress={this._handleAddPress}>
+                  <Feather name="plus-circle" size={24} />
+                </TouchableOpacity>
+              )}
+            >
+              <Text style={styles.title}>My Equipment</Text>
+            </Header>
+
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={styles.scrollContent}
+            >
+              {this._renderContent()}
+            </ScrollView>
+          </View>
+        ) : (
+          <Loading />
+        )}
       </SafeAreaView>
     );
   }
@@ -127,11 +226,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  scrollWrapper: {
-    flex: 1,
-    justifyContent: "center",
-    paddingLeft: 15
+  scrollContent: {
+    flex: 0,
+    paddingHorizontal: 15
+  },
+  equipmentItemContainer: {
+    paddingVertical: 8
+  },
+  title: {
+    fontSize: fontSize.h4,
+    fontWeight: "600"
   }
 });
 
-export default MyEquipment;
+export default MyEquipmentScreen;

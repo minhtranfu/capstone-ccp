@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import {
   StyleSheet,
   Text,
@@ -8,35 +9,29 @@ import {
   Picker,
   TouchableOpacity
 } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
 
 const width = Dimensions.get("window").width;
 
-const mockData = [
-  {
-    id: 1,
-    name: "Java",
-    value: "java"
-  },
-  {
-    id: 2,
-    name: "Javascript",
-    value: "javascrtip"
-  },
-  {
-    id: 3,
-    name: "C#",
-    value: "c#"
-  }
-];
+class Dropdown extends Component {
+  static propTypes = {
+    defaultText: PropTypes.string,
+    options: PropTypes.arrayOf([
+      PropTypes.shape({
+        id: PropTypes.number,
+        name: PropTypes.string,
+        value: PropTypes.string
+      })
+    ]).isRequired
+  };
 
-class CustomModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pickerValue: "Select an option",
+      pickerValue: props.defaultText || "Please select an option",
       modalVisible: false
     };
   }
@@ -46,6 +41,7 @@ class CustomModal extends Component {
   }
 
   render() {
+    const { options, isHorizontal } = this.props;
     return (
       <View style={{ marginBottom: 20 }}>
         <Modal transparent={true} visible={this.state.modalVisible}>
@@ -69,11 +65,11 @@ class CustomModal extends Component {
                   this.props.onSelectValue(itemValue);
                 }}
               >
-                {mockData.map(item => (
+                {options.map(option => (
                   <Picker.Item
-                    key={item.id}
-                    label={item.name}
-                    value={item.name}
+                    key={option.id}
+                    label={option.name}
+                    value={option.name}
                   />
                 ))}
               </Picker>
@@ -81,19 +77,37 @@ class CustomModal extends Component {
           </View>
         </Modal>
 
-        <TouchableOpacity
-          style={{
-            marginHorizontal: 15,
-            borderBottomColor: colors.secondaryColorOpacity,
-            borderBottomWidth: 1
-          }}
-          onPress={() => {
-            this.setModalVisible(true);
-          }}
-        >
-          <Text style={styles.label}>{this.props.label}</Text>
-          <Text style={styles.placeholder}>{this.state.pickerValue}</Text>
-        </TouchableOpacity>
+        {isHorizontal ? (
+          <TouchableOpacity
+            style={styles.buttonHorizontal}
+            onPress={() => {
+              this.setModalVisible(true);
+            }}
+          >
+            <View
+              style={{ flex: 2, flexDirection: "row", alignItems: "center" }}
+            >
+              <Text style={styles.textHorizontal}>{this.props.label}: </Text>
+              <Text style={styles.textHorizontal}>
+                {this.state.pickerValue}
+              </Text>
+            </View>
+            <Feather name="chevron-right" size={24} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={{
+              borderBottomColor: colors.secondaryColorOpacity,
+              borderBottomWidth: StyleSheet.hairlineWidth
+            }}
+            onPress={() => {
+              this.setModalVisible(true);
+            }}
+          >
+            <Text style={styles.label}>{this.props.label}</Text>
+            <Text style={styles.placeholder}>{this.state.pickerValue}</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   }
@@ -130,21 +144,36 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: fontSize.secondaryText,
-    color: colors.secondaryColor,
-    fontWeight: "bold",
+    color: colors.text,
+    fontWeight: "500",
     marginTop: 5
   },
   placeholder: {
-    fontSize: fontSize.caption,
-    color: colors.secondaryColor,
+    fontSize: fontSize.bodyText,
+    color: colors.text68,
+    fontWeight: "400",
     marginBottom: 5,
     marginTop: 15
+  },
+  textHorizontal: {
+    fontSize: fontSize.bodyText,
+    color: colors.text,
+    fontWeight: "500"
   },
   divider: {
     backgroundColor: "#D8D8D8",
     height: 1,
     width: width
+  },
+  buttonHorizontal: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.secondaryColorOpacity,
+    paddingVertical: 15
   }
 });
 
-export default CustomModal;
+export default Dropdown;

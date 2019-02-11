@@ -9,9 +9,10 @@ import {
 } from "react-native";
 import { SafeAreaView, NavigationActions } from "react-navigation";
 import { ImagePicker, Permissions } from "expo";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Ionicons, Feather } from "@expo/vector-icons";
+import Header from "../../../components/Header";
 
-import CustomModal from "../../../components/CustomModal";
+import Dropdown from "../../../components/Dropdown";
 import InputField from "../../../components/InputField";
 import Title from "../../../components/Title";
 import Button from "../../../components/Button";
@@ -26,6 +27,42 @@ const config = {
   image: "https://ak4.picdn.net/shutterstock/videos/6731134/thumb/1.jpg"
 };
 
+const DROPDOWN_TYPES_OPTIONS = [
+  {
+    id: 0,
+    name: "Select your type",
+    value: "all"
+  },
+  {
+    id: 1,
+    name: "Xe Lu",
+    value: "xe lu"
+  },
+  {
+    id: 2,
+    name: "Xe UI",
+    value: "xe ui"
+  }
+];
+
+const DROPDOWN_CATEGORIES_OPTIONS = [
+  {
+    id: 0,
+    name: "Select your categories",
+    value: "all"
+  },
+  {
+    id: 1,
+    name: "Xe",
+    value: "xe"
+  },
+  {
+    id: 2,
+    name: "May Moc",
+    value: "maymoc"
+  }
+];
+
 class AddDetail extends Component {
   constructor(props) {
     super(props);
@@ -35,14 +72,14 @@ class AddDetail extends Component {
       name: null,
       dailyPrice: null,
       type: null,
-      generalType: null,
+      categories: null,
       deliveryPrice: null
     };
   }
 
   isNextEnabled = () => {
-    const { name, dailyPrice, type, generalType, deliveryPrice } = this.state;
-    if (name && dailyPrice && type && generalType && deliveryPrice) {
+    const { name, dailyPrice, type, categories, deliveryPrice } = this.state;
+    if (name && dailyPrice && type && categories && deliveryPrice) {
       return false;
     }
     return true;
@@ -53,14 +90,14 @@ class AddDetail extends Component {
   };
 
   handlePassValue = () => {
-    const { name, dailyPrice, type, generalType, deliveryPrice } = this.state;
+    const { name, dailyPrice, type, categories, deliveryPrice } = this.state;
 
     const data = {
       name: name,
       dailyPrice: dailyPrice,
       deliveryPrice: deliveryPrice,
       type: type,
-      generalType: generalType
+      categories: categories
     };
     return data;
   };
@@ -73,27 +110,26 @@ class AddDetail extends Component {
         style={styles.container}
         forceInset={{ bottom: "always", top: "always" }}
       >
-        <View style={styles.topWrapper}>
-          <TouchableOpacity
-            style={{ marginLeft: 15 }}
-            onPress={() =>
-              this.props.navigation.dispatch(NavigationActions.back())
-            }
-          >
-            <AntDesign name="close" size={30} />
-          </TouchableOpacity>
-        </View>
-        <ScrollView style={styles.container}>
-          <Text style={styles.title}>Post your equipment</Text>
+        <Header
+          renderLeftButton={() => (
+            <TouchableOpacity
+              onPress={() =>
+                this.props.navigation.dispatch(NavigationActions.back())
+              }
+            >
+              <Feather name="x" size={24} />
+            </TouchableOpacity>
+          )}
+        >
+          <Text style={{ fontSize: fontSize.h4, fontWeight: "500" }}>
+            Add Detail
+          </Text>
+        </Header>
+        <ScrollView style={styles.scrollWrapper}>
           <InputField
             label={"Equipment Name"}
             placeholder={"Input your equipment name"}
-            labelTextSize={fontSize.secondaryText}
-            labelColor={colors.secondaryColor}
-            textColor={colors.secondaryColor}
-            placeholderTextColor={colors.secondaryColorOpacity}
-            borderBottomColor={colors.secondaryColorOpacity}
-            customWrapperStyle={{ marginBottom: 20, marginHorizontal: 15 }}
+            customWrapperStyle={{ marginBottom: 20 }}
             inputType="text"
             onChangeText={value => this.setState({ name: value })}
             value={name}
@@ -102,12 +138,7 @@ class AddDetail extends Component {
           <InputField
             label={"Daily price"}
             placeholder={"Input your equipment Daily price"}
-            labelTextSize={fontSize.secondaryText}
-            labelColor={colors.secondaryColor}
-            textColor={colors.secondaryColor}
-            placeholderTextColor={colors.secondaryColorOpacity}
-            borderBottomColor={colors.secondaryColorOpacity}
-            customWrapperStyle={{ marginBottom: 20, marginHorizontal: 15 }}
+            customWrapperStyle={{ marginBottom: 20 }}
             inputType="text"
             onChangeText={value => this.setState({ dailyPrice: value })}
             value={dailyPrice}
@@ -117,24 +148,23 @@ class AddDetail extends Component {
           <InputField
             label={"Delivery price"}
             placeholder={"Input your equipment Delivery price"}
-            labelTextSize={fontSize.secondaryText}
-            labelColor={colors.secondaryColor}
-            textColor={colors.secondaryColor}
-            placeholderTextColor={colors.secondaryColorOpacity}
-            borderBottomColor={colors.secondaryColorOpacity}
-            customWrapperStyle={{ marginBottom: 20, marginHorizontal: 15 }}
+            customWrapperStyle={{ marginBottom: 20 }}
             inputType="text"
             onChangeText={value => this.setState({ deliveryPrice: value })}
             keyboardType={"numeric"}
             value={deliveryPrice}
           />
-          <CustomModal
+          <Dropdown
             label={"Select your categories"}
-            onSelectValue={value => this.setState({ generalType: value })}
+            defaultText={"Select your categories"}
+            onSelectValue={value => this.setState({ categories: value })}
+            options={DROPDOWN_CATEGORIES_OPTIONS}
           />
-          <CustomModal
+          <Dropdown
             label={"Select your types"}
+            defaultText={"Select your types"}
             onSelectValue={value => this.setState({ type: value })}
+            options={DROPDOWN_TYPES_OPTIONS}
           />
         </ScrollView>
         <View style={styles.bottomWrapper}>
@@ -152,8 +182,14 @@ class AddDetail extends Component {
                   })
             }
           >
-            <Text style={[styles.text, { marginRight: 10 }]}>Next</Text>
-            <Ionicons name="ios-arrow-forward" size={24} />
+            <Text style={disable ? styles.textDisable : styles.textEnable}>
+              Next
+            </Text>
+            <Ionicons
+              name="ios-arrow-forward"
+              size={24}
+              color={disable ? "white" : colors.secondaryColor}
+            />
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -165,6 +201,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
+  scrollWrapper: {
+    flex: 1,
+    paddingHorizontal: 15
+  },
   buttonStyle: {
     backgroundColor: "grey",
     borderRadius: 5,
@@ -173,20 +213,9 @@ const styles = StyleSheet.create({
   titleStyle: {
     fontSize: fontSize.secondaryText
   },
-  topWrapper: {
-    backgroundColor: colors.white,
-    zIndex: 1,
-    top: 0,
-    alignItems: "flex-start",
-    justifyContent: "center",
-    height: 50
-  },
   bottomWrapper: {
     backgroundColor: "transparent",
-    position: "absolute",
     zIndex: 1,
-    bottom: 15,
-    right: 15,
     justifyContent: "center",
     alignItems: "flex-end"
   },
@@ -194,13 +223,19 @@ const styles = StyleSheet.create({
     fontSize: fontSize.h3,
     color: colors.secondaryColor,
     fontWeight: "bold",
-    marginLeft: 15,
     marginBottom: 20
   },
-  text: {
+  textEnable: {
     fontSize: fontSize.bodyText,
     fontWeight: "bold",
-    color: colors.secondaryColor
+    color: colors.secondaryColor,
+    paddingRight: 5
+  },
+  textDisable: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "bold",
+    color: colors.white,
+    paddingRight: 5
   },
   buttonWrapper: {
     marginRight: 15,

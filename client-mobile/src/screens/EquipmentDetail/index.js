@@ -5,7 +5,8 @@ import {
   StyleSheet,
   Animated,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  Dimensions
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import MapView, { Marker } from "react-native-maps";
@@ -27,11 +28,13 @@ import fontSize from "../../config/fontSize";
 import Title from "../../components/Title";
 import { Button } from "../../components/AnimatedHeader";
 
+const { width } = Dimensions.get("window");
+
 @connect(
   state => {
     console.log(state.equipment.detail);
     return {
-      equipment: state.equipment.equipment
+      equipment: state.equipment.list
     };
   },
   dispatch => ({
@@ -130,7 +133,6 @@ class EquipmentDetail extends Component {
     //   description
     // } = detail.data;
     const { id } = this.props.navigation.state.params;
-    console.log(id);
     const dataFlow = this.props.equipment.find(item => item.id === id);
     console.log(dataFlow);
     const {
@@ -269,20 +271,10 @@ class EquipmentDetail extends Component {
               scrollElement={<Animated.ScrollView />}
               renderScrollItem={this.renderScrollItem}
             />
-            <View
-              style={{
-                position: "fixed",
-                zIndex: 1,
-                bottom: 0,
-                height: 50,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                borderTopWidth: 1,
-                borderTopColor: colors.secondaryColorOpacity
-              }}
-            >
-              <Text style={styles.text}>{detail.data.dailyPrice}$/day</Text>
+            <View style={styles.bottomWrapper}>
+              <Text style={{ fontSize: fontSize.h4, fontWeight: "500" }}>
+                {detail.data.dailyPrice}$/day
+              </Text>
               {/* <ModalCalendar
                 visible={this.state.modalVisible}
                 handleModalVisible={this.setModalVisible}
@@ -355,7 +347,6 @@ const styles = StyleSheet.create({
     paddingLeft: 15
   },
   checkAvailability: {
-    marginRight: 15,
     alignItems: "center",
     justifyContent: "center",
     width: 180,
@@ -373,6 +364,20 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 500,
     marginHorizontal: 15
+  },
+  bottomWrapper: {
+    width: width,
+    backgroundColor: "white",
+    position: "absolute",
+    zIndex: 1,
+    bottom: 0,
+    height: 50,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: colors.secondaryColorOpacity,
+    paddingHorizontal: 15
   }
 });
 

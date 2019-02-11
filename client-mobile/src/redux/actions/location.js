@@ -50,7 +50,7 @@ export const autoCompleteSearch = async (stringAddress, lat, long) => {
     .then(res => res.json())
     .then(res => {
       const predictions = res.predictions;
-      const autocomplete = predictions.map(item => item.description);
+      const autocomplete = predictions.map(item => item.structured_formatting);
       return autocomplete ? autocomplete : [];
     });
 

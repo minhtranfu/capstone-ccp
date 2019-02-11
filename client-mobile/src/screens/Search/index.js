@@ -32,8 +32,8 @@ class Search extends Component {
     const locationStatus = await grantPermission("location");
     console.log(locationStatus);
     if (locationStatus === "granted") {
-      const location = await Location.getCurrentPositionAsync({});
-      const coords = location.coords;
+      const currentLocation = await Location.getCurrentPositionAsync({});
+      const coords = currentLocation.coords;
       this.setState({
         currentLat: coords.latitude,
         currentLong: coords.longitude
@@ -64,7 +64,8 @@ class Search extends Component {
         })
       }
     >
-      <Text style={styles.text}>{item}</Text>
+      <Text style={styles.text}>{item.main_text}</Text>
+      <Text style={styles.secondaryText}>{item.secondary_text}</Text>
     </TouchableOpacity>
   );
 
@@ -75,16 +76,14 @@ class Search extends Component {
         style={styles.container}
         forceInset={{ bottom: "always", top: "always" }}
       >
-        <Header>
-          <SearchBar
-            handleOnChangeText={this.handleOnChangeText}
-            renderRightButton={() => (
-              <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-                <Text>Cancel</Text>
-              </TouchableOpacity>
-            )}
-          />
-        </Header>
+        <SearchBar
+          handleOnChangeText={this.handleOnChangeText}
+          renderRightButton={() => (
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+              <Text>Cancel</Text>
+            </TouchableOpacity>
+          )}
+        />
         <ScrollView>
           {location.length > 0 ? (
             <View
@@ -116,14 +115,20 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     justifyContent: "center",
+    flexDirection: "column",
     marginTop: 10,
-    height: 44,
+    paddingBottom: 5,
+    flex: 1,
     borderBottomWidth: 0.5,
     borderBottomColor: colors.secondaryColorOpacity
   },
   text: {
     fontSize: fontSize.bodyText,
     color: colors.secondaryColor
+  },
+  secondaryText: {
+    fontSize: fontSize.secondaryText,
+    color: colors.secondaryColorOpacity
   }
 });
 

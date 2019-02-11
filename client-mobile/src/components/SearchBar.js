@@ -67,7 +67,7 @@ class SearchBar extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: 44,
     marginHorizontal: 15
   },
   textInputContainer: {
@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     flex: 1,
     backgroundColor: "#00000023",
-    borderRadius: 8,
-    paddingHorizontal: 5,
+    borderRadius: 15,
+    paddingHorizontal: 10,
     flexDirection: "row",
     alignItems: "center",
     marginRight: 5

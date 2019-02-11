@@ -5,6 +5,7 @@ import configureStorage from "./src/config/store";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import Loading from "./src/components/Loading";
+import "./src/config/api";
 
 const config = configureStorage();
 

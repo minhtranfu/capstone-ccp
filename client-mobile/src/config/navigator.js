@@ -6,7 +6,7 @@ import {
   createSwitchNavigator,
   createAppContainer
 } from "react-navigation";
-import DismissableStackNav from "../Utils/Navigator";
+import DismissableStackNav from "../utils/Navigator";
 import colors from "./colors";
 
 import Discover from "../screens/Discover";
@@ -22,10 +22,9 @@ import AddDurationText from "../screens/MyEquipment/AddEquipment/AddDurationText
 import AddImage from "../screens/MyEquipment/AddEquipment/AddImage";
 import EquipmentDetail from "../screens/EquipmentDetail";
 import Transaction from "../screens/EquipmentDetail/Transaction";
-import Requester from "../screens/Equipment/Requester";
-import RequesterPost from "../screens/Equipment/RequesterPost";
-// import AddEquipment from "../screens/Equipment/AddEquipment";
-import Notification from "../screens/Notification";
+import MyEquipmentDetail from "../screens/MyEquipment/Detail";
+import Activity from "../screens/Activity";
+import Notification from "../screens/Activity/Notification";
 import Login from "../screens/Login";
 import ButtonWithIcon from "../components/ButtonWithIcon";
 
@@ -99,6 +98,7 @@ const AddNewEquipmentStack = DismissableStackNav(
 const EquipmentStack = createStackNavigator(
   {
     Equipment: MyEquipment,
+    MyEquipmentDetail: MyEquipmentDetail,
     AddNewEquipment: AddNewEquipmentStack
   },
   {
@@ -122,19 +122,22 @@ EquipmentStack.navigationOptions = ({ navigation }) => {
   };
 };
 
-const NotificationStack = createStackNavigator(
+const ActivityStack = createStackNavigator(
   {
+    Activity: Activity,
     Notification: Notification
   },
   {
-    headerMode: "none"
+    mode: "modal",
+    headerMode: "none",
+    initialRouteName: "Activity"
   }
 );
 
 const TabNavigator = createBottomTabNavigator(
   {
     Discover: DiscoverStack,
-    Notification: NotificationStack,
+    Activity: ActivityStack,
     Call: {
       screen: () => null, // Empty screen
       navigationOptions: () => ({
@@ -147,7 +150,7 @@ const TabNavigator = createBottomTabNavigator(
     Settings: SettingStack
   },
   {
-    initialRouteName: "Discover",
+    initialRouteName: "Equipment",
     defaultNavigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused }) => {
         const { routeName } = navigation.state;
@@ -156,7 +159,7 @@ const TabNavigator = createBottomTabNavigator(
           icon = focused
             ? require("../../assets/icons/discover_ic_active.png")
             : require("../../assets/icons/discover_ic.png");
-        } else if (routeName === "Notification") {
+        } else if (routeName === "Activity") {
           icon = focused
             ? require("../../assets/icons/search_ic_active.png")
             : require("../../assets/icons/search_ic.png");

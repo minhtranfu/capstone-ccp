@@ -2,13 +2,13 @@ import React, { Component } from "react";
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { CalendarList } from "react-native-calendars";
-import Calendar from "react-native-calendar-select";
+import Calendar from 'react-native-calendar-select';
 
 class ModalCalendar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      startDate: "",
+      selectedDate: [],
       endDate: ""
     };
   }
@@ -53,38 +53,10 @@ class ModalCalendar extends Component {
     this.setState({ endDate: date });
   };
 
-  confirmDate = ({ startDate, endDate, startMoment, endMoment }) => {
-    this.setState({
-      startDate,
-      endDate
-    });
-  };
-
   render() {
     const { dates, title, visible, handleModalVisible } = this.props;
     const { selectedDate, endDate } = this.state;
     let datesPeriod = {};
-    let customI18n = {
-      w: ["", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"],
-      weekday: [
-        "",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday"
-      ],
-      text: {
-        start: "Check in",
-        end: "Check out",
-        date: "Date",
-        save: "Confirm",
-        clear: "Reset"
-      },
-      date: "DD / MM" // date format
-    };
 
     //get date range (should refactor)
     dates.map(item =>
@@ -101,9 +73,6 @@ class ModalCalendar extends Component {
         };
       })
     );
-    let color = {
-      subColor: "#f0f0f0"
-    };
 
     console.log(datesPeriod);
     console.log("render na`");
@@ -128,19 +97,26 @@ class ModalCalendar extends Component {
               </TouchableOpacity>
               <Text>Check in date: {selectedDate}</Text>
               <Text>Check out date: {endDate}</Text>
-              <Calendar
-                i18n="en"
-                ref={calendar => {
-                  this.calendar = calendar;
+              <CalendarList
+                onDayPress={this.handleSelectDate}
+                onDayLongPress={this.handleEndDate}
+                markedDates={{
+                  [selectedDate]: {
+                    selected: true,
+                    color: "red",
+                    textColor: "white",
+                    startingDay: true
+                  },
+                  [endDate]: {
+
+                  }
+                  ,
+                  ...datesPeriod
                 }}
-                customI18n={customI18n}
-                color={color}
-                format="YYYYMMDD"
-                minDate="20190110"
-                maxDate="20190312"
-                startDate={this.state.startDate}
-                endDate={this.state.endDate}
-                onConfirm={this.confirmDate}
+                markingType={"period"}
+                pastScrollRange={1}
+                futureScrollRange={3}
+                showScrollIndicator={true}
               />
             </View>
           </View>

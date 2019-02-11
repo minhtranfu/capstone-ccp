@@ -7,5 +7,9 @@ export default {
   grayWhite: "#F0F0F0",
   lightBlue: "#3B4961",
   lightYellow: "#ECE8AC",
-  dark: "#000000"
+  dark: "#000000",
+  text: "#3E3E3E",
+  text68: "#3E3E3EAD",
+  text50: "#3E3E3E7F",
+  text25: "#3E3E3E3F"
 };
