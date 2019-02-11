@@ -3,6 +3,7 @@ import * as Actions from "../types";
 const INITIAL_STATE = {
   loading: false,
   detail: {},
+  transactionDetail: {},
   list: [],
   listSearch: [],
   listRequesterEquipment: [],
@@ -16,6 +17,12 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         detail: payload
+      };
+    }
+    case Actions.GET_TRANSACTION_DETAIL_SUCCESS: {
+      return {
+        ...state,
+        transactionDetail: payload
       };
     }
     case Actions.LIST_SUPPLIER_EQUIPMENT_SUCCESS: {

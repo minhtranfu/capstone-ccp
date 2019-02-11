@@ -13,7 +13,10 @@ import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { ImagePicker, Permissions } from "expo";
-import { getEquipmentDetail } from "../../redux/actions/equipment";
+import {
+  getEquipmentDetail,
+  getTransactionDetail
+} from "../../redux/actions/equipment";
 
 import InputField from "../../components/InputField";
 import Dropdown from "../../components/Dropdown";
@@ -65,6 +68,7 @@ const DROPDOWN_CATEGORIES_OPTIONS = [
     console.log(state.equipment);
     return {
       equipmentDetail: state.equipment.detail,
+      transactionDetail: state.equipment.transactionDetail,
       //test
       equipment: state.equipment.list
     };
@@ -72,6 +76,9 @@ const DROPDOWN_CATEGORIES_OPTIONS = [
   dispatch => ({
     fetchEquipmentDetail: id => {
       dispatch(getEquipmentDetail(id));
+    },
+    fetchTransactionDetail: id => {
+      dispatch(getTransactionDetail(id));
     }
   })
 )
@@ -93,17 +100,17 @@ class MyEquipmentDetail extends Component {
 
   componentDidMount() {
     const { id } = this.props.navigation.state.params;
-    this.props.fetchEquipmentDetail(id);
+    this.props.fetchTransactionDetail(id);
   }
 
   getDerivedStateFromProps(props, state) {
-    const data = props.equipment.find(item => item.id === id);
+    const { transactionDetail } = this.props;
     this.setState({
-      name: data.name,
-      dailyPrice: data.dailyPrice,
-      type: data.type,
-      categories: data.categories,
-      deliveryPrice: data.deliveryPrice
+      name: transactionDetail.equipment.name,
+      dailyPrice: transactionDetail.dailyPrice,
+      type: transactionDetail.equipmentType.name,
+      generalEquipment: transactionDetail.equipmentType.generalEquipment.name,
+      deliveryPrice: transactionDetail.deliveryPrice
     });
   }
 
@@ -117,7 +124,7 @@ class MyEquipmentDetail extends Component {
 
   renderScrollItem = () => {
     const { id } = this.props.navigation.state.params;
-    const data = this.props.equipment.find(item => item.id === id);
+    const { transactionDetail } = this.props;
     return (
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.landscapeImgWrapper}>
@@ -143,7 +150,7 @@ class MyEquipmentDetail extends Component {
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this.setState({ name: value })}
-          value={data.name}
+          value={transactionDetail.equipment.name}
           returnKeyType={"next"}
         />
         <InputField
@@ -153,7 +160,7 @@ class MyEquipmentDetail extends Component {
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this.setState({ dailyPrice: value })}
-          value={data.dailyPrice}
+          value={transactionDetail.dailyPrice}
           keyboardType={"numeric"}
           returnKeyType={"next"}
         />
@@ -165,17 +172,17 @@ class MyEquipmentDetail extends Component {
           inputType="text"
           onChangeText={value => this.setState({ deliveryPrice: value })}
           keyboardType={"numeric"}
-          value={data.deliveryPrice}
+          value={transactionDetail.deliveryPrice}
         />
         <Dropdown
           label={"Select your categories"}
-          defaultText={data.categories}
+          defaultText={transactionDetail.equipmentType.generalEquipment.name}
           onSelectValue={value => this.setState({ categories: value })}
           options={DROPDOWN_CATEGORIES_OPTIONS}
         />
         <Dropdown
           label={"Select your types"}
-          defaultText={data.type}
+          defaultText={transactionDetail.equipmentType.name}
           onSelectValue={value => this.setState({ type: value })}
           options={DROPDOWN_TYPES_OPTIONS}
         />
@@ -198,7 +205,7 @@ class MyEquipmentDetail extends Component {
   };
 
   render() {
-    const { equipment } = this.props;
+    const { transactionDetail } = this.props;
     return (
       <SafeAreaView
         style={styles.container}
@@ -213,7 +220,7 @@ class MyEquipmentDetail extends Component {
         >
           <Text>My Equipment</Text>
         </Header>
-        {equipment ? (
+        {transactionDetail ? (
           <ScrollView>{this.renderScrollItem()}</ScrollView>
         ) : (
           <Loading />

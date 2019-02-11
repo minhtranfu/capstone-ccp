@@ -12,6 +12,16 @@ export function getEquipmentDetail(id) {
   };
 }
 
+export function getTransactionDetail(id) {
+  return async dispatch => {
+    const data = await axios.get(`transaction/${id}`);
+    dispatch({
+      type: Actions.GET_TRANSACTION_DETAIL_SUCCESS,
+      payload: data
+    });
+  };
+}
+
 export function addNewEquipment(data) {
   return {
     type: Actions.ADD_EQUIPMENT,
