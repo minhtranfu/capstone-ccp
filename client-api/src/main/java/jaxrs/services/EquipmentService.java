@@ -145,17 +145,17 @@ public class EquipmentService {
 	}
 
 
-
-	@GET
-	@Path("/types")
-	public Response getEquipmentTypes() {
-//        List<EquipmentType> resultList = manager.createQuery("SELECT et FROM EquipmentType et WHERE et.isActive = 1", EquipmentType.class).getResultList();
-
-
-		DBUtils.getEntityManager().createNamedQuery("EquipmentTypeEntity.getAllEquipmentType").getResultList();
-		List<EquipmentTypeEntity> result = equipmentTypeDAO.getAll("EquipmentTypeEntity.getAllEquipmentType");
-		return CommonUtils.responseFilterOk(result);
-	}
+//
+//	@GET
+//	@Path("/types")
+//	public Response getEquipmentTypes() {
+////        List<EquipmentType> resultList = manager.createQuery("SELECT et FROM EquipmentType et WHERE et.isActive = 1", EquipmentType.class).getResultList();
+//
+//
+//		DBUtils.getEntityManager().createNamedQuery("EquipmentTypeEntity.getAllEquipmentType").getResultList();
+//		List<EquipmentTypeEntity> result = equipmentTypeDAO.getAll("EquipmentTypeEntity.getAllEquipmentType");
+//		return CommonUtils.responseFilterOk(result);
+//	}
 
 
 	@PUT

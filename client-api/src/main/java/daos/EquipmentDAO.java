@@ -42,6 +42,12 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	public boolean validateEquipmentAvailable(long equipmentId, Date beginDate, Date endDate) {
 
 		// TODO: 1/30/19 validate this
+
+		
+		// TODO: 2/11/19 validate user's available time
+
+
+		// TODO: 2/11/19 check renting time
 		return true;
 	}
 
