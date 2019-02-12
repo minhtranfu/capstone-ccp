@@ -13,8 +13,6 @@ import Discover from "../screens/Discover";
 import Settings from "../screens/Settings";
 import Search from "../screens/Search";
 import SearchResult from "../screens/Search/SearchResult";
-import Profile from "../screens/Profile";
-import Equipment from "../screens/Equipment";
 import MyEquipment from "../screens/MyEquipment";
 import AddDetail from "../screens/MyEquipment/AddEquipment/AddDetail";
 import AddDuration from "../screens/MyEquipment/AddEquipment/AddDuration";
@@ -26,7 +24,6 @@ import MyEquipmentDetail from "../screens/MyEquipment/Detail";
 import Activity from "../screens/Activity";
 import ActivityDetail from "../screens/Activity/Detail";
 import Notification from "../screens/Activity/Notification";
-import Login from "../screens/Login";
 import ButtonWithIcon from "../components/ButtonWithIcon";
 
 const EquipmentDetailStack = createStackNavigator(
@@ -154,33 +151,29 @@ const TabNavigator = createBottomTabNavigator(
   {
     initialRouteName: "Equipment",
     defaultNavigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused }) => {
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
         const { routeName } = navigation.state;
         let icon;
         if (routeName === "Discover") {
-          icon = focused
-            ? require("../../assets/icons/discover_ic_active.png")
-            : require("../../assets/icons/discover_ic.png");
+          icon = focused ? require('../../assets/icons/icons8-compass-active.png')
+          : require('../../assets/icons/icons8-compass.png');
         } else if (routeName === "Activity") {
-          icon = focused
-            ? require("../../assets/icons/search_ic_active.png")
-            : require("../../assets/icons/search_ic.png");
+          icon = focused ? require('../../assets/icons/icons8-search-active.png')
+          : require('../../assets/icons/icons8-search.png');
         } else if (routeName === "Equipment") {
-          icon = focused
-            ? require("../../assets/icons/plus_ic_active.png")
-            : require("../../assets/icons/plus_ic.png");
+          icon = focused ? require('../../assets/icons/icons8-garage-active.png')
+          : require('../../assets/icons/icons8-garage.png');
         } else if (routeName === "Settings") {
-          icon = focused
-            ? require("../../assets/icons/profile_ic_active.png")
-            : require("../../assets/icons/profile_ic.png");
+          icon = focused ? require('../../assets/icons/icons8-settings-active.png')
+          : require('../../assets/icons/icons8-settings.png');
         }
 
         return (
           <Image
             source={icon}
             style={{
-              width: 26,
-              height: 26,
+              height: 29,
+              aspectRatio: 1,
               marginTop: 2
             }}
             resizeMode={"contain"}
@@ -189,109 +182,15 @@ const TabNavigator = createBottomTabNavigator(
       }
     }),
     tabBarOptions: {
-      activeTintColor: colors.primaryColor,
-      inactiveTintColor: colors.secondaryColor,
+      showLabel: false,
+      activeTintColor: colors.secondaryColor,
+      inactiveTintColor: colors.white,
       style: {
-        backgroundColor: colors.white,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 0.5,
-        borderTopWidth: 0
+        backgroundColor: colors.primaryColor,
       }
     }
   }
 );
-
-// const TabNavigator = createBottomTabNavigator({
-//   Discover: {
-//     screen: DiscoverStack,
-//     navigationOptions: {
-//       title: "Discover",
-//       tabBarIcon: ({ focused }) =>
-//         focused ? (
-//           <Image
-//             source={require("../../assets/icons/discover_ic_active.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         ) : (
-//           <Image
-//             source={require("../../assets/icons/discover_ic.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         )
-//     }
-//   },
-//   Notification: {
-//     screen: NotificationStack,
-//     navigationOptions: {
-//       title: "Notification",
-//       tabBarIcon: ({ focused }) =>
-//         focused ? (
-//           <Image
-//             source={require("../../assets/icons/search_ic_active.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         ) : (
-//           <Image
-//             source={require("../../assets/icons/search_ic.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         )
-//     }
-//   },
-//   Call: {
-//     screen: () => null, // Empty screen
-//     navigationOptions: () => ({
-//       title: "",
-//       tabBarIcon: <ButtonWithIcon /> // Plus button component
-//     })
-//   },
-//   Equipment: {
-//     screen: EquipmentStack,
-//     navigationOptions: {
-//       title: "Equipment",
-//       tabBarIcon: ({ focused }) =>
-//         focused ? (
-//           <Image
-//             source={require("../../assets/icons/plus_ic_active.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         ) : (
-//           <Image
-//             source={require("../../assets/icons/plus_ic.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         )
-//     }
-//   },
-//   Settings: {
-//     screen: SettingStack,
-//     navigationOptions: {
-//       title: "Profile",
-//       tabBarIcon: ({ focused }) =>
-//         focused ? (
-//           <Image
-//             source={require("../../assets/icons/profile_ic_active.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         ) : (
-//           <Image
-//             source={require("../../assets/icons/profile_ic.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         )
-//     }
-//   }
-// });
 
 const AppNavigator = createSwitchNavigator({
   App: TabNavigator

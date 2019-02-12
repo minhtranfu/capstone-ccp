@@ -1,7 +1,7 @@
 export default {
-  primaryColor: "#0288D1",
+  primaryColor: "#344955",
   backgroundColor: "#DD6379",
-  secondaryColor: "#3B4961",
+  secondaryColor: "#F9AA33",
   secondaryColorOpacity: "rgba(59,73,97,0.6)",
   white: "#FFF",
   grayWhite: "#F0F0F0",

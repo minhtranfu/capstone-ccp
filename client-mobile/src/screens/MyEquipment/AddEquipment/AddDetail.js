@@ -8,15 +8,11 @@ import {
   ScrollView
 } from "react-native";
 import { SafeAreaView, NavigationActions } from "react-navigation";
-import { ImagePicker, Permissions } from "expo";
-import { AntDesign, Ionicons, Feather } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import Header from "../../../components/Header";
 
 import Dropdown from "../../../components/Dropdown";
 import InputField from "../../../components/InputField";
-import Title from "../../../components/Title";
-import Button from "../../../components/Button";
-import ParallaxList from "../../../components/ParallaxList";
 
 import colors from "../../../config/colors";
 import fontSize from "../../../config/fontSize";
