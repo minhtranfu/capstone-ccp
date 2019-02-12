@@ -91,10 +91,11 @@ class MyEquipmentDetail extends Component {
       type: null,
       categories: null,
       deliveryPrice: null,
-      startDate: "",
+      beginDate: "",
       endDate: "",
       thumbnailImage: "",
-      descriptionImages: []
+      descriptionImages: [],
+      data: {}
     };
   }
 
@@ -103,17 +104,19 @@ class MyEquipmentDetail extends Component {
     this.props.fetchTransactionDetail(id);
   }
 
-  getDerivedStateFromProps(props, state) {
-    const { transactionDetail } = this.props;
-    this.setState({
-      name: transactionDetail.equipment.name,
-      dailyPrice: transactionDetail.dailyPrice,
-      type: transactionDetail.equipmentType.name,
-      generalEquipment: transactionDetail.equipmentType.generalEquipment.name,
-      deliveryPrice: transactionDetail.deliveryPrice
-    });
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.transactionDetail.data !== prevState.data) {
+      return { data: nextProps.transactionDetail.data };
+    } else return null;
   }
-
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevProps.transactionDetail.data !== this.props.transactionDetail.data
+    ) {
+      //Perform some operation here
+      this.setState({ data: this.props.transactionDetail.data });
+    }
+  }
   _handleChangeBackgroundImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
@@ -124,7 +127,7 @@ class MyEquipmentDetail extends Component {
 
   renderScrollItem = () => {
     const { id } = this.props.navigation.state.params;
-    const { transactionDetail } = this.props;
+    const { data } = this.props.transactionDetail;
     return (
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.landscapeImgWrapper}>
@@ -150,43 +153,66 @@ class MyEquipmentDetail extends Component {
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this.setState({ name: value })}
-          value={transactionDetail.equipment.name}
+          value={data.equipment.name}
           returnKeyType={"next"}
         />
         <InputField
           label={"Daily price"}
-          placeholder={"Input your equipment Daily price"}
           placeholderTextColor={colors.text68}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this.setState({ dailyPrice: value })}
-          value={transactionDetail.dailyPrice}
+          value={data.dailyPrice.toString()}
           keyboardType={"numeric"}
           returnKeyType={"next"}
         />
         <InputField
           label={"Delivery price"}
-          placeholder={"Input your equipment Delivery price"}
           placeholderTextColor={colors.text68}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this.setState({ deliveryPrice: value })}
           keyboardType={"numeric"}
-          value={transactionDetail.deliveryPrice}
+          value={data.deliveryPrice.toString()}
         />
         <Dropdown
-          label={"Select your categories"}
-          defaultText={transactionDetail.equipmentType.generalEquipment.name}
+          label={"General Type"}
+          defaultText={data.equipment.equipmentType.generalEquipment.name}
           onSelectValue={value => this.setState({ categories: value })}
           options={DROPDOWN_CATEGORIES_OPTIONS}
         />
         <Dropdown
-          label={"Select your types"}
-          defaultText={transactionDetail.equipmentType.name}
+          label={"Type"}
+          defaultText={data.equipment.equipmentType.name}
           onSelectValue={value => this.setState({ type: value })}
           options={DROPDOWN_TYPES_OPTIONS}
         />
-
+        <Text
+          style={{
+            fontSize: fontSize.h4,
+            fontWeight: "500",
+            color: colors.text
+          }}
+        >
+          Available time range
+        </Text>
+        <InputField
+          label={"From"}
+          placeholder={"dd-mm-yyyy"}
+          customWrapperStyle={{ marginBottom: 20 }}
+          inputType="text"
+          onChangeText={value => this.setState({ beginDate: value })}
+          value={data.beginDate}
+          returnKeyType={"next"}
+        />
+        <InputField
+          label={"To"}
+          placeholder={"dd-mm-yyyy"}
+          customWrapperStyle={{ marginBottom: 20 }}
+          inputType="text"
+          onChangeText={value => this.setState({ endDate: value })}
+          value={data.endDate}
+        />
         {data.status === "pending" || data.status === "delivery" ? (
           <View style={styles.bottomWrapper}>
             <Text>Do you want to manage your delivery?</Text>
@@ -206,6 +232,8 @@ class MyEquipmentDetail extends Component {
 
   render() {
     const { transactionDetail } = this.props;
+    const { id } = this.props.navigation.state.params;
+
     return (
       <SafeAreaView
         style={styles.container}
@@ -220,7 +248,7 @@ class MyEquipmentDetail extends Component {
         >
           <Text>My Equipment</Text>
         </Header>
-        {transactionDetail ? (
+        {transactionDetail.data ? (
           <ScrollView>{this.renderScrollItem()}</ScrollView>
         ) : (
           <Loading />

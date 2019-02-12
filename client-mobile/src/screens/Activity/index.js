@@ -11,18 +11,40 @@ import {
   FlatList
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
-import { Feather } from "@expo/vector-icons";
 import { connect } from "react-redux";
-import { listEquipmentByRequesterId } from "../../redux/actions/equipment";
+import {
+  listEquipmentByRequesterId,
+  getTransactionDetail
+} from "../../redux/actions/equipment";
 
 import { isSignedIn } from "../../config/auth";
 import RequireLogin from "../Login/RequireLogin";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
-import EquipmentItem from "../MyEquipment/components/EquipmentItem";
+import EquipmentItem from "./components/EquipmentItem";
+import StepProgress from "./components/StepProgress";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+import Ionicons from "@expo/vector-icons/Ionicons";
+
+const STEP_PROGRESS_OPTIONS = [
+  {
+    id: 1,
+    name: "Pending",
+    value: "PENDING"
+  },
+  {
+    id: 2,
+    name: "Delivery",
+    value: "DELIVERY"
+  },
+  {
+    id: 3,
+    name: "Returning",
+    value: "RETURNING"
+  }
+];
 
 @connect(
   state => {
@@ -60,43 +82,16 @@ class Activity extends Component {
     return result;
   };
 
-  renderHiredSreen = () => {
-    return (
-      <View>
-        <FlatList
-          data={this._handleFilterResult("ACCEPTED")}
-          renderItem={({ item, index }) => (
-            <EquipmentItem
-              onPress={() =>
-                this.props.navigation.navigate("Detail", { id: item.id })
-              }
-              key={`eq_${index}`}
-              id={item.id}
-              name={item.name}
-              imageURL={
-                "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-              }
-              status={item.status}
-              price={item.dailyPrice}
-            />
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
-    );
-  };
-
-  renderPendingScreen = () => {};
-
-  renderScrollItem = () => {
+  renderContent = () => {
     const { selectedIndex } = this.state;
     const { requesterEquipment } = this.props;
+
     if (requesterEquipment.data.length > 0) {
       switch (selectedIndex) {
         case 0:
-          return this.renderHiredSreen();
+          return this._renderHiredScreen();
         case 1:
-          return this.renderPendingScreen();
+          return this._renderPendingScreen();
       }
     } else {
       return (
@@ -107,48 +102,103 @@ class Activity extends Component {
     }
   };
 
+  //Render item in hired tab
+  _renderHiredScreen = () => (
+    <FlatList
+      style={{ flex: 1, paddingHorizontal: 15 }}
+      data={this._handleFilterStatusResult("ACCEPTED")}
+      renderItem={this._renderHiredFlatListItem}
+      keyExtractor={(item, index) => index.toString()}
+    />
+  );
+
+  //Render item in pending tab
+  _renderPendingScreen = () => (
+    <FlatList
+      style={{ flex: 1, paddingHorizontal: 15 }}
+      data={this._handleFilterStatusResult("PENDING")}
+      renderItem={this._renderPendingFlatListItem}
+      keyExtractor={(item, index) => index.toString()}
+    />
+  );
+
+  //List data in hired tab
+  _renderHiredFlatListItem = ({ item }) => (
+    <View style={styles.pendingRowItem}>
+      <EquipmentItem
+        onPress={() =>
+          this.props.navigation.navigate("ActivityDetail", { id: item.id })
+        }
+        key={`eq_${item.id}`}
+        id={item.id}
+        name={item.equipment.name}
+        imageURL={
+          "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+        }
+        status={item.status}
+        contractor={item.equipment.contractor.name}
+        phone={item.equipment.contractor.phoneNumber}
+        beginDate={item.beginDate}
+        endDate={item.endDate}
+      />
+    </View>
+  );
+
+  //List data in pending tab
+  _renderPendingFlatListItem = ({ item }) => (
+    <View style={styles.pendingRowItem}>
+      <EquipmentItem
+        onPress={() =>
+          this.props.navigation.navigate("ActivityDetail", { id: item.id })
+        }
+        key={`eq_${item.id}`}
+        id={item.id}
+        name={item.equipment.name}
+        imageURL={
+          "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+        }
+        status={item.status}
+        contractor={item.equipment.contractor.name}
+        phone={item.equipment.contractor.phoneNumber}
+        beginDate={item.beginDate}
+        endDate={item.endDate}
+      />
+      <StepProgress options={STEP_PROGRESS_OPTIONS} status={item.status} />
+    </View>
+  );
+
   render() {
     const { checkedSignIn, signedIn } = this.state;
     const { navigation, auth, requesterEquipment } = this.props;
-    console.log("Activity", auth);
 
     if (auth) {
       return (
         <SafeAreaView
           style={styles.container}
-          forceInset={{ bottom: "never", top: "always" }}
+          forceInset={{ bottom: "always", top: "always" }}
         >
-          {requesterEquipment ? (
-            <View>
-              <Header
-                renderRightButton={() => (
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate("Notification")
-                    }
-                  >
-                    <Feather name="bell" size={24} />
-                  </TouchableOpacity>
-                )}
+          <Header
+            renderRightButton={() => (
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate("Notification")}
               >
-                <SegmentedControlIOS
-                  style={{ width: 300 }}
-                  values={["Hired", "Pending"]}
-                  selectedIndex={this.state.selectedIndex}
-                  onChange={event => {
-                    this.setState({
-                      selectedIndex: event.nativeEvent.selectedSegmentIndex
-                    });
-                  }}
-                  tintColor={colors.primaryColor}
-                />
-              </Header>
-
-              <ScrollView>{this.renderScrollItem()}</ScrollView>
-            </View>
-          ) : (
-            <Loading />
-          )}
+                <Ionicons name="ios-notifications-outline" size={24} />
+              </TouchableOpacity>
+            )}
+          >
+            <SegmentedControlIOS
+              style={{ width: 300 }}
+              values={["Hired", "Pending"]}
+              selectedIndex={this.state.selectedIndex}
+              onChange={event => {
+                this.setState({
+                  selectedIndex: event.nativeEvent.selectedSegmentIndex
+                });
+              }}
+              tintColor={colors.primaryColor}
+            />
+          </Header>
+          {requesterEquipment ? this.renderContent() : <Loading />}
         </SafeAreaView>
       );
     } else {
@@ -159,10 +209,17 @@ class Activity extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
+    flex: 1
+  },
+  pendingRowItem: {
+    borderRadius: 15,
+    shadowColor: "#3E3E3E",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 3,
+    elevation: 2,
+    marginBottom: 15,
+    marginTop: 5
   }
 });
 

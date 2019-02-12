@@ -4,20 +4,20 @@ import { baseUrl } from "../baseUrl";
 
 export function getEquipmentDetail(id) {
   return async dispatch => {
-    const data = await axios.get(`equipments/${id}`);
+    const res = await axios.get(`equipments/${id}`);
     dispatch({
       type: Actions.GET_EQUIPMENT_DETAIL_SUCCESS,
-      payload: data
+      payload: res
     });
   };
 }
 
 export function getTransactionDetail(id) {
   return async dispatch => {
-    const data = await axios.get(`transaction/${id}`);
+    const res = await axios.get(`transactions/${id}`);
     dispatch({
       type: Actions.GET_TRANSACTION_DETAIL_SUCCESS,
-      payload: data
+      payload: res
     });
   };
 }
@@ -45,20 +45,20 @@ export function removeEquipment(id) {
 
 export function listEquipmentBySupplierId(id) {
   return async dispatch => {
-    const data = await axios.get(`transactions/supplier/${id}`);
+    const res = await axios.get(`transactions/supplier/${id}`);
     dispatch({
       type: Actions.LIST_SUPPLIER_EQUIPMENT_SUCCESS,
-      payload: data
+      payload: res
     });
   };
 }
 
 export function listEquipmentByRequesterId(id) {
   return async dispatch => {
-    const data = await axios.get(`transactions/requester/${id}`);
+    const res = await axios.get(`transactions/requester/${id}`);
     dispatch({
       type: Actions.LIST_REQUESTER_EQUIPMENT_SUCCESS,
-      payload: data
+      payload: res
     });
   };
 }

@@ -24,6 +24,7 @@ import EquipmentDetail from "../screens/EquipmentDetail";
 import Transaction from "../screens/EquipmentDetail/Transaction";
 import MyEquipmentDetail from "../screens/MyEquipment/Detail";
 import Activity from "../screens/Activity";
+import ActivityDetail from "../screens/Activity/Detail";
 import Notification from "../screens/Activity/Notification";
 import Login from "../screens/Login";
 import ButtonWithIcon from "../components/ButtonWithIcon";
@@ -125,7 +126,8 @@ EquipmentStack.navigationOptions = ({ navigation }) => {
 const ActivityStack = createStackNavigator(
   {
     Activity: Activity,
-    Notification: Notification
+    Notification: Notification,
+    ActivityDetail: ActivityDetail
   },
   {
     mode: "modal",
