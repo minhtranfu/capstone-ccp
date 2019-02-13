@@ -22,7 +22,7 @@ class AddDurationText extends Component {
     this.state = {
       valueArray: [],
       duration: [],
-      startDate: "",
+      beginDate: "",
       endDate: ""
     };
 
@@ -30,7 +30,7 @@ class AddDurationText extends Component {
     this.animatedValue = new Animated.Value(0);
   }
 
-  handleAddMore = () => {
+  _handleOnPressAddMore = () => {
     this.animatedValue.setValue(0);
     let newlyAddedValue = { index: this.index };
     this.setState(
@@ -51,12 +51,62 @@ class AddDurationText extends Component {
     );
   };
 
-  render() {
-    const { startDate, endDate } = this.state;
-    const { data } = this.props.navigation.state.params;
-    const timeRange = { startDate, endDate };
+  _renderScrollViewItem = () => {
+    const { beginDate, endDate } = this.state;
     return (
-      <SafeAreaView style={styles.container}>
+      <View>
+        <InputField
+          label={"From"}
+          placeholder={"yyyy-mm-dd"}
+          customWrapperStyle={{ marginBottom: 20 }}
+          inputType="text"
+          onChangeText={value => this.setState({ beginDate: value })}
+          value={beginDate}
+          returnKeyType={"next"}
+        />
+        <InputField
+          label={"To"}
+          placeholder={"yyyy-mm-dd"}
+          customWrapperStyle={{ marginBottom: 20 }}
+          inputType="text"
+          onChangeText={value => this.setState({ endDate: value })}
+          value={endDate}
+          returnKeyType={"next"}
+        />
+      </View>
+    );
+  };
+
+  _renderBottomButton = (data, timeRange) => (
+    <TouchableOpacity
+      style={[styles.buttonWrapper, styles.buttonEnable]}
+      onPress={() =>
+        this.props.navigation.navigate("AddImage", {
+          data: Object.assign({}, data, {
+            availableTimeRanges: [timeRange]
+          })
+        })
+      }
+    >
+      <Text style={styles.textEnable}>Next</Text>
+      <Ionicons
+        name="ios-arrow-forward"
+        size={23}
+        color={"white"}
+        style={{ marginTop: 3 }}
+      />
+    </TouchableOpacity>
+  );
+
+  render() {
+    const { beginDate, endDate } = this.state;
+    const { data } = this.props.navigation.state.params;
+    const timeRange = { beginDate, endDate };
+    return (
+      <SafeAreaView
+        style={styles.container}
+        forceInset={{ bottom: "always", top: "always" }}
+      >
         <Header
           renderLeftButton={() => (
             <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
@@ -64,49 +114,13 @@ class AddDurationText extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text style={{ fontSize: fontSize.h4, fontWeight: "500", color: colors.text }}>
-            Available time range
-          </Text>
+          <Text style={styles.header}>Available time range</Text>
         </Header>
-        <ScrollView contentContainerStyle={{paddingHorizontal: 15}}>
-          <InputField
-            label={"From"}
-            placeholder={"dd-mm-yyyy"}
-            customWrapperStyle={{ marginBottom: 20 }}
-            inputType="text"
-            onChangeText={value => this.setState({ startDate: value })}
-            value={startDate}
-            returnKeyType={"next"}
-          />
-          <InputField
-            label={"To"}
-            placeholder={"dd-mm-yyyy"}
-            customWrapperStyle={{ marginBottom: 20 }}
-            inputType="text"
-            onChangeText={value => this.setState({ endDate: value })}
-            value={endDate}
-            returnKeyType={"next"}
-          />
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
+          {this._renderScrollViewItem()}
         </ScrollView>
         <View style={styles.bottomWrapper}>
-          <TouchableOpacity
-            style={[styles.buttonWrapper, styles.buttonEnable]}
-            onPress={() =>
-              this.props.navigation.navigate("AddImage", {
-                data: Object.assign({}, data, {
-                  availableTimeRanges: [timeRange]
-                })
-              })
-            }
-          >
-            <Text style={styles.textEnable}>Next</Text>
-            <Ionicons
-              name="ios-arrow-forward"
-              size={23}
-              color={"white"}
-              style={{marginTop: 3}}
-            />
-          </TouchableOpacity>
+          {this._renderBottomButton(data, timeRange)}
         </View>
       </SafeAreaView>
     );
@@ -119,14 +133,16 @@ const styles = StyleSheet.create({
   },
   bottomWrapper: {
     backgroundColor: "transparent",
-    zIndex: 1,
+    position: "absolute",
+    bottom: 30,
+    right: 15,
     justifyContent: "center",
     alignItems: "flex-end"
   },
   buttonWrapper: {
     marginRight: 15,
-    width: 80,
     paddingVertical: 5,
+    width: 80,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
@@ -135,14 +151,19 @@ const styles = StyleSheet.create({
   textEnable: {
     fontSize: fontSize.bodyText,
     fontWeight: "500",
-    color: 'white',
-    marginRight: 8,
+    color: "white",
+    marginRight: 8
   },
   buttonEnable: {
     backgroundColor: colors.primaryColor
   },
   buttonDisable: {
-    backgroundColor: colors.text25,
+    backgroundColor: colors.text25
+  },
+  header: {
+    fontSize: fontSize.h4,
+    fontWeight: "500",
+    color: colors.text
   }
 });
 

@@ -14,6 +14,7 @@ import {
   getGeneralEquipmentType,
   getEquipmentType
 } from "../../../redux/actions/type";
+import { getCurrentLocation } from "../../../redux/actions/location";
 
 import Loading from "../../../components/Loading";
 import Header from "../../../components/Header";
@@ -75,7 +76,8 @@ class AddDetail extends Component {
       generalType: null,
       typeIndex: 0,
       type: null,
-      deliveryPrice: null
+      deliveryPrice: null,
+      description: ""
     };
   }
 
@@ -110,7 +112,6 @@ class AddDetail extends Component {
   //Create new dropdown options for type
   _handleNewEquipmentType = generalTypeIndex => {
     const { data } = this.props.generalType;
-    const typeList = data.find((item, index) => index === generalTypeIndex - 1);
     let newGeneralTypeArray = this._handleNewGeneralEquipmentType();
     let result = data.find(
       item => item.id === newGeneralTypeArray[generalTypeIndex].id
@@ -134,14 +135,16 @@ class AddDetail extends Component {
       dailyPrice,
       typeIndex,
       generalTypeIndex,
-      deliveryPrice
+      deliveryPrice,
+      description
     } = this.state;
     const newTypeOptions = this._handleNewEquipmentType(generalTypeIndex);
     let type = { id: newTypeOptions[typeIndex].id };
     const newData = {
       name: name,
-      dailyPrice: dailyPrice,
-      deliveryPrice: deliveryPrice,
+      dailyPrice: parseInt(dailyPrice),
+      deliveryPrice: parseInt(deliveryPrice),
+      description: description,
       equipmentType: type
     };
     return newData;
@@ -151,11 +154,10 @@ class AddDetail extends Component {
     const {
       name,
       dailyPrice,
-      type,
-      generalType,
-      deliveryPrice,
+      typeIndex,
       generalTypeIndex,
-      typeIndex
+      deliveryPrice,
+      description
     } = this.state;
     const NEW_DROPDOWN_GENERAL_TYPES_OPTIONS = this._handleNewGeneralEquipmentType();
     const NEW_DROPDOWN_TYPES_OPTIONS = this._handleNewEquipmentType(
@@ -190,6 +192,14 @@ class AddDetail extends Component {
           onChangeText={value => this.setState({ deliveryPrice: value })}
           keyboardType={"numeric"}
           value={deliveryPrice}
+        />
+        <InputField
+          label={"Description"}
+          placeholder={"Input your description"}
+          customWrapperStyle={{ marginBottom: 20 }}
+          inputType="text"
+          onChangeText={value => this.setState({ description: value })}
+          value={description}
         />
         <Dropdown
           label={"General Equipment Type"}

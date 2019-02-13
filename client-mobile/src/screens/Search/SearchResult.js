@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
+import { searchEquipment } from "../../redux/actions/equipment";
 
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -19,9 +20,16 @@ import EquipmentItem from "../MyEquipment/components/EquipmentItem";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
-@connect(state => ({
-  equipment: state.equipment.list
-}))
+@connect(
+  state => ({
+    equipment: state.equipment.list
+  }),
+  dispatch => ({
+    fetchSearchEquipment: (address, long, lat, beginDate, endDate) => {
+      dispatch(searchEquipment(address, long, lat, beginDate, endDate));
+    }
+  })
+)
 class SearchResult extends Component {
   constructor(props) {
     super(props);
@@ -30,11 +38,11 @@ class SearchResult extends Component {
     };
   }
 
-  setModalVisible(visible) {
+  _setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
 
-  findResultByAddress = equipment => {
+  _findResultByAddress = equipment => {
     //Query response: main_text & secondary_text
     const { query, lat, long } = this.props.navigation.state.params;
     const result = equipment.filter(
@@ -48,7 +56,7 @@ class SearchResult extends Component {
   render() {
     const { equipment } = this.props;
     const { query } = this.props.navigation.state.params;
-    const result = this.findResultByAddress(equipment);
+    const result = this._findResultByAddress(equipment);
     return (
       <SafeAreaView
         style={styles.container}
@@ -62,7 +70,7 @@ class SearchResult extends Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  this.setModalVisible(true);
+                  this._setModalVisible(true);
                 }}
               >
                 <Feather name="search" size={24} />

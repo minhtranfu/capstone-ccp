@@ -28,13 +28,15 @@ export function clearTransactionDetail() {
 }
 
 export function addEquipment(equipment) {
-  return async dispatch => {
-    const res = await axios.post(`equipments`, { equipment });
-    dispatch({
-      type: Actions.ADD_EQUIPMENT,
-      payload: res
-    });
-  };
+  axios.post(
+    `equipments`,
+    { equipment },
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
 }
 
 // export function addNewEquipment(data) {
@@ -78,11 +80,14 @@ export function listEquipmentByRequesterId(id) {
   };
 }
 
-export function searchEquipment(text, beginDate, endDate) {
+export function searchEquipment(address, long, lat, beginDate, endDate) {
+  if (beginDate && endDate) {
+    const url = `equipments?begin_date=${beginDate}&end_date=${endDate}&long=${long}&lad=${lat}&lquery=${address}`;
+  } else {
+    const url = `equipments?long=${long}&lad=${lat}&lquery=${address}`;
+  }
   return async dispatch => {
-    const res = await axios.get(
-      `equipments?begin_date=${beginDate}&end_date=${endDate}&lquery=${text}`
-    );
+    const res = await axios.get(url);
     dispatch({
       type: Actions.SEARCH_EQUIPMENT_SUCCESS,
       payload: res

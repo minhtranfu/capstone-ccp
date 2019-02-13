@@ -9,9 +9,12 @@ import {
 } from "react-native";
 import { ImagePicker, Permissions } from "expo";
 import { SafeAreaView, NavigationActions } from "react-navigation";
-import { connect } from "react-redux";
-import { addNewEquipment } from "../../../redux/actions/equipment";
 import { Feather } from "@expo/vector-icons";
+import { connect } from "react-redux";
+import { Location } from "expo";
+import { grantPermission } from "../../../redux/reducers/permission";
+import { addEquipment } from "../../../redux/actions/equipment";
+import { getAddressByLatLong } from "../../../redux/actions/location";
 
 import Header from "../../../components/Header";
 import Button from "../../../components/Button";
@@ -24,7 +27,7 @@ import fontSize from "../../../config/fontSize";
     equipment: state.equipment.equipment
   }),
   dispatch => ({
-    addEquipment: data => dispatch(addNewEquipment(data))
+    addEquipment: data => dispatch(addEquipment(data))
   })
 )
 class AddImage extends Component {
@@ -32,11 +35,29 @@ class AddImage extends Component {
     super(props);
     this.state = {
       thumbnailImage: "",
-      descriptionImages: []
+      descriptionImages: [],
+      long: "",
+      lat: "",
+      address: ""
     };
   }
 
-  handleAddThumbnailImage = async () => {
+  componentDidMount = async () => {
+    const locationStatus = await grantPermission("location");
+    if (locationStatus === "granted") {
+      const currentLocation = await Location.getCurrentPositionAsync({});
+      const coords = currentLocation.coords;
+      const lat = coords.latitude;
+      const long = coords.longitude;
+      this.setState({
+        lat: lat,
+        long: long,
+        address: await getAddressByLatLong(lat, long)
+      });
+    }
+  };
+
+  _handleOnPressThumbnailImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
     if (status === "granted") {
@@ -47,7 +68,7 @@ class AddImage extends Component {
     }
   };
 
-  handleAddDescriptionImage = async () => {
+  _handleOnPressDescriptionImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
     if (status === "granted") {
@@ -60,18 +81,25 @@ class AddImage extends Component {
     }
   };
 
-  handleAddNewEquipment = () => {
-    const { descriptionImages, thumbnailImage } = this.state;
+  _handleOnPressAddEquipment = () => {
+    const {
+      descriptionImages,
+      thumbnailImage,
+      address,
+      lat,
+      long
+    } = this.state;
     const { data } = this.props.navigation.state.params;
     const contractor = {
-      constructionId: 1,
+      constructionId: null,
       descriptionImages: descriptionImages,
       constractor: {
-        id: 1
+        id: 13
       },
       thumbnailImage: [thumbnailImage],
-      address: "340 Nguyễn Tất Thành, Quận 4, Hồ Chí Minh, Việt Nam",
-      status: "available"
+      address: address,
+      latitude: lat,
+      longitute: long
     };
     const newData = Object.assign({}, data, contractor);
     console.log("Submit", newData);
@@ -80,9 +108,11 @@ class AddImage extends Component {
 
   render() {
     const { data } = this.props.navigation.state.params;
-    console.log(data);
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView
+        style={styles.container}
+        forceInset={{ bottom: "always", top: "always" }}
+      >
         <Header
           renderLeftButton={() => (
             <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
@@ -90,15 +120,24 @@ class AddImage extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text style={{ fontSize: fontSize.h4, fontWeight: "500", color: colors.text }}>
+          <Text
+            style={{
+              fontSize: fontSize.h4,
+              fontWeight: "500",
+              color: colors.text
+            }}
+          >
             Upload images
           </Text>
         </Header>
-        <ScrollView style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 15}}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingHorizontal: 15 }}
+        >
           <Button
             buttonStyle={styles.buttonStyle}
             text={"Add Thumbnail Image"}
-            onPress={this.handleAddThumbnailImage}
+            onPress={this._handleOnPressThumbnailImage}
           />
           <Image
             source={{ uri: this.state.thumbnailImage || "" }}
@@ -109,7 +148,7 @@ class AddImage extends Component {
           <Button
             buttonStyle={styles.buttonStyle}
             text={"Add Description Image"}
-            onPress={this.handleAddDescriptionImage}
+            onPress={this._handleOnPressDescriptionImage}
           />
           {this.state.descriptionImages.length > 0
             ? this.state.descriptionImages.map((item, index) => (
@@ -126,8 +165,8 @@ class AddImage extends Component {
           <TouchableOpacity
             style={[styles.buttonWrapper, styles.buttonEnable]}
             onPress={() => {
+              this._handleOnPressAddEquipment();
               this.props.navigation.dismiss();
-              this.handleAddNewEquipment();
             }}
           >
             <Text style={styles.textEnable}>Submit</Text>
@@ -148,7 +187,9 @@ const styles = StyleSheet.create({
   },
   bottomWrapper: {
     backgroundColor: "transparent",
-    zIndex: 1,
+    position: "absolute",
+    bottom: 30,
+    right: 15,
     justifyContent: "center",
     alignItems: "flex-end"
   },
@@ -167,8 +208,8 @@ const styles = StyleSheet.create({
   textEnable: {
     fontSize: fontSize.bodyText,
     fontWeight: "500",
-    color: 'white',
-  },
+    color: "white"
+  }
 });
 
 export default AddImage;

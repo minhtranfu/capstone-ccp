@@ -39,8 +39,7 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
     }
     case Actions.ADD_EQUIPMENT: {
       return {
-        ...state,
-        listSupplierEquipment: [...state.listSupplierEquipment, payload]
+        ...state
       };
     }
     case Actions.UPDATE_EQUIPMENT: {

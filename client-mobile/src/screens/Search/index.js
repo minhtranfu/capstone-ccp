@@ -47,14 +47,14 @@ class Search extends Component {
     this.setState({ location: [], currentLat: "", currentLong: "" });
   };
 
-  handleOnChangeText = async address => {
+  _handleOnChangeText = async address => {
     const { currentLat, currentLong } = this.state;
     this.setState({
       location: await autoCompleteSearch(address, currentLat, currentLong)
     });
   };
 
-  renderRowItem = (item, index) => (
+  _renderRowItem = (item, index) => (
     <TouchableOpacity
       key={index}
       style={styles.buttonWrapper}
@@ -79,7 +79,7 @@ class Search extends Component {
         forceInset={{ bottom: "always", top: "always" }}
       >
         <SearchBar
-          handleOnChangeText={this.handleOnChangeText}
+          handleOnChangeText={this._handleOnChangeText}
           renderRightButton={() => (
             <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
               <Text>Cancel</Text>
@@ -94,7 +94,7 @@ class Search extends Component {
                 paddingHorizontal: 15
               }}
             >
-              {location.map((item, index) => this.renderRowItem(item, index))}
+              {location.map((item, index) => this._renderRowItem(item, index))}
             </View>
           ) : (
             <View>

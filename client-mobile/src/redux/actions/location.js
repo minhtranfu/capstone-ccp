@@ -10,6 +10,19 @@ function getCurrLocation() {
   });
 }
 
+export const getAddressByLatLong = async (lat, long) => {
+  const address = await fetch(
+    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${GOOGLE_MAPS_KEY}`
+  )
+    .then(res => res.json())
+    .then(res => {
+      const result = res.results;
+      const currentAddress = result[0] && result[0].formatted_address;
+      return currentAddress ? currentAddress : {};
+    });
+  if (address) return address;
+};
+
 export const getCurrentLocation = async () => {
   const position = await getCurrLocation();
   const address = await getAddressByLatLong(
