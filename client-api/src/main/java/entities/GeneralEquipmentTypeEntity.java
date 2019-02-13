@@ -1,6 +1,9 @@
 package entities;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "general_equipment_type", schema = "capstone_ccp", catalog = "")
@@ -10,6 +13,17 @@ public class GeneralEquipmentTypeEntity {
 	private String name;
 	private boolean isDeleted;
 
+	private List<EquipmentTypeEntity> equipmentTypeEntities;
+
+	public GeneralEquipmentTypeEntity() {
+	}
+
+	public GeneralEquipmentTypeEntity(GeneralEquipmentTypeEntity equipmentTypeEntity) {
+		this.id = equipmentTypeEntity.id;
+		this.name = equipmentTypeEntity.name;
+		this.isDeleted = equipmentTypeEntity.isDeleted;
+		this.equipmentTypeEntities = new ArrayList<>(equipmentTypeEntity.equipmentTypeEntities);
+	}
 
 	@Id
 	@GeneratedValue
@@ -40,5 +54,15 @@ public class GeneralEquipmentTypeEntity {
 
 	public void setDeleted(boolean deleted) {
 		isDeleted = deleted;
+	}
+
+	@XmlTransient
+	@OneToMany(mappedBy = "generalEquipment")
+	public List<EquipmentTypeEntity> getEquipmentTypeEntities() {
+		return equipmentTypeEntities;
+	}
+
+	public void setEquipmentTypeEntities(List<EquipmentTypeEntity> equipmentTypeEntity) {
+		this.equipmentTypeEntities = equipmentTypeEntity;
 	}
 }

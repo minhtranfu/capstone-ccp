@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "available_time_range", schema = "capstone_ccp", catalog = "")
+@Table(name = "available_time_range", schema = "capstone_ccp")
 @NamedQuery(name = "AvailableTimeRangeEntity.searchTimeRangeInDate",query = "select t from AvailableTimeRangeEntity t where t.equipment.id =:equipmentId and t.beginDate <= :curBeginDate and :curBeginDate <= :curEndDate  and  :curEndDate <= t.endDate")
 public class AvailableTimeRangeEntity {
 	private long id;

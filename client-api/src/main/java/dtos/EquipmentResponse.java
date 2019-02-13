@@ -5,6 +5,8 @@ import entities.*;
 import java.util.Collection;
 import java.util.List;
 
+
+/*It's not useless, it have getDistance!*/
 public class EquipmentResponse {
 	private EquipmentEntity equipmentEntity;
 

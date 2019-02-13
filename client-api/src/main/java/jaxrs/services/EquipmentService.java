@@ -7,11 +7,15 @@ import dtos.EquipmentResponse;
 import dtos.LocationDTO;
 import dtos.MessageResponse;
 import entities.*;
+import org.omg.CORBA.PRIVATE_MEMBER;
 import utils.CommonUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,21 +29,52 @@ public class EquipmentService {
 	private static final ContractorDAO CONTRACTOR_DAO = new ContractorDAO();
 
 
+	/*========Constants============*/
+//	Nghia's house address
+	private static final String DEFAULT_LAT = "10.806488";
+	private static final String DEFAULT_LONG = "106.676364";
+
 	@GET
 	public Response searchEquipment(
-			@QueryParam("lat") double latitude,
-			@QueryParam("long") double longitude,
-			@QueryParam("begin_date") Date beginDate,
-			@QueryParam("end_date") Date endDate,
+			@QueryParam("lat") @DefaultValue(DEFAULT_LAT) double latitude,
+			@QueryParam("long") @DefaultValue(DEFAULT_LONG) double longitude,
+			@QueryParam("beginDate") @DefaultValue("") String beginDateStr,
+			@QueryParam("endDate") @DefaultValue("") String endDateStr,
 			@QueryParam("lquery") @DefaultValue("") String locationQuery) {
 
-		if (beginDate == null || endDate == null) {
-			// return all
-			List<EquipmentEntity> equipmentEntities = equipmentDAO.getAll("EquipmentEntity.getAll");
-			return CommonUtils.responseFilterOk(equipmentEntities);
 
+		Date beginDate = null;
+		Date endDate = null;
+
+
+		if (!beginDateStr.isEmpty() && !endDateStr.isEmpty()) {
+
+
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+			try {
+				beginDate = simpleDateFormat.parse(beginDateStr);
+				endDate = simpleDateFormat.parse(endDateStr);
+
+			} catch (ParseException e) {
+				e.printStackTrace();
+
+				// TODO: 2/12/19 always return somethings even when format is shit for risk preventing
+
+				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Date format must be yyyy-mm-dd")).build();
+			}
+			if (beginDate.after(endDate)) {
+				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Error: beginDate > endDate")).build();
+
+			}
 		}
+
+
+		// TODO: 2/12/19 change to search !!
+
+
 		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(beginDate, endDate);
+//		List<EquipmentEntity> equipmentEntities = equipmentDAO.getAll("EquipmentEntity.getAll");
+
 		List<EquipmentResponse> result = new ArrayList<EquipmentResponse>();
 
 		for (EquipmentEntity equipmentEntity : equipmentEntities) {
@@ -112,6 +147,16 @@ public class EquipmentService {
 
 		//remove status
 		equipmentEntity.setStatus(null);
+
+		if (equipmentEntity.getLatitude() == null) {
+			equipmentEntity.setLatitude(Double.parseDouble(DEFAULT_LAT));
+		}
+
+		if (equipmentEntity.getLongitude() == null) {
+			equipmentEntity.setLongitude(Double.parseDouble(DEFAULT_LONG));
+		}
+
+
 
 		//check for constructor id
 		if (equipmentEntity.getContractor() == null) {

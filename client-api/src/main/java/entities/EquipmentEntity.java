@@ -1,6 +1,7 @@
 package entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 		@NamedQuery(name = "EquipmentEntity.getAll", query = "select  e from EquipmentEntity e")
 })
 
-public class EquipmentEntity {
+public class EquipmentEntity implements Serializable {
 	private long id;
 	private String name;
 	private Integer dailyPrice;
