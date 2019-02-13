@@ -36,11 +36,16 @@ const STEP_PROGRESS_OPTIONS = [
   },
   {
     id: 2,
+    name: "Accepted",
+    value: "ACCEPTED"
+  },
+  {
+    id: 3,
     name: "Delivery",
     value: "DELIVERY"
   },
   {
-    id: 3,
+    id: 4,
     name: "Returning",
     value: "RETURNING"
   }
@@ -126,8 +131,9 @@ class Activity extends Component {
   _renderHiredFlatListItem = ({ item }) => (
     <View style={styles.pendingRowItem}>
       <EquipmentItem
+        hasRenewButton={true}
         onPress={() =>
-          this.props.navigation.navigate("ActivityDetail", { id: item.id })
+          this.props.navigation.navigate("Detail", { id: item.id })
         }
         key={`eq_${item.id}`}
         id={item.id}
@@ -149,7 +155,7 @@ class Activity extends Component {
     <View style={styles.pendingRowItem}>
       <EquipmentItem
         onPress={() =>
-          this.props.navigation.navigate("ActivityDetail", { id: item.id })
+          this.props.navigation.navigate("Detail", { id: item.id })
         }
         key={`eq_${item.id}`}
         id={item.id}

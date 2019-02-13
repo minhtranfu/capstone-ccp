@@ -1,10 +1,19 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Dimensions
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import colors from "../../../config/colors";
 import fontSize from "../../../config/fontSize";
+
+const { width } = Dimensions.get("window");
 
 const COLORS = {
   ACCEPTED: "#4DB781", //green
@@ -44,15 +53,18 @@ class StepProgress extends Component {
           />
           <Text style={styles.text}> Status: {status}</Text>
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
+        <View style={styles.rowWrapper}>
           {options.map((step, index) => (
-            <View key={index} style={styles.buttonWrapper}>
+            <View
+              key={index}
+              style={[
+                styles.itemWrapper,
+                { width: (width - 30) / options.length }, // width - padding Horizontal 15
+                step.value === status
+                  ? { backgroundColor: COLORS[status || "default"] }
+                  : null
+              ]}
+            >
               <Text style={styles.text}>{step.name}</Text>
             </View>
           ))}
@@ -67,10 +79,14 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 10
   },
-  buttonWrapper: {
+  rowWrapper: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  itemWrapper: {
     marginTop: 10,
     height: 35,
-    paddingHorizontal: 15,
+
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: "center",
     justifyContent: "center"

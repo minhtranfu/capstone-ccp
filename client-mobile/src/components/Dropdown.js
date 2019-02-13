@@ -41,7 +41,7 @@ class Dropdown extends Component {
   }
 
   render() {
-    const { options, isHorizontal } = this.props;
+    const { options, isHorizontal, onPress } = this.props;
     return (
       <View style={{ marginBottom: 20 }}>
         <Modal transparent={true} visible={this.state.modalVisible}>
@@ -52,7 +52,10 @@ class Dropdown extends Component {
                   alignSelf: "flex-end",
                   marginRight: 15
                 }}
-                onPress={() => this.setModalVisible(!this.state.modalVisible)}
+                onPress={() => {
+                  onPress;
+                  this.setModalVisible(!this.state.modalVisible);
+                }}
               >
                 <Text style={styles.textDone}>Done</Text>
               </TouchableOpacity>
@@ -62,7 +65,7 @@ class Dropdown extends Component {
                 style={{ width: width }}
                 onValueChange={(itemValue, itemIndex) => {
                   this.setState({ pickerValue: itemValue });
-                  this.props.onSelectValue(itemValue);
+                  this.props.onSelectValue(itemValue, itemIndex);
                 }}
               >
                 {options.map(option => (

@@ -32,21 +32,27 @@ class EquipmentItem extends Component {
       beginDate,
       endDate,
       onPress,
-      hasExtend
+      onRenewPress,
+      hasRenewButton
     } = this.props;
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={styles.wrapper}>
+        <TouchableOpacity style={styles.wrapper} onPress={onPress}>
           <View style={styles.imageWrapper}>
             <Image
               source={{ uri: imageURL }}
               resizeMode={"cover"}
-              style={styles.image}
+              style={[styles.image, hasRenewButton ? null : { width: 120 }]}
             />
-            <TouchableOpacity style={styles.buttonWrapper}>
-              <Ionicons name="ios-calendar" size={20} />
-              <Text style={styles.buttonText}>Renew transaction</Text>
-            </TouchableOpacity>
+            {hasRenewButton ? (
+              <TouchableOpacity
+                style={styles.buttonWrapper}
+                onPress={onRenewPress}
+              >
+                <Ionicons name="ios-calendar" size={20} />
+                <Text style={styles.buttonText}>Renew transaction</Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
           <View style={styles.contentWrapper}>
             <Text style={styles.title}>{name}</Text>
@@ -83,8 +89,7 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   imageWrapper: {
-    flexDirection: "column",
-    justifyContent: "center"
+    flexDirection: "column"
   },
   contentWrapper: {
     flex: 2,

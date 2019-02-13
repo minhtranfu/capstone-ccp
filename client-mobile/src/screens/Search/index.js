@@ -7,10 +7,12 @@ import {
   ScrollView
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
+import { connect } from "react-redux";
 import { Location } from "expo";
-
 import { grantPermission } from "../../redux/reducers/permission";
 import { autoCompleteSearch } from "../../redux/actions/location";
+import { searchEquipment } from "../../redux/actions/equipment";
+
 import SearchBar from "../../components/SearchBar";
 import Header from "../../components/Header";
 import { FlatList } from "react-native-gesture-handler";

@@ -1,6 +1,5 @@
 import axios from "axios";
 import * as Actions from "../types";
-import { baseUrl } from "../baseUrl";
 
 export function getEquipmentDetail(id) {
   return async dispatch => {
@@ -22,12 +21,28 @@ export function getTransactionDetail(id) {
   };
 }
 
-export function addNewEquipment(data) {
+export function clearTransactionDetail() {
   return {
-    type: Actions.ADD_EQUIPMENT,
-    payload: data
+    type: Actions.CLEAR_TRANSACTION_DETAIL
   };
 }
+
+export function addEquipment(equipment) {
+  return async dispatch => {
+    const res = await axios.post(`equipments`, { equipment });
+    dispatch({
+      type: Actions.ADD_EQUIPMENT,
+      payload: res
+    });
+  };
+}
+
+// export function addNewEquipment(data) {
+//   return {
+//     type: Actions.ADD_EQUIPMENT,
+//     payload: data
+//   };
+// }
 
 export function updateEquipment(id, status) {
   return {

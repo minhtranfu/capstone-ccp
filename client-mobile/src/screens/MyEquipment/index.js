@@ -96,7 +96,6 @@ const DROPDOWN_OPTIONS = [
 
 @connect(
   state => {
-    console.log(state.equipment);
     return {
       equipment: state.equipment.list,
       myEquipment: state.equipment.listSupplierEquipment
@@ -204,7 +203,13 @@ class MyEquipmentScreen extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text style={{ fontSize: fontSize.h4, fontWeight: "500", color: colors.text }}>
+          <Text
+            style={{
+              fontSize: fontSize.h4,
+              fontWeight: "500",
+              color: colors.text
+            }}
+          >
             My Equipment
           </Text>
         </Header>
@@ -230,7 +235,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flex: 0,
     paddingHorizontal: 15,
-    paddingTop: 20,
+    paddingTop: 20
   },
   equipmentItemContainer: {
     paddingVertical: 8

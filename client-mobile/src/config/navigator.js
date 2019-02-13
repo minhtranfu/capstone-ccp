@@ -124,7 +124,7 @@ const ActivityStack = createStackNavigator(
   {
     Activity: Activity,
     Notification: Notification,
-    ActivityDetail: ActivityDetail
+    Detail: ActivityDetail
   },
   {
     mode: "modal",

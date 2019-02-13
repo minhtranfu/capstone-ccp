@@ -38,12 +38,9 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       };
     }
     case Actions.ADD_EQUIPMENT: {
-      const newEquipment = {
-        id: Date.now(),
-        ...payload
-      };
       return {
-        list: [...state.list, newEquipment]
+        ...state,
+        listSupplierEquipment: [...state.listSupplierEquipment, payload]
       };
     }
     case Actions.UPDATE_EQUIPMENT: {
@@ -61,6 +58,11 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         list: state.list.filter(x => x.id !== action.id)
+      };
+    case Actions.CLEAR_TRANSACTION_DETAIL:
+      return {
+        ...state,
+        transactionDetail: {}
       };
     default:
       return state;

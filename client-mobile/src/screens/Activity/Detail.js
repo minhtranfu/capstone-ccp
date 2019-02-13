@@ -11,13 +11,41 @@ import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import PropTypes from "prop-types";
 import { Feather } from "@expo/vector-icons";
-import { getTransactionDetail } from "../../redux/actions/equipment";
+import {
+  getTransactionDetail,
+  clearTransactionDetail
+} from "../../redux/actions/equipment";
 
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
+import Button from "../../components/Button";
+import StepProgress from "./components/StepProgress";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+
+const STEP_PROGRESS_OPTIONS = [
+  {
+    id: 1,
+    name: "Pending",
+    value: "PENDING"
+  },
+  {
+    id: 2,
+    name: "Accepted",
+    value: "ACCEPTED"
+  },
+  {
+    id: 3,
+    name: "Delivery",
+    value: "DELIVERY"
+  },
+  {
+    id: 4,
+    name: "Returning",
+    value: "RETURNING"
+  }
+];
 
 @connect(
   state => {
@@ -28,6 +56,9 @@ import fontSize from "../../config/fontSize";
   dispatch => ({
     fetchTransactionDetail: id => {
       dispatch(getTransactionDetail(id));
+    },
+    fetchClearDetail: () => {
+      dispatch(clearTransactionDetail());
     }
   })
 )
@@ -42,18 +73,104 @@ class ActivityDetail extends Component {
     this.props.fetchTransactionDetail(id);
   }
 
-  componentDidUpdate(prevProps) {
-    const { id } = this.props.navigation.state.params;
-    if (id !== prevProps.detail.data.id) {
-      this.props.fetchTransactionDetail(id);
+  //Replace Spalsh to , from date
+  _replaceSplash = date => {
+    let regex = /-/g;
+    return date.replace(regex, ",");
+  };
+
+  //Count total day from begin date to end date
+  _countTotalDay = (firstDate, secondDate) => {
+    let oneDay = 24 * 60 * 60 * 1000; //hours,mintues,sec, milisec
+    let startDate = new Date(this._replaceSplash(firstDate));
+    let endDate = new Date(this._replaceSplash(secondDate));
+    let totalDay = Math.round(
+      Math.abs((startDate.getTime() - endDate.getTime()) / oneDay)
+    );
+    return totalDay > 1 ? totalDay : 1;
+  };
+
+  //If status is renting, return null
+  _renderStepProgress = status => {
+    if (status !== "RENTING")
+      return (
+        <View style={styles.rowWrapper}>
+          <StepProgress options={STEP_PROGRESS_OPTIONS} status={status} />
+        </View>
+      );
+    return null;
+  };
+
+  _renderBottomButton = status => {
+    if (status === "RENTING") {
+      return (
+        <View style={styles.rowWrapper}>
+          <Button text={"Extend Duration"} />
+        </View>
+      );
+    } else if (status === "PENDING") {
+      return (
+        <View style={styles.rowWrapper}>
+          <Button text={"Cancel"} />
+        </View>
+      );
     }
-  }
+    return null;
+  };
 
   _renderScrollViewItem = () => {
-    const { detail } = this.props;
+    const { data } = this.props.detail;
+    const totalDay = this._countTotalDay(data.beginDate, data.endDate);
+    const totalPrice = totalDay * data.dailyPrice;
     return (
-      <View>
-        <Image />
+      <View style={{ paddingHorizontal: 15 }}>
+        <View style={styles.imageWrapper}>
+          <Image
+            source={{
+              uri:
+                "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+            }}
+            resizeMode={"cover"}
+            style={styles.image}
+          />
+          <View style={{ flexDirection: "column", paddingLeft: 10 }}>
+            <Text style={styles.title}>{data.equipment.name}</Text>
+            <Text style={styles.text}>
+              Contractor: {data.equipment.contractor.name}
+            </Text>
+            <Text style={styles.text}>
+              Phone: {data.equipment.contractor.phoneNumber}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.rowWrapper}>
+          <Text style={styles.title}>Duration</Text>
+          <Text style={styles.text}>
+            From:{" "}
+            <Text style={[styles.text, { paddingLeft: 10 }]}>
+              {data.beginDate}
+            </Text>
+          </Text>
+          <Text style={styles.text}>
+            To:{" "}
+            <Text style={[styles.text, { paddingLeft: 10 }]}>
+              {data.endDate}
+            </Text>
+          </Text>
+        </View>
+        <View style={styles.rowWrapper}>
+          <Text style={styles.title}>Price</Text>
+          <View style={styles.priceItemWrapper}>
+            <Text style={styles.text}>Price/day:</Text>
+            <Text style={styles.text}>{data.dailyPrice} $</Text>
+          </View>
+          <View style={styles.priceItemWrapper}>
+            <Text style={styles.text}>Total in {totalDay}:</Text>
+            <Text style={styles.text}>{totalPrice} $</Text>
+          </View>
+        </View>
+        {this._renderStepProgress(data.status)}
+        {this._renderBottomButton(data.status)}
       </View>
     );
   };
@@ -67,12 +184,17 @@ class ActivityDetail extends Component {
       >
         <Header
           renderLeftButton={() => (
-            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+            <TouchableOpacity
+              onPress={() => {
+                this.props.fetchClearDetail();
+                this.props.navigation.goBack();
+              }}
+            >
               <Feather name="x" size={24} />
             </TouchableOpacity>
           )}
         >
-          <Text style={styles.title}>Detail Transaction</Text>
+          <Text style={styles.header}>Detail Transaction</Text>
         </Header>
         {detail.data ? (
           <ScrollView>{this._renderScrollViewItem()}</ScrollView>
@@ -88,9 +210,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
+  imageWrapper: {
+    paddingVertical: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  rowWrapper: {
+    paddingVertical: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    flexDirection: "column",
+    justifyContent: "center"
+  },
+  priceItemWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  image: {
+    width: 120,
+    height: 80,
+    borderRadius: 10
+  },
+  header: {
+    fontSize: fontSize.h3,
+    fontWeight: "600"
+  },
   title: {
     fontSize: fontSize.h4,
-    fontWeight: "600"
+    fontWeight: "500"
+  },
+  text: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500"
   }
 });
 
