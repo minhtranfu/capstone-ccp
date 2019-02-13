@@ -11,8 +11,14 @@ class EquipmentItem extends Component {
     id: PropTypes.number,
     imageURL: PropTypes.string,
     construction: PropTypes.string,
+    address: PropTypes.string,
+    requesterThumbnail: PropTypes.string,
     price: PropTypes.number
   };
+
+  static defaultProps = {
+    requesterThumbnail: 'https://drupway.com/wp-content/uploads/2018/10/person-male.png'
+  }
 
   constructor(props) {
     super(props);
@@ -20,7 +26,7 @@ class EquipmentItem extends Component {
   }
 
   render() {
-    const { id, name, imageURL, status, price, onPress } = this.props;
+    const { id, name, imageURL, address, price, onPress, requesterThumbnail } = this.props;
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -33,10 +39,17 @@ class EquipmentItem extends Component {
             resizeMode={"cover"}
           />
           <View style={styles.titleWrapper}>
-            <Text style={styles.equipmentName}>{name}</Text>
-            <Text style={styles.equipmentStatus}>{status.toUpperCase()}</Text>
+            {/* <Image
+              source={{ uri: requesterThumbnail || 'https://i.pinimg.com/originals/d1/1a/45/d11a452f5ce6ab534e083cdc11e8035e.png' }}
+              style={{ height: 40, aspectRatio: 1, borderRadius: 20, backgroundColor: colors.secondaryColor, marginRight: 10, marginLeft: -3 }}
+              resizeMode={"cover"}
+            /> */}
+            <View style={{flexDirection: 'column', flex: 1}}>
+              <Text style={styles.equipmentName}>{name}</Text>
+              <Text style={styles.equipmentStatus}>{address}</Text>
+            </View>
             <View style={styles.priceWrapper}>
-              <Text style={styles.equipmentPrice}>{price}$</Text>
+              <Text style={styles.equipmentPrice}>{price} $</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -56,9 +69,9 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   titleWrapper: {
-    flexDirection: "column",
-    justifyContent: "center",
-    paddingLeft: 15,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    paddingHorizontal: 15,
     paddingVertical: 8,
     backgroundColor: "white"
   },
@@ -73,20 +86,13 @@ const styles = StyleSheet.create({
     color: colors.text50
   },
   equipmentPrice: {
-    fontSize: fontSize.h2 - 2,
+    fontSize: fontSize.h2,
     fontWeight: "600",
     color: colors.text
   },
   priceWrapper: {
     alignItems: "center",
     justifyContent: "center",
-    position: "absolute",
-    right: 0,
-    bottom: 0,
-    zIndex: 1,
-    borderTopLeftRadius: 26,
-    height: 80,
-    width: 120,
     backgroundColor: "white"
   }
 });

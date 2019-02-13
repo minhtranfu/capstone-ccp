@@ -172,7 +172,8 @@ class MyEquipmentScreen extends Component {
                         imageURL={
                           "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
                         }
-                        status={item.status}
+                        address={item.equipmentAddress}
+                        requesterThumbnail={item.requester.thumbnailImage}
                         price={item.dailyPrice}
                       />
                     ))}
