@@ -46,9 +46,7 @@ class SearchResult extends Component {
     //Query response: main_text & secondary_text
     const { query, lat, long } = this.props.navigation.state.params;
     const result = equipment.filter(
-      item =>
-        item.address === query.main_text.concat(", ", query.secondary_text) &&
-        item.status === "available"
+      item => item.address === query.main_text && item.status === "AVAILABLE"
     );
     return result ? result : equipment;
   };

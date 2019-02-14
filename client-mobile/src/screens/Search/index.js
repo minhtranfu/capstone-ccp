@@ -97,11 +97,11 @@ class Search extends Component {
         />
         <ScrollView>
           {location.length > 0 ? (
-            <View style={styles.rowWrapper}>
+            <View style={styles.columnWrapper}>
               {location.map((item, index) => this._renderRowItem(item, index))}
             </View>
           ) : (
-            <View style={styles.rowWrapper}>
+            <View style={styles.columnWrapper}>
               <TouchableOpacity style={styles.buttonWrapper}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <MaterialIcons name="my-location" size={22} />
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column"
   },
-  rowWrapper: {
+  columnWrapper: {
     flexDirection: "column",
     paddingHorizontal: 15
   },

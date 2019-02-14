@@ -38,6 +38,7 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       };
     }
     case Actions.ADD_EQUIPMENT: {
+      console.log(payload);
       return {
         ...state
       };

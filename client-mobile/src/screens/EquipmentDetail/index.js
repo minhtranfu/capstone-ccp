@@ -14,27 +14,35 @@ import { Ionicons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import Calendar from "react-native-calendar-select";
+import Swiper from "react-native-swiper";
+import { getEquipmentDetail } from "../../redux/actions/equipment";
 
 import CustomFlatList from "../../components/CustomFlatList";
 import ParallaxList from "../../components/ParallaxList";
+import Button from "../../components/Button";
 import Loading from "../../components/Loading";
 import { itemDetail, discoverData, detail } from "../../config/mockData";
 import Item from "../Discover/components/Item";
-import { getEquipmentDetail } from "../../redux/actions/equipment";
-import ModalCalendar from "./ModalCalendar";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import Title from "../../components/Title";
-import { Button } from "../../components/AnimatedHeader";
 
 const { width } = Dimensions.get("window");
+
+const IMAGE_LIST = [
+  "https://gitlab.pro/yuji/demo/uploads/d6133098b53fe1a5f3c5c00cf3c2d670/DVrj5Hz.jpg_1",
+  "https://gitlab.pro/yuji/demo/uploads/2d5122a2504e5cbdf01f4fcf85f2594b/Mwb8VWH.jpg",
+  "https://gitlab.pro/yuji/demo/uploads/4421f77012d43a0b4e7cfbe1144aac7c/XFVzKhq.jpg",
+  "https://gitlab.pro/yuji/demo/uploads/576ef91941b0bda5761dde6914dae9f0/kD3eeHe.jpg"
+];
 
 @connect(
   state => {
     console.log(state.equipment.detail);
     return {
-      equipment: state.equipment.list
+      equipment: state.equipment.list,
+      detail: state.equipment.detail
     };
   },
   dispatch => ({
@@ -61,17 +69,17 @@ class EquipmentDetail extends Component {
     this.props.fetchGetEquipmentDetail(id);
   }
 
-  setModalVisible(visible) {
+  _setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
 
-  selectDate = date => {
+  _selectDate = date => {
     this.setState(() => ({
       selectedDate: date
     }));
   };
 
-  confirmDate = ({ startDate, endDate }) => {
+  _confirmDate = ({ startDate, endDate }) => {
     this.setState({
       startDate,
       endDate
@@ -84,17 +92,17 @@ class EquipmentDetail extends Component {
     });
   };
 
-  openCalendar = () => {
+  _openCalendar = () => {
     this.calendar && this.calendar.open();
   };
 
-  handleRangeDate = dates => {
+  _handleRangeDate = dates => {
     let minDate = new Date(Math.min.apply(null, dates));
     let maxDate = new Date(Math.max.apply(null, dates));
     this.setState({ minDate: minDate, maxDate: maxDate });
   };
 
-  handleFormatDate = date => {
+  _handleFormatDate = date => {
     year = date.getFullYear();
     month = date.getMonth() + 1;
     dt = date.getDate();
@@ -107,7 +115,7 @@ class EquipmentDetail extends Component {
     return year + "-" + month + "-" + dt;
   };
 
-  renderSuggestionItem = ({ item }) => {
+  _renderSuggestionItem = ({ item }) => {
     return (
       <Item
         name={item.name}
@@ -119,7 +127,30 @@ class EquipmentDetail extends Component {
     );
   };
 
-  renderScrollItem = () => {
+  _renderSlideItem = (uri, key) => (
+    <View style={styles.slide} key={key}>
+      <Image style={styles.imageSlide} source={{ uri: props.uri }} />
+    </View>
+  );
+
+  _renderRangeItem = (index, item) => (
+    <View key={index} style={styles.rowWrapper}>
+      <View style={styles.columnWrapper}>
+        <Text style={[styles.text, { marginBottom: 10 }]}>
+          From: {new Date(item.beginDate).toDateString()}
+        </Text>
+        <Text style={styles.text}>
+          To: {new Date(item.endDate).toDateString()}
+        </Text>
+      </View>
+      <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }}>
+        <Text style={[styles.text, { color: "blue" }]}>Change</Text>
+        <Ionicons name="ios-arrow-forward" size={22} color={"blue"} />
+      </TouchableOpacity>
+    </View>
+  );
+
+  _renderScrollItem = () => {
     const { images, author, availableFrom, availableTo } = itemDetail;
     // const {
     //   name,
@@ -134,7 +165,6 @@ class EquipmentDetail extends Component {
     // } = detail.data;
     const { id } = this.props.navigation.state.params;
     const dataFlow = this.props.equipment.find(item => item.id === id);
-    console.log(dataFlow);
     const {
       name,
       constructor,
@@ -148,6 +178,9 @@ class EquipmentDetail extends Component {
     } = dataFlow;
     return (
       <View>
+        <Swiper style={styles.wrapper} loop={false}>
+          {imgList.map((uri, index) => this._renderSlideItem(uri, index))}
+        </Swiper>
         <View style={styles.textWrapper}>
           <Text style={styles.header}>{name}</Text>
           <Text style={{ color: colors.secondaryColorOpacity }}>
@@ -157,29 +190,17 @@ class EquipmentDetail extends Component {
         <Text style={styles.text}>Constructor: {constructor.name}</Text>
         <Text style={styles.text}>Phone: {constructor.phoneNumber}</Text>
         <Title title={"Time Range Available"} />
-        {availableTimeRanges.map((item, index) => (
-          <View key={index} style={styles.rowWrapper}>
-            <View
-              style={{
-                flexDirection: "column",
-                justifyContent: "center"
-              }}
-            >
-              <Text style={{ marginBottom: 10 }}>
-                From: {new Date(item.beginDate).toDateString()}
-              </Text>
-              <Text>To: {new Date(item.endDate).toDateString()}</Text>
-            </View>
-          </View>
-        ))}
+        {availableTimeRanges.map((item, index) =>
+          this._renderRangeItem(index, item)
+        )}
         <Title title={"Pricing"} />
         <View style={styles.rowWrapper}>
-          <Text>Daily price</Text>
-          <Text style={{ marginRight: 15 }}>{dailyPrice}$/day</Text>
+          <Text style={styles.text}>Daily price</Text>
+          <Text style={styles.text}>{dailyPrice}$/day</Text>
         </View>
         <View style={styles.rowWrapper}>
-          <Text>Delivery price</Text>
-          <Text style={{ marginRight: 15 }}>{deliveryPrice}$/day</Text>
+          <Text style={styles.text}>Delivery price</Text>
+          <Text style={styles.text}>{deliveryPrice}$/day</Text>
         </View>
 
         <Title title={"Description"} />
@@ -220,7 +241,7 @@ class EquipmentDetail extends Component {
         <Title title={"Suggestion"} />
         <CustomFlatList
           data={discoverData}
-          renderItem={this.renderSuggestionItem}
+          renderItem={this._renderSuggestionItem}
           isHorizontal={true}
           contentContainerStyle={{
             marginTop: 10
@@ -231,7 +252,6 @@ class EquipmentDetail extends Component {
   };
 
   render() {
-    console.log(new Date().toLocaleDateString());
     const { id } = this.props.navigation.state.params;
     let customI18n = {
       w: ["", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"],
@@ -269,24 +289,10 @@ class EquipmentDetail extends Component {
               hasLeft={true}
               hasFavorite={true}
               scrollElement={<Animated.ScrollView />}
-              renderScrollItem={this.renderScrollItem}
+              renderScrollItem={this._renderScrollItem}
             />
             <View style={styles.bottomWrapper}>
-              <Text style={{ fontSize: fontSize.h4, fontWeight: "500" }}>
-                {detail.data.dailyPrice}$/day
-              </Text>
-              {/* <ModalCalendar
-                visible={this.state.modalVisible}
-                handleModalVisible={this.setModalVisible}
-                dates={detail.data.availableTimeRanges}
-                onSelectDate={this.selectDate}
-              /> */}
-              <TouchableOpacity
-                style={styles.checkAvailability}
-                onPress={this.openCalendar}
-              >
-                <Text style={{ fontWeight: "bold" }}>CHECK AVAILABILITY</Text>
-              </TouchableOpacity>
+              <Button text={"Book Now"} onPress={this._openCalendar} />
               <Calendar
                 i18n="en"
                 ref={calendar => {
@@ -295,11 +301,11 @@ class EquipmentDetail extends Component {
                 customI18n={customI18n}
                 color={color}
                 format="YYYY-MM-DD"
-                minDate={this.handleFormatDate(new Date())}
+                minDate={this._handleFormatDate(new Date())}
                 maxDate="2019-03-12"
                 startDate={this.state.startDate}
                 endDate={this.state.endDate}
-                onConfirm={this.confirmDate}
+                onConfirm={this._confirmDate}
               />
             </View>
           </View>
@@ -331,6 +337,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 5
   },
+  columnWrapper: {
+    flexDirection: "column",
+    justifyContent: "center"
+  },
   header: {
     color: colors.secondaryColor,
     fontSize: fontSize.h4,
@@ -338,7 +348,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.secondaryColor,
-    fontSize: fontSize.secondaryText,
+    fontSize: fontSize.bodyText,
     paddingLeft: 15
   },
   description: {
@@ -378,6 +388,16 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.secondaryColorOpacity,
     paddingHorizontal: 15
+  },
+  slide: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "transparent"
+  },
+  imageSlide: {
+    width,
+    flex: 1,
+    backgroundColor: "transparent"
   }
 });
 

@@ -49,6 +49,7 @@ class AddImage extends Component {
       const coords = currentLocation.coords;
       const lat = coords.latitude;
       const long = coords.longitude;
+      console.log(lat);
       this.setState({
         lat: lat,
         long: long,
@@ -93,13 +94,13 @@ class AddImage extends Component {
     const contractor = {
       constructionId: null,
       descriptionImages: descriptionImages,
-      constractor: {
+      contractor: {
         id: 13
       },
-      thumbnailImage: [thumbnailImage],
+      thumbnailImage: null,
       address: address,
       latitude: lat,
-      longitute: long
+      longitude: long
     };
     const newData = Object.assign({}, data, contractor);
     console.log("Submit", newData);

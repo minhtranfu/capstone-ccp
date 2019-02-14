@@ -305,11 +305,9 @@ const styles = StyleSheet.create({
   },
   bottomWrapper: {
     backgroundColor: "transparent",
-    position: "absolute",
-    bottom: 30,
-    right: 15,
     justifyContent: "center",
-    alignItems: "flex-end"
+    alignItems: "flex-end",
+    paddingBottom: 20
   },
   buttonWrapper: {
     marginRight: 15,

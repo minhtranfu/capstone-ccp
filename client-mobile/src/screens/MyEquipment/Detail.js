@@ -27,41 +27,13 @@ import Loading from "../../components/Loading";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
-const DROPDOWN_TYPES_OPTIONS = [
-  {
-    id: 0,
-    name: "Select your type",
-    value: "all"
-  },
-  {
-    id: 1,
-    name: "Xe Lu",
-    value: "xe lu"
-  },
-  {
-    id: 2,
-    name: "Xe UI",
-    value: "xe ui"
-  }
-];
-
-const DROPDOWN_CATEGORIES_OPTIONS = [
-  {
-    id: 0,
-    name: "Select your categories",
-    value: "all"
-  },
-  {
-    id: 1,
-    name: "Xe",
-    value: "xe"
-  },
-  {
-    id: 2,
-    name: "May Moc",
-    value: "maymoc"
-  }
-];
+const COLORS = {
+  ACCEPTED: "#4DB781", //green
+  DENIED: "#FF5C5C", //red
+  PENDING: "#FFDF49",
+  default: "red"
+  // blue: 7199FE, yellow: FFDF49
+};
 
 @connect(
   state => {
@@ -105,27 +77,62 @@ class MyEquipmentDetail extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    //Check data is update
     if (nextProps.transactionDetail.data !== prevState.data) {
       return { data: nextProps.transactionDetail.data };
     } else return null;
   }
+
   componentDidUpdate(prevProps, prevState) {
     if (
       prevProps.transactionDetail.data !== this.props.transactionDetail.data
     ) {
-      //Perform some operation here
+      //Update new state
       this.setState({ data: this.props.transactionDetail.data });
     }
   }
+
   _handleChangeBackgroundImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-
     if (status === "granted") {
       let result = await ImagePicker.launchImageLibraryAsync();
     }
   };
 
-  renderScrollItem = () => {
+  _renderAvailableBottom = () => (
+    <View style={styles.bottomWrapper}>
+      <Button text={"Update"} />
+      <Button text={"Delete"} />
+    </View>
+  );
+
+  _renderPendingBottom = () => (
+    <View style={styles.bottomWrapper}>
+      <Button text={"Accept"} />
+      <Button text={"Denied"} />
+    </View>
+  );
+
+  _renderAcceptedBottom = () => (
+    <View style={styles.bottomWrapper}>
+      <Button text={"Delivery"} />
+    </View>
+  );
+
+  _renderBottomButton = status => {
+    switch (status) {
+      case "ACCEPTED":
+        return this._renderAcceptedBottom();
+      case "PENDING":
+        return this._renderPendingBottom();
+      case "AVAILABLE":
+        return this._renderAvailableBottom();
+      default:
+        return null;
+    }
+  };
+
+  _renderScrollItem = () => {
     const { id } = this.props.navigation.state.params;
     const { data } = this.props.transactionDetail;
     return (
@@ -187,15 +194,7 @@ class MyEquipmentDetail extends Component {
           onSelectValue={value => this.setState({ type: value })}
           options={DROPDOWN_TYPES_OPTIONS}
         />
-        <Text
-          style={{
-            fontSize: fontSize.h4,
-            fontWeight: "500",
-            color: colors.text
-          }}
-        >
-          Available time range
-        </Text>
+        <Text style={styles.title}>Available time range</Text>
         <InputField
           label={"From"}
           placeholder={"dd-mm-yyyy"}
@@ -213,19 +212,17 @@ class MyEquipmentDetail extends Component {
           onChangeText={value => this.setState({ endDate: value })}
           value={data.endDate}
         />
-        {data.status === "pending" || data.status === "delivery" ? (
-          <View style={styles.bottomWrapper}>
-            <Text>Do you want to manage your delivery?</Text>
-            <Switch />
-            <Button text={"Accept"} />
-            <Button text={"Decline"} />
-          </View>
-        ) : (
-          <View style={styles.bottomWrapper}>
-            <Button text={"Update"} />
-            <Button text={"Delete"} />
-          </View>
-        )}
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View
+            style={{
+              width: 15,
+              height: 15,
+              backgroundColor: COLORS[status || "default"]
+            }}
+          />
+          <Text style={styles.text}> Status: {status}</Text>
+        </View>
+        {this._renderBottomButton(data.status)}
       </View>
     );
   };
@@ -246,10 +243,10 @@ class MyEquipmentDetail extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text>My Equipment</Text>
+          <Text style={styles.header}>My Equipment</Text>
         </Header>
         {transactionDetail.data ? (
-          <ScrollView>{this.renderScrollItem()}</ScrollView>
+          <ScrollView>{this._renderScrollItem()}</ScrollView>
         ) : (
           <Loading />
         )}
@@ -262,10 +259,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  bottomWrapper: {
-    flexDirection: "column",
-    justifyContent: "center"
-  },
+
   landscapeImgWrapper: {
     height: 200,
     marginBottom: 15
@@ -283,6 +277,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center"
+  },
+  header: {
+    fontSize: fontSize.h4,
+    fontWeight: "500"
+  },
+  title: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: colors.text
   }
 });
 

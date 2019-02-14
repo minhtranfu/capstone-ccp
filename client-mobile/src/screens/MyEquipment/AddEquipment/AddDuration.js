@@ -211,10 +211,7 @@ const styles = StyleSheet.create({
   },
   bottomWrapper: {
     backgroundColor: "transparent",
-    position: "absolute",
-    zIndex: 1,
-    bottom: 15,
-    right: 15,
+    paddingBottom: 20,
     justifyContent: "center",
     alignItems: "flex-end"
   },

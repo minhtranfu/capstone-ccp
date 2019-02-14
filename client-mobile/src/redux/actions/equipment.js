@@ -1,6 +1,7 @@
 import axios from "axios";
 import StatusAction from "./status";
 import * as Actions from "../types";
+import { ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS } from "expo/build/IntentLauncherAndroid";
 
 export function getEquipmentDetail(id) {
   return async dispatch => {
@@ -30,24 +31,14 @@ export function clearTransactionDetail() {
 
 export function addEquipment(equipment) {
   return async dispatch => {
-    await axios
-      .post(
-        `equipments`,
-        { body: JSON.stringify(equipment) },
-        {
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      )
-      .then(
-        res => {
-          dispatch(StatusAction.success("Add Success"));
-        },
-        () => {
-          dispatch(StatusAction.error("Connection error"));
-        }
-      );
+    try {
+      const res = await axios.post(`equipments`, equipment);
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch({
+      type: Actions.ADD_EQUIPMENT
+    });
   };
 }
 
@@ -58,10 +49,17 @@ export function addEquipment(equipment) {
 //   };
 // }
 
-export function updateEquipment(id, status) {
-  return {
-    type: Actions.UPDATE_EQUIPMENT,
-    payload: { id, status }
+export function updateEquipment(id) {
+  return async dispatch => {
+    try {
+      const res = await axios.put(`equipments`, equipment);
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch({
+      type: Actions.UPDATE_EQUIPMENT,
+      payload: res
+    });
   };
 }
 
