@@ -1,4 +1,5 @@
 import axios from "axios";
+import StatusAction from "./status";
 import * as Actions from "../types";
 
 export function getEquipmentDetail(id) {
@@ -28,15 +29,26 @@ export function clearTransactionDetail() {
 }
 
 export function addEquipment(equipment) {
-  axios.post(
-    `equipments`,
-    { equipment },
-    {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }
-  );
+  return async dispatch => {
+    await axios
+      .post(
+        `equipments`,
+        { body: JSON.stringify(equipment) },
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      )
+      .then(
+        res => {
+          dispatch(StatusAction.success("Add Success"));
+        },
+        () => {
+          dispatch(StatusAction.error("Connection error"));
+        }
+      );
+  };
 }
 
 // export function addNewEquipment(data) {

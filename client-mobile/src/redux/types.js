@@ -37,3 +37,8 @@ export const ADD_NEW_CART = "@@cart/ADD_NEW_CART";
 export const UPDATE_CART = "@@cart/UPDATE_CART";
 export const REMOVE_ITEM_CART = "@@cart/REMOVE_ITEM_CART";
 export const REMOVE_CART = "@@cart/REMOVE_CART";
+
+// STATUS
+export const STATUS_LOADING = "@@status/LOADING";
+export const STATUS_SUCCESS = "@@status/SUCCESS";
+export const STATUS_FAIL = "@@status/FAIL";

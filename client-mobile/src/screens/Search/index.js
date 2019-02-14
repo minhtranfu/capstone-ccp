@@ -12,6 +12,7 @@ import { Location } from "expo";
 import { grantPermission } from "../../redux/reducers/permission";
 import { autoCompleteSearch } from "../../redux/actions/location";
 import { searchEquipment } from "../../redux/actions/equipment";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import SearchBar from "../../components/SearchBar";
 import Header from "../../components/Header";
@@ -54,6 +55,14 @@ class Search extends Component {
     });
   };
 
+  _renderButton = (text, onPress) => (
+    <TouchableOpacity style={styles.buttonWrapper}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Text style={styles.text}>{text}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
   _renderRowItem = (item, index) => (
     <TouchableOpacity
       key={index}
@@ -88,20 +97,21 @@ class Search extends Component {
         />
         <ScrollView>
           {location.length > 0 ? (
-            <View
-              style={{
-                flexDirection: "column",
-                paddingHorizontal: 15
-              }}
-            >
+            <View style={styles.rowWrapper}>
               {location.map((item, index) => this._renderRowItem(item, index))}
             </View>
           ) : (
-            <View>
-              <Text>Current Location</Text>
-              <TouchableOpacity>
-                <Text>Add new location</Text>
+            <View style={styles.rowWrapper}>
+              <TouchableOpacity style={styles.buttonWrapper}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <MaterialIcons name="my-location" size={22} />
+                  <Text style={[styles.text, { paddingLeft: 10 }]}>
+                    Current Location
+                  </Text>
+                </View>
               </TouchableOpacity>
+              <Text style={styles.title}>Recently Search</Text>
+              {this._renderButton("340 Nguyen Tat Thanh")}
             </View>
           )}
         </ScrollView>
@@ -115,18 +125,26 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column"
   },
+  rowWrapper: {
+    flexDirection: "column",
+    paddingHorizontal: 15
+  },
   buttonWrapper: {
     justifyContent: "center",
     flexDirection: "column",
     marginTop: 10,
-    paddingBottom: 5,
-    flex: 1,
+    paddingBottom: 10,
     borderBottomWidth: 0.5,
     borderBottomColor: colors.secondaryColorOpacity
   },
+  title: {
+    paddingTop: 10,
+    fontSize: fontSize.h4,
+    fontWeight: "500"
+  },
   text: {
     fontSize: fontSize.bodyText,
-    color: colors.secondaryColor
+    fontWeight: "500"
   },
   secondaryText: {
     fontSize: fontSize.secondaryText,

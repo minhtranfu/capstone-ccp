@@ -67,6 +67,7 @@ class SearchBar extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 5,
     height: 44,
     marginHorizontal: 15
   },
@@ -89,7 +90,6 @@ const styles = StyleSheet.create({
     height: 32,
     paddingLeft: 5,
     backgroundColor: "transparent",
-    color: colors.secondaryColor,
     fontSize: fontSize.bodyText
   }
 });
