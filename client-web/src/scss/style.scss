@@ -45,3 +45,21 @@ nav.navbar {
   opacity: 1;
   transition: opacity 500ms ease-in;
 }
+.product-images .owl-dots {
+  margin-top: -25px !important;
+  position: relative;
+}
+.owl-theme .owl-dots .owl-dot.active span, .owl-theme .owl-dots .owl-dot:hover span {
+  background: #eabf00 !important;
+}
+.owl-theme .owl-dots .owl-dot span {
+  box-shadow: 0 0 0 1.5px #fff;
+}
+.product-title {
+  font-size: 24px;
+}
+
+// Constructor card
+.constructor-card > img {
+  background-color: #e8e8e8;
+}

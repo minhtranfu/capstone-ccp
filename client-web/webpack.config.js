@@ -25,7 +25,8 @@ const config = {
   plugins: [
     new webpack.ProvidePlugin({
       $: "jquery",
-      jQuery: "jquery"
+      jQuery: "jquery",
+      "window.jQuery": "jquery"
     }),
     new CleanPlugin({
       files: ['dist/*']
