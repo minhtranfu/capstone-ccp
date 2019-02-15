@@ -4,6 +4,7 @@ import Skeleton from 'react-loading-skeleton';
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
+import Helmet from 'react-helmet-async';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
 
@@ -17,14 +18,9 @@ class EquipDetail extends Component {
     }
 
     _loadData = async () => {
-        await new Promise(resolve => {
-            setTimeout(() => resolve(1), 1000);
-        });
 
         const { params } = this.props.match;
-        // const { id } = params;
-        // TODO: get dynamic id from URL path
-        const id = 34
+        const { id } = params;
 
         const data = await ccpApiService.getEquipmentById(id);
         data.images = [
@@ -51,6 +47,9 @@ class EquipDetail extends Component {
         console.log(equip.images);
         return (
             <div className="container">
+                <Helmet>
+                    <title>Equipment detail: {equip.name || ''}</title>
+                </Helmet>
                 <div className="row py-4">
                     <div className="col-md-9">
                         {equip.images && (
@@ -76,12 +75,12 @@ class EquipDetail extends Component {
                         </div>
                     </div>
                     <div className="col-md-3 constructor-card">
-                        <img className="rounded-circle w-50 d-block mx-auto" src={equip.contractor && equip.contractor.thumbnailImage ? equip.contractor.thumbnailImage : 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'} alt=""/>
+                        <img className="rounded-circle w-50 d-block mx-auto" src={equip.contractor && equip.contractor.thumbnailImage ? equip.contractor.thumbnailImage : 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'} alt="" />
                         <h5 className="text-center">{equip.contractor ? equip.contractor.name : <Skeleton />}</h5>
                         <p className="m-0">
                             Join at: {equip.contractor ?
-                            new Date(equip.contractor.createdTime).toDateString()
-                            : <span className="d-inline"><Skeleton width={100} /></span>
+                                new Date(equip.contractor.createdTime).toDateString()
+                                : <span className="d-inline"><Skeleton width={100} /></span>
                             }
                         </p>
                     </div>

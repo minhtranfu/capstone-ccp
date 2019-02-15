@@ -3,6 +3,8 @@ import SearchBox from '../../common/SearchBox';
 import EquipmentCard from '../../common/EquipmentCard';
 import Helmet from 'react-helmet-async';
 
+import ccpApiService from '../../../services/domain/ccp-api-service';
+
 class Home extends PureComponent {
     constructor(props) {
         super(props);
@@ -13,23 +15,23 @@ class Home extends PureComponent {
     }
 
     _loadData = async () => {
-        await new Promise(rosolve => {
-            setTimeout(rosolve(), 1000);
-        });
+        const products = await ccpApiService.searchEquipment({});
 
-        const product = {
-            id: 1,
-            image: 'http://4.bp.blogspot.com/-Hzr2v5MOp6k/U9zAYcmArGI/AAAAAAAABOQ/AFFdqFT8AYo/s1600/xe_lu_rung_5.jpg',
-            name: 'Tên thiết bị',
-            location: 'Bình Tân, HCM',
-            timeRange: {
-                start_at: '2019-01-01',
-                end_at: '2019-02-01',
-            }
-        };
-        const products = [];
-        for (let i = 0; i < 12; i++) {
-            products.push(product);
+        if (products.length === 0) {
+            alert('Data is empty!');
+        }
+
+        this.setState({
+            products
+        });
+    };
+
+    _handleSearch = async (criteria) => {
+        console.log(criteria);
+        const products = await ccpApiService.searchEquipment(criteria);
+
+        if (products.length === 0) {
+            alert('Data is empty!');
         }
 
         this.setState({
@@ -51,7 +53,7 @@ class Home extends PureComponent {
                 </Helmet>
                 <div className="section-search text-light">
                     <div className="container">
-                        <SearchBox />
+                        <SearchBox onSearch={this._handleSearch} />
                     </div>
                 </div>
                 <div className="container">
@@ -59,7 +61,7 @@ class Home extends PureComponent {
                         <div className="col-md-12">
                             <h3>Kết quả phù hợp</h3>
                         </div>
-                        {products && products.map(product => <EquipmentCard className="col-md-4" product={product}/>)}
+                        {products && products.map(product => <EquipmentCard key={product.id} className="col-md-4" product={product}/>)}
                     </div>
                 </div>
             </div>
