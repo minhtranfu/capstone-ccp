@@ -50,7 +50,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Gender</label>
-                                        <select th:field="${staff.account.male}" class="form-control">
+                                        <select th:field="*{account.male}" class="form-control">
                                             <option th:value="'true'" th:text="Male"></option>
                                             <option th:value="'false'" th:text="Female"></option>
                                         </select>
@@ -65,7 +65,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Role</label>
-                                        <select th:field="${staff.account.roleId}" class="form-control">
+                                        <select th:field="*{account.roleId}" class="form-control">
                                             <option th:value="'1'" th:text="Admin"></option>
                                             <option th:value="'2'" th:text="Staff"></option>
                                         </select>

@@ -14,13 +14,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GeneralEquipmentTypeImpl implements GeneralEquipmentTypeService {
+public class GeneralEquipmentTypeServiceImpl implements GeneralEquipmentTypeService {
 
     private final GeneralEquipmentTypeRepository generalEquipmentTypeRepository;
 
     @Autowired
-
-    public GeneralEquipmentTypeImpl(GeneralEquipmentTypeRepository generalEquipmentTypeRepository) {
+    public GeneralEquipmentTypeServiceImpl(GeneralEquipmentTypeRepository generalEquipmentTypeRepository) {
         this.generalEquipmentTypeRepository = generalEquipmentTypeRepository;
     }
 

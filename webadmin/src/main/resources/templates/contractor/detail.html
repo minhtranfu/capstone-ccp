@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <div th:replace="fragments/header :: header"></div>
+    <title>CCP Admin</title>
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- Navigation -->
+    <div th:replace="fragments/navigation :: navigation"></div>
+
+
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Contractor Information</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <form th:action="@{/contractor/saveProcess}" method="post"
+                                      th:object="${contractor}" enctype="multipart/form-data">
+                                    <input type="hidden" th:field="*{id}"><br>
+                                    Name: <input th:field="*{name}" class="form-control"><br>
+                                    <td th:switch="${contractor.activated}">
+                                        <input type="Submit" th:case="false" class="btn btn-success link" value="Active">
+                                        <input type="Submit" th:case="true" class="btn btn-danger link" value="Deactive">
+                                        <!--<span th:case="false" class="btn btn-danger link">Deactive</span>-->
+                                    </td>
+
+                                </form>
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
+                            <div class="col-lg-6">
+
+                                <!--/.table-responsive -->
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<div th:replace="fragments/footer_javascript :: footer_javascript"></div>
+
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script>
+    $(document).ready(function () {
+        $('#dataTables-example').DataTable({
+            responsive: true
+        });
+    });
+</script>
+</body>
+
+</html>

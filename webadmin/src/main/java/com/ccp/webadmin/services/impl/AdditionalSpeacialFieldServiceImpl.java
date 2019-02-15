@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class AdditionalSpeacialFieldImpl implements AdditionalSpecialFieldService {
+public class AdditionalSpeacialFieldServiceImpl implements AdditionalSpecialFieldService {
 
     private final EquipmentTypeRepository equipmentTypeRepository;
     private final AdditionalSpecialFieldRepository additionalSpecialFieldRepository;
 
     @Autowired
-    public AdditionalSpeacialFieldImpl(EquipmentTypeRepository equipmentTypeRepository, AdditionalSpecialFieldRepository additionalSpecialFieldRepository) {
+    public AdditionalSpeacialFieldServiceImpl(EquipmentTypeRepository equipmentTypeRepository, AdditionalSpecialFieldRepository additionalSpecialFieldRepository) {
         this.equipmentTypeRepository = equipmentTypeRepository;
         this.additionalSpecialFieldRepository = additionalSpecialFieldRepository;
     }

@@ -27,9 +27,6 @@ public class AdminAccountController {
     @GetMapping({"", "/", "/index"})
     public String getStaff(Model model) {
         model.addAttribute("staffs", adminAccountService.findAll());
-        for (AdminAccountEntity item: adminAccountService.findAll()) {
-            System.out.println(item);
-        }
         return "staff/index";
     }
 
@@ -47,7 +44,7 @@ public class AdminAccountController {
 
     @PostMapping("/saveProcess")
     public String saveProcess(
-            @Valid @ModelAttribute("equipmentType") AdminAccountEntity adminAccountEntity,
+            @Valid @ModelAttribute("staff") AdminAccountEntity adminAccountEntity,
             BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             Integer id = adminAccountEntity.getId();

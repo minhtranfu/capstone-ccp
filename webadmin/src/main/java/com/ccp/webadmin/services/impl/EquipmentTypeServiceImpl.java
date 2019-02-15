@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class EquipmentTypeImpl implements EquipmentTypeService {
+public class EquipmentTypeServiceImpl implements EquipmentTypeService {
 
     private final EquipmentTypeRepository equipmentTypeRepository;
 
     @Autowired
-    public EquipmentTypeImpl(EquipmentTypeRepository equipmentTypeRepository) {
+    public EquipmentTypeServiceImpl(EquipmentTypeRepository equipmentTypeRepository) {
         this.equipmentTypeRepository = equipmentTypeRepository;
     }
 
