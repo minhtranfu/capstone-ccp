@@ -2,6 +2,7 @@ import axios from "axios";
 import * as Actions from "../types";
 
 export function sendTransactionRequest(transaction) {
+  console.log(transaction);
   return async dispatch => {
     const res = await axios.post(`transactions`, transaction);
     dispatch({
@@ -11,9 +12,9 @@ export function sendTransactionRequest(transaction) {
   };
 }
 
-export function approveTransaction(id, transaction) {
+export function approveTransaction(id, transactionStatus) {
   return async dispatch => {
-    const res = await axios.put(`transactions/${id}`, transaction);
+    const res = await axios.put(`transactions/${id}`, transactionStatus);
     dispatch({
       type: Actions.APPROVE_TRANSACTION_SUCCESS,
       payload: res.status

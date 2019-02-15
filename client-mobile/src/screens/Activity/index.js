@@ -94,9 +94,9 @@ class Activity extends Component {
     if (requesterEquipment.data.length > 0) {
       switch (selectedIndex) {
         case 0:
-          return this._renderHiredScreen();
-        case 1:
           return this._renderPendingScreen();
+        case 1:
+          return this._renderHiredScreen();
       }
     } else {
       return (
@@ -194,7 +194,7 @@ class Activity extends Component {
           >
             <SegmentedControlIOS
               style={{ width: 300 }}
-              values={["Hired", "Pending"]}
+              values={["Pending", "Hired"]}
               selectedIndex={this.state.selectedIndex}
               onChange={event => {
                 this.setState({

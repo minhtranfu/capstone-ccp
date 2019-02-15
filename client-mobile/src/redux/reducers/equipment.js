@@ -38,7 +38,6 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       };
     }
     case Actions.ADD_EQUIPMENT: {
-      console.log(payload);
       return {
         ...state
       };
@@ -58,6 +57,16 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         list: state.list.filter(x => x.id !== action.id)
+      };
+    case Actions.SEARCH_EQUIPMENT_SUCCESS:
+      return {
+        ...state,
+        listSearch: payload
+      };
+    case Actions.CLEAR_SEARCH_RESULT:
+      return {
+        ...state,
+        listSearch: []
       };
     case Actions.CLEAR_TRANSACTION_DETAIL:
       return {

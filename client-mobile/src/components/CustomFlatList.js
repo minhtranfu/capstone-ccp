@@ -13,7 +13,14 @@ import colors from "../config/colors";
 
 class CustomFlatList extends PureComponent {
   render() {
-    const { data, renderItem, isHorizontal, numColumns, style } = this.props;
+    const {
+      data,
+      renderItem,
+      isHorizontal,
+      numColumns,
+      style,
+      contentContainerStyle
+    } = this.props;
     return (
       <View style={[styles.container, style]}>
         <FlatList

@@ -27,6 +27,22 @@ import Loading from "../../components/Loading";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
+const DROPDOWN_GENERAL_TYPES_OPTIONS = [
+  {
+    id: 0,
+    name: "Select general equipment types",
+    value: "all"
+  }
+];
+
+const DROPDOWN_TYPES_OPTIONS = [
+  {
+    id: 0,
+    name: "Select equipment types",
+    value: "all"
+  }
+];
+
 const COLORS = {
   ACCEPTED: "#4DB781", //green
   DENIED: "#FF5C5C", //red
@@ -186,7 +202,7 @@ class MyEquipmentDetail extends Component {
           label={"General Type"}
           defaultText={data.equipment.equipmentType.generalEquipment.name}
           onSelectValue={value => this.setState({ categories: value })}
-          options={DROPDOWN_CATEGORIES_OPTIONS}
+          options={DROPDOWN_GENERAL_TYPES_OPTIONS}
         />
         <Dropdown
           label={"Type"}
@@ -217,10 +233,10 @@ class MyEquipmentDetail extends Component {
             style={{
               width: 15,
               height: 15,
-              backgroundColor: COLORS[status || "default"]
+              backgroundColor: COLORS[data.status || "default"]
             }}
           />
-          <Text style={styles.text}> Status: {status}</Text>
+          <Text style={styles.text}> Status: {data.status}</Text>
         </View>
         {this._renderBottomButton(data.status)}
       </View>

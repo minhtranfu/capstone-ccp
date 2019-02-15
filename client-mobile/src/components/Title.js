@@ -6,9 +6,9 @@ import fontSize from "../config/fontSize";
 
 class Title extends Component {
   render() {
-    const { title, hasMore, titleStyle } = this.props;
+    const { title, hasMore, titleStyle, style } = this.props;
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, style]}>
         <Text style={[styles.text, titleStyle]}>{title.toUpperCase()}</Text>
         <Text style={styles.hasMoreText}>
           {hasMore ? hasMore || "More" : null}
@@ -29,8 +29,7 @@ const styles = StyleSheet.create({
   text: {
     color: colors.secondaryColor,
     fontSize: fontSize.bodyText,
-    fontWeight: "500",
-    paddingLeft: 15
+    fontWeight: "500"
   },
   hasMoreText: {
     color: colors.primaryColor,

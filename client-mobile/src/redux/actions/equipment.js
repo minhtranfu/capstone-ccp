@@ -91,16 +91,21 @@ export function listEquipmentByRequesterId(id) {
 }
 
 export function searchEquipment(address, long, lat, beginDate, endDate) {
-  if (beginDate && endDate) {
-    const url = `equipments?begin_date=${beginDate}&end_date=${endDate}&long=${long}&lad=${lat}&lquery=${address}`;
-  } else {
-    const url = `equipments?long=${long}&lad=${lat}&lquery=${address}`;
-  }
+  const url =
+    beginDate && endDate
+      ? `equipments?begin_date=${beginDate}&end_date=${endDate}&long=${long}&lad=${lat}&lquery=${address}`
+      : `equipments?long=${long}&lad=${lat}&lquery=${address}`;
   return async dispatch => {
     const res = await axios.get(url);
     dispatch({
       type: Actions.SEARCH_EQUIPMENT_SUCCESS,
       payload: res
     });
+  };
+}
+
+export function clearSearchResult() {
+  return {
+    type: Actions.CLEAR_SEARCH_RESULT
   };
 }

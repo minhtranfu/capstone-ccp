@@ -31,10 +31,10 @@ import Title from "../../components/Title";
 const { width } = Dimensions.get("window");
 
 const IMAGE_LIST = [
-  "https://gitlab.pro/yuji/demo/uploads/d6133098b53fe1a5f3c5c00cf3c2d670/DVrj5Hz.jpg_1",
-  "https://gitlab.pro/yuji/demo/uploads/2d5122a2504e5cbdf01f4fcf85f2594b/Mwb8VWH.jpg",
-  "https://gitlab.pro/yuji/demo/uploads/4421f77012d43a0b4e7cfbe1144aac7c/XFVzKhq.jpg",
-  "https://gitlab.pro/yuji/demo/uploads/576ef91941b0bda5761dde6914dae9f0/kD3eeHe.jpg"
+  "https://s3.amazonaws.com/toyotaforklifts/content/20150902212609/mid-electric-hero.png",
+  "https://s3.amazonaws.com/toyotaforklifts/content/20150902212609/mid-electric-hero.png",
+  "https://s3.amazonaws.com/toyotaforklifts/content/20150902212609/mid-electric-hero.png",
+  "https://s3.amazonaws.com/toyotaforklifts/content/20150902212609/mid-electric-hero.png"
 ];
 
 @connect(
@@ -60,7 +60,8 @@ class EquipmentDetail extends Component {
       startDate: "",
       endDate: "",
       minDate: "",
-      maxDate: ""
+      maxDate: "",
+      loadQueue: [0, 0, 0, 0]
     };
   }
 
@@ -80,15 +81,29 @@ class EquipmentDetail extends Component {
   };
 
   _confirmDate = ({ startDate, endDate }) => {
+    const { id, dailyPrice, deliveryPrice, name } = this.props.detail.data;
     this.setState({
       startDate,
       endDate
     });
-    const { id } = this.props.navigation.state.params;
-    const equipment = this.props.equipment.find(item => item.id === id);
+    const newEquipment = {
+      dailyPrice: dailyPrice,
+      deliveryPrice: deliveryPrice,
+      beginDate: this._handleFormatDate(startDate),
+      endDate: this._handleFormatDate(endDate),
+      requesterAddress: "Phu Nhuan",
+      requesterLatitude: 123123,
+      requesterLongitude: 123123,
+      equipment: {
+        id: id
+      },
+      requester: {
+        id: 12
+      }
+    };
     this.props.navigation.navigate("Transaction", {
-      equipment: equipment,
-      id: id
+      equipment: newEquipment,
+      name: name
     });
   };
 
@@ -127,9 +142,21 @@ class EquipmentDetail extends Component {
     );
   };
 
-  _renderSlideItem = (uri, key) => (
+  _loadHandle(i) {
+    let loadQueue = this.state.loadQueue;
+    loadQueue[i] = 1;
+    this.setState({
+      loadQueue
+    });
+  }
+
+  _renderSlideItem = (uri, key, loaded) => (
     <View style={styles.slide} key={key}>
-      <Image style={styles.imageSlide} source={{ uri: props.uri }} />
+      <Image
+        style={styles.imageSlide}
+        source={{ uri: uri }}
+        resizeMode={"contain"}
+      />
     </View>
   );
 
@@ -143,52 +170,52 @@ class EquipmentDetail extends Component {
           To: {new Date(item.endDate).toDateString()}
         </Text>
       </View>
-      <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }}>
-        <Text style={[styles.text, { color: "blue" }]}>Change</Text>
+      <TouchableOpacity style={{ flexDirection: "row" }}>
+        <Text style={[styles.text, { color: "blue", paddingRight: 5 }]}>
+          Change
+        </Text>
         <Ionicons name="ios-arrow-forward" size={22} color={"blue"} />
       </TouchableOpacity>
     </View>
   );
 
   _renderScrollItem = () => {
-    const { images, author, availableFrom, availableTo } = itemDetail;
-    // const {
-    //   name,
-    //   constructor,
-    //   location,
-    //   available,
-    //   availableTimeRanges,
-    //   status,
-    //   dailyPrice,
-    //   deliveryPrice,
-    //   description
-    // } = detail.data;
-    const { id } = this.props.navigation.state.params;
-    const dataFlow = this.props.equipment.find(item => item.id === id);
     const {
       name,
-      constructor,
-      address,
+      contractor,
+      location,
       available,
       availableTimeRanges,
       status,
+      address,
       dailyPrice,
       deliveryPrice,
       description
-    } = dataFlow;
+    } = this.props.detail.data;
     return (
-      <View>
-        <Swiper style={styles.wrapper} loop={false}>
-          {imgList.map((uri, index) => this._renderSlideItem(uri, index))}
-        </Swiper>
+      <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.textWrapper}>
-          <Text style={styles.header}>{name}</Text>
+          <Text style={styles.title}>{name}</Text>
           <Text style={{ color: colors.secondaryColorOpacity }}>
-            {status.toUpperCase()}
+            {status ? status.toUpperCase() : "AVAILABLE"}
           </Text>
         </View>
-        <Text style={styles.text}>Constructor: {constructor.name}</Text>
-        <Text style={styles.text}>Phone: {constructor.phoneNumber}</Text>
+        <View style={styles.textWrapper}>
+          <View style={{ flexDirection: "column", justifyContent: "center" }}>
+            <Text style={styles.text}>Constructor: {contractor.name}</Text>
+            <Text style={styles.text}>Phone: {contractor.phoneNumber}</Text>
+          </View>
+          <View
+            style={{
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "flex-end"
+            }}
+          >
+            <Text style={styles.price}>${dailyPrice}</Text>
+            <Text style={styles.text}>per day</Text>
+          </View>
+        </View>
         <Title title={"Time Range Available"} />
         {availableTimeRanges.map((item, index) =>
           this._renderRangeItem(index, item)
@@ -207,21 +234,16 @@ class EquipmentDetail extends Component {
         <Text style={styles.description}>{description}</Text>
 
         <Title title={"Images"} />
-        <CustomFlatList
-          data={images}
-          renderItem={image => (
-            <Image
-              source={image.item}
-              style={styles.image}
-              resizeMode={"cover"}
-            />
-          )}
-          numColumns={3}
-          contentContainerStyle={{
-            marginHorizontal: 15,
-            marginVertical: 10
-          }}
-        />
+        <Swiper
+          style={styles.slideWrapper}
+          loop={false}
+          loadMinimal
+          loadMinimalSize={1}
+          activeDotColor={"white"}
+          activeDotStyle={{ width: 30 }}
+        >
+          {IMAGE_LIST.map((uri, index) => this._renderSlideItem(uri, index))}
+        </Swiper>
         <Title title={"Location"} />
         <Text style={[styles.text, { paddingVertical: 5 }]}>{address}</Text>
         <MapView
@@ -253,6 +275,7 @@ class EquipmentDetail extends Component {
 
   render() {
     const { id } = this.props.navigation.state.params;
+    const { detail } = this.props;
     let customI18n = {
       w: ["", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"],
       weekday: [
@@ -280,7 +303,7 @@ class EquipmentDetail extends Component {
     };
     return (
       <SafeAreaView style={styles.container}>
-        {detail ? (
+        {detail.data ? (
           <View>
             <ParallaxList
               title={detail.data.name}
@@ -292,7 +315,11 @@ class EquipmentDetail extends Component {
               renderScrollItem={this._renderScrollItem}
             />
             <View style={styles.bottomWrapper}>
-              <Button text={"Book Now"} onPress={this._openCalendar} />
+              <Button
+                text={"Book Now"}
+                onPress={this._openCalendar}
+                wrapperStyle={{ marginTop: 0 }}
+              />
               <Calendar
                 i18n="en"
                 ref={calendar => {
@@ -325,7 +352,6 @@ const styles = StyleSheet.create({
   },
   textWrapper: {
     flexDirection: "row",
-    paddingHorizontal: 15,
     justifyContent: "space-between",
     alignItems: "center"
   },
@@ -333,7 +359,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginLeft: 15,
     marginTop: 10,
     marginBottom: 5
   },
@@ -341,20 +366,22 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center"
   },
-  header: {
-    color: colors.secondaryColor,
+  title: {
+    color: colors.text,
     fontSize: fontSize.h4,
-    fontWeight: "500"
+    fontWeight: "600"
   },
   text: {
-    color: colors.secondaryColor,
-    fontSize: fontSize.bodyText,
-    paddingLeft: 15
+    color: colors.text,
+    fontSize: fontSize.bodyText
+  },
+  price: {
+    fontSize: fontSize.h3,
+    fontWeight: "600"
   },
   description: {
-    color: colors.secondaryColor,
-    fontSize: fontSize.secondaryText,
-    paddingLeft: 15
+    color: colors.text,
+    fontSize: fontSize.bodyText
   },
   checkAvailability: {
     alignItems: "center",
@@ -372,22 +399,19 @@ const styles = StyleSheet.create({
   },
   mapWrapper: {
     flex: 1,
-    height: 500,
-    marginHorizontal: 15
+    height: 500
   },
   bottomWrapper: {
+    justifyContent: "center",
     width: width,
-    backgroundColor: "white",
-    position: "absolute",
-    zIndex: 1,
-    bottom: 0,
     height: 50,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    backgroundColor: "white",
     borderTopWidth: 1,
     borderTopColor: colors.secondaryColorOpacity,
     paddingHorizontal: 15
+  },
+  slideWrapper: {
+    height: 200
   },
   slide: {
     flex: 1,
@@ -395,9 +419,19 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent"
   },
   imageSlide: {
-    width,
-    flex: 1,
+    width: width,
+    height: 200,
     backgroundColor: "transparent"
+  },
+  loadingView: {
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,.5)"
   }
 });
 

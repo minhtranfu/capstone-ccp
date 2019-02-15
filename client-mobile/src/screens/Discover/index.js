@@ -14,7 +14,7 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
 class Discover extends Component {
-  renderDiscoverItem = ({ item }) => {
+  _renderDiscoverItem = ({ item }) => {
     return (
       <Item
         name={item.name}
@@ -26,33 +26,38 @@ class Discover extends Component {
     );
   };
 
-  renderTopRate = ({ item }) => {
+  _renderTopRate = ({ item }) => {
     return <TopRateItem uploaded={item.uploaded} price={item.price} />;
   };
 
-  renderItem = () => {
+  _renderItem = () => {
     return (
       <View>
-        <Title title={"What can we help you to find"} />
+        <Title
+          title={"What can we help you to find"}
+          style={{ paddingLeft: 15 }}
+        />
         <CustomFlatList
           data={discoverData}
-          renderItem={this.renderDiscoverItem}
+          renderItem={this._renderDiscoverItem}
           isHorizontal={true}
-          contentContainerStyle={{
+          style={{
             marginTop: 10
           }}
         />
-        <Title title={"Near you"} />
+        <Title title={"Near you"} style={{ paddingLeft: 15 }} />
         <CustomFlatList
           data={discoverData}
-          renderItem={this.renderTopRate}
+          renderItem={this._renderTopRate}
           numColumns={2}
-          contentContainerStyle={{
-            marginHorizontal: 15,
-            justifyContent: "space-between"
+          style={{
+            paddingLeft: 15
           }}
         />
-        <Button text={"Show more"} />
+        <Button
+          text={"Show more"}
+          wrapperStyle={{ marginHorizontal: 15, marginBottom: 15 }}
+        />
       </View>
     );
   };
@@ -70,7 +75,7 @@ class Discover extends Component {
           hasCart={true}
           onRightPress={() => this.props.navigation.navigate("Search")}
           scrollElement={<Animated.ScrollView />}
-          renderScrollItem={this.renderItem}
+          renderScrollItem={this._renderItem}
         />
       </SafeAreaView>
     );

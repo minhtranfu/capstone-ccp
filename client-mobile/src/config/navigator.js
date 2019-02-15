@@ -155,17 +155,21 @@ const TabNavigator = createBottomTabNavigator(
         const { routeName } = navigation.state;
         let icon;
         if (routeName === "Discover") {
-          icon = focused ? require('../../assets/icons/icons8-compass-active.png')
-          : require('../../assets/icons/icons8-compass.png');
+          icon = focused
+            ? require("../../assets/icons/icons8-compass-active.png")
+            : require("../../assets/icons/icons8-compass.png");
         } else if (routeName === "Activity") {
-          icon = focused ? require('../../assets/icons/icons8-search-active.png')
-          : require('../../assets/icons/icons8-search.png');
+          icon = focused
+            ? require("../../assets/icons/icons8-activity-active.png")
+            : require("../../assets/icons/icons8-activity.png");
         } else if (routeName === "Equipment") {
-          icon = focused ? require('../../assets/icons/icons8-garage-active.png')
-          : require('../../assets/icons/icons8-garage.png');
+          icon = focused
+            ? require("../../assets/icons/icons8-garage-active.png")
+            : require("../../assets/icons/icons8-garage.png");
         } else if (routeName === "Settings") {
-          icon = focused ? require('../../assets/icons/icons8-settings-active.png')
-          : require('../../assets/icons/icons8-settings.png');
+          icon = focused
+            ? require("../../assets/icons/icons8-settings-active.png")
+            : require("../../assets/icons/icons8-settings.png");
         }
 
         return (
@@ -186,7 +190,7 @@ const TabNavigator = createBottomTabNavigator(
       activeTintColor: colors.secondaryColor,
       inactiveTintColor: colors.white,
       style: {
-        backgroundColor: colors.primaryColor,
+        backgroundColor: colors.primaryColor
       }
     }
   }

@@ -1,10 +1,18 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView
+} from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
+import { Feather } from "@expo/vector-icons";
+import { sendTransactionRequest } from "../../redux/actions/transaction";
 
-import { updateEquipment } from "../../redux/actions/equipment";
-import ParallaxList from "../../components/ParallaxList";
+import Header from "../../components/Header";
+import Button from "../../components/Button";
 import Loading from "../../components/Loading";
 
 import colors from "../../config/colors";
@@ -13,8 +21,8 @@ import fontSize from "../../config/fontSize";
 @connect(
   state => ({}),
   dispatch => ({
-    fetchUpdateEquipment: (id, status) => {
-      dispatch(updateEquipment(id, status));
+    fetchSendRequest: transactionDetail => {
+      dispatch(sendTransactionRequest(transactionDetail));
     }
   })
 )
@@ -24,31 +32,49 @@ class ConfirmTransaction extends Component {
     this.state = {};
   }
 
-  handleConfirmBooking = () => {
-    const { id } = this.props.navigation.state.params;
-    const status = "pending";
-    this.props.fetchUpdateEquipment(id, status);
+  _handleConfirmBooking = transactionDetail => {
+    this.props.fetchSendRequest(transactionDetail);
+  };
+
+  _showAlert = msg => {
+    Alert.alert("Error", msg, [{ text: "OK" }], {
+      cancelable: true
+    });
   };
 
   render() {
-    const { equipment } = this.props.navigation.state.params;
+    const { equipment, name } = this.props.navigation.state.params;
     return (
       <SafeAreaView
         style={styles.container}
         forceInset={{ bottom: "always", top: "always" }}
       >
-        {equipment ? (
-          <View>
-            <Text>{equipment.name}</Text>
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.navigate("Notification");
-                this.handleConfirmBooking();
-              }}
-            >
-              <Text>Confirm booking</Text>
+        <Header
+          renderLeftButton={() => (
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+              <Feather name="arrow-left" size={24} />
             </TouchableOpacity>
-          </View>
+          )}
+        >
+          <Text style={styles.header}>Review booking</Text>
+        </Header>
+        {equipment ? (
+          <ScrollView style={{ paddingHorizontal: 15 }}>
+            <Text style={styles.text}>Name: {name}</Text>
+            <Text style={styles.text}>
+              Daily price: {equipment.dailyPrice} $/day
+            </Text>
+            <Text style={styles.text}>Begin date: {equipment.beginDate}</Text>
+            <Text style={styles.text}>End date:{equipment.endDate}</Text>
+            <Button
+              text={"Confirm Booking"}
+              onPress={() => {
+                this._handleConfirmBooking(equipment);
+                this._showAlert("Success");
+                this.props.navigation.navigate("Discover");
+              }}
+            />
+          </ScrollView>
         ) : (
           <Loading />
         )}
@@ -60,7 +86,16 @@ class ConfirmTransaction extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
-  }
+  },
+  header: {
+    fontSize: fontSize.h4,
+    fontWeight: "600"
+  },
+  text: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500"
+  },
+  buttonWrapper: {}
 });
 
 export default ConfirmTransaction;

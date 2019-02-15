@@ -94,7 +94,7 @@ class ActivityDetail extends Component {
   _renderStepProgress = status => {
     if (status !== "RENTING")
       return (
-        <View style={styles.rowWrapper}>
+        <View style={styles.columnWrapper}>
           <StepProgress options={STEP_PROGRESS_OPTIONS} status={status} />
         </View>
       );
@@ -104,13 +104,13 @@ class ActivityDetail extends Component {
   _renderBottomButton = status => {
     if (status === "RENTING") {
       return (
-        <View style={styles.rowWrapper}>
+        <View style={styles.columnWrapper}>
           <Button text={"Extend Duration"} />
         </View>
       );
     } else if (status === "PENDING") {
       return (
-        <View style={styles.rowWrapper}>
+        <View style={styles.columnWrapper}>
           <Button text={"Cancel"} />
         </View>
       );
@@ -143,7 +143,7 @@ class ActivityDetail extends Component {
             </Text>
           </View>
         </View>
-        <View style={styles.rowWrapper}>
+        <View style={styles.columnWrapper}>
           <Text style={styles.title}>Duration</Text>
           <Text style={styles.text}>
             From:{" "}
@@ -158,7 +158,7 @@ class ActivityDetail extends Component {
             </Text>
           </Text>
         </View>
-        <View style={styles.rowWrapper}>
+        <View style={styles.columnWrapper}>
           <Text style={styles.title}>Price</Text>
           <View style={styles.priceItemWrapper}>
             <Text style={styles.text}>Price/day:</Text>
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   },
-  rowWrapper: {
+  columnWrapper: {
     paddingVertical: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     flexDirection: "column",

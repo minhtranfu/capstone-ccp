@@ -49,7 +49,7 @@ class EquipmentItem extends Component {
                 style={styles.buttonWrapper}
                 onPress={onRenewPress}
               >
-                <Ionicons name="ios-calendar" size={20} />
+                <Ionicons name="ios-calendar" size={20} color={"white"} />
                 <Text style={styles.buttonText}>Renew transaction</Text>
               </TouchableOpacity>
             ) : null}
@@ -120,7 +120,8 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: fontSize.secondaryText,
     fontWeight: "500",
-    paddingLeft: 5
+    paddingLeft: 5,
+    color: "white"
   },
   title: {
     fontSize: fontSize.h4,

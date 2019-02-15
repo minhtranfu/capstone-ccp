@@ -11,7 +11,10 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
-import { searchEquipment } from "../../redux/actions/equipment";
+import {
+  searchEquipment,
+  clearSearchResult
+} from "../../redux/actions/equipment";
 
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -22,11 +25,15 @@ import fontSize from "../../config/fontSize";
 
 @connect(
   state => ({
-    equipment: state.equipment.list
+    equipment: state.equipment.list,
+    listSearch: state.equipment.listSearch
   }),
   dispatch => ({
     fetchSearchEquipment: (address, long, lat, beginDate, endDate) => {
       dispatch(searchEquipment(address, long, lat, beginDate, endDate));
+    },
+    fetchClearSearchEquipment: () => {
+      dispatch(clearSearchResult());
     }
   })
 )
@@ -38,6 +45,12 @@ class SearchResult extends Component {
     };
   }
 
+  componentDidMount() {
+    const { query, lat, long } = this.props.navigation.state.params;
+    const fullAddress = query.main_text.concat(", ", query.secondary_text);
+    this.props.fetchSearchEquipment(query.main_text, lat, long);
+  }
+
   _setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
@@ -46,13 +59,15 @@ class SearchResult extends Component {
     //Query response: main_text & secondary_text
     const { query, lat, long } = this.props.navigation.state.params;
     const result = equipment.filter(
-      item => item.address === query.main_text && item.status === "AVAILABLE"
+      item =>
+        item.address === query.main_text.concat(", ", query.secondary_text) &&
+        item.status === "AVAILABLE"
     );
     return result ? result : equipment;
   };
 
   render() {
-    const { equipment } = this.props;
+    const { equipment, listSearch } = this.props;
     const { query } = this.props.navigation.state.params;
     const result = this._findResultByAddress(equipment);
     return (
@@ -61,6 +76,16 @@ class SearchResult extends Component {
         forceInset={{ bottom: "always", top: "always" }}
       >
         <Header
+          renderLeftButton={() => (
+            <TouchableOpacity
+              onPress={() => {
+                this.props.fetchClearSearchEquipment();
+                this.props.navigation.goBack();
+              }}
+            >
+              <Feather name="arrow-left" size={24} />
+            </TouchableOpacity>
+          )}
           renderRightButton={() => (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <TouchableOpacity style={{ marginRight: 10 }}>
@@ -75,32 +100,30 @@ class SearchResult extends Component {
               </TouchableOpacity>
             </View>
           )}
-          renderLeftButton={() => (
-            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-              <Feather name="arrow-left" size={24} />
-            </TouchableOpacity>
-          )}
         >
           <Text style={styles.title}>{query.main_text}</Text>
         </Header>
 
-        {equipment ? (
-          <View style={{ flex: 1, paddingHorizontal: 15 }}>
+        {listSearch.data ? (
+          <View style={{ flex: 1 }}>
             <FlatList
-              data={result}
+              style={{ paddingHorizontal: 15 }}
+              data={listSearch.data}
               renderItem={({ item, index }) => (
                 <EquipmentItem
                   onPress={() =>
-                    this.props.navigation.navigate("Detail", { id: item.id })
+                    this.props.navigation.navigate("Detail", {
+                      id: item.equipmentEntity.id
+                    })
                   }
                   key={`eq_${index}`}
-                  id={item.id}
-                  name={item.name}
+                  id={item.equipmentEntity.id}
+                  name={item.equipmentEntity.name}
                   imageURL={
                     "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
                   }
-                  status={item.status}
-                  price={item.dailyPrice}
+                  address={item.equipmentEntity.address}
+                  price={item.equipmentEntity.dailyPrice}
                 />
               )}
               keyExtractor={(item, index) => index.toString()}
