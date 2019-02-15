@@ -13,7 +13,7 @@ class EquipmentCard extends PureComponent {
                 <div className="card">
                     <Image src={product.image || 'https://via.placeholder.com/728x458.png?text=CCP+Capstone'} className="card-img-top" alt="" />
                     <div className="card-body">
-                        <h6 className="card-title">{product.name}</h6>
+                        <h6 className="card-title">{product.name} <span className="float-right"><i className="fa fa-dollar"></i> {product.dailyPrice}</span></h6>
                         <div className="text-muted"><i className="fa fa-map-marker"></i> {product.address}</div>
                         {product.availableTimeRanges[0] &&
                             <div className="text-muted">
