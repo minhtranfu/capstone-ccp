@@ -15,8 +15,13 @@ import { Feather } from "@expo/vector-icons";
 import { ImagePicker, Permissions } from "expo";
 import {
   getEquipmentDetail,
-  getTransactionDetail
+  getTransactionDetail,
+  clearTransactionDetail
 } from "../../redux/actions/equipment";
+import {
+  approveTransaction,
+  denyTransaction
+} from "../../redux/actions/transaction";
 
 import InputField from "../../components/InputField";
 import Dropdown from "../../components/Dropdown";
@@ -53,7 +58,6 @@ const COLORS = {
 
 @connect(
   state => {
-    console.log(state.equipment);
     return {
       equipmentDetail: state.equipment.detail,
       transactionDetail: state.equipment.transactionDetail,
@@ -67,6 +71,15 @@ const COLORS = {
     },
     fetchTransactionDetail: id => {
       dispatch(getTransactionDetail(id));
+    },
+    fetchClearDetail: () => {
+      dispatch(clearTransactionDetail());
+    },
+    fetchApproveTransaction: (id, transactionStatus) => {
+      dispatch(approveTransaction(id, transactionStatus));
+    },
+    fetchDenyTransaction: id => {
+      dispatch(denyTransaction(id));
     }
   })
 )
@@ -108,6 +121,10 @@ class MyEquipmentDetail extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.fetchClearDetail();
+  }
+
   _handleChangeBackgroundImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
     if (status === "granted") {
@@ -115,34 +132,46 @@ class MyEquipmentDetail extends Component {
     }
   };
 
-  _renderAvailableBottom = () => (
+  _renderAvailableBottom = id => (
     <View style={styles.bottomWrapper}>
       <Button text={"Update"} />
       <Button text={"Delete"} />
     </View>
   );
 
-  _renderPendingBottom = () => (
+  _renderPendingBottom = id => (
     <View style={styles.bottomWrapper}>
-      <Button text={"Accept"} />
-      <Button text={"Denied"} />
+      <Button
+        text={"Accept"}
+        onPress={() => {
+          this.props.fetchApproveTransaction(id, { status: "ACCEPTED" });
+          this.props.navigation.goBack();
+        }}
+      />
+      <Button
+        text={"Denied"}
+        onPress={() => {
+          this.props.fetchDenyTransaction(id, { status: "DENIED" });
+          this.props.navigation.goBack();
+        }}
+      />
     </View>
   );
 
-  _renderAcceptedBottom = () => (
+  _renderAcceptedBottom = id => (
     <View style={styles.bottomWrapper}>
       <Button text={"Delivery"} />
     </View>
   );
 
-  _renderBottomButton = status => {
+  _renderBottomButton = (status, id) => {
     switch (status) {
       case "ACCEPTED":
-        return this._renderAcceptedBottom();
+        return this._renderAcceptedBottom(id);
       case "PENDING":
-        return this._renderPendingBottom();
+        return this._renderPendingBottom(id);
       case "AVAILABLE":
-        return this._renderAvailableBottom();
+        return this._renderAvailableBottom(id);
       default:
         return null;
     }
@@ -238,7 +267,7 @@ class MyEquipmentDetail extends Component {
           />
           <Text style={styles.text}> Status: {data.status}</Text>
         </View>
-        {this._renderBottomButton(data.status)}
+        {this._renderBottomButton(data.status, id)}
       </View>
     );
   };
@@ -254,7 +283,12 @@ class MyEquipmentDetail extends Component {
       >
         <Header
           renderLeftButton={() => (
-            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+            <TouchableOpacity
+              onPress={() => {
+                this.props.fetchClearDetail();
+                this.props.navigation.goBack();
+              }}
+            >
               <Feather name="x" size={24} />
             </TouchableOpacity>
           )}
@@ -275,7 +309,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-
+  bottomWrapper: {
+    marginBottom: 10
+  },
   landscapeImgWrapper: {
     height: 200,
     marginBottom: 15

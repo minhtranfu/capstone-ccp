@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Animated } from "react-native";
+import { StyleSheet, Text, View, Animated, Alert } from "react-native";
 import { SafeAreaView } from "react-navigation";
+import { connect } from "react-redux";
 
 import Button from "../../components/Button";
 import Title from "../../components/Title";
@@ -13,6 +14,9 @@ import { discoverData } from "../../config/mockData";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
+@connect(state => ({
+  status: state.transaction.status
+}))
 class Discover extends Component {
   _renderDiscoverItem = ({ item }) => {
     return (
@@ -62,7 +66,14 @@ class Discover extends Component {
     );
   };
 
+  _showAlert = (title, msg) => {
+    Alert.alert(title, msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
+
   render() {
+    const { status } = this.props;
     return (
       <SafeAreaView
         style={styles.container}

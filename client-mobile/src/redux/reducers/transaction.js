@@ -1,6 +1,6 @@
 import * as ACTIONS from "../types";
 
-const initialState = { status: "" };
+const initialState = { status: null };
 
 export default function transactionReducer(state = initialState, action) {
   const { type, payload } = action;

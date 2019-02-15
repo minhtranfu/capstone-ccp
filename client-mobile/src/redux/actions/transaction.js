@@ -2,7 +2,7 @@ import axios from "axios";
 import * as Actions from "../types";
 
 export function sendTransactionRequest(transaction) {
-  console.log(transaction);
+  console.log(JSON.stringify(transaction));
   return async dispatch => {
     const res = await axios.post(`transactions`, transaction);
     dispatch({

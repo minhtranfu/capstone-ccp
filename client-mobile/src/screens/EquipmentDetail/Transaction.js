@@ -4,7 +4,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Alert
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -36,14 +37,9 @@ class ConfirmTransaction extends Component {
     this.props.fetchSendRequest(transactionDetail);
   };
 
-  _showAlert = msg => {
-    Alert.alert("Error", msg, [{ text: "OK" }], {
-      cancelable: true
-    });
-  };
-
   render() {
     const { equipment, name } = this.props.navigation.state.params;
+    console.log(equipment);
     return (
       <SafeAreaView
         style={styles.container}
@@ -70,7 +66,6 @@ class ConfirmTransaction extends Component {
               text={"Confirm Booking"}
               onPress={() => {
                 this._handleConfirmBooking(equipment);
-                this._showAlert("Success");
                 this.props.navigation.navigate("Discover");
               }}
             />
