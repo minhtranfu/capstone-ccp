@@ -14,7 +14,7 @@ public class EquipmentTypeEntity implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "general_equipment_type_id")
     private GeneralEquipmentTypeEntity generalEquipmentType;
 

@@ -5,6 +5,8 @@ import com.ccp.webadmin.entities.AdminUserEntity;
 import com.ccp.webadmin.repositories.AdminAccountRepository;
 import com.ccp.webadmin.services.AdminAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.core.userdetails.UserDetails;
+//import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,28 +33,18 @@ public class AdminAccountServiceImpl implements AdminAccountService {
 
     @Override
     public void save(AdminAccountEntity adminAccountEntity) {
-//        AdminUserEntity adminUserEntity = new AdminUserEntity();
-//
-//        adminUserEntity.setName(adminAccountEntity.getAccount().getName());
-//
-//        adminUserEntity.setEmail(adminAccountEntity.getAccount().getEmail());
-//
-//        adminUserEntity.setPhone(adminAccountEntity.getAccount().getPhone());
-//
-//        adminUserEntity.setRoleId(2);
-//
-//        adminUserEntity.setMale(adminAccountEntity.getAccount().isMale());
-//
-//        adminAccountEntity.setAccount(adminUserEntity);
-        adminAccountEntity.getAccount().setRoleId(2);
-        System.out.println(adminAccountEntity);
-
         adminAccountRepository.save(adminAccountEntity);
-        System.out.println(adminAccountEntity);
     }
 
     @Override
     public void deleteById(Integer id) {
 
     }
+//
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        return adminAccountRepository.findByUsername(username).orElseThrow(
+//                () -> new RuntimeException("Username not found!")
+//        );
+//    }
 }

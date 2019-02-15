@@ -1,11 +1,18 @@
 package com.ccp.webadmin.entities;
 
+//import org.springframework.security.core.GrantedAuthority;
+//import org.springframework.security.core.authority.SimpleGrantedAuthority;
+//import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "admin_account")
-public class AdminAccountEntity implements Serializable {
+public class AdminAccountEntity  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -16,8 +23,17 @@ public class AdminAccountEntity implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @OneToOne( mappedBy = "adminAccountEntity", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "adminAccountEntity", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, optional = false)
     private AdminUserEntity account;
+
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        List<GrantedAuthority> authorities = new ArrayList<>();
+//        GrantedAuthority authority = new SimpleGrantedAuthority(this.getAccount().getRoleId().toString());
+//        authorities.add(authority);
+//        return authorities;
+//    }
 
     public AdminAccountEntity() {
     }
@@ -40,6 +56,26 @@ public class AdminAccountEntity implements Serializable {
         return username;
     }
 
+//    @Override
+//    public boolean isAccountNonExpired() {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isAccountNonLocked() {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isCredentialsNonExpired() {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isEnabled() {
+//        return false;
+//    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -57,16 +93,23 @@ public class AdminAccountEntity implements Serializable {
     }
 
     public void setAccount(AdminUserEntity account) {
+        if (account == null) {
+            if (this.account != null) {
+                this.account.setAdminAccountEntity(null);
+                System.out.println("aaaaaaaaaaaa" + this.account.getId());
+                System.out.println("aaaaaaa2" + account.getId());
+            }
+            else{
+                System.out.println("bbbbbbb1" + this.account.getId());
+                System.out.println("bbbbbbb2" + account.getId());
+            }
+        }
+        else {
+            System.out.println("ccccccc" + this.account.getId());
+            System.out.println("ccccccc2" + account.getId());
+            account.setRoleId(2);
+            account.setAdminAccountEntity(this);
+        }
         this.account = account;
-    }
-
-    @Override
-    public String toString() {
-        return "AdminAccountEntity{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", account=" + account +
-                '}';
     }
 }

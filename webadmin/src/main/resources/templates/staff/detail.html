@@ -36,19 +36,41 @@
                                 <form th:action="@{/staff/saveProcess}" method="post"
                                       th:object="${staff}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{id}"><br>
-                                    User Name: <input th:field="*{username}" class="form-control"><br>
-                                    Full Name: <input th:field="*{account.name}" class="form-control"><br>
-                                    Gender:<select th:field="${staff.account.male}" class="form-control">
-                                                <option th:value="'true'" th:text="Male"></option>
-                                                <option th:value="'false'" th:text="Female"></option>
-                                            </select><br>
-                                    Phone: <input th:field="*{account.phone}" class="form-control"><br>
-                                    Email: <input th:field="*{account.email}" class="form-control"><br>
-                                    Role:<select th:field="${staff.account.roleId}" class="form-control">
-                                                <option th:value="'1'" th:text="Admin"></option>
-                                                <option th:value="'2'" th:text="Staff"></option>
-                                        </select><br>
-                                    <input type="Submit" class="btn btn-default">
+                                    <div class="form-group">
+                                        <label>User Name</label>
+                                        <input th:field="*{username}" class="form-control" placeholder="User Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input th:field="*{password}" readonly="true" class="form-control" placeholder="Password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Full Name</label>
+                                        <input th:field="*{account.name}" class="form-control" placeholder="Full Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Gender</label>
+                                        <select th:field="${staff.account.male}" class="form-control">
+                                            <option th:value="'true'" th:text="Male"></option>
+                                            <option th:value="'false'" th:text="Female"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Phone Number</label>
+                                        <input th:field="*{account.phone}" class="form-control" placeholder="Phone Number">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email:</label>
+                                        <input th:field="*{account.email}" class="form-control" placeholder="Email">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Role</label>
+                                        <select th:field="${staff.account.roleId}" class="form-control">
+                                            <option th:value="'1'" th:text="Admin"></option>
+                                            <option th:value="'2'" th:text="Staff"></option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-default">Submit</button>
                                 </form>
                             </div>
                             <!-- /.col-lg-6 (nested) -->

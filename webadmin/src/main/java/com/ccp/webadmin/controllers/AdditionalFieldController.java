@@ -27,12 +27,6 @@ public class AdditionalFieldController {
         this.additionalSpecialFieldService = additionalSpecialFieldService;
     }
 
-//    @GetMapping({"", "/", "/index"})
-//    public String getAll(Model model) {
-//        model.addAttribute("additionalfield", ad.findAll());
-//        return "equipment_type/index";
-//    }
-
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("additionalSpecialField", additionalSpecialFieldService.findById(id));
@@ -60,12 +54,8 @@ public class AdditionalFieldController {
 
     @GetMapping("/delete")
     public String delete(@RequestParam("id") Integer id) {
-        EquipmentTypeEntity equipmentTypeEntity = equipmentTypeService.findEquipmentTypeById(id);
-
-//        if (equipmentTypeService.existsEquipmentTypeByGeneralEquipmentType(generalEquipmentTypeEntity) == false) {
-//            equipmentTypeService.deleteById(id);
-//        }
-        equipmentTypeService.deleteById(id);
+        AdditionalSpecialFieldEntity  additionalSpecialFieldEntity = additionalSpecialFieldService.findById(id);
+        additionalSpecialFieldService.deleteById(id);
         return "redirect:index";
     }
 }

@@ -22,7 +22,7 @@ public class AdminUserEntity implements Serializable {
     @Column(name = "role_id")
     private Integer roleId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private AdminAccountEntity adminAccountEntity;
 

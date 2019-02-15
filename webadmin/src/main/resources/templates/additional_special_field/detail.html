@@ -33,11 +33,16 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-6">
-                                <form th:action="@{/additional_special_field/saveProcess}" method="post" th:object="${additionalSpecialField}" enctype="multipart/form-data">
+                                <form th:action="@{/additional_special_field/saveProcess}" method="post"
+                                      th:object="${additionalSpecialField}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{id}"><br>
                                     Name: <input th:field="*{name}" class="form-control"><br>
                                     Data Type: <input th:field="*{dataType}" class="form-control"><br>
-                                    Equipment Type <input th:field="*{equipmentTypeEntity.name}" readonly="true" class="form-control"><br>
+                                    Equipment Type :
+                                    <a th:href="@{/equipment_type/detail/{id}(id = *{equipmentTypeEntity.id})}">
+                                        <span th:text="*{equipmentTypeEntity.name}" class="link form-control"> </span>
+                                    </a>
+                                    <br>
                                     <input type="Submit" class="btn btn-default">
                                 </form>
                             </div>

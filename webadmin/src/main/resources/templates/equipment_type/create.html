@@ -33,18 +33,20 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-6">
-                                <form th:action="@{/equipment_type/saveProcess}" method="post" th:object="${equipmentType}" enctype="multipart/form-data">
+                                <form th:action="@{/equipment_type/saveProcess}" method="post"
+                                      th:object="${equipmentType}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{id}"><br>
                                     <div class="form-group">
-                                    Name: <input th:field="*{name}" class="form-control"><br>
+                                        Name: <input th:field="*{name}" class="form-control"><br>
                                     </div>
                                     <div class="form-group">
-                                    <select th:field="*{generalEquipmentType}" class="form-control">
-                                        <option th:each="generalEquipmentType : ${generalEquipmentTypes}"
-                                                th:value="${generalEquipmentType.id}"
-                                                th:text="${generalEquipmentType.name}">
-                                        </option>
-                                    </select><br/>
+                                        Category:
+                                        <select th:field="*{generalEquipmentType}" class="form-control">
+                                            <option th:each="generalEquipmentType : ${generalEquipmentTypes}"
+                                                    th:value="${generalEquipmentType.id}"
+                                                    th:text="${generalEquipmentType.name}">
+                                            </option>
+                                        </select><br/>
                                     </div>
                                     <span th:errors="*{name}" style="color: red"></span><br>
                                     <input type="Submit" class="btn btn-default"/>
