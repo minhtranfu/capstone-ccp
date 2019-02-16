@@ -156,7 +156,7 @@ public class EquipmentService {
 		}
 
 		//todo validate for additionalSpecsValues
-		for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValueEntities()) {
+		for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValues()) {
 			AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByID(additionalSpecsValueEntity.getAdditionalSpecsField().getId());
 			if (foundAdditionalSpecsFieldEntity == null) {
 				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()))).build();
@@ -278,7 +278,7 @@ public class EquipmentService {
 		}
 
 		//todo validate for additionalSpecsValues
-		for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValueEntities()) {
+		for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValues()) {
 			AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByID(additionalSpecsValueEntity.getAdditionalSpecsField().getId());
 			if (foundAdditionalSpecsFieldEntity == null) {
 				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()))).build();

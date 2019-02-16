@@ -18,7 +18,7 @@ public class EquipmentTypeEntity {
 	private Timestamp createdTime;
 	private Timestamp updatedTime;
 	private boolean isDeleted;
-	private List<AdditionalSpecsFieldEntity> additionalSpecsFieldEntities;
+	private List<AdditionalSpecsFieldEntity> additionalSpecsFields;
 
 
 
@@ -75,12 +75,12 @@ public class EquipmentTypeEntity {
 	}
 
 	@OneToMany(mappedBy = "equipmentType", cascade = CascadeType.ALL)
-	public List<AdditionalSpecsFieldEntity> getAdditionalSpecsFieldEntities() {
-		return additionalSpecsFieldEntities;
+	public List<AdditionalSpecsFieldEntity> getAdditionalSpecsFields() {
+		return additionalSpecsFields;
 	}
 
-	public void setAdditionalSpecsFieldEntities(List<AdditionalSpecsFieldEntity> additionalSpecsFieldEntities) {
-		this.additionalSpecsFieldEntities = additionalSpecsFieldEntities;
+	public void setAdditionalSpecsFields(List<AdditionalSpecsFieldEntity> additionalSpecsFieldEntities) {
+		this.additionalSpecsFields = additionalSpecsFieldEntities;
 	}
 
 

@@ -24,11 +24,13 @@ public class GeneralEquipmentTypeEntity {
 	public GeneralEquipmentTypeEntity() {
 	}
 
-	public GeneralEquipmentTypeEntity(GeneralEquipmentTypeEntity equipmentTypeEntity) {
-		this.id = equipmentTypeEntity.id;
-		this.name = equipmentTypeEntity.name;
-		this.isDeleted = equipmentTypeEntity.isDeleted;
-		this.equipmentTypeEntities = new ArrayList<>(equipmentTypeEntity.equipmentTypeEntities);
+	public GeneralEquipmentTypeEntity(GeneralEquipmentTypeEntity generalEquipmentTypeEntity) {
+		this.id = generalEquipmentTypeEntity.id;
+		this.name = generalEquipmentTypeEntity.name;
+		this.isDeleted = generalEquipmentTypeEntity.isDeleted;
+		this.createdTime = generalEquipmentTypeEntity.createdTime;
+		this.updatedTime = generalEquipmentTypeEntity.updatedTime;
+		this.equipmentTypeEntities = new ArrayList<>(generalEquipmentTypeEntity.equipmentTypeEntities);
 	}
 
 	@Id

@@ -1533,8 +1533,8 @@
     </column>
     <column id="371" parent="288" name="is_deleted">
       <Position>8</Position>
-      <DataType>bit(1)|0s</DataType>
-      <DefaultExpression>b&apos;0&apos;</DefaultExpression>
+      <DataType>tinyint(1)|0s</DataType>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="372" parent="288" name="created_time">

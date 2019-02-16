@@ -3,6 +3,7 @@ package entities;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Where(clause = "is_deleted=0")
@@ -14,6 +15,7 @@ public class ConstructionEntity {
 	private double longitude;
 	private double latitude;
 	private boolean isDeleted;
+	private ContractorEntity contractor;
 
 
 	@Id
@@ -51,7 +53,7 @@ public class ConstructionEntity {
 
 
 	@Basic
-	@Column(name = "long")
+	@Column(name = "`long`")
 	public double getLongitude() {
 		return longitude;
 	}
@@ -80,5 +82,14 @@ public class ConstructionEntity {
 		isDeleted = deleted;
 	}
 
+	@XmlTransient
+	@ManyToOne
+	@JoinColumn(name = "contractor_id")
+	public ContractorEntity getContractor() {
+		return contractor;
+	}
 
+	public void setContractor(ContractorEntity contractorEntity) {
+		this.contractor = contractorEntity;
+	}
 }

@@ -1,6 +1,5 @@
 package entities;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -44,7 +43,7 @@ public class EquipmentEntity implements Serializable {
 	private Collection<DescriptionImageEntity> descriptionImages;
 
 
-	private List<AdditionalSpecsValueEntity> additionalSpecsValueEntities;
+	private List<AdditionalSpecsValueEntity> additionalSpecsValues;
 
 	public EquipmentEntity() {
 	}
@@ -255,12 +254,12 @@ public class EquipmentEntity implements Serializable {
 
 
 	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL)
-	public List<AdditionalSpecsValueEntity> getAdditionalSpecsValueEntities() {
-		return additionalSpecsValueEntities;
+	public List<AdditionalSpecsValueEntity> getAdditionalSpecsValues() {
+		return additionalSpecsValues;
 	}
 
-	public void setAdditionalSpecsValueEntities(List<AdditionalSpecsValueEntity> additionalSpecsValueEntities) {
-		this.additionalSpecsValueEntities = additionalSpecsValueEntities;
+	public void setAdditionalSpecsValues(List<AdditionalSpecsValueEntity> additionalSpecsValueEntities) {
+		this.additionalSpecsValues = additionalSpecsValueEntities;
 	}
 
 	public enum Status {
