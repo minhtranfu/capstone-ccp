@@ -1,11 +1,14 @@
 package entities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
+@Where(clause = "is_deleted=0")
 @Table(name = "contractor", schema = "capstone_ccp")
 public class ContractorEntity {
 	private long id;

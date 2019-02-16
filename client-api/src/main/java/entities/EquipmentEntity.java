@@ -1,5 +1,8 @@
 package entities;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -7,8 +10,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
+@Where(clause = "is_deleted=0")
 @Table(name = "equipment", schema = "capstone_ccp")
-
 @NamedQueries({
 		@NamedQuery(name = "EquipmentEntity.searchEquipment", query = "select e from EquipmentEntity  e where exists (select t from e.availableTimeRanges t where t.beginDate <= :curBeginDate and :curBeginDate <= :curEndDate  and  :curEndDate <= t.endDate)"),
 		@NamedQuery(name = "EquipmentEntity.getAll", query = "select  e from EquipmentEntity e")
@@ -23,7 +26,7 @@ public class EquipmentEntity implements Serializable {
 	private Status status;
 	private String thumbnailImage;
 
-	private Boolean isDeleted;
+	private boolean isDeleted;
 	private Timestamp createdTime;
 	private Timestamp updatedTime;
 
@@ -40,6 +43,8 @@ public class EquipmentEntity implements Serializable {
 	private List<AvailableTimeRangeEntity> availableTimeRanges;
 	private Collection<DescriptionImageEntity> descriptionImages;
 
+
+	private List<AdditionalSpecsValueEntity> additionalSpecsValueEntities;
 
 	public EquipmentEntity() {
 	}
@@ -180,12 +185,12 @@ public class EquipmentEntity implements Serializable {
 	}
 
 	@Basic
-	@Column(name = "is_deleted", insertable=false)
-	public Boolean isDeleted() {
+	@Column(name = "is_deleted", insertable = false, nullable = false)
+	public boolean isDeleted() {
 		return isDeleted;
 	}
 
-	public void setDeleted(Boolean deleted) {
+	public void setDeleted(boolean deleted) {
 		isDeleted = deleted;
 	}
 
@@ -200,7 +205,7 @@ public class EquipmentEntity implements Serializable {
 	}
 
 	@Basic
-@Column(name = "updated_time", insertable=false, updatable = false)
+	@Column(name = "updated_time", insertable = false, updatable = false)
 	public Timestamp getUpdatedTime() {
 		return updatedTime;
 	}
@@ -239,7 +244,7 @@ public class EquipmentEntity implements Serializable {
 		this.longitude = longitude;
 	}
 
-	@OneToMany(mappedBy = "equipment")
+	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL)
 	public Collection<DescriptionImageEntity> getDescriptionImages() {
 		return descriptionImages;
 	}
@@ -249,8 +254,16 @@ public class EquipmentEntity implements Serializable {
 	}
 
 
+	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL)
+	public List<AdditionalSpecsValueEntity> getAdditionalSpecsValueEntities() {
+		return additionalSpecsValueEntities;
+	}
 
-	public enum Status{
+	public void setAdditionalSpecsValueEntities(List<AdditionalSpecsValueEntity> additionalSpecsValueEntities) {
+		this.additionalSpecsValueEntities = additionalSpecsValueEntities;
+	}
+
+	public enum Status {
 		AVAILABLE,
 		WAITING_FOR_DELIVERY,
 		DELIVERING,

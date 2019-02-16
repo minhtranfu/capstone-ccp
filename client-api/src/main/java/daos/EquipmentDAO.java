@@ -136,8 +136,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		// TODO: 2/11/19 validate user's available time
 		//check if there are any available time range that contain this timerange
 		//if yes then it's good to go
-		List<EquipmentEntity> resultList = entityManager
-				.createNamedQuery("AvailableTimeRangeEntity.searchTimeRangeInDate", EquipmentEntity.class)
+		List<AvailableTimeRangeEntity> resultList = entityManager
+				.createNamedQuery("AvailableTimeRangeEntity.searchTimeRangeInDate", AvailableTimeRangeEntity.class)
 				.setParameter("equipmentId", equipmentId)
 				.setParameter("curBeginDate", beginDate)
 				.setParameter("curEndDate", endDate)
@@ -199,4 +199,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 		return !(endDate2.before(beginDate1) || beginDate2.after(endDate1));
 	}
+
+
 }

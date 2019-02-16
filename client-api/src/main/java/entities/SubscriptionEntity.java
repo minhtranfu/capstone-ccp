@@ -1,10 +1,13 @@
 package entities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
 
 @Entity
+@Where(clause = "is_deleted=0")
 @Table(name = "subscription", schema = "capstone_ccp", catalog = "")
 public class SubscriptionEntity {
 	private long id;

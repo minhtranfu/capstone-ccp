@@ -1,8 +1,11 @@
 package entities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 @Entity
+@Where(clause = "is_deleted=0")
 @Table(name = "role", schema = "capstone_ccp")
 public class RoleEntity {
 	private long id;

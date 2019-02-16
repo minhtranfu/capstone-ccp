@@ -1,5 +1,6 @@
 package jaxrs.services;
 
+import daos.AdditionalSpecsFieldDAO;
 import daos.ContractorDAO;
 import daos.EquipmentDAO;
 import daos.EquipmentTypeDAO;
@@ -24,7 +25,8 @@ public class EquipmentService {
 
 	private static final EquipmentDAO equipmentDAO = new EquipmentDAO();
 	private static final EquipmentTypeDAO equipmentTypeDAO = new EquipmentTypeDAO();
-	private static final ContractorDAO CONTRACTOR_DAO = new ContractorDAO();
+	private static final ContractorDAO contractorDAO = new ContractorDAO();
+	private static final AdditionalSpecsFieldDAO additionalSpecsFieldDAO = new AdditionalSpecsFieldDAO();
 
 
 	/*========Constants============*/
@@ -77,8 +79,6 @@ public class EquipmentService {
 		}
 
 
-
-
 		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(
 				beginDate, endDate,
 				orderBy,
@@ -115,6 +115,86 @@ public class EquipmentService {
 		EquipmentEntity foundEquipment = equipmentDAO.findByID(id);
 		if (foundEquipment == null) {
 			return CommonUtils.responseFilterBadRequest(new MessageResponse("Not found equipment with id=" + id));
+		}
+
+		if (equipmentEntity.getLatitude() == null) {
+			equipmentEntity.setLatitude(Double.parseDouble(DEFAULT_LAT));
+		}
+
+		if (equipmentEntity.getLongitude() == null) {
+			equipmentEntity.setLongitude(Double.parseDouble(DEFAULT_LONG));
+		}
+
+
+		//check for constructor id
+		if (equipmentEntity.getContractor() == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor is null"));
+			return responseBuilder.build();
+
+		}
+		long constructorId = equipmentEntity.getContractor().getId();
+
+		ContractorEntity foundConstructor = contractorDAO.findByID(constructorId);
+		if (foundConstructor == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor not found"));
+			return responseBuilder.build();
+		}
+
+		//check for equipment type
+
+		if (equipmentEntity.getEquipmentType() == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType is null"));
+			return responseBuilder.build();
+
+		}
+		long equipmentTypeId = equipmentEntity.getEquipmentType().getId();
+
+		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByID(equipmentTypeId);
+		if (foundEquipmentType == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType not found"));
+			return responseBuilder.build();
+		}
+
+		//todo validate for additionalSpecsValues
+		for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValueEntities()) {
+			AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByID(additionalSpecsValueEntity.getAdditionalSpecsField().getId());
+			if (foundAdditionalSpecsFieldEntity == null) {
+				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()))).build();
+			}
+
+			//remove id for persist transaction
+			additionalSpecsValueEntity.setId(0);
+
+			//validate datatype
+			switch (foundAdditionalSpecsFieldEntity.getDataType()) {
+				case STRING:
+					break;
+				case DOUBLE:
+					try {
+						Double.parseDouble(additionalSpecsValueEntity.getValue());
+					} catch (NumberFormatException e) {
+						return Response.status(Response.Status.BAD_REQUEST)
+								.entity(new MessageResponse(
+										String.format("AdditionalSpecsField value=%s is not %s"
+												, additionalSpecsValueEntity.getValue()
+												, foundAdditionalSpecsFieldEntity.getDataType())
+								)).build();
+					}
+
+					break;
+				case INTEGER:
+					try {
+						Integer.parseInt(additionalSpecsValueEntity.getValue());
+					} catch (NumberFormatException e) {
+						return Response.status(Response.Status.BAD_REQUEST)
+								.entity(new MessageResponse(
+										String.format("AdditionalSpecsField value=%s is not %s"
+												, additionalSpecsValueEntity.getValue()
+												, foundAdditionalSpecsFieldEntity.getDataType())
+								)).build();
+					}
+					break;
+			}
 		}
 
 		//delete status
@@ -176,12 +256,11 @@ public class EquipmentService {
 		}
 		long constructorId = equipmentEntity.getContractor().getId();
 
-		ContractorEntity foundConstructor = CONTRACTOR_DAO.findByID(constructorId);
+		ContractorEntity foundConstructor = contractorDAO.findByID(constructorId);
 		if (foundConstructor == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor not found"));
 			return responseBuilder.build();
 		}
-
 
 		//check for equipment type
 
@@ -196,6 +275,48 @@ public class EquipmentService {
 		if (foundEquipmentType == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType not found"));
 			return responseBuilder.build();
+		}
+
+		//todo validate for additionalSpecsValues
+		for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValueEntities()) {
+			AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByID(additionalSpecsValueEntity.getAdditionalSpecsField().getId());
+			if (foundAdditionalSpecsFieldEntity == null) {
+				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()))).build();
+			}
+
+			//remove id for persist transaction
+			additionalSpecsValueEntity.setId(0);
+
+			//validate datatype
+			switch (foundAdditionalSpecsFieldEntity.getDataType()) {
+				case STRING:
+					break;
+				case DOUBLE:
+					try {
+						Double.parseDouble(additionalSpecsValueEntity.getValue());
+					} catch (NumberFormatException e) {
+						return Response.status(Response.Status.BAD_REQUEST)
+								.entity(new MessageResponse(
+										String.format("AdditionalSpecsField value=%s is not %s"
+												, additionalSpecsValueEntity.getValue()
+												, foundAdditionalSpecsFieldEntity.getDataType())
+								)).build();
+					}
+
+					break;
+				case INTEGER:
+					try {
+						Integer.parseInt(additionalSpecsValueEntity.getValue());
+					} catch (NumberFormatException e) {
+						return Response.status(Response.Status.BAD_REQUEST)
+								.entity(new MessageResponse(
+										String.format("AdditionalSpecsField value=%s is not %s"
+												, additionalSpecsValueEntity.getValue()
+												, foundAdditionalSpecsFieldEntity.getDataType())
+								)).build();
+					}
+					break;
+			}
 		}
 
 		//validate time range begin end correct
