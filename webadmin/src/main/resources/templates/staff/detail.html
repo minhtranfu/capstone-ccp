@@ -36,6 +36,7 @@
                                 <form th:action="@{/staff/saveProcess}" method="post"
                                       th:object="${staff}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{id}"><br>
+                                    <input type="hidden" th:field="*{account.id}"><br>
                                     <div class="form-group">
                                         <label>User Name</label>
                                         <input th:field="*{username}" class="form-control" placeholder="User Name">

@@ -3,6 +3,7 @@ package com.ccp.webadmin.services.impl;
 import com.ccp.webadmin.entities.AdminAccountEntity;
 import com.ccp.webadmin.entities.AdminUserEntity;
 import com.ccp.webadmin.repositories.AdminAccountRepository;
+import com.ccp.webadmin.repositories.AdminUserRepository;
 import com.ccp.webadmin.services.AdminAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.core.userdetails.UserDetails;
@@ -16,9 +17,12 @@ public class AdminAccountServiceImpl implements AdminAccountService {
 
     private final AdminAccountRepository adminAccountRepository;
 
+    private final AdminUserRepository adminUserRepository;
+
     @Autowired
-    public AdminAccountServiceImpl(AdminAccountRepository adminAccountRepository) {
+    public AdminAccountServiceImpl(AdminAccountRepository adminAccountRepository, AdminUserRepository adminUserRepository) {
         this.adminAccountRepository = adminAccountRepository;
+        this.adminUserRepository = adminUserRepository;
     }
 
     @Override
@@ -33,12 +37,22 @@ public class AdminAccountServiceImpl implements AdminAccountService {
 
     @Override
     public void save(AdminAccountEntity adminAccountEntity) {
-        adminAccountRepository.save(adminAccountEntity);
+//        if (findById(adminAccountEntity.getId()) != null) {
+//            System.out.println("aaaaaaaa" + adminAccountEntity);
+//            adminAccountEntity.getAccount().setAdminAccountEntity(findById(adminAccountEntity.getId()));
+//            System.out.println("bbbbbb" + adminAccountEntity);
+         adminAccountRepository.save(adminAccountEntity);
+
     }
 
     @Override
     public void deleteById(Integer id) {
 
+    }
+
+    @Override
+    public boolean existsAdminAccountEntity(AdminAccountEntity adminAccountEntity) {
+        return adminAccountRepository.existsById(adminAccountEntity.getId());
     }
 //
 //    @Override

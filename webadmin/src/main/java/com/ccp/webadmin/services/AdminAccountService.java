@@ -22,4 +22,6 @@ public interface AdminAccountService  {
 
     void deleteById(Integer id);
 
+    boolean existsAdminAccountEntity(AdminAccountEntity adminAccountEntity);
+
 }

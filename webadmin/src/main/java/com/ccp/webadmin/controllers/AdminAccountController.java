@@ -27,6 +27,13 @@ public class AdminAccountController {
     @GetMapping({"", "/", "/index"})
     public String getStaff(Model model) {
         model.addAttribute("staffs", adminAccountService.findAll());
+        for (AdminAccountEntity adminAccountEntity : adminAccountService.findAll()
+        ) {
+            System.out.println(adminAccountEntity.getId());
+            System.out.println(adminAccountEntity.getUsername());
+            System.out.println(adminAccountEntity.getAccount().getName());
+
+        }
         return "staff/index";
     }
 
@@ -50,8 +57,9 @@ public class AdminAccountController {
             Integer id = adminAccountEntity.getId();
             return "staff/detail/" + id;
         }
+
         adminAccountService.save(adminAccountEntity);
         Integer id = adminAccountEntity.getId();
-        return "redirect:detail/" +  id;
+        return "redirect:detail/" + id;
     }
 }

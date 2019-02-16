@@ -96,20 +96,14 @@ public class AdminAccountEntity  {
         if (account == null) {
             if (this.account != null) {
                 this.account.setAdminAccountEntity(null);
-                System.out.println("aaaaaaaaaaaa" + this.account.getId());
-                System.out.println("aaaaaaa2" + account.getId());
-            }
-            else{
-                System.out.println("bbbbbbb1" + this.account.getId());
-                System.out.println("bbbbbbb2" + account.getId());
             }
         }
         else {
-            System.out.println("ccccccc" + this.account.getId());
-            System.out.println("ccccccc2" + account.getId());
             account.setRoleId(2);
             account.setAdminAccountEntity(this);
         }
         this.account = account;
     }
+
+
 }
