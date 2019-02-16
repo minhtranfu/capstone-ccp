@@ -1,9 +1,12 @@
 package com.ccp.webadmin.entities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "general_equipment_type")
+//@Where(clause = "is_deleted == 0")
 public class GeneralEquipmentTypeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,6 +18,8 @@ public class GeneralEquipmentTypeEntity {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
+
+
 
     public GeneralEquipmentTypeEntity() {
     }

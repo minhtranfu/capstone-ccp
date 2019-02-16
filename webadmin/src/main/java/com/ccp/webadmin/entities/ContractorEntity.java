@@ -26,8 +26,8 @@ public class ContractorEntity implements Serializable {
     @Column(name = "thumbnail_image")
     private String thumbnail;
 
-    @Column(name = "is_activated")
-    private boolean isActivated;
+    @Column(name = "status")
+    private Integer status;
 
     @Column(name = "created_time")
     private LocalDateTime createdTime;
@@ -38,12 +38,12 @@ public class ContractorEntity implements Serializable {
     public ContractorEntity() {
     }
 
-    public ContractorEntity(String name, String email, String phone, String thumbnail, boolean isActivated, LocalDateTime createdTime, LocalDateTime updatedTime) {
+    public ContractorEntity(String name, String email, String phone, String thumbnail, Integer status, LocalDateTime createdTime, LocalDateTime updatedTime) {
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.thumbnail = thumbnail;
-        this.isActivated = isActivated;
+        this.status = status;
         this.createdTime = createdTime;
         this.updatedTime = updatedTime;
     }
@@ -88,12 +88,12 @@ public class ContractorEntity implements Serializable {
         this.thumbnail = thumbnail;
     }
 
-    public boolean isActivated() {
-        return isActivated;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setActivated(boolean activated) {
-        isActivated = activated;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public LocalDateTime getCreatedTime() {

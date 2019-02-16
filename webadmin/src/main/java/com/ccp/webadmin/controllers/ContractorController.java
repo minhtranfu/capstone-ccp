@@ -39,21 +39,21 @@ public class ContractorController {
 //        return "contractor/create";
 //    }
 
-    @GetMapping("/active/{id}")
-    public String active(@PathVariable("id") Integer id, Model model) {
-        ContractorEntity contractorEntity = contractorService.findById(id);
-        contractorEntity.setActivated(true);
-        contractorService.save(contractorEntity);
-        return "contractor/index";
-    }
-
-    @GetMapping("/deactive/{id}")
-    public String deactive(@PathVariable("id") Integer id, Model model) {
-        ContractorEntity contractorEntity = contractorService.findById(id);
-        contractorEntity.setActivated(false);
-        contractorService.save(contractorEntity);
-        return "contractor/index";
-    }
+//    @GetMapping("/active/{id}")
+//    public String active(@PathVariable("id") Integer id, Model model) {
+//        ContractorEntity contractorEntity = contractorService.findById(id);
+//        contractorEntity.setActivated(true);
+//        contractorService.save(contractorEntity);
+//        return "contractor/index";
+//    }
+//
+//    @GetMapping("/deactive/{id}")
+//    public String deactive(@PathVariable("id") Integer id, Model model) {
+//        ContractorEntity contractorEntity = contractorService.findById(id);
+//        contractorEntity.setActivated(false);
+//        contractorService.save(contractorEntity);
+//        return "contractor/index";
+//    }
 
     @PostMapping("/saveProcess")
     public String saveProcess(
@@ -63,7 +63,6 @@ public class ContractorController {
             Integer id = contractorEntity.getId();
             return "contractor/detail/" + id;
         }
-        System.out.println("aa" + contractorEntity.isActivated());
 //        if(contractorEntity.isActivated() == true){
 //            System.out.println("aa" + contractorEntity.isActivated());
 //            contractorEntity.setActivated(false);
@@ -72,10 +71,12 @@ public class ContractorController {
 //            System.out.println("aa2" +contractorEntity.isActivated());
 //            contractorEntity.setActivated(false);
 //        }
-        contractorEntity.setActivated(!contractorEntity.isActivated());
-        System.out.println("bb" +contractorEntity.isActivated());
+//        contractorEntity.setActivated(!contractorEntity.isActivated());
+//        System.out.println("bb" +contractorEntity.isActivated());
+
+        contractorEntity.getStatus();
         contractorService.save(contractorEntity);
-        System.out.println("bb2" +contractorEntity.isActivated());
+//        System.out.println("bb2" +contractorEntity.isActivated());
         Integer id = contractorEntity.getId();
         return "redirect:detail/" +  id;
     }

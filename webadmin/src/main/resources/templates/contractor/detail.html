@@ -37,12 +37,11 @@
                                       th:object="${contractor}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{id}"><br>
                                     Name: <input th:field="*{name}" class="form-control"><br>
-                                    <td th:switch="${contractor.activated}">
-                                        <input type="Submit" th:case="false" class="btn btn-success link" value="Active">
-                                        <input type="Submit" th:case="true" class="btn btn-danger link" value="Deactive">
-                                        <!--<span th:case="false" class="btn btn-danger link">Deactive</span>-->
+                                    <td th:switch="${contractor.status}">
+                                        <input type="Submit" th:case="0" class="btn btn-primary link" value="Not Verify">
+                                        <input type="Submit" th:case="1" class="btn btn-success link" value="Active">
+                                        <input type="Submit" th:case="2" class="btn btn-danger link" value="Deactive">
                                     </td>
-
                                 </form>
                             </div>
                             <!-- /.col-lg-6 (nested) -->

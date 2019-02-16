@@ -16,7 +16,7 @@ public class AdditionalSpecialFieldEntity implements Serializable {
     @Column(name = "data_type")
     private String dataType;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "equipment_type_id")
     private EquipmentTypeEntity equipmentTypeEntity;
 
