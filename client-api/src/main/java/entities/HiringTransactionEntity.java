@@ -1,6 +1,7 @@
 package entities;
 
 
+import dtos.requests.HiringTransactionRequest;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ import java.sql.Timestamp;
 @NamedQueries({
 		@NamedQuery(name = "HiringTransactionEntity.getTransactionBySupplierId", query = "select e from HiringTransactionEntity  e where e.equipment.contractor.id = :supplierId")
 		, @NamedQuery(name = "HiringTransactionEntity.getTransactionsByRequesterId", query = "select e from HiringTransactionEntity  e where e.requester.id = :requesterId")
-		,@NamedQuery(name = "HiringTransactionEntity.getTimeRangeIntersectingWith", query = "select e from HiringTransactionEntity e where e.equipment.id = :equipmentId and not (e.beginDate > :curEndDate or e.endDate< :curBeginDate)")
+		,@NamedQuery(name = "HiringTransactionEntity.getTimeRangeIntersectingWith", query = "select e from HiringTransactionEntity e where e.equipment.id = :equipmentId and e.equipment.status <> 'PENDING' and not (e.beginDate > :curEndDate or e.endDate< :curBeginDate)")
 }
 )
 public class HiringTransactionEntity {
@@ -41,6 +42,22 @@ public class HiringTransactionEntity {
 	private EquipmentEntity equipment;
 	private ContractorEntity requester;
 
+
+	public HiringTransactionEntity() {
+	}
+
+	public HiringTransactionEntity(HiringTransactionRequest request, EquipmentEntity equipment) {
+		this.beginDate = request.getBeginDate();
+		this.endDate = request.getEndDate();
+		this.requesterAddress = request.getRequesterAddress();
+		this.requesterLatitude = request.getRequesterLatitude();
+		this.requesterLongitude = request.getRequesterLongitude();
+
+		this.equipment = equipment;
+
+		this.dailyPrice = equipment.getDailyPrice();
+		this.deliveryPrice = equipment.getDeliveryPrice();
+	}
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -217,6 +234,7 @@ public class HiringTransactionEntity {
 	public void setEquipment(EquipmentEntity equipment) {
 		this.equipment = equipment;
 	}
+
 
 
 	public enum Status {

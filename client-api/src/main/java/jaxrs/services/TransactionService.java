@@ -4,13 +4,15 @@ import daos.ContractorDAO;
 import daos.EquipmentDAO;
 import daos.HiringTransactionDAO;
 import daos.TransactionDateChangeRequestDAO;
-import dtos.MessageResponse;
+import dtos.requests.HiringTransactionRequest;
+import dtos.responses.MessageResponse;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 import entities.TransactionDateChangeRequestEntity;
-import utils.DBUtils;
+import utils.Constants;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -27,22 +29,35 @@ public class TransactionService {
 
 
 	@POST
-	public Response requestTransaction(HiringTransactionEntity hiringTransactionEntity) {
-		hiringTransactionEntity.setId(0);
+	public Response requestTransaction(@Valid HiringTransactionRequest hiringTransactionRequest) {
+
+
 		//  check equipment id
-
-		if (hiringTransactionEntity.getBeginDate() == null || hiringTransactionEntity.getEndDate() == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Missing data!")).build();
-
-		}
-		// TODO: 1/30/19 check not null for other data
-
-
-		EquipmentEntity foundEquipment = equipmentDAO.findByID(hiringTransactionEntity.getEquipment().getId());
+		EquipmentEntity foundEquipment = equipmentDAO.findByID(hiringTransactionRequest.getEquipmentId());
 		if (foundEquipment == null) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Equipment id not found!")).build();
 		}
 
+		// TODO: 2/17/19 map this properly with modelmapper
+		HiringTransactionEntity hiringTransactionEntity = new HiringTransactionEntity(
+				hiringTransactionRequest, foundEquipment
+		);
+
+
+		ContractorEntity contractorEntity = new ContractorEntity();
+		// TODO: 2/17/19 get requester id from cookie
+		contractorEntity.setId(Constants.CURRENT_USER_PROFILE);
+
+		hiringTransactionEntity.setRequester(contractorEntity);
+
+
+
+		//already checked by DTO validation
+//		if (hiringTransactionEntity.getBeginDate() == null || hiringTransactionEntity.getEndDate() == null) {
+//			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Date is missing!")).build();
+//
+//		}
+		// TODO: 1/30/19 check not null for other data
 
 
 
@@ -80,8 +95,8 @@ public class TransactionService {
 		hiringTransactionEntity.setEquipmentLongitude(foundEquipment.getLongitude());
 		hiringTransactionEntity.setEquipmentLatitude(foundEquipment.getLatitude());
 
-		// todo  1/30/19 validate equipment is available at that date
 
+		// todo  1/30/19 validate equipment is available at that date
 		if (!equipmentDAO.validateEquipmentAvailable(
 				foundEquipment.getId(),
 				hiringTransactionEntity.getBeginDate()
@@ -203,12 +218,12 @@ public class TransactionService {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("transaction status must be ACCEPTED to adjust date!")).build();
 
 		}
-		// validate if there's no other pending request
+		// validate if there's no other pending requests
 
 		boolean isValidated = transactionDateChangeRequestDAO.validateNewRequest(transactionId);
 
 		if (!isValidated) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("this transaction already has another pending request!")).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("this transaction already has another pending requests!")).build();
 		}
 
 
@@ -270,17 +285,17 @@ public class TransactionService {
 //		foundAdjustDateRequest.setIsDeleted(true);
 //		transactionDateChangeRequestDAO.merge(foundAdjustDateRequest);
 
-		//validate if existing pending request
+		//validate if existing pending requests
 		List<TransactionDateChangeRequestEntity> pendingRequestByTransactionId = transactionDateChangeRequestDAO.getPendingRequestByTransactionId(transactionId);
 		if (pendingRequestByTransactionId.size() < 1) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("No previous PENDING request to delete!")).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("No previous PENDING requests to delete!")).build();
 		}
 
 		TransactionDateChangeRequestEntity transactionDateChangeRequestEntity = pendingRequestByTransactionId.get(0);
 		transactionDateChangeRequestEntity.setIsDeleted(true);
 		transactionDateChangeRequestDAO.merge(transactionDateChangeRequestEntity);
 
-		return Response.ok(new MessageResponse("Pending request deleted successfully!")).build();
+		return Response.ok(new MessageResponse("Pending requests deleted successfully!")).build();
 
 
 	}
@@ -294,10 +309,10 @@ public class TransactionService {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("transaction id not found!")).build();
 		}
 
-		//validate if existing pending request
+		//validate if existing pending requests
 		List<TransactionDateChangeRequestEntity> pendingRequestByTransactionId = transactionDateChangeRequestDAO.getPendingRequestByTransactionId(transactionId);
 		if (pendingRequestByTransactionId.size() < 1) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("No previous PENDING request!")).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("No previous PENDING requests!")).build();
 		}
 
 		if (entity.getStatus() == TransactionDateChangeRequestEntity.Status.PENDING) {

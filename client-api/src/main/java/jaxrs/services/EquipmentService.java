@@ -4,9 +4,9 @@ import daos.AdditionalSpecsFieldDAO;
 import daos.ContractorDAO;
 import daos.EquipmentDAO;
 import daos.EquipmentTypeDAO;
-import dtos.EquipmentResponse;
-import dtos.LocationDTO;
-import dtos.MessageResponse;
+import dtos.responses.EquipmentResponse;
+import dtos.wrappers.LocationWrapper;
+import dtos.responses.MessageResponse;
 import entities.*;
 import utils.CommonUtils;
 
@@ -90,7 +90,7 @@ public class EquipmentService {
 
 		for (EquipmentEntity equipmentEntity : equipmentEntities) {
 			EquipmentResponse equipmentResponse = new EquipmentResponse(equipmentEntity
-					, new LocationDTO(locationQuery, longitude, latitude)
+					, new LocationWrapper(locationQuery, longitude, latitude)
 			);
 			result.add(equipmentResponse);
 		}

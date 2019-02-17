@@ -1,18 +1,16 @@
-package dtos;
+package dtos.responses;
 
+import dtos.wrappers.LocationWrapper;
 import entities.*;
-
-import java.util.Collection;
-import java.util.List;
 
 
 /*It's not useless, it have getDistance!*/
 public class EquipmentResponse {
 	private EquipmentEntity equipmentEntity;
 
-	private LocationDTO currentLocation;
+	private LocationWrapper currentLocation;
 
-	public EquipmentResponse(EquipmentEntity equipmentEntity, LocationDTO currentLocation) {
+	public EquipmentResponse(EquipmentEntity equipmentEntity, LocationWrapper currentLocation) {
 		this.equipmentEntity = equipmentEntity;
 		this.currentLocation = currentLocation;
 	}
@@ -27,19 +25,19 @@ public class EquipmentResponse {
 
 	public double getDistance() {
 		return calculateDistance(this.currentLocation,
-				new LocationDTO(equipmentEntity.getAddress(), equipmentEntity.getLatitude(), equipmentEntity.getLongitude()));
+				new LocationWrapper(equipmentEntity.getAddress(), equipmentEntity.getLatitude(), equipmentEntity.getLongitude()));
 	}
 
 
-	public LocationDTO getCurrentLocation() {
+	public LocationWrapper getCurrentLocation() {
 		return currentLocation;
 	}
 
-	public void setCurrentLocation(LocationDTO currentLocation) {
+	public void setCurrentLocation(LocationWrapper currentLocation) {
 		this.currentLocation = currentLocation;
 	}
 
-	public  double calculateDistance(LocationDTO location1, LocationDTO location2) {
+	public  double calculateDistance(LocationWrapper location1, LocationWrapper location2) {
 		// TODO: 1/24/19 calculate distance
 
 

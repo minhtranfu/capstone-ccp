@@ -21,7 +21,7 @@ public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilt
 //    @Override
     public void filter(ContainerRequestContext request) throws IOException {
 
-        // If it's a preflight request, we abort the request with
+        // If it's a preflight requests, we abort the requests with
         // a 200 status, and the CORS headers are added in the
         // response filter method below.
         if (isPreflightRequest(request)) {
@@ -31,7 +31,7 @@ public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilt
     }
 
     /**
-     * A preflight request is an OPTIONS request
+     * A preflight requests is an OPTIONS requests
      * with an Origin header.
      */
     private static boolean isPreflightRequest(ContainerRequestContext request) {
@@ -47,12 +47,12 @@ public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilt
             throws IOException {
 
         // if there is no Origin header, then it is not a
-        // cross origin request. We don't do anything.
+        // cross origin requests. We don't do anything.
         if (request.getHeaderString("Origin") == null) {
             return;
         }
 
-        // If it is a preflight request, then we add all
+        // If it is a preflight requests, then we add all
         // the CORS headers here.
         if (isPreflightRequest(request)) {
             response.getHeaders().add("Access-Control-Allow-Credentials", "true");
@@ -70,7 +70,7 @@ public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilt
         }
 
         // Cross origin requests can be either simple requests
-        // or preflight request. We need to add this header
+        // or preflight requests. We need to add this header
         // to both type of requests. Only preflight requests
         // need the previously added headers.
         response.getHeaders().add("Access-Control-Allow-Origin", "*");

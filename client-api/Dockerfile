@@ -17,7 +17,7 @@ RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "verify", "clean", "tomcat7:exec
 #RUN mvn package
 
 # local application port
-EXPOSE 8080
+EXPOSE 8088
 
 # execute it
 CMD ["java", "-jar", "./target/client-api.jar"]

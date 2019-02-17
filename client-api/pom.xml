@@ -82,6 +82,14 @@
             <artifactId>weld-servlet-shaded</artifactId>
             <version>3.0.2.Final</version>
         </dependency>
+
+        <!--for mapping DTO objects-->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -105,6 +113,7 @@
                 <configuration>
                     <path>/</path>
                     <finalName>client-api.jar</finalName>
+                    <port>8080</port>
                 </configuration>
             </plugin>
             <plugin>

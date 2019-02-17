@@ -1,9 +1,8 @@
 package jaxrs.services;
 
 import daos.EquipmentTypeDAO;
-import dtos.MessageResponse;
+import dtos.responses.MessageResponse;
 import entities.EquipmentTypeEntity;
-import entities.GeneralEquipmentTypeEntity;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

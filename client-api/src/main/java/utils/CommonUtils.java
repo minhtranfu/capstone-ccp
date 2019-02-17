@@ -1,9 +1,8 @@
 package utils;
 
-import dtos.MessageResponse;
+import dtos.responses.MessageResponse;
 
 import javax.ws.rs.core.Response;
-import java.util.Date;
 
 public class CommonUtils {
     public static Response responseFilterOk(Object data) {
