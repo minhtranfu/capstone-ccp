@@ -83,7 +83,7 @@ public class EquipmentService {
 			);
 			result.add(equipmentResponse);
 		}
-		return CommonUtils.responseFilterOk(result);
+		return Response.ok(result).build();
 	}
 
 	@GET
@@ -207,7 +207,7 @@ public class EquipmentService {
 		Response.ResponseBuilder builder = Response.status(Response.Status.CREATED).entity(
 				equipmentDAO.findByID(equipmentEntity.getId())
 		);
-		return CommonUtils.addFilterHeader(builder).build();
+		return builder.build();
 
 
 	}
