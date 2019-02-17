@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("contractor")
@@ -32,12 +33,6 @@ public class ContractorController {
         model.addAttribute("contractor", contractorService.findById(id));
         return "contractor/detail";
     }
-
-//    @GetMapping("/create")
-//    public String create(Model model) {
-//        model.addAttribute("contractor", new ContractorEntity());
-//        return "contractor/create";
-//    }
 
 //    @GetMapping("/active/{id}")
 //    public String active(@PathVariable("id") Integer id, Model model) {
@@ -63,21 +58,34 @@ public class ContractorController {
             Integer id = contractorEntity.getId();
             return "contractor/detail/" + id;
         }
-//        if(contractorEntity.isActivated() == true){
-//            System.out.println("aa" + contractorEntity.isActivated());
-//            contractorEntity.setActivated(false);
-//            System.out.println("cc" + contractorEntity.isActivated());
-//        }else{
-//            System.out.println("aa2" +contractorEntity.isActivated());
-//            contractorEntity.setActivated(false);
-//        }
-//        contractorEntity.setActivated(!contractorEntity.isActivated());
-//        System.out.println("bb" +contractorEntity.isActivated());
 
-        contractorEntity.getStatus();
         contractorService.save(contractorEntity);
-//        System.out.println("bb2" +contractorEntity.isActivated());
         Integer id = contractorEntity.getId();
-        return "redirect:detail/" +  id;
+        return "redirect:detail/" + id;
+    }
+
+    @GetMapping("/updateStatus")
+    public String updateStatus(@RequestParam("id") Integer id) {
+        ContractorEntity contractorEntity = contractorService.findById(id);
+
+        //change contractor status Not Verify into Active
+        System.out.println("bbbb" + contractorEntity.getStatus());
+        switch (contractorEntity.getStatus()) {
+            case 0:
+                contractorEntity.setStatus(1);
+                contractorEntity.setUpdatedTime(LocalDateTime.now());
+                break;
+            case 1:
+                contractorEntity.setStatus(2);
+                contractorEntity.setUpdatedTime(LocalDateTime.now());
+                break;
+            case 2:
+                contractorEntity.setStatus(1);
+                contractorEntity.setUpdatedTime(LocalDateTime.now());
+                break;
+        }
+        contractorService.save(contractorEntity);
+
+        return "redirect:detail/" + id;
     }
 }

@@ -35,15 +35,20 @@
                             <div class="col-lg-6">
                                 <form th:action="@{/equipment_type/saveProcess}" method="post"
                                       th:object="${equipmentType}" enctype="multipart/form-data">
-                                    <input type="hidden" th:field="*{id}"><br>
-                                    Name: <input th:field="*{name}" class="form-control"><br>
+                                    <input type="hidden" th:field="*{id}">
+                                    <div class="form-group">
+                                        <label>Name:</label>
+                                        <input th:field="*{name}" class="form-control" placeholder="Name">
+                                    </div>
+                                    <div class="form-group">
                                     <label>Equipment Type Category</label>
                                     <select th:field="*{generalEquipmentType}" class="form-control">
                                         <option th:each="generalEquipmentType : ${generalEquipmentTypes}"
                                                 th:value="${generalEquipmentType.id}"
                                                 th:text="${generalEquipmentType.name}">
                                         </option>
-                                    </select><br/>
+                                    </select>
+                                    </div>
                                     <input type="Submit" class="btn btn-default">
                                 </form>
                             </div>

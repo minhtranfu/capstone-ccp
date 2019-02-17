@@ -49,11 +49,11 @@ public class GeneralEquipmentTypeController {
             @Valid @ModelAttribute("generalEquipmentType") GeneralEquipmentTypeEntity generalEquipmentTypeEntity,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            long id = generalEquipmentTypeEntity.getId();
+            Integer id = generalEquipmentTypeEntity.getId();
             return "general_equipment_type/detail/" + id;
         }
         generalEquipmentTypeService.save(generalEquipmentTypeEntity);
-        long id = generalEquipmentTypeEntity.getId();
+        Integer id = generalEquipmentTypeEntity.getId();
         return "redirect:detail/" + id;
     }
 

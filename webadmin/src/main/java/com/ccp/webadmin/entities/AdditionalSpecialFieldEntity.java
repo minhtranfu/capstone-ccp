@@ -16,6 +16,9 @@ public class AdditionalSpecialFieldEntity implements Serializable {
     @Column(name = "data_type")
     private String dataType;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
     @ManyToOne
     @JoinColumn(name = "equipment_type_id")
     private EquipmentTypeEntity equipmentTypeEntity;
@@ -27,9 +30,10 @@ public class AdditionalSpecialFieldEntity implements Serializable {
         this.equipmentTypeEntity = equipmentTypeEntity;
     }
 
-    public AdditionalSpecialFieldEntity(String name, String dataType, EquipmentTypeEntity equipmentTypeEntity) {
+    public AdditionalSpecialFieldEntity(String name, String dataType, boolean isDeleted, EquipmentTypeEntity equipmentTypeEntity) {
         this.name = name;
         this.dataType = dataType;
+        this.isDeleted = isDeleted;
         this.equipmentTypeEntity = equipmentTypeEntity;
     }
 
@@ -63,5 +67,13 @@ public class AdditionalSpecialFieldEntity implements Serializable {
 
     public void setEquipmentTypeEntity(EquipmentTypeEntity equipmentTypeEntity) {
         this.equipmentTypeEntity = equipmentTypeEntity;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }
