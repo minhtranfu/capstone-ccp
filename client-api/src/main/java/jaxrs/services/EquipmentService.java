@@ -1,5 +1,6 @@
 package jaxrs.services;
 
+import daos.AdditionalSpecsFieldDAO;
 import daos.ContractorDAO;
 import daos.EquipmentDAO;
 import daos.EquipmentTypeDAO;
@@ -7,13 +8,11 @@ import dtos.EquipmentResponse;
 import dtos.LocationDTO;
 import dtos.MessageResponse;
 import entities.*;
-import org.omg.CORBA.PRIVATE_MEMBER;
 import utils.CommonUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,13 +25,17 @@ public class EquipmentService {
 
 	private static final EquipmentDAO equipmentDAO = new EquipmentDAO();
 	private static final EquipmentTypeDAO equipmentTypeDAO = new EquipmentTypeDAO();
-	private static final ContractorDAO CONTRACTOR_DAO = new ContractorDAO();
+	private static final ContractorDAO contractorDAO = new ContractorDAO();
+	private static final AdditionalSpecsFieldDAO additionalSpecsFieldDAO = new AdditionalSpecsFieldDAO();
 
 
 	/*========Constants============*/
 //	Nghia's house address
 	private static final String DEFAULT_LAT = "10.806488";
 	private static final String DEFAULT_LONG = "106.676364";
+	private static final String DEFAULT_RESULT_LIMIT = "1000";
+
+	private static final String REGEX_ORDERBY = "(\\w+\\.(asc|desc)($|,))+";
 
 	@GET
 	public Response searchEquipment(
@@ -40,8 +43,15 @@ public class EquipmentService {
 			@QueryParam("long") @DefaultValue(DEFAULT_LONG) double longitude,
 			@QueryParam("beginDate") @DefaultValue("") String beginDateStr,
 			@QueryParam("endDate") @DefaultValue("") String endDateStr,
-			@QueryParam("lquery") @DefaultValue("") String locationQuery) {
+			@QueryParam("lquery") @DefaultValue("") String locationQuery,
+			@QueryParam("orderBy") @DefaultValue("id.asc") String orderBy,
+			@QueryParam("limit") @DefaultValue(DEFAULT_RESULT_LIMIT) int limit,
+			@QueryParam("offset") @DefaultValue("0") int offset) {
 
+		// TODO: 2/14/19 validate orderBy pattern
+		if (!orderBy.matches(REGEX_ORDERBY)) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("orderBy param format must be " + REGEX_ORDERBY)).build();
+		}
 
 		Date beginDate = null;
 		Date endDate = null;
@@ -69,10 +79,11 @@ public class EquipmentService {
 		}
 
 
-		// TODO: 2/12/19 change to search !!
-
-
-		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(beginDate, endDate);
+		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(
+				beginDate, endDate,
+				orderBy,
+				offset,
+				limit);
 //		List<EquipmentEntity> equipmentEntities = equipmentDAO.getAll("EquipmentEntity.getAll");
 
 		List<EquipmentResponse> result = new ArrayList<EquipmentResponse>();
@@ -104,6 +115,86 @@ public class EquipmentService {
 		EquipmentEntity foundEquipment = equipmentDAO.findByID(id);
 		if (foundEquipment == null) {
 			return CommonUtils.responseFilterBadRequest(new MessageResponse("Not found equipment with id=" + id));
+		}
+
+		if (equipmentEntity.getLatitude() == null) {
+			equipmentEntity.setLatitude(Double.parseDouble(DEFAULT_LAT));
+		}
+
+		if (equipmentEntity.getLongitude() == null) {
+			equipmentEntity.setLongitude(Double.parseDouble(DEFAULT_LONG));
+		}
+
+
+		//check for constructor id
+		if (equipmentEntity.getContractor() == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor is null"));
+			return responseBuilder.build();
+
+		}
+		long constructorId = equipmentEntity.getContractor().getId();
+
+		ContractorEntity foundConstructor = contractorDAO.findByID(constructorId);
+		if (foundConstructor == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor not found"));
+			return responseBuilder.build();
+		}
+
+		//check for equipment type
+
+		if (equipmentEntity.getEquipmentType() == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType is null"));
+			return responseBuilder.build();
+
+		}
+		long equipmentTypeId = equipmentEntity.getEquipmentType().getId();
+
+		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByID(equipmentTypeId);
+		if (foundEquipmentType == null) {
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType not found"));
+			return responseBuilder.build();
+		}
+
+		//todo validate for additionalSpecsValues
+		for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValues()) {
+			AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByID(additionalSpecsValueEntity.getAdditionalSpecsField().getId());
+			if (foundAdditionalSpecsFieldEntity == null) {
+				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()))).build();
+			}
+
+			//remove id for persist transaction
+			additionalSpecsValueEntity.setId(0);
+
+			//validate datatype
+			switch (foundAdditionalSpecsFieldEntity.getDataType()) {
+				case STRING:
+					break;
+				case DOUBLE:
+					try {
+						Double.parseDouble(additionalSpecsValueEntity.getValue());
+					} catch (NumberFormatException e) {
+						return Response.status(Response.Status.BAD_REQUEST)
+								.entity(new MessageResponse(
+										String.format("AdditionalSpecsField value=%s is not %s"
+												, additionalSpecsValueEntity.getValue()
+												, foundAdditionalSpecsFieldEntity.getDataType())
+								)).build();
+					}
+
+					break;
+				case INTEGER:
+					try {
+						Integer.parseInt(additionalSpecsValueEntity.getValue());
+					} catch (NumberFormatException e) {
+						return Response.status(Response.Status.BAD_REQUEST)
+								.entity(new MessageResponse(
+										String.format("AdditionalSpecsField value=%s is not %s"
+												, additionalSpecsValueEntity.getValue()
+												, foundAdditionalSpecsFieldEntity.getDataType())
+								)).build();
+					}
+					break;
+			}
 		}
 
 		//delete status
@@ -157,7 +248,6 @@ public class EquipmentService {
 		}
 
 
-
 		//check for constructor id
 		if (equipmentEntity.getContractor() == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor is null"));
@@ -166,12 +256,11 @@ public class EquipmentService {
 		}
 		long constructorId = equipmentEntity.getContractor().getId();
 
-		ContractorEntity foundConstructor = CONTRACTOR_DAO.findByID(constructorId);
+		ContractorEntity foundConstructor = contractorDAO.findByID(constructorId);
 		if (foundConstructor == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor not found"));
 			return responseBuilder.build();
 		}
-
 
 		//check for equipment type
 
@@ -186,6 +275,48 @@ public class EquipmentService {
 		if (foundEquipmentType == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType not found"));
 			return responseBuilder.build();
+		}
+
+		//todo validate for additionalSpecsValues
+		for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValues()) {
+			AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByID(additionalSpecsValueEntity.getAdditionalSpecsField().getId());
+			if (foundAdditionalSpecsFieldEntity == null) {
+				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()))).build();
+			}
+
+			//remove id for persist transaction
+			additionalSpecsValueEntity.setId(0);
+
+			//validate datatype
+			switch (foundAdditionalSpecsFieldEntity.getDataType()) {
+				case STRING:
+					break;
+				case DOUBLE:
+					try {
+						Double.parseDouble(additionalSpecsValueEntity.getValue());
+					} catch (NumberFormatException e) {
+						return Response.status(Response.Status.BAD_REQUEST)
+								.entity(new MessageResponse(
+										String.format("AdditionalSpecsField value=%s is not %s"
+												, additionalSpecsValueEntity.getValue()
+												, foundAdditionalSpecsFieldEntity.getDataType())
+								)).build();
+					}
+
+					break;
+				case INTEGER:
+					try {
+						Integer.parseInt(additionalSpecsValueEntity.getValue());
+					} catch (NumberFormatException e) {
+						return Response.status(Response.Status.BAD_REQUEST)
+								.entity(new MessageResponse(
+										String.format("AdditionalSpecsField value=%s is not %s"
+												, additionalSpecsValueEntity.getValue()
+												, foundAdditionalSpecsFieldEntity.getDataType())
+								)).build();
+					}
+					break;
+			}
 		}
 
 		//validate time range begin end correct

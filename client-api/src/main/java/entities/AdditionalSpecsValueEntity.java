@@ -1,8 +1,12 @@
 package entities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
+@Where(clause = "is_deleted=0")
 @Table(name = "additional_specs_value", schema = "capstone_ccp", catalog = "")
 public class AdditionalSpecsValueEntity {
 	private long id;
@@ -42,6 +46,7 @@ public class AdditionalSpecsValueEntity {
 		this.additionalSpecsField = additionalSpecsField;
 	}
 
+	@XmlTransient
 	@ManyToOne
 	@JoinColumn(name = "equipment_id")
 	public EquipmentEntity getEquipment() {

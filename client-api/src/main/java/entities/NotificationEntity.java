@@ -1,9 +1,12 @@
 package entities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
+@Where(clause = "is_deleted=0")
 @Table(name = "notification", schema = "capstone_ccp")
 public class NotificationEntity {
 	private long id;

@@ -1,11 +1,14 @@
 package entities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
+@Where(clause = "is_deleted=0")
 @Table(name = "contractor", schema = "capstone_ccp")
 public class ContractorEntity {
 	private long id;
@@ -20,12 +23,13 @@ public class ContractorEntity {
 
 
 	private List<EquipmentEntity> equipments;
+	private List<ConstructionEntity> constructions;
 
 	@XmlTransient
 	@OneToMany(cascade =
-			{CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH},
+			{CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
 			orphanRemoval = false,
-	mappedBy = "contractor")
+			mappedBy = "contractor")
 	public List<EquipmentEntity> getEquipments() {
 		return equipments;
 	}
@@ -98,7 +102,7 @@ public class ContractorEntity {
 
 
 	@Basic
-	@Column(name = "created_time", insertable=false, updatable = false)
+	@Column(name = "created_time", insertable = false, updatable = false)
 	public Timestamp getCreatedTime() {
 		return createdTime;
 	}
@@ -109,12 +113,21 @@ public class ContractorEntity {
 	}
 
 	@Basic
-@Column(name = "updated_time", insertable=false, updatable = false)
+	@Column(name = "updated_time", insertable = false, updatable = false)
 	public Timestamp getUpdatedTime() {
 		return updatedTime;
 	}
 
 	public void setUpdatedTime(Timestamp updatedTime) {
 		this.updatedTime = updatedTime;
+	}
+
+	@OneToMany(mappedBy = "contractor", cascade = CascadeType.ALL)
+	public List<ConstructionEntity> getConstructions() {
+		return constructions;
+	}
+
+	public void setConstructions(List<ConstructionEntity> constructions) {
+		this.constructions = constructions;
 	}
 }

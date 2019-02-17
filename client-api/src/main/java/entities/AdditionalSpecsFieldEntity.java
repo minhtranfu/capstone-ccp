@@ -1,13 +1,17 @@
 package entities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
+@Where(clause = "is_deleted=0")
 @Table(name = "additional_specs_field", schema = "capstone_ccp", catalog = "")
 public class AdditionalSpecsFieldEntity {
 	private long id;
 	private String name;
-	private String dataType;
+	private DataType dataType;
 	private EquipmentTypeEntity equipmentType;
 	private boolean isDeleted;
 
@@ -35,16 +39,18 @@ public class AdditionalSpecsFieldEntity {
 	}
 
 	@Basic
+	@Enumerated(EnumType.STRING)
 	@Column(name = "data_type", nullable = true, length = 255)
-	public String getDataType() {
+	public DataType getDataType() {
 		return dataType;
 	}
 
-	public void setDataType(String dataType) {
+	public void setDataType(DataType dataType) {
 		this.dataType = dataType;
 	}
 
 
+	@XmlTransient
 	@ManyToOne
 	@JoinColumn(name = "equipment_type_id")
 	public EquipmentTypeEntity getEquipmentType() {
@@ -66,21 +72,10 @@ public class AdditionalSpecsFieldEntity {
 	}
 
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		AdditionalSpecsFieldEntity that = (AdditionalSpecsFieldEntity) o;
-
-		if (id != that.id) return false;
-		if (name != null ? !name.equals(that.name) : that.name != null) return false;
-		if (dataType != null ? !dataType.equals(that.dataType) : that.dataType != null) return false;
-		if (equipmentType != null ? !equipmentType.equals(that.equipmentType) : that.equipmentType != null)
-			return false;
-
-		return true;
+	public enum DataType{
+		STRING,
+		INTEGER,
+		DOUBLE
 	}
-
 
 }

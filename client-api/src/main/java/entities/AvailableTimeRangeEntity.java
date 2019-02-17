@@ -1,5 +1,7 @@
 package entities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.sql.Timestamp;

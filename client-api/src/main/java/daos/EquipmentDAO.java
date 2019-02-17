@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	private static Logger logger = Logger.getLogger(EquipmentDAO.class.toString());
@@ -20,51 +22,89 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	private static EquipmentDAO instance;
 	private static Object LOCK = new Object();
 
-	public List<EquipmentEntity> searchEquipment(Date beginDate, Date endDate) {
+
+	private static final String REGEX_ORDERBY_SINGLEITEM = "(\\w+)\\.(asc|desc)($|,)";
+	public List<EquipmentEntity> searchEquipment(Date beginDate, Date endDate, String orderBy, int offset, int limit) {
 
 
-//"select e from EquipmentEntity  e where exists (select t from e.availableTimeRanges t where t.beginDate <= :curBeginDate and :curBeginDate <= :curEndDate  and  :curEndDate <= t.endDate)"
+		//"select e from EquipmentEntity  e where exists (select t from AvailableTimeRangeEntity t where t.equipment.id = e.id  and  t.beginDate <= :curBeginDate and  :curEndDate <= t.endDate)"
+
+		//cant use something like 'from e.availableTimeRanges' because of the lack of flexibility of jpa criteria query
+
 
 		EntityManager entityManager = DBUtils.getEntityManager();
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<EquipmentEntity> query = criteriaBuilder.createQuery(EquipmentEntity.class);
 
+
 		Root<EquipmentEntity> e = query.from(EquipmentEntity.class);
-		Join<EquipmentEntity, AvailableTimeRangeEntity> t = e.join("availableTimeRanges", JoinType.LEFT);
+
+		Subquery<AvailableTimeRangeEntity> subQuery = query.subquery(AvailableTimeRangeEntity.class);
+		Root<AvailableTimeRangeEntity> t = subQuery.from(AvailableTimeRangeEntity.class);
+
 
 		ParameterExpression<Date> beginDateParam = criteriaBuilder.parameter(Date.class);
 		ParameterExpression<Date> endDateParam = criteriaBuilder.parameter(Date.class);
 
-		query.select(e);
 		List<Predicate> whereClauses = new ArrayList<>();
 
-		Predicate finalPredicate = criteriaBuilder.conjunction();
+		whereClauses.add(criteriaBuilder.equal(t.get("equipment").get("id"), e.get("id")));
+//		Predicate finalPredicate = criteriaBuilder.conjunction();
 
 
-		// this shit by no means be done in another way, fucking retarded jpa 
+		// this shit by no means be done in another way, fucking retarded jpa
 		if (beginDate != null) {
-
 //			finalPredicate = criteriaBuilder.and(finalPredicate,criteriaBuilder.lessThanOrEqualTo(t.get("beginDate"), beginDateParam));
 			whereClauses.add(criteriaBuilder.lessThanOrEqualTo(t.get("beginDate"), beginDateParam));
 		}
 		if (endDate != null) {
 //			finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.lessThanOrEqualTo(endDateParam, t.get("endDate")));
 			whereClauses.add(criteriaBuilder.lessThanOrEqualTo(endDateParam, t.get("endDate")));
-
 		}
 
 
-		query.where(whereClauses.toArray(new Predicate[0]));
+		subQuery.select(t).where(whereClauses.toArray(new Predicate[0]));
 
+		query.select(e).where(criteriaBuilder.exists(subQuery));
+
+
+		if (!orderBy.isEmpty()) {
+			List<Order> orderList = new ArrayList<>();
+
+			// TODO: 2/14/19 string split to orderBy list
+			Pattern pattern = Pattern.compile(REGEX_ORDERBY_SINGLEITEM);
+
+			Matcher matcher = pattern.matcher(orderBy);
+			while (matcher.find()) {
+				String orderBySingleItem = orderBy.substring(matcher.start(), matcher.end());
+
+
+				String columnName = matcher.group(1);
+				String orderKeyword = matcher.group(2);
+
+				if (orderKeyword.equals("desc")) {
+					orderList.add(criteriaBuilder.desc(e.get(columnName)));
+				} else {
+					orderList.add(criteriaBuilder.asc(e.get(columnName)));
+
+				}
+			}
+
+
+			query.orderBy(orderList);
+		}
 
 		TypedQuery<EquipmentEntity> typeQuery = entityManager.createQuery(query);
+
 		if (beginDate != null) {
 			typeQuery.setParameter(beginDateParam, beginDate);
 		}
 		if (endDate != null) {
 			typeQuery.setParameter(endDateParam, endDate);
 		}
-		List<EquipmentEntity> resultList = typeQuery.getResultList();
+
+		typeQuery.setFirstResult(offset);
+		typeQuery.setMaxResults(limit);
 
 
 //		List<EquipmentEntity> resultList = entityManager
@@ -73,7 +113,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 //				.setParameter("curEndDate", endDate)
 //				.getResultList();
 
-		return resultList;
+		return typeQuery.getResultList();
 
 	}
 
@@ -96,8 +136,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		// TODO: 2/11/19 validate user's available time
 		//check if there are any available time range that contain this timerange
 		//if yes then it's good to go
-		List<EquipmentEntity> resultList = entityManager
-				.createNamedQuery("AvailableTimeRangeEntity.searchTimeRangeInDate", EquipmentEntity.class)
+		List<AvailableTimeRangeEntity> resultList = entityManager
+				.createNamedQuery("AvailableTimeRangeEntity.searchTimeRangeInDate", AvailableTimeRangeEntity.class)
 				.setParameter("equipmentId", equipmentId)
 				.setParameter("curBeginDate", beginDate)
 				.setParameter("curEndDate", endDate)
@@ -159,4 +199,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 		return !(endDate2.before(beginDate1) || beginDate2.after(endDate1));
 	}
+
+
 }
