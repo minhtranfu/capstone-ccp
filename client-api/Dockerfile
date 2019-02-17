@@ -11,8 +11,8 @@ COPY pom.xml /opt/app/
 
 # rest of the project
 COPY src /opt/app/src
-#RUN mvn install
-RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "verify", "clean", "tomcat7:exec-war-only", "--fail-never"]
+#RUN mvn install and package
+RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "verify", "clean", "package", "--fail-never"]
 # package project
 #RUN mvn package
 
@@ -20,4 +20,4 @@ RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "verify", "clean", "tomcat7:exec
 EXPOSE 8080
 
 # execute it
-CMD ["java", "-jar", "./target/client-api.jar"]
+CMD ["mvn", "tomcat7:run-war-only"]
