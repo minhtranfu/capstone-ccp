@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 @NamedQueries({
 		@NamedQuery(name = "HiringTransactionEntity.getTransactionBySupplierId", query = "select e from HiringTransactionEntity  e where e.equipment.contractor.id = :supplierId")
 		, @NamedQuery(name = "HiringTransactionEntity.getTransactionsByRequesterId", query = "select e from HiringTransactionEntity  e where e.requester.id = :requesterId")
-		,@NamedQuery(name = "HiringTransactionEntity.getTimeRangeIntersectingWith", query = "select e from HiringTransactionEntity e where e.equipment.id = :equipmentId and e.equipment.status <> 'PENDING' and not (e.beginDate > :curEndDate or e.endDate< :curBeginDate)")
+		,@NamedQuery(name = "HiringTransactionEntity.getTimeRangeIntersectingWith", query = "select e from HiringTransactionEntity e where e.equipment.id = :equipmentId and e.status='AVAILABLE' and not (e.beginDate > :curEndDate or e.endDate< :curBeginDate)")
 }
 )
 public class HiringTransactionEntity {
