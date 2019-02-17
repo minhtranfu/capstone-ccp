@@ -1,12 +1,12 @@
-package dtos;
+package dtos.wrappers;
 
-public class LocationDTO {
+public class LocationWrapper {
 	private String address;
 	private double latitude;
 	private double longitude;
 
 
-	public LocationDTO(String address, double latitude, double longitude) {
+	public LocationWrapper(String address, double latitude, double longitude) {
 		this.address = address;
 		this.latitude = latitude;
 		this.longitude = longitude;

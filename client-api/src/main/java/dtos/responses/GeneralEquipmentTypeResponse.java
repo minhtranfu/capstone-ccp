@@ -1,4 +1,4 @@
-package dtos;
+package dtos.responses;
 
 import entities.EquipmentTypeEntity;
 import entities.GeneralEquipmentTypeEntity;

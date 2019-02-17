@@ -1,4 +1,4 @@
-package dtos;
+package dtos.responses;
 
 public class MessageResponse {
 	private String message;
