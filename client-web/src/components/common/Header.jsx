@@ -19,7 +19,7 @@ class Header extends PureComponent {
                                 <Link className="nav-link" to="/">Home <span className="sr-only">(current)</span></Link>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="#">Link</a>
+                            <Link className="nav-link" to="/dashboard">Dashboard</Link>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link disabled" href="#">Disabled</a>

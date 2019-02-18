@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 
 import NotFound from './notfound/NotFound';
 import Loading from 'react-loading-skeleton';
+import PageLoader from '../common/PageLoader';
 
 const modules = [
     {
@@ -26,12 +27,17 @@ const modules = [
         path: '/add-equipment',
         modulePath: './add-equipment/AddEquipment',
     },
+    {
+        name: 'UserDashboard',
+        path: '/dashboard',
+        modulePath: './user-dashboard',
+    },
 ];
 
 const routes = modules.map(module => {
     const component = Loadable({
         loader: () => import(/* webpackPrefetch: true */ `${module.modulePath}`),
-        loading: () => <Loading />,
+        loading: () => <PageLoader/>,
         modules: [module.modulePath],
         webpack: () => [require.resolveWeak(module.modulePath)],
     });
