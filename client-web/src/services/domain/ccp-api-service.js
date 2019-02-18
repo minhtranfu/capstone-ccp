@@ -19,6 +19,9 @@ const CcpApiService = {
     const queryString = params.join('&');
     return DataAccessService.get(`/equipments?${queryString}`);
   },
+  postTransaction(transaction) {
+    return DataAccessService.post('/transactions', transaction);
+  }
 };
   
 export default CcpApiService;  
