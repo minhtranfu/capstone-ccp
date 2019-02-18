@@ -242,4 +242,24 @@ public class ContractorService {
 		)).build();
 	}
 
+	@GET
+	@Path("{id:\\d+}/equipments")
+	public Response getEquipmentsBySupplierId(@PathParam("id") long id) {
+
+		//validate contractor id
+		ContractorEntity foundContractor = contractorDao.findByID(id);
+		if (foundContractor == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
+					String.format("contractor id=%s not found!", id)
+			)).build();
+		}
+
+		return Response.ok(foundContractor.getEquipments()).build();
+	}
+
+	
+
+
+
+
 }
