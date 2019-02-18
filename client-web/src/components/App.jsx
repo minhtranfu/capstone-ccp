@@ -6,21 +6,12 @@ import Footer from './common/Footer';
 import Header from './common/Header';
 import Routes from './modules/Routes';
 
-import { TransitionGroup, CSSTransition } from "react-transition-group";
-
 const App = ({ location, history }) => {
+  
   return (
     <div>
       <Header />
-      <TransitionGroup>
-        <CSSTransition
-          key={location.key}
-          classNames="fade"
-          timeout={500}
-        >
-          {Routes}
-        </CSSTransition>
-      </TransitionGroup>
+        {Routes}
       <Footer />
     </div>
   );
