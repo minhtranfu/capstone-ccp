@@ -257,7 +257,7 @@ public class ContractorService {
 		return Response.ok(foundContractor.getEquipments()).build();
 	}
 
-	
+
 
 
 

@@ -20,7 +20,7 @@ import java.util.List;
 
 @Path("transactions")
 @Produces(MediaType.APPLICATION_JSON)
-public class TransactionService {
+public class HiringTransactionService {
 
 	private static final HiringTransactionDAO hiringTransactionDAO = new HiringTransactionDAO();
 	private static final EquipmentDAO equipmentDAO = new EquipmentDAO();
@@ -51,17 +51,12 @@ public class TransactionService {
 		hiringTransactionEntity.setRequester(contractorEntity);
 
 
-
 		//already checked by DTO validation
 //		if (hiringTransactionEntity.getBeginDate() == null || hiringTransactionEntity.getEndDate() == null) {
 //			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Date is missing!")).build();
 //
 //		}
 		// TODO: 1/30/19 check not null for other data
-
-
-
-
 
 
 		// check requester id
@@ -143,23 +138,133 @@ public class TransactionService {
 
 	@PUT
 	@Path("{id:\\d+}")
-	public Response approveTransaction(@PathParam("id") long id, HiringTransactionEntity entity) {
+	public Response updateTransactionStatus(@PathParam("id") long id, HiringTransactionEntity transactionEntity) {
 
 		// TODO: 2/9/19 if approved, auto deny all intersected requests
+
 
 		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByID(id);
 		if (foundTransaction == null) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("id not found!")).build();
 		}
 
-		if (entity.getStatus() == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Status incorrect!")).build();
+		if (transactionEntity.getStatus() == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Status is null!")).build();
 		}
-		if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Transaction is already " + foundTransaction.getStatus())).build();
+
+
+		EquipmentEntity foundEquipment = foundTransaction.getEquipment();
+		switch (transactionEntity.getStatus()) {
+			case PENDING:
+				//validate
+				if (foundTransaction.getStatus() != transactionEntity.getStatus()) {
+					return Response.status(Response.Status.BAD_REQUEST)
+							.entity(new MessageResponse(String.format("Cannot change from %s to %s",
+									foundTransaction.getStatus(), transactionEntity.getStatus()))).build();
+
+				}
+				break;
+			case ACCEPTED:
+				//validate
+
+				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING
+						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
+					return Response.status(Response.Status.BAD_REQUEST)
+							.entity(new MessageResponse(String.format("Cannot change from %s to %s",
+									foundTransaction.getStatus(), transactionEntity.getStatus()))).build();
+
+				}
+
+				break;
+			case DENIED:
+				//validate
+
+				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING
+						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
+					return Response.status(Response.Status.BAD_REQUEST)
+							.entity(new MessageResponse(String.format("Cannot change from %s to %s",
+									foundTransaction.getStatus(), transactionEntity.getStatus()))).build();
+
+				}
+				break;
+			case PROCESSING:
+				//validate
+
+				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.ACCEPTED
+						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
+					return Response.status(Response.Status.BAD_REQUEST)
+							.entity(new MessageResponse(String.format("Cannot change from %s to %s",
+									foundTransaction.getStatus(), transactionEntity.getStatus()))).build();
+
+				}
+
+
+				// TODO: 2/18/19 validate there'are no processing transaction related to equipment
+				List<HiringTransactionEntity> processingTransactionsByEquipmentId = hiringTransactionDAO.getProcessingTransactionsByEquipmentId(foundEquipment.getId());
+				if (processingTransactionsByEquipmentId.size() > 0) {
+					if (processingTransactionsByEquipmentId.size() == 1) {
+						return Response.status(Response.Status.BAD_REQUEST).entity(
+								new MessageResponse(String.format("Equipment id=%d already have processing transaction id=%d"
+										, foundEquipment.getId()
+										, processingTransactionsByEquipmentId.get(0).getId()))
+						).build();
+					} else {
+						return Response.status(Response.Status.BAD_REQUEST).entity(
+								new MessageResponse(String.format("Severe: there are more than 1 processing transaction for equipment id=%s",
+										foundEquipment.getId()))
+						).build();
+					}
+				}
+
+				// TODO: 2/18/19 validate equipment status must be available
+				if (foundEquipment.getStatus() != EquipmentEntity.Status.AVAILABLE) {
+					return Response.status(Response.Status.BAD_REQUEST).entity(
+							new MessageResponse(String.format("Equipment id=%d status must be AVAILABLE to process transaction", foundEquipment.getId()))
+					).build();
+				}
+				//change transaction status to PROCESSING
+
+				//todo change equipment status to delivering
+				foundEquipment.setStatus(EquipmentEntity.Status.DELIVERING);
+				equipmentDAO.merge(foundEquipment);
+
+				break;
+			case CANCELED:
+				//validate
+				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PROCESSING
+						&& foundTransaction.getStatus() != HiringTransactionEntity.Status.ACCEPTED
+						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
+					return Response.status(Response.Status.BAD_REQUEST)
+							.entity(new MessageResponse(String.format("Cannot change from %s to %s",
+									foundTransaction.getStatus(), transactionEntity.getStatus()))).build();
+
+				}
+				break;
+			case FINISHED:
+				//validate
+				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PROCESSING
+						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
+					return Response.status(Response.Status.BAD_REQUEST)
+							.entity(new MessageResponse(String.format("Cannot change from %s to %s",
+									foundTransaction.getStatus(), transactionEntity.getStatus()))).build();
+
+				}
+				// TODO: 2/18/19 check equipment status must be WAITING_FOR_RETURNING
+				if (foundEquipment.getStatus() != EquipmentEntity.Status.WAITING_FOR_RETURNING) {
+					return Response.status(Response.Status.BAD_REQUEST)
+							.entity(new MessageResponse(String.format("Equipment id=%d status must be WAITING_FOR_RETURNING to finish transaction",
+									foundEquipment.getId()))).build();
+				}
+
+				// TODO: 2/18/19 change equipment status to AVAILABLE
+				foundEquipment.setStatus(EquipmentEntity.Status.AVAILABLE);
+				equipmentDAO.merge(foundEquipment);
+				break;
 
 		}
-		foundTransaction.setStatus(entity.getStatus());
+
+
+		foundTransaction.setStatus(transactionEntity.getStatus());
 		hiringTransactionDAO.merge(foundTransaction);
 		return Response.status(Response.Status.OK).entity(hiringTransactionDAO.findByID(id)).build();
 	}

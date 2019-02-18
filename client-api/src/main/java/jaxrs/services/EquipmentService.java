@@ -108,10 +108,12 @@ public class EquipmentService {
 	public Response updateEquipmentById(@PathParam("id") long id, EquipmentEntity equipmentEntity) {
 
 
+
 		if (equipmentEntity == null) {
 			return CommonUtils.responseFilterBadRequest(new MessageResponse("no equipment information"));
 		}
 		equipmentEntity.setId(id);
+
 		EquipmentEntity foundEquipment = equipmentDAO.findByID(id);
 		if (foundEquipment == null) {
 			return CommonUtils.responseFilterBadRequest(new MessageResponse("Not found equipment with id=" + id));
@@ -232,9 +234,10 @@ public class EquipmentService {
 
 	@POST
 	public Response postEquipment(EquipmentEntity equipmentEntity) {
+		//clean equipment entity
+
 		//remove id
 		equipmentEntity.setId(0);
-
 
 		//remove status
 		equipmentEntity.setStatus(null);
@@ -368,30 +371,19 @@ public class EquipmentService {
 		EquipmentEntity.Status status = entity.getStatus();
 		switch (status) {
 			case AVAILABLE:
-				if (foundEquipment.getStatus() != EquipmentEntity.Status.WAITING_FOR_RETURNING) {
-					return Response.status(Response.Status.BAD_REQUEST).entity
-							(new MessageResponse("Invalid! Current status is " + foundEquipment.getStatus()))
-							.build();
-				}
-				break;
-			case WAITING_FOR_DELIVERY:
-				if (foundEquipment.getStatus() != EquipmentEntity.Status.AVAILABLE) {
-					return Response.status(Response.Status.BAD_REQUEST).entity
-							(new MessageResponse("Invalid! Current status is " + foundEquipment.getStatus()))
-							.build();
-				}
-				break;
+				//cant change to this status because already implemented in Finish Transaction
+				return Response.status(Response.Status.BAD_REQUEST).entity
+						(new MessageResponse("Not allowed to change to " + status))
+						.build();
 			case DELIVERING:
-				if (foundEquipment.getStatus() != EquipmentEntity.Status.WAITING_FOR_DELIVERY) {
-					return Response.status(Response.Status.BAD_REQUEST).entity
-							(new MessageResponse("Invalid! Current status is " + foundEquipment.getStatus()))
-							.build();
-				}
-				break;
+				//cant change to this status because already implemented in Process Transaction
+				return Response.status(Response.Status.BAD_REQUEST).entity
+						(new MessageResponse("Not allowed to change to " + status))
+						.build();
 			case RENTING:
 				if (foundEquipment.getStatus() != EquipmentEntity.Status.DELIVERING) {
 					return Response.status(Response.Status.BAD_REQUEST).entity
-							(new MessageResponse("Invalid! Current status is " + foundEquipment.getStatus()))
+							(new MessageResponse(String.format("Invalid! Cannot change status from %s to %s ", foundEquipment.getStatus(),status)))
 							.build();
 				}
 				break;
@@ -399,7 +391,7 @@ public class EquipmentService {
 				// TODO: 2/1/19 change this status by system not user
 				if (foundEquipment.getStatus() != EquipmentEntity.Status.RENTING) {
 					return Response.status(Response.Status.BAD_REQUEST).entity
-							(new MessageResponse("Invalid! Current status is " + foundEquipment.getStatus()))
+							(new MessageResponse(String.format("Invalid! Cannot change status from %s to %s ", foundEquipment.getStatus(),status)))
 							.build();
 				}
 				break;

@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 		@NamedQuery(name = "HiringTransactionEntity.getTransactionBySupplierId", query = "select e from HiringTransactionEntity  e where e.equipment.contractor.id = :supplierId")
 		, @NamedQuery(name = "HiringTransactionEntity.getTransactionsByRequesterId", query = "select e from HiringTransactionEntity  e where e.requester.id = :requesterId")
 		,@NamedQuery(name = "HiringTransactionEntity.getTimeRangeIntersectingWith", query = "select e from HiringTransactionEntity e where e.equipment.id = :equipmentId and e.status='AVAILABLE' and not (e.beginDate > :curEndDate or e.endDate< :curBeginDate)")
+		,@NamedQuery(name = "HiringTransactionEntity.getProcessingTransactionsByEquipmentId",query = "select e from HiringTransactionEntity  e where e.equipment.id = :equipmentId and e.status = 'PROCESSING'")
 }
 )
 public class HiringTransactionEntity {
@@ -240,6 +241,9 @@ public class HiringTransactionEntity {
 	public enum Status {
 		PENDING,
 		ACCEPTED,
+		PROCESSING,
+		FINISHED,
+		CANCELED,
 		DENIED
 	}
 }

@@ -194,11 +194,13 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		return true;
 	}
 
-	public static boolean checkIsIntersect(Date beginDate1, Date endDate1, Date beginDate2, Date endDate2) {
+
+	public  boolean checkIsIntersect(Date beginDate1, Date endDate1, Date beginDate2, Date endDate2) {
 		//validate begindate < enddate
 
 		return !(endDate2.before(beginDate1) || beginDate2.after(endDate1));
 	}
+
 
 
 }
