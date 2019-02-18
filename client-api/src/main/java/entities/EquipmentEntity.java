@@ -1,14 +1,13 @@
 package entities;
 
-import dtos.wrappers.ProcessingHiringTransactionWrapper;
-import org.hibernate.annotations.Formula;
+import dtos.wrappers.IndependentHiringTransactionWrapper;
 import org.hibernate.annotations.Where;
 
-import javax.inject.Named;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,8 +49,8 @@ public class EquipmentEntity implements Serializable {
 	private List<AdditionalSpecsValueEntity> additionalSpecsValues;
 	private List<HiringTransactionEntity> hiringTransactions;
 
-
 	private List<HiringTransactionEntity> processingHiringTransactions;
+	private List<HiringTransactionEntity> activeHiringTransactionEntities;
 
 	public EquipmentEntity() {
 	}
@@ -291,13 +290,39 @@ public class EquipmentEntity implements Serializable {
 	}
 
 	@Transient
-	public ProcessingHiringTransactionWrapper getProcessingHiringTransaction() {
+	public IndependentHiringTransactionWrapper getProcessingHiringTransaction() {
 		if (getProcessingHiringTransactions().size() > 0) {
-			return new ProcessingHiringTransactionWrapper(getProcessingHiringTransactions().get(0));
+			return new IndependentHiringTransactionWrapper(getProcessingHiringTransactions().get(0));
 		} else {
 			return null;
 		}
 	}
+
+	@XmlTransient
+	@OneToMany(mappedBy = "equipment",fetch = FetchType.LAZY)
+	@Where(clause = "status = 'PROCESSING' or status='ACCEPTED'")
+	public List<HiringTransactionEntity> getActiveHiringTransactionEntities() {
+		return activeHiringTransactionEntities;
+	}
+
+	public void setActiveHiringTransactionEntities(List<HiringTransactionEntity> activeHiringTransactionEntities) {
+		this.activeHiringTransactionEntities = activeHiringTransactionEntities;
+	}
+
+	@Transient
+	public List<IndependentHiringTransactionWrapper> getActiveHiringTransactions() {
+		ArrayList<IndependentHiringTransactionWrapper> result = new ArrayList<>();
+		for (HiringTransactionEntity activeHiringTransactionEntity : getActiveHiringTransactionEntities()) {
+			result.add(new IndependentHiringTransactionWrapper(activeHiringTransactionEntity));
+		}
+		return result;
+	}
+
+
+
+
+
+
 
 	public enum Status {
 		AVAILABLE,

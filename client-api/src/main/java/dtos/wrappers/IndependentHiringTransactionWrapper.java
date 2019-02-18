@@ -8,7 +8,7 @@ import entities.HiringTransactionEntity;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-public class ProcessingHiringTransactionWrapper {
+public class IndependentHiringTransactionWrapper {
 
 	private long id;
 	private HiringTransactionEntity.Status status;
@@ -24,9 +24,9 @@ public class ProcessingHiringTransactionWrapper {
 	private String requesterAddress;
 	private double requesterLatitude;
 	private double requesterLongitude;
+	private long equipmentId;
 
-
-	public ProcessingHiringTransactionWrapper(HiringTransactionEntity hiringTransactionEntity) {
+	public IndependentHiringTransactionWrapper(HiringTransactionEntity hiringTransactionEntity) {
 		this.id = hiringTransactionEntity.getId();
 		this.status = hiringTransactionEntity.getStatus();
 		this.dailyPrice = hiringTransactionEntity.getDailyPrice();
@@ -39,6 +39,7 @@ public class ProcessingHiringTransactionWrapper {
 		this.requesterAddress = hiringTransactionEntity.getRequesterAddress();
 		this.requesterLatitude = hiringTransactionEntity.getRequesterLatitude();
 		this.requesterLongitude = hiringTransactionEntity.getRequesterLongitude();
+		this.equipmentId = hiringTransactionEntity.getEquipment().getId();
 	}
 
 
@@ -139,4 +140,12 @@ public class ProcessingHiringTransactionWrapper {
 		this.requesterLongitude = requesterLongitude;
 	}
 
+
+	public long getEquipmentId() {
+		return equipmentId;
+	}
+
+	public void setEquipmentId(long equipmentId) {
+		this.equipmentId = equipmentId;
+	}
 }
