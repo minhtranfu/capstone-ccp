@@ -17,7 +17,7 @@ RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "verify", "clean", "package", "-
 #RUN mvn package
 
 # local application port
-EXPOSE 8088
+EXPOSE 8080
 
 # execute it
 CMD ["mvn", "tomcat7:run-war-only"]
