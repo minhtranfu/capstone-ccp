@@ -3,6 +3,8 @@ package com.ccp.webadmin.entities;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "general_equipment_type")
@@ -13,6 +15,7 @@ public class GeneralEquipmentTypeEntity {
     @Column(name = "id")
     private Integer id;
 
+    @Size(min = 3, message = "Name required more than 3 letters")
     @Column(name = "name")
     private String name;
 

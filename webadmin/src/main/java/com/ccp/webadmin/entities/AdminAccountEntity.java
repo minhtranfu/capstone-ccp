@@ -5,6 +5,7 @@ package com.ccp.webadmin.entities;
 //import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,8 +19,11 @@ public class AdminAccountEntity  {
     @Column(name = "id")
     private Integer id;
 
+    @NotNull
     @Column(name = "username")
     private String username;
+
+    @NotNull
     @Column(name = "password")
     private String password;
 

@@ -36,9 +36,25 @@
                                 <form th:action="@{/additional_special_field/saveProcess}" method="post" th:object="${additionalSpecialField}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{id}">
                                     <input type="hidden" th:field="*{equipmentTypeEntity.id}">
-                                    Name: <input th:field="*{name}"><br>
-                                    Data Type: <input th:field="*{dataType}"><br>
-                                    <span th:errors="*{name}" style="color: red"></span><br>
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <input th:field="*{name}" class="form-control" placeholder="Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Data Type</label>
+                                        <select th:field="*{dataType}" class="form-control">
+                                            <option th:each="datatype : ${datatypes}"
+                                                    th:value="${datatype}"
+                                                    th:text="${datatype}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('dataType')}" th:errors="*{dataType}" style="color: red"></span>
+                                    </div>
                                     <input type="Submit" class="btn btn-default">
                                 </form>
 

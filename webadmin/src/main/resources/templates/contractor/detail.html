@@ -35,7 +35,8 @@
                             <div class="col-lg-6">
                                 <form th:action="@{/contractor/saveProcess}" method="post"
                                       th:object="${contractor}" enctype="multipart/form-data">
-                                    <input type="hidden" th:field="*{id}"><br>
+                                    <input type="hidden" th:field="*{id}">
+                                    <input type="hidden" th:field="*{status}">
                                     <div class="form-group">
                                         <label>Name:</label>
                                         <input th:field="*{name}" class="form-control" placeholder="Name">
@@ -71,16 +72,17 @@
                                                placeholder="Updated Time">
                                     </div>
                                     <div class="form-group">
-                                        <label>Status</label>
                                         <span th:switch="${contractor.status}" th:value="${contractor.status}">
                                             <a th:case="0" th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
-                                               class="link btn btn-primary">Verify</a>
+                                               class="link btn btn-primary">Verify Contractor</a>
                                             <a th:case="1" th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
-                                               class="link btn btn-success">Active</a>
+                                               class="link btn btn-danger">Deactive Contractor</a>
                                             <a th:case="2" th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
-                                               class="link btn btn-danger">Deactive</a>
+                                               class="link btn btn-success">Active Contractor</a>
                                         </span>
+                                        <input type="Submit" class="btn btn-default">
                                     </div>
+
                                 </form>
                             </div>
                             <!-- /.col-lg-6 (nested) -->

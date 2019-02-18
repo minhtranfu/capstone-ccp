@@ -1,6 +1,9 @@
 package com.ccp.webadmin.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
@@ -11,14 +14,23 @@ public class AdminUserEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+
+    @Size(min = 3, message = "Name required more than 3 letters")
     @Column(name = "name")
     private String name;
+
     @Column(name = "is_male")
     private boolean isMale;
+
+    @Pattern(regexp = "\\d{10}", message = "Invalid Phone Number")
     @Column(name = "phone", length = 10)
     private String phone;
+
+    @Email(message = "Email required")
     @Column(name = "email")
     private String email;
+
+
     @Column(name = "role_id")
     private Integer roleId;
 

@@ -35,19 +35,22 @@
                             <div class="col-lg-6">
                                 <form th:action="@{/staff/saveProcess}" method="post"
                                       th:object="${staff}" enctype="multipart/form-data">
-                                    <input type="hidden" th:field="*{id}"><br>
-                                    <input type="hidden" th:field="*{account.id}"><br>
+                                    <input type="hidden" th:field="*{id}">
+                                    <input type="hidden" th:field="*{account.id}">
+                                    <input type="hidden" th:field="*{password}">
                                     <div class="form-group">
                                         <label>User Name</label>
                                         <input th:field="*{username}" class="form-control" placeholder="User Name">
                                     </div>
                                     <div class="form-group">
-                                        <label>Password</label>
-                                        <input th:field="*{password}" readonly="true" class="form-control" placeholder="Password">
+                                        <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Full Name</label>
                                         <input th:field="*{account.name}" class="form-control" placeholder="Full Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('account.name')}" th:errors="*{account.name}" style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Gender</label>
@@ -61,15 +64,14 @@
                                         <input th:field="*{account.phone}" class="form-control" placeholder="Phone Number">
                                     </div>
                                     <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('account.phone')}" th:errors="*{account.phone}" style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
                                         <label>Email:</label>
                                         <input th:field="*{account.email}" class="form-control" placeholder="Email">
                                     </div>
                                     <div class="form-group">
-                                        <label>Role</label>
-                                        <select th:field="*{account.roleId}" class="form-control">
-                                            <option th:value="'1'" th:text="Admin"></option>
-                                            <option th:value="'2'" th:text="Staff"></option>
-                                        </select>
+                                        <span th:if="${#fields.hasErrors('account.email')}" th:errors="*{account.email}" style="color: red"></span>
                                     </div>
                                     <button type="submit" class="btn btn-default">Submit</button>
                                 </form>

@@ -49,8 +49,11 @@ public class GeneralEquipmentTypeController {
             @Valid @ModelAttribute("generalEquipmentType") GeneralEquipmentTypeEntity generalEquipmentTypeEntity,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            Integer id = generalEquipmentTypeEntity.getId();
-            return "general_equipment_type/detail/" + id;
+            if(generalEquipmentTypeEntity.getId() != null){
+                return "general_equipment_type/detail";
+            } else{
+                return "general_equipment_type/create";
+            }
         }
         generalEquipmentTypeService.save(generalEquipmentTypeEntity);
         Integer id = generalEquipmentTypeEntity.getId();

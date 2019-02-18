@@ -57,9 +57,15 @@ public class EquipmentTypeController {
             @Valid @ModelAttribute("equipmentType") EquipmentTypeEntity equipmentTypeEntity,
             BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("generalEquipmentTypes", generalEquipmentTypeService.findAll());
-            long id = equipmentTypeEntity.getId();
-            return "equipment_type/detail/" + id;
+
+            if(equipmentTypeEntity.getId() != null){
+                model.addAttribute("generalEquipmentTypes", generalEquipmentTypeService.findAll());
+                return "equipment_type/detail";
+            } else{
+                model.addAttribute("generalEquipmentTypes", generalEquipmentTypeService.findAll());
+                return "equipment_type/create";
+            }
+
         }
         model.addAttribute("generalEquipmentTypes", generalEquipmentTypeService.findAll());
         equipmentTypeService.save(equipmentTypeEntity);

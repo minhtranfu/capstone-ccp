@@ -42,8 +42,13 @@
                                         <input th:field="*{name}" class="form-control" placeholder="Name">
                                     </div>
                                     <div class="form-group">
-                                        <label>Data Type:</label>
-                                        <input th:field="*{name}" class="form-control" placeholder="Name">
+                                        <label>Data Type</label>
+                                        <select th:field="*{dataType}" class="form-control">
+                                            <option th:each="datatype : ${datatypes}"
+                                                    th:value="${datatype}"
+                                                    th:text="${datatype}">
+                                            </option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label>Equipment Type:</label>

@@ -69,7 +69,6 @@ public class ContractorController {
         ContractorEntity contractorEntity = contractorService.findById(id);
 
         //change contractor status Not Verify into Active
-        System.out.println("bbbb" + contractorEntity.getStatus());
         switch (contractorEntity.getStatus()) {
             case 0:
                 contractorEntity.setStatus(1);

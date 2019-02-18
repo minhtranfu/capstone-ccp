@@ -1,6 +1,8 @@
 package com.ccp.webadmin.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
@@ -11,6 +13,8 @@ public class EquipmentTypeEntity implements Serializable {
     @Column(name = "id")
     private Integer id;
 
+    @NotNull(message = "Name is required not empty")
+    @Size(min = 3, message = "Equipment's name required more than 3 letters")
     @Column(name = "name")
     private String name;
 

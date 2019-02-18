@@ -47,8 +47,11 @@ public class AdminAccountController {
             @Valid @ModelAttribute("staff") AdminAccountEntity adminAccountEntity,
             BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            Integer id = adminAccountEntity.getId();
-            return "staff/detail/" + id;
+            if (adminAccountEntity.getId() != null) {
+                return "staff/detail";
+            } else
+                return "staff/create";
+
         }
 
         adminAccountService.save(adminAccountEntity);
