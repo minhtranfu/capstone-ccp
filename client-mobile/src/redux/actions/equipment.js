@@ -13,23 +13,8 @@ export function getEquipmentDetail(id) {
   };
 }
 
-export function getTransactionDetail(id) {
-  return async dispatch => {
-    const res = await axios.get(`transactions/${id}`);
-    dispatch({
-      type: Actions.GET_TRANSACTION_DETAIL_SUCCESS,
-      payload: res
-    });
-  };
-}
-
-export function clearTransactionDetail() {
-  return {
-    type: Actions.CLEAR_TRANSACTION_DETAIL
-  };
-}
-
 export function addEquipment(equipment) {
+  console.log(JSON.stringify(equipment));
   return async dispatch => {
     try {
       const res = await axios.post(`equipments`, equipment);
@@ -80,13 +65,21 @@ export function listEquipmentBySupplierId(id) {
   };
 }
 
+export function resetEquipmentBySupplier() {
+  return {
+    type: Actions.RESET_EQUIPMENT_BY_SUPPLIER
+  };
+}
+
 export function listEquipmentByRequesterId(id) {
   return async dispatch => {
-    const res = await axios.get(`transactions/requester/${id}`);
-    dispatch({
-      type: Actions.LIST_REQUESTER_EQUIPMENT_SUCCESS,
-      payload: res
-    });
+    try {
+      const res = await axios.get(`transactions/requester/${id}`);
+      dispatch({
+        type: Actions.LIST_REQUESTER_EQUIPMENT_SUCCESS,
+        payload: res
+      });
+    } catch {}
   };
 }
 

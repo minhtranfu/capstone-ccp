@@ -51,25 +51,29 @@ class SearchResult extends Component {
     this.props.fetchSearchEquipment(query.main_text, lat, long);
   }
 
+  componentWillUnmount() {
+    this.props.fetchClearSearchEquipment();
+  }
+
   _setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
 
-  _findResultByAddress = equipment => {
-    //Query response: main_text & secondary_text
-    const { query, lat, long } = this.props.navigation.state.params;
-    const result = equipment.filter(
-      item =>
-        item.address === query.main_text.concat(", ", query.secondary_text) &&
-        item.status === "AVAILABLE"
-    );
-    return result ? result : equipment;
-  };
+  // _findResultByAddress = equipment => {
+  //   //Query response: main_text & secondary_text
+  //   const { query, lat, long } = this.props.navigation.state.params;
+  //   const result = equipment.filter(
+  //     item =>
+  //       item.address === query.main_text.concat(", ", query.secondary_text) &&
+  //       item.status === "AVAILABLE"
+  //   );
+  //   return result ? result : equipment;
+  // };
 
   render() {
     const { equipment, listSearch } = this.props;
     const { query } = this.props.navigation.state.params;
-    const result = this._findResultByAddress(equipment);
+    //const result = this._findResultByAddress(equipment);
     return (
       <SafeAreaView
         style={styles.container}
@@ -104,7 +108,7 @@ class SearchResult extends Component {
           <Text style={styles.title}>{query.main_text}</Text>
         </Header>
 
-        {listSearch.data ? (
+        {listSearch && listSearch.data ? (
           <View style={{ flex: 1 }}>
             <FlatList
               style={{ paddingHorizontal: 15 }}

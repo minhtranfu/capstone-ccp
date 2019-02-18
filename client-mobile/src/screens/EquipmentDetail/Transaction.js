@@ -39,7 +39,6 @@ class ConfirmTransaction extends Component {
 
   render() {
     const { equipment, name } = this.props.navigation.state.params;
-    console.log(equipment);
     return (
       <SafeAreaView
         style={styles.container}
@@ -57,16 +56,13 @@ class ConfirmTransaction extends Component {
         {equipment ? (
           <ScrollView style={{ paddingHorizontal: 15 }}>
             <Text style={styles.text}>Name: {name}</Text>
-            <Text style={styles.text}>
-              Daily price: {equipment.dailyPrice} $/day
-            </Text>
             <Text style={styles.text}>Begin date: {equipment.beginDate}</Text>
             <Text style={styles.text}>End date:{equipment.endDate}</Text>
             <Button
               text={"Confirm Booking"}
               onPress={() => {
                 this._handleConfirmBooking(equipment);
-                this.props.navigation.navigate("Discover");
+                this.props.navigation.navigate("Result");
               }}
             />
           </ScrollView>

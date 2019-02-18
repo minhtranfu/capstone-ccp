@@ -17,8 +17,9 @@ class EquipmentItem extends Component {
   };
 
   static defaultProps = {
-    requesterThumbnail: 'https://drupway.com/wp-content/uploads/2018/10/person-male.png'
-  }
+    requesterThumbnail:
+      "https://drupway.com/wp-content/uploads/2018/10/person-male.png"
+  };
 
   constructor(props) {
     super(props);
@@ -26,7 +27,15 @@ class EquipmentItem extends Component {
   }
 
   render() {
-    const { id, name, imageURL, address, price, onPress, requesterThumbnail } = this.props;
+    const {
+      id,
+      name,
+      imageURL,
+      address,
+      price,
+      onPress,
+      requesterThumbnail
+    } = this.props;
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -44,7 +53,7 @@ class EquipmentItem extends Component {
               style={{ height: 40, aspectRatio: 1, borderRadius: 20, backgroundColor: colors.secondaryColor, marginRight: 10, marginLeft: -3 }}
               resizeMode={"cover"}
             /> */}
-            <View style={{flexDirection: 'column', flex: 1}}>
+            <View style={{ flexDirection: "column", flex: 1 }}>
               <Text style={styles.equipmentName}>{name}</Text>
               <Text style={styles.equipmentStatus}>{address}</Text>
             </View>

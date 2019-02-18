@@ -14,7 +14,7 @@ import { Feather } from "@expo/vector-icons";
 import {
   getTransactionDetail,
   clearTransactionDetail
-} from "../../redux/actions/equipment";
+} from "../../redux/actions/transaction";
 
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -50,7 +50,7 @@ const STEP_PROGRESS_OPTIONS = [
 @connect(
   state => {
     return {
-      detail: state.equipment.transactionDetail
+      detail: state.transaction.transactionDetail
     };
   },
   dispatch => ({

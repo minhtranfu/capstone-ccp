@@ -100,10 +100,17 @@ class AddImage extends Component {
       thumbnailImage: null,
       address: address,
       latitude: lat,
-      longitude: long
+      longitude: long,
+      additionalSpecsValues: [
+        {
+          value: "động cơ 300 mã lực",
+          additionalSpecsField: {
+            id: 3
+          }
+        }
+      ]
     };
     const newData = Object.assign({}, data, contractor);
-    console.log("Submit", newData);
     this.props.addEquipment(newData);
   };
 

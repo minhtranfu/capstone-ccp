@@ -204,7 +204,11 @@ class Activity extends Component {
               tintColor={colors.primaryColor}
             />
           </Header>
-          {requesterEquipment ? this.renderContent() : <Loading />}
+          {requesterEquipment && requesterEquipment.data ? (
+            this.renderContent()
+          ) : (
+            <Loading />
+          )}
         </SafeAreaView>
       );
     } else {

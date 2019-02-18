@@ -3,11 +3,9 @@ import * as Actions from "../types";
 const INITIAL_STATE = {
   loading: false,
   detail: {},
-  transactionDetail: {},
   list: [],
   listSearch: [],
-  listRequesterEquipment: [],
-  listSupplierEquipment: []
+  listRequesterEquipment: []
 };
 
 export default function equipmentReducer(state = INITIAL_STATE, action) {
@@ -19,18 +17,7 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
         detail: payload
       };
     }
-    case Actions.GET_TRANSACTION_DETAIL_SUCCESS: {
-      return {
-        ...state,
-        transactionDetail: payload
-      };
-    }
-    case Actions.LIST_SUPPLIER_EQUIPMENT_SUCCESS: {
-      return {
-        ...state,
-        listSupplierEquipment: payload
-      };
-    }
+
     case Actions.LIST_REQUESTER_EQUIPMENT_SUCCESS: {
       return {
         ...state,
@@ -68,11 +55,7 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
         ...state,
         listSearch: []
       };
-    case Actions.CLEAR_TRANSACTION_DETAIL:
-      return {
-        ...state,
-        transactionDetail: {}
-      };
+
     default:
       return state;
   }

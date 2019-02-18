@@ -15,7 +15,7 @@ export default function statusReducer(state = initialState, action) {
       return {
         message: payload.message,
         type: "success",
-        loading: true
+        loading: false
       };
     case ACTIONS.STATUS_FAIL:
       return {

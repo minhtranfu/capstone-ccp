@@ -39,7 +39,6 @@ const IMAGE_LIST = [
 
 @connect(
   state => {
-    console.log(state.equipment.detail);
     return {
       equipment: state.equipment.list,
       detail: state.equipment.detail
@@ -87,19 +86,13 @@ class EquipmentDetail extends Component {
       endDate
     });
     const newEquipment = {
-      dailyPrice: dailyPrice,
-      deliveryPrice: deliveryPrice,
       beginDate: this._handleFormatDate(startDate),
       endDate: this._handleFormatDate(endDate),
       requesterAddress: "Phu Nhuan",
       requesterLatitude: 123123,
       requesterLongitude: 123123,
-      equipment: {
-        id: id
-      },
-      requester: {
-        id: 12
-      }
+      equipmentId: id,
+      requesterId: 13
     };
     this.props.navigation.navigate("Transaction", {
       equipment: newEquipment,

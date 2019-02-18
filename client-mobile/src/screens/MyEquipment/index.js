@@ -11,11 +11,12 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
-
+import { removeEquipment } from "../../redux/actions/equipment";
 import {
-  removeEquipment,
-  listEquipmentBySupplierId
-} from "../../redux/actions/equipment";
+  listTransactionBySupplierId,
+  clearSupplierTransactionList
+} from "../../redux/actions/transaction";
+
 import ParallaxList from "../../components/ParallaxList";
 import Dropdown from "../../components/Dropdown";
 import Button from "../../components/Button";
@@ -98,7 +99,10 @@ const DROPDOWN_OPTIONS = [
   state => {
     return {
       equipment: state.equipment.list,
-      myEquipment: state.equipment.listSupplierEquipment
+      myEquipment: state.transaction.listSupplierTransaction,
+      tranactionStatus: state.transaction.tranactionStatus,
+      detail: state.tranaction.tranactionDetail,
+      message: state.status.message
     };
   },
   dispatch => ({
@@ -107,6 +111,9 @@ const DROPDOWN_OPTIONS = [
     },
     fetchListMyEquipment: id => {
       dispatch(listEquipmentBySupplierId(id));
+    },
+    fetchClearMyEquipment: () => {
+      dispatch(clearSupplierTransactionList());
     }
   })
 )
@@ -115,13 +122,41 @@ class MyEquipmentScreen extends Component {
     super(props);
     this.state = {
       status: "",
-      loading: true
+      loading: true,
+      id: null,
+      transactionStatus: ""
     };
   }
 
   componentDidMount() {
-    this.props.fetchListMyEquipment(13);
+    this.props.fetchListMyEquipment(12);
   }
+
+  componentDidUpdate(prevProps) {
+    const { myEquipment, tranactionStatus, detail } = this.props;
+    if (
+      myEquipment.data &&
+      prevProps.myEquipment.data &&
+      myEquipment.data.length !== prevProps.myEquipment.data.length
+    ) {
+      this.props.fetchListMyEquipment(12);
+    }
+    if (
+      detail.data &&
+      detail.data.id === transactionStatus.data.id &&
+      transactionStatus.data.status !== prevProps.data.staus
+    ) {
+      this.props.fetchListMyEquipment(12);
+    }
+  }
+
+  _getIdByPress = id => {
+    this.setState({ id });
+  };
+
+  _handleOnNavigateBack = transactionStatus => {
+    this.setState({ transactionStatus });
+  };
 
   _handleAddPress = () => {
     this.props.navigation.navigate("AddDetail");
@@ -133,7 +168,8 @@ class MyEquipmentScreen extends Component {
   };
 
   _renderContent = () => {
-    const { myEquipment } = this.props;
+    const { myEquipment, message } = this.props;
+    console.log(message);
     return (
       <View style={styles.scrollWrapper}>
         {myEquipment.data.length > 0 ? (
@@ -161,11 +197,13 @@ class MyEquipmentScreen extends Component {
                     />
                     {equipmentList.map((item, index) => (
                       <EquipmentItem
-                        onPress={() =>
+                        onPress={() => {
+                          this._getIdByPress(item.id);
                           this.props.navigation.navigate("MyEquipmentDetail", {
-                            id: item.id
-                          })
-                        }
+                            id: item.id,
+                            onNavigateBack: this._handleOnNavigateBack
+                          });
+                        }}
                         key={`eq_${index}`}
                         id={item.id}
                         name={item.equipment.name}
@@ -195,7 +233,7 @@ class MyEquipmentScreen extends Component {
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "never", top: "always" }}
+        forceInset={{ bottom: "always", top: "always" }}
       >
         <Header
           renderRightButton={() => (

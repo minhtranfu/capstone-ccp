@@ -15,12 +15,13 @@ import { Feather } from "@expo/vector-icons";
 import { ImagePicker, Permissions } from "expo";
 import {
   getEquipmentDetail,
-  getTransactionDetail,
-  clearTransactionDetail
+  listEquipmentBySupplierId
 } from "../../redux/actions/equipment";
 import {
+  getTransactionDetail,
   approveTransaction,
-  denyTransaction
+  denyTransaction,
+  clearTransactionDetail
 } from "../../redux/actions/transaction";
 
 import InputField from "../../components/InputField";
@@ -60,12 +61,15 @@ const COLORS = {
   state => {
     return {
       equipmentDetail: state.equipment.detail,
-      transactionDetail: state.equipment.transactionDetail,
+      transactionDetail: state.transaction.transactionDetail,
       //test
       equipment: state.equipment.list
     };
   },
   dispatch => ({
+    fetchListMyEquipment: id => {
+      dispatch(listEquipmentBySupplierId(id));
+    },
     fetchEquipmentDetail: id => {
       dispatch(getEquipmentDetail(id));
     },
@@ -78,8 +82,8 @@ const COLORS = {
     fetchApproveTransaction: (id, transactionStatus) => {
       dispatch(approveTransaction(id, transactionStatus));
     },
-    fetchDenyTransaction: id => {
-      dispatch(denyTransaction(id));
+    fetchDenyTransaction: (id, transactionStatus) => {
+      dispatch(denyTransaction(id, transactionStatus));
     }
   })
 )
@@ -108,21 +112,10 @@ class MyEquipmentDetail extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     //Check data is update
     if (nextProps.transactionDetail.data !== prevState.data) {
-      return { data: nextProps.transactionDetail.data };
+      return {
+        data: nextProps.transactionDetail.data
+      };
     } else return null;
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      prevProps.transactionDetail.data !== this.props.transactionDetail.data
-    ) {
-      //Update new state
-      this.setState({ data: this.props.transactionDetail.data });
-    }
-  }
-
-  componentWillUnmount() {
-    this.props.fetchClearDetail();
   }
 
   _handleChangeBackgroundImage = async () => {
@@ -139,24 +132,30 @@ class MyEquipmentDetail extends Component {
     </View>
   );
 
-  _renderPendingBottom = id => (
-    <View style={styles.bottomWrapper}>
-      <Button
-        text={"Accept"}
-        onPress={() => {
-          this.props.fetchApproveTransaction(id, { status: "ACCEPTED" });
-          this.props.navigation.goBack();
-        }}
-      />
-      <Button
-        text={"Denied"}
-        onPress={() => {
-          this.props.fetchDenyTransaction(id, { status: "DENIED" });
-          this.props.navigation.goBack();
-        }}
-      />
-    </View>
-  );
+  _handleReRender = async (id, status) => {
+    await this.props.fetchApproveTransaction(id, { status: status });
+    this.props.navigation.state.params.onNavigateBack(status);
+    this.props.navigation.goBack();
+  };
+
+  _renderPendingBottom = id => {
+    return (
+      <View style={styles.bottomWrapper}>
+        <Button
+          text={"Accept"}
+          onPress={() => {
+            this._handleReRender(id, "ACCEPTED");
+          }}
+        />
+        <Button
+          text={"Denied"}
+          onPress={() => {
+            this._handleReRender(id, "DENIED");
+          }}
+        />
+      </View>
+    );
+  };
 
   _renderAcceptedBottom = id => (
     <View style={styles.bottomWrapper}>
@@ -178,6 +177,7 @@ class MyEquipmentDetail extends Component {
   };
 
   _renderScrollItem = () => {
+    console.log("find data", this.state.data);
     const { id } = this.props.navigation.state.params;
     const { data } = this.props.transactionDetail;
     return (
@@ -205,7 +205,7 @@ class MyEquipmentDetail extends Component {
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this.setState({ name: value })}
-          value={data.equipment.name}
+          value={this.state.name}
           returnKeyType={"next"}
         />
         <InputField
@@ -274,8 +274,7 @@ class MyEquipmentDetail extends Component {
 
   render() {
     const { transactionDetail } = this.props;
-    const { id } = this.props.navigation.state.params;
-
+    console.log(transactionDetail);
     return (
       <SafeAreaView
         style={styles.container}
@@ -295,7 +294,7 @@ class MyEquipmentDetail extends Component {
         >
           <Text style={styles.header}>My Equipment</Text>
         </Header>
-        {transactionDetail.data ? (
+        {transactionDetail && transactionDetail.data ? (
           <ScrollView>{this._renderScrollItem()}</ScrollView>
         ) : (
           <Loading />

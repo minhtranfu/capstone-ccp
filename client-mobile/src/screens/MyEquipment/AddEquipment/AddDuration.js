@@ -130,7 +130,6 @@ class AddDuration extends Component {
           </Animated.View>
         );
       } else {
-        console.log("render", this.state.duration[key]);
         return (
           <View key={key} style={styles.viewHolder}>
             <TouchableOpacity onPress={this.openCalendar}>
@@ -176,7 +175,13 @@ class AddDuration extends Component {
             <Text>Go Back</Text>
           </TouchableOpacity>
         </Header>
-        <Text style={{ fontSize: fontSize.h4, fontWeight: "500", color: colors.text }}>
+        <Text
+          style={{
+            fontSize: fontSize.h4,
+            fontWeight: "500",
+            color: colors.text
+          }}
+        >
           Time range
         </Text>
         <ScrollView>
