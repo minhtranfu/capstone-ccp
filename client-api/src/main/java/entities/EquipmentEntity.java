@@ -2,7 +2,9 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
+import javax.inject.Named;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -12,8 +14,8 @@ import java.util.List;
 @Where(clause = "is_deleted=0")
 @Table(name = "equipment", schema = "capstone_ccp")
 @NamedQueries({
-		@NamedQuery(name = "EquipmentEntity.searchEquipment", query = "select e from EquipmentEntity  e where exists (select t from e.availableTimeRanges t where t.beginDate <= :curBeginDate and :curBeginDate <= :curEndDate  and  :curEndDate <= t.endDate)"),
-		@NamedQuery(name = "EquipmentEntity.getAll", query = "select  e from EquipmentEntity e")
+		@NamedQuery(name = "EquipmentEntity.searchEquipment", query = "select e from EquipmentEntity  e where exists (select t from e.availableTimeRanges t where t.beginDate <= :curBeginDate and :curBeginDate <= :curEndDate  and  :curEndDate <= t.endDate)")
+		, @NamedQuery(name = "EquipmentEntity.getAll", query = "select  e from EquipmentEntity e")
 })
 
 public class EquipmentEntity implements Serializable {
@@ -44,6 +46,7 @@ public class EquipmentEntity implements Serializable {
 
 
 	private List<AdditionalSpecsValueEntity> additionalSpecsValues;
+	private List<HiringTransactionEntity> hiringTransactions;
 
 	public EquipmentEntity() {
 	}
@@ -262,9 +265,18 @@ public class EquipmentEntity implements Serializable {
 		this.additionalSpecsValues = additionalSpecsValueEntities;
 	}
 
+	@XmlTransient
+	@OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)
+	public List<HiringTransactionEntity> getHiringTransactions() {
+		return hiringTransactions;
+	}
+
+	public void setHiringTransactions(List<HiringTransactionEntity> hiringTransactions) {
+		this.hiringTransactions = hiringTransactions;
+	}
+
 	public enum Status {
 		AVAILABLE,
-		WAITING_FOR_DELIVERY,
 		DELIVERING,
 		RENTING,
 		WAITING_FOR_RETURNING

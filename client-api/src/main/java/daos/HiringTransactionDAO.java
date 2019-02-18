@@ -1,5 +1,6 @@
 package daos;
 
+import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 import utils.DBUtils;
 
@@ -21,5 +22,16 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 				.getResultList();
 	}
 
+	/* There's no PROCESSING transaction related to this equipment*/
+	public List<HiringTransactionEntity> getProcessingTransactionsByEquipmentId(long equipmentId) {
+		EntityManager entityManager = DBUtils.getEntityManager();
+
+		List<HiringTransactionEntity> hiringTransactionEntities = entityManager.createNamedQuery("HiringTransactionEntity.getProcessingTransactionsByEquipmentId", HiringTransactionEntity.class)
+				.setParameter("equipmentId", equipmentId)
+				.getResultList();
+
+		return hiringTransactionEntities;
+
+	}
 
 }
