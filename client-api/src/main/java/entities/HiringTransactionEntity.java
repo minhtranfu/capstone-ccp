@@ -15,7 +15,8 @@ import java.sql.Timestamp;
 @NamedQueries({
 		@NamedQuery(name = "HiringTransactionEntity.getTransactionBySupplierId", query = "select e from HiringTransactionEntity  e where e.equipment.contractor.id = :supplierId")
 		, @NamedQuery(name = "HiringTransactionEntity.getTransactionsByRequesterId", query = "select e from HiringTransactionEntity  e where e.requester.id = :requesterId")
-		,@NamedQuery(name = "HiringTransactionEntity.getTimeRangeIntersectingWith", query = "select e from HiringTransactionEntity e where e.equipment.id = :equipmentId and e.status='AVAILABLE' and not (e.beginDate > :curEndDate or e.endDate< :curBeginDate)")
+		,@NamedQuery(name = "HiringTransactionEntity.getRentingTimeRangeIntersectingWith", query = "select e from HiringTransactionEntity e where e.equipment.id = :equipmentId and (e.status = 'ACCEPTED' or e.status = 'PROCESSING') and not (e.beginDate > :curEndDate or e.endDate< :curBeginDate)")
+		,@NamedQuery(name = "HiringTransactionEntity.getPendingTransactionIntersectingWith", query = "select e from HiringTransactionEntity e where e.equipment.id = :equipmentId and e.status = 'PENDING'  and not (e.beginDate > :curEndDate or e.endDate< :curBeginDate)")
 		,@NamedQuery(name = "HiringTransactionEntity.getProcessingTransactionsByEquipmentId",query = "select e from HiringTransactionEntity  e where e.equipment.id = :equipmentId and e.status = 'PROCESSING'")
 }
 )
@@ -47,7 +48,7 @@ public class HiringTransactionEntity {
 	public HiringTransactionEntity() {
 	}
 
-	public HiringTransactionEntity(HiringTransactionRequest request, EquipmentEntity equipment) {
+	public HiringTransactionEntity(HiringTransactionRequest request, EquipmentEntity equipment, ContractorEntity requester) {
 		this.beginDate = request.getBeginDate();
 		this.endDate = request.getEndDate();
 		this.requesterAddress = request.getRequesterAddress();
@@ -55,6 +56,7 @@ public class HiringTransactionEntity {
 		this.requesterLongitude = request.getRequesterLongitude();
 
 		this.equipment = equipment;
+		this.requester = requester;
 
 		this.dailyPrice = equipment.getDailyPrice();
 		this.deliveryPrice = equipment.getDeliveryPrice();

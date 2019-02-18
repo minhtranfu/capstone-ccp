@@ -21,6 +21,8 @@ public class HiringTransactionRequest {
 	@NotNull
 	private long equipmentId;
 
+	private long requesterId;
+
 	public HiringTransactionRequest() {
 	}
 
@@ -72,5 +74,11 @@ public class HiringTransactionRequest {
 		this.equipmentId = equipmentId;
 	}
 
+	public long getRequesterId() {
+		return requesterId;
+	}
 
+	public void setRequesterId(long requesterId) {
+		this.requesterId = requesterId;
+	}
 }

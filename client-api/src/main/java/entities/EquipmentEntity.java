@@ -1,5 +1,7 @@
 package entities;
 
+import dtos.wrappers.ProcessingHiringTransactionWrapper;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
 
 import javax.inject.Named;
@@ -39,7 +41,7 @@ public class EquipmentEntity implements Serializable {
 	private EquipmentTypeEntity equipmentType;
 
 	private ContractorEntity contractor;
-	private Integer constructionId;
+	private ConstructionEntity  construction;
 
 	private List<AvailableTimeRangeEntity> availableTimeRanges;
 	private Collection<DescriptionImageEntity> descriptionImages;
@@ -47,6 +49,9 @@ public class EquipmentEntity implements Serializable {
 
 	private List<AdditionalSpecsValueEntity> additionalSpecsValues;
 	private List<HiringTransactionEntity> hiringTransactions;
+
+
+	private List<HiringTransactionEntity> processingHiringTransactions;
 
 	public EquipmentEntity() {
 	}
@@ -136,16 +141,15 @@ public class EquipmentEntity implements Serializable {
 		this.contractor = constructor;
 	}
 
-	@Basic
-	@Column(name = "construction_id", nullable = true)
-	public Integer getConstructionId() {
-		return constructionId;
+	@ManyToOne
+	@JoinColumn(name = "construction_id")
+	public ConstructionEntity getConstruction() {
+		return construction;
 	}
 
-	public void setConstructionId(Integer constructionId) {
-		this.constructionId = constructionId;
+	public void setConstruction(ConstructionEntity construction) {
+		this.construction = construction;
 	}
-
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "equipment_id")
@@ -273,6 +277,26 @@ public class EquipmentEntity implements Serializable {
 
 	public void setHiringTransactions(List<HiringTransactionEntity> hiringTransactions) {
 		this.hiringTransactions = hiringTransactions;
+	}
+
+	@XmlTransient
+	@OneToMany(mappedBy = "equipment",fetch = FetchType.LAZY)
+	@Where(clause = "status = 'PROCESSING'")
+	public List<HiringTransactionEntity> getProcessingHiringTransactions() {
+		return processingHiringTransactions;
+	}
+
+	public void setProcessingHiringTransactions(List<HiringTransactionEntity> processingHiringTransactions) {
+		this.processingHiringTransactions = processingHiringTransactions;
+	}
+
+	@Transient
+	public ProcessingHiringTransactionWrapper getProcessingHiringTransaction() {
+		if (getProcessingHiringTransactions().size() > 0) {
+			return new ProcessingHiringTransactionWrapper(getProcessingHiringTransactions().get(0));
+		} else {
+			return null;
+		}
 	}
 
 	public enum Status {

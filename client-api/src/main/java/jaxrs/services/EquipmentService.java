@@ -1,9 +1,6 @@
 package jaxrs.services;
 
-import daos.AdditionalSpecsFieldDAO;
-import daos.ContractorDAO;
-import daos.EquipmentDAO;
-import daos.EquipmentTypeDAO;
+import daos.*;
 import dtos.responses.EquipmentResponse;
 import dtos.wrappers.LocationWrapper;
 import dtos.responses.MessageResponse;
@@ -26,6 +23,8 @@ public class EquipmentService {
 	private static final EquipmentDAO equipmentDAO = new EquipmentDAO();
 	private static final EquipmentTypeDAO equipmentTypeDAO = new EquipmentTypeDAO();
 	private static final ContractorDAO contractorDAO = new ContractorDAO();
+	private static final ConstructionDAO constructionDAO = new ConstructionDAO();
+
 	private static final AdditionalSpecsFieldDAO additionalSpecsFieldDAO = new AdditionalSpecsFieldDAO();
 
 
@@ -103,10 +102,10 @@ public class EquipmentService {
 		return Response.ok(EquipmentDAO.getInstance().findByID(id)).build();
 	}
 
+
 	@PUT
 	@Path("{id:\\d+}")
 	public Response updateEquipmentById(@PathParam("id") long id, EquipmentEntity equipmentEntity) {
-
 
 
 		if (equipmentEntity == null) {
@@ -136,8 +135,8 @@ public class EquipmentService {
 		}
 		long constructorId = equipmentEntity.getContractor().getId();
 
-		ContractorEntity foundConstructor = contractorDAO.findByID(constructorId);
-		if (foundConstructor == null) {
+		ContractorEntity foundContractor = contractorDAO.findByID(constructorId);
+		if (foundContractor == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor not found"));
 			return responseBuilder.build();
 		}
@@ -155,6 +154,24 @@ public class EquipmentService {
 		if (foundEquipmentType == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType not found"));
 			return responseBuilder.build();
+		}
+
+
+		//check construction
+		if (equipmentEntity.getConstruction() != null) {
+			long constructionId = equipmentEntity.getConstruction().getId();
+			ConstructionEntity foundConstructionEntity = constructionDAO.findByID(constructionId);
+			if (foundConstructionEntity == null) {
+				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("construction id=%d not found", constructionId))).build();
+			}
+
+			//todo validate
+			if (foundConstructionEntity.getContractor().getId() != equipmentEntity.getContractor().getId()) {
+				return Response.status(Response.Status.BAD_REQUEST).entity
+						(new MessageResponse(String.format("construction id=%d not belongs to contractor id=%d"
+								, constructionId
+								, foundContractor.getId()))).build();
+			}
 		}
 
 		//todo validate for additionalSpecsValues
@@ -259,8 +276,8 @@ public class EquipmentService {
 		}
 		long constructorId = equipmentEntity.getContractor().getId();
 
-		ContractorEntity foundConstructor = contractorDAO.findByID(constructorId);
-		if (foundConstructor == null) {
+		ContractorEntity foundContractor = contractorDAO.findByID(constructorId);
+		if (foundContractor == null) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor not found"));
 			return responseBuilder.build();
 		}
@@ -279,6 +296,24 @@ public class EquipmentService {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType not found"));
 			return responseBuilder.build();
 		}
+
+		//check construction
+		if (equipmentEntity.getConstruction() != null) {
+			long constructionId = equipmentEntity.getConstruction().getId();
+			ConstructionEntity foundConstructionEntity = constructionDAO.findByID(constructionId);
+			if (foundConstructionEntity == null) {
+				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("construction id=%d not found", constructionId))).build();
+			}
+
+			//todo validate
+			if (foundConstructionEntity.getContractor().getId() != equipmentEntity.getContractor().getId()) {
+				return Response.status(Response.Status.BAD_REQUEST).entity
+						(new MessageResponse(String.format("construction id=%d not belongs to contractor id=%d"
+								, constructionId
+								, foundContractor.getId()))).build();
+			}
+		}
+
 
 		//todo validate for additionalSpecsValues
 		for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValues()) {
@@ -334,7 +369,7 @@ public class EquipmentService {
 			return responseBuilder.build();
 		}
 
-		equipmentEntity.setContractor(foundConstructor);
+		equipmentEntity.setContractor(foundContractor);
 		equipmentEntity.setEquipmentType(foundEquipmentType);
 
 		equipmentDAO.persist(equipmentEntity);
@@ -383,7 +418,7 @@ public class EquipmentService {
 			case RENTING:
 				if (foundEquipment.getStatus() != EquipmentEntity.Status.DELIVERING) {
 					return Response.status(Response.Status.BAD_REQUEST).entity
-							(new MessageResponse(String.format("Invalid! Cannot change status from %s to %s ", foundEquipment.getStatus(),status)))
+							(new MessageResponse(String.format("Invalid! Cannot change status from %s to %s ", foundEquipment.getStatus(), status)))
 							.build();
 				}
 				break;
@@ -391,7 +426,7 @@ public class EquipmentService {
 				// TODO: 2/1/19 change this status by system not user
 				if (foundEquipment.getStatus() != EquipmentEntity.Status.RENTING) {
 					return Response.status(Response.Status.BAD_REQUEST).entity
-							(new MessageResponse(String.format("Invalid! Cannot change status from %s to %s ", foundEquipment.getStatus(),status)))
+							(new MessageResponse(String.format("Invalid! Cannot change status from %s to %s ", foundEquipment.getStatus(), status)))
 							.build();
 				}
 				break;
