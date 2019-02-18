@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import {
     CSSTransition,
 } from 'react-transition-group';
+import { Redirect } from 'react-router-dom'; 
 
 import Step1 from './Step1';
 import Step2 from './Step2';
@@ -21,8 +22,8 @@ class AddEquipment extends Component {
         };
 
         this.data = {
-            constructor: {
-                id: 1,
+            contractor: {
+                id: 12,
             }, // Todo: Get constructorId from user data
         };
 
@@ -70,6 +71,7 @@ class AddEquipment extends Component {
             id: equipmentTypeId,
         };
         this.data.equipmentTypeId = undefined;
+        this.data.specs = undefined;
 
         const data = await ccpApiService.postEquipment(this.data);
         if (data && data.id) {

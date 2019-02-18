@@ -1,3 +1,6 @@
+a:hover {
+  text-decoration: none;
+}
 .section-search {
   background: url("https://images.pexels.com/photos/313032/pexels-photo-313032.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260");
   padding: 80px 0;
@@ -62,4 +65,60 @@ nav.navbar {
 // Constructor card
 .constructor-card > img {
   background-color: #e8e8e8;
+}
+
+.page-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background: #fff;
+}
+
+.date-range-picker input {
+  background: #fff !important;
+}
+
+.owl-carousel .owl-nav button.owl-prev, .owl-carousel .owl-nav button.owl-next {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  z-index: 2;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.22), #000000) !important;
+  margin: 0;
+  border-radius: 0;
+  color: #fff !important;
+  font-weight: bold !important;
+  font-size: 30px !important;
+}
+
+.owl-carousel .owl-nav button.owl-prev {
+  left: 0;
+  right: unset;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.5), #000000) !important;
+}
+
+.product-images-nav .item:hover {
+  cursor: pointer;
+}
+
+.request-card {
+  margin: -6px;
+  padding: 10px;
+  border: 2px dashed #828282;
+  border-radius: 8px;
+  background: #efefef;
+}
+
+.user-dashboard .nav-pills .nav-link {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.sticky-sidebar {
+  top: 65px;
 }

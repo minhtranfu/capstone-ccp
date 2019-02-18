@@ -62,27 +62,29 @@ class AddEquipmentStep1 extends Step {
         // ranges[rangeId].endDate = picker.endDate;
         // console.log(ranges);
         this.setState({
-            startDate: picker.startDate,
-            endDate: picker.endDate,
+            availableTimeRanges: [
+                {
+                    beginDate: picker.startDate,
+                    endDate: picker.endDate,
+                }
+            ]
         })
     };
 
     _getLabelOfRange = (rangeId) => {
-        const { startDate, endDate } = this.state;
-        // if (ranges == undefined) {
-        //     return '';
-        // }
-
-        // const range = ranges[rangeId];
-        // if (range == undefined) {
-        //     return '';
-        // }
-
-        if (!startDate) {
+        const { availableTimeRanges } = this.state;
+        if (availableTimeRanges == undefined || availableTimeRanges.length == 0) {
             return '';
         }
 
-        return `${startDate.format('DD/MM/YYYY, HH:mm:ss')} - ${endDate.format('DD/MM/YYYY, HH:mm:ss')}`;
+        const range = ranges[rangeId];
+        if (range == undefined || !range.beginDate) {
+            return '';
+        }
+
+        const { beginDate, endDate } = range;
+
+        return `${beginDate.format('YYYY/MM/DD')} - ${endDate.format('YYYY/MM/DD')}`;
     }
 
     _handleFieldChange = e => {
@@ -148,8 +150,8 @@ class AddEquipmentStep1 extends Step {
                         <div className="form-group">
                             <label htmlFor="">Available time</label>
                             <DateRangePicker onApply={this._onChangeDateRanage} containerClass="w-100" data-range-id="1" startDate="1/1/2014" endDate="3/1/2014" autoUpdateInput timePicker timePicker24Hour>
-                                <div className="input-group">
-                                    <input type="text" className="form-control" readOnly value={this._getLabelOfRange(1) || ""} />
+                                <div className="input-group date-range-picker">
+                                    <input type="text" className="form-control" readOnly value={this._getLabelOfRange(0) || ""} />
                                     <div className="input-group-append">
                                         <span className="input-group-text" id="basic-addon2"><i className="fa fa-calendar"></i></span>
                                     </div>
