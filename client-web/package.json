@@ -40,6 +40,7 @@
     "react": "^16.6.3",
     "react-bootstrap-daterangepicker": "^4.1.0",
     "react-bootstrap-select": "^0.14.0",
+    "react-bootstrap-sweetalert": "^4.4.1",
     "react-date-range": "^0.9.4",
     "react-dom": "^16.6.3",
     "react-dropzone": "^8.0.3",
