@@ -38,17 +38,20 @@ public class HiringTransactionService {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Equipment id not found!")).build();
 		}
 
+		ContractorEntity foundRequester = contractorDAO.findByID(hiringTransactionRequest.getRequesterId());
+		if (foundRequester == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Requester id not found!")).build();
+		}
+		// TODO: 2/17/19 get requester id from cookie
+
+
+
 		// TODO: 2/17/19 map this properly with modelmapper
 		HiringTransactionEntity hiringTransactionEntity = new HiringTransactionEntity(
-				hiringTransactionRequest, foundEquipment
+				hiringTransactionRequest, foundEquipment, foundRequester
 		);
 
 
-		ContractorEntity contractorEntity = new ContractorEntity();
-		// TODO: 2/17/19 get requester id from cookie
-		contractorEntity.setId(Constants.CURRENT_USER_PROFILE);
-
-		hiringTransactionEntity.setRequester(contractorEntity);
 
 
 		//already checked by DTO validation
@@ -59,11 +62,6 @@ public class HiringTransactionService {
 		// TODO: 1/30/19 check not null for other data
 
 
-		// check requester id
-		ContractorEntity foundRequester = contractorDAO.findByID(hiringTransactionEntity.getRequester().getId());
-		if (foundRequester == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Requester id not found!")).build();
-		}
 
 
 		//validate begindate enddate

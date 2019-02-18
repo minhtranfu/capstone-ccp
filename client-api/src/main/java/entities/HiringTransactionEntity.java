@@ -47,7 +47,7 @@ public class HiringTransactionEntity {
 	public HiringTransactionEntity() {
 	}
 
-	public HiringTransactionEntity(HiringTransactionRequest request, EquipmentEntity equipment) {
+	public HiringTransactionEntity(HiringTransactionRequest request, EquipmentEntity equipment, ContractorEntity requester) {
 		this.beginDate = request.getBeginDate();
 		this.endDate = request.getEndDate();
 		this.requesterAddress = request.getRequesterAddress();
@@ -55,6 +55,7 @@ public class HiringTransactionEntity {
 		this.requesterLongitude = request.getRequesterLongitude();
 
 		this.equipment = equipment;
+		this.requester = requester;
 
 		this.dailyPrice = equipment.getDailyPrice();
 		this.deliveryPrice = equipment.getDeliveryPrice();

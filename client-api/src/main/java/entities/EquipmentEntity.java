@@ -41,7 +41,7 @@ public class EquipmentEntity implements Serializable {
 	private EquipmentTypeEntity equipmentType;
 
 	private ContractorEntity contractor;
-	private Integer constructionId;
+	private ConstructionEntity  construction;
 
 	private List<AvailableTimeRangeEntity> availableTimeRanges;
 	private Collection<DescriptionImageEntity> descriptionImages;
@@ -141,16 +141,15 @@ public class EquipmentEntity implements Serializable {
 		this.contractor = constructor;
 	}
 
-	@Basic
-	@Column(name = "construction_id", nullable = true)
-	public Integer getConstructionId() {
-		return constructionId;
+	@ManyToOne
+	@JoinColumn(name = "construction_id")
+	public ConstructionEntity getConstruction() {
+		return construction;
 	}
 
-	public void setConstructionId(Integer constructionId) {
-		this.constructionId = constructionId;
+	public void setConstruction(ConstructionEntity construction) {
+		this.construction = construction;
 	}
-
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "equipment_id")
