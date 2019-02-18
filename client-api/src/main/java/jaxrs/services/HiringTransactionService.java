@@ -45,13 +45,10 @@ public class HiringTransactionService {
 		// TODO: 2/17/19 get requester id from cookie
 
 
-
 		// TODO: 2/17/19 map this properly with modelmapper
 		HiringTransactionEntity hiringTransactionEntity = new HiringTransactionEntity(
 				hiringTransactionRequest, foundEquipment, foundRequester
 		);
-
-
 
 
 		//already checked by DTO validation
@@ -60,8 +57,6 @@ public class HiringTransactionService {
 //
 //		}
 		// TODO: 1/30/19 check not null for other data
-
-
 
 
 		//validate begindate enddate
@@ -170,7 +165,20 @@ public class HiringTransactionService {
 					return Response.status(Response.Status.BAD_REQUEST)
 							.entity(new MessageResponse(String.format("Cannot change from %s to %s",
 									foundTransaction.getStatus(), transactionEntity.getStatus()))).build();
+				}
+				//todo deny other pending requests that intersect with this accepted transaction
 
+				List<HiringTransactionEntity> pendingTransactionIntersectingWith = hiringTransactionDAO.getPendingTransactionIntersectingWith(
+						foundEquipment.getId(),
+						foundTransaction.getBeginDate(),
+						foundTransaction.getEndDate());
+
+				for (HiringTransactionEntity pendingTransaction : pendingTransactionIntersectingWith) {
+					//deny
+					if (pendingTransaction.getId() != foundTransaction.getId()) {
+						pendingTransaction.setStatus(HiringTransactionEntity.Status.DENIED);
+						hiringTransactionDAO.merge(pendingTransaction);
+					}
 				}
 
 				break;

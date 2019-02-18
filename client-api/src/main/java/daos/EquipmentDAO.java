@@ -2,7 +2,6 @@ package daos;
 
 import entities.AvailableTimeRangeEntity;
 import entities.EquipmentEntity;
-import utils.CommonUtils;
 import utils.DBUtils;
 
 import javax.persistence.EntityManager;
@@ -151,7 +150,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		// TODO: 2/11/19 check renting time
 		//check if there are any renting time that INTERSECT with this time range
 		//if yes --> BAD
-		List timeRangeIntersectingWithList = entityManager.createNamedQuery("HiringTransactionEntity.getTimeRangeIntersectingWith")
+		List timeRangeIntersectingWithList = entityManager.createNamedQuery("HiringTransactionEntity.getRentingTimeRangeIntersectingWith")
 				.setParameter("equipmentId", equipmentId)
 				.setParameter("curBeginDate", beginDate)
 				.setParameter("curEndDate", endDate)
