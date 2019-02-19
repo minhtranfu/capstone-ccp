@@ -1,0 +1,26 @@
+image: ictu/sshpass
+
+variables:
+  GIT_STRATEGY: none
+
+before_script:
+ # - apt-get update -qq && apt-get install -y -qq sshpass
+
+deploy_stage:
+  stage: deploy
+  environment: production
+  only:
+    - develop-web-api
+  script:
+    # - ls
+    - sshpass -V
+    - export SSHPASS=$USER_PASS
+    - export GITUSER=$GIT_USER
+    - export GITPASS=$GIT_PASS
+    - sshpass -e ssh -o StrictHostKeyChecking=no root@ccp.hoctot.net "
+        cd /home/capstone/capstone-ccp/ &&
+        git pull  https://$GITUSER:$GITPASS@gitlab.com/minhtranfu/capstone-ccp.git develop-web-api &&
+        cd client-api &&
+        docker build -t client-api .
+        "
+
