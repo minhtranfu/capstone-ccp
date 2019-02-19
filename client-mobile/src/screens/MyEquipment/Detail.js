@@ -14,10 +14,6 @@ import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { ImagePicker, Permissions } from "expo";
 import {
-  getEquipmentDetail,
-  listEquipmentBySupplierId
-} from "../../redux/actions/equipment";
-import {
   getTransactionDetail,
   approveTransaction,
   denyTransaction,
@@ -67,12 +63,6 @@ const COLORS = {
     };
   },
   dispatch => ({
-    fetchListMyEquipment: id => {
-      dispatch(listEquipmentBySupplierId(id));
-    },
-    fetchEquipmentDetail: id => {
-      dispatch(getEquipmentDetail(id));
-    },
     fetchTransactionDetail: id => {
       dispatch(getTransactionDetail(id));
     },
@@ -106,14 +96,15 @@ class MyEquipmentDetail extends Component {
 
   componentDidMount() {
     const { id } = this.props.navigation.state.params;
+    console.log(id);
     this.props.fetchTransactionDetail(id);
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     //Check data is update
-    if (nextProps.transactionDetail.data !== prevState.data) {
+    if (nextProps.transactionDetail !== prevState.data) {
       return {
-        data: nextProps.transactionDetail.data
+        data: nextProps.transactionDetail
       };
     } else return null;
   }
@@ -134,7 +125,6 @@ class MyEquipmentDetail extends Component {
 
   _handleReRender = async (id, status) => {
     await this.props.fetchApproveTransaction(id, { status: status });
-    this.props.navigation.state.params.onNavigateBack(status);
     this.props.navigation.goBack();
   };
 
@@ -177,9 +167,9 @@ class MyEquipmentDetail extends Component {
   };
 
   _renderScrollItem = () => {
-    console.log("find data", this.state.data);
     const { id } = this.props.navigation.state.params;
-    const { data } = this.props.transactionDetail;
+    const { transactionDetail } = this.props;
+    console.log("transaction", transactionDetail);
     return (
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.landscapeImgWrapper}>
@@ -214,7 +204,7 @@ class MyEquipmentDetail extends Component {
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this.setState({ dailyPrice: value })}
-          value={data.dailyPrice.toString()}
+          value={transactionDetail.dailyPrice.toString()}
           keyboardType={"numeric"}
           returnKeyType={"next"}
         />
@@ -225,17 +215,19 @@ class MyEquipmentDetail extends Component {
           inputType="text"
           onChangeText={value => this.setState({ deliveryPrice: value })}
           keyboardType={"numeric"}
-          value={data.deliveryPrice.toString()}
+          value={transactionDetail.deliveryPrice.toString()}
         />
         <Dropdown
           label={"General Type"}
-          defaultText={data.equipment.equipmentType.generalEquipment.name}
+          defaultText={
+            transactionDetail.equipment.equipmentType.generalEquipment.name
+          }
           onSelectValue={value => this.setState({ categories: value })}
           options={DROPDOWN_GENERAL_TYPES_OPTIONS}
         />
         <Dropdown
           label={"Type"}
-          defaultText={data.equipment.equipmentType.name}
+          defaultText={transactionDetail.equipment.equipmentType.name}
           onSelectValue={value => this.setState({ type: value })}
           options={DROPDOWN_TYPES_OPTIONS}
         />
@@ -246,7 +238,7 @@ class MyEquipmentDetail extends Component {
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this.setState({ beginDate: value })}
-          value={data.beginDate}
+          value={transactionDetail.beginDate}
           returnKeyType={"next"}
         />
         <InputField
@@ -255,19 +247,19 @@ class MyEquipmentDetail extends Component {
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this.setState({ endDate: value })}
-          value={data.endDate}
+          value={transactionDetail.endDate}
         />
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View
             style={{
               width: 15,
               height: 15,
-              backgroundColor: COLORS[data.status || "default"]
+              backgroundColor: COLORS[transactionDetail.status || "default"]
             }}
           />
-          <Text style={styles.text}> Status: {data.status}</Text>
+          <Text style={styles.text}> Status: {transactionDetail.status}</Text>
         </View>
-        {this._renderBottomButton(data.status, id)}
+        {this._renderBottomButton(transactionDetail.status, id)}
       </View>
     );
   };
@@ -294,7 +286,7 @@ class MyEquipmentDetail extends Component {
         >
           <Text style={styles.header}>My Equipment</Text>
         </Header>
-        {transactionDetail && transactionDetail.data ? (
+        {Object.keys(transactionDetail).length !== 0 ? (
           <ScrollView>{this._renderScrollItem()}</ScrollView>
         ) : (
           <Loading />

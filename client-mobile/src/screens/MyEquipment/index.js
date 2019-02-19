@@ -100,8 +100,8 @@ const DROPDOWN_OPTIONS = [
     return {
       equipment: state.equipment.list,
       myEquipment: state.transaction.listSupplierTransaction,
-      tranactionStatus: state.transaction.tranactionStatus,
-      detail: state.tranaction.tranactionDetail,
+      transactionStatus: state.transaction.transactionStatus,
+      detail: state.transaction.transactionDetail,
       message: state.status.message
     };
   },
@@ -110,7 +110,7 @@ const DROPDOWN_OPTIONS = [
       dispatch(removeEquipment(id));
     },
     fetchListMyEquipment: id => {
-      dispatch(listEquipmentBySupplierId(id));
+      dispatch(listTransactionBySupplierId(id));
     },
     fetchClearMyEquipment: () => {
       dispatch(clearSupplierTransactionList());
@@ -129,28 +129,43 @@ class MyEquipmentScreen extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchListMyEquipment(12);
+    this.props.fetchListMyEquipment(13);
   }
 
-  componentDidUpdate(prevProps) {
-    const { myEquipment, tranactionStatus, detail } = this.props;
+  componentDidUpdate(prevProps, prevState) {
+    const { myEquipment, transactionStatus, detail } = this.props;
+    console.log("hello", myEquipment);
+    console.log("hrl", prevProps.myEquipment);
     if (
-      myEquipment.data &&
-      prevProps.myEquipment.data &&
-      myEquipment.data.length !== prevProps.myEquipment.data.length
+      transactionStatus.id === prevProps.transactionStatus.id &&
+      transactionStatus.status !== prevProps.transactionStatus.status
     ) {
-      this.props.fetchListMyEquipment(12);
+      this.props.fetchListMyEquipment(13);
     }
+    // const { id } = this.state;
     if (
-      detail.data &&
-      detail.data.id === transactionStatus.data.id &&
-      transactionStatus.data.status !== prevProps.data.staus
+      myEquipment &&
+      prevProps.myEquipment &&
+      myEquipment.length !== prevProps.myEquipment.length
     ) {
-      this.props.fetchListMyEquipment(12);
+      this.props.fetchListMyEquipment(13);
     }
+    // if (
+    //   id === prevState.id &&
+    //   transactionStatus.data.status !== prevProps.transactionStatus.data.status
+    // ) {
+    //   this.props.fetchListMyEquipment(12);
+    // }
+    // if (
+    //   detail.data &&
+    //   detail.data.id === transactionStatus.data.id &&
+    //   transactionStatus.data.status !== prevProps.data.staus
+    // ) {
+    //   this.props.fetchListMyEquipment(12);
+    // }
   }
 
-  _getIdByPress = id => {
+  _handleOnPressItem = id => {
     this.setState({ id });
   };
 
@@ -164,15 +179,15 @@ class MyEquipmentScreen extends Component {
 
   _getEquipementByStatus = status => {
     const { myEquipment } = this.props;
-    return myEquipment.data.filter(item => item.status === status) || [];
+    return myEquipment.filter(item => item.status === status) || [];
   };
 
   _renderContent = () => {
     const { myEquipment, message } = this.props;
-    console.log(message);
+    // console.log("status here", this.props.transactionStatus);
     return (
       <View style={styles.scrollWrapper}>
-        {myEquipment.data.length > 0 ? (
+        {myEquipment.length > 0 ? (
           <View>
             <Dropdown
               label={"Filter"}
@@ -198,10 +213,9 @@ class MyEquipmentScreen extends Component {
                     {equipmentList.map((item, index) => (
                       <EquipmentItem
                         onPress={() => {
-                          this._getIdByPress(item.id);
+                          this._handleOnPressItem(item.id);
                           this.props.navigation.navigate("MyEquipmentDetail", {
-                            id: item.id,
-                            onNavigateBack: this._handleOnNavigateBack
+                            id: item.id
                           });
                         }}
                         key={`eq_${index}`}
@@ -252,7 +266,7 @@ class MyEquipmentScreen extends Component {
             My Equipment
           </Text>
         </Header>
-        {myEquipment && myEquipment.data ? (
+        {myEquipment ? (
           <ScrollView
             style={{ flex: 1 }}
             contentContainerStyle={styles.scrollContent}

@@ -2,7 +2,7 @@ import * as ACTIONS from "../types";
 
 const initialState = {
   status: null,
-  tranactionStatus: {},
+  transactionStatus: {},
   transactionDetail: {},
   listSupplierTransaction: []
 };
@@ -19,28 +19,30 @@ export default function transactionReducer(state = initialState, action) {
     case ACTIONS.GET_TRANSACTION_DETAIL_SUCCESS: {
       return {
         ...state,
-        transactionDetail: payload
+        transactionDetail: payload,
+        transactionStatus: payload
       };
     }
     case ACTIONS.SEND_TRANSACTION_REQUEST_SUCCESS:
       return {
         ...state,
-        tranactionStatus: payload.data
+        transactionStatus: payload,
+        listSupplierTransaction: [...state.listSupplierTransaction, payload]
       };
     case ACTIONS.APPROVE_TRANSACTION_SUCCESS:
       return {
         ...state,
-        tranactionStatus: payload.data
+        transactionStatus: payload
       };
     case ACTIONS.DENY_TRANSACTION_SUCCESS:
       return {
         ...state,
-        tranactionStatus: payload.data
+        transactionStatus: payload
       };
     case ACTIONS.CANCEL_TRANSACTION_SUCCESS:
       return {
         ...state,
-        tranactionStatus: payload.data
+        transactionStatus: payload
       };
     case ACTIONS.CLEAR_TRANSACTION_DETAIL:
       return {

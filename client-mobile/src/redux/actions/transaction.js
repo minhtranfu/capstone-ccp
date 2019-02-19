@@ -7,7 +7,7 @@ export function listTransactionBySupplierId(id) {
     const res = await axios.get(`transactions/supplier/${id}`);
     dispatch({
       type: Actions.LIST_SUPPLIER_TRANSACTION_SUCCESS,
-      payload: res
+      payload: res.data
     });
   };
 }
@@ -17,7 +17,7 @@ export function getTransactionDetail(id) {
     const res = await axios.get(`transactions/${id}`);
     dispatch({
       type: Actions.GET_TRANSACTION_DETAIL_SUCCESS,
-      payload: res
+      payload: res.data
     });
   };
 }
@@ -29,7 +29,7 @@ export function sendTransactionRequest(transaction) {
       const res = await axios.post(`transactions`, transaction);
       dispatch({
         type: Actions.SEND_TRANSACTION_REQUEST_SUCCESS,
-        payload: res
+        payload: res.data
       });
     } catch (error) {
       StatusAction.error("Send not successful");
@@ -42,7 +42,7 @@ export function approveTransaction(id, transactionStatus) {
     const res = await axios.put(`transactions/${id}`, transactionStatus);
     dispatch({
       type: Actions.APPROVE_TRANSACTION_SUCCESS,
-      payload: res
+      payload: res.data
     });
   };
 }
@@ -52,7 +52,7 @@ export function denyTransaction(id, transactionStatus) {
     const res = await axios.put(`transactions/${id}`, transactionStatus);
     dispatch({
       type: Actions.DENY_TRANSACTION_SUCCESS,
-      payload: res
+      payload: res.data
     });
   };
 }
@@ -62,7 +62,7 @@ export function cancelTransaction(id) {
     const res = await axios.post(`transactions/${id}`);
     dispatch({
       type: Actions.CANCEL_TRANSACTION_SUCCESS,
-      payload: res
+      payload: res.data
     });
   };
 }
