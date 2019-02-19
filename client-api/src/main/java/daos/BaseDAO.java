@@ -35,12 +35,14 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T,PK>{
 		entityManager.remove(t);
 		entityManager.getTransaction().commit();	}
 
-	public void merge(T t) {
+	public T merge(T t) {
+		T managedEntity;
 		EntityManager entityManager = DBUtils.getEntityManager();
 		entityManager.getTransaction().begin();
-		entityManager.merge(t);
+		managedEntity = entityManager.merge(t);
 		entityManager.getTransaction().commit();
 
+		return managedEntity;
 	}
 
 

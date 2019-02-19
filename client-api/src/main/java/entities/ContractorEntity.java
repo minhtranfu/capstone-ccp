@@ -91,7 +91,7 @@ public class ContractorEntity {
 
 
 	@Basic
-	@Column(name = "is_activated")
+	@Column(name = "is_activated", insertable = false, updatable = false)
 	public boolean isActivated() {
 		return isActivated;
 	}
@@ -122,10 +122,22 @@ public class ContractorEntity {
 		this.updatedTime = updatedTime;
 	}
 
-	@OneToMany(mappedBy = "contractor", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "contractor",cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<ConstructionEntity> getConstructions() {
 		return constructions;
 	}
+
+
+	public void addConstruction(ConstructionEntity constructionEntity) {
+		constructionEntity.setContractor(this);
+		constructions.add(constructionEntity);
+	}
+
+	public void removeConstruction(ConstructionEntity constructionEntity) {
+		constructionEntity.setContractor(null);
+		constructions.remove(constructionEntity);
+	}
+
 
 	public void setConstructions(List<ConstructionEntity> constructions) {
 		this.constructions = constructions;

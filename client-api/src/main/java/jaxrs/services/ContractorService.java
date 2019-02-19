@@ -5,6 +5,7 @@ import daos.ContractorDAO;
 import dtos.responses.MessageResponse;
 import entities.ConstructionEntity;
 import entities.ContractorEntity;
+import utils.DBUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -143,10 +144,8 @@ public class ContractorService {
 					String.format("contractor id=%s not found!", contractorId)
 			)).build();
 		}
-		ContractorEntity contractorEntity = new ContractorEntity();
-		contractorEntity.setId(contractorId);
 
-		constructionEntity.setContractor(contractorEntity);
+		constructionEntity.setContractor(foundContractor);
 		constructionDao.persist(constructionEntity);
 
 		return Response.status(Response.Status.CREATED).entity(constructionDao.findByID(constructionEntity.getId())).build();

@@ -42,6 +42,7 @@ public class EquipmentService {
 			@QueryParam("long") @DefaultValue(DEFAULT_LONG) double longitude,
 			@QueryParam("beginDate") @DefaultValue("") String beginDateStr,
 			@QueryParam("endDate") @DefaultValue("") String endDateStr,
+			@QueryParam("equipmentTypeId") @DefaultValue("0") long equipmentTypeId,
 			@QueryParam("lquery") @DefaultValue("") String locationQuery,
 			@QueryParam("orderBy") @DefaultValue("id.asc") String orderBy,
 			@QueryParam("limit") @DefaultValue(DEFAULT_RESULT_LIMIT) int limit,
@@ -80,6 +81,7 @@ public class EquipmentService {
 
 		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(
 				beginDate, endDate,
+				equipmentTypeId,
 				orderBy,
 				offset,
 				limit);
@@ -312,6 +314,16 @@ public class EquipmentService {
 								, constructionId
 								, foundContractor.getId()))).build();
 			}
+		}
+
+		// TODO: 2/19/19 add available time ranges
+		for (AvailableTimeRangeEntity availableTimeRange : equipmentEntity.getAvailableTimeRanges()) {
+			availableTimeRange.setEquipment(equipmentEntity);
+		}
+
+		// TODO: 2/19/19 add addtionalsepecs
+		for (AdditionalSpecsValueEntity additionalSpecsValue : equipmentEntity.getAdditionalSpecsValues()) {
+			additionalSpecsValue.setEquipment(equipmentEntity);
 		}
 
 
