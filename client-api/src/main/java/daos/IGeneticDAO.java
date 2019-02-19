@@ -11,7 +11,7 @@ public interface IGeneticDAO<T, PK> {
 	void delete(T t);
 
 
-	void merge(T t);
+	T merge(T t);
 	List<T> getAll(String queryName);
 
 }

@@ -91,7 +91,7 @@ public class ContractorEntity {
 
 
 	@Basic
-	@Column(name = "is_activated")
+	@Column(name = "is_activated", insertable = false, updatable = false)
 	public boolean isActivated() {
 		return isActivated;
 	}
@@ -123,7 +123,6 @@ public class ContractorEntity {
 	}
 
 	@OneToMany(mappedBy = "contractor",cascade = CascadeType.ALL, orphanRemoval = true)
-//	@JoinColumn(name = "contractor_id")
 	public List<ConstructionEntity> getConstructions() {
 		return constructions;
 	}
