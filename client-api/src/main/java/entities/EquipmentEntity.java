@@ -150,8 +150,7 @@ public class EquipmentEntity implements Serializable {
 		this.construction = construction;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "equipment_id")
+	@OneToMany(mappedBy = "equipment",cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<AvailableTimeRangeEntity> getAvailableTimeRanges() {
 		return availableTimeRanges;
 	}
@@ -259,7 +258,7 @@ public class EquipmentEntity implements Serializable {
 	}
 
 
-	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<AdditionalSpecsValueEntity> getAdditionalSpecsValues() {
 		return additionalSpecsValues;
 	}
@@ -267,6 +266,17 @@ public class EquipmentEntity implements Serializable {
 	public void setAdditionalSpecsValues(List<AdditionalSpecsValueEntity> additionalSpecsValueEntities) {
 		this.additionalSpecsValues = additionalSpecsValueEntities;
 	}
+
+	public void addAdditionalSpecsValue(AdditionalSpecsValueEntity additionalSpecsValueEntity) {
+		additionalSpecsValueEntity.setEquipment(this);
+		additionalSpecsValues.add(additionalSpecsValueEntity);
+	}
+
+	public void removeAdditionalSpecsValue(AdditionalSpecsValueEntity additionalSpecsValueEntity) {
+		additionalSpecsValueEntity.setEquipment(null);
+		additionalSpecsValues.remove(additionalSpecsValueEntity);
+	}
+
 
 	@XmlTransient
 	@OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)

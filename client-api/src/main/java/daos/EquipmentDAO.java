@@ -23,10 +23,12 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 
 	private static final String REGEX_ORDERBY_SINGLEITEM = "(\\w+)\\.(asc|desc)($|,)";
-	public List<EquipmentEntity> searchEquipment(Date beginDate, Date endDate, String orderBy, int offset, int limit) {
+	public List<EquipmentEntity> searchEquipment(Date beginDate, Date endDate,
+												 long equipmentTypeId,
+												 String orderBy, int offset, int limit) {
 
 
-		//"select e from EquipmentEntity  e where exists (select t from AvailableTimeRangeEntity t where t.equipment.id = e.id  and  t.beginDate <= :curBeginDate and  :curEndDate <= t.endDate)"
+		//"select e from EquipmentEntity  e where e.equipmentType.id = :equipmentTypeIdParam and exists (select t from AvailableTimeRangeEntity t where t.equipment.id = e.id  and  t.beginDate <= :curBeginDate and  :curEndDate <= t.endDate)"
 
 		//cant use something like 'from e.availableTimeRanges' because of the lack of flexibility of jpa criteria query
 
@@ -44,7 +46,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 		ParameterExpression<Date> beginDateParam = criteriaBuilder.parameter(Date.class);
 		ParameterExpression<Date> endDateParam = criteriaBuilder.parameter(Date.class);
-
+		ParameterExpression<Long> equipmentTypeIdParam = criteriaBuilder.parameter(Long.class);
 		List<Predicate> whereClauses = new ArrayList<>();
 
 		whereClauses.add(criteriaBuilder.equal(t.get("equipment").get("id"), e.get("id")));
@@ -61,6 +63,9 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 			whereClauses.add(criteriaBuilder.lessThanOrEqualTo(endDateParam, t.get("endDate")));
 		}
 
+		if (equipmentTypeId != 0) {
+			whereClauses.add(criteriaBuilder.equal(equipmentTypeIdParam, e.get("equipmentType").get("id")));
+		}
 
 		subQuery.select(t).where(whereClauses.toArray(new Predicate[0]));
 
@@ -100,6 +105,11 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		}
 		if (endDate != null) {
 			typeQuery.setParameter(endDateParam, endDate);
+		}
+
+		if (equipmentTypeId > 0) {
+			typeQuery.setParameter(equipmentTypeIdParam, equipmentTypeId);
+
 		}
 
 		typeQuery.setFirstResult(offset);

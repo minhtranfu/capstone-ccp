@@ -122,10 +122,23 @@ public class ContractorEntity {
 		this.updatedTime = updatedTime;
 	}
 
-	@OneToMany(mappedBy = "contractor", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "contractor",cascade = CascadeType.ALL, orphanRemoval = true)
+//	@JoinColumn(name = "contractor_id")
 	public List<ConstructionEntity> getConstructions() {
 		return constructions;
 	}
+
+
+	public void addConstruction(ConstructionEntity constructionEntity) {
+		constructionEntity.setContractor(this);
+		constructions.add(constructionEntity);
+	}
+
+	public void removeConstruction(ConstructionEntity constructionEntity) {
+		constructionEntity.setContractor(null);
+		constructions.remove(constructionEntity);
+	}
+
 
 	public void setConstructions(List<ConstructionEntity> constructions) {
 		this.constructions = constructions;

@@ -2,6 +2,7 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
+import javax.naming.Name;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.sql.Timestamp;
@@ -50,6 +51,7 @@ public class AvailableTimeRangeEntity {
 
 	@XmlTransient
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "equipment_id")
 	public EquipmentEntity getEquipment() {
 		return equipment;
 	}
