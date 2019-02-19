@@ -1,0 +1,5 @@
+export const TRANSACTION_STATUSES = {
+    ACCEPTED: 'ACCEPTED',
+    DENIED: 'DENIED',
+    PENDING: 'PENDING',
+};

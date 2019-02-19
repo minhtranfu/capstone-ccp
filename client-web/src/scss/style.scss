@@ -121,4 +121,19 @@ nav.navbar {
 
 .sticky-sidebar {
   top: 65px;
+  z-index: 10;
+}
+
+.transaction {
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.22);
+  word-wrap: keep-all;
+  white-space: nowrap;
+  .image {
+    max-height: 200px;
+    max-width: 300px;
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
 }

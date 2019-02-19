@@ -21,7 +21,16 @@ const CcpApiService = {
   },
   postTransaction(transaction) {
     return DataAccessService.post('/transactions', transaction);
-  }
+  },
+  getEquipmentsByContractorId(constractorId) {
+    return DataAccessService.get(`contractors/${constractorId}/equipments`);
+  },
+  getConstructionsByContractorId(constractorId) {
+    return DataAccessService.get(`contractors/${constractorId}/constructions`);
+  },
+  getTransactionsByRequesterId(requesterId) {
+    return DataAccessService.get(`transactions/requester/${requesterId}`);
+  },
 };
   
 export default CcpApiService;  
