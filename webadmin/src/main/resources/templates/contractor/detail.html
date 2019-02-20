@@ -59,7 +59,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Picture:</label>
-                                        <input th:field="*{thumbnail}" class="form-control" placeholder="Thumbnail">
+                                        <img th:src="*{thumbnail}" style="width: 100px; height: 100px"/>
                                     </div>
                                     <div class="form-group">
                                         <label>Created Time:</label>
@@ -80,7 +80,7 @@
                                             <a th:case="2" th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
                                                class="link btn btn-success">Active Contractor</a>
                                         </span>
-                                        <input type="Submit" class="btn btn-default">
+                                        <input type="Submit" value="Save" class="btn btn-success">
                                     </div>
 
                                 </form>

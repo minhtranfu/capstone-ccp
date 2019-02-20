@@ -1,5 +1,7 @@
 package com.ccp.webadmin.entities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -17,6 +19,9 @@ public class EquipmentTypeEntity implements Serializable {
     @Size(min = 3, message = "Equipment's name required more than 3 letters")
     @Column(name = "name")
     private String name;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "general_equipment_type_id")
@@ -52,5 +57,13 @@ public class EquipmentTypeEntity implements Serializable {
 
     public void setGeneralEquipmentType(GeneralEquipmentTypeEntity generalEquipmentType) {
         this.generalEquipmentType = generalEquipmentType;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

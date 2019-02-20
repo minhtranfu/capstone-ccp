@@ -19,7 +19,7 @@ public class AdminAccountEntity  {
     @Column(name = "id")
     private Integer id;
 
-    @NotNull
+    @NotNull(message = "aaaa")
     @Column(name = "username")
     private String username;
 

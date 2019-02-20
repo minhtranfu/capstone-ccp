@@ -15,18 +15,18 @@ public class AdminUserEntity implements Serializable {
     @Column(name = "id")
     private Integer id;
 
-    @Size(min = 3, message = "Name required more than 3 letters")
+//    @Size(min = 3, message = "Name required more than 3 letters")
     @Column(name = "name")
     private String name;
 
     @Column(name = "is_male")
     private boolean isMale;
 
-    @Pattern(regexp = "\\d{10}", message = "Invalid Phone Number")
+//    @Pattern(regexp = "\\d{10}", message = "Invalid Phone Number")
     @Column(name = "phone", length = 10)
     private String phone;
 
-    @Email(message = "Email required")
+//    @Email(message = "Email required")
     @Column(name = "email")
     private String email;
 

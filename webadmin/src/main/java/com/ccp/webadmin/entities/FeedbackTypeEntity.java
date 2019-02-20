@@ -1,14 +1,12 @@
 package com.ccp.webadmin.entities;
 
-import org.hibernate.annotations.Where;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "general_equipment_type")
-public class GeneralEquipmentTypeEntity {
+@Table(name = "feedback_type")
+public class FeedbackTypeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -21,10 +19,11 @@ public class GeneralEquipmentTypeEntity {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
-    public GeneralEquipmentTypeEntity() {
+
+    public FeedbackTypeEntity() {
     }
 
-    public GeneralEquipmentTypeEntity(String name, boolean isDeleted) {
+    public FeedbackTypeEntity(String name, boolean isDeleted) {
         this.name = name;
         this.isDeleted = isDeleted;
     }
@@ -45,11 +44,11 @@ public class GeneralEquipmentTypeEntity {
         this.name = name;
     }
 
-    public boolean isIs_deleted() {
+    public boolean isDeleted() {
         return isDeleted;
     }
 
-    public void setIs_deleted(boolean is_delete) {
-        this.isDeleted = isDeleted;
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }
