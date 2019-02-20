@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/equipmentTypes")
 @Produces(MediaType.APPLICATION_JSON)
-public class EquipmentTypeService {
+public class EquipmentTypeResource {
 	public static final EquipmentTypeDAO equipmentTypeDAO = new EquipmentTypeDAO();
 
 	@GET

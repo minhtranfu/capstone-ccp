@@ -18,7 +18,7 @@ import java.util.List;
 
 @Path("/equipments")
 @Produces(MediaType.APPLICATION_JSON)
-public class EquipmentService {
+public class EquipmentResource {
 
 	private static final EquipmentDAO equipmentDAO = new EquipmentDAO();
 	private static final EquipmentTypeDAO equipmentTypeDAO = new EquipmentTypeDAO();

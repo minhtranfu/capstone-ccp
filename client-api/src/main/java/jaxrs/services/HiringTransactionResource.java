@@ -20,7 +20,7 @@ import java.util.List;
 
 @Path("transactions")
 @Produces(MediaType.APPLICATION_JSON)
-public class HiringTransactionService {
+public class HiringTransactionResource {
 
 	private static final HiringTransactionDAO hiringTransactionDAO = new HiringTransactionDAO();
 	private static final EquipmentDAO equipmentDAO = new EquipmentDAO();

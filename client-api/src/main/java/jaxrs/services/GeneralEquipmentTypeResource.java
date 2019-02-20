@@ -17,7 +17,7 @@ import java.util.List;
 
 @Path("generalEquipmentTypes")
 @Produces(MediaType.APPLICATION_JSON)
-public class GeneralEquipmentTypeService {
+public class GeneralEquipmentTypeResource {
 	private static final GeneralEquipmentTypeDAO generalEquipmentTypeDAO = new GeneralEquipmentTypeDAO();
 
 	@GET
