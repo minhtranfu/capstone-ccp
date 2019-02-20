@@ -21,13 +21,13 @@ public class UserService {
 
 
 
-//
-//    @GET
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response allUser() {
-//
-////        List<Equipment> resultList = manager.createQuery("Select a From equipment a", Equipment.class).getResultList();
-//
-//        return CommonUtils.responseFilterOk(resultList);
-//    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String allUser() {
+
+//        List<Equipment> resultList = manager.createQuery("Select a From equipment a", Equipment.class).getResultList();
+
+        return "asdasdasd";
+    }
 }

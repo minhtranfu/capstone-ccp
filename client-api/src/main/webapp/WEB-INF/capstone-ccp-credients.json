@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "sonic-arcadia-97210",
+  "private_key_id": "b3c3d9629a87f03747f7c52f2084fe1ae7b1fa14",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCn1yc2ADzlDclG\nXXu1RL6YNGsQQfkHjEicOU8JUJOonEHDQidOR3KXGjtdR3MDZOCnakDhX+eC5i9Q\nCgTENFgVBGqSZbQLXBNN7KcPx/XF5BDY5NHmhnul8WXJb7gEiaxQ4kvsxm6G565/\n1LoHV+pZuF3Qprmgid1T+WALl8sjM0r5onGL1+Q9n0CiF/kY1OjfwS5Mo+iwZFNJ\nEmUEUJpMpAFgfcp25T3z9AhgKnkWvE2qXpecLk5OsDTz5A3SrfU+QIZSmPTp7/gX\ncQxbW9cwDh9igI+2G1Qz+0UVyaH5gd88jVCD9oZlNm8c6UZ/+BEwAP0mIlbA5Dxt\n/HZHpIyJAgMBAAECggEACmHexRJisfCWYMnrmxzzhUrIzKqoEvV0kGVjJDpdx/JS\nhxeSgt8ckYhH389JqA4Xb4O9G7PpCEng51yXSuPKBxLM3N15s7IwZ4OaGfnOlD01\nZZVR/qaXA37ZQwqsIWu6ww4ckDr+H045lyK7lzSzBHXJJ90IYovkqwskC9OJ91Vd\nFofreHx8Yg3ldQel447iTji1KCWt5sF8DvRvx7rFP+wYDnArxWfmMj2WGjMDD/Fh\nak6O0cx3jdNVV1iByF9Clx+OSB7Pj1lBTVgST9VHy9HfwputbTYsmKXwIGDfQi3D\n9hOLRecQDt2h7KCIlC2hVyeEXwfpKpqFY8Y2hCWSAQKBgQDrJumrxVWh0K7rdq7s\nbU1S0rvjB4YX16eyWUiuXKkap4LsSqjt04C1QPwiSVuo9MM755dmHZqBZ7dj8gXT\n5ZT2XHepXsp2Efgq82spAW8yYNzYjwNlcRaBEBBE3vWgO8T3kc7ZxLdCT2nsU1jg\nRf5ssGxFJ3fVSGcecWNpn8nHqQKBgQC2uIPa108OGvSoVumPTyi/R46+BKc4wow0\nzOY1snsbcwgTyenwnp1D/FwHccvUHSVQK5rK651wj+YNFLIT+23ucH0fqBZAUUk4\ndCIzLP02O1JkeZo19Xpq5R2Yodz/Jh6FrAnG2mEdkdcR3PwNhb0tepntQbX8cxPp\n7zxUnwIp4QKBgGf4x57EXM10SLMhwcwVs/en551FKVwHZUVtRr6Zh8eaQ0AY7sJh\nHuqFdjXuu5Fjz6MADif/dN48rpCJZVxAiXG4hswjdl9oKJNNF5eE49ahj2RNL5I9\nw1aDdL4O2wnjA373QD93RBQUqt/sJkLbj9gc1XJqNgjev4FtXyhHl18pAoGABxZV\nFvHvAQ8OmlD0sjhRzkmKQdiQW+U/5vRjoYWQvNnTYGEej9S3KOHq9+b0DwAqaFeo\no2JMMweB1tQMrDW+Z9c5Izcz1b7RZj0q7m06TRYz9e25i4o/+1Fzum3c0pC58llf\n77Scu7bibrDxndyoH9F3kvpPgsE77oD3CBk6zkECgYBTNsXjImoZ3hYE4o3aFlEd\nYy9pVsK80MaK5zA9QSWplI/WeloHbNjhCxaksQKP3QJ62BQKsnJGwLN5/71EOowl\nGS8Rj4eLbDCcMtbbh/LOi0kqT76mko7AsRpHkN3OTtgeHhQUPf51sqhHFA80cmBn\nrP/rVIyOY6+S/ZnB6dtz3A==\n-----END PRIVATE KEY-----\n",
+  "client_email": "capstone-ccp@sonic-arcadia-97210.iam.gserviceaccount.com",
+  "client_id": "117145390377969360203",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/capstone-ccp%40sonic-arcadia-97210.iam.gserviceaccount.com"
+}
