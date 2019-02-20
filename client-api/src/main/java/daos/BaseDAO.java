@@ -8,8 +8,9 @@ import javax.persistence.Query;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-public class BaseDAO<T, PK> implements IGeneticDAO<T,PK>{
+public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 	protected Class<T> entityClass;
+
 	public BaseDAO() {
 		ParameterizedType geneticSupperClass = (ParameterizedType) this.getClass().getGenericSuperclass();
 		entityClass = (Class<T>) geneticSupperClass.getActualTypeArguments()[0];
@@ -32,8 +33,9 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T,PK>{
 	public void delete(T t) {
 		EntityManager entityManager = DBUtils.getEntityManager();
 		entityManager.getTransaction().begin();
-		entityManager.remove(t);
-		entityManager.getTransaction().commit();	}
+		entityManager.remove(entityManager.contains(t) ? t : entityManager.merge(t));
+		entityManager.getTransaction().commit();
+	}
 
 	public T merge(T t) {
 		T managedEntity;

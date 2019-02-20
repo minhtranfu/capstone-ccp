@@ -1,15 +1,13 @@
 package entities;
 
-import org.hibernate.annotations.Where;
-
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 
 @Entity
-@Where(clause = "is_deleted=0")
 @Table(name = "cart_request", schema = "capstone_ccp", catalog = "")
+@NamedQuery(name = "CartRequestEntity.getByContractorId", query = "select e from CartRequestEntity e where e.sent = false and  e.contractor.id = :contractorId")
 public class CartRequestEntity {
 	private long id;
 	private Timestamp beginDate;
@@ -20,7 +18,11 @@ public class CartRequestEntity {
 	private Timestamp createdTime;
 	private Timestamp updatedTime;
 
+	private EquipmentEntity equipment;
 	private ContractorEntity contractor;
+
+	private boolean isSent;
+
 
 	@Id
 	@GeneratedValue
@@ -84,7 +86,7 @@ public class CartRequestEntity {
 	}
 
 	@Basic
-	@Column(name = "created_time", insertable=false, updatable = false)
+	@Column(name = "created_time", insertable = false, updatable = false)
 	public Timestamp getCreatedTime() {
 		return createdTime;
 	}
@@ -94,7 +96,7 @@ public class CartRequestEntity {
 	}
 
 	@Basic
-@Column(name = "updated_time", insertable=false, updatable = false)
+	@Column(name = "updated_time", insertable = false, updatable = false)
 	public Timestamp getUpdatedTime() {
 		return updatedTime;
 	}
@@ -103,7 +105,7 @@ public class CartRequestEntity {
 		this.updatedTime = updatedTime;
 	}
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "contractor_id")
 	public ContractorEntity getContractor() {
 		return contractor;
@@ -112,4 +114,25 @@ public class CartRequestEntity {
 	public void setContractor(ContractorEntity contractor) {
 		this.contractor = contractor;
 	}
+
+	@ManyToOne
+	@JoinColumn(name = "equipment_id")
+	public EquipmentEntity getEquipment() {
+		return equipment;
+	}
+
+	public void setEquipment(EquipmentEntity equipment) {
+		this.equipment = equipment;
+	}
+
+	@Basic
+	@Column(name = "is_sent")
+	public boolean isSent() {
+		return isSent;
+	}
+
+	public void setSent(boolean sent) {
+		isSent = sent;
+	}
+
 }

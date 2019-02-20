@@ -5,6 +5,7 @@ import daos.ContractorDAO;
 import dtos.responses.MessageResponse;
 import entities.ConstructionEntity;
 import entities.ContractorEntity;
+import org.glassfish.jersey.server.model.Resource;
 import utils.DBUtils;
 
 import javax.ws.rs.*;
@@ -13,7 +14,7 @@ import javax.ws.rs.core.Response;
 
 @Path("contractors")
 @Produces(MediaType.APPLICATION_JSON)
-public class ContractorService {
+public class ContractorResource {
 
 	private static final ContractorDAO contractorDao = new ContractorDAO();
 	private static final ConstructionDAO constructionDao = new ConstructionDAO();
@@ -70,6 +71,21 @@ public class ContractorService {
 		return Response.ok(contractorDao.findByID(contractorEntity.getId())).build();
 
 	}
+
+//	@Path("{id:\\d+}/constructions")
+//	public ConstructionService toConstructionService(@PathParam("id") long contractorId) {
+//		// TODO: 2/20/19 validate contractor id
+//		//validate contractor id
+//		ContractorEntity foundContractorEntity = contractorDao.findByID(contractorId);
+//		if (foundContractorEntity == null) {
+//			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
+//					String.format("contractor id=%s not found!", contractorId)
+//			)).build();
+//		}
+//
+//		return new ConstructionService(foundContractorEntity);
+//	}
+
 
 
 	@GET
@@ -254,6 +270,29 @@ public class ContractorService {
 		}
 
 		return Response.ok(foundContractor.getEquipments()).build();
+	}
+
+
+	/*============================Cart Service=================*/
+//	@GET
+//	@Path("{id:\\d+}/cart")
+//	public Response getCart(@PathParam("id")long contractorId) {
+//		//validate contractor id
+//		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
+//		if (foundContractor == null) {
+//			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
+//					String.format("contractor id=%s not found!", contractorId)
+//			)).build();
+//		}
+//
+//
+//
+//	}
+
+	@Path("{id:\\d+}/cart")
+	public CartRequestResource toCartResource(@PathParam("id") long contractorId) {
+		return new CartRequestResource(contractorId);
+
 	}
 
 

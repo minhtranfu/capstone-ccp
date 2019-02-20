@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 @Path("/user")
 //@ResourceFilters(CorsFilter.class)
 //@RequestScoped
-public class UserService {
+public class UserResource {
     private static EntityManager manager = DBUtils.getEntityManager();
 
 
