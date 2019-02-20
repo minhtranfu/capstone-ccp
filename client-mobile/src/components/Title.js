@@ -1,10 +1,15 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { View, Text, StyleSheet } from "react-native";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
 
 class Title extends Component {
+  static propTypes = {
+    title: PropTypes.string,
+    hasMore: PropTypes.string
+  };
   render() {
     const { title, hasMore, titleStyle, style } = this.props;
     return (

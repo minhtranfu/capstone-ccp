@@ -55,3 +55,18 @@ export const REMOVE_CART = "@@cart/REMOVE_CART";
 export const STATUS_LOADING = "@@status/LOADING";
 export const STATUS_SUCCESS = "@@status/SUCCESS";
 export const STATUS_FAIL = "@@status/FAIL";
+
+//CONTRACTOR
+export const GET_CONTRACTOR_SUCCESS = "@@contractor/GET_CONTRACTOR_SUCCESS";
+export const CONTRACTOR_REGISTER_SUCCESS =
+  "@@contractor/CONTRACTOR_REGISTER_SUCCESS";
+export const UPDATE_CONTRACTOR_SUCCESS =
+  "@@contractor/UPDATE_CONTRACTOR_SUCCESS";
+
+export const GET_CONSTRUCTION_SUCCESS = "@@contractor/GET_CONSTRUCTION_SUCCESS";
+export const CREATE_CONSTRUCTION_SUCCESS =
+  "@@contractor/CREATE_CONSTRUCTION_SUCCESS";
+export const UPDATE_CONSTRUCTION_SUCCESS =
+  "@@contractor/UPDATE_CONSTRUCTION_SUCCESS";
+export const DELETE_CONSTRUCTION_SUCCESS =
+  "@@contractor/DELETE_CONSTRUCTION_SUCCESS";

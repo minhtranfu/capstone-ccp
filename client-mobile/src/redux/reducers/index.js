@@ -4,13 +4,15 @@ import equipmentReducer from "./equipment";
 import typeReducer from "./type";
 import statusReducer from "./status";
 import transactionReducer from "./transaction";
+import contractorReducer from "./contractor";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   equipment: equipmentReducer,
   type: typeReducer,
   status: statusReducer,
-  transaction: transactionReducer
+  transaction: transactionReducer,
+  contractor: contractorReducer
 });
 
 export default rootReducer;

@@ -18,7 +18,7 @@ import {
 
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
-import EquipmentItem from "../MyEquipment/components/EquipmentItem";
+import EquipmentItem from "../MyTransaction/components/EquipmentItem";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";

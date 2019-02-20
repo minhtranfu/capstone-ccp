@@ -10,17 +10,17 @@ import DismissableStackNav from "../Utils/DismissableStackNav";
 import colors from "./colors";
 
 import Discover from "../screens/Discover";
-import Settings from "../screens/Settings";
+import Account from "../screens/Account";
 import Search from "../screens/Search";
 import SearchResult from "../screens/Search/SearchResult";
-import MyEquipment from "../screens/MyEquipment";
-import AddDetail from "../screens/MyEquipment/AddEquipment/AddDetail";
-import AddDuration from "../screens/MyEquipment/AddEquipment/AddDuration";
-import AddDurationText from "../screens/MyEquipment/AddEquipment/AddDurationText";
-import AddImage from "../screens/MyEquipment/AddEquipment/AddImage";
+import MyTransaction from "../screens/MyTransaction";
+import AddDetail from "../screens/MyTransaction/AddEquipment/AddDetail";
+import AddDuration from "../screens/MyTransaction/AddEquipment/AddDuration";
+import AddDurationText from "../screens/MyTransaction/AddEquipment/AddDurationText";
+import AddImage from "../screens/MyTransaction/AddEquipment/AddImage";
 import EquipmentDetail from "../screens/EquipmentDetail";
 import Transaction from "../screens/EquipmentDetail/Transaction";
-import MyEquipmentDetail from "../screens/MyEquipment/Detail";
+import MyTransactionDetail from "../screens/MyTransaction/Detail";
 import Activity from "../screens/Activity";
 import ActivityDetail from "../screens/Activity/Detail";
 import Notification from "../screens/Activity/Notification";
@@ -62,9 +62,9 @@ DiscoverStack.navigationOptions = ({ navigation }) => {
   };
 };
 
-const SettingStack = createStackNavigator(
+const AccountStack = createStackNavigator(
   {
-    Settings: Settings
+    Account: Account
   },
   {
     headerMode: "none"
@@ -93,20 +93,20 @@ const AddNewEquipmentStack = DismissableStackNav(
   }
 );
 
-const EquipmentStack = createStackNavigator(
+const TransactionStack = createStackNavigator(
   {
-    Equipment: MyEquipment,
-    MyEquipmentDetail: MyEquipmentDetail,
+    MyTransaction: MyTransaction,
+    MyTransactionDetail: MyTransactionDetail,
     AddNewEquipment: AddNewEquipmentStack
   },
   {
     mode: "modal",
     headerMode: "none",
-    initialRouteName: "Equipment"
+    initialRouteName: "MyTransaction"
   }
 );
 
-EquipmentStack.navigationOptions = ({ navigation }) => {
+TransactionStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
 
   let routeName = navigation.state.routes[navigation.state.index].routeName;
@@ -145,11 +145,11 @@ const TabNavigator = createBottomTabNavigator(
         tabBarIcon: <ButtonWithIcon /> // Plus button component
       })
     },
-    Equipment: EquipmentStack,
-    Settings: SettingStack
+    Transaction: TransactionStack,
+    Account: AccountStack
   },
   {
-    initialRouteName: "Equipment",
+    initialRouteName: "Account",
     defaultNavigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, horizontal, tintColor }) => {
         const { routeName } = navigation.state;
@@ -162,11 +162,11 @@ const TabNavigator = createBottomTabNavigator(
           icon = focused
             ? require("../../assets/icons/icons8-activity-active.png")
             : require("../../assets/icons/icons8-activity.png");
-        } else if (routeName === "Equipment") {
+        } else if (routeName === "Transaction") {
           icon = focused
             ? require("../../assets/icons/icons8-garage-active.png")
             : require("../../assets/icons/icons8-garage.png");
-        } else if (routeName === "Settings") {
+        } else if (routeName === "Account") {
           icon = focused
             ? require("../../assets/icons/icons8-settings-active.png")
             : require("../../assets/icons/icons8-settings.png");

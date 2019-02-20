@@ -94,9 +94,9 @@ class Activity extends Component {
     if (requesterEquipment.data.length > 0) {
       switch (selectedIndex) {
         case 0:
-          return this._renderPendingScreen();
+          return this._renderFlatList("PENDING");
         case 1:
-          return this._renderHiredScreen();
+          return this._renderFlatList("ACCEPTED");
       }
     } else {
       return (
@@ -107,51 +107,18 @@ class Activity extends Component {
     }
   };
 
-  //Render item in hired tab
-  _renderHiredScreen = () => (
+  //Render flat list base on status
+  _renderFlatList = status => (
     <FlatList
       style={{ flex: 1, paddingHorizontal: 15 }}
-      data={this._handleFilterStatusResult("ACCEPTED")}
-      renderItem={this._renderHiredFlatListItem}
+      data={this._handleFilterStatusResult(status)}
+      renderItem={({ item }) => this._renderItem(status, { item })}
       keyExtractor={(item, index) => index.toString()}
     />
   );
 
-  //Render item in pending tab
-  _renderPendingScreen = () => (
-    <FlatList
-      style={{ flex: 1, paddingHorizontal: 15 }}
-      data={this._handleFilterStatusResult("PENDING")}
-      renderItem={this._renderPendingFlatListItem}
-      keyExtractor={(item, index) => index.toString()}
-    />
-  );
-
-  //List data in hired tab
-  _renderHiredFlatListItem = ({ item }) => (
-    <View style={styles.pendingRowItem}>
-      <EquipmentItem
-        hasRenewButton={true}
-        onPress={() =>
-          this.props.navigation.navigate("Detail", { id: item.id })
-        }
-        key={`eq_${item.id}`}
-        id={item.id}
-        name={item.equipment.name}
-        imageURL={
-          "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-        }
-        status={item.status}
-        contractor={item.equipment.contractor.name}
-        phone={item.equipment.contractor.phoneNumber}
-        beginDate={item.beginDate}
-        endDate={item.endDate}
-      />
-    </View>
-  );
-
-  //List data in pending tab
-  _renderPendingFlatListItem = ({ item }) => (
+  //Render row item
+  _renderItem = (status, { item }) => (
     <View style={styles.pendingRowItem}>
       <EquipmentItem
         onPress={() =>
@@ -169,7 +136,9 @@ class Activity extends Component {
         beginDate={item.beginDate}
         endDate={item.endDate}
       />
-      <StepProgress options={STEP_PROGRESS_OPTIONS} status={item.status} />
+      {status !== "ACCEPTED" ? (
+        <StepProgress options={STEP_PROGRESS_OPTIONS} status={item.status} />
+      ) : null}
     </View>
   );
 

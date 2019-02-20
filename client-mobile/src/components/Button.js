@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
 import {
   StyleSheet,
   View,
@@ -16,6 +17,10 @@ const Touchable =
   Platform.OS === "ios" ? TouchableOpacity : TouchableNativeFeedback;
 
 class Button extends PureComponent {
+  static propTypes = {
+    text: PropTypes.string
+  };
+
   render() {
     const { onPress, buttonStyle, text, wrapperStyle, textStyle } = this.props;
     return (
@@ -32,7 +37,7 @@ class Button extends PureComponent {
 
 const styles = StyleSheet.create({
   btnWrapper: {
-    marginTop: 20
+    marginTop: 15
   },
   button: {
     backgroundColor: colors.primaryColor,
@@ -46,7 +51,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colors.white,
-    fontSize: fontSize.bodyText
+    fontSize: fontSize.bodyText,
+    fontWeight: "500"
   }
 });
 

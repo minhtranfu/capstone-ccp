@@ -117,7 +117,7 @@ const DROPDOWN_OPTIONS = [
     }
   })
 )
-class MyEquipment extends Component {
+class MyTransaction extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -289,4 +289,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MyEquipment;
+export default MyTransaction;

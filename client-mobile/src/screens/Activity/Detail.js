@@ -70,6 +70,7 @@ class ActivityDetail extends Component {
 
   componentDidMount() {
     const { id } = this.props.navigation.state.params;
+    console.log(id);
     this.props.fetchTransactionDetail(id);
   }
 
@@ -119,9 +120,10 @@ class ActivityDetail extends Component {
   };
 
   _renderScrollViewItem = () => {
-    const { data } = this.props.detail;
-    const totalDay = this._countTotalDay(data.beginDate, data.endDate);
-    const totalPrice = totalDay * data.dailyPrice;
+    const { detail } = this.props;
+    console.log(detail);
+    const totalDay = this._countTotalDay(detail.beginDate, detail.endDate);
+    const totalPrice = totalDay * detail.dailyPrice;
     return (
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.imageWrapper}>
@@ -134,12 +136,12 @@ class ActivityDetail extends Component {
             style={styles.image}
           />
           <View style={{ flexDirection: "column", paddingLeft: 10 }}>
-            <Text style={styles.title}>{data.equipment.name}</Text>
+            <Text style={styles.title}>{detail.equipment.name}</Text>
             <Text style={styles.text}>
-              Contractor: {data.equipment.contractor.name}
+              Contractor: {detail.equipment.contractor.name}
             </Text>
             <Text style={styles.text}>
-              Phone: {data.equipment.contractor.phoneNumber}
+              Phone: {detail.equipment.contractor.phoneNumber}
             </Text>
           </View>
         </View>
@@ -148,13 +150,13 @@ class ActivityDetail extends Component {
           <Text style={styles.text}>
             From:{" "}
             <Text style={[styles.text, { paddingLeft: 10 }]}>
-              {data.beginDate}
+              {detail.beginDate}
             </Text>
           </Text>
           <Text style={styles.text}>
             To:{" "}
             <Text style={[styles.text, { paddingLeft: 10 }]}>
-              {data.endDate}
+              {detail.endDate}
             </Text>
           </Text>
         </View>
@@ -162,15 +164,15 @@ class ActivityDetail extends Component {
           <Text style={styles.title}>Price</Text>
           <View style={styles.priceItemWrapper}>
             <Text style={styles.text}>Price/day:</Text>
-            <Text style={styles.text}>{data.dailyPrice} $</Text>
+            <Text style={styles.text}>{detail.dailyPrice} $</Text>
           </View>
           <View style={styles.priceItemWrapper}>
             <Text style={styles.text}>Total in {totalDay}:</Text>
             <Text style={styles.text}>{totalPrice} $</Text>
           </View>
         </View>
-        {this._renderStepProgress(data.status)}
-        {this._renderBottomButton(data.status)}
+        {this._renderStepProgress(detail.status)}
+        {this._renderBottomButton(detail.status)}
       </View>
     );
   };
@@ -196,7 +198,7 @@ class ActivityDetail extends Component {
         >
           <Text style={styles.header}>Detail Transaction</Text>
         </Header>
-        {detail.data ? (
+        {detail ? (
           <ScrollView>{this._renderScrollViewItem()}</ScrollView>
         ) : (
           <Loading />
