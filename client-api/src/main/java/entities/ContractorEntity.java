@@ -25,6 +25,9 @@ public class ContractorEntity {
 	private List<EquipmentEntity> equipments;
 	private List<ConstructionEntity> constructions;
 
+	private List<FeedbackEntity> sentFeedback;
+	private List<FeedbackEntity> receivedFeedback;
+
 	@XmlTransient
 	@OneToMany(cascade =
 			{CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
@@ -137,6 +140,28 @@ public class ContractorEntity {
 		constructionEntity.setContractor(null);
 		constructions.remove(constructionEntity);
 	}
+
+	@XmlTransient
+	@OneToMany(mappedBy = "fromContractor", fetch = FetchType.LAZY,cascade = {})
+	public List<FeedbackEntity> getSentFeedback() {
+		return sentFeedback;
+	}
+
+	public void setSentFeedback(List<FeedbackEntity> sentFeedback) {
+		this.sentFeedback = sentFeedback;
+	}
+
+	@XmlTransient
+	@OneToMany(mappedBy = "toContractor", fetch = FetchType.LAZY, cascade = {})
+	public List<FeedbackEntity> getReceivedFeedback() {
+		return receivedFeedback;
+	}
+
+	public void setReceivedFeedback(List<FeedbackEntity> receivedFeedback) {
+		this.receivedFeedback = receivedFeedback;
+	}
+
+
 
 
 	public void setConstructions(List<ConstructionEntity> constructions) {

@@ -5,17 +5,26 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+
 @Entity
 @Where(clause = "is_deleted=0")
+@NamedQueries({
+		@NamedQuery(name = "FeedbackEntity.getByToContractorId", query = "select  e from FeedbackEntity  e where e.toContractor.id = :toContractorId")
+		, @NamedQuery(name = "FeedbackEntity.getByFromContractorId", query = "select  e from FeedbackEntity  e where e.fromContractor.id =:fromContractorId")
+		, @NamedQuery(name = "FeedbackEntity.getBy", query = "select  e from FeedbackEntity  e where e.fromContractor.id =:fromContractorId and e.toContractor.id=:toContractorId")
+})
+
 @Table(name = "feedback", schema = "capstone_ccp", catalog = "")
 public class FeedbackEntity {
 	private long id;
 	private String content;
 	private Boolean isRead;
 	private Timestamp createdTime;
-	private Integer toConstructorId;
-	private Integer fromConstructorId;
-	private Integer feedbackTypeId;
+	private Timestamp updatedTime;
+	private ContractorEntity toContractor;
+	private ContractorEntity fromContractor;
+	private FeedbackTypeEntity feedbackType;
+
 
 	@Id
 	@GeneratedValue
@@ -49,7 +58,7 @@ public class FeedbackEntity {
 	}
 
 	@Basic
-	@Column(name = "created_time", insertable=false, updatable = false)
+	@Column(name = "created_time", insertable = false, updatable = false)
 	public Timestamp getCreatedTime() {
 		return createdTime;
 	}
@@ -58,55 +67,44 @@ public class FeedbackEntity {
 		this.createdTime = createdTime;
 	}
 
+
+	@ManyToOne
+	@JoinColumn(name = "to_contractor_id")
+	public ContractorEntity getToContractor() {
+		return toContractor;
+	}
+
+	public void setToContractor(ContractorEntity toContractor) {
+		this.toContractor = toContractor;
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "from_contractor_id")
+	public ContractorEntity getFromContractor() {
+		return fromContractor;
+	}
+
+	public void setFromContractor(ContractorEntity fromContractor) {
+		this.fromContractor = fromContractor;
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "feedback_type_id")
+	public FeedbackTypeEntity getFeedbackType() {
+		return feedbackType;
+	}
+
+	public void setFeedbackType(FeedbackTypeEntity feedbackType) {
+		this.feedbackType = feedbackType;
+	}
+
 	@Basic
-	@Column(name = "to_contractor_id", nullable = true)
-	public Integer getToConstructorId() {
-		return toConstructorId;
+	@Column(name = "updated_time", nullable = true, insertable = false, updatable = false)
+	public Timestamp getUpdatedTime() {
+		return updatedTime;
 	}
 
-	public void setToConstructorId(Integer toConstructorId) {
-		this.toConstructorId = toConstructorId;
+	public void setUpdatedTime(Timestamp updatedTime) {
+		this.updatedTime = updatedTime;
 	}
-
-	@Basic
-	@Column(name = "from_contractor_id", nullable = true)
-	public Integer getFromConstructorId() {
-		return fromConstructorId;
-	}
-
-	public void setFromConstructorId(Integer fromConstructorId) {
-		this.fromConstructorId = fromConstructorId;
-	}
-
-	@Basic
-	@Column(name = "feedback_type_id", nullable = true)
-	public Integer getFeedbackTypeId() {
-		return feedbackTypeId;
-	}
-
-	public void setFeedbackTypeId(Integer feedbackTypeId) {
-		this.feedbackTypeId = feedbackTypeId;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		FeedbackEntity that = (FeedbackEntity) o;
-
-		if (id != that.id) return false;
-		if (content != null ? !content.equals(that.content) : that.content != null) return false;
-		if (isRead != null ? !isRead.equals(that.isRead) : that.isRead != null) return false;
-		if (createdTime != null ? !createdTime.equals(that.createdTime) : that.createdTime != null) return false;
-		if (toConstructorId != null ? !toConstructorId.equals(that.toConstructorId) : that.toConstructorId != null)
-			return false;
-		if (fromConstructorId != null ? !fromConstructorId.equals(that.fromConstructorId) : that.fromConstructorId != null)
-			return false;
-		if (feedbackTypeId != null ? !feedbackTypeId.equals(that.feedbackTypeId) : that.feedbackTypeId != null)
-			return false;
-
-		return true;
-	}
-
 }
