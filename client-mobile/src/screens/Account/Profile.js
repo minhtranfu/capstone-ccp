@@ -64,6 +64,7 @@ class Profile extends Component {
 
   _renderScrollViewItem = () => {
     const { contractor } = this.props;
+    const { data } = this.state;
     return (
       <View>
         <InputField

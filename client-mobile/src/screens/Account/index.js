@@ -173,7 +173,7 @@ class Account extends Component {
                   ))}
                   <Button
                     wrapperStyle={{ paddingBottom: 15 }}
-                    buttonStyle={{ backgroundColor: "red" }}
+                    buttonStyle={{ backgroundColor: "#FF5C5C" }}
                     text={"Logout"}
                     onPress={() => {
                       this.props.fetchLogout();
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   nameWrapper: {
     alignItems: "center",
     justifyContent: "center",
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.primaryColor,
     paddingVertical: 10,
     marginBottom: 10

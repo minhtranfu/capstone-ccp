@@ -36,24 +36,24 @@ const EQUIPMENT_STATUSES = [
     title: "Pending" // On Waiting,
   },
   {
-    code: "DELIVERED",
-    title: "Delivered"
-  },
-  {
-    code: "AVAILABLE",
-    title: "Available"
-  },
-  {
     code: "ACCEPTED",
     title: "Accepted"
+  },
+  {
+    code: "PROCESSING",
+    title: "Processing"
+  },
+  {
+    code: "FINISHED",
+    title: "Finished"
   },
   {
     code: "DENIED",
     title: "Denied"
   },
   {
-    code: "WAITING_FOR_RETURNING",
-    title: "Waiting for returning"
+    code: "CANCEL",
+    title: "Cancel"
   }
 ];
 
@@ -65,23 +65,23 @@ const DROPDOWN_OPTIONS = [
   },
   {
     id: 1,
-    name: "Available",
-    value: "AVAILABLE"
-  },
-  {
-    id: 2,
-    name: "Delivered",
-    value: "DELIVERED"
-  },
-  {
-    id: 3,
     name: "Pending",
     value: "PENDING"
   },
   {
-    id: 4,
+    id: 2,
     name: "Accepted",
     value: "ACCEPTED"
+  },
+  {
+    id: 3,
+    name: "Processing",
+    value: "PROCESSING"
+  },
+  {
+    id: 4,
+    name: "Finished",
+    value: "FINISHED"
   },
   {
     id: 5,
@@ -90,8 +90,8 @@ const DROPDOWN_OPTIONS = [
   },
   {
     id: 6,
-    name: "Waiting to returning",
-    value: "waiting"
+    name: "Cancel",
+    value: "CANCEL"
   }
 ];
 
@@ -239,13 +239,7 @@ class MyTransaction extends Component {
         style={styles.container}
         forceInset={{ bottom: "always", top: "always" }}
       >
-        <Header
-          renderRightButton={() => (
-            <TouchableOpacity onPress={this._handleAddPress}>
-              <Feather name="plus" size={22} />
-            </TouchableOpacity>
-          )}
-        >
+        <Header>
           <Text
             style={{
               fontSize: fontSize.h4,

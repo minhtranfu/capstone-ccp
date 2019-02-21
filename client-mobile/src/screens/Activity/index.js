@@ -41,8 +41,8 @@ const STEP_PROGRESS_OPTIONS = [
   },
   {
     id: 3,
-    name: "Delivery",
-    value: "DELIVERY"
+    name: "Processing",
+    value: "PROCESSING"
   },
   {
     id: 4,

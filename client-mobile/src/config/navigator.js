@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Image, StyleSheet } from "react-native";
+import { Image } from "react-native";
 import {
   createBottomTabNavigator,
   createStackNavigator,
@@ -11,20 +11,27 @@ import colors from "./colors";
 
 import Discover from "../screens/Discover";
 import Account from "../screens/Account";
+import Profile from "../screens/Account/Profile";
+import Feedback from "../screens/Account/Feedback";
+import CallOrTextUs from "../screens/Account/CallOrTextUs";
+import AboutUs from "../screens/Account/AboutUs";
+import AddConstruction from "../screens/Account/AddConstruction";
 import Search from "../screens/Search";
 import SearchResult from "../screens/Search/SearchResult";
 import MyTransaction from "../screens/MyTransaction";
-import AddDetail from "../screens/MyTransaction/AddEquipment/AddDetail";
-import AddDuration from "../screens/MyTransaction/AddEquipment/AddDuration";
-import AddDurationText from "../screens/MyTransaction/AddEquipment/AddDurationText";
-import AddImage from "../screens/MyTransaction/AddEquipment/AddImage";
+import MyTransactionDetail from "../screens/MyTransaction/Detail";
 import EquipmentDetail from "../screens/EquipmentDetail";
 import Transaction from "../screens/EquipmentDetail/Transaction";
-import MyTransactionDetail from "../screens/MyTransaction/Detail";
 import Activity from "../screens/Activity";
 import ActivityDetail from "../screens/Activity/Detail";
 import Notification from "../screens/Activity/Notification";
 import ButtonWithIcon from "../components/ButtonWithIcon";
+import MyEquipment from "../screens/MyEquipment";
+import MyEquipmentDetail from "../screens/MyEquipment/Detail";
+import AddDetail from "../screens/MyEquipment/AddEquipment/AddDetail";
+import AddDuration from "../screens/MyEquipment/AddEquipment/AddDuration";
+import AddDurationText from "../screens/MyEquipment/AddEquipment/AddDurationText";
+import AddImage from "../screens/MyEquipment/AddEquipment/AddImage";
 
 const EquipmentDetailStack = createStackNavigator(
   {
@@ -64,7 +71,12 @@ DiscoverStack.navigationOptions = ({ navigation }) => {
 
 const AccountStack = createStackNavigator(
   {
-    Account: Account
+    Account: Account,
+    Profile: Profile,
+    Feedback: Feedback,
+    CallOrTextUs: CallOrTextUs,
+    AboutUs: AboutUs,
+    AddConstruction: AddConstruction
   },
   {
     headerMode: "none"
@@ -93,20 +105,20 @@ const AddNewEquipmentStack = DismissableStackNav(
   }
 );
 
-const TransactionStack = createStackNavigator(
+const MyEquipmentStack = createStackNavigator(
   {
-    MyTransaction: MyTransaction,
-    MyTransactionDetail: MyTransactionDetail,
+    MyEquipment: MyEquipment,
+    MyEquipmentDetail: MyEquipmentDetail,
     AddNewEquipment: AddNewEquipmentStack
   },
   {
     mode: "modal",
     headerMode: "none",
-    initialRouteName: "MyTransaction"
+    initialRouteName: "MyEquipment"
   }
 );
 
-TransactionStack.navigationOptions = ({ navigation }) => {
+MyEquipmentStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
 
   let routeName = navigation.state.routes[navigation.state.index].routeName;
@@ -119,6 +131,18 @@ TransactionStack.navigationOptions = ({ navigation }) => {
     tabBarVisible
   };
 };
+
+const MyTransactionStack = createStackNavigator(
+  {
+    MyTransaction: MyTransaction,
+    MyTransactionDetail: MyTransactionDetail
+  },
+  {
+    mode: "modal",
+    headerMode: "none",
+    initialRouteName: "MyTransaction"
+  }
+);
 
 const ActivityStack = createStackNavigator(
   {
@@ -137,15 +161,8 @@ const TabNavigator = createBottomTabNavigator(
   {
     Discover: DiscoverStack,
     Activity: ActivityStack,
-    Call: {
-      screen: () => null, // Empty screen
-      navigationOptions: () => ({
-        title: "",
-        tabBarOnPress: () => null,
-        tabBarIcon: <ButtonWithIcon /> // Plus button component
-      })
-    },
-    Transaction: TransactionStack,
+    Equipment: MyEquipmentStack,
+    Transaction: MyTransactionStack,
     Account: AccountStack
   },
   {
@@ -162,10 +179,14 @@ const TabNavigator = createBottomTabNavigator(
           icon = focused
             ? require("../../assets/icons/icons8-activity-active.png")
             : require("../../assets/icons/icons8-activity.png");
-        } else if (routeName === "Transaction") {
+        } else if (routeName === "Equipment") {
           icon = focused
             ? require("../../assets/icons/icons8-garage-active.png")
             : require("../../assets/icons/icons8-garage.png");
+        } else if (routeName === "Transaction") {
+          icon = focused
+            ? require("../../assets/icons/icons8-transaction-active.png")
+            : require("../../assets/icons/icons8-transaction.png");
         } else if (routeName === "Account") {
           icon = focused
             ? require("../../assets/icons/icons8-settings-active.png")
@@ -198,14 +219,6 @@ const TabNavigator = createBottomTabNavigator(
 
 const AppNavigator = createSwitchNavigator({
   App: TabNavigator
-});
-
-const styles = StyleSheet.create({
-  image: {
-    width: 26,
-    height: 26,
-    marginTop: 2
-  }
 });
 
 export default createAppContainer(AppNavigator);

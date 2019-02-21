@@ -1,11 +1,16 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-class Profile extends Component {
+class Feedback extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text>Profile! </Text>
+        <Text> textInComponent </Text>
       </View>
     );
   }
@@ -14,10 +19,9 @@ class Profile extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
   }
 });
 
-export default Profile;
+export default Feedback;

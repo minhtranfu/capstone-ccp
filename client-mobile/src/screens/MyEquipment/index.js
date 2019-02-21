@@ -20,8 +20,8 @@ import {
 import ParallaxList from "../../components/ParallaxList";
 import Dropdown from "../../components/Dropdown";
 import Button from "../../components/Button";
-import EquipmentItem from "./components/EquipmentItem";
-import EquipmentStatus from "./components/EquipmentStatus";
+import EquipmentItem from "../MyTransaction/components/EquipmentItem";
+import EquipmentStatus from "../MyTransaction/components/EquipmentStatus";
 import Header from "../../components/Header";
 
 import colors from "../../config/colors";
@@ -32,14 +32,6 @@ const { width, height } = Dimensions.get("window");
 
 const EQUIPMENT_STATUSES = [
   {
-    code: "PENDING",
-    title: "Pending" // On Waiting,
-  },
-  {
-    code: "DELIVERED",
-    title: "Delivered"
-  },
-  {
     code: "AVAILABLE",
     title: "Available"
   },
@@ -48,12 +40,20 @@ const EQUIPMENT_STATUSES = [
     title: "Accepted"
   },
   {
-    code: "DENIED",
-    title: "Denied"
+    code: "DELIVERING",
+    title: "Delivering"
+  },
+  {
+    code: "RENTING",
+    title: "Renting" // On Waiting,
   },
   {
     code: "WAITING_FOR_RETURNING",
     title: "Waiting for returning"
+  },
+  {
+    code: "DENIED",
+    title: "Denied"
   }
 ];
 
@@ -253,7 +253,7 @@ class MyEquipment extends Component {
               color: colors.text
             }}
           >
-            My Transaction
+            My Equipment
           </Text>
         </Header>
         {myTransaction ? (
