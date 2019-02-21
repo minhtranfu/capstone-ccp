@@ -161,16 +161,18 @@ public class CartRequestResource {
 	}
 
 
-//	@POST
-//	@Path("send")
-//	public Response sendAllRequestFromCart() {
-//		Response validateResult = validateContractorId(contractorId);
-//		if (validateResult != null) {
-//			return validateResult;
-//		}
-//
-//		List<CartRequestEntity> cartRequestEntityList = cartRequestDao.getCartByContractorId(contractorId);
-//
-//	}
+	// TODO: 2/20/19 send all request from cart
+		@POST
+		@Path("send")
+		public Response sendAllRequestFromCart() {
+			Response validateResult = validateContractorId(contractorId);
+			if (validateResult != null) {
+				return validateResult;
+			}
+
+//			List<CartRequestEntity> cartRequestEntityList = cartRequestDao.getCartByContractorId(contractorId);
+
+			return Response.ok().build();
+		}
 
 }
