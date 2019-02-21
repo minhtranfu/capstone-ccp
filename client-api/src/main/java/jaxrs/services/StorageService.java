@@ -1,9 +1,9 @@
 package jaxrs.services;
 
-import com.google.api.gax.paging.Page;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
+import dtos.responses.MessageResponse;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.joda.time.DateTime;
@@ -13,18 +13,17 @@ import org.joda.time.format.DateTimeFormatter;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.UUID;
 
 import static com.google.api.client.util.Charsets.UTF_8;
 
@@ -37,23 +36,14 @@ public class StorageService {
     private ServletContext servletContext;
 
     private final String BUCKET_NAME = "sonic-arcadia-97210.appspot.com";
+    private final String CREDENTIAL_JSON_FILENAME = "capstone-ccp-credential.json";
     private Bucket bucket = null;
     private Storage storage;
-
-//    public StorageService() throws IOException {
-//        String credentialPath = servletContext.getRealPath("/WEB-INF/capstone-ccp-credients.json");
-//        Credentials credentials = GoogleCredentials.fromStream(new FileInputStream(credentialPath));
-//        storage = StorageOptions.newBuilder().setCredentials(credentials)
-//                .setProjectId("sonic-arcadia-97210").build().getService();
-//
-//        bucket = storage.get(BUCKET_NAME);
-//    }
-
 
     @GET
     public Response getFiles() {
 
-        String credentialPath = servletContext.getRealPath("/WEB-INF/capstone-ccp-credients.json");
+        String credentialPath = servletContext.getRealPath("/WEB-INF/" + CREDENTIAL_JSON_FILENAME);
 
         try {
             Credentials credentials = GoogleCredentials.fromStream(new FileInputStream(credentialPath));
@@ -86,7 +76,6 @@ public class StorageService {
     public Response create(@FormDataParam("file") InputStream uploadedInputStream,
                            @FormDataParam("file") FormDataContentDisposition fileDetail) {
         final String fileName = fileDetail.getFileName();
-        String imageUrl = "buon-vkl";
         try {
             // Check extension of file
             if (fileName != null && !fileName.isEmpty() && fileName.contains(".")) {
@@ -103,21 +92,24 @@ public class StorageService {
             e.printStackTrace();
         }
 
-        return Response.ok(imageUrl).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Fail!")).build();
     }
 
-    public String uploadFile(InputStream uploadedInputStream, FormDataContentDisposition fileDetail, final String bucketName) throws IOException {
-        String credentialPath = servletContext.getRealPath("/WEB-INF/capstone-ccp-credients.json");
+    public Object uploadFile(InputStream uploadedInputStream, FormDataContentDisposition fileDetail, final String bucketName) throws IOException {
+        String credentialPath = servletContext.getRealPath("/WEB-INF/" + CREDENTIAL_JSON_FILENAME);
         Credentials credentials = GoogleCredentials.fromStream(new FileInputStream(credentialPath));
         storage = StorageOptions.newBuilder().setCredentials(credentials)
                 .setProjectId("sonic-arcadia-97210").build().getService();
 
         bucket = storage.get(BUCKET_NAME);
 
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("-YYYY-MM-dd-HHmmssSSS");
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("YYYY/MM/dd");
         DateTime dt = DateTime.now(DateTimeZone.UTC);
-        String dtString = dt.toString(dtf);
-        final String fileName = fileDetail.getFileName() + dtString;
+        String folderOfDate = dt.toString(dtf);
+        long currentMiliseconds = new Date().getTime();
+        String originName = fileDetail.getFileName();
+        String fileExtension = originName.substring(originName.lastIndexOf('.') + 1);
+        final String fileName = folderOfDate + "/" + currentMiliseconds + "-" + UUID.randomUUID().toString() + "." + fileExtension;
 
         // the inputstream is closed by default, so we don't need to close it here
         BlobInfo blobInfo =
@@ -128,6 +120,11 @@ public class StorageService {
                                 .setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER))))
                                 .build(),
                         uploadedInputStream);
+//          // Get serving url for image - a magic image URL for resize - crop .... For appengine only
+//        ImagesService imagesService = ImagesServiceFactory.getImagesService();
+//        String imageUrl = imagesService.getServingUrl(ServingUrlOptions.Builder.withGoogleStorageFileName("/gs/" + BUCKET_NAME + "/" + blobInfo.getName()));
+//        return imageUrl;
+
         // return the public download link
         return blobInfo.getMediaLink();
     }
