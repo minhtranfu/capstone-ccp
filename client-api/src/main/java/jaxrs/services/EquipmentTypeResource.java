@@ -4,10 +4,7 @@ import daos.EquipmentTypeDAO;
 import dtos.responses.MessageResponse;
 import entities.EquipmentTypeEntity;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -32,4 +29,5 @@ public class EquipmentTypeResource {
 
 		return Response.ok(foundEquipmentTypeEntity).build();
 	}
+
 }

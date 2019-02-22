@@ -35,6 +35,7 @@ public class ContractorResource {
 	@POST
 	public Response postContractor(ContractorEntity contractorEntity) {
 		contractorEntity.setId(0);
+
 		contractorEntity.setConstructions(null);
 
 		// TODO: 2/16/19 validate shits here
@@ -53,7 +54,6 @@ public class ContractorResource {
 
 
 		contractorEntity.setId(constractorId);
-		contractorEntity.setConstructions(null);
 
 
 		// TODO: 2/16/19 validate shits here
@@ -66,6 +66,9 @@ public class ContractorResource {
 			)).build();
 		}
 
+
+		//no allowed to edit the construction list
+		contractorEntity.setConstructions(foundContractorEntity.getConstructions());
 
 		contractorDao.merge(contractorEntity);
 		return Response.ok(contractorDao.findByID(contractorEntity.getId())).build();
