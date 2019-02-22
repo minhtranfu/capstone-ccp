@@ -6,13 +6,18 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  ScrollView
+  ScrollView,
+  Alert
 } from "react-native";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import { Feather } from "@expo/vector-icons";
-import { getContractorDetail } from "../../redux/actions/contractor";
+import {
+  getContractorDetail,
+  updateContractorDetail
+} from "../../redux/actions/contractor";
 
+import Button from "../../components/Button";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
 import Title from "../../components/Title";
@@ -28,6 +33,9 @@ import fontSize from "../../config/fontSize";
   dispatch => ({
     fetchGetContractorDetail: id => {
       dispatch(getContractorDetail(id));
+    },
+    fetchUpdateContractorDetail: (id, contractor) => {
+      dispatch(updateContractorDetail(id, contractor));
     }
   })
 )
@@ -35,6 +43,10 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      name: "",
+      email: "",
+      phone: "",
+      thumbnailImage: "",
       data: {}
     };
   }
@@ -57,16 +69,33 @@ class Profile extends Component {
   }
 
   _handleInputChange = (field, value) => {
-    const newData = { ...this.state.data };
-    newData.field = value;
+    let newData = { ...this.state.data };
+    newData[field] = value;
     this.setState({ data: newData });
+  };
+
+  _handleSave = () => {
+    const { data } = this.state;
+    const { contractorId } = this.props.navigation.state.params;
+    try {
+      this.props.fetchUpdateContractorDetail(contractorId, data);
+    } catch (error) {
+      this._showAlert(error);
+    }
+    this.props.navigation.goBack();
+  };
+
+  _showAlert = msg => {
+    Alert.alert("Error", msg, [{ text: "OK" }], {
+      cancelable: true
+    });
   };
 
   _renderScrollViewItem = () => {
     const { contractor } = this.props;
     const { data } = this.state;
     return (
-      <View>
+      <View style={{ paddingHorizontal: 15 }}>
         <InputField
           label={"Name"}
           placeholder={"Input your equipment name"}
@@ -97,17 +126,16 @@ class Profile extends Component {
           value={data.phoneNumber}
           returnKeyType={"next"}
         />
-        <Title title={"Manage your construction"} />
-        {data.construction.length > 0 ? (
-          <View>
-            <Text>Data</Text>
-          </View>
-        ) : (
-          <Text>Your construction list is empty</Text>
-        )}
+        <Button text={"Save"} onPress={() => this._handleSave()} />
       </View>
     );
   };
+
+  _renderNextButton = () => (
+    <TouchableOpacity style={styles.buttonWrapper}>
+      <Text style={styles.text}>Submit</Text>
+    </TouchableOpacity>
+  );
 
   render() {
     const { contractor } = this.props;
@@ -123,7 +151,7 @@ class Profile extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text>Edit Profile</Text>
+          <Text style={styles.header}>Edit Profile</Text>
         </Header>
         {contractor ? (
           <ScrollView>{this._renderScrollViewItem()}</ScrollView>
@@ -138,6 +166,15 @@ class Profile extends Component {
 const styles = StyleSheet.create({
   containter: {
     flex: 1
+  },
+  header: {
+    fontSize: fontSize.h4,
+    fontWeight: "600"
+  },
+  text: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: "white"
   }
 });
 

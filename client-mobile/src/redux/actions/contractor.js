@@ -15,7 +15,7 @@ export function register(contractor) {
   };
 }
 
-export function updateInfo(contractorId, contractor) {
+export function updateContractorDetail(contractorId, contractor) {
   return async dispatch => {
     try {
       const res = await axios.put(`contractors/${contractorId}`, contractor);
@@ -42,32 +42,29 @@ export function getContractorDetail(contractorId) {
   };
 }
 
-export function getConstructionDetail(contractorId) {
+export function getConstructionList(contractorId) {
   return async dispatch => {
     try {
       const res = await axios.get(`contractors/${contractorId}/constructions`);
+      dispatch({
+        type: Actions.GET_CONSTRUCTION_SUCCESS,
+        payload: res.data
+      });
     } catch (error) {
-      console.log(error);
+      dispatch(StatusAction.error(error));
     }
-    dispatch({
-      type: Actions.GET_CONSTRUCTION_SUCCESS,
-      payload: res.data
-    });
   };
 }
 
 export function createConstruction(contractorId, construction) {
   return async dispatch => {
-    try {
-      const res = await axios.post(
-        `contractors/${contractorId}/constructions`,
-        contractor
-      );
-    } catch (error) {
-      console.log(error);
-    }
+    const res = await axios.post(
+      `contractors/${contractorId}/constructions`,
+      construction
+    );
     dispatch({
-      type: Actions.CREATE_CONSTRUCTION_SUCCESS
+      type: Actions.CREATE_CONSTRUCTION_SUCCESS,
+      payload: res.data
     });
   };
 }

@@ -12,10 +12,11 @@ import colors from "./colors";
 import Discover from "../screens/Discover";
 import Account from "../screens/Account";
 import Profile from "../screens/Account/Profile";
+import Construction from "../screens/Account/Construction";
+import ConstructionDetail from "../screens/Account/Detail";
 import Feedback from "../screens/Account/Feedback";
 import CallOrTextUs from "../screens/Account/CallOrTextUs";
 import AboutUs from "../screens/Account/AboutUs";
-import AddConstruction from "../screens/Account/AddConstruction";
 import Search from "../screens/Search";
 import SearchResult from "../screens/Search/SearchResult";
 import MyTransaction from "../screens/MyTransaction";
@@ -76,7 +77,8 @@ const AccountStack = createStackNavigator(
     Feedback: Feedback,
     CallOrTextUs: CallOrTextUs,
     AboutUs: AboutUs,
-    AddConstruction: AddConstruction
+    Construction: Construction,
+    ConstructionDetail: ConstructionDetail
   },
   {
     headerMode: "none"

@@ -21,6 +21,12 @@ export default function contractorReducer(state = initialState, action) {
         constructionList: payload
       };
     }
+    case ACTIONS.CREATE_CONSTRUCTION_SUCCESS: {
+      return {
+        ...state,
+        constructionList: [...state.constructionList, payload]
+      };
+    }
     default:
       return state;
   }

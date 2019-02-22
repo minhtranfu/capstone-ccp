@@ -31,6 +31,11 @@ const ROW_ITEM_VALUE = [
     code: "Profile"
   },
   {
+    id: 2,
+    value: "Manage your construction",
+    code: "Construction"
+  },
+  {
     id: 3,
     value: "History renting",
     code: "Renting"
@@ -64,7 +69,6 @@ const ROW_ITEM_VALUE = [
 
 @connect(
   state => {
-    console.log(state.contractor);
     return {
       auth: state.auth.userIsLoggin,
       contractor: state.contractor.info

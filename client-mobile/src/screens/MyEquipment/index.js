@@ -160,7 +160,7 @@ class MyEquipment extends Component {
     this.setState({ transactionStatus });
   };
 
-  _handleAddPress = () => {
+  _handleAddButton = () => {
     this.props.navigation.navigate("AddDetail");
   };
 
@@ -241,7 +241,7 @@ class MyEquipment extends Component {
       >
         <Header
           renderRightButton={() => (
-            <TouchableOpacity onPress={this._handleAddPress}>
+            <TouchableOpacity onPress={this._handleAddButton}>
               <Feather name="plus" size={22} />
             </TouchableOpacity>
           )}
