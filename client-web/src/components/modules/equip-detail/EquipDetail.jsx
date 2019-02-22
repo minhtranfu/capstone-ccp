@@ -133,10 +133,13 @@ class EquipDetail extends Component {
             isFetching: true,
         });
         let data;
+        // TODO: Remove hardcode requester ID
+        const requesterId = 12;
         transaction = {
             ...transaction,
             beginDate: transaction.beginDate.format('YYYY-MM-DD'),
             endDate: transaction.endDate.format('YYYY-MM-DD'),
+            requesterId,
         };
         try {
             data = await ccpApiService.postTransaction(transaction);
