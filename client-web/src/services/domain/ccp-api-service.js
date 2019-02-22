@@ -31,6 +31,9 @@ const CcpApiService = {
   getTransactionsByRequesterId(requesterId) {
     return DataAccessService.get(`transactions/requester/${requesterId}`);
   },
+  updateTransactionById(transactionId, data) {
+    return DataAccessService.put(`transactions/${transactionId}`, data);
+  },
 };
   
 export default CcpApiService;  

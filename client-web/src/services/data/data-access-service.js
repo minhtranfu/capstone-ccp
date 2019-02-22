@@ -51,6 +51,9 @@ const DataAccessService = {
   },
   post (url, data, options) {
     return _request('POST', url, data, options);
+  },
+  put (url, data, options) {
+    return _request('PUT', url, data, options);
   }
 };
 
