@@ -19,7 +19,7 @@ deploy_stage:
     - export GITPASS=$GIT_PASS
     - sshpass -e ssh -o StrictHostKeyChecking=no root@ccp.hoctot.net "
         cd /home/capstone/capstone-ccp/ &&
-        git pull  https://$GITUSER:$GITPASS@gitlab.com/minhtranfu/capstone-ccp.git develop-web-api &&
+        git pull  https://$GITUSER:$GITPASS@github.com/minhtranfu/capstone-ccp.git develop-web-api &&
         cd client-api &&
         docker build -t client-api .
         "
