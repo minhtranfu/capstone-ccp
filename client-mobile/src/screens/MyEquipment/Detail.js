@@ -308,18 +308,18 @@ class MyEquipmentDetail extends Component {
                 this.props.fetchClearDetail();
                 this.props.navigation.goBack();
               }}
-              renderRightButton={() => (
-                <TouchableOpacity
-                  onPress={() => {
-                    this.props.fetchClearDetail();
-                    this.props.navigation.goBack();
-                  }}
-                >
-                  <Text>Save and exit</Text>
-                </TouchableOpacity>
-              )}
             >
               <Feather name="x" size={24} />
+            </TouchableOpacity>
+          )}
+          renderRightButton={() => (
+            <TouchableOpacity
+              onPress={() => {
+                this.props.fetchClearDetail();
+                this.props.navigation.goBack();
+              }}
+            >
+              <Text>Save and exit</Text>
             </TouchableOpacity>
           )}
         >

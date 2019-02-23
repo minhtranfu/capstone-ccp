@@ -13,6 +13,16 @@ export function getEquipmentDetail(id) {
   };
 }
 
+export function getContractorEquipmentList(contractorId) {
+  return async dispatch => {
+    const res = await axios.get(`contractors/${contractorId}/equipments`);
+    dispatch({
+      type: Actions.GET_CONTRACTOR_EQUIPMENT_SUCCESS,
+      payload: res.data
+    });
+  };
+}
+
 export function addEquipment(equipment) {
   console.log(JSON.stringify(equipment));
   return async dispatch => {
@@ -52,22 +62,6 @@ export function removeEquipment(id) {
   return {
     type: Actions.REMOVE_EQUIPMENT,
     id
-  };
-}
-
-export function listEquipmentBySupplierId(id) {
-  return async dispatch => {
-    const res = await axios.get(`transactions/supplier/${id}`);
-    dispatch({
-      type: Actions.LIST_SUPPLIER_EQUIPMENT_SUCCESS,
-      payload: res
-    });
-  };
-}
-
-export function resetEquipmentBySupplier() {
-  return {
-    type: Actions.RESET_EQUIPMENT_BY_SUPPLIER
   };
 }
 

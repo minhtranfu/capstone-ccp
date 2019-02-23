@@ -134,8 +134,6 @@ class MyTransaction extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { myTransaction, transactionStatus, detail } = this.props;
-    console.log("hello", myTransaction);
-    console.log("hrl", prevProps.myTransaction);
     if (
       transactionStatus.id === prevProps.transactionStatus.id &&
       transactionStatus.status !== prevProps.transactionStatus.status
@@ -171,7 +169,6 @@ class MyTransaction extends Component {
 
   _renderContent = () => {
     const { myTransaction, message } = this.props;
-    // console.log("status here", this.props.transactionStatus);
     return (
       <View style={styles.scrollWrapper}>
         {myTransaction.length > 0 ? (

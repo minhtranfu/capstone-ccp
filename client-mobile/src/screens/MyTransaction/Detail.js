@@ -15,9 +15,9 @@ import { Feather } from "@expo/vector-icons";
 import { ImagePicker, Permissions } from "expo";
 import {
   getTransactionDetail,
-  approveTransaction,
-  denyTransaction,
-  clearTransactionDetail
+  requestTransaction,
+  clearTransactionDetail,
+  cancelTransaction
 } from "../../redux/actions/transaction";
 
 import InputField from "../../components/InputField";
@@ -48,86 +48,40 @@ const DROPDOWN_TYPES_OPTIONS = [
 const COLORS = {
   ACCEPTED: "#4DB781", //green
   DENIED: "#FF5C5C", //red
-  PENDING: "#FFDF49",
+  PENDING: "#FFDF49", //yellow
+  PROCESSING: "#7199FE", //blue
   default: "red"
-  // blue: 7199FE, yellow: FFDF49
 };
 
 @connect(
   state => {
     return {
-      equipmentDetail: state.equipment.detail,
-      transactionDetail: state.transaction.transactionDetail,
-      //test
-      equipment: state.equipment.list
+      transactionDetail: state.transaction.transactionDetail
     };
   },
   dispatch => ({
     fetchTransactionDetail: id => {
       dispatch(getTransactionDetail(id));
     },
+    fetchRequestTransaction: (id, transactionStatus) => {
+      dispatch(requestTransaction(id, transactionStatus));
+    },
+    fetchCancelTransaction: id => {
+      dispatch(cancelTransaction(id));
+    },
     fetchClearDetail: () => {
       dispatch(clearTransactionDetail());
-    },
-    fetchApproveTransaction: (id, transactionStatus) => {
-      dispatch(approveTransaction(id, transactionStatus));
-    },
-    fetchDenyTransaction: (id, transactionStatus) => {
-      dispatch(denyTransaction(id, transactionStatus));
     }
   })
 )
 class MyTransactionDetail extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: "",
-      dailyPrice: "",
-      type: null,
-      categories: null,
-      deliveryPrice: "",
-      beginDate: "",
-      endDate: "",
-      thumbnailImage: "",
-      descriptionImages: [],
-      data: {}
-    };
-  }
-
   componentDidMount() {
     const { id } = this.props.navigation.state.params;
     this.props.fetchTransactionDetail(id);
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    console.log("render");
-    //Check data is update
-    if (
-      Object.keys(prevState.data).length === 0 &&
-      nextProps.transactionDetail !== prevState.data
-    ) {
-      return {
-        data: nextProps.transactionDetail
-      };
-    } else return null;
-  }
-
-  _handleChangeBackgroundImage = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    if (status === "granted") {
-      let result = await ImagePicker.launchImageLibraryAsync();
-    }
-  };
-
-  _renderAvailableBottom = id => (
-    <View style={styles.bottomWrapper}>
-      <Button text={"Update"} />
-      <Button text={"Delete"} />
-    </View>
-  );
-
-  _handleReRender = async (id, status) => {
-    await this.props.fetchApproveTransaction(id, { status: status });
+  _handleRequestTransaction = async (id, status) => {
+    await this.props.fetchRequestTransaction(id, { status: status });
     this.props.navigation.goBack();
   };
 
@@ -137,13 +91,13 @@ class MyTransactionDetail extends Component {
         <Button
           text={"Accept"}
           onPress={() => {
-            this._handleReRender(id, "ACCEPTED");
+            this._handleRequestTransaction(id, "ACCEPTED");
           }}
         />
         <Button
           text={"Denied"}
           onPress={() => {
-            this._handleReRender(id, "DENIED");
+            this._handleRequestTransaction(id, "DENIED");
           }}
         />
       </View>
@@ -152,7 +106,30 @@ class MyTransactionDetail extends Component {
 
   _renderAcceptedBottom = id => (
     <View style={styles.bottomWrapper}>
-      <Button text={"Delivery"} />
+      <Button
+        text={"Delivery"}
+        onPress={() => {
+          this._handleRequestTransaction(id, "PROCESSING");
+        }}
+      />
+      <Button
+        text={"Cancel"}
+        onPress={() => {
+          this.props.fetchCancelTransaction(id);
+          this.props.navigation.goBack();
+        }}
+      />
+    </View>
+  );
+
+  _renderProcessingBottom = id => (
+    <View style={styles.bottomWrapper}>
+      <Button
+        text={"FINISH"}
+        onPress={() => {
+          this._handleRequestTransaction(id, "FINISHED");
+        }}
+      />
     </View>
   );
 
@@ -162,43 +139,16 @@ class MyTransactionDetail extends Component {
         return this._renderAcceptedBottom(id);
       case "PENDING":
         return this._renderPendingBottom(id);
-      case "AVAILABLE":
-        return this._renderAvailableBottom(id);
+      case "PROCESSING":
+        return this._renderProcessingBottom(id);
       default:
         return null;
     }
   };
 
-  _handleInputChange = (field, value) => {
-    // console.log(value, field);
-    // this.setState({ field: value });
-    // this.setState(prevState => ({
-    //   data: {
-    //     ...prevState.data,
-    //     field: parseInt(value)
-    //   }
-    // }));
-    let newData = { ...this.setState.data };
-    newData.dailyPrice = value;
-    this.setState({ data: newData });
-    console.log(this.state.data);
-    // this.setState({data:{
-    //   ...data,
-    //   equipment:{
-    //     ...data.equipment,
-    //     field: value
-    //   }
-    // }})
-  };
-
-  _handleInputField = (field, value) => {
-    this.setState({ field: value });
-  };
-
   _renderScrollItem = () => {
     const { id } = this.props.navigation.state.params;
     const { transactionDetail } = this.props;
-    const { data } = this.state;
     return (
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.landscapeImgWrapper}>
@@ -210,12 +160,6 @@ class MyTransactionDetail extends Component {
             style={styles.landscapeImg}
             resizeMode={"cover"}
           />
-          <TouchableOpacity
-            style={styles.buttonChangeImage}
-            onPress={this._handleChangeBackgroundImage}
-          >
-            <Feather name="camera" size={24} />
-          </TouchableOpacity>
         </View>
         <InputField
           label={"Equipment Name"}
@@ -223,7 +167,7 @@ class MyTransactionDetail extends Component {
           placeholderTextColor={colors.text68}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          onChangeText={value => this.setState({ name: value })}
+          editable={false}
           value={transactionDetail.equipment.name}
           returnKeyType={"next"}
         />
@@ -232,8 +176,8 @@ class MyTransactionDetail extends Component {
           placeholderTextColor={colors.text68}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          onChangeText={value => this._handleInputChange("dailyPrice", value)}
-          value={data.dailyPrice.toString()}
+          editable={false}
+          value={transactionDetail.dailyPrice.toString()}
           keyboardType={"numeric"}
           returnKeyType={"next"}
         />
@@ -242,23 +186,27 @@ class MyTransactionDetail extends Component {
           placeholderTextColor={colors.text68}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          onChangeText={value => this.setState({ deliveryPrice: value })}
+          editable={false}
           keyboardType={"numeric"}
           value={transactionDetail.deliveryPrice.toString()}
         />
-        <Dropdown
+        <InputField
           label={"General Type"}
-          defaultText={
+          placeholderTextColor={colors.text68}
+          customWrapperStyle={{ marginBottom: 20 }}
+          inputType="text"
+          editable={false}
+          value={
             transactionDetail.equipment.equipmentType.generalEquipment.name
           }
-          onSelectValue={value => this.setState({ categories: value })}
-          options={DROPDOWN_GENERAL_TYPES_OPTIONS}
         />
-        <Dropdown
+        <InputField
           label={"Type"}
-          defaultText={transactionDetail.equipment.equipmentType.name}
-          onSelectValue={value => this.setState({ type: value })}
-          options={DROPDOWN_TYPES_OPTIONS}
+          placeholderTextColor={colors.text68}
+          customWrapperStyle={{ marginBottom: 20 }}
+          inputType="text"
+          editable={false}
+          value={transactionDetail.equipment.equipmentType.name}
         />
         <Text style={styles.title}>Available time range</Text>
         <InputField
@@ -266,7 +214,7 @@ class MyTransactionDetail extends Component {
           placeholder={"dd-mm-yyyy"}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          onChangeText={value => this.setState({ beginDate: value })}
+          editable={false}
           value={transactionDetail.beginDate}
           returnKeyType={"next"}
         />
@@ -275,7 +223,7 @@ class MyTransactionDetail extends Component {
           placeholder={"dd-mm-yyyy"}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          onChangeText={value => this.setState({ endDate: value })}
+          editable={false}
           value={transactionDetail.endDate}
         />
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -295,7 +243,6 @@ class MyTransactionDetail extends Component {
 
   render() {
     const { transactionDetail } = this.props;
-    console.log(transactionDetail);
     return (
       <SafeAreaView
         style={styles.container}
@@ -308,24 +255,14 @@ class MyTransactionDetail extends Component {
                 this.props.fetchClearDetail();
                 this.props.navigation.goBack();
               }}
-              renderRightButton={() => (
-                <TouchableOpacity
-                  onPress={() => {
-                    this.props.fetchClearDetail();
-                    this.props.navigation.goBack();
-                  }}
-                >
-                  <Text>Save and exit</Text>
-                </TouchableOpacity>
-              )}
             >
               <Feather name="x" size={24} />
             </TouchableOpacity>
           )}
         >
-          <Text style={styles.header}>My Transaction</Text>
+          <Text style={styles.header}>My Transaction Detail</Text>
         </Header>
-        {Object.keys(transactionDetail).length !== 0 ? (
+        {Object.keys(transactionDetail).length > 0 ? (
           <ScrollView>{this._renderScrollItem()}</ScrollView>
         ) : (
           <Loading />

@@ -5,7 +5,8 @@ const INITIAL_STATE = {
   detail: {},
   list: [],
   listSearch: [],
-  listRequesterEquipment: []
+  listRequesterEquipment: [],
+  contractorEquipment: []
 };
 
 export default function equipmentReducer(state = INITIAL_STATE, action) {
@@ -17,7 +18,12 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
         detail: payload
       };
     }
-
+    case Actions.GET_CONTRACTOR_EQUIPMENT_SUCCESS: {
+      return {
+        ...state,
+        contractorEquipment: payload
+      };
+    }
     case Actions.LIST_REQUESTER_EQUIPMENT_SUCCESS: {
       return {
         ...state,
@@ -30,7 +36,6 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       };
     }
     case Actions.UPDATE_EQUIPMENT: {
-      console.log(payload.status);
       return {
         ...state,
         list: state.list.map(item => {

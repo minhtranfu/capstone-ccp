@@ -11,7 +11,10 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
-import { removeEquipment } from "../../redux/actions/equipment";
+import {
+  getContractorEquipmentList,
+  removeEquipment
+} from "../../redux/actions/equipment";
 import {
   listTransactionBySupplierId,
   clearSupplierTransactionList
@@ -98,7 +101,7 @@ const DROPDOWN_OPTIONS = [
 @connect(
   state => {
     return {
-      equipment: state.equipment.list,
+      list: state.equipment.contractorEquipment,
       myTransaction: state.transaction.listSupplierTransaction,
       transactionStatus: state.transaction.transactionStatus,
       detail: state.transaction.transactionDetail,
@@ -109,8 +112,8 @@ const DROPDOWN_OPTIONS = [
     fetchRemoveEquipment: id => {
       dispatch(removeEquipment(id));
     },
-    fetchListMyTransaction: id => {
-      dispatch(listTransactionBySupplierId(id));
+    fetchContractorEquipment: id => {
+      dispatch(getContractorEquipmentList(id));
     },
     fetchClearMyTransaction: () => {
       dispatch(clearSupplierTransactionList());
@@ -129,26 +132,14 @@ class MyEquipment extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchListMyTransaction(13);
+    this.props.fetchContractorEquipment(13);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { myTransaction, transactionStatus, detail } = this.props;
-    console.log("hello", myTransaction);
-    console.log("hrl", prevProps.myTransaction);
-    if (
-      transactionStatus.id === prevProps.transactionStatus.id &&
-      transactionStatus.status !== prevProps.transactionStatus.status
-    ) {
-      this.props.fetchListMyTransaction(13);
-    }
+    const { list } = this.props;
     // const { id } = this.state;
-    if (
-      myTransaction &&
-      prevProps.myTransaction &&
-      myTransaction.length !== prevProps.myTransaction.length
-    ) {
-      this.props.fetchListMyTransaction(13);
+    if (prevProps.list && list.length !== prevProps.list.length) {
+      this.props.fetchContractorEquipment(13);
     }
   }
 
@@ -165,16 +156,16 @@ class MyEquipment extends Component {
   };
 
   _getEquipementByStatus = status => {
-    const { myTransaction } = this.props;
-    return myTransaction.filter(item => item.status === status) || [];
+    const { list } = this.props;
+    return list.filter(item => item.status === status) || [];
   };
 
   _renderContent = () => {
-    const { myTransaction, message } = this.props;
-    // console.log("status here", this.props.transactionStatus);
+    const { list, message } = this.props;
+    console.log("status here", list);
     return (
       <View style={styles.scrollWrapper}>
-        {myTransaction.length > 0 ? (
+        {list.length > 0 ? (
           <View>
             <Dropdown
               label={"Filter"}
@@ -201,21 +192,18 @@ class MyEquipment extends Component {
                       <EquipmentItem
                         onPress={() => {
                           this._handleOnPressItem(item.id);
-                          this.props.navigation.navigate(
-                            "MyTransactionDetail",
-                            {
-                              id: item.id
-                            }
-                          );
+                          this.props.navigation.navigate("MyEquipmentDetail", {
+                            id: item.id
+                          });
                         }}
                         key={`eq_${index}`}
                         id={item.id}
-                        name={item.equipment.name}
+                        name={item.name}
                         imageURL={
                           "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
                         }
-                        address={item.equipmentAddress}
-                        requesterThumbnail={item.requester.thumbnailImage}
+                        address={item.address}
+                        requesterThumbnail={item.thumbnailImage}
                         price={item.dailyPrice}
                       />
                     ))}
@@ -232,7 +220,7 @@ class MyEquipment extends Component {
   };
 
   render() {
-    const { myTransaction } = this.props;
+    const { list } = this.props;
     const { loading } = this.state;
     return (
       <SafeAreaView
@@ -256,7 +244,7 @@ class MyEquipment extends Component {
             My Equipment
           </Text>
         </Header>
-        {myTransaction ? (
+        {list ? (
           <ScrollView
             style={{ flex: 1 }}
             contentContainerStyle={styles.scrollContent}

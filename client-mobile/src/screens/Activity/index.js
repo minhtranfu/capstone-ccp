@@ -100,22 +100,27 @@ class Activity extends Component {
       }
     } else {
       return (
-        <View>
-          <Text>No Data</Text>
+        <View style={styles.actionWrapper}>
+          <Text style={styles.text}>No data</Text>
         </View>
       );
     }
   };
 
   //Render flat list base on status
-  _renderFlatList = status => (
-    <FlatList
-      style={{ flex: 1, paddingHorizontal: 15 }}
-      data={this._handleFilterStatusResult(status)}
-      renderItem={({ item }) => this._renderItem(status, { item })}
-      keyExtractor={(item, index) => index.toString()}
-    />
-  );
+  _renderFlatList = status =>
+    this._handleFilterStatusResult(status).length > 0 ? (
+      <FlatList
+        style={{ flex: 1, paddingHorizontal: 15 }}
+        data={this._handleFilterStatusResult(status)}
+        renderItem={({ item }) => this._renderItem(status, { item })}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    ) : (
+      <View style={styles.actionWrapper}>
+        <Text style={styles.text}>No data</Text>
+      </View>
+    );
 
   //Render row item
   _renderItem = (status, { item }) => (
@@ -199,6 +204,20 @@ const styles = StyleSheet.create({
     elevation: 2,
     marginBottom: 15,
     marginTop: 5
+  },
+  actionWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+    height: "35%",
+    borderRadius: 9,
+    borderStyle: "dashed",
+    borderWidth: 3,
+    borderColor: "#DEE4E3",
+    padding: 30
+  },
+  text: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500"
   }
 });
 

@@ -29,16 +29,12 @@ export default function transactionReducer(state = initialState, action) {
         transactionStatus: payload,
         listSupplierTransaction: [...state.listSupplierTransaction, payload]
       };
-    case ACTIONS.APPROVE_TRANSACTION_SUCCESS:
+    case ACTIONS.REQUEST_TRANSACTION_SUCCESS: {
       return {
         ...state,
         transactionStatus: payload
       };
-    case ACTIONS.DENY_TRANSACTION_SUCCESS:
-      return {
-        ...state,
-        transactionStatus: payload
-      };
+    }
     case ACTIONS.CANCEL_TRANSACTION_SUCCESS:
       return {
         ...state,

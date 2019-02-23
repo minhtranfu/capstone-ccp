@@ -74,7 +74,7 @@ class ActivityDetail extends Component {
     this.props.fetchTransactionDetail(id);
   }
 
-  //Replace Spalsh to , from date
+  //Replace Splash -> ','  from date
   _replaceSplash = date => {
     let regex = /-/g;
     return date.replace(regex, ",");
@@ -121,7 +121,7 @@ class ActivityDetail extends Component {
 
   _renderScrollViewItem = () => {
     const { detail } = this.props;
-    console.log(detail);
+    console.log("show detail", detail);
     const totalDay = this._countTotalDay(detail.beginDate, detail.endDate);
     const totalPrice = totalDay * detail.dailyPrice;
     return (
@@ -167,7 +167,7 @@ class ActivityDetail extends Component {
             <Text style={styles.text}>{detail.dailyPrice} $</Text>
           </View>
           <View style={styles.priceItemWrapper}>
-            <Text style={styles.text}>Total in {totalDay}:</Text>
+            <Text style={styles.text}>Total price:</Text>
             <Text style={styles.text}>{totalPrice} $</Text>
           </View>
         </View>
@@ -198,7 +198,7 @@ class ActivityDetail extends Component {
         >
           <Text style={styles.header}>Detail Transaction</Text>
         </Header>
-        {detail ? (
+        {Object.keys(detail).length > 0 ? (
           <ScrollView>{this._renderScrollViewItem()}</ScrollView>
         ) : (
           <Loading />
@@ -240,11 +240,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: fontSize.h4,
-    fontWeight: "500"
+    fontWeight: "500",
+    paddingBottom: 10
   },
   text: {
     fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontWeight: "500",
+    paddingBottom: 5
   }
 });
 

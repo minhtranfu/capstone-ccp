@@ -168,7 +168,7 @@ const TabNavigator = createBottomTabNavigator(
     Account: AccountStack
   },
   {
-    initialRouteName: "Account",
+    initialRouteName: "Equipment",
     defaultNavigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, horizontal, tintColor }) => {
         const { routeName } = navigation.state;

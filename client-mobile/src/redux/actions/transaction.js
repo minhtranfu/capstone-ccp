@@ -23,7 +23,6 @@ export function getTransactionDetail(id) {
 }
 
 export function sendTransactionRequest(transaction) {
-  console.log(JSON.stringify(transaction));
   return async dispatch => {
     try {
       const res = await axios.post(`transactions`, transaction);
@@ -37,21 +36,11 @@ export function sendTransactionRequest(transaction) {
   };
 }
 
-export function approveTransaction(id, transactionStatus) {
+export function requestTransaction(id, transactionStatus) {
   return async dispatch => {
     const res = await axios.put(`transactions/${id}`, transactionStatus);
     dispatch({
-      type: Actions.APPROVE_TRANSACTION_SUCCESS,
-      payload: res.data
-    });
-  };
-}
-
-export function denyTransaction(id, transactionStatus) {
-  return async dispatch => {
-    const res = await axios.put(`transactions/${id}`, transactionStatus);
-    dispatch({
-      type: Actions.DENY_TRANSACTION_SUCCESS,
+      type: Actions.REQUEST_TRANSACTION_SUCCESS,
       payload: res.data
     });
   };
