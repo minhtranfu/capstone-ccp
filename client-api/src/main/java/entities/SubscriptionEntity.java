@@ -6,9 +6,18 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+
 @Entity
 @Where(clause = "is_deleted=0")
 @Table(name = "subscription", schema = "capstone_ccp", catalog = "")
+@NamedNativeQuery(name = "SubscriptionEntity.matchEquipment"
+		,resultClass = SubscriptionEntity.class
+		,query = "SELECT * from subscription s where s.equipment_type_id = :equipmentTypeId and "+
+		"(s.max_price > :dailyPrice  or s.max_price =-1)" +
+		//check exists equipment availble time range contain the subscribed time range\n"
+		"and  exists (select * from available_time_range t where t.equipment_id = :equipmentId and t.begin_date <= s.begin_date  and  s.end_date <= t.end_date)"+
+		// check equipment renting time not contain the subscribed time range
+		"and not exists (select * from hiring_transaction h where h.equipment_id = :equipmentId and (h.status = 'ACCEPTED' or h.status = 'PROCESSING') and not (h.end_date > s.end_date or h.end_date< s.begin_date))")
 public class SubscriptionEntity {
 	private long id;
 	private EquipmentTypeEntity equipmentType;

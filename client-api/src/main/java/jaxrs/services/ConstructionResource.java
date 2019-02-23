@@ -13,9 +13,9 @@ public class ConstructionResource {
 		this.contractorEntity = contractorEntity;
 	}
 
-	@GET
-	@Path("{id:\\d}")
-	public Response getConstructionById() {
-		return Response.ok().build();
-	}
+//	@GET
+//	@Path("{id:\\d}")
+//	public Response getConstructionById() {
+//		return Response.ok().build();
+//	}
 }

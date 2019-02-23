@@ -2,6 +2,8 @@ package daos;
 
 import entities.AvailableTimeRangeEntity;
 import entities.EquipmentEntity;
+import listeners.DataChangeListener;
+import listeners.DataChangeSubscriber;
 import utils.DBUtils;
 
 import javax.persistence.EntityManager;
@@ -14,7 +16,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
+// TODO: 2/22/19 make the dao singleton for a publisher pattern !
+public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>  implements DataChangeListener<EquipmentEntity> {
 	private static Logger logger = Logger.getLogger(EquipmentDAO.class.toString());
 
 
@@ -36,6 +39,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		EntityManager entityManager = DBUtils.getEntityManager();
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<EquipmentEntity> query = criteriaBuilder.createQuery(EquipmentEntity.class);
+
 
 
 		Root<EquipmentEntity> e = query.from(EquipmentEntity.class);
@@ -212,4 +216,37 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 
 
+	List<DataChangeSubscriber<EquipmentEntity>> subscriberList = new ArrayList<>() ;
+
+	@Override
+	public void subscribe(DataChangeSubscriber<EquipmentEntity> subscriber) {
+		subscriberList.add(subscriber);
+	}
+
+	@Override
+	public void unsubscribe(DataChangeSubscriber<EquipmentEntity> subscriber) {
+		subscriberList.remove(subscriber);
+	}
+
+	public void notifyAllWhenDataChange(EquipmentEntity equipmentEntity) {
+		for (DataChangeSubscriber<EquipmentEntity> subscriber : subscriberList) {
+			subscriber.onDataChange(equipmentEntity);
+		}
+	}
+
+	@Override
+	public void persist(EquipmentEntity equipmentEntity) {
+		super.persist(equipmentEntity);
+		notifyAllWhenDataChange(equipmentEntity);
+	}
+
+	@Override
+	public EquipmentEntity merge(EquipmentEntity equipmentEntity) {
+		EquipmentEntity mergedEntity = super.merge(equipmentEntity);
+		notifyAllWhenDataChange(mergedEntity);
+		return mergedEntity;
+	}
+
+
 }
+

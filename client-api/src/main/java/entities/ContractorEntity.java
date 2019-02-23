@@ -8,8 +8,9 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
-@Where(clause = "is_deleted=0")
+
 @Table(name = "contractor", schema = "capstone_ccp")
+@Where(clause = "is_deleted=0")
 public class ContractorEntity {
 	private long id;
 	private String name;
@@ -33,6 +34,7 @@ public class ContractorEntity {
 			{CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
 			orphanRemoval = false,
 			mappedBy = "contractor")
+	@Where(clause = "is_deleted=0")
 	public List<EquipmentEntity> getEquipments() {
 		return equipments;
 	}
@@ -126,6 +128,7 @@ public class ContractorEntity {
 	}
 
 	@OneToMany(mappedBy = "contractor",cascade = CascadeType.ALL, orphanRemoval = true)
+	@Where(clause = "is_deleted=0")
 	public List<ConstructionEntity> getConstructions() {
 		return constructions;
 	}
@@ -143,6 +146,7 @@ public class ContractorEntity {
 
 	@XmlTransient
 	@OneToMany(mappedBy = "fromContractor", fetch = FetchType.LAZY,cascade = {})
+	@Where(clause = "is_deleted = 0")
 	public List<FeedbackEntity> getSentFeedback() {
 		return sentFeedback;
 	}
@@ -153,6 +157,7 @@ public class ContractorEntity {
 
 	@XmlTransient
 	@OneToMany(mappedBy = "toContractor", fetch = FetchType.LAZY, cascade = {})
+	@Where(clause = "is_deleted = 0")
 	public List<FeedbackEntity> getReceivedFeedback() {
 		return receivedFeedback;
 	}

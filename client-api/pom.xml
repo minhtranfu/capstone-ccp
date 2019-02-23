@@ -18,7 +18,7 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>8.0</version>
+            <version>6.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -117,6 +117,9 @@
                 <configuration>
                     <tomeeVersion>1.7.1</tomeeVersion>
                     <tomeeClassifier>plus</tomeeClassifier>
+                    <tomeeHttpPort>8089</tomeeHttpPort>
+                    <!--<debugPort>5050</debugPort>-->
+                    <!--<debug>true</debug>-->
                     <path>/</path>
                     <synchronization>
                         <extensions>
@@ -133,12 +136,13 @@
                 <configuration>
                     <path>/</path>
                     <finalName>client-api.jar</finalName>
-                    <port>8080</port>
+                    <port>8089</port>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>

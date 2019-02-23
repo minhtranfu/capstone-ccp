@@ -53,6 +53,7 @@ public class AdditionalSpecsFieldEntity {
 	@XmlTransient
 	@ManyToOne
 	@JoinColumn(name = "equipment_type_id")
+	@Where(clause = "is_deleted=0")
 	public EquipmentTypeEntity getEquipmentType() {
 		return equipmentType;
 	}

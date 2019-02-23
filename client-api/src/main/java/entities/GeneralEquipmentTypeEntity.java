@@ -87,7 +87,8 @@ public class GeneralEquipmentTypeEntity {
 	}
 
 	@XmlTransient
-	@OneToMany(mappedBy = "generalEquipment")
+	@OneToMany(mappedBy = "generalEquipment", orphanRemoval = true)
+	@Where(clause = "is_deleted=0")
 	public List<EquipmentTypeEntity> getEquipmentTypeEntities() {
 		return equipmentTypeEntities;
 	}

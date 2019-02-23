@@ -1,13 +1,14 @@
 package entities;
 
 import org.hibernate.annotations.Where;
+import org.hibernate.annotations.WhereJoinTable;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
-@Where(clause = "is_deleted=0")
-@Table(name = "construction", schema = "capstone_ccp", catalog = "")
+@Table(name = "construction", schema = "capstone_ccp")
+@Where(clause = "is_deleted = 0")
 public class ConstructionEntity {
 	private long id;
 	private String name;
@@ -93,3 +94,4 @@ public class ConstructionEntity {
 		this.contractor = contractorEntity;
 	}
 }
+

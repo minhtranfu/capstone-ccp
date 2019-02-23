@@ -151,6 +151,7 @@ public class EquipmentEntity implements Serializable {
 	}
 
 	@OneToMany(mappedBy = "equipment",cascade = CascadeType.ALL, orphanRemoval = true)
+	@Where(clause = "is_deleted=0")
 	public List<AvailableTimeRangeEntity> getAvailableTimeRanges() {
 		return availableTimeRanges;
 	}
@@ -249,6 +250,8 @@ public class EquipmentEntity implements Serializable {
 	}
 
 	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL)
+	@Where(clause = "is_deleted=0")
+
 	public Collection<DescriptionImageEntity> getDescriptionImages() {
 		return descriptionImages;
 	}
@@ -259,6 +262,8 @@ public class EquipmentEntity implements Serializable {
 
 
 	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Where(clause = "is_deleted=0")
+
 	public List<AdditionalSpecsValueEntity> getAdditionalSpecsValues() {
 		return additionalSpecsValues;
 	}
@@ -280,6 +285,8 @@ public class EquipmentEntity implements Serializable {
 
 	@XmlTransient
 	@OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)
+	@Where(clause = "is_deleted=0")
+
 	public List<HiringTransactionEntity> getHiringTransactions() {
 		return hiringTransactions;
 	}
@@ -290,7 +297,7 @@ public class EquipmentEntity implements Serializable {
 
 	@XmlTransient
 	@OneToMany(mappedBy = "equipment",fetch = FetchType.LAZY)
-	@Where(clause = "status = 'PROCESSING'")
+	@Where(clause = "status = 'PROCESSING' and is_deleted=0")
 	public List<HiringTransactionEntity> getProcessingHiringTransactions() {
 		return processingHiringTransactions;
 	}
@@ -310,7 +317,7 @@ public class EquipmentEntity implements Serializable {
 
 	@XmlTransient
 	@OneToMany(mappedBy = "equipment",fetch = FetchType.LAZY)
-	@Where(clause = "status = 'PROCESSING' or status='ACCEPTED'")
+	@Where(clause = "(status = 'PROCESSING' or status='ACCEPTED') and is_deleted=0")
 	public List<HiringTransactionEntity> getActiveHiringTransactionEntities() {
 		return activeHiringTransactionEntities;
 	}
