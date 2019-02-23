@@ -5,7 +5,6 @@ import daos.ContractorDAO;
 import dtos.responses.MessageResponse;
 import entities.ConstructionEntity;
 import entities.ContractorEntity;
-import org.glassfish.jersey.server.model.Resource;
 import utils.DBUtils;
 
 import javax.ws.rs.*;

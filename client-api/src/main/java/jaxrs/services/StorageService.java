@@ -4,8 +4,9 @@ import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
 import dtos.responses.MessageResponse;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
+//todo configure alternative for this shit
+//import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+//import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -71,61 +72,61 @@ public class StorageService {
         return Response.ok("Error!").build();
     }
 
-    @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response create(@FormDataParam("file") InputStream uploadedInputStream,
-                           @FormDataParam("file") FormDataContentDisposition fileDetail) {
-        final String fileName = fileDetail.getFileName();
-        try {
-            // Check extension of file
-            if (fileName != null && !fileName.isEmpty() && fileName.contains(".")) {
-                final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
-                String[] allowedExt = {"jpg", "jpeg", "png", "gif"};
-                for (String s : allowedExt) {
-                    if (extension.equals(s)) {
-                        return Response.ok(this.uploadFile(uploadedInputStream, fileDetail, BUCKET_NAME)).build();
-                    }
-                }
-                throw new ServletException("file must be an image");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Fail!")).build();
-    }
-
-    public Object uploadFile(InputStream uploadedInputStream, FormDataContentDisposition fileDetail, final String bucketName) throws IOException {
-        String credentialPath = servletContext.getRealPath("/WEB-INF/" + CREDENTIAL_JSON_FILENAME);
-        Credentials credentials = GoogleCredentials.fromStream(new FileInputStream(credentialPath));
-        storage = StorageOptions.newBuilder().setCredentials(credentials)
-                .setProjectId("sonic-arcadia-97210").build().getService();
-
-        bucket = storage.get(BUCKET_NAME);
-
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("YYYY/MM/dd");
-        DateTime dt = DateTime.now(DateTimeZone.UTC);
-        String folderOfDate = dt.toString(dtf);
-        long currentMiliseconds = new Date().getTime();
-        String originName = fileDetail.getFileName();
-        String fileExtension = originName.substring(originName.lastIndexOf('.') + 1);
-        final String fileName = folderOfDate + "/" + currentMiliseconds + "-" + UUID.randomUUID().toString() + "." + fileExtension;
-
-        // the inputstream is closed by default, so we don't need to close it here
-        BlobInfo blobInfo =
-                storage.create(
-                        BlobInfo
-                                .newBuilder(bucketName, fileName)
-                                // Modify access list to allow all users with link to read file
-                                .setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER))))
-                                .build(),
-                        uploadedInputStream);
-//          // Get serving url for image - a magic image URL for resize - crop .... For appengine only
-//        ImagesService imagesService = ImagesServiceFactory.getImagesService();
-//        String imageUrl = imagesService.getServingUrl(ServingUrlOptions.Builder.withGoogleStorageFileName("/gs/" + BUCKET_NAME + "/" + blobInfo.getName()));
-//        return imageUrl;
-
-        // return the public download link
-        return blobInfo.getMediaLink();
-    }
+//    @POST
+//    @Consumes(MediaType.MULTIPART_FORM_DATA)
+//    public Response create(@FormDataParam("file") InputStream uploadedInputStream,
+//                           @FormDataParam("file") FormDataContentDisposition fileDetail) {
+//        final String fileName = fileDetail.getFileName();
+//        try {
+//            // Check extension of file
+//            if (fileName != null && !fileName.isEmpty() && fileName.contains(".")) {
+//                final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+//                String[] allowedExt = {"jpg", "jpeg", "png", "gif"};
+//                for (String s : allowedExt) {
+//                    if (extension.equals(s)) {
+//                        return Response.ok(this.uploadFile(uploadedInputStream, fileDetail, BUCKET_NAME)).build();
+//                    }
+//                }
+//                throw new ServletException("file must be an image");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Fail!")).build();
+//    }
+//
+//    public Object uploadFile(InputStream uploadedInputStream, FormDataContentDisposition fileDetail, final String bucketName) throws IOException {
+//        String credentialPath = servletContext.getRealPath("/WEB-INF/" + CREDENTIAL_JSON_FILENAME);
+//        Credentials credentials = GoogleCredentials.fromStream(new FileInputStream(credentialPath));
+//        storage = StorageOptions.newBuilder().setCredentials(credentials)
+//                .setProjectId("sonic-arcadia-97210").build().getService();
+//
+//        bucket = storage.get(BUCKET_NAME);
+//
+//        DateTimeFormatter dtf = DateTimeFormat.forPattern("YYYY/MM/dd");
+//        DateTime dt = DateTime.now(DateTimeZone.UTC);
+//        String folderOfDate = dt.toString(dtf);
+//        long currentMiliseconds = new Date().getTime();
+//        String originName = fileDetail.getFileName();
+//        String fileExtension = originName.substring(originName.lastIndexOf('.') + 1);
+//        final String fileName = folderOfDate + "/" + currentMiliseconds + "-" + UUID.randomUUID().toString() + "." + fileExtension;
+//
+//        // the inputstream is closed by default, so we don't need to close it here
+//        BlobInfo blobInfo =
+//                storage.create(
+//                        BlobInfo
+//                                .newBuilder(bucketName, fileName)
+//                                // Modify access list to allow all users with link to read file
+//                                .setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER))))
+//                                .build(),
+//                        uploadedInputStream);
+////          // Get serving url for image - a magic image URL for resize - crop .... For appengine only
+////        ImagesService imagesService = ImagesServiceFactory.getImagesService();
+////        String imageUrl = imagesService.getServingUrl(ServingUrlOptions.Builder.withGoogleStorageFileName("/gs/" + BUCKET_NAME + "/" + blobInfo.getName()));
+////        return imageUrl;
+//
+//        // return the public download link
+//        return blobInfo.getMediaLink();
+//    }
 }

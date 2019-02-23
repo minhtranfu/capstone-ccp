@@ -151,7 +151,6 @@ public class EquipmentEntity implements Serializable {
 	}
 
 	@OneToMany(mappedBy = "equipment",cascade = CascadeType.ALL, orphanRemoval = true)
-	@Where(clause = "is_deleted=0")
 	public List<AvailableTimeRangeEntity> getAvailableTimeRanges() {
 		return availableTimeRanges;
 	}
