@@ -8,7 +8,7 @@ export function getEquipmentDetail(id) {
     const res = await axios.get(`equipments/${id}`);
     dispatch({
       type: Actions.GET_EQUIPMENT_DETAIL_SUCCESS,
-      payload: res
+      payload: res.data
     });
   };
 }
@@ -17,14 +17,13 @@ export function getContractorEquipmentList(contractorId) {
   return async dispatch => {
     const res = await axios.get(`contractors/${contractorId}/equipments`);
     dispatch({
-      type: Actions.GET_CONTRACTOR_EQUIPMENT_SUCCESS,
+      type: Actions.LIST_CONTRACTOR_EQUIPMENT_SUCCESS,
       payload: res.data
     });
   };
 }
 
 export function addEquipment(equipment) {
-  console.log(JSON.stringify(equipment));
   return async dispatch => {
     try {
       const res = await axios.post(`equipments`, equipment);
@@ -32,29 +31,37 @@ export function addEquipment(equipment) {
       console.log(error);
     }
     dispatch({
-      type: Actions.ADD_EQUIPMENT
+      type: Actions.ADD_EQUIPMENT,
+      payload: res.data
     });
   };
 }
 
-// export function addNewEquipment(data) {
-//   return {
-//     type: Actions.ADD_EQUIPMENT,
-//     payload: data
-//   };
-// }
-
-export function updateEquipment(id) {
+export function updateEquipment(equipmentId, equipment) {
   return async dispatch => {
     try {
-      const res = await axios.put(`equipments`, equipment);
+      const res = await axios.put(`equipments/${equipmentId}`, equipment);
+      dispatch({
+        type: Actions.UPDATE_EQUIPMENT,
+        payload: res.data
+      });
     } catch (error) {
       console.log(error);
     }
-    dispatch({
-      type: Actions.UPDATE_EQUIPMENT,
-      payload: res
-    });
+  };
+}
+
+export function updateEquipmentStatus(equipmentId, status) {
+  return async dispatch => {
+    try {
+      const res = await axios.put(`equipments/${equipmentId}/status`, status);
+      dispatch({
+        type: Actions.UPDATE_EQUIPMENT_STATUS_SUCCESS,
+        payload: res.data
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 }
 
@@ -94,5 +101,11 @@ export function searchEquipment(address, long, lat, beginDate, endDate) {
 export function clearSearchResult() {
   return {
     type: Actions.CLEAR_SEARCH_RESULT
+  };
+}
+
+export function clearEquipmentDetail() {
+  return {
+    type: Actions.CLEAR_EQUIPMENT_DETAIL
   };
 }

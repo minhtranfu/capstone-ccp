@@ -27,7 +27,7 @@ import fontSize from "../../../config/fontSize";
     equipment: state.equipment.equipment
   }),
   dispatch => ({
-    addEquipment: data => dispatch(addEquipment(data))
+    fetchAddEquipment: data => dispatch(addEquipment(data))
   })
 )
 class AddImage extends Component {
@@ -82,7 +82,7 @@ class AddImage extends Component {
     }
   };
 
-  _handleOnPressAddEquipment = () => {
+  _handleAddEquipment = () => {
     const {
       descriptionImages,
       thumbnailImage,
@@ -111,7 +111,7 @@ class AddImage extends Component {
       ]
     };
     const newData = Object.assign({}, data, contractor);
-    this.props.addEquipment(newData);
+    this.props.fetchAddEquipment(newData);
   };
 
   render() {
@@ -173,7 +173,7 @@ class AddImage extends Component {
           <TouchableOpacity
             style={[styles.buttonWrapper, styles.buttonEnable]}
             onPress={() => {
-              this._handleOnPressAddEquipment();
+              this._handleAddEquipment();
               this.props.navigation.dismiss();
             }}
           >

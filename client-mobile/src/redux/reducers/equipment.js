@@ -3,7 +3,7 @@ import * as Actions from "../types";
 const INITIAL_STATE = {
   loading: false,
   detail: {},
-  list: [],
+  equipmentStatus: {},
   listSearch: [],
   listRequesterEquipment: [],
   contractorEquipment: []
@@ -18,7 +18,7 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
         detail: payload
       };
     }
-    case Actions.GET_CONTRACTOR_EQUIPMENT_SUCCESS: {
+    case Actions.LIST_CONTRACTOR_EQUIPMENT_SUCCESS: {
       return {
         ...state,
         contractorEquipment: payload
@@ -32,23 +32,26 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
     }
     case Actions.ADD_EQUIPMENT: {
       return {
-        ...state
+        ...state,
+        contractorEquipment: [...state.contractorEquipment, payload]
       };
     }
     case Actions.UPDATE_EQUIPMENT: {
       return {
         ...state,
-        list: state.list.map(item => {
-          if (item.id === payload.id)
-            return Object.assign({}, item, { status: payload.status });
-          return item;
-        })
+        detail: payload
+      };
+    }
+    case Actions.UPDATE_EQUIPMENT_STATUS_SUCCESS: {
+      return {
+        ...state,
+        equipmentStatus: payload
       };
     }
     case Actions.REMOVE_EQUIPMENT:
       return {
         ...state,
-        list: state.list.filter(x => x.id !== action.id)
+        equipmentStatus: payload
       };
     case Actions.SEARCH_EQUIPMENT_SUCCESS:
       return {
@@ -60,7 +63,11 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
         ...state,
         listSearch: []
       };
-
+    case Actions.CLEAR_EQUIPMENT_DETAIL:
+      return {
+        ...state,
+        detail: {}
+      };
     default:
       return state;
   }

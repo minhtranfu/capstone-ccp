@@ -162,7 +162,6 @@ class MyEquipment extends Component {
 
   _renderContent = () => {
     const { list, message } = this.props;
-    console.log("status here", list);
     return (
       <View style={styles.scrollWrapper}>
         {list.length > 0 ? (

@@ -80,7 +80,7 @@ class EquipmentDetail extends Component {
   };
 
   _confirmDate = ({ startDate, endDate }) => {
-    const { id, dailyPrice, deliveryPrice, name } = this.props.detail.data;
+    const { id, dailyPrice, deliveryPrice, name } = this.props.detail;
     this.setState({
       startDate,
       endDate
@@ -184,7 +184,7 @@ class EquipmentDetail extends Component {
       dailyPrice,
       deliveryPrice,
       description
-    } = this.props.detail.data;
+    } = this.props.detail;
     return (
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.textWrapper}>
@@ -296,10 +296,10 @@ class EquipmentDetail extends Component {
     };
     return (
       <SafeAreaView style={styles.container}>
-        {detail.data ? (
+        {detail ? (
           <View>
             <ParallaxList
-              title={detail.data.name}
+              title={detail.name}
               removeTitle={true}
               hasThumbnail={true}
               hasLeft={true}

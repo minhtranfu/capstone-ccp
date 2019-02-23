@@ -39,8 +39,8 @@ import fontSize from "../../config/fontSize";
     fetchCreateConstruction: (contractorId, construction) => {
       dispatch(createConstruction(contractorId, construction));
     },
-    fetchDeleteConstruction: contractorId => {
-      dispatch(deleteConstruction(contractorId));
+    fetchDeleteConstruction: (contractorId, constructionId) => {
+      dispatch(deleteConstruction(contractorId, constructionId));
     }
   })
 )
@@ -179,24 +179,26 @@ class Construction extends Component {
       <View style={{ paddingHorizontal: 15 }}>
         {list.length > 0 ? (
           <View>
-            {list.map(item => (
-              <ConstructionItem
-                key={item.id}
-                name={item.name}
-                address={item.address}
-                onPress={() =>
-                  this.props.navigation.navigate("ConstructionDetail", {
-                    contractorId: contractorId,
-                    constructionId: item.id,
-                    name: item.name,
-                    address: item.address
-                  })
-                }
-                onIconPress={() =>
-                  this._handleRemoveConstruction(contractorId, item.id)
-                }
-              />
-            ))}
+            {list
+              .filter(item => item.deleted !== true)
+              .map(item => (
+                <ConstructionItem
+                  key={item.id}
+                  name={item.name}
+                  address={item.address}
+                  onPress={() =>
+                    this.props.navigation.navigate("ConstructionDetail", {
+                      contractorId: contractorId,
+                      constructionId: item.id,
+                      name: item.name,
+                      address: item.address
+                    })
+                  }
+                  onIconPress={() =>
+                    this._handleRemoveConstruction(contractorId, item.id)
+                  }
+                />
+              ))}
           </View>
         ) : (
           <TouchableOpacity onPress={() => this._setModalVisible(true)}>
