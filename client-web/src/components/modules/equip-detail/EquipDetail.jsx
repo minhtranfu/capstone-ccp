@@ -277,7 +277,7 @@ class EquipDetail extends Component {
                                     }
                                 </p>
                             </div>
-                            <div className="request-card">
+                            <div className="request-card bg-white shadow">
                                 <div className="my-2">Daily price: <span className="float-right"><i className="fa fa-dollar"></i>{equip.dailyPrice}</span></div>
                                 <div className="my-2">Delivery price: <span className="float-right"><i className="fa fa-dollar"></i>{equip.deliveryPrice}</span></div>
                                 <DateRangePicker minDate={moment()} onApply={this._onChangeDateRanage} containerClass="w-100" data-range-id="1" startDate="1/1/2014" endDate="3/1/2014">
