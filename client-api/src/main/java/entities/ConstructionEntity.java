@@ -83,7 +83,7 @@ public class ConstructionEntity {
 		isDeleted = deleted;
 	}
 
-	@JsonbTransient
+	@JsonbTransient 	@XmlTransient
 	@ManyToOne()
 	@JoinColumn(name = "contractor_id")
 	public ContractorEntity getContractor() {

@@ -5,6 +5,7 @@ import org.hibernate.annotations.Where;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Where(clause = "is_deleted=0")
@@ -17,9 +18,8 @@ public class AdditionalSpecsFieldEntity {
 	private boolean isDeleted;
 
 
-
-
-	@Id @GeneratedValue
+	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;
@@ -52,6 +52,7 @@ public class AdditionalSpecsFieldEntity {
 
 
 	@JsonbTransient
+	@XmlTransient
 	@ManyToOne
 	@JoinColumn(name = "equipment_type_id")
 	@Where(clause = "is_deleted=0")
@@ -64,7 +65,7 @@ public class AdditionalSpecsFieldEntity {
 	}
 
 	@Basic
-	@Column(name = "is_deleted", insertable=false)
+	@Column(name = "is_deleted", insertable = false)
 	public boolean isDeleted() {
 		return isDeleted;
 	}
@@ -74,7 +75,7 @@ public class AdditionalSpecsFieldEntity {
 	}
 
 
-	public enum DataType{
+	public enum DataType {
 		STRING,
 		INTEGER,
 		DOUBLE

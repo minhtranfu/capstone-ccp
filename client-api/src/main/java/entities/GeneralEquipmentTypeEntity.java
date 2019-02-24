@@ -87,7 +87,7 @@ public class GeneralEquipmentTypeEntity {
 		this.updatedTime = updatedTime;
 	}
 
-	@JsonbTransient
+	@JsonbTransient 	@XmlTransient
 	@OneToMany(mappedBy = "generalEquipment", orphanRemoval = true)
 	@Where(clause = "is_deleted=0")
 	public List<EquipmentTypeEntity> getEquipmentTypeEntities() {

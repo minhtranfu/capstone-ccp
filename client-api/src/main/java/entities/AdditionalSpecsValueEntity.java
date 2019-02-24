@@ -46,7 +46,7 @@ public class AdditionalSpecsValueEntity {
 		this.additionalSpecsField = additionalSpecsField;
 	}
 
-	@JsonbTransient
+	@JsonbTransient 	@XmlTransient
 	@ManyToOne
 	@JoinColumn(name = "equipment_id")
 	public EquipmentEntity getEquipment() {

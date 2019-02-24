@@ -17,7 +17,7 @@ public class AvailableTimeRangeEntity {
 	private Timestamp endDate;
 	private EquipmentEntity equipment;
 
-	@JsonbTransient
+	@JsonbTransient 	@XmlTransient
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -50,7 +50,7 @@ public class AvailableTimeRangeEntity {
 	}
 
 
-	@JsonbTransient
+	@JsonbTransient 	@XmlTransient
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "equipment_id")
 	public EquipmentEntity getEquipment() {

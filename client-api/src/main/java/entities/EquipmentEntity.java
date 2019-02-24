@@ -283,7 +283,7 @@ public class EquipmentEntity implements Serializable {
 
 
 
-	@JsonbTransient
+	@JsonbTransient 	@XmlTransient
 	@OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")
 
@@ -295,7 +295,7 @@ public class EquipmentEntity implements Serializable {
 		this.hiringTransactions = hiringTransactions;
 	}
 
-	@JsonbTransient
+	@JsonbTransient 	@XmlTransient
 	@OneToMany(mappedBy = "equipment",fetch = FetchType.LAZY)
 	@Where(clause = "status = 'PROCESSING' and is_deleted=0")
 	public List<HiringTransactionEntity> getProcessingHiringTransactions() {
@@ -315,7 +315,7 @@ public class EquipmentEntity implements Serializable {
 		}
 	}
 
-	@JsonbTransient
+	@JsonbTransient 	@XmlTransient
 	@OneToMany(mappedBy = "equipment",fetch = FetchType.LAZY)
 	@Where(clause = "(status = 'PROCESSING' or status='ACCEPTED') and is_deleted=0")
 	public List<HiringTransactionEntity> getActiveHiringTransactionEntities() {

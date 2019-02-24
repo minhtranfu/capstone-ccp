@@ -29,7 +29,7 @@ public class ContractorEntity {
 	private List<FeedbackEntity> sentFeedback;
 	private List<FeedbackEntity> receivedFeedback;
 
-	@JsonbTransient
+	@JsonbTransient 	@XmlTransient
 	@OneToMany(cascade =
 			{CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
 			orphanRemoval = false,
@@ -144,7 +144,7 @@ public class ContractorEntity {
 		constructions.remove(constructionEntity);
 	}
 
-	@JsonbTransient
+	@JsonbTransient 	@XmlTransient
 	@OneToMany(mappedBy = "fromContractor", fetch = FetchType.LAZY,cascade = {})
 	@Where(clause = "is_deleted = 0")
 	public List<FeedbackEntity> getSentFeedback() {
@@ -155,7 +155,7 @@ public class ContractorEntity {
 		this.sentFeedback = sentFeedback;
 	}
 
-	@JsonbTransient
+	@JsonbTransient 	@XmlTransient
 	@OneToMany(mappedBy = "toContractor", fetch = FetchType.LAZY, cascade = {})
 	@Where(clause = "is_deleted = 0")
 	public List<FeedbackEntity> getReceivedFeedback() {
