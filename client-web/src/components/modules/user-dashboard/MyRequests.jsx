@@ -245,7 +245,7 @@ class MyRequests extends Component {
                                 >
                                     <div className="d-flex transaction my-3 rounded">
                                         <div className="image flex-fill">
-                                            <img src="https://via.placeholder.com/300x200.png?text=CCP+Capstone" />
+                                            <img src="/upload/product-images/unnamed-19-jpg.jpg" className="rounded-left" />
                                         </div>
                                         <div className="detail flex-fill p-2">
                                             <h6><span className={statusClasses}>{transaction.status}</span> {equipment.name}</h6>

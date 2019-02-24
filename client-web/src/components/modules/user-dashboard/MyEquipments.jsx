@@ -34,7 +34,7 @@ class MyEquipments extends PureComponent {
                     return (
                             <div className="d-flex transaction my-3 rounded">
                                 <div className="image flex-fill">
-                                    <img src={equipment.thumbnailImage || "https://via.placeholder.com/300x200.png?text=CCP+Capstone"} />
+                                    <img src={equipment.thumbnailImage || "/upload/product-images/unnamed-19-jpg.jpg"} className="rounded-left" />
                                 </div>
                                 <div className="detail flex-fill p-2">
                                     <h6>{equipment.name}</h6>

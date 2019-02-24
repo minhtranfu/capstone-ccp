@@ -1,3 +1,6 @@
+body {
+  background-color: #ececec;
+}
 a:hover {
   text-decoration: none;
 }
@@ -128,6 +131,7 @@ nav.navbar {
   box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.22);
   word-wrap: keep-all;
   white-space: nowrap;
+  background-color: #fff;
   .image {
     max-height: 200px;
     max-width: 300px;
@@ -136,6 +140,11 @@ nav.navbar {
       max-height: 100%;
     }
   }
+}
+
+.equip-card .card {
+  border: none;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.22);
 }
 
 .white-space-normal {
