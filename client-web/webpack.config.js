@@ -5,7 +5,8 @@ const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const MinifyPlugin = require("babel-minify-webpack-plugin");
+// const MinifyPlugin = require("babel-minify-webpack-plugin");
+// const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const CleanPlugin = require('./utils/clean-plugin');
 const NodeUtils = require('./src/services/common/node-service');
@@ -103,7 +104,7 @@ const config = {
 if (NodeUtils.isProduction()) {
   config.entry = './src/Bootstrap';
   config.mode = 'production';
-  config.plugins.push(new MinifyPlugin());
+  // config.optimization.push(new MinifyPlugin());
 } else {
   config.devtool = 'eval';
   config.mode = 'development';
