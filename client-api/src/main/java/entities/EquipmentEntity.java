@@ -282,6 +282,7 @@ public class EquipmentEntity implements Serializable {
 	}
 
 
+
 	@JsonbTransient
 	@OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")

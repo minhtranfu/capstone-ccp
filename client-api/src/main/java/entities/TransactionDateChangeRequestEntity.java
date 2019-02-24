@@ -3,7 +3,7 @@ package entities;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.Timestamp;
 
 @Entity

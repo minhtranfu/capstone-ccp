@@ -2,7 +2,7 @@ package dtos.requests;
 
 
 import javax.validation.constraints.NotNull;
-import java.sql.Date;
+import java.util.Date;
 
 public class HiringTransactionRequest {
 

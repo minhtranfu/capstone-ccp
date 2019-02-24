@@ -4,10 +4,11 @@ package entities;
 import dtos.requests.HiringTransactionRequest;
 import org.hibernate.annotations.Where;
 
+import javax.json.bind.annotation.JsonbDateFormat;
 import javax.persistence.*;
 import java.security.AllPermission;
-import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "hiring_transaction", schema = "capstone_ccp", catalog = "")
@@ -27,6 +28,7 @@ public class HiringTransactionEntity {
 	private Integer deliveryPrice;
 	private Timestamp createdTime;
 	private Timestamp updatedTime;
+
 	private Date beginDate;
 	private Date endDate;
 
@@ -137,6 +139,8 @@ public class HiringTransactionEntity {
 
 	@Basic
 	@Column(name = "begin_date")
+	@Temporal(TemporalType.DATE)
+	@JsonbDateFormat("yyyy-MM-dd")
 	public Date getBeginDate() {
 		return beginDate;
 	}
@@ -148,6 +152,8 @@ public class HiringTransactionEntity {
 
 	@Basic
 	@Column(name = "end_date")
+	@JsonbDateFormat("yyyy-MM-dd")
+
 	public Date getEndDate() {
 		return endDate;
 	}

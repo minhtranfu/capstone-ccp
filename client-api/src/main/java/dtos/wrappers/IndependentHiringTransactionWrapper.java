@@ -5,7 +5,7 @@ import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 
-import java.sql.Date;
+import java.util.Date;
 import java.sql.Timestamp;
 
 public class IndependentHiringTransactionWrapper {
