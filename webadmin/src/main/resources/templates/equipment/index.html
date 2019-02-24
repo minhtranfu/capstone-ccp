@@ -18,13 +18,18 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Contractor Manage </h1>
+                <h1 class="page-header">Equipment Manage</h1>
             </div>
 
 
             <!-- /.col-lg-12 -->
         </div>
         <div class="row">
+            <div class="col-lg-10">
+            </div>
+            <div class="col-lg-2">
+                <!--<a th:href="@{/feedback/create}" class="link btn btn-default spacing">Create New</a>-->
+            </div>
 
             <!-- /.col-lg-12 -->
         </div>
@@ -33,7 +38,7 @@
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Contractor Information
+                        Feedback Information
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
@@ -42,42 +47,39 @@
                             <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone Number</th>
-                                <th>Created Time</th>
-                                <th>Updated Time</th>
-                                <th>Number Of Feedbacked</th>
+                                <th>Id</th>
                                 <th>Status</th>
+                                <th>Name</th>
+                                <th>Supplier</th>
+                                <th>Daily Price</th>
+                                <th>Delivery Price</th>
+                                <th>Address</th>
+                                <th>Create Time</th>
+                                <th>Updated Time</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="item,iter : ${contractors}">
-                                <td th:text="*{iter.index + 1}"></td>
-                                <td><a th:href="@{/contractor/detail/{id}(id = ${item.id})}">
+                            <tr th:each="item,iter : ${equipments}">
+                                <td th:text="${iter.index + 1}"></td>
+                                <td><a th:href="@{/equipment/detail/{id}(id = ${item.id})}">
+                                    <span th:text="${item.id}" class="link"></span></a>
+                                </td>
+                                <td th:text="${item.status}"></td>
+
+                                <td><a th:href="@{/equipment/detail/{id}(id = ${item.id})}">
                                     <span th:text="${item.name}" class="link"></span></a>
                                 </td>
-                                <td>
-                                    <span th:text="${item.email}"></span>
+                                <td><a th:href="@{/contractor/detail/{id}(id = ${item.contractorEntity.id})}">
+                                    <span th:text="${item.contractorEntity.name}" class="link"></span></a>
                                 </td>
-                                <td>
-                                    <span th:text="${item.phone}"></span>
-                                </td>
-                                <td>
-                                    <span th:text="${item.createdTime}"></span>
-                                </td>
-                                <td>
-                                    <span th:text="${item.updatedTime}"></span>
-                                </td>
-                                <td>
-                                    <span th:text="${numberOfFeedbacked}"></span>
-                                </td>
-                                <td th:switch="${item.status}">
-                                    <a th:case="0" th:href="@{/contractor/deactive/{id}(id = ${item.id})}" class="btn btn-primary link">Not Verify</a>
-                                    <a th:case="1" th:href="@{/contractor/active/{id}(id = ${item.id})}" class="btn btn-success link">Active</a>
-                                    <a th:case="2" th:href="@{/contractor/active/{id}(id = ${item.id})}" class="btn btn-danger link">Deactive</a>
-                                </td>
+                                <td th:text="${item.dailyPrice}"></td>
+                                <td th:text="${item.deliveryPrice}"></td>
+                                <td th:text="${item.address}"></td>
+                                <td th:text="${item.createdTime}"></td>
+                                <td th:text="${item.updatedTime}"></td>
+
                             </tr>
+
                             </tbody>
                         </table>
                         <!-- /.table-responsive -->

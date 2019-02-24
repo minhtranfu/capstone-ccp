@@ -1,9 +1,6 @@
 package com.ccp.webadmin.services;
 
-import com.ccp.webadmin.entities.EquipmentTypeEntity;
-import com.ccp.webadmin.entities.FeedbackEntity;
-import com.ccp.webadmin.entities.FeedbackTypeEntity;
-import com.ccp.webadmin.entities.GeneralEquipmentTypeEntity;
+import com.ccp.webadmin.entities.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,5 +18,7 @@ public interface FeedbackService {
     void save(FeedbackEntity feedbackEntity);
 
     void deleteById(Integer id);
+
+    Integer countFeedbackByContractor(ContractorEntity contractor);
 
 }

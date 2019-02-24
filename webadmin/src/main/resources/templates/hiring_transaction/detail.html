@@ -33,29 +33,50 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-6">
-                                <form th:action="@{/feedback/saveProcess}" method="post"
-                                      th:object="${feedback}" enctype="multipart/form-data">
+                                <form th:action="@{/hiring_transaction/saveProcess}" method="post"
+                                      th:object="${transaction}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{id}">
                                     <div class="form-group">
-                                        <label>Content:</label>
-                                        <input th:field="*{content}" class="form-control" disabled="disabled" placeholder="Content">
+                                        <label>Status:</label>
+                                        <input th:field="*{status}" class="form-control" disabled="disabled" placeholder="Status">
                                     </div>
                                     <div class="form-group">
-                                        <label>Feedback Type:</label>
-                                        <input th:field="*{feedbackTypeEntity.name}" class="form-control" disabled="disabled" placeholder="Content">
+                                        <label>Equipment:</label>
+                                        <a th:href="@{/equipment/detail/{id}(id = *{equipment.id})}">
+                                            <span th:text="*{equipment.name}" class="link form-control"></span></a>
                                     </div>
                                     <div class="form-group">
-                                        <label>Feedback Contractor:</label>
-                                        <input th:field="*{contractorFeedback.name}" class="form-control" disabled="disabled" placeholder="Content">
+                                        <label>Requester:</label>
+                                        <a th:href="@{/contractor/detail/{id}(id = *{requester.id})}">
+                                            <span th:text="*{requester.name}" class="link form-control"></span></a>
                                     </div>
                                     <div class="form-group">
-                                        <label>Feedbacked Contractor:</label>
-                                        <input th:field="*{contractorIsFeedbacked.name}" class="form-control" disabled="disabled" placeholder="Content">
+                                        <label>Daily Price:</label>
+                                        <input th:field="*{dailyPrice}" class="form-control" disabled="disabled" placeholder="Created Time">
                                     </div>
-
+                                    <div class="form-group">
+                                        <label>Delivery Price:</label>
+                                        <input th:field="*{deliveryPrice}" class="form-control" disabled="disabled" placeholder="Created Time">
+                                    </div>
+                                    <!--<div class="form-group">-->
+                                        <!--<label>Total Price:</label>-->
+                                        <!--<input th:field="*{deliveryPrice}" class="form-control" disabled="disabled" placeholder="Created Time">-->
+                                    <!--</div>-->
+                                    <div class="form-group">
+                                        <label>Equipment Address:</label>
+                                        <input th:field="*{equipmentAddress}" class="form-control" disabled="disabled" placeholder="Created Time">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Requester Address:</label>
+                                        <input th:field="*{requesterAddress}" class="form-control" disabled="disabled" placeholder="Created Time">
+                                    </div>
                                     <div class="form-group">
                                         <label>Create Timed:</label>
                                         <input th:field="*{createdTime}" class="form-control" disabled="disabled" placeholder="Created Time">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Update Timed:</label>
+                                        <input th:field="*{updatedTime}" class="form-control" disabled="disabled" placeholder="Created Time">
                                     </div>
 
                                 </form>

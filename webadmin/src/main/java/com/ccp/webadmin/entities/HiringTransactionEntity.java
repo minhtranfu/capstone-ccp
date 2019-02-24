@@ -55,11 +55,8 @@ public class HiringTransactionEntity implements Serializable {
     @Column(name = "requester_long")
     private Double requesterLong;
 
-    @Column(name = "equipment_lat")
+    @Column(name = "requester_lat")
     private Double requesterLat;
-
-    @Column(name = "is_read")
-    private boolean isRead;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "requester_id")
@@ -75,7 +72,7 @@ public class HiringTransactionEntity implements Serializable {
     public HiringTransactionEntity() {
     }
 
-    public HiringTransactionEntity(@NotNull(message = "Content is required not empty") @Size(max = 45, message = "status") String status, @NotNull(message = "Price is required not empty") Double dailyPrice, @NotNull(message = "Price is required not empty") Double deliveryPrice, LocalDateTime createdTime, LocalDateTime updatedTime, LocalDate beginDate, LocalDate endDate, String equipmentAddress, Double equipmentLong, Double equipmentLat, String requesterAddress, Double requesterLong, Double requesterLat, boolean isRead, ContractorEntity requester, EquipmentEntity equipment, boolean isDeleted) {
+    public HiringTransactionEntity(@NotNull(message = "Content is required not empty") @Size(max = 45, message = "status") String status, @NotNull(message = "Price is required not empty") Double dailyPrice, @NotNull(message = "Price is required not empty") Double deliveryPrice, LocalDateTime createdTime, LocalDateTime updatedTime, LocalDate beginDate, LocalDate endDate, String equipmentAddress, Double equipmentLong, Double equipmentLat, String requesterAddress, Double requesterLong, Double requesterLat, ContractorEntity requester, EquipmentEntity equipment, boolean isDeleted) {
         this.status = status;
         this.dailyPrice = dailyPrice;
         this.deliveryPrice = deliveryPrice;
@@ -89,7 +86,6 @@ public class HiringTransactionEntity implements Serializable {
         this.requesterAddress = requesterAddress;
         this.requesterLong = requesterLong;
         this.requesterLat = requesterLat;
-        this.isRead = isRead;
         this.requester = requester;
         this.equipment = equipment;
         this.isDeleted = isDeleted;
@@ -205,14 +201,6 @@ public class HiringTransactionEntity implements Serializable {
 
     public void setRequesterLat(Double requesterLat) {
         this.requesterLat = requesterLat;
-    }
-
-    public boolean isRead() {
-        return isRead;
-    }
-
-    public void setRead(boolean read) {
-        isRead = read;
     }
 
     public ContractorEntity getRequester() {

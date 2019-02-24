@@ -48,28 +48,39 @@
                             <tr>
                                 <th>No</th>
                                 <th>Id</th>
-                                <th>Content</th>
+                                <th>Status</th>
+                                <th>Equipment</th>
+                                <th>Requester</th>
+                                <th>Daily Price</th>
+                                <th>Delivery Price</th>
+                                <th>Total Price</th>
+                                <th>Equipment Address</th>
+                                <th>Requester Adddress</th>
                                 <th>Create Time</th>
-                                <th>Feedback Contractor</th>
-                                <th>Feedbacked Contractor</th>
-                                <th>Feedback Type</th>
+                                <th>Updated Time</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="item,iter : ${transactions}">
                                 <td th:text="${iter.index + 1}"></td>
-                                <td><a th:href="@{/feedback/detail/{id}(id = ${item.id})}">
+                                <td><a th:href="@{/hiring_transaction/detail/{id}(id = ${item.id})}">
                                     <span th:text="${item.id}" class="link"></span></a>
                                 </td>
                                 <td th:text="${item.status}"></td>
-                                <td th:text="${item.createdTime}"></td>
-                                <!--<td th:text="${item.feedbackTypeEntity.name}"></td>-->
-                                <!--<td><a th:href="@{/contractor/detail/{id}(id = ${item.contractorFeedback.id})}">-->
-                                    <!--<span th:text="${item.contractorFeedback.name}" class="link"></span></a>-->
-                                <!--</td>-->
-                                <!--<td><a th:href="@{/contractor/detail/{id}(id = ${item.contractorIsFeedbacked.id})}">-->
-                                    <!--<span th:text="${item.contractorIsFeedbacked.name}" class="link"></span></a>-->
+
+                                <td><a th:href="@{/equipment/detail/{id}(id = ${item.equipment.id})}">
+                                    <span th:text="${item.equipment.name}" class="link"></span></a>
                                 </td>
+                                <td><a th:href="@{/contractor/detail/{id}(id = ${item.requester.id})}">
+                                    <span th:text="${item.requester.name}" class="link"></span></a>
+                                </td>
+                                <td th:text="${item.dailyPrice}"></td>
+                                <td th:text="${item.deliveryPrice}"></td>
+                                <td th:text="${item.dailyPrice + item.deliveryPrice}"></td>
+                                <td th:text="${item.equipmentAddress}"></td>
+                                <td th:text="${item.requesterAddress}"></td>
+                                <td th:text="${item.createdTime}"></td>
+                                <td th:text="${item.updatedTime}"></td>
 
                             </tr>
 

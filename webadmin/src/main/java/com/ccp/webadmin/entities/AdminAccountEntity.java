@@ -5,7 +5,9 @@ package com.ccp.webadmin.entities;
 //import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,20 +15,21 @@ import java.util.List;
 
 @Entity
 @Table(name = "admin_account")
-public class AdminAccountEntity  {
+public class AdminAccountEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @NotNull(message = "aaaa")
+    @Size(min = 3, message = "Username required more than 3 letters")
     @Column(name = "username")
     private String username;
 
-    @NotNull
+    @Size(min = 3, message = "Password required more than 3 letters")
     @Column(name = "password")
     private String password;
 
+    @NotNull
     @OneToOne(mappedBy = "adminAccountEntity", cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, optional = false)
     private AdminUserEntity account;
@@ -101,8 +104,7 @@ public class AdminAccountEntity  {
             if (this.account != null) {
                 this.account.setAdminAccountEntity(null);
             }
-        }
-        else {
+        } else {
             account.setRoleId(2);
             account.setAdminAccountEntity(this);
         }

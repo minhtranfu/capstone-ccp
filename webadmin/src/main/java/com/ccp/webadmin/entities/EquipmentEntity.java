@@ -1,42 +1,112 @@
 package com.ccp.webadmin.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "equipment")
 public class EquipmentEntity {
-    private int id;
-    private String name;
-    private Integer dailyPrice;
-    private Integer deliveryPrice;
-    private String description;
-    private String status;
-    private String thumbnailImage;
-    private Boolean isDeleted;
-    private Timestamp createdTime;
-    private Timestamp updatedTime;
-    private Integer equipmentTypeId;
-    private Integer contractorId;
-    private Integer constructionId;
-    private String address;
-    private Double longitude;
-    private Double lat;
-    private Integer descriptionImageId;
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    public int getId() {
+    private Integer id;
+
+    @NotNull(message = "Name is required not empty")
+    @Size(min = 3, message = "Equipment's name required more than 3 letters")
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "daily_price")
+    private Double dailyPrice;
+
+    @Column(name = "delivery_price")
+    private Double deliveryPrice;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "thumbnail_image")
+    private String thumbnailImage;
+
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
+    @Column(name = "created_time")
+    private LocalDateTime createdTime;
+
+    @Column(name = "updated_time")
+    private LocalDateTime updatedTime;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "long")
+    private Double longitude;
+
+    @Column(name = "lat")
+    private Double lat;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "equipment_type_id")
+    private EquipmentTypeEntity equipmentTypeEntity;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "contractor_id")
+    private ContractorEntity contractorEntity;
+
+//    @Basic
+//    @Column(name = "construction_id")
+//    public Integer getConstructionId() {
+//        return constructionId;
+//    }
+
+
+//    @Basic
+//    @Column(name = "description_image_id")
+//    public Integer getDescriptionImageId() {
+//        return descriptionImageId;
+//    }
+//
+//    public void setDescriptionImageId(Integer descriptionImageId) {
+//        this.descriptionImageId = descriptionImageId;
+//    }
+
+
+    public EquipmentEntity() {
+    }
+
+    public EquipmentEntity(@NotNull(message = "Name is required not empty") @Size(min = 3, message = "Equipment's name required more than 3 letters") String name, Double dailyPrice, Double deliveryPrice, String description, String status, String thumbnailImage, Boolean isDeleted, LocalDateTime createdTime, LocalDateTime updatedTime, String address, Double longitude, Double lat, EquipmentTypeEntity equipmentTypeEntity, ContractorEntity contractorEntity) {
+        this.name = name;
+        this.dailyPrice = dailyPrice;
+        this.deliveryPrice = deliveryPrice;
+        this.description = description;
+        this.status = status;
+        this.thumbnailImage = thumbnailImage;
+        this.isDeleted = isDeleted;
+        this.createdTime = createdTime;
+        this.updatedTime = updatedTime;
+        this.address = address;
+        this.longitude = longitude;
+        this.lat = lat;
+        this.equipmentTypeEntity = equipmentTypeEntity;
+        this.contractorEntity = contractorEntity;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -45,28 +115,22 @@ public class EquipmentEntity {
         this.name = name;
     }
 
-    @Basic
-    @Column(name = "daily_price")
-    public Integer getDailyPrice() {
+    public Double getDailyPrice() {
         return dailyPrice;
     }
 
-    public void setDailyPrice(Integer dailyPrice) {
+    public void setDailyPrice(Double dailyPrice) {
         this.dailyPrice = dailyPrice;
     }
 
-    @Basic
-    @Column(name = "delivery_price")
-    public Integer getDeliveryPrice() {
+    public Double getDeliveryPrice() {
         return deliveryPrice;
     }
 
-    public void setDeliveryPrice(Integer deliveryPrice) {
+    public void setDeliveryPrice(Double deliveryPrice) {
         this.deliveryPrice = deliveryPrice;
     }
 
-    @Basic
-    @Column(name = "description")
     public String getDescription() {
         return description;
     }
@@ -75,8 +139,6 @@ public class EquipmentEntity {
         this.description = description;
     }
 
-    @Basic
-    @Column(name = "status")
     public String getStatus() {
         return status;
     }
@@ -85,8 +147,6 @@ public class EquipmentEntity {
         this.status = status;
     }
 
-    @Basic
-    @Column(name = "thumbnail_image")
     public String getThumbnailImage() {
         return thumbnailImage;
     }
@@ -95,8 +155,6 @@ public class EquipmentEntity {
         this.thumbnailImage = thumbnailImage;
     }
 
-    @Basic
-    @Column(name = "is_deleted")
     public Boolean getDeleted() {
         return isDeleted;
     }
@@ -105,58 +163,22 @@ public class EquipmentEntity {
         isDeleted = deleted;
     }
 
-    @Basic
-    @Column(name = "created_time")
-    public Timestamp getCreatedTime() {
+    public LocalDateTime getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Timestamp createdTime) {
+    public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
     }
 
-    @Basic
-    @Column(name = "updated_time")
-    public Timestamp getUpdatedTime() {
+    public LocalDateTime getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(Timestamp updatedTime) {
+    public void setUpdatedTime(LocalDateTime updatedTime) {
         this.updatedTime = updatedTime;
     }
 
-    @Basic
-    @Column(name = "equipment_type_id")
-    public Integer getEquipmentTypeId() {
-        return equipmentTypeId;
-    }
-
-    public void setEquipmentTypeId(Integer equipmentTypeId) {
-        this.equipmentTypeId = equipmentTypeId;
-    }
-
-    @Basic
-    @Column(name = "contractor_id")
-    public Integer getContractorId() {
-        return contractorId;
-    }
-
-    public void setContractorId(Integer contractorId) {
-        this.contractorId = contractorId;
-    }
-
-    @Basic
-    @Column(name = "construction_id")
-    public Integer getConstructionId() {
-        return constructionId;
-    }
-
-    public void setConstructionId(Integer constructionId) {
-        this.constructionId = constructionId;
-    }
-
-    @Basic
-    @Column(name = "address")
     public String getAddress() {
         return address;
     }
@@ -165,8 +187,6 @@ public class EquipmentEntity {
         this.address = address;
     }
 
-    @Basic
-    @Column(name = "long")
     public Double getLongitude() {
         return longitude;
     }
@@ -175,8 +195,6 @@ public class EquipmentEntity {
         this.longitude = longitude;
     }
 
-    @Basic
-    @Column(name = "lat")
     public Double getLat() {
         return lat;
     }
@@ -185,42 +203,19 @@ public class EquipmentEntity {
         this.lat = lat;
     }
 
-    @Basic
-    @Column(name = "description_image_id")
-    public Integer getDescriptionImageId() {
-        return descriptionImageId;
+    public EquipmentTypeEntity getEquipmentTypeEntity() {
+        return equipmentTypeEntity;
     }
 
-    public void setDescriptionImageId(Integer descriptionImageId) {
-        this.descriptionImageId = descriptionImageId;
+    public void setEquipmentTypeEntity(EquipmentTypeEntity equipmentTypeEntity) {
+        this.equipmentTypeEntity = equipmentTypeEntity;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EquipmentEntity that = (EquipmentEntity) o;
-        return id == that.id &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(dailyPrice, that.dailyPrice) &&
-                Objects.equals(deliveryPrice, that.deliveryPrice) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(status, that.status) &&
-                Objects.equals(thumbnailImage, that.thumbnailImage) &&
-                Objects.equals(isDeleted, that.isDeleted) &&
-                Objects.equals(createdTime, that.createdTime) &&
-                Objects.equals(updatedTime, that.updatedTime) &&
-                Objects.equals(equipmentTypeId, that.equipmentTypeId) &&
-                Objects.equals(contractorId, that.contractorId) &&
-                Objects.equals(constructionId, that.constructionId) &&
-                Objects.equals(address, that.address) &&
-                Objects.equals(longitude, that.longitude) &&
-                Objects.equals(lat, that.lat) &&
-                Objects.equals(descriptionImageId, that.descriptionImageId);
+    public ContractorEntity getContractorEntity() {
+        return contractorEntity;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, dailyPrice, deliveryPrice, description, status, thumbnailImage, isDeleted, createdTime, updatedTime, equipmentTypeId, contractorId, constructionId, address, longitude, lat, descriptionImageId);
+    public void setContractorEntity(ContractorEntity contractorEntity) {
+        this.contractorEntity = contractorEntity;
     }
 }

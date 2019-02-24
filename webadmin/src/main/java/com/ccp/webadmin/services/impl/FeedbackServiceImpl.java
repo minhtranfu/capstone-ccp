@@ -1,9 +1,6 @@
 package com.ccp.webadmin.services.impl;
 
-import com.ccp.webadmin.entities.EquipmentTypeEntity;
-import com.ccp.webadmin.entities.FeedbackEntity;
-import com.ccp.webadmin.entities.FeedbackTypeEntity;
-import com.ccp.webadmin.entities.GeneralEquipmentTypeEntity;
+import com.ccp.webadmin.entities.*;
 import com.ccp.webadmin.repositories.EquipmentTypeRepository;
 import com.ccp.webadmin.repositories.FeedbackRepository;
 import com.ccp.webadmin.services.EquipmentTypeService;
@@ -59,4 +56,11 @@ public class FeedbackServiceImpl implements FeedbackService {
     public void deleteById(Integer id) {
         feedbackRepository.deleteById(id);
     }
+
+    @Override
+    public Integer countFeedbackByContractor(ContractorEntity contractor) {
+        return feedbackRepository.countFeedbackEntityByContractorIsFeedbacked(contractor);
+    }
+
+
 }

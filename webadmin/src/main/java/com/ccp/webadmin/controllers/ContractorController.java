@@ -2,6 +2,7 @@ package com.ccp.webadmin.controllers;
 
 import com.ccp.webadmin.entities.ContractorEntity;
 import com.ccp.webadmin.services.ContractorService;
+import com.ccp.webadmin.services.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,28 +17,36 @@ import java.time.LocalDateTime;
 public class ContractorController {
 
     private final ContractorService contractorService;
+    private final FeedbackService feedbackService;
 
     @Autowired
-    public ContractorController(ContractorService contractorService) {
+    public ContractorController(ContractorService contractorService, FeedbackService feedbackService) {
         this.contractorService = contractorService;
+        this.feedbackService = feedbackService;
     }
 
     @GetMapping({"", "/", "/index"})
     public String getcontractor(Model model) {
         model.addAttribute("contractors", contractorService.findAll());
+        for (ContractorEntity contractor: contractorService.findAll()) {
+            System.out.println("aaa" + feedbackService.countFeedbackByContractor(contractor));
+            model.addAttribute("numberOfFeedbacked", feedbackService.countFeedbackByContractor(contractor));
+        }
+
         return "contractor/index";
     }
 
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("contractor", contractorService.findById(id));
+        model.addAttribute("numberOfFeedbacked", feedbackService.countFeedbackByContractor(contractorService.findById(id)));
         return "contractor/detail";
     }
 
 //    @GetMapping("/active/{id}")
 //    public String active(@PathVariable("id") Integer id, Model model) {
 //        ContractorEntity contractorEntity = contractorService.findById(id);
-//        contractorEntity.setActivated(true);
+//        contractorEntity.setActivated(true);c
 //        contractorService.save(contractorEntity);
 //        return "contractor/index";
 //    }
