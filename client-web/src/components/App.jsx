@@ -7,11 +7,10 @@ import Header from './common/Header';
 import Routes from './modules/Routes';
 
 const App = ({ location, history }) => {
-  
   return (
     <div>
       <Header />
-        {Routes}
+      {Routes}
       <Footer />
     </div>
   );

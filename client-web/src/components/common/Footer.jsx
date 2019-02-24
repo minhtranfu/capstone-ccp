@@ -48,9 +48,9 @@ const Footer = () => {
         </div>
       </div>
       <div className="footer-copyright text-center py-3 bg-black">
-      <hr/>
+        <hr/>
       © 2019 Copyright
-      <a href="#"> CCP Project Team</a>
+        <a href="#"> CCP Project Team</a>
       </div>
     </footer>
   );

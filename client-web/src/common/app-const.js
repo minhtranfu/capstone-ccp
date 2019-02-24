@@ -5,7 +5,7 @@ export const ENTITY_KEY = {
   BAR: 'bar',
   BAZ: 'baz',
   EQUIPMENT_TYPES: 'equipment_types',
-  EQUIPMENT_TYPE_INFOS: 'equipment_type_infos',
+  EQUIPMENT_TYPE_INFOS: 'equipment_type_infos'
 };
 
 export const INITIAL_STATE = {
@@ -14,7 +14,7 @@ export const INITIAL_STATE = {
     [ENTITY_KEY.BAR]: {},
     [ENTITY_KEY.BAZ]: {},
     [ENTITY_KEY.EQUIPMENT_TYPES]: {},
-    [ENTITY_KEY.EQUIPMENT_TYPE_INFOS]: {},
+    [ENTITY_KEY.EQUIPMENT_TYPE_INFOS]: {}
   },
   counter: 0
 };
