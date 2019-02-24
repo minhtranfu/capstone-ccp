@@ -1,4 +1,4 @@
-package jaxrs.services;
+package jaxrs.resources;
 
 import daos.ContractorDAO;
 import daos.FeedbackDAO;

@@ -4,7 +4,7 @@ import dtos.wrappers.IndependentHiringTransactionWrapper;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.json.bind.annotation.JsonbTransient;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -282,7 +282,7 @@ public class EquipmentEntity implements Serializable {
 	}
 
 
-	@XmlTransient
+	@JsonbTransient
 	@OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")
 
@@ -294,7 +294,7 @@ public class EquipmentEntity implements Serializable {
 		this.hiringTransactions = hiringTransactions;
 	}
 
-	@XmlTransient
+	@JsonbTransient
 	@OneToMany(mappedBy = "equipment",fetch = FetchType.LAZY)
 	@Where(clause = "status = 'PROCESSING' and is_deleted=0")
 	public List<HiringTransactionEntity> getProcessingHiringTransactions() {
@@ -314,7 +314,7 @@ public class EquipmentEntity implements Serializable {
 		}
 	}
 
-	@XmlTransient
+	@JsonbTransient
 	@OneToMany(mappedBy = "equipment",fetch = FetchType.LAZY)
 	@Where(clause = "(status = 'PROCESSING' or status='ACCEPTED') and is_deleted=0")
 	public List<HiringTransactionEntity> getActiveHiringTransactionEntities() {

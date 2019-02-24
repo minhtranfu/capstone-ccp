@@ -3,7 +3,7 @@ package entities;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.json.bind.annotation.JsonbTransient;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class ContractorEntity {
 	private List<FeedbackEntity> sentFeedback;
 	private List<FeedbackEntity> receivedFeedback;
 
-	@XmlTransient
+	@JsonbTransient
 	@OneToMany(cascade =
 			{CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
 			orphanRemoval = false,
@@ -144,7 +144,7 @@ public class ContractorEntity {
 		constructions.remove(constructionEntity);
 	}
 
-	@XmlTransient
+	@JsonbTransient
 	@OneToMany(mappedBy = "fromContractor", fetch = FetchType.LAZY,cascade = {})
 	@Where(clause = "is_deleted = 0")
 	public List<FeedbackEntity> getSentFeedback() {
@@ -155,7 +155,7 @@ public class ContractorEntity {
 		this.sentFeedback = sentFeedback;
 	}
 
-	@XmlTransient
+	@JsonbTransient
 	@OneToMany(mappedBy = "toContractor", fetch = FetchType.LAZY, cascade = {})
 	@Where(clause = "is_deleted = 0")
 	public List<FeedbackEntity> getReceivedFeedback() {

@@ -1,30 +1,20 @@
-package jaxrs.services;
+package jaxrs.resources;
 
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
-import dtos.responses.MessageResponse;
 //todo configure alternative for this shit
 //import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 //import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.UUID;
 
 import static com.google.api.client.util.Charsets.UTF_8;
 

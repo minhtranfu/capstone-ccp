@@ -1,4 +1,4 @@
-package jaxrs.services;
+package jaxrs.resources;
 
 import daos.ContractorDAO;
 import daos.EquipmentDAO;
@@ -10,7 +10,6 @@ import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 import entities.TransactionDateChangeRequestEntity;
-import utils.Constants;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;

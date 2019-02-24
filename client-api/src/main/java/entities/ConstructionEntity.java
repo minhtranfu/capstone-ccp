@@ -4,7 +4,7 @@ import org.hibernate.annotations.Where;
 import org.hibernate.annotations.WhereJoinTable;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.json.bind.annotation.JsonbTransient;
 
 @Entity
 @Table(name = "construction", schema = "capstone_ccp")
@@ -83,7 +83,7 @@ public class ConstructionEntity {
 		isDeleted = deleted;
 	}
 
-	@XmlTransient
+	@JsonbTransient
 	@ManyToOne()
 	@JoinColumn(name = "contractor_id")
 	public ContractorEntity getContractor() {

@@ -2,12 +2,12 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Where(clause = "is_deleted=0")
-@Table(name = "additional_specs_value", schema = "capstone_ccp", catalog = "")
+@Table(name = "additional_specs_value", schema = "capstone_ccp")
 public class AdditionalSpecsValueEntity {
 	private long id;
 	private String value;
@@ -46,7 +46,7 @@ public class AdditionalSpecsValueEntity {
 		this.additionalSpecsField = additionalSpecsField;
 	}
 
-	@XmlTransient
+	@JsonbTransient
 	@ManyToOne
 	@JoinColumn(name = "equipment_id")
 	public EquipmentEntity getEquipment() {

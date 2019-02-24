@@ -1,11 +1,10 @@
-package jaxrs.services;
+package jaxrs.resources;
 
 import daos.ConstructionDAO;
 import daos.ContractorDAO;
 import dtos.responses.MessageResponse;
 import entities.ConstructionEntity;
 import entities.ContractorEntity;
-import utils.DBUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

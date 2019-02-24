@@ -1,8 +1,6 @@
-package jaxrs.services;
+package jaxrs.resources;
 
 //import com.sun.jersey.spi.container.ResourceFilters;
-import jaxrs.providers.CorsFilter;
-import utils.CommonUtils;
 import utils.DBUtils;
 
 //import javax.enterprise.context.RequestScoped;
@@ -11,7 +9,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 @Path("/user")
 //@ResourceFilters(CorsFilter.class)

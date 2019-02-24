@@ -1,10 +1,6 @@
-package jaxrs.services;
+package jaxrs.resources;
 
 import entities.ContractorEntity;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
 
 public class ConstructionResource {
 	private ContractorEntity contractorEntity;

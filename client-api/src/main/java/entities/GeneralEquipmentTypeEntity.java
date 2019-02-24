@@ -2,8 +2,9 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.json.bind.annotation.JsonbTransient;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +87,7 @@ public class GeneralEquipmentTypeEntity {
 		this.updatedTime = updatedTime;
 	}
 
-	@XmlTransient
+	@JsonbTransient
 	@OneToMany(mappedBy = "generalEquipment", orphanRemoval = true)
 	@Where(clause = "is_deleted=0")
 	public List<EquipmentTypeEntity> getEquipmentTypeEntities() {

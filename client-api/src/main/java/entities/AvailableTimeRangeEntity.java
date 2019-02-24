@@ -2,9 +2,10 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.naming.Name;
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.json.bind.annotation.JsonbTransient;
 import java.sql.Timestamp;
 
 @Entity
@@ -16,7 +17,7 @@ public class AvailableTimeRangeEntity {
 	private Timestamp endDate;
 	private EquipmentEntity equipment;
 
-	@XmlTransient
+	@JsonbTransient
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -49,7 +50,7 @@ public class AvailableTimeRangeEntity {
 	}
 
 
-	@XmlTransient
+	@JsonbTransient
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "equipment_id")
 	public EquipmentEntity getEquipment() {
