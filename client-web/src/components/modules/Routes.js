@@ -27,10 +27,15 @@ const modules = [
     path: '/add-equipment',
     modulePath: './add-equipment/AddEquipment'
   },
+  // {
+  //   name: 'SupplierDashboard',
+  //   path: '/dashboard/supplier',
+  //   modulePath: './supplier-dashboard'
+  // },
   {
-    name: 'UserDashboard',
-    path: '/dashboard',
-    modulePath: './user-dashboard'
+    name: 'MyReceivedRequests',
+    path: '/dashboard/supplier/',
+    modulePath: './supplier-dashboard/MyRequests'
   }
 ];
 

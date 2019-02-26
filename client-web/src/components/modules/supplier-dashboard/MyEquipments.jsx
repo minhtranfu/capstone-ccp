@@ -31,7 +31,7 @@ class MyEquipments extends PureComponent {
           <h4>My equipments</h4>
           {equipments && equipments.map(equipment => {
             return (
-              <div key={equipment.id} className="d-flex transaction my-3 rounded">
+              <div key={equipment.id} className="d-flex transaction my-3 rounded shadow-sm">
                 <div className="image flex-fill">
                   <img src={equipment.thumbnailImage || '/upload/product-images/unnamed-19-jpg.jpg'} className="rounded-left" />
                 </div>

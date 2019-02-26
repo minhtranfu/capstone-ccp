@@ -30,7 +30,7 @@ class MyConstructions extends PureComponent {
           <h4>My Constructions <button className="btn btn-success btn-sm float-right"><i className="fa fa-plus"></i> Add new</button></h4>
           {constructions && constructions.map(construction => {
             return (
-              <div key={construction.id} className="bg-white shadow construction my-3 p-3 rounded">
+              <div key={construction.id} className="bg-white shadow-sm construction my-3 p-3 rounded">
                 <h4 className="m-0">
                   {construction.name}
                   <span className="float-right">
