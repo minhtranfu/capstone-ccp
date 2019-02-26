@@ -4,19 +4,24 @@ import entities.EquipmentEntity;
 import entities.SubscriptionEntity;
 import utils.DBUtils;
 
+import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Singleton
 public class SubscriptionDAO extends BaseDAO<SubscriptionEntity, Long> {
 
+	@PersistenceContext(unitName = DBUtils.PERSISTANCE_UNIT)
+	EntityManager entityManager;
 	public List<SubscriptionEntity> getMatchedSubscriptions(EquipmentEntity equipmentEntity) {
 		if (equipmentEntity.getStatus() != EquipmentEntity.Status.AVAILABLE) {
 			return new ArrayList<>();
 		}
 
 
-		EntityManager entityManager = DBUtils.getEntityManager();
 		List<SubscriptionEntity> matchedSubscriptions =
 				entityManager.createNamedQuery("SubscriptionEntity.matchEquipment", SubscriptionEntity.class)
 						.setParameter("equipmentId", equipmentEntity.getId())

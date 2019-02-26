@@ -6,9 +6,8 @@ import org.hibernate.annotations.Where;
 
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.persistence.*;
-import java.security.AllPermission;
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "hiring_transaction", schema = "capstone_ccp", catalog = "")
@@ -26,11 +25,11 @@ public class HiringTransactionEntity {
 	private Status status;
 	private Integer dailyPrice;
 	private Integer deliveryPrice;
-	private Timestamp createdTime;
-	private Timestamp updatedTime;
+	private LocalDateTime createdTime;
+	private LocalDateTime updatedTime;
 
-	private Date beginDate;
-	private Date endDate;
+	private LocalDate beginDate;
+	private LocalDate endDate;
 
 	private String equipmentAddress;
 	private double equipmentLatitude;
@@ -118,22 +117,22 @@ public class HiringTransactionEntity {
 
 	@Basic
 	@Column(name = "created_time", insertable = false, updatable = false)
-	public Timestamp getCreatedTime() {
+	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(Timestamp createdTime) {
+	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
 	}
 
 	@Basic
 	@Column(name = "updated_time", insertable = false, updatable = false)
-	public Timestamp getUpdatedTime() {
+	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
 
 
-	public void setUpdatedTime(Timestamp updatedTime) {
+	public void setUpdatedTime(LocalDateTime updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 
@@ -141,12 +140,12 @@ public class HiringTransactionEntity {
 	@Column(name = "begin_date")
 	@Temporal(TemporalType.DATE)
 	@JsonbDateFormat("yyyy-MM-dd")
-	public Date getBeginDate() {
+	public LocalDate getBeginDate() {
 		return beginDate;
 	}
 
 
-	public void setBeginDate(Date beginDate) {
+	public void setBeginDate(LocalDate beginDate) {
 		this.beginDate = beginDate;
 	}
 
@@ -154,11 +153,11 @@ public class HiringTransactionEntity {
 	@Column(name = "end_date")
 	@JsonbDateFormat("yyyy-MM-dd")
 
-	public Date getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 

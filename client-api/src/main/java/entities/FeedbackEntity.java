@@ -2,8 +2,9 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -19,8 +20,8 @@ public class FeedbackEntity {
 	private long id;
 	private String content;
 	private Boolean isRead;
-	private Timestamp createdTime;
-	private Timestamp updatedTime;
+	private LocalDateTime createdTime;
+	private LocalDateTime updatedTime;
 	private ContractorEntity toContractor;
 	private ContractorEntity fromContractor;
 	private FeedbackTypeEntity feedbackType;
@@ -59,16 +60,17 @@ public class FeedbackEntity {
 
 	@Basic
 	@Column(name = "created_time", insertable = false, updatable = false)
-	public Timestamp getCreatedTime() {
+	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(Timestamp createdTime) {
+	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
 	}
 
 
 	@ManyToOne
+	@JsonbTransient
 	@JoinColumn(name = "to_contractor_id")
 	public ContractorEntity getToContractor() {
 		return toContractor;
@@ -78,7 +80,8 @@ public class FeedbackEntity {
 		this.toContractor = toContractor;
 	}
 
-	@ManyToOne
+	@JsonbTransient
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "from_contractor_id")
 	public ContractorEntity getFromContractor() {
 		return fromContractor;
@@ -88,7 +91,7 @@ public class FeedbackEntity {
 		this.fromContractor = fromContractor;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "feedback_type_id")
 	public FeedbackTypeEntity getFeedbackType() {
 		return feedbackType;
@@ -100,11 +103,11 @@ public class FeedbackEntity {
 
 	@Basic
 	@Column(name = "updated_time", nullable = true, insertable = false, updatable = false)
-	public Timestamp getUpdatedTime() {
+	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Timestamp updatedTime) {
+	public void setUpdatedTime(LocalDateTime updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 }

@@ -59,7 +59,7 @@ public class HiringTransactionResource {
 
 
 		//validate begindate enddate
-		if (hiringTransactionEntity.getBeginDate().after(hiringTransactionEntity.getEndDate())) {
+		if (hiringTransactionEntity.getBeginDate().isAfter(hiringTransactionEntity.getEndDate())) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("beginDate>endDate")).build();
 		}
 

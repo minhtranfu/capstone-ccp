@@ -4,7 +4,8 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
-import java.sql.Timestamp;
+import javax.xml.bind.annotation.XmlTransient;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -17,10 +18,11 @@ public class ContractorEntity {
 	private String email;
 	private String phoneNumber;
 	private String thumbnailImage;
-	private boolean isActivated;
 
-	private Timestamp createdTime;
-	private Timestamp updatedTime;
+	private Status status;
+
+	private LocalDateTime createdTime;
+	private LocalDateTime updatedTime;
 
 
 	private List<EquipmentEntity> equipments;
@@ -29,11 +31,13 @@ public class ContractorEntity {
 	private List<FeedbackEntity> sentFeedback;
 	private List<FeedbackEntity> receivedFeedback;
 
-	@JsonbTransient 	@XmlTransient
+	@JsonbTransient
+	@XmlTransient
 	@OneToMany(cascade =
 			{CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
 			orphanRemoval = false,
-			mappedBy = "contractor")
+			mappedBy = "contractor"
+			, fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")
 	public List<EquipmentEntity> getEquipments() {
 		return equipments;
@@ -94,40 +98,41 @@ public class ContractorEntity {
 		this.thumbnailImage = thumbnailImage;
 	}
 
-
 	@Basic
-	@Column(name = "is_activated", insertable = false, updatable = false)
-	public boolean isActivated() {
-		return isActivated;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", insertable = false, updatable = false)
+	public Status getStatus() {
+		return status;
 	}
 
-	public void setActivated(boolean activated) {
-		isActivated = activated;
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 
+	//	@JsonbDateFormat("hh:mm:ss dd:MM:yyyy")
 	@Basic
 	@Column(name = "created_time", insertable = false, updatable = false)
-	public Timestamp getCreatedTime() {
+	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
 
 
-	public void setCreatedTime(Timestamp createdTime) {
+	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
 	}
 
 	@Basic
 	@Column(name = "updated_time", insertable = false, updatable = false)
-	public Timestamp getUpdatedTime() {
+	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Timestamp updatedTime) {
+	public void setUpdatedTime(LocalDateTime updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 
-	@OneToMany(mappedBy = "contractor",cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "contractor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")
 	public List<ConstructionEntity> getConstructions() {
 		return constructions;
@@ -144,8 +149,9 @@ public class ContractorEntity {
 		constructions.remove(constructionEntity);
 	}
 
-	@JsonbTransient 	@XmlTransient
-	@OneToMany(mappedBy = "fromContractor", fetch = FetchType.LAZY,cascade = {})
+	@JsonbTransient
+	@XmlTransient
+	@OneToMany(mappedBy = "fromContractor", fetch = FetchType.LAZY, cascade = {})
 	@Where(clause = "is_deleted = 0")
 	public List<FeedbackEntity> getSentFeedback() {
 		return sentFeedback;
@@ -155,7 +161,8 @@ public class ContractorEntity {
 		this.sentFeedback = sentFeedback;
 	}
 
-	@JsonbTransient 	@XmlTransient
+	@JsonbTransient
+	@XmlTransient
 	@OneToMany(mappedBy = "toContractor", fetch = FetchType.LAZY, cascade = {})
 	@Where(clause = "is_deleted = 0")
 	public List<FeedbackEntity> getReceivedFeedback() {
@@ -167,9 +174,20 @@ public class ContractorEntity {
 	}
 
 
-
-
 	public void setConstructions(List<ConstructionEntity> constructions) {
 		this.constructions = constructions;
+	}
+
+
+	@JsonbTransient
+	@Transient
+	public boolean isActivated() {
+		return status == Status.ACTIVATED;
+	}
+
+	public enum Status{
+		NOT_VERIFIED,
+		ACTIVATED,
+		DEACTIVATED
 	}
 }

@@ -7,6 +7,6 @@ public class MessageB implements Message {
 	public MessageB() { }
 
 	public String get() {
-		return "message BBBBBB";
+		return "message B here!";
 	}
 }

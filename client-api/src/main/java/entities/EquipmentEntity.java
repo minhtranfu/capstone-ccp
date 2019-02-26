@@ -5,8 +5,10 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
-import java.sql.Timestamp;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,8 +31,8 @@ public class EquipmentEntity implements Serializable {
 	private String thumbnailImage;
 
 	private boolean isDeleted;
-	private Timestamp createdTime;
-	private Timestamp updatedTime;
+	private LocalDateTime createdTime;
+	private LocalDateTime updatedTime;
 
 
 	private String address;
@@ -150,7 +152,7 @@ public class EquipmentEntity implements Serializable {
 		this.construction = construction;
 	}
 
-	@OneToMany(mappedBy = "equipment",cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "equipment",cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	public List<AvailableTimeRangeEntity> getAvailableTimeRanges() {
 		return availableTimeRanges;
 	}
@@ -200,21 +202,21 @@ public class EquipmentEntity implements Serializable {
 
 	@Basic
 	@Column(name = "created_time", insertable = false, updatable = false)
-	public Timestamp getCreatedTime() {
+	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(Timestamp createdTime) {
+	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
 	}
 
 	@Basic
 	@Column(name = "updated_time", insertable = false, updatable = false)
-	public Timestamp getUpdatedTime() {
+	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Timestamp updatedTime) {
+	public void setUpdatedTime(LocalDateTime updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 
@@ -248,7 +250,7 @@ public class EquipmentEntity implements Serializable {
 		this.longitude = longitude;
 	}
 
-	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")
 
 	public Collection<DescriptionImageEntity> getDescriptionImages() {
@@ -260,7 +262,7 @@ public class EquipmentEntity implements Serializable {
 	}
 
 
-	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")
 
 	public List<AdditionalSpecsValueEntity> getAdditionalSpecsValues() {
@@ -283,10 +285,10 @@ public class EquipmentEntity implements Serializable {
 
 
 
-	@JsonbTransient 	@XmlTransient
+	@JsonbTransient
+	@XmlTransient
 	@OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")
-
 	public List<HiringTransactionEntity> getHiringTransactions() {
 		return hiringTransactions;
 	}
@@ -295,7 +297,8 @@ public class EquipmentEntity implements Serializable {
 		this.hiringTransactions = hiringTransactions;
 	}
 
-	@JsonbTransient 	@XmlTransient
+	@JsonbTransient
+	@XmlTransient
 	@OneToMany(mappedBy = "equipment",fetch = FetchType.LAZY)
 	@Where(clause = "status = 'PROCESSING' and is_deleted=0")
 	public List<HiringTransactionEntity> getProcessingHiringTransactions() {
@@ -315,7 +318,8 @@ public class EquipmentEntity implements Serializable {
 		}
 	}
 
-	@JsonbTransient 	@XmlTransient
+	@JsonbTransient
+	@XmlTransient
 	@OneToMany(mappedBy = "equipment",fetch = FetchType.LAZY)
 	@Where(clause = "(status = 'PROCESSING' or status='ACCEPTED') and is_deleted=0")
 	public List<HiringTransactionEntity> getActiveHiringTransactionEntities() {
@@ -334,12 +338,6 @@ public class EquipmentEntity implements Serializable {
 		}
 		return result;
 	}
-
-
-
-
-
-
 
 	public enum Status {
 		AVAILABLE,

@@ -4,6 +4,7 @@ import org.hibernate.annotations.Where;
 
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Where(clause = "is_deleted=0")
@@ -46,7 +47,8 @@ public class AdditionalSpecsValueEntity {
 		this.additionalSpecsField = additionalSpecsField;
 	}
 
-	@JsonbTransient 	@XmlTransient
+	@JsonbTransient
+	@XmlTransient
 	@ManyToOne
 	@JoinColumn(name = "equipment_id")
 	public EquipmentEntity getEquipment() {

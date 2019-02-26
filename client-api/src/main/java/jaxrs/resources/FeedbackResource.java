@@ -9,6 +9,7 @@ import entities.FeedbackEntity;
 import entities.FeedbackTypeEntity;
 import utils.DBUtils;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -20,11 +21,18 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class FeedbackResource {
 
-	public static final FeedbackDAO feedbackDao = new FeedbackDAO();
+//	public static final FeedbackDAO feedbackDao = new FeedbackDAO();
 	public static final ContractorDAO contractorDao = new ContractorDAO();
 	public static final FeedbackTypeDAO feedbackTypeDAO = new FeedbackTypeDAO();
 
 
+	@Inject
+	FeedbackDAO feedbackDao;
+	@GET
+	@Path("status")
+	public String getStatus() {
+		return "Good to go!";
+	}
 	@GET
 	public Response getFeedbacks(@QueryParam("from") @DefaultValue("0") long fromContractorId,
 								 @QueryParam("to") @DefaultValue("0") long toContractorId) {

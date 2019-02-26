@@ -13,6 +13,6 @@ import java.awt.*;
 public class DummyResource {
 	@GET
 	public String getMessage() {
-		return "Hello new dummy!";
+		return "Hello old dummy!";
 	}
 }

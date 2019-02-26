@@ -1,0 +1,9 @@
+<tomee>
+    <Resource id="MySQLDatabase" type="javax.sql.DataSource">
+        jdbcDriver=com.mysql.cj.jdbc.Driver
+        jdbcUrl=jdbc:mysql://localhost:3306/capstone_ccp
+        userName=root
+        password=12345678
+        jtaManaged=true
+    </Resource>
+</tomee>

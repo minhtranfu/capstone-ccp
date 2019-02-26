@@ -3,7 +3,7 @@ package entities;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Where(clause = "is_deleted=0")
@@ -12,7 +12,7 @@ public class NotificationEntity {
 	private long id;
 	private String title;
 	private String content;
-	private Timestamp createdTime;
+	private LocalDateTime createdTime;
 	private Boolean isRead;
 	private ContractorEntity contractor;
 
@@ -49,11 +49,11 @@ public class NotificationEntity {
 
 	@Basic
 	@Column(name = "created_time", insertable=false, updatable = false)
-	public Timestamp getCreatedTime() {
+	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(Timestamp createdTime) {
+	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
 	}
 

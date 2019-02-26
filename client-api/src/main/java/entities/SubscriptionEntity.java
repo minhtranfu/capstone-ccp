@@ -3,13 +3,14 @@ package entities;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 
 @Entity
-@Where(clause = "is_deleted=0")
-@Table(name = "subscription", schema = "capstone_ccp", catalog = "")
+@Table(name = "subscription", schema = "capstone_ccp")
 @NamedNativeQuery(name = "SubscriptionEntity.matchEquipment"
 		,resultClass = SubscriptionEntity.class
 		,query = "SELECT * from subscription s where s.equipment_type_id = :equipmentTypeId and "+
@@ -22,13 +23,12 @@ public class SubscriptionEntity {
 	private long id;
 	private EquipmentTypeEntity equipmentType;
 	private ContractorEntity contractor;
-	private int maxDistance;
 	private double maxPrice;
 
-	private Date beginDate;
-	private Date endDate;
-	private Timestamp createdTime;
-	private Timestamp updatedTime;
+	private LocalDate beginDate;
+	private LocalDate endDate;
+	private LocalDateTime createdTime;
+	private LocalDateTime updatedTime;
 
 	@Id
 	@GeneratedValue
@@ -63,14 +63,9 @@ public class SubscriptionEntity {
 		this.contractor = contractor;
 	}
 
-	public int getMaxDistance() {
-		return maxDistance;
-	}
 
-	public void setMaxDistance(int maxDistance) {
-		this.maxDistance = maxDistance;
-	}
-
+	@Basic
+	@Column(name = "max_price")
 	public double getMaxPrice() {
 		return maxPrice;
 	}
@@ -79,35 +74,44 @@ public class SubscriptionEntity {
 		this.maxPrice = maxPrice;
 	}
 
-	public Date getBeginDate() {
+	@Basic
+	@Column(name = "begin_date")
+	public LocalDate getBeginDate() {
 		return beginDate;
 	}
 
-	public void setBeginDate(Date beginDate) {
+	public void setBeginDate(LocalDate beginDate) {
 		this.beginDate = beginDate;
 	}
 
-	public Date getEndDate() {
+	@Basic
+	@Column(name = "end_date")
+	public LocalDate getEndDate() {
 		return endDate;
+
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 
-	public Timestamp getCreatedTime() {
+	@Basic
+	@Column(name = "created_time", insertable = false, updatable = false)
+	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(Timestamp createdTime) {
+	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
 	}
 
-	public Timestamp getUpdatedTime() {
+	@Basic
+	@Column(name = "updated_time", insertable = false, updatable = false)
+	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Timestamp updatedTime) {
+	public void setUpdatedTime(LocalDateTime updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 }

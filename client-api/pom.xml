@@ -18,6 +18,11 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <version.microprofile>1.3</version.microprofile>
+
+        <mysqlconnector.group>mysql</mysqlconnector.group>
+        <mysqlconnector.id>mysql-connector-java</mysqlconnector.id>
+        <mysqlconnector.version>8.0.13</mysqlconnector.version>
+        <!--<mysqlconnectordependency>mysql:mysql-connector-java:8.0.13</mysqlconnectordependency>-->
     </properties>
 
     <dependencies>
@@ -96,9 +101,9 @@
         <!--</dependency>-->
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.13</version>
+            <groupId>${mysqlconnector.group}</groupId>
+            <artifactId>${mysqlconnector.id}</artifactId>
+            <version>${mysqlconnector.version}</version>
         </dependency>
         <!--<dependency>-->
         <!--<groupId>org.hibernate.javax.persistence</groupId>-->
@@ -213,6 +218,14 @@
                     <path>/</path>
                     <!--<debugPort>5050</debugPort>-->
                     <!--<debug>true</debug>-->
+                    <libs>
+                        <lib>${mysqlconnector.group}:${mysqlconnector.id}:${mysqlconnector.version}</lib>
+                        <lib>org.hibernate:hibernate-core:5.4.1.Final</lib>
+                        <!--<lib>org.hibernate.validator:hibernate-validator:6.0.13.Final</lib>-->
+                        <lib>org.jboss.logging:jboss-logging:3.3.2.Final</lib>
+                        <!--<lib>org.hibernate.common:hibernate-commons-annotations:5.1.0.Final</lib>-->
+                        <lib>remove:openjpa-</lib>
+                    </libs>
                     <synchronization>
                         <extensions>
                             <extension>.class
@@ -225,6 +238,9 @@
                         <openejb.system.apps>true</openejb.system.apps>
                         <tomee.serialization.class.blacklist>-</tomee.serialization.class.blacklist>
                     </systemVariables>
+
+                    <!--config for datasource or tomee.xml configuration file-->
+                    <config>src/main/tomee/conf</config>
                 </configuration>
             </plugin>
             <plugin>

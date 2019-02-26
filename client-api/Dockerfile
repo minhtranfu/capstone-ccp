@@ -20,4 +20,5 @@ RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "verify", "clean", "package", "-
 EXPOSE 8080
 
 # execute it
-CMD ["mvn", "tomcat7:run-war-only"]
+#CMD ["mvn", "tomcat7:run-war-only"]
+CMD ["mvn", "tomee:run"]

@@ -6,18 +6,20 @@ import javax.json.bind.annotation.JsonbTransient;
 import javax.naming.Name;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
-import java.sql.Timestamp;
+import javax.xml.bind.annotation.XmlTransient;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "available_time_range", schema = "capstone_ccp")
 @NamedQuery(name = "AvailableTimeRangeEntity.searchTimeRangeInDate",query = "select t from AvailableTimeRangeEntity t where t.equipment.id =:equipmentId and t.beginDate <= :curBeginDate  and  :curEndDate <= t.endDate")
 public class AvailableTimeRangeEntity {
 	private long id;
-	private Timestamp beginDate;
-	private Timestamp endDate;
+	private LocalDate beginDate;
+	private LocalDate endDate;
 	private EquipmentEntity equipment;
 
-	@JsonbTransient 	@XmlTransient
+	@JsonbTransient
+	@XmlTransient
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -31,26 +33,27 @@ public class AvailableTimeRangeEntity {
 
 	@Basic
 	@Column(name = "begin_date", nullable = true)
-	public Timestamp getBeginDate() {
+	public LocalDate getBeginDate() {
 		return beginDate;
 	}
 
-	public void setBeginDate(Timestamp beginDate) {
+	public void setBeginDate(LocalDate beginDate) {
 		this.beginDate = beginDate;
 	}
 
 	@Basic
 	@Column(name = "end_date", nullable = true)
-	public Timestamp getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Timestamp endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 
 
-	@JsonbTransient 	@XmlTransient
+	@JsonbTransient
+	@XmlTransient
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "equipment_id")
 	public EquipmentEntity getEquipment() {

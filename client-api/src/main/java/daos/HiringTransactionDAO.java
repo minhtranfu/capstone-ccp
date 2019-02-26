@@ -5,7 +5,7 @@ import entities.HiringTransactionEntity;
 import utils.DBUtils;
 
 import javax.persistence.EntityManager;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long> {
@@ -35,7 +35,7 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 
 	}
 
-	public List<HiringTransactionEntity> getPendingTransactionIntersectingWith(long equipmentId, Date beginDate, Date endDate){
+	public List<HiringTransactionEntity> getPendingTransactionIntersectingWith(long equipmentId, LocalDate beginDate, LocalDate endDate){
 		return DBUtils.getEntityManager().createNamedQuery("HiringTransactionEntity.getPendingTransactionIntersectingWith")
 				.setParameter("equipmentId", equipmentId)
 				.setParameter("curBeginDate", beginDate)

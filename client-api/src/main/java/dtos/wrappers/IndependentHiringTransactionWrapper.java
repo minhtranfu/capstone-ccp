@@ -5,8 +5,8 @@ import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 
-import java.util.Date;
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class IndependentHiringTransactionWrapper {
 
@@ -14,8 +14,8 @@ public class IndependentHiringTransactionWrapper {
 	private HiringTransactionEntity.Status status;
 	private Integer dailyPrice;
 	private Integer deliveryPrice;
-	private Date beginDate;
-	private Date endDate;
+	private LocalDate beginDate;
+	private LocalDate endDate;
 
 	private String equipmentAddress;
 	private double equipmentLatitude;
@@ -76,19 +76,19 @@ public class IndependentHiringTransactionWrapper {
 	}
 
 
-	public Date getBeginDate() {
+	public LocalDate getBeginDate() {
 		return beginDate;
 	}
 
-	public void setBeginDate(Date beginDate) {
+	public void setBeginDate(LocalDate beginDate) {
 		this.beginDate = beginDate;
 	}
 
-	public Date getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 

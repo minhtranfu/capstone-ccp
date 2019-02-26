@@ -5,7 +5,8 @@ import org.hibernate.annotations.Where;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
-import java.sql.Timestamp;
+import javax.xml.bind.annotation.XmlTransient;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +19,8 @@ public class GeneralEquipmentTypeEntity {
 	private String name;
 	private boolean isDeleted;
 
-	private Timestamp createdTime;
-	private Timestamp updatedTime;
+	private LocalDateTime createdTime;
+	private LocalDateTime updatedTime;
 	private List<EquipmentTypeEntity> equipmentTypeEntities;
 
 	public GeneralEquipmentTypeEntity() {
@@ -68,27 +69,28 @@ public class GeneralEquipmentTypeEntity {
 
 	@Basic
 	@Column(name = "created_time", insertable = false, updatable = false)
-	public Timestamp getCreatedTime() {
+	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
 
 
-	public void setCreatedTime(Timestamp createdTime) {
+	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
 	}
 
 	@Basic
 	@Column(name = "updated_time", insertable = false, updatable = false)
-	public Timestamp getUpdatedTime() {
+	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Timestamp updatedTime) {
+	public void setUpdatedTime(LocalDateTime updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 
-	@JsonbTransient 	@XmlTransient
-	@OneToMany(mappedBy = "generalEquipment", orphanRemoval = true)
+	@JsonbTransient
+	@XmlTransient
+	@OneToMany(mappedBy = "generalEquipment", orphanRemoval = true, fetch = FetchType.EAGER)
 	@Where(clause = "is_deleted=0")
 	public List<EquipmentTypeEntity> getEquipmentTypeEntities() {
 		return equipmentTypeEntities;

@@ -3,7 +3,7 @@ package listeners;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 //singleton for better stability and also this task is not that urgent for asynchronous
 public class CheckerForRentingStatus implements DataChangeSubscriber<EquipmentEntity> {
@@ -34,9 +34,9 @@ public class CheckerForRentingStatus implements DataChangeSubscriber<EquipmentEn
 		if (equipmentEntity.getStatus() != EquipmentEntity.Status.RENTING) {
 			return false;
 		}
-		Date today = new Date();
+		LocalDate today = LocalDate.now();
 		if (equipmentEntity.getProcessingHiringTransaction()
-				.getEndDate().before(today)) {
+				.getEndDate().isBefore(today)) {
 			// today must <= endDate to
 			return true;
 		}

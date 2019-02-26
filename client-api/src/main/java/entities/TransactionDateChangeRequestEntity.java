@@ -3,23 +3,23 @@ package entities;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "transaction_date_change_request", schema = "capstone_ccp", catalog = "")
+@Table(name = "transaction_date_change_request", schema = "capstone_ccp")
 @Where(clause = "is_deleted = 0")
 @NamedQueries({
 		@NamedQuery(name = "TransactionDateChangeRequestEntity.countExistingPendingRequest", query = "select count(e) from TransactionDateChangeRequestEntity e where e.hiringTransactionEntity.id=:transactionId and e.status='PENDING'")
 		, @NamedQuery(name = "TransactionDateChangeRequestEntity.getRequestsByTransactionId", query = "select e from TransactionDateChangeRequestEntity e where e.hiringTransactionEntity.id=:transactionId")
-		,@NamedQuery(name = "TransactionDateChangeRequestEntity.getPendingRequestByTransactionId",query = "select e from TransactionDateChangeRequestEntity e where e.hiringTransactionEntity.id=:transactionId and e.status='PENDING'")
+		, @NamedQuery(name = "TransactionDateChangeRequestEntity.getPendingRequestByTransactionId", query = "select e from TransactionDateChangeRequestEntity e where e.hiringTransactionEntity.id=:transactionId and e.status='PENDING'")
 })
 public class TransactionDateChangeRequestEntity {
 	private long id;
-	private Date requestedBeginDate;
-	private Date requestedEndDate;
-	private Timestamp createdTime;
-	private Timestamp updatedTime;
+	private LocalDate requestedBeginDate;
+	private LocalDate requestedEndDate;
+	private LocalDateTime createdTime;
+	private LocalDateTime updatedTime;
 	private Status status;
 	private boolean isDeleted;
 	private HiringTransactionEntity hiringTransactionEntity;
@@ -37,41 +37,41 @@ public class TransactionDateChangeRequestEntity {
 
 	@Basic
 	@Column(name = "requested_begin_date", nullable = true)
-	public Date getRequestedBeginDate() {
+	public LocalDate getRequestedBeginDate() {
 		return requestedBeginDate;
 	}
 
-	public void setRequestedBeginDate(Date requestedBeginDate) {
+	public void setRequestedBeginDate(LocalDate requestedBeginDate) {
 		this.requestedBeginDate = requestedBeginDate;
 	}
 
 	@Basic
 	@Column(name = "requested_end_date", nullable = true)
-	public Date getRequestedEndDate() {
+	public LocalDate getRequestedEndDate() {
 		return requestedEndDate;
 	}
 
-	public void setRequestedEndDate(Date requestedEndDate) {
+	public void setRequestedEndDate(LocalDate requestedEndDate) {
 		this.requestedEndDate = requestedEndDate;
 	}
 
 	@Basic
 	@Column(name = "created_time", insertable = false, updatable = false)
-	public Timestamp getCreatedTime() {
+	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(Timestamp createdTime) {
+	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
 	}
 
 	@Basic
 	@Column(name = "updated_time", insertable = false, updatable = false)
-	public Timestamp getUpdatedTime() {
+	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Timestamp updatedTime) {
+	public void setUpdatedTime(LocalDateTime updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 

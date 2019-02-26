@@ -2,15 +2,15 @@ package dtos.requests;
 
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDate;
 
 public class HiringTransactionRequest {
 
 	@NotNull
-	private Date beginDate;
+	private LocalDate beginDate;
 
 	@NotNull
-	private Date endDate;
+	private LocalDate endDate;
 	@NotNull
 	private String requesterAddress;
 	@NotNull
@@ -26,19 +26,19 @@ public class HiringTransactionRequest {
 	public HiringTransactionRequest() {
 	}
 
-	public Date getBeginDate() {
+	public LocalDate getBeginDate() {
 		return beginDate;
 	}
 
-	public void setBeginDate(Date beginDate) {
+	public void setBeginDate(LocalDate beginDate) {
 		this.beginDate = beginDate;
 	}
 
-	public Date getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 

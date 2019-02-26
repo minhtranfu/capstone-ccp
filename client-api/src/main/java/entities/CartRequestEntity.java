@@ -2,7 +2,7 @@ package entities;
 
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -10,13 +10,13 @@ import java.sql.Timestamp;
 @NamedQuery(name = "CartRequestEntity.getByContractorId", query = "select e from CartRequestEntity e where e.sent = false and  e.contractor.id = :contractorId")
 public class CartRequestEntity {
 	private long id;
-	private Timestamp beginDate;
-	private Timestamp endDate;
+	private LocalDateTime beginDate;
+	private LocalDateTime endDate;
 	private String requesterAddress;
 	private Double requesterLong;
 	private Double requesterLat;
-	private Timestamp createdTime;
-	private Timestamp updatedTime;
+	private LocalDateTime createdTime;
+	private LocalDateTime updatedTime;
 
 	private EquipmentEntity equipment;
 	private ContractorEntity contractor;
@@ -37,21 +37,21 @@ public class CartRequestEntity {
 
 	@Basic
 	@Column(name = "begin_date", nullable = true)
-	public Timestamp getBeginDate() {
+	public LocalDateTime getBeginDate() {
 		return beginDate;
 	}
 
-	public void setBeginDate(Timestamp beginDate) {
+	public void setBeginDate(LocalDateTime beginDate) {
 		this.beginDate = beginDate;
 	}
 
 	@Basic
 	@Column(name = "end_date", nullable = true)
-	public Timestamp getEndDate() {
+	public LocalDateTime getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Timestamp endDate) {
+	public void setEndDate(LocalDateTime endDate) {
 		this.endDate = endDate;
 	}
 
@@ -87,21 +87,21 @@ public class CartRequestEntity {
 
 	@Basic
 	@Column(name = "created_time", insertable = false, updatable = false)
-	public Timestamp getCreatedTime() {
+	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
 
-	public void setCreatedTime(Timestamp createdTime) {
+	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
 	}
 
 	@Basic
 	@Column(name = "updated_time", insertable = false, updatable = false)
-	public Timestamp getUpdatedTime() {
+	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Timestamp updatedTime) {
+	public void setUpdatedTime(LocalDateTime updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 

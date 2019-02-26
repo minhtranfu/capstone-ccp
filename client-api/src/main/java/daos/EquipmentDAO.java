@@ -10,7 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -26,7 +26,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>  implements Dat
 
 
 	private static final String REGEX_ORDERBY_SINGLEITEM = "(\\w+)\\.(asc|desc)($|,)";
-	public List<EquipmentEntity> searchEquipment(Date beginDate, Date endDate,
+	public List<EquipmentEntity> searchEquipment(LocalDate beginDate, LocalDate endDate,
 												 long equipmentTypeId,
 												 String orderBy, int offset, int limit) {
 
@@ -48,8 +48,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>  implements Dat
 		Root<AvailableTimeRangeEntity> t = subQuery.from(AvailableTimeRangeEntity.class);
 
 
-		ParameterExpression<Date> beginDateParam = criteriaBuilder.parameter(Date.class);
-		ParameterExpression<Date> endDateParam = criteriaBuilder.parameter(Date.class);
+		ParameterExpression<LocalDate> beginDateParam = criteriaBuilder.parameter(LocalDate.class);
+		ParameterExpression<LocalDate> endDateParam = criteriaBuilder.parameter(LocalDate.class);
 		ParameterExpression<Long> equipmentTypeIdParam = criteriaBuilder.parameter(Long.class);
 		List<Predicate> whereClauses = new ArrayList<>();
 
@@ -141,7 +141,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>  implements Dat
 
 
 	//validate if the equipment is available in this time range
-	public boolean validateEquipmentAvailable(long equipmentId, Date beginDate, Date endDate) {
+	public boolean validateEquipmentAvailable(long equipmentId, LocalDate beginDate, LocalDate endDate) {
 
 
 		EntityManager entityManager = DBUtils.getEntityManager();
@@ -179,7 +179,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>  implements Dat
 
 	public boolean validateBeginEndDate(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {
 		for (AvailableTimeRangeEntity availableTimeRangeEntity : availableTimeRangeEntities) {
-			if (availableTimeRangeEntity.getBeginDate().after(availableTimeRangeEntity.getEndDate())) {
+			if (availableTimeRangeEntity.getBeginDate().isAfter(availableTimeRangeEntity.getEndDate())) {
 				return false;
 			}
 		}
@@ -208,10 +208,10 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>  implements Dat
 	}
 
 
-	public  boolean checkIsIntersect(Date beginDate1, Date endDate1, Date beginDate2, Date endDate2) {
+	public  boolean checkIsIntersect(LocalDate beginDate1, LocalDate endDate1, LocalDate beginDate2, LocalDate endDate2) {
 		//validate begindate < enddate
 
-		return !(endDate2.before(beginDate1) || beginDate2.after(endDate1));
+		return !(endDate2.isBefore(beginDate1) || beginDate2.isAfter(endDate1));
 	}
 
 

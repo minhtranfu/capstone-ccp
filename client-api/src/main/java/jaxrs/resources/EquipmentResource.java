@@ -12,8 +12,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Path("/equipments")
@@ -53,26 +56,26 @@ public class EquipmentResource {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("orderBy param format must be " + REGEX_ORDERBY)).build();
 		}
 
-		Date beginDate = null;
-		Date endDate = null;
-
+		LocalDate beginDate = null;
+		LocalDate endDate = null;
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
 
 		if (!beginDateStr.isEmpty() && !endDateStr.isEmpty()) {
 
 
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+//			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
 			try {
-				beginDate = simpleDateFormat.parse(beginDateStr);
-				endDate = simpleDateFormat.parse(endDateStr);
+				beginDate = LocalDate.parse(beginDateStr,dateTimeFormatter);
+				endDate = LocalDate.parse(endDateStr, dateTimeFormatter);
 
-			} catch (ParseException e) {
+			} catch ( DateTimeParseException e) {
 				e.printStackTrace();
 
 				// TODO: 2/12/19 always return somethings even when format is shit for risk preventing
 
 				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Date format must be yyyy-mm-dd")).build();
 			}
-			if (beginDate.after(endDate)) {
+			if (beginDate.isAfter(endDate)) {
 				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Error: beginDate > endDate")).build();
 
 			}

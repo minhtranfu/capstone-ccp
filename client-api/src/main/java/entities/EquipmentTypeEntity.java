@@ -3,7 +3,7 @@ package entities;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -15,8 +15,8 @@ public class EquipmentTypeEntity {
 	private String name;
 	private GeneralEquipmentTypeEntity generalEquipment;
 
-	private Timestamp createdTime;
-	private Timestamp updatedTime;
+	private LocalDateTime createdTime;
+	private LocalDateTime updatedTime;
 	private boolean isDeleted;
 	private List<AdditionalSpecsFieldEntity> additionalSpecsFields;
 
@@ -45,22 +45,22 @@ public class EquipmentTypeEntity {
 
 	@Basic
 	@Column(name = "created_time", insertable = false, updatable = false)
-	public Timestamp getCreatedTime() {
+	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
 
 
-	public void setCreatedTime(Timestamp createdTime) {
+	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
 	}
 
 	@Basic
 	@Column(name = "updated_time", insertable = false, updatable = false)
-	public Timestamp getUpdatedTime() {
+	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
 
-	public void setUpdatedTime(Timestamp updatedTime) {
+	public void setUpdatedTime(LocalDateTime updatedTime) {
 		this.updatedTime = updatedTime;
 	}
 
@@ -74,7 +74,7 @@ public class EquipmentTypeEntity {
 		this.generalEquipment = generalEquipment;
 	}
 
-	@OneToMany(mappedBy = "equipmentType", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "equipmentType", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Where(clause = "is_deleted=0")
 	public List<AdditionalSpecsFieldEntity> getAdditionalSpecsFields() {
 		return additionalSpecsFields;
