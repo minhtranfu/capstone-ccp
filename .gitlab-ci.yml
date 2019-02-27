@@ -20,7 +20,7 @@ deploy_stage:
     - sshpass -e ssh -o StrictHostKeyChecking=no root@ccp.hoctot.net "
         cd /home/capstone/capstone-ccp-run-web/ &&
         git pull  https://$GITUSER:$GITPASS@github.com/minhtranfu/capstone-ccp.git web-client &&
-        cd capstone-ccp-run-web &&
+        cd client-web &&
         yarn install &&
         yarn build:prod
         "
