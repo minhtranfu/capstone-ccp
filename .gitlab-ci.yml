@@ -19,8 +19,9 @@ deploy_stage:
     - export GITPASS=$GIT_PASS
     - sshpass -e ssh -o StrictHostKeyChecking=no root@ccp.hoctot.net "
         cd /home/capstone/capstone-ccp-run-web/ &&
-        git pull  https://$GITUSER:$GITPASS@github.com/minhtranfu/capstone-ccp.git web-client &&
+        git pull https://$GITUSER:$GITPASS@github.com/minhtranfu/capstone-ccp.git web-client &&
         cd client-web &&
         yarn install &&
-        yarn build:prod
+        yarn build:prod &&
+        ln -s "$PWD/public" "$PWD/dist"
         "
