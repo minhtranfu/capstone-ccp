@@ -23,5 +23,5 @@ deploy_stage:
         cd client-web &&
         yarn install &&
         yarn build:prod &&
-        ln -s "$PWD/public" "$PWD/dist"
+        ln -s \"\$PWD/public\" \"\$PWD/dist\"
         "
