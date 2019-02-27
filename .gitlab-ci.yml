@@ -25,5 +25,5 @@ deploy_stage:
         docker stop client-api1 &&
         docker rm client-api1 &&
         docker run --detach --name client-api1 -p 8080:8080 --link mysqldb:mysql client-api
-	"
+        "
 
