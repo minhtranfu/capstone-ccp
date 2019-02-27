@@ -22,8 +22,8 @@ deploy_stage:
         git pull  https://$GITUSER:$GITPASS@github.com/minhtranfu/capstone-ccp.git develop-web-api &&
         cd client-api &&
         docker build -t client-api . &&
-	docker stop client-api1 &&
-	docker rm client-api1 &&
-	docker run --detach --name client-api1 -p 8080:8080 --link mysqldb:mysql client-api
+        docker stop client-api1 &&
+        docker rm client-api1 &&
+        docker run --detach --name client-api1 -p 8080:8080 --link mysqldb:mysql client-api
 	"
 
