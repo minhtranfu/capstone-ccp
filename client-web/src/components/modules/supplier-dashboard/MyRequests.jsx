@@ -26,6 +26,19 @@ class MyRequests extends Component {
       [TRANSACTION_STATUSES.FINISHED]: 'Did you received equipment of this transaction?'
     };
 
+    this.showableStatuses = {
+      [TRANSACTION_STATUSES.PENDING]: 'Pending',
+      [TRANSACTION_STATUSES.ACCEPTED]: 'Accepted',
+      [TRANSACTION_STATUSES.PROCESSING]: 'Processing',
+      [TRANSACTION_STATUSES.FINISHED]: 'Finished',
+      [TRANSACTION_STATUSES.DENIED]: 'Denied'
+    };
+
+    this.needActionStatuses = [
+      TRANSACTION_STATUSES.PENDING,
+      TRANSACTION_STATUSES.ACCEPTED
+    ];
+
     this.tabContents = {};
   }
 
@@ -357,9 +370,14 @@ class MyRequests extends Component {
             <div className="border-right border-primary h-100">
               <div className="sticky-top sticky-sidebar nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                 <h4>Status</h4>
-                {Object.keys(TRANSACTION_STATUSES).map(status => {
+                {Object.keys(this.showableStatuses).map(status => {
                   return (
-                    <a key={status} className={`nav-link ${status == TRANSACTION_STATUSES.PROCESSING ? 'active' : ''}`} id={`v-pills-${status}-tab`} data-toggle="pill" href={`#v-pills-${status}`} role="tab" aria-controls={`v-pills-${status}`} aria-selected={status == TRANSACTION_STATUSES.PROCESSING}>{status} <span className="badge badge-pill badge-info">{this.tabContents[status] ? this.tabContents[status].length : 0}</span></a>
+                    <a key={status} className={`nav-link ${status == TRANSACTION_STATUSES.PENDING ? 'active' : ''}`} id={`v-pills-${status}-tab`} data-toggle="pill" href={`#v-pills-${status}`} role="tab" aria-controls={`v-pills-${status}`} aria-selected={status == TRANSACTION_STATUSES.PENDING}>
+                      {this.showableStatuses[status]}
+                      {this.needActionStatuses.includes(status) && this.tabContents[status] && this.tabContents[status].length &&
+                        <span className="badge badge-pill badge-danger ml-1">{this.tabContents[status] ? this.tabContents[status].length : 0}</span>
+                      }
+                    </a>
                   );
                 })}
               </div>
@@ -369,7 +387,7 @@ class MyRequests extends Component {
             <div className="tab-content" id="v-pills-tabContent">
               {Object.keys(TRANSACTION_STATUSES).map(status => {
                 return (
-                  <div key={status} className={`tab-pane fade ${status == TRANSACTION_STATUSES.PROCESSING ? 'show active' : ''}`} id={`v-pills-${status}`} role="tabpanel" aria-labelledby={`v-pills-${status}-tab`}>
+                  <div key={status} className={`tab-pane fade ${status == TRANSACTION_STATUSES.PENDING ? 'show active' : ''}`} id={`v-pills-${status}`} role="tabpanel" aria-labelledby={`v-pills-${status}-tab`}>
                     {this.tabContents[status]}
                     {this._renderLoadingTransactions()}
                   </div>
