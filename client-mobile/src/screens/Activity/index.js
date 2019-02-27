@@ -12,10 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-import {
-  listEquipmentByRequesterId,
-  getTransactionDetail
-} from "../../redux/actions/equipment";
+import { listTransactionByRequesterId } from "../../redux/actions/transaction";
 
 import { isSignedIn } from "../../config/auth";
 import RequireLogin from "../Login/RequireLogin";
@@ -55,13 +52,13 @@ const STEP_PROGRESS_OPTIONS = [
   state => {
     return {
       auth: state.auth.userIsLoggin,
-      equipment: state.equipment.list,
-      requesterEquipment: state.equipment.listRequesterEquipment
+      loading: state.transaction.loading,
+      listTransaction: state.transaction.listRequesterTransaction
     };
   },
   dispatch => ({
-    fetchRequesterEquipment: id => {
-      dispatch(listEquipmentByRequesterId(id));
+    fetchRequesterTransaction: id => {
+      dispatch(listTransactionByRequesterId(id));
     }
   })
 )
@@ -76,22 +73,18 @@ class Activity extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchRequesterEquipment(12);
+    this.props.fetchRequesterTransaction(12);
   }
 
   _handleFilterStatusResult = status => {
-    const { requesterEquipment } = this.props;
-    const result = requesterEquipment.data.filter(
-      item => item.status === status
-    );
+    const { listTransaction } = this.props;
+    const result = listTransaction.data.filter(item => item.status === status);
     return result;
   };
 
-  renderContent = () => {
+  renderContent = ({ listTransaction }) => {
     const { selectedIndex } = this.state;
-    const { requesterEquipment } = this.props;
-
-    if (requesterEquipment.data.length > 0) {
+    if (listTransaction.length > 0) {
       switch (selectedIndex) {
         case 0:
           return this._renderFlatList("PENDING");
@@ -149,7 +142,7 @@ class Activity extends Component {
 
   render() {
     const { checkedSignIn, signedIn } = this.state;
-    const { navigation, auth, requesterEquipment } = this.props;
+    const { navigation, auth, listTransaction, loading } = this.props;
 
     if (auth) {
       return (
@@ -178,11 +171,7 @@ class Activity extends Component {
               tintColor={colors.primaryColor}
             />
           </Header>
-          {requesterEquipment && requesterEquipment.data ? (
-            this.renderContent()
-          ) : (
-            <Loading />
-          )}
+          {!loading ? this.renderContent(listTransaction) : <Loading />}
         </SafeAreaView>
       );
     } else {

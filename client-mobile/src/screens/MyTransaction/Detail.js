@@ -7,16 +7,17 @@ import {
   Switch,
   ScrollView,
   TouchableOpacity,
-  Image
+  Image,
+  Alert
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { Feather } from "@expo/vector-icons";
 import { ImagePicker, Permissions } from "expo";
 import {
   getTransactionDetail,
   requestTransaction,
-  clearTransactionDetail,
   cancelTransaction
 } from "../../redux/actions/transaction";
 
@@ -54,34 +55,27 @@ const COLORS = {
 };
 
 @connect(
-  state => {
+  (state, ownProps) => {
+    const { id } = ownProps.navigation.state.params;
     return {
-      transactionDetail: state.transaction.transactionDetail
+      transactionDetail: state.transaction.listSupplierTransaction.find(
+        item => item.id === id
+      )
     };
   },
   dispatch => ({
-    fetchTransactionDetail: id => {
-      dispatch(getTransactionDetail(id));
-    },
-    fetchRequestTransaction: (id, transactionStatus) => {
-      dispatch(requestTransaction(id, transactionStatus));
-    },
-    fetchCancelTransaction: id => {
-      dispatch(cancelTransaction(id));
-    },
-    fetchClearDetail: () => {
-      dispatch(clearTransactionDetail());
-    }
+    actions: bindActionCreators(
+      {
+        fetchRequestTransaction: requestTransaction,
+        fetchCancelTransaction: cancelTransaction
+      },
+      dispatch
+    )
   })
 )
 class MyTransactionDetail extends Component {
-  componentDidMount() {
-    const { id } = this.props.navigation.state.params;
-    this.props.fetchTransactionDetail(id);
-  }
-
-  _handleRequestTransaction = async (id, status) => {
-    await this.props.fetchRequestTransaction(id, { status: status });
+  _handleRequestTransaction = (id, status) => {
+    this.props.actions.fetchRequestTransaction(id, { status: status });
     this.props.navigation.goBack();
   };
 
@@ -104,6 +98,12 @@ class MyTransactionDetail extends Component {
     );
   };
 
+  _showAlert = msg => {
+    Alert.alert("Error", msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
+
   _renderAcceptedBottom = id => (
     <View style={styles.bottomWrapper}>
       <Button
@@ -115,7 +115,7 @@ class MyTransactionDetail extends Component {
       <Button
         text={"Cancel"}
         onPress={() => {
-          this.props.fetchCancelTransaction(id);
+          this.props.actions.fetchCancelTransaction(id);
           this.props.navigation.goBack();
         }}
       />
@@ -252,7 +252,6 @@ class MyTransactionDetail extends Component {
           renderLeftButton={() => (
             <TouchableOpacity
               onPress={() => {
-                this.props.fetchClearDetail();
                 this.props.navigation.goBack();
               }}
             >

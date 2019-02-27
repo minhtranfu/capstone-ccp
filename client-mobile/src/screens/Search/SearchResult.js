@@ -25,7 +25,6 @@ import fontSize from "../../config/fontSize";
 
 @connect(
   state => ({
-    equipment: state.equipment.list,
     listSearch: state.equipment.listSearch
   }),
   dispatch => ({

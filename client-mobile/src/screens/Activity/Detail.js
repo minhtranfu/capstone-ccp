@@ -11,10 +11,6 @@ import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import PropTypes from "prop-types";
 import { Feather } from "@expo/vector-icons";
-import {
-  getTransactionDetail,
-  clearTransactionDetail
-} from "../../redux/actions/transaction";
 
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -47,31 +43,18 @@ const STEP_PROGRESS_OPTIONS = [
   }
 ];
 
-@connect(
-  state => {
-    return {
-      detail: state.transaction.transactionDetail
-    };
-  },
-  dispatch => ({
-    fetchTransactionDetail: id => {
-      dispatch(getTransactionDetail(id));
-    },
-    fetchClearDetail: () => {
-      dispatch(clearTransactionDetail());
-    }
-  })
-)
+@connect((state, ownProps) => {
+  const { id } = ownProps.navigation.state.params;
+  return {
+    detail: state.transaction.listRequesterTransaction.find(
+      item => item.id === id
+    )
+  };
+})
 class ActivityDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-  }
-
-  componentDidMount() {
-    const { id } = this.props.navigation.state.params;
-    console.log(id);
-    this.props.fetchTransactionDetail(id);
   }
 
   //Replace Splash -> ','  from date
@@ -119,9 +102,7 @@ class ActivityDetail extends Component {
     return null;
   };
 
-  _renderScrollViewItem = () => {
-    const { detail } = this.props;
-    console.log("show detail", detail);
+  _renderScrollViewItem = ({ detail }) => {
     const totalDay = this._countTotalDay(detail.beginDate, detail.endDate);
     const totalPrice = totalDay * detail.dailyPrice;
     return (
@@ -199,7 +180,7 @@ class ActivityDetail extends Component {
           <Text style={styles.header}>Detail Transaction</Text>
         </Header>
         {Object.keys(detail).length > 0 ? (
-          <ScrollView>{this._renderScrollViewItem()}</ScrollView>
+          <ScrollView>{this._renderScrollViewItem(detail)}</ScrollView>
         ) : (
           <Loading />
         )}

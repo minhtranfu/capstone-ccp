@@ -1,51 +1,76 @@
-import * as ACTIONS from "../types";
+import * as Actions from "../types";
 
 const initialState = {
-  status: null,
-  transactionStatus: {},
-  transactionDetail: {},
-  listSupplierTransaction: []
+  loading: false,
+  listSupplierTransaction: [],
+  listRequesterTransaction: []
 };
 
 export default function transactionReducer(state = initialState, action) {
   const { type, payload } = action;
   switch (action.type) {
-    case ACTIONS.LIST_SUPPLIER_TRANSACTION_SUCCESS: {
+    case Actions.LIST_SUPPLIER_TRANSACTION.REQUEST: {
+      return { ...state, loading: true };
+    }
+    case Actions.LIST_SUPPLIER_TRANSACTION.SUCCESS: {
       return {
         ...state,
-        listSupplierTransaction: payload
+        loading: false,
+        listSupplierTransaction: payload.data
       };
     }
-    case ACTIONS.GET_TRANSACTION_DETAIL_SUCCESS: {
+    case Actions.LIST_REQUESTER_TRANSACTION.REQUEST: {
       return {
         ...state,
-        transactionDetail: payload,
-        transactionStatus: payload
+        loading: true
       };
     }
-    case ACTIONS.SEND_TRANSACTION_REQUEST_SUCCESS:
+    case Actions.LIST_REQUESTER_TRANSACTION.SUCCESS: {
       return {
         ...state,
-        transactionStatus: payload,
-        listSupplierTransaction: [...state.listSupplierTransaction, payload]
-      };
-    case ACTIONS.REQUEST_TRANSACTION_SUCCESS: {
-      return {
-        ...state,
-        transactionStatus: payload
+        loading: false,
+        listRequesterTransaction: payload.data
       };
     }
-    case ACTIONS.CANCEL_TRANSACTION_SUCCESS:
+    case Actions.SEND_TRANSACTION_REQUEST.SUCCESS:
       return {
         ...state,
-        transactionStatus: payload
+        // transactionStatus: payload,
+        listSupplierTransaction: [
+          ...state.listSupplierTransaction,
+          payload.data
+        ]
       };
-    case ACTIONS.CLEAR_TRANSACTION_DETAIL:
+    case Actions.REQUEST_TRANSACTION.REQUEST: {
       return {
         ...state,
-        transactionDetail: {}
+        loading: true
       };
-    case ACTIONS.CLEAR_SUPPLIER_TRANSACTION_SUCCESS:
+    }
+    case Actions.REQUEST_TRANSACTION.SUCCESS: {
+      return {
+        ...state,
+        loading: false,
+        listSupplierTransaction: state.listSupplierTransaction.map(item =>
+          item.id === payload.id ? item === payload.data.data : item
+        )
+      };
+    }
+    case Actions.REQUEST_TRANSACTION.ERROR: {
+      return {
+        ...state,
+        loading: true,
+        error: payload.message
+      };
+    }
+    case Actions.CANCEL_TRANSACTION_SUCCESS:
+      return {
+        ...state,
+        listSupplierTransaction: state.listSupplierTransaction.filter(
+          item => item.id !== payload.id
+        )
+      };
+    case Actions.CLEAR_SUPPLIER_TRANSACTION_SUCCESS:
       return {
         ...state,
         listSupplierTransaction: []

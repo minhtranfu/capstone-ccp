@@ -5,9 +5,10 @@ import configureStorage from "./src/config/store";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import Loading from "./src/components/Loading";
-import "./src/config/api";
+import configAPI from "./src/config/api";
 
 const config = configureStorage();
+configAPI(config);
 
 export default class App extends React.Component {
   render() {

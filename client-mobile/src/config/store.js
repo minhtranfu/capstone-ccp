@@ -7,17 +7,18 @@ import { persistReducer, persistStore } from "redux-persist";
 
 const persistConfig = {
   key: "root",
-  storage: AsyncStorage
-  //blacklist: ["equipment"]
+  storage: AsyncStorage,
+  blacklist: ["status"]
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export default function configureStore(initialState, reducer = rootReducer) {
-  let store = applyMiddleware(thunkMiddleWare, logger)(createStore)(
+  let store = applyMiddleware(thunkMiddleWare)(createStore)(
     persistedReducer,
     initialState
   );
   let persistor = persistStore(store);
+
   return { store, persistor };
 }

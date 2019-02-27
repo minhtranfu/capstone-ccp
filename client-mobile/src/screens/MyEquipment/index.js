@@ -6,7 +6,8 @@ import {
   Animated,
   Dimensions,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Alert
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -101,11 +102,9 @@ const DROPDOWN_OPTIONS = [
 @connect(
   state => {
     return {
-      list: state.equipment.contractorEquipment,
-      myTransaction: state.transaction.listSupplierTransaction,
-      transactionStatus: state.transaction.transactionStatus,
-      detail: state.transaction.transactionDetail,
-      message: state.status.message
+      loading: state.equipment.loading,
+      listEquipment: state.equipment.contractorEquipment,
+      status: state.status
     };
   },
   dispatch => ({
@@ -125,7 +124,6 @@ class MyEquipment extends Component {
     super(props);
     this.state = {
       status: "",
-      loading: true,
       id: null,
       transactionStatus: ""
     };
@@ -135,13 +133,32 @@ class MyEquipment extends Component {
     this.props.fetchContractorEquipment(13);
   }
 
+  shouldComponentUpdate(nextProps) {
+    if (this.props.status.message === nextProps.status.message) return false;
+    return true;
+  }
+
   componentDidUpdate(prevProps, prevState) {
-    const { list } = this.props;
+    const { listEquipment, status } = this.props;
     // const { id } = this.state;
-    if (prevProps.list && list.length !== prevProps.list.length) {
+    if (
+      prevProps.listEquipmentist &&
+      listEquipment.length !== prevProps.listEquipment.length
+    ) {
       this.props.fetchContractorEquipment(13);
     }
+    if (status.type === "error") {
+      this._showAlert("Error", status.message);
+    } else if (status.type === "success") {
+      this._showAlert("Success", status.message);
+    }
   }
+
+  _showAlert = (title, msg) => {
+    Alert.alert(title, msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
 
   _handleOnPressItem = id => {
     this.setState({ id });
@@ -156,15 +173,14 @@ class MyEquipment extends Component {
   };
 
   _getEquipementByStatus = status => {
-    const { list } = this.props;
-    return list.filter(item => item.status === status) || [];
+    const { listEquipment } = this.props;
+    return listEquipment.filter(item => item.status === status) || [];
   };
 
-  _renderContent = () => {
-    const { list, message } = this.props;
+  _renderContent = listEquipment => {
     return (
       <View style={styles.scrollWrapper}>
-        {list.length > 0 ? (
+        {listEquipment.length > 0 ? (
           <View>
             <Dropdown
               label={"Filter"}
@@ -219,8 +235,7 @@ class MyEquipment extends Component {
   };
 
   render() {
-    const { list } = this.props;
-    const { loading } = this.state;
+    const { listEquipment, loading } = this.props;
     return (
       <SafeAreaView
         style={styles.container}
@@ -243,12 +258,12 @@ class MyEquipment extends Component {
             My Equipment
           </Text>
         </Header>
-        {list ? (
+        {!loading ? (
           <ScrollView
             style={{ flex: 1 }}
             contentContainerStyle={styles.scrollContent}
           >
-            {this._renderContent()}
+            {this._renderContent(listEquipment)}
           </ScrollView>
         ) : (
           <Loading />

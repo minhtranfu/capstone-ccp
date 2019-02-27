@@ -6,7 +6,8 @@ import {
   Animated,
   Dimensions,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Alert
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -98,17 +99,13 @@ const DROPDOWN_OPTIONS = [
 @connect(
   state => {
     return {
-      equipment: state.equipment.list,
-      myTransaction: state.transaction.listSupplierTransaction,
-      transactionStatus: state.transaction.transactionStatus,
-      detail: state.transaction.transactionDetail,
-      message: state.status.message
+      listTransaction: state.transaction.listSupplierTransaction,
+      loading: state.transaction.loading,
+      error: state.transaction.error,
+      status: state.status
     };
   },
   dispatch => ({
-    fetchRemoveEquipment: id => {
-      dispatch(removeEquipment(id));
-    },
     fetchListMyTransaction: id => {
       dispatch(listTransactionBySupplierId(id));
     },
@@ -121,7 +118,7 @@ class MyTransaction extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: "",
+      status: "All Statuses",
       loading: true,
       id: null,
       transactionStatus: ""
@@ -133,29 +130,24 @@ class MyTransaction extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { myTransaction, transactionStatus, detail } = this.props;
+    const { listTransaction, detail, status } = this.props;
     if (
-      transactionStatus.id === prevProps.transactionStatus.id &&
-      transactionStatus.status !== prevProps.transactionStatus.status
-    ) {
-      this.props.fetchListMyTransaction(13);
-    }
-    // const { id } = this.state;
-    if (
-      myTransaction &&
-      prevProps.myTransaction &&
-      myTransaction.length !== prevProps.myTransaction.length
+      listTransaction &&
+      prevProps.listTransaction &&
+      listTransaction.length !== prevProps.listTransaction.length
     ) {
       this.props.fetchListMyTransaction(13);
     }
   }
 
-  _handleOnPressItem = id => {
-    this.setState({ id });
+  _showAlert = (title, msg) => {
+    Alert.alert(title, msg, [{ text: "OK" }], {
+      cancelable: true
+    });
   };
 
-  _handleOnNavigateBack = transactionStatus => {
-    this.setState({ transactionStatus });
+  _handleOnPressItem = id => {
+    this.setState({ id });
   };
 
   _handleAddPress = () => {
@@ -163,15 +155,90 @@ class MyTransaction extends Component {
   };
 
   _getEquipementByStatus = status => {
-    const { myTransaction } = this.props;
-    return myTransaction.filter(item => item.status === status) || [];
+    const { listTransaction } = this.props;
+    return listTransaction.filter(item => item.status === status) || [];
   };
 
-  _renderContent = () => {
-    const { myTransaction, message } = this.props;
+  _renderAllTransaction = () => (
+    <View>
+      {EQUIPMENT_STATUSES.map((status, idx) => {
+        const equipmentList = this._getEquipementByStatus(status.code);
+        //Hide section if there is no equipment
+        if (equipmentList.length === 0) return null;
+
+        // Otherwise, display the whole list
+        return (
+          <View key={`sec_${idx}`}>
+            <EquipmentStatus
+              count={equipmentList.length}
+              title={status.title}
+              code={status.code}
+            />
+            {equipmentList.map((item, index) => (
+              <EquipmentItem
+                onPress={() => {
+                  this._handleOnPressItem(item.id);
+                  this.props.navigation.navigate("MyTransactionDetail", {
+                    id: item.id
+                  });
+                }}
+                key={`eq_${index}`}
+                id={item.id}
+                name={item.equipment.name}
+                imageURL={
+                  "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+                }
+                address={item.equipmentAddress}
+                requesterThumbnail={item.requester.thumbnailImage}
+                price={item.dailyPrice}
+              />
+            ))}
+          </View>
+        );
+      })}
+    </View>
+  );
+
+  _renderFilterTransaction = status => {
+    const equipmentList = this._getEquipementByStatus(status.toUpperCase());
+    if (equipmentList.length === 0) return null;
+    return (
+      <View>
+        <EquipmentStatus
+          count={equipmentList.length}
+          title={status}
+          code={status.toUpperCase()}
+        />
+
+        {equipmentList.map((item, index) => (
+          <EquipmentItem
+            key={`status${index}`}
+            onPress={() => {
+              this._handleOnPressItem(item.id);
+              this.props.navigation.navigate("MyTransactionDetail", {
+                id: item.id
+              });
+            }}
+            id={item.id}
+            name={item.equipment.name}
+            imageURL={
+              "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+            }
+            address={item.equipmentAddress}
+            requesterThumbnail={item.requester.thumbnailImage}
+            price={item.dailyPrice}
+          />
+        ))}
+      </View>
+    );
+  };
+
+  _renderContent = listTransaction => {
+    const { status } = this.state;
+
     return (
       <View style={styles.scrollWrapper}>
-        {myTransaction.length > 0 ? (
+        {listTransaction.length > 0 ? (
           <View>
             <Dropdown
               label={"Filter"}
@@ -180,46 +247,9 @@ class MyTransaction extends Component {
               options={DROPDOWN_OPTIONS}
               isHorizontal={true}
             />
-            <View>
-              {EQUIPMENT_STATUSES.map((status, idx) => {
-                const equipmentList = this._getEquipementByStatus(status.code);
-                //Hide section if there is no equipment
-                if (equipmentList.length === 0) return null;
-
-                // Otherwise, display the whole list
-                return (
-                  <View key={`sec_${idx}`}>
-                    <EquipmentStatus
-                      count={equipmentList.length}
-                      title={status.title}
-                      code={status.code}
-                    />
-                    {equipmentList.map((item, index) => (
-                      <EquipmentItem
-                        onPress={() => {
-                          this._handleOnPressItem(item.id);
-                          this.props.navigation.navigate(
-                            "MyTransactionDetail",
-                            {
-                              id: item.id
-                            }
-                          );
-                        }}
-                        key={`eq_${index}`}
-                        id={item.id}
-                        name={item.equipment.name}
-                        imageURL={
-                          "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-                        }
-                        address={item.equipmentAddress}
-                        requesterThumbnail={item.requester.thumbnailImage}
-                        price={item.dailyPrice}
-                      />
-                    ))}
-                  </View>
-                );
-              })}
-            </View>
+            {status === "All Statuses"
+              ? this._renderAllTransaction()
+              : this._renderFilterTransaction(status)}
           </View>
         ) : (
           <Text>No Data</Text>
@@ -229,30 +259,21 @@ class MyTransaction extends Component {
   };
 
   render() {
-    const { myTransaction } = this.props;
-    const { loading } = this.state;
+    const { listTransaction, loading, error, status } = this.props;
     return (
       <SafeAreaView
         style={styles.container}
         forceInset={{ bottom: "always", top: "always" }}
       >
         <Header>
-          <Text
-            style={{
-              fontSize: fontSize.h4,
-              fontWeight: "500",
-              color: colors.text
-            }}
-          >
-            My Transaction
-          </Text>
+          <Text style={styles.header}>My Transaction</Text>
         </Header>
-        {myTransaction ? (
+        {!loading ? (
           <ScrollView
             style={{ flex: 1 }}
             contentContainerStyle={styles.scrollContent}
           >
-            {this._renderContent()}
+            {this._renderContent(listTransaction)}
           </ScrollView>
         ) : (
           <Loading />
@@ -277,6 +298,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: fontSize.h4,
     fontWeight: "600"
+  },
+  header: {
+    fontSize: fontSize.h4,
+    fontWeight: "500",
+    color: colors.text
   }
 });
 

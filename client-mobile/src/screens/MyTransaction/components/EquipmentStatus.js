@@ -9,6 +9,7 @@ const COLORS = {
   ACCEPTED: "#4DB781", //green
   DENIED: "#FF5C5C", //red
   PENDING: "#F9AA33",
+  PROCESSING: "#7199FE",
   default: "#3E3E3E"
   // blue: 7199FE, yellow: FFDF49
 };

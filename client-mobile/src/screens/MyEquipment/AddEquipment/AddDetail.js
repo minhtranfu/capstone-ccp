@@ -10,10 +10,7 @@ import {
 import { SafeAreaView, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 import { Ionicons, Feather } from "@expo/vector-icons";
-import {
-  getGeneralEquipmentType,
-  getEquipmentType
-} from "../../../redux/actions/type";
+import { getGeneralEquipmentType } from "../../../redux/actions/type";
 import { getCurrentLocation } from "../../../redux/actions/location";
 
 import Loading from "../../../components/Loading";
@@ -48,19 +45,14 @@ const DROPDOWN_TYPES_OPTIONS = [
 
 @connect(
   state => {
-    console.log("Type", state.type);
-    console.log("Equipment", state.equipment);
     return {
-      generalType: state.type.listGeneralEquipmentType,
-      type: state.type.listType
+      loading: state.type.loading,
+      generalType: state.type.listGeneralEquipmentType
     };
   },
   dispatch => ({
     fetchGeneralType: () => {
       dispatch(getGeneralEquipmentType());
-    },
-    fetchType: id => {
-      dispatch(getEquipmentType(id));
     }
   })
 )
@@ -100,8 +92,8 @@ class AddDetail extends Component {
 
   //Create new dropdown options for general type
   _handleNewGeneralEquipmentType = () => {
-    const { data } = this.props.generalType;
-    let newData = data.map(item => ({
+    const { generalType } = this.props;
+    let newData = generalType.map(item => ({
       id: item.id,
       name: this._capitalizeLetter(item.name),
       value: this._capitalizeLetter(item.name)
@@ -111,9 +103,9 @@ class AddDetail extends Component {
 
   //Create new dropdown options for type
   _handleNewEquipmentType = generalTypeIndex => {
-    const { data } = this.props.generalType;
+    const { generalType } = this.props;
     let newGeneralTypeArray = this._handleNewGeneralEquipmentType();
-    let result = data.find(
+    let result = generalType.find(
       item => item.id === newGeneralTypeArray[generalTypeIndex].id
     );
 
@@ -247,7 +239,7 @@ class AddDetail extends Component {
   );
 
   render() {
-    const { generalType } = this.props;
+    const { generalType, loading } = this.props;
     const result = this._validateEnableButton();
     return (
       <SafeAreaView
@@ -267,7 +259,7 @@ class AddDetail extends Component {
         >
           <Text style={styles.header}>Add Detail</Text>
         </Header>
-        {generalType.data ? (
+        {!loading ? (
           <View style={{ flex: 1 }}>
             <ScrollView
               style={styles.scrollWrapper}

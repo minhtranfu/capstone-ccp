@@ -1,3 +1,11 @@
+function renderActions(name) {
+  return {
+    SUCCESS: `${name}_SUCCESS`,
+    ERROR: `${name}_ERROR`,
+    REQUEST: `${name}_REQUEST`
+  };
+}
+
 //LOGIN
 export const LOGIN_REQUEST = "@@auth/LOGIN_REQUEST";
 export const LOGIN_SUCCESS = "@@auth/LOGIN_SUCCESS";
@@ -6,47 +14,45 @@ export const LOGIN_FAIL = "@@auth/LOGIN_FAIL";
 export const LOGOUT_SUCCESS = "@@auth/LOGOUT_SUCCESS";
 
 //TYPE
-export const GET_TYPE_SUCCESS = "@@type/GET_TYPE_SUCCESS";
-export const GET_GENERAL_EQUIPMENT_TYPE_SUCCESS =
-  "@@type/GET_GENERAL_EQUIPMENT_TYPE_SUCCESS";
+export const GET_GENERAL_EQUIPMENT_TYPE = renderActions(
+  "@@type/GET_GENERAL_EQUIPMENT_TYPE"
+);
 
 //EQUIPMENT
-export const LIST_CONTRACTOR_EQUIPMENT_SUCCESS =
-  "@@equip/LIST_CONTRACTOR_EQUIPMENT_SUCCESS";
-export const UPDATE_EQUIPMENT = "@@equip/UPDATE_EQUIPMENT";
-export const ADD_EQUIPMENT = "@@equip/ADD_EQUIPMENT";
-export const REMOVE_EQUIPMENT = "@@equip/REMOVE_EQUIPMENT";
-export const EQUIPMENTS_LIST_SUCCESS = "@@equip/EQUIPMENTS_LIST_SUCCESS";
-export const UPDATE_EQUIPMENT_STATUS_SUCCESS =
-  "@@equip/UPDATE_EQUIPMENT_STATUS_SUCCESS";
-export const LIST_REQUESTER_EQUIPMENT_SUCCESS =
-  "@@equip/LIST_REQUESTER_EQUIPMENT_SUCCESS";
-export const CLEAR_SEARCH_RESULT = "@@equip/CLEAR_SEARCH_RESULT";
-export const CLEAR_EQUIPMENT_DETAIL = "@@equip/CLEAR_EQUIPMENT_DETAIL";
-
-//EQUIPMENT DETAIL
-export const GET_EQUIPMENT_DETAIL_SUCCESS =
-  "@@equip/GET_EQUIPMENT_DETAIL_SUCCESS";
+export const LIST_CONTRACTOR_EQUIPMENT = renderActions(
+  "@@equip/LIST_CONTRACTOR_EQUIPMENT"
+);
+export const UPDATE_EQUIPMENT = renderActions("@@equip/UPDATE_EQUIPMENT");
+export const ADD_EQUIPMENT = renderActions("@@equip/ADD_EQUIPMENT");
+export const REMOVE_EQUIPMENT = renderActions("@@equip/REMOVE_EQUIPMENT");
+export const EQUIPMENT_LIST = renderActions("@@equip/EQUIPMENT_LIST");
+export const UPDATE_EQUIPMENT_STATUS = renderActions(
+  "@@equip/UPDATE_EQUIPMENT_STATUS"
+);
+export const CLEAR_SEARCH_RESULT = renderActions("@@equip/CLEAR_SEARCH_RESULT");
 
 //TRANSACTION
-export const SEND_TRANSACTION_REQUEST_SUCCESS =
-  "@@transaction/SEND_REQUEST_SUCCESS";
-export const REQUEST_TRANSACTION_SUCCESS =
-  "@@transaction/REQUEST_TRANSACTION_SUCCESS";
-export const CANCEL_TRANSACTION_SUCCESS =
-  "@@transaction/CANCEL_TRANSACTION_SUCCESS";
+export const LIST_SUPPLIER_TRANSACTION = renderActions(
+  "@@equip/LIST_SUPPLIER_TRANSACTION"
+);
+export const LIST_REQUESTER_TRANSACTION = renderActions(
+  "@@transaction/LIST_REQUESTER_TRANSACTION"
+);
+export const SEND_TRANSACTION_REQUEST = renderActions(
+  "@@transaction/SEND_REQUEST"
+);
+export const REQUEST_TRANSACTION = renderActions(
+  "@transaction/REQUEST_TRANSACTION"
+);
+
+export const CANCEL_TRANSACTION = renderActions(
+  "@@transaction/CANCEL_TRANSACTION"
+);
 export const CLEAR_SUPPLIER_TRANSACTION_SUCCESS =
   "@@equip/CLEAR_SUPPLIER_TRANSACTION_SUCCESS";
-export const LIST_SUPPLIER_TRANSACTION_SUCCESS =
-  "@@equip/LIST_SUPPLIER_TRANSACTION_SUCCESS";
-
-//TRANSACTION DETAIL
-export const GET_TRANSACTION_DETAIL_SUCCESS =
-  "@@equip/GET_TRANSACTION_DETAIL_SUCCESS";
-export const CLEAR_TRANSACTION_DETAIL = "@@equip/CLEAR_TRANSACTION_DETAIL";
 
 //SEARCH EQUIPMENT
-export const SEARCH_EQUIPMENT_SUCCESS = "@@equip/SEARCH_EQUIPMENT_SUCCESS";
+export const SEARCH_EQUIPMENT = renderActions("@@equip/SEARCH_EQUIPMENT");
 
 //CART
 export const ADD_NEW_CART = "@@cart/ADD_NEW_CART";
@@ -57,7 +63,7 @@ export const REMOVE_CART = "@@cart/REMOVE_CART";
 // STATUS
 export const STATUS_LOADING = "@@status/LOADING";
 export const STATUS_SUCCESS = "@@status/SUCCESS";
-export const STATUS_FAIL = "@@status/FAIL";
+export const STATUS_ERROR = "@@status/ERROR";
 
 //CONTRACTOR
 export const GET_CONTRACTOR_SUCCESS = "@@contractor/GET_CONTRACTOR_SUCCESS";

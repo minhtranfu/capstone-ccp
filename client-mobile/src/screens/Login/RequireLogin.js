@@ -29,24 +29,13 @@ class RequireLogin extends Component {
             source={require("../../../assets/images/intro.png")}
             style={styles.image}
           />
-          <Text style={styles.text}>Sign up to share your equipment</Text>
-          <Button
-            wrapperStyle={styles.wrapperStyle}
-            buttonStyle={styles.buttonStyle}
-            textStyle={styles.textStyle}
-            text={"Sign Up"}
-          />
-          <View style={styles.dividerWrapper}>
-            <View style={styles.divider} />
-            <Text style={styles.textOr}>or</Text>
-            <View style={styles.divider} />
-          </View>
+          <Text style={styles.text}>Login to share your equipment</Text>
           <Button
             wrapperStyle={styles.wrapperStyle}
             buttonStyle={styles.buttonStyle}
             textStyle={styles.textStyle}
             text={"Login"}
-            onPress={() => navigation.navigate("Settings")}
+            onPress={() => navigation.navigate("Account")}
           />
         </View>
       </SafeAreaView>

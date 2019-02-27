@@ -3,84 +3,61 @@ import StatusAction from "./status";
 import * as Actions from "../types";
 import { ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS } from "expo/build/IntentLauncherAndroid";
 
-export function getEquipmentDetail(id) {
-  return async dispatch => {
-    const res = await axios.get(`equipments/${id}`);
-    dispatch({
-      type: Actions.GET_EQUIPMENT_DETAIL_SUCCESS,
-      payload: res.data
-    });
-  };
-}
+// export function getEquipmentDetail(id) {
+//   return async dispatch => {
+//     const res = await axios.get(`equipments/${id}`);
+//     dispatch({
+//       type: Actions.GET_EQUIPMENT_DETAIL_SUCCESS,
+//       payload: { data: res.data, id }
+//     });
+//   };
+// }
 
 export function getContractorEquipmentList(contractorId) {
   return async dispatch => {
+    dispatch({ type: Actions.LIST_CONTRACTOR_EQUIPMENT.REQUEST });
     const res = await axios.get(`contractors/${contractorId}/equipments`);
     dispatch({
-      type: Actions.LIST_CONTRACTOR_EQUIPMENT_SUCCESS,
-      payload: res.data
+      type: Actions.LIST_CONTRACTOR_EQUIPMENT.SUCCESS,
+      payload: res
     });
   };
 }
 
 export function addEquipment(equipment) {
   return async dispatch => {
-    try {
-      const res = await axios.post(`equipments`, equipment);
-    } catch (error) {
-      console.log(error);
-    }
+    const res = await axios.post(`equipments`, equipment);
     dispatch({
-      type: Actions.ADD_EQUIPMENT,
-      payload: res.data
+      type: Actions.ADD_EQUIPMENT.SUCCESS,
+      payload: res
     });
   };
 }
 
 export function updateEquipment(equipmentId, equipment) {
   return async dispatch => {
-    try {
-      const res = await axios.put(`equipments/${equipmentId}`, equipment);
-      dispatch({
-        type: Actions.UPDATE_EQUIPMENT,
-        payload: res.data
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    const res = await axios.put(`equipments/${equipmentId}`, equipment);
+    dispatch({
+      type: Actions.UPDATE_EQUIPMENT.SUCCESS,
+      payload: { data: res, id: equipmentId }
+    });
   };
 }
 
 export function updateEquipmentStatus(equipmentId, status) {
   return async dispatch => {
-    try {
-      const res = await axios.put(`equipments/${equipmentId}/status`, status);
-      dispatch({
-        type: Actions.UPDATE_EQUIPMENT_STATUS_SUCCESS,
-        payload: res.data
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    const res = await axios.put(`equipments/${equipmentId}/status`, status);
+    dispatch({
+      type: Actions.UPDATE_EQUIPMENT_STATUS.SUCCESS,
+      payload: { data: res, id: equipmentId }
+    });
   };
 }
 
 export function removeEquipment(id) {
   return {
-    type: Actions.REMOVE_EQUIPMENT,
+    type: Actions.REMOVE_EQUIPMENT.SUCCESS,
     id
-  };
-}
-
-export function listEquipmentByRequesterId(id) {
-  return async dispatch => {
-    try {
-      const res = await axios.get(`transactions/requester/${id}`);
-      dispatch({
-        type: Actions.LIST_REQUESTER_EQUIPMENT_SUCCESS,
-        payload: res
-      });
-    } catch {}
   };
 }
 
@@ -92,7 +69,7 @@ export function searchEquipment(address, long, lat, beginDate, endDate) {
   return async dispatch => {
     const res = await axios.get(url);
     dispatch({
-      type: Actions.SEARCH_EQUIPMENT_SUCCESS,
+      type: Actions.SEARCH_EQUIPMENT.SUCCESS,
       payload: res
     });
   };
@@ -100,12 +77,6 @@ export function searchEquipment(address, long, lat, beginDate, endDate) {
 
 export function clearSearchResult() {
   return {
-    type: Actions.CLEAR_SEARCH_RESULT
-  };
-}
-
-export function clearEquipmentDetail() {
-  return {
-    type: Actions.CLEAR_EQUIPMENT_DETAIL
+    type: Actions.CLEAR_SEARCH_RESULT.SUCCESS
   };
 }

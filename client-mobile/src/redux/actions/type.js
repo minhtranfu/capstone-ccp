@@ -3,19 +3,10 @@ import axios from "axios";
 
 export function getGeneralEquipmentType() {
   return async dispatch => {
+    dispatch({ type: Actions.GET_GENERAL_EQUIPMENT_TYPE.REQUEST });
     const res = await axios.get(`generalEquipmentTypes`);
     dispatch({
-      type: Actions.GET_GENERAL_EQUIPMENT_TYPE_SUCCESS,
-      payload: res
-    });
-  };
-}
-
-export function getEquipmentType(generalTypeId) {
-  return async dispatch => {
-    const res = await axios.get(`generalEquipmentTypes/${generalTypeId}`);
-    dispatch({
-      type: Actions.GET_TYPE_SUCCESS,
+      type: Actions.GET_GENERAL_EQUIPMENT_TYPE.SUCCESS,
       payload: res
     });
   };

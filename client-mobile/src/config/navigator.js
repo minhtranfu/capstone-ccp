@@ -33,6 +33,7 @@ import AddDetail from "../screens/MyEquipment/AddEquipment/AddDetail";
 import AddDuration from "../screens/MyEquipment/AddEquipment/AddDuration";
 import AddDurationText from "../screens/MyEquipment/AddEquipment/AddDurationText";
 import AddImage from "../screens/MyEquipment/AddEquipment/AddImage";
+import RequireLogin from "../screens/Login/RequireLogin";
 
 const EquipmentDetailStack = createStackNavigator(
   {

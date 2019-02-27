@@ -1,11 +1,11 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 
 import colors from "../../../config/colors";
 import fontSize from "../../../config/fontSize";
 
-class EquipmentItem extends Component {
+class EquipmentItem extends PureComponent {
   static propTypes = {
     name: PropTypes.string,
     id: PropTypes.number,

@@ -1,35 +1,32 @@
 import * as ACTIONS from "../types";
 
-async function loading(message) {
-  return async dispatch => {
-    dispatch({
-      type: ACTIONS.STATUS_LOADING,
-      payload: {
-        message
-      }
-    });
+function loading(message) {
+  return {
+    type: ACTIONS.STATUS_LOADING,
+    payload: {
+      message
+    }
   };
 }
 
-async function success(message) {
-  return async dispatch => {
-    dispatch({
-      type: ACTIONS.STATUS_LOADING,
-      payload: {
-        message
-      }
-    });
+function success(message, time) {
+  return {
+    type: ACTIONS.STATUS_SUCCESS,
+    payload: {
+      message,
+      time
+    }
   };
 }
 
-async function error(message) {
-  return async dispatch => {
-    dispatch({
-      type: ACTIONS.STATUS_FAIL,
-      payload: {
-        message
-      }
-    });
+function error(message, time) {
+  console.log("actions message", message);
+  return {
+    type: ACTIONS.STATUS_ERROR,
+    payload: {
+      message,
+      time
+    }
   };
 }
 

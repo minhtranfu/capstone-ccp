@@ -14,8 +14,6 @@ import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { ImagePicker, Permissions } from "expo";
 import {
-  getEquipmentDetail,
-  clearEquipmentDetail,
   updateEquipment,
   updateEquipmentStatus
 } from "../../redux/actions/equipment";
@@ -55,23 +53,20 @@ const COLORS = {
 };
 
 @connect(
-  state => {
+  (state, ownProps) => {
+    const { id } = ownProps.navigation.state.params;
     return {
-      equipmentDetail: state.equipment.detail
+      equipmentDetail: state.equipment.contractorEquipment.find(
+        item => item.id === id
+      )
     };
   },
   dispatch => ({
-    fetchEquipmentDetail: id => {
-      dispatch(getEquipmentDetail(id));
-    },
     fetchUpdateEquipment: (equipmentId, equipment) => {
       dispatch(updateEquipment(equipmentId, equipment));
     },
     fetchUpdateEquipmentStatus: (equipmentId, status) => {
       dispatch(updateEquipmentStatus(equipmentId, status));
-    },
-    fetchClearEquipmentDetail: () => {
-      dispatch(clearEquipmentDetail());
     }
   })
 )
@@ -81,11 +76,6 @@ class MyEquipmentDetail extends Component {
     this.state = {
       data: {}
     };
-  }
-
-  componentDidMount() {
-    const { id } = this.props.navigation.state.params;
-    this.props.fetchEquipmentDetail(id);
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {

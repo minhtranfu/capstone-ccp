@@ -2,71 +2,61 @@ import * as Actions from "../types";
 
 const INITIAL_STATE = {
   loading: false,
-  detail: {},
-  equipmentStatus: {},
   listSearch: [],
-  listRequesterEquipment: [],
   contractorEquipment: []
 };
 
 export default function equipmentReducer(state = INITIAL_STATE, action) {
   const { type, payload } = action;
   switch (type) {
-    case Actions.GET_EQUIPMENT_DETAIL_SUCCESS: {
+    case Actions.LIST_CONTRACTOR_EQUIPMENT.REQUEST: {
       return {
         ...state,
-        detail: payload
+        loading: true
       };
     }
-    case Actions.LIST_CONTRACTOR_EQUIPMENT_SUCCESS: {
+    case Actions.LIST_CONTRACTOR_EQUIPMENT.SUCCESS: {
       return {
         ...state,
-        contractorEquipment: payload
+        loading: false,
+        contractorEquipment: payload.data
       };
     }
-    case Actions.LIST_REQUESTER_EQUIPMENT_SUCCESS: {
+    case Actions.ADD_EQUIPMENT.SUCCESS: {
       return {
         ...state,
-        listRequesterEquipment: payload
+        contractorEquipment: [...state.contractorEquipment, payload.data]
       };
     }
-    case Actions.ADD_EQUIPMENT: {
+    case Actions.UPDATE_EQUIPMENT.SUCCESS: {
       return {
         ...state,
-        contractorEquipment: [...state.contractorEquipment, payload]
+        contractorEquipment: state.contractorEquipment.map(item =>
+          item.id === payload.id ? item === payload.data.data : item
+        )
       };
     }
-    case Actions.UPDATE_EQUIPMENT: {
+    case Actions.UPDATE_EQUIPMENT_STATUS.SUCCESS: {
       return {
         ...state,
-        detail: payload
+        contractorEquipment: state.contractorEquipment.map(item =>
+          item.id === payload.id ? item === payload.data.data : item
+        )
       };
     }
-    case Actions.UPDATE_EQUIPMENT_STATUS_SUCCESS: {
+    case Actions.REMOVE_EQUIPMENT.SUCCESS:
+      return {
+        ...state
+      };
+    case Actions.SEARCH_EQUIPMENT.SUCCESS:
       return {
         ...state,
-        equipmentStatus: payload
+        listSearch: payload.data
       };
-    }
-    case Actions.REMOVE_EQUIPMENT:
-      return {
-        ...state,
-        equipmentStatus: payload
-      };
-    case Actions.SEARCH_EQUIPMENT_SUCCESS:
-      return {
-        ...state,
-        listSearch: payload
-      };
-    case Actions.CLEAR_SEARCH_RESULT:
+    case Actions.CLEAR_SEARCH_RESULT.SUCCESS:
       return {
         ...state,
         listSearch: []
-      };
-    case Actions.CLEAR_EQUIPMENT_DETAIL:
-      return {
-        ...state,
-        detail: {}
       };
     default:
       return state;

@@ -33,7 +33,6 @@ class Search extends Component {
 
   componentDidMount = async () => {
     const locationStatus = await grantPermission("location");
-    console.log(locationStatus);
     if (locationStatus === "granted") {
       const currentLocation = await Location.getCurrentPositionAsync({});
       const coords = currentLocation.coords;
