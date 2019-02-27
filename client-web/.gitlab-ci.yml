@@ -1,0 +1,26 @@
+image: ictu/sshpass
+
+variables:
+  GIT_STRATEGY: none
+
+before_script:
+ # - apt-get update -qq && apt-get install -y -qq sshpass
+
+deploy_stage:
+  stage: deploy
+  environment: production
+  only:
+    - web-client
+  script:
+    # - ls
+    - sshpass -V
+    - export SSHPASS=$USER_PASS
+    - export GITUSER=$GIT_USER
+    - export GITPASS=$GIT_PASS
+    - sshpass -e ssh -o StrictHostKeyChecking=no root@ccp.hoctot.net "
+        cd /home/capstone/capstone-ccp-run-web/ &&
+        git pull  https://$GITUSER:$GITPASS@github.com/minhtranfu/capstone-ccp.git web-client &&
+        cd capstone-ccp-run-web &&
+        yarn install &&
+        yarn build:prod
+        "
