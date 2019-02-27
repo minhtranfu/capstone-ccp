@@ -12,13 +12,16 @@ COPY pom.xml /opt/app/
 # rest of the project
 COPY src /opt/app/src
 #RUN mvn install and package
-RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "verify", "clean", "package", "--fail-never"]
+RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "verify", "clean", "install", "--fail-never"]
 # package project
-#RUN mvn package
+RUN mvn tomee:build
+
+# create excutable file
+RUN mvn tomee:exec
 
 # local application port
 EXPOSE 8080
 
 # execute it
 #CMD ["mvn", "tomcat7:run-war-only"]
-CMD ["mvn", "tomee:run"]
+CMD ["java" , "-jar", "./target/CcpApi-exec.jar"]
