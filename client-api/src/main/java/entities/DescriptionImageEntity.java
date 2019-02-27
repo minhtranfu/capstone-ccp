@@ -5,7 +5,7 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 
 @Entity
-@Where(clause = "is_deleted=0")
+//@Where(clause = "is_deleted=0")
 @Table(name = "description_image", schema = "capstone_ccp", catalog = "")
 public class DescriptionImageEntity {
 	private long id;

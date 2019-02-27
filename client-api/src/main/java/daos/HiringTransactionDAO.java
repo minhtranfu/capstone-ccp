@@ -4,20 +4,26 @@ import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 import utils.DBUtils;
 
+import javax.ejb.Singleton;
+import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.List;
 
+@Stateless
 public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long> {
+	@PersistenceContext
+	EntityManager entityManager;
+
 	public List<HiringTransactionEntity> getHiringTransactionsBySupplierId(long supplierId) {
-		EntityManager entityManager = DBUtils.getEntityManager();
 		return entityManager.createNamedQuery("HiringTransactionEntity.getTransactionBySupplierId")
 				.setParameter("supplierId", supplierId)
 				.getResultList();
 	}
 
 	public List<HiringTransactionEntity> getHiringTransactionsByRequesterId(long requesterId) {
-		EntityManager entityManager = DBUtils.getEntityManager();
 		return entityManager.createNamedQuery("HiringTransactionEntity.getTransactionsByRequesterId")
 				.setParameter("requesterId", requesterId)
 				.getResultList();
@@ -25,7 +31,6 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 
 	/* There's no PROCESSING transaction related to this equipment*/
 	public List<HiringTransactionEntity> getProcessingTransactionsByEquipmentId(long equipmentId) {
-		EntityManager entityManager = DBUtils.getEntityManager();
 
 		List<HiringTransactionEntity> hiringTransactionEntities = entityManager.createNamedQuery("HiringTransactionEntity.getProcessingTransactionsByEquipmentId", HiringTransactionEntity.class)
 				.setParameter("equipmentId", equipmentId)
@@ -36,7 +41,7 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 	}
 
 	public List<HiringTransactionEntity> getPendingTransactionIntersectingWith(long equipmentId, LocalDate beginDate, LocalDate endDate){
-		return DBUtils.getEntityManager().createNamedQuery("HiringTransactionEntity.getPendingTransactionIntersectingWith")
+		return entityManager.createNamedQuery("HiringTransactionEntity.getPendingTransactionIntersectingWith")
 				.setParameter("equipmentId", equipmentId)
 				.setParameter("curBeginDate", beginDate)
 				.setParameter("curEndDate", endDate)

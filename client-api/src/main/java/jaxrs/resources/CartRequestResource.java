@@ -9,6 +9,9 @@ import entities.CartRequestEntity;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Default;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -17,12 +20,29 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class CartRequestResource {
 
-	public static final CartRequestDAO cartRequestDao = new CartRequestDAO();
-	public static final ContractorDAO contractorDao = new ContractorDAO();
-	public static final EquipmentDAO equipmentDao = new EquipmentDAO();
+	@Inject
+	CartRequestDAO cartRequestDao;
 
+	@Inject
+	ContractorDAO contractorDao;
+
+	@Inject @Default @Any
+	EquipmentDAO equipmentDao;
+
+
+	public CartRequestResource() {
+	}
 
 	long contractorId;
+
+
+	public long getContractorId() {
+		return contractorId;
+	}
+
+	public void setContractorId(long contractorId) {
+		this.contractorId = contractorId;
+	}
 
 
 	public CartRequestResource(long contractorId) {
@@ -83,10 +103,13 @@ public class CartRequestResource {
 
 
 		//validate contractor id
-		Response validateResult = validateContractorId(contractorId);
-		if (validateResult != null) {
-			return validateResult;
-		}
+
+		// TODO: 2/27/19 validate contractor
+//		Response validateResult = validateContractorId(contractorId);
+//		if (validateResult != null) {
+//			return validateResult;
+//		}
+		Response validateResult;
 
 		//check equipment not null
 		if (cartRequestEntity.getEquipment() == null) {
@@ -162,17 +185,17 @@ public class CartRequestResource {
 
 
 	// TODO: 2/20/19 send all request from cart
-		@POST
-		@Path("send")
-		public Response sendAllRequestFromCart() {
-			Response validateResult = validateContractorId(contractorId);
-			if (validateResult != null) {
-				return validateResult;
-			}
+	@POST
+	@Path("send")
+	public Response sendAllRequestFromCart() {
+		Response validateResult = validateContractorId(contractorId);
+		if (validateResult != null) {
+			return validateResult;
+		}
 
 //			List<CartRequestEntity> cartRequestEntityList = cartRequestDao.getCartByContractorId(contractorId);
 
-			return Response.ok().build();
-		}
+		return Response.ok().build();
+	}
 
 }

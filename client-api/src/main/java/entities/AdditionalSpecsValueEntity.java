@@ -7,7 +7,6 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
-@Where(clause = "is_deleted=0")
 @Table(name = "additional_specs_value", schema = "capstone_ccp")
 public class AdditionalSpecsValueEntity {
 	private long id;

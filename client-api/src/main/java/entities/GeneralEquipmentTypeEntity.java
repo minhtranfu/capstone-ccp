@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Where(clause = "is_deleted=0")
-@Table(name = "general_equipment_type", schema = "capstone_ccp", catalog = "")
+@Table(name = "general_equipment_type", schema = "capstone_ccp")
 @NamedQuery(name = "GeneralEquipmentTypeEntity.getAllGeneralEquipmentType",query = "select e from GeneralEquipmentTypeEntity e")
 public class GeneralEquipmentTypeEntity {
 	private long id;
@@ -88,9 +88,13 @@ public class GeneralEquipmentTypeEntity {
 		this.updatedTime = updatedTime;
 	}
 
+
+	// TODO: 2/27/19 orphan removal here !
+
+
 	@JsonbTransient
 	@XmlTransient
-	@OneToMany(mappedBy = "generalEquipment", orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "generalEquipment", fetch = FetchType.EAGER)
 	@Where(clause = "is_deleted=0")
 	public List<EquipmentTypeEntity> getEquipmentTypeEntities() {
 		return equipmentTypeEntities;

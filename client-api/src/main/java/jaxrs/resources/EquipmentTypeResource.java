@@ -4,6 +4,7 @@ import daos.EquipmentTypeDAO;
 import dtos.responses.MessageResponse;
 import entities.EquipmentTypeEntity;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -11,7 +12,8 @@ import javax.ws.rs.core.Response;
 @Path("/equipmentTypes")
 @Produces(MediaType.APPLICATION_JSON)
 public class EquipmentTypeResource {
-	public static final EquipmentTypeDAO equipmentTypeDAO = new EquipmentTypeDAO();
+	@Inject
+	public EquipmentTypeDAO equipmentTypeDAO ;
 
 	@GET
 	public Response getAllEquipmentTypes() {

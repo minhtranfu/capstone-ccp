@@ -1,16 +1,15 @@
 package daos;
 
 
-import utils.DBUtils;
 
-import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-@Singleton
+
 public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 
 
@@ -26,9 +25,11 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 	}
 
 
+//	@Transactional
 	public void persist(T t) {
 		entityManager.persist(t);
 	}
+
 
 	public T findByID(PK id) {
 		return entityManager.find(entityClass, id);

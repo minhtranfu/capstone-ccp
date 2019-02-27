@@ -3,12 +3,18 @@ package daos;
 import entities.TransactionDateChangeRequestEntity;
 import utils.DBUtils;
 
+import javax.ejb.Singleton;
+import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@Stateless
 public class TransactionDateChangeRequestDAO extends BaseDAO<TransactionDateChangeRequestEntity, Long> {
+	@PersistenceContext
+	EntityManager entityManager;
 	public boolean validateNewRequest(long transactionId) {
-		EntityManager entityManager = DBUtils.getEntityManager();
 		int count =  entityManager.createNamedQuery("TransactionDateChangeRequestEntity.getPendingRequestByTransactionId")
 				.setParameter("transactionId", transactionId)
 				.getResultList().size();
@@ -18,7 +24,6 @@ public class TransactionDateChangeRequestDAO extends BaseDAO<TransactionDateChan
 	public List<TransactionDateChangeRequestEntity> getRequestsByTransactionId(long transactionId) {
 
 
-		EntityManager entityManager = DBUtils.getEntityManager();
 		return entityManager.createNamedQuery("TransactionDateChangeRequestEntity.getRequestsByTransactionId")
 				.setParameter("transactionId", transactionId)
 				.getResultList();
@@ -27,7 +32,6 @@ public class TransactionDateChangeRequestDAO extends BaseDAO<TransactionDateChan
 	public List<TransactionDateChangeRequestEntity> getPendingRequestByTransactionId(long transactionId) {
 
 
-		EntityManager entityManager = DBUtils.getEntityManager();
 		return entityManager.createNamedQuery("TransactionDateChangeRequestEntity.getPendingRequestByTransactionId")
 				.setParameter("transactionId", transactionId)
 				.getResultList();

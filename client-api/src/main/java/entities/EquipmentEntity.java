@@ -152,7 +152,8 @@ public class EquipmentEntity implements Serializable {
 		this.construction = construction;
 	}
 
-	@OneToMany(mappedBy = "equipment",cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	// TODO: 2/27/19 orphan removal here !
+	@OneToMany(mappedBy = "equipment",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<AvailableTimeRangeEntity> getAvailableTimeRanges() {
 		return availableTimeRanges;
 	}
@@ -251,8 +252,6 @@ public class EquipmentEntity implements Serializable {
 	}
 
 	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@Where(clause = "is_deleted=0")
-
 	public Collection<DescriptionImageEntity> getDescriptionImages() {
 		return descriptionImages;
 	}
@@ -262,9 +261,9 @@ public class EquipmentEntity implements Serializable {
 	}
 
 
-	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	@Where(clause = "is_deleted=0")
+	// TODO: 2/27/19 orphan removal here !
 
+	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<AdditionalSpecsValueEntity> getAdditionalSpecsValues() {
 		return additionalSpecsValues;
 	}

@@ -132,7 +132,8 @@ public class ContractorEntity {
 		this.updatedTime = updatedTime;
 	}
 
-	@OneToMany(mappedBy = "contractor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	// TODO: 2/27/19 orphan removal here
+	@OneToMany(mappedBy = "contractor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")
 	public List<ConstructionEntity> getConstructions() {
 		return constructions;

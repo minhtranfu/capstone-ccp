@@ -19,10 +19,10 @@ public class TestResource extends HttpServlet {
 
 
 	@Inject
-	private Message messageB;
+	 Message messageB;
 
 	@Inject
-	private TestDAO testDAO;
+	 TestDAO testDAO;
 	@GET
 	public String doGet() {
 		return messageB.get();

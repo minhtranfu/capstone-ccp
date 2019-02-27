@@ -11,6 +11,9 @@ import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 import entities.TransactionDateChangeRequestEntity;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Default;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -21,10 +24,17 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class HiringTransactionResource {
 
-	private static final HiringTransactionDAO hiringTransactionDAO = new HiringTransactionDAO();
-	private static final EquipmentDAO equipmentDAO = new EquipmentDAO();
-	private static final ContractorDAO contractorDAO = new ContractorDAO();
-	private static final TransactionDateChangeRequestDAO transactionDateChangeRequestDAO = new TransactionDateChangeRequestDAO();
+	@Inject
+	HiringTransactionDAO hiringTransactionDAO;
+
+	@Inject @Default @Any
+	public EquipmentDAO equipmentDAO;
+
+	@Inject
+	ContractorDAO contractorDAO;
+
+	@Inject
+	TransactionDateChangeRequestDAO transactionDateChangeRequestDAO;
 
 
 	@POST

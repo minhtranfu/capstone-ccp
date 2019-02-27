@@ -1,5 +1,6 @@
 package jaxrs.providers;
 
+import javax.ejb.Local;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
@@ -15,7 +16,11 @@ public class JSONBConfiguration implements ContextResolver<Jsonb> {
 	public JSONBConfiguration() {
 		// jsonbConfig offers a lot of configurations.
 		JsonbConfig config = new JsonbConfig()
-				.withDateFormat(JsonbDateFormat.TIME_IN_MILLIS, Locale.ENGLISH);
+				.withDateFormat(JsonbDateFormat.TIME_IN_MILLIS, Locale.ENGLISH)
+				.withLocale(Locale.ENGLISH)
+				.withEncoding("UTF-8");
+
+//				.withDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
 
 

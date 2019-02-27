@@ -14,10 +14,6 @@ import javax.ws.rs.core.MediaType;
 //@ResourceFilters(CorsFilter.class)
 //@RequestScoped
 public class UserResource {
-    private static EntityManager manager = DBUtils.getEntityManager();
-
-
-
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

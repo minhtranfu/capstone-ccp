@@ -2,6 +2,7 @@ package entities;
 
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -10,8 +11,8 @@ import java.time.LocalDateTime;
 @NamedQuery(name = "CartRequestEntity.getByContractorId", query = "select e from CartRequestEntity e where e.sent = false and  e.contractor.id = :contractorId")
 public class CartRequestEntity {
 	private long id;
-	private LocalDateTime beginDate;
-	private LocalDateTime endDate;
+	private LocalDate beginDate;
+	private LocalDate endDate;
 	private String requesterAddress;
 	private Double requesterLong;
 	private Double requesterLat;
@@ -24,6 +25,7 @@ public class CartRequestEntity {
 	private boolean isSent;
 
 
+	// TODO: 2/27/19 fixing generation strategy for hibernte not found hibernate_sequence
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -37,21 +39,21 @@ public class CartRequestEntity {
 
 	@Basic
 	@Column(name = "begin_date", nullable = true)
-	public LocalDateTime getBeginDate() {
+	public LocalDate getBeginDate() {
 		return beginDate;
 	}
 
-	public void setBeginDate(LocalDateTime beginDate) {
+	public void setBeginDate(LocalDate beginDate) {
 		this.beginDate = beginDate;
 	}
 
 	@Basic
 	@Column(name = "end_date", nullable = true)
-	public LocalDateTime getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(LocalDateTime endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 

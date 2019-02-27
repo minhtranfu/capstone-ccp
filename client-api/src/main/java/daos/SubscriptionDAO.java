@@ -5,13 +5,15 @@ import entities.SubscriptionEntity;
 import utils.DBUtils;
 
 import javax.ejb.Singleton;
+import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
 
-@Singleton
+@Stateless
 public class SubscriptionDAO extends BaseDAO<SubscriptionEntity, Long> {
 
 	@PersistenceContext(unitName = DBUtils.PERSISTANCE_UNIT)

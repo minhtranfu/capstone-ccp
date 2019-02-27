@@ -7,6 +7,9 @@ import dtos.responses.MessageResponse;
 import entities.*;
 import utils.CommonUtils;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Default;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -23,12 +26,20 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class EquipmentResource {
 
-	private static final EquipmentDAO equipmentDAO = new EquipmentDAO();
-	private static final EquipmentTypeDAO equipmentTypeDAO = new EquipmentTypeDAO();
-	private static final ContractorDAO contractorDAO = new ContractorDAO();
-	private static final ConstructionDAO constructionDAO = new ConstructionDAO();
+	@Inject
+	@Default
+	@Any
+	EquipmentDAO equipmentDAO;
+	@Inject
+	EquipmentTypeDAO equipmentTypeDAO;
 
-	private static final AdditionalSpecsFieldDAO additionalSpecsFieldDAO = new AdditionalSpecsFieldDAO();
+	@Inject
+	ContractorDAO contractorDAO;
+	@Inject
+	ConstructionDAO constructionDAO;
+
+	@Inject
+	AdditionalSpecsFieldDAO additionalSpecsFieldDAO;
 
 
 	/*========Constants============*/
@@ -58,22 +69,22 @@ public class EquipmentResource {
 
 		LocalDate beginDate = null;
 		LocalDate endDate = null;
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 		if (!beginDateStr.isEmpty() && !endDateStr.isEmpty()) {
 
 
 //			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
 			try {
-				beginDate = LocalDate.parse(beginDateStr,dateTimeFormatter);
+				beginDate = LocalDate.parse(beginDateStr, dateTimeFormatter);
 				endDate = LocalDate.parse(endDateStr, dateTimeFormatter);
 
-			} catch ( DateTimeParseException e) {
+			} catch (DateTimeParseException e) {
 				e.printStackTrace();
 
 				// TODO: 2/12/19 always return somethings even when format is shit for risk preventing
 
-				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Date format must be yyyy-mm-dd")).build();
+				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Date format must be yyyy-MM-dd")).build();
 			}
 			if (beginDate.isAfter(endDate)) {
 				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Error: beginDate > endDate")).build();
@@ -104,7 +115,7 @@ public class EquipmentResource {
 	@GET
 	@Path("{id:\\d+}")
 	public Response getEquipment(@PathParam("id") long id) {
-		return Response.ok(EquipmentDAO.getInstance().findByID(id)).build();
+		return Response.ok(equipmentDAO.findByID(id)).build();
 	}
 
 
@@ -180,44 +191,47 @@ public class EquipmentResource {
 		}
 
 		//todo validate for additionalSpecsValues
-		for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValues()) {
-			AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByID(additionalSpecsValueEntity.getAdditionalSpecsField().getId());
-			if (foundAdditionalSpecsFieldEntity == null) {
-				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()))).build();
-			}
+		if (equipmentEntity.getAdditionalSpecsValues() != null) {
 
-			//remove id for persist transaction
-			additionalSpecsValueEntity.setId(0);
+			for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValues()) {
+				AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByID(additionalSpecsValueEntity.getAdditionalSpecsField().getId());
+				if (foundAdditionalSpecsFieldEntity == null) {
+					return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()))).build();
+				}
 
-			//validate datatype
-			switch (foundAdditionalSpecsFieldEntity.getDataType()) {
-				case STRING:
-					break;
-				case DOUBLE:
-					try {
-						Double.parseDouble(additionalSpecsValueEntity.getValue());
-					} catch (NumberFormatException e) {
-						return Response.status(Response.Status.BAD_REQUEST)
-								.entity(new MessageResponse(
-										String.format("AdditionalSpecsField value=%s is not %s"
-												, additionalSpecsValueEntity.getValue()
-												, foundAdditionalSpecsFieldEntity.getDataType())
-								)).build();
-					}
+				//remove id for persist transaction
+				additionalSpecsValueEntity.setId(0);
 
-					break;
-				case INTEGER:
-					try {
-						Integer.parseInt(additionalSpecsValueEntity.getValue());
-					} catch (NumberFormatException e) {
-						return Response.status(Response.Status.BAD_REQUEST)
-								.entity(new MessageResponse(
-										String.format("AdditionalSpecsField value=%s is not %s"
-												, additionalSpecsValueEntity.getValue()
-												, foundAdditionalSpecsFieldEntity.getDataType())
-								)).build();
-					}
-					break;
+				//validate datatype
+				switch (foundAdditionalSpecsFieldEntity.getDataType()) {
+					case STRING:
+						break;
+					case DOUBLE:
+						try {
+							Double.parseDouble(additionalSpecsValueEntity.getValue());
+						} catch (NumberFormatException e) {
+							return Response.status(Response.Status.BAD_REQUEST)
+									.entity(new MessageResponse(
+											String.format("AdditionalSpecsField value=%s is not %s"
+													, additionalSpecsValueEntity.getValue()
+													, foundAdditionalSpecsFieldEntity.getDataType())
+									)).build();
+						}
+
+						break;
+					case INTEGER:
+						try {
+							Integer.parseInt(additionalSpecsValueEntity.getValue());
+						} catch (NumberFormatException e) {
+							return Response.status(Response.Status.BAD_REQUEST)
+									.entity(new MessageResponse(
+											String.format("AdditionalSpecsField value=%s is not %s"
+													, additionalSpecsValueEntity.getValue()
+													, foundAdditionalSpecsFieldEntity.getDataType())
+									)).build();
+						}
+						break;
+				}
 			}
 		}
 
@@ -225,7 +239,8 @@ public class EquipmentResource {
 		equipmentEntity.setStatus(null);
 
 		//delete all children of the old equipment
-		foundEquipment.deleteAllAvailableTimeRange();
+//		foundEquipment.deleteAllAvailableTimeRange();
+
 		// validate time range begin end correct
 		if (!equipmentDAO.validateBeginEndDate(equipmentEntity.getAvailableTimeRanges())) {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("beginDate > endDate !!!"));
@@ -237,7 +252,7 @@ public class EquipmentResource {
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("TimeRanges must not be intersect !!!"));
 			return responseBuilder.build();
 		}
-		equipmentDAO.merge(foundEquipment);
+//		equipmentDAO.merge(foundEquipment);
 
 
 		//todo delete image

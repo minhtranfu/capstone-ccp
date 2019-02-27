@@ -6,7 +6,13 @@ import listeners.DataChangeListener;
 import listeners.DataChangeSubscriber;
 import utils.DBUtils;
 
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
@@ -16,13 +22,13 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// TODO: 2/22/19 make the dao singleton for a publisher pattern !
-public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>  implements DataChangeListener<EquipmentEntity> {
-	private static Logger logger = Logger.getLogger(EquipmentDAO.class.toString());
+@Stateless
+public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>   {
 
 
-	private static EquipmentDAO instance;
-	private static Object LOCK = new Object();
+	@PersistenceContext
+	EntityManager entityManager;
+
 
 
 	private static final String REGEX_ORDERBY_SINGLEITEM = "(\\w+)\\.(asc|desc)($|,)";
@@ -36,7 +42,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>  implements Dat
 		//cant use something like 'from e.availableTimeRanges' because of the lack of flexibility of jpa criteria query
 
 
-		EntityManager entityManager = DBUtils.getEntityManager();
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<EquipmentEntity> query = criteriaBuilder.createQuery(EquipmentEntity.class);
 
@@ -130,21 +135,12 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>  implements Dat
 
 	}
 
-	public static EquipmentDAO getInstance() {
-		synchronized (LOCK) {
-			if (instance == null) {
-				instance = new EquipmentDAO();
-			}
-		}
-		return instance;
-	}
 
 
 	//validate if the equipment is available in this time range
 	public boolean validateEquipmentAvailable(long equipmentId, LocalDate beginDate, LocalDate endDate) {
 
 
-		EntityManager entityManager = DBUtils.getEntityManager();
 
 		// TODO: 2/11/19 validate user's available time
 		//check if there are any available time range that contain this timerange
@@ -218,12 +214,10 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>  implements Dat
 
 	List<DataChangeSubscriber<EquipmentEntity>> subscriberList = new ArrayList<>() ;
 
-	@Override
 	public void subscribe(DataChangeSubscriber<EquipmentEntity> subscriber) {
 		subscriberList.add(subscriber);
 	}
 
-	@Override
 	public void unsubscribe(DataChangeSubscriber<EquipmentEntity> subscriber) {
 		subscriberList.remove(subscriber);
 	}
@@ -249,4 +243,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>  implements Dat
 
 
 }
+
+// TODO: 2/22/19 make the dao singleton for a publisher pattern !
 

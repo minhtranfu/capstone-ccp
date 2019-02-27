@@ -6,6 +6,7 @@ import dtos.responses.GeneralEquipmentTypeResponse;
 import dtos.responses.MessageResponse;
 import entities.GeneralEquipmentTypeEntity;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -18,7 +19,9 @@ import java.util.List;
 @Path("generalEquipmentTypes")
 @Produces(MediaType.APPLICATION_JSON)
 public class GeneralEquipmentTypeResource {
-	private static final GeneralEquipmentTypeDAO generalEquipmentTypeDAO = new GeneralEquipmentTypeDAO();
+
+	@Inject
+	  GeneralEquipmentTypeDAO generalEquipmentTypeDAO ;
 
 	@GET
 	public Response getAllGeneralEquipmentType() {

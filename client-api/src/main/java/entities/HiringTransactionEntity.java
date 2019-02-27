@@ -138,8 +138,6 @@ public class HiringTransactionEntity {
 
 	@Basic
 	@Column(name = "begin_date")
-	@Temporal(TemporalType.DATE)
-	@JsonbDateFormat("yyyy-MM-dd")
 	public LocalDate getBeginDate() {
 		return beginDate;
 	}
@@ -151,8 +149,6 @@ public class HiringTransactionEntity {
 
 	@Basic
 	@Column(name = "end_date")
-	@JsonbDateFormat("yyyy-MM-dd")
-
 	public LocalDate getEndDate() {
 		return endDate;
 	}

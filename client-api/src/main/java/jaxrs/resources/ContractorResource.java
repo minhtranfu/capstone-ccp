@@ -6,7 +6,9 @@ import dtos.responses.MessageResponse;
 import entities.ConstructionEntity;
 import entities.ContractorEntity;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -14,8 +16,16 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class ContractorResource {
 
-	private static final ContractorDAO contractorDao = new ContractorDAO();
-	private static final ConstructionDAO constructionDao = new ConstructionDAO();
+	@Inject
+	ContractorDAO contractorDao;
+
+	@Inject
+	ConstructionDAO constructionDao;
+
+
+	//todo refactore this bullshit subresource for a better life
+	@Inject
+	CartRequestResource cartRequestResource;
 
 	@GET
 	@Path("{id:\\d+}")
@@ -86,7 +96,6 @@ public class ContractorResource {
 //
 //		return new ConstructionService(foundContractorEntity);
 //	}
-
 
 
 	@GET
@@ -292,13 +301,10 @@ public class ContractorResource {
 
 	@Path("{id:\\d+}/cart")
 	public CartRequestResource toCartResource(@PathParam("id") long contractorId) {
-		return new CartRequestResource(contractorId);
+
+		return cartRequestResource;
 
 	}
-
-
-
-
 
 
 }
