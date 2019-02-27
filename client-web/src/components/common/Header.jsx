@@ -51,7 +51,7 @@ class Header extends Component {
       <nav className="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
         <div className="container">
           <Link className="navbar-brand py-0" to="/">
-            <img src="/assets/images/logo.png" width="40" height="40" className="d-inline-block align-top" alt="" />
+            <img src="/public/assets/images/logo.png" width="40" height="40" className="d-inline-block align-top" alt="" />
             ConstuctionSharing
             </Link>
           <button className="navbar-toggler" type="button" onClick={this._toggleOffCanvas}>

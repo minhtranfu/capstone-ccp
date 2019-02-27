@@ -37,13 +37,13 @@ class EquipDetail extends Component {
 
       const data = await ccpApiService.getEquipmentById(id);
       data.images = [
-        '/upload/product-images/unnamed-19-jpg.jpg',
-        '/upload/product-images/unnamed-24-jpg.jpg',
-        '/upload/product-images/unnamed-20-jpg.jpg',
-        '/upload/product-images/unnamed-25-jpg.jpg',
-        '/upload/product-images/unnamed-21-jpg.jpg',
-        '/upload/product-images/unnamed-22-jpg.jpg',
-        '/upload/product-images/unnamed-23-jpg.jpg'
+        '/public/upload/product-images/unnamed-19-jpg.jpg',
+        '/public/upload/product-images/unnamed-24-jpg.jpg',
+        '/public/upload/product-images/unnamed-20-jpg.jpg',
+        '/public/upload/product-images/unnamed-25-jpg.jpg',
+        '/public/upload/product-images/unnamed-21-jpg.jpg',
+        '/public/upload/product-images/unnamed-22-jpg.jpg',
+        '/public/upload/product-images/unnamed-23-jpg.jpg'
       ];
 
       const { transaction } = this.state;

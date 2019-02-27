@@ -12,7 +12,7 @@ class EquipmentCard extends PureComponent {
       <div className={`equip-card my-2 ${className}`}>
         <Link to={`/equip-detail/${product.id}`}>
           <div className="card">
-            <Image src={product.image || '/upload/product-images/unnamed-19-jpg.jpg'} className="card-img-top" alt="" />
+            <Image src={product.image || '/public/upload/product-images/unnamed-19-jpg.jpg'} className="card-img-top" alt="" />
             <div className="card-body">
               <h6 className="card-title">{product.name} <span className="float-right"><i className="fa fa-dollar"></i> {product.dailyPrice}</span>
                 <span className="clearfix"></span>
