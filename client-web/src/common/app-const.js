@@ -16,7 +16,11 @@ export const INITIAL_STATE = {
     [ENTITY_KEY.EQUIPMENT_TYPES]: {},
     [ENTITY_KEY.EQUIPMENT_TYPE_INFOS]: {}
   },
-  counter: 0
+  counter: 0,
+  user: {
+    // TODO: Remove hard code for user data
+    id: 12
+  }
 };
 
 export const ROUTES = [

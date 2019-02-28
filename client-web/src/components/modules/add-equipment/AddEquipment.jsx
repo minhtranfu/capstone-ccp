@@ -13,7 +13,7 @@ import Step3 from './Step3';
 import ccpApiService from '../../../services/domain/ccp-api-service';
 
 class AddEquipment extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -43,118 +43,121 @@ class AddEquipment extends Component {
     ];
   }
 
-    toggle = tab => {
-      if (this.state.activeStep !== tab) {
-        this.setState({
-          activeStep: tab
-        });
-      }
+  toggle = tab => {
+    if (this.state.activeStep !== tab) {
+      this.setState({
+        activeStep: tab
+      });
+    }
+  };
+
+  _handleStepDone = async result => {
+    this.data = {
+      ...this.data,
+      ...result.data
     };
 
-    _handleStepDone = async result => {
-      this.data = {
-        ...this.data,
-        ...result.data
-      };
-
-      let { activeStep } = this.state;
-      if (activeStep < this.steps.length - 1) {
-        activeStep++;
-        this.setState({
-          activeStep
-        });
-        return;
-      }
-
-      const { equipmentTypeId } = this.data;
-      this.data.equipmentType = {
-        id: equipmentTypeId
-      };
-      this.data.equipmentTypeId = undefined;
-      this.data.specs = undefined;
-
-      const data = await ccpApiService.postEquipment(this.data);
-      if (data && data.id) {
-        this.setState({
-          equipmentId: data.id
-        });
-      }
-    };
-
-    _handleBackStep = () => {
-      let { activeStep } = this.state;
-
-      if (activeStep == 0) {
-        return;
-      }
-
-      activeStep--;
+    let { activeStep } = this.state;
+    if (activeStep < this.steps.length - 1) {
+      activeStep++;
       this.setState({
         activeStep
       });
+      return;
     }
 
-    _renderSteps = () => {
-      const tabs = [];
-      const tabPanes = [];
-
-      this.steps.forEach((step, index) => {
-        tabs.push(
-          <NavItem key={index}>
-            <NavLink
-              className={classnames({ active: this.state.activeStep === index })}
-              onClick={() => { this.toggle(index); }}
-            >
-              {step.name}
-            </NavLink>
-          </NavItem>
-        );
-
-        tabPanes.push(
-          <TabPane tabId={index} className="p-1" key={index}>
-            <CSSTransition
-              in={this.state.activeStep === index}
-              timeout={500}
-              classNames="fade"
-            >
-              <Row>
-                <Col sm="12">
-                  <step.component onStepDone={this._handleStepDone} onBackStep={this._handleBackStep} currentState={this.state.data} />
-                </Col>
-              </Row>
-            </CSSTransition>
-          </TabPane>
-        );
-      });
-
-      return (
-        <div>
-          {this.state.equipmentId &&
-                    <Redirect to={`/equip-detail/${this.state.equipmentId}`} />
-          }
-          <Nav tabs>
-            {tabs}
-          </Nav>
-          <TabContent activeTab={this.state.activeStep}>
-            {tabPanes}
-          </TabContent>
-        </div>
-      );
+    const { equipmentTypeId, constructionId } = this.data;
+    this.data.equipmentType = {
+      id: +equipmentTypeId
     };
+    this.data.construction = {
+      id: +constructionId
+    };
+    this.data.equipmentTypeId = undefined;
+    this.data.constructionId = undefined;
 
-    render () {
-      return (
-        <div className="container pb-5">
-          <div className="row">
-            <div className="col-12">
-              <h2 className="my-4">Post equipment</h2>
-              <hr />
-            </div>
-          </div>
-          {this._renderSteps()}
-        </div >
-      );
+    const data = await ccpApiService.postEquipment(this.data);
+    if (data && data.id) {
+      this.setState({
+        equipmentId: data.id
+      });
     }
+  };
+
+  _handleBackStep = () => {
+    let { activeStep } = this.state;
+
+    if (activeStep == 0) {
+      return;
+    }
+
+    activeStep--;
+    this.setState({
+      activeStep
+    });
+  }
+
+  _renderSteps = () => {
+    const tabs = [];
+    const tabPanes = [];
+
+    this.steps.forEach((step, index) => {
+      tabs.push(
+        <NavItem key={index}>
+          <NavLink
+            className={classnames({ active: this.state.activeStep === index })}
+            onClick={() => { this.toggle(index); }}
+          >
+            {step.name}
+          </NavLink>
+        </NavItem>
+      );
+
+      tabPanes.push(
+        <TabPane tabId={index} className="p-1" key={index}>
+          <CSSTransition
+            in={this.state.activeStep === index}
+            timeout={500}
+            classNames="fade"
+          >
+            <Row>
+              <Col sm="12">
+                <step.component onStepDone={this._handleStepDone} onBackStep={this._handleBackStep} currentState={this.data} />
+              </Col>
+            </Row>
+          </CSSTransition>
+        </TabPane>
+      );
+    });
+
+    return (
+      <div>
+        {this.state.equipmentId &&
+          <Redirect to={`/equip-detail/${this.state.equipmentId}`} />
+        }
+        <Nav tabs>
+          {tabs}
+        </Nav>
+        <TabContent activeTab={this.state.activeStep}>
+          {tabPanes}
+        </TabContent>
+      </div>
+    );
+  };
+
+  render() {
+    return (
+      <div className="container pb-5">
+        <div className="row">
+          <div className="col-12">
+            <h2 className="my-4">Post equipment</h2>
+            <hr />
+          </div>
+        </div>
+        {this._renderSteps()}
+      </div >
+    );
+  }
 }
 
 export default AddEquipment;
