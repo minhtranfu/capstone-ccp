@@ -16,7 +16,7 @@ class Header extends Component {
         name: 'Supplier'
       },
       {
-        to: '/dashboard/Requester',
+        to: '/dashboard/requester',
         name: 'Requester'
       }
     ];
@@ -31,7 +31,7 @@ class Header extends Component {
 
     this.setState({
       showOffCanvas: !showOffCanvas
-    })
+    });
   };
 
   _isMenuActive = (menu) => {
@@ -53,7 +53,7 @@ class Header extends Component {
           <Link className="navbar-brand py-0" to="/">
             <img src="/public/assets/images/logo.png" width="40" height="40" className="d-inline-block align-top" alt="" />
             ConstuctionSharing
-            </Link>
+          </Link>
           <button className="navbar-toggler" type="button" onClick={this._toggleOffCanvas}>
             <span className="navbar-toggler-icon"></span>
           </button>

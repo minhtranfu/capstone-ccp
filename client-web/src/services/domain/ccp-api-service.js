@@ -1,37 +1,43 @@
 import DataAccessService from '../data/data-access-service';
 
 const CcpApiService = {
-  getEquipmentTypes () {
+  getEquipmentTypes() {
     return DataAccessService.get('/equipmentTypes');
   },
-  getEquipmentTypeSpecs (typeId) {
+  getEquipmentTypeSpecs(typeId) {
     return DataAccessService.get(`/equipments/types/${typeId}/specs`);
   },
-  postEquipment (data) {
+  postEquipment(data) {
     return DataAccessService.post('/equipments', data);
   },
-  getEquipmentById (id) {
+  getEquipmentById(id) {
     return DataAccessService.get(`/equipments/${id}`);
   },
-  searchEquipment (criteria) {
+  searchEquipment(criteria) {
     const params = Object.keys(criteria).map(key => `${key}=${encodeURIComponent(criteria[key])}`);
     const queryString = params.join('&');
     return DataAccessService.get(`/equipments?${queryString}`);
   },
-  postTransaction (transaction) {
+  postTransaction(transaction) {
     return DataAccessService.post('/transactions', transaction);
   },
-  getEquipmentsByContractorId (constractorId) {
+  getEquipmentsByContractorId(constractorId) {
     return DataAccessService.get(`contractors/${constractorId}/equipments`);
   },
-  getConstructionsByContractorId (constractorId) {
+  getConstructionsByContractorId(constractorId) {
     return DataAccessService.get(`contractors/${constractorId}/constructions`);
   },
-  getTransactionsByRequesterId (requesterId) {
+  getTransactionsBySupplierId(supplierId) {
+    return DataAccessService.get(`transactions/supplier/${supplierId}`);
+  },
+  getTransactionsByRequesterId(requesterId) {
     return DataAccessService.get(`transactions/requester/${requesterId}`);
   },
-  updateTransactionById (transactionId, data) {
+  updateTransactionById(transactionId, data) {
     return DataAccessService.put(`transactions/${transactionId}`, data);
+  },
+  updateEquipmentStatus(equipmentId, status) {
+    return DataAccessService.put(`/equipments/${equipmentId}/status`, { status });
   }
 };
 

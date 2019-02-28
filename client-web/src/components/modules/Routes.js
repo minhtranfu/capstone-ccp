@@ -36,6 +36,11 @@ const modules = [
     name: 'MyReceivedRequests',
     path: '/dashboard/supplier/',
     modulePath: './supplier-dashboard/MyRequests'
+  },
+  {
+    name: 'RequesterRequests',
+    path: '/dashboard/requester/',
+    modulePath: './requester-dashboard/MyRequests'
   }
 ];
 

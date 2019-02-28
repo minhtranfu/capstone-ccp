@@ -6,45 +6,43 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 import Skeleton from 'react-loading-skeleton';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
-import { TRANSACTION_STATUSES } from '../../../common/consts';
+import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES } from '../../../common/consts';
 
 class MyRequests extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    filterStatus: 'all',
+    confirm: {},
+    alert: {}
+  };
 
-    this.state = {
-      filterStatus: 'all',
-      confirm: {},
-      alert: {}
-    };
+  confirmMessages = {
+    [TRANSACTION_STATUSES.ACCEPTED]: 'Are you sure to accept this transaction?',
+    [TRANSACTION_STATUSES.CANCELED]: 'Are you sure to cancel this transaction?',
+    [TRANSACTION_STATUSES.DENIED]: 'Are you sure to deny this transaction?',
+    [TRANSACTION_STATUSES.PROCESSING]: 'Are you going to delivery equipment of this transaction?',
+    [TRANSACTION_STATUSES.FINISHED]: 'Have you received the equipment from requester?'
+  };
 
-    this.confirmMessages = {
-      [TRANSACTION_STATUSES.ACCEPTED]: 'Are you sure to accept this transaction?',
-      [TRANSACTION_STATUSES.CANCELED]: 'Are you sure to cancel this transaction?',
-      [TRANSACTION_STATUSES.DENIED]: 'Are you sure to deny this transaction?',
-      [TRANSACTION_STATUSES.PROCESSING]: 'Are you going to delivery equipment of this transaction?',
-      [TRANSACTION_STATUSES.FINISHED]: 'Did you received equipment of this transaction?'
-    };
+  showableStatuses = {
+    [TRANSACTION_STATUSES.PENDING]: 'Pending',
+    [TRANSACTION_STATUSES.ACCEPTED]: 'Accepted',
+    [TRANSACTION_STATUSES.PROCESSING]: 'Processing',
+    [TRANSACTION_STATUSES.FINISHED]: 'Finished',
+    [TRANSACTION_STATUSES.DENIED]: 'Denied'
+  };
 
-    this.showableStatuses = {
-      [TRANSACTION_STATUSES.PENDING]: 'Pending',
-      [TRANSACTION_STATUSES.ACCEPTED]: 'Accepted',
-      [TRANSACTION_STATUSES.PROCESSING]: 'Processing',
-      [TRANSACTION_STATUSES.FINISHED]: 'Finished',
-      [TRANSACTION_STATUSES.DENIED]: 'Denied'
-    };
+  needActionStatuses = [
+    TRANSACTION_STATUSES.PENDING,
+    TRANSACTION_STATUSES.ACCEPTED
+  ];
 
-    this.needActionStatuses = [
-      TRANSACTION_STATUSES.PENDING,
-      TRANSACTION_STATUSES.ACCEPTED
-    ];
+  tabContents = {};
 
-    this.tabContents = {};
-  }
+  needActionCounters = {};
 
   _loadData = async () => {
     const REQUESTER_ID = 12;
-    const transactions = await ccpApiService.getTransactionsByRequesterId(REQUESTER_ID);
+    const transactions = await ccpApiService.getTransactionsBySupplierId(REQUESTER_ID);
     this.setState({
       transactions
     });
@@ -222,7 +220,7 @@ class MyRequests extends Component {
   };
 
   _renderAlert = () => {
-    const { transactions, filterStatus, confirm, alert } = this.state;
+    const { confirm, alert } = this.state;
 
     return (
       <div>
@@ -251,6 +249,7 @@ class MyRequests extends Component {
     const { transactions } = this.state;
 
     this.tabContents = {};
+    this.needActionCounters = {};
 
     if (!transactions || transactions.length === 0) {
       return;
@@ -266,6 +265,13 @@ class MyRequests extends Component {
     });
   }
 
+  _countNeedActionForStatus = (status) => {
+    if (!this.needActionCounters[status]) {
+      this.needActionCounters[status] = 0;
+    }
+    this.needActionCounters[status]++;
+  };
+
   _renderTransaction = transaction => {
     const { filterStatus } = this.state;
     const { equipment } = transaction;
@@ -280,6 +286,7 @@ class MyRequests extends Component {
     let changeStatusButtons = '';
     switch (transaction.status) {
       case TRANSACTION_STATUSES.PENDING:
+        this._countNeedActionForStatus(TRANSACTION_STATUSES.PENDING);
         statusClasses += ' badge-info';
         changeStatusButtons = (
           <div className="mt-2">
@@ -290,13 +297,15 @@ class MyRequests extends Component {
         break;
 
       case TRANSACTION_STATUSES.ACCEPTED:
+        this._countNeedActionForStatus(TRANSACTION_STATUSES.ACCEPTED);
         statusClasses += ' badge-success';
-        changeStatusButtons = (
-          <div className="mt-2">
-            <button className="btn btn-warning" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.PROCESSING)}>Deliery</button>
-            <button className="btn btn-outline-danger ml-2" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.CANCELED)}>Cancel</button>
-          </div>
-        );
+        if (transaction.equipment.status === EQUIPMENT_STATUSES.AVAILABLE) {
+          changeStatusButtons = (
+            <div className="mt-2">
+              <button className="btn btn-warning" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.PROCESSING)}>Deliver</button>
+            </div>
+          );
+        }
         break;
 
       case TRANSACTION_STATUSES.DENIED:
@@ -309,15 +318,17 @@ class MyRequests extends Component {
 
       case TRANSACTION_STATUSES.PROCESSING:
         statusClasses += 'badge-warning';
-        break;
 
-      case TRANSACTION_STATUSES.WAITING_FOR_RETURNING:
-        statusClasses += 'badge-warning';
-        changeStatusButtons = (
-          <div className="mt-2">
-            <button className="btn btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.FINISHED)}>Finish</button>
-          </div>
-        );
+        if (transaction.equipment.status === EQUIPMENT_STATUSES.WAITING_FOR_RETURNING) {
+          this._countNeedActionForStatus(TRANSACTION_STATUSES.PROCESSING);
+
+          changeStatusButtons = (
+            <div className="mt-2">
+              <button className="btn btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.FINISHED)}>Finish</button>
+            </div>
+          );
+        }
+
         break;
 
       case TRANSACTION_STATUSES.FINISHED:
@@ -361,6 +372,7 @@ class MyRequests extends Component {
   render() {
 
     this._renderTabContents();
+    console.log(this.needActionCounters);
 
     return (
       <div className="container py-5 user-dashboard">
@@ -374,8 +386,8 @@ class MyRequests extends Component {
                   return (
                     <a key={status} className={`nav-link ${status == TRANSACTION_STATUSES.PENDING ? 'active' : ''}`} id={`v-pills-${status}-tab`} data-toggle="pill" href={`#v-pills-${status}`} role="tab" aria-controls={`v-pills-${status}`} aria-selected={status == TRANSACTION_STATUSES.PENDING}>
                       {this.showableStatuses[status]}
-                      {this.needActionStatuses.includes(status) && this.tabContents[status] && this.tabContents[status].length &&
-                        <span className="badge badge-pill badge-danger ml-1">{this.tabContents[status] ? this.tabContents[status].length : 0}</span>
+                      {this.needActionCounters[status] &&
+                        <span className="badge badge-pill badge-danger ml-1">{this.needActionCounters[status]}</span>
                       }
                     </a>
                   );
