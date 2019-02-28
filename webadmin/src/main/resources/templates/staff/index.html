@@ -18,7 +18,7 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Staff Manage </h1>
+                <h1 class="page-header">Staff Manage</h1>
             </div>
 
 
@@ -28,7 +28,7 @@
             <div class="col-lg-10">
             </div>
             <div class="col-lg-2">
-                <a th:href="@{/staff/create}" class="link btn btn-default spacing">Create Staff</a>
+                <a th:href="@{/staff/create}" class="link btn btn-default spacing">Create</a>
             </div>
 
             <!-- /.col-lg-12 -->
@@ -53,6 +53,7 @@
                                 <th>Phone Number</th>
                                 <th>Email</th>
                                 <th>Role</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -68,9 +69,35 @@
                                 </td>
                                 <td th:text="${item.account.phone}"></td>
                                 <td th:text="${item.account.email}"></td>
-                                <td th:switch="${item.account.roleId}">
-                                    <span th:case="1">Admin</span>
-                                    <span th:case="2">Staff</span>
+                                <td th:text="${item.account.role.getRoleName()}"></td>
+                                <td>
+
+                                        <a href="#" class="btn btn-danger" data-toggle="modal"
+                                           data-target="#smallModal">Delete</a>
+
+                                        <div class="modal fade" id="smallModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="smallModal" aria-hidden="true">
+                                            <div class="modal-dialog modal-sm">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-hidden="true">&times;
+                                                        </button>
+                                                        <h4 class="modal-title" id="myModalLabel">Confirm</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <h4>Do you want to delete?</h4>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default"
+                                                                data-dismiss="modal">
+                                                            No
+                                                        </button>
+                                                        <a th:href="@{/staff/delete(id = ${item.id})}" class="link btn btn-success">Yes</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                 </td>
                             </tr>
                             </tbody>

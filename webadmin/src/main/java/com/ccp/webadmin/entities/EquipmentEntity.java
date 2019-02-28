@@ -1,11 +1,11 @@
 package com.ccp.webadmin.entities;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(name = "equipment")
@@ -26,11 +26,13 @@ public class EquipmentEntity {
     @Column(name = "delivery_price")
     private Double deliveryPrice;
 
-    @Column(name = "description")
+
+    @Column(name = "description", nullable = true, length = -1, columnDefinition = "TEXT")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private Status status;
 
     @Column(name = "thumbnail_image")
     private String thumbnailImage;
@@ -38,26 +40,28 @@ public class EquipmentEntity {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    @Column(name = "created_time")
-    private LocalDateTime createdTime;
+    @Column(name = "created_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private Timestamp createdTime;
 
-    @Column(name = "updated_time")
-    private LocalDateTime updatedTime;
+    @Column(name = "updated_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private Timestamp updatedTime;
 
     @Column(name = "address")
     private String address;
 
-    @Column(name = "long")
+    @Column(name = "`long`")
     private Double longitude;
 
     @Column(name = "lat")
     private Double lat;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "equipment_type_id")
     private EquipmentTypeEntity equipmentTypeEntity;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "contractor_id")
     private ContractorEntity contractorEntity;
 
@@ -82,22 +86,6 @@ public class EquipmentEntity {
     public EquipmentEntity() {
     }
 
-    public EquipmentEntity(@NotNull(message = "Name is required not empty") @Size(min = 3, message = "Equipment's name required more than 3 letters") String name, Double dailyPrice, Double deliveryPrice, String description, String status, String thumbnailImage, Boolean isDeleted, LocalDateTime createdTime, LocalDateTime updatedTime, String address, Double longitude, Double lat, EquipmentTypeEntity equipmentTypeEntity, ContractorEntity contractorEntity) {
-        this.name = name;
-        this.dailyPrice = dailyPrice;
-        this.deliveryPrice = deliveryPrice;
-        this.description = description;
-        this.status = status;
-        this.thumbnailImage = thumbnailImage;
-        this.isDeleted = isDeleted;
-        this.createdTime = createdTime;
-        this.updatedTime = updatedTime;
-        this.address = address;
-        this.longitude = longitude;
-        this.lat = lat;
-        this.equipmentTypeEntity = equipmentTypeEntity;
-        this.contractorEntity = contractorEntity;
-    }
 
     public Integer getId() {
         return id;
@@ -139,11 +127,11 @@ public class EquipmentEntity {
         this.description = description;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -163,19 +151,19 @@ public class EquipmentEntity {
         isDeleted = deleted;
     }
 
-    public LocalDateTime getCreatedTime() {
+    public Timestamp getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(LocalDateTime createdTime) {
+    public void setCreatedTime(Timestamp createdTime) {
         this.createdTime = createdTime;
     }
 
-    public LocalDateTime getUpdatedTime() {
+    public Timestamp getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(LocalDateTime updatedTime) {
+    public void setUpdatedTime(Timestamp updatedTime) {
         this.updatedTime = updatedTime;
     }
 
@@ -217,5 +205,44 @@ public class EquipmentEntity {
 
     public void setContractorEntity(ContractorEntity contractorEntity) {
         this.contractorEntity = contractorEntity;
+    }
+
+    public enum Status {
+        AVAILABLE("Available"),
+        DELIVERING("Delivering"),
+        RENTING("Renting"),
+        WAITING_FOR_RETURNING("Waiting for returning"),
+        ;
+
+        private String value;
+
+        Status(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "EquipmentEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", dailyPrice=" + dailyPrice +
+                ", deliveryPrice=" + deliveryPrice +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", thumbnailImage='" + thumbnailImage + '\'' +
+                ", isDeleted=" + isDeleted +
+                ", createdTime=" + createdTime +
+                ", updatedTime=" + updatedTime +
+                ", address='" + address + '\'' +
+                ", longitude=" + longitude +
+                ", lat=" + lat +
+                ", equipmentTypeEntity=" + equipmentTypeEntity +
+                ", contractorEntity=" + contractorEntity +
+                '}';
     }
 }

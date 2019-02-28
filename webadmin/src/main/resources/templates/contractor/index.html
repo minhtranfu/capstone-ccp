@@ -57,25 +57,18 @@
                                 <td><a th:href="@{/contractor/detail/{id}(id = ${item.id})}">
                                     <span th:text="${item.name}" class="link"></span></a>
                                 </td>
-                                <td>
-                                    <span th:text="${item.email}"></span>
-                                </td>
-                                <td>
-                                    <span th:text="${item.phone}"></span>
-                                </td>
-                                <td>
-                                    <span th:text="${item.createdTime}"></span>
-                                </td>
-                                <td>
-                                    <span th:text="${item.updatedTime}"></span>
-                                </td>
-                                <td>
-                                    <span th:text="${numberOfFeedbacked}"></span>
-                                </td>
-                                <td th:switch="${item.status}">
-                                    <a th:case="0" th:href="@{/contractor/deactive/{id}(id = ${item.id})}" class="btn btn-primary link">Not Verify</a>
-                                    <a th:case="1" th:href="@{/contractor/active/{id}(id = ${item.id})}" class="btn btn-success link">Active</a>
-                                    <a th:case="2" th:href="@{/contractor/active/{id}(id = ${item.id})}" class="btn btn-danger link">Deactive</a>
+                                <td th:text="${item.email}"></td>
+                                <td th:text="${item.phone}"></td>
+                                <td th:text="${{item.createdTime}}"></td>
+                                <td th:text="${{item.updatedTime}}"></td>
+                                <td th:text="${item.countReceivedFeedbackEntity()}"></td>
+                                <td th:switch="${item.status.toString()}">
+                                    <a th:case="NOT_VERIFIED" th:href="@{/contractor/deactive/{id}(id = ${item.id})}" class=""
+                                       style="color: #1ab7ea">Not Verified</a>
+                                    <a th:case="ACTIVATED" th:href="@{/contractor/active/{id}(id = ${item.id})}" class=""
+                                       style="color: green">Activated</a>
+                                    <a th:case="DEACTIVATED" th:href="@{/contractor/active/{id}(id = ${item.id})}" class=""
+                                       style="color: red">Deactivated</a>
                                 </td>
                             </tr>
                             </tbody>

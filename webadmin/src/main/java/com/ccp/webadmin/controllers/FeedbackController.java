@@ -62,7 +62,7 @@ public class FeedbackController {
         }
         model.addAttribute("feedbackTypes", feedbackTypeService.findAll());
         feedbackService.save(feedbackEntity);
-        long id = feedbackEntity.getId();
+        Integer id = feedbackEntity.getId();
         return "redirect:detail/" +  id;
     }
 

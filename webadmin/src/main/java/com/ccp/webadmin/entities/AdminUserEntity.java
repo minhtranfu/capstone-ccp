@@ -26,29 +26,21 @@ public class AdminUserEntity implements Serializable {
     @Column(name = "phone", length = 10)
     private String phone;
 
-    @Email(message = "Email required")
+    @Email(message = "Email not correct")
     @Column(name = "email")
     private String email;
 
 
-    @Column(name = "role_id")
-    private Integer roleId;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private RoleEntity role;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @OneToOne(mappedBy = "account")
     private AdminAccountEntity adminAccountEntity;
 
     public AdminUserEntity() {
     }
 
-    public AdminUserEntity(String name, boolean isMale, String phone, String email, Integer roleId, AdminAccountEntity adminAccountEntity) {
-        this.name = name;
-        this.isMale = isMale;
-        this.phone = phone;
-        this.email = email;
-        this.roleId = roleId;
-        this.adminAccountEntity = adminAccountEntity;
-    }
 
     public Integer getId() {
         return id;
@@ -90,12 +82,12 @@ public class AdminUserEntity implements Serializable {
         this.email = email;
     }
 
-    public Integer getRoleId() {
-        return roleId;
+    public RoleEntity getRole() {
+        return role;
     }
 
-    public void setRoleId(Integer roleId) {
-        this.roleId = roleId;
+    public void setRole(RoleEntity role) {
+        this.role = role;
     }
 
     public AdminAccountEntity getAdminAccountEntity() {
@@ -106,16 +98,4 @@ public class AdminUserEntity implements Serializable {
         this.adminAccountEntity = adminAccountEntity;
     }
 
-    @Override
-    public String toString() {
-        return "AdminUserEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", isMale=" + isMale +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                ", roleId=" + roleId +
-                ", adminAccountEntity=" + adminAccountEntity +
-                '}';
-    }
 }

@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("hiring_transaction")
@@ -32,6 +33,7 @@ public class HiringTransactionController {
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("transaction", hiringTransactionService.findById(id));
+        model.addAttribute("transactionStatus", Arrays.asList(HiringTransactionEntity.Status.values()));
         return "hiring_transaction/detail";
     }
 
@@ -44,16 +46,17 @@ public class HiringTransactionController {
     @PostMapping("/saveProcess")
     public String saveProcess(
             @Valid @ModelAttribute("transaction") HiringTransactionEntity hiringTransactionEntity,
-            BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            if(hiringTransactionEntity.getId() != null){
-                return "hiring_transaction/detail";
-            } else{
-                return "hiring_transaction/create";
-            }
-        }
-        hiringTransactionService.save(hiringTransactionEntity);
-        Integer id = hiringTransactionEntity.getId();
+            BindingResult bindingResult, Model model) {
+
+        model.addAttribute("transactionStatus", Arrays.asList(HiringTransactionEntity.Status.values()));
+        HiringTransactionEntity foundHiringTransaction = hiringTransactionService.findById(hiringTransactionEntity.getId());
+
+        // TODO: 2019-02-26 set attributes
+        foundHiringTransaction.setStatus(hiringTransactionEntity.getStatus());
+
+
+        hiringTransactionService.save(foundHiringTransaction);
+        Integer id = foundHiringTransaction.getId();
         return "redirect:detail/" + id;
     }
 
@@ -63,4 +66,6 @@ public class HiringTransactionController {
         hiringTransactionService.deleteById(id);
         return "redirect:index";
     }
+
+
 }

@@ -1,11 +1,13 @@
 package com.ccp.webadmin.entities;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "hiring_transaction")
@@ -15,10 +17,9 @@ public class HiringTransactionEntity implements Serializable {
     @Column(name = "id")
     private Integer id;
 
-    @NotNull(message = "Content is required not empty")
-    @Size(max = 45, message = "status")
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private Status status;
 
     @NotNull(message = "Price is required not empty")
     @Column(name = "daily_price")
@@ -28,11 +29,14 @@ public class HiringTransactionEntity implements Serializable {
     @Column(name = "delivery_price")
     private Double deliveryPrice;
 
-    @Column(name = "created_time")
-    private LocalDateTime createdTime;
 
-    @Column(name = "updated_time")
-    private LocalDateTime updatedTime;
+    @Column(name = "created_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private Timestamp createdTime;
+
+    @Column(name = "updated_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private Timestamp updatedTime;
 
     @Column(name = "begin_date")
     private LocalDate beginDate;
@@ -58,11 +62,11 @@ public class HiringTransactionEntity implements Serializable {
     @Column(name = "requester_lat")
     private Double requesterLat;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "requester_id")
     private ContractorEntity requester;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "equipment_id")
     private EquipmentEntity equipment;
 
@@ -72,24 +76,6 @@ public class HiringTransactionEntity implements Serializable {
     public HiringTransactionEntity() {
     }
 
-    public HiringTransactionEntity(@NotNull(message = "Content is required not empty") @Size(max = 45, message = "status") String status, @NotNull(message = "Price is required not empty") Double dailyPrice, @NotNull(message = "Price is required not empty") Double deliveryPrice, LocalDateTime createdTime, LocalDateTime updatedTime, LocalDate beginDate, LocalDate endDate, String equipmentAddress, Double equipmentLong, Double equipmentLat, String requesterAddress, Double requesterLong, Double requesterLat, ContractorEntity requester, EquipmentEntity equipment, boolean isDeleted) {
-        this.status = status;
-        this.dailyPrice = dailyPrice;
-        this.deliveryPrice = deliveryPrice;
-        this.createdTime = createdTime;
-        this.updatedTime = updatedTime;
-        this.beginDate = beginDate;
-        this.endDate = endDate;
-        this.equipmentAddress = equipmentAddress;
-        this.equipmentLong = equipmentLong;
-        this.equipmentLat = equipmentLat;
-        this.requesterAddress = requesterAddress;
-        this.requesterLong = requesterLong;
-        this.requesterLat = requesterLat;
-        this.requester = requester;
-        this.equipment = equipment;
-        this.isDeleted = isDeleted;
-    }
 
     public Integer getId() {
         return id;
@@ -99,11 +85,11 @@ public class HiringTransactionEntity implements Serializable {
         this.id = id;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -123,19 +109,19 @@ public class HiringTransactionEntity implements Serializable {
         this.deliveryPrice = deliveryPrice;
     }
 
-    public LocalDateTime getCreatedTime() {
+    public Timestamp getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(LocalDateTime createdTime) {
+    public void setCreatedTime(Timestamp createdTime) {
         this.createdTime = createdTime;
     }
 
-    public LocalDateTime getUpdatedTime() {
+    public Timestamp getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(LocalDateTime updatedTime) {
+    public void setUpdatedTime(Timestamp updatedTime) {
         this.updatedTime = updatedTime;
     }
 
@@ -225,5 +211,24 @@ public class HiringTransactionEntity implements Serializable {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public enum Status {
+        PENDING("Pending"),
+        PROCESSING("Processing"),
+        ACCEPTED("Accepted"),
+        FINISHED("Finished"),
+        CANCELED("Canceled"),
+        DENIED("Denied");
+
+        private String value;
+
+        Status(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 }

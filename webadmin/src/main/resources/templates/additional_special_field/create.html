@@ -46,9 +46,9 @@
                                     <div class="form-group">
                                         <label>Data Type</label>
                                         <select th:field="*{dataType}" class="form-control">
-                                            <option th:each="datatype : ${datatypes}"
-                                                    th:value="${datatype}"
-                                                    th:text="${datatype}">
+                                            <option th:each="dataType : ${dataTypes}"
+                                                    th:value="${dataType}"
+                                                    th:text="${dataType.getValue()}">
                                             </option>
                                         </select>
                                     </div>

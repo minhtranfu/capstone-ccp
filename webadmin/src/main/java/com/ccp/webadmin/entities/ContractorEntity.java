@@ -2,13 +2,16 @@ package com.ccp.webadmin.entities;
 
 import lombok.Builder;
 import org.hibernate.annotations.Type;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "contractor")
@@ -18,41 +21,38 @@ public class ContractorEntity implements Serializable {
     @Column(name = "id")
     private Integer id;
 
-//    @Size(min = 3, message = "Name required more than 3 letters")
+    @Size(min = 3, message = "Name required more than 3 letters")
     @Column(name = "name")
     private String name;
 
-//    @Email(message = "Email required")
+    @Email(message = "Email required")
     @Column(name = "email")
     private String email;
 
-//    @NotNull
+    @Pattern(regexp = "\\d{10}", message = "Invalid Phone Number")
     @Column(name = "phone_number")
     private String phone;
 
     @Column(name = "thumbnail_image")
     private String thumbnail;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private Integer status;
+    private Status status;
 
-    @Column(name = "created_time")
-    private LocalDateTime createdTime;
 
-    @Column(name = "updated_time")
-    private LocalDateTime updatedTime;
+    @Column(name = "created_time", updatable = false, insertable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private Timestamp createdTime;
+
+    @Column(name = "updated_time", updatable = false, insertable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private Timestamp updatedTime;
+
+    @OneToMany(mappedBy = "contractorIsFeedbacked")
+    private List<FeedbackEntity> receivedFeedbackEntities;
 
     public ContractorEntity() {
-    }
-
-    public ContractorEntity(String name, String email, String phone, String thumbnail, Integer status, LocalDateTime createdTime, LocalDateTime updatedTime) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.thumbnail = thumbnail;
-        this.status = status;
-        this.createdTime = createdTime;
-        this.updatedTime = updatedTime;
     }
 
     public Integer getId() {
@@ -95,27 +95,57 @@ public class ContractorEntity implements Serializable {
         this.thumbnail = thumbnail;
     }
 
-    public Integer getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
-    public LocalDateTime getCreatedTime() {
+
+    public List<FeedbackEntity> getReceivedFeedbackEntities() {
+        return receivedFeedbackEntities;
+    }
+
+    public Integer countReceivedFeedbackEntity() {
+
+        return receivedFeedbackEntities != null ? receivedFeedbackEntities.size() : 0;
+    }
+    public void setReceivedFeedbackEntities(List<FeedbackEntity> receivedFeedbackEntities) {
+        this.receivedFeedbackEntities = receivedFeedbackEntities;
+    }
+
+    public Timestamp getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(LocalDateTime createdTime) {
+    public void setCreatedTime(Timestamp createdTime) {
         this.createdTime = createdTime;
     }
 
-    public LocalDateTime getUpdatedTime() {
+    public Timestamp getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(LocalDateTime updatedTime) {
+    public void setUpdatedTime(Timestamp updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public enum Status {
+        NOT_VERIFIED("Not Verified"),
+        ACTIVATED("Activated"),
+        DEACTIVATED("Deactivated"),
+        ;
+
+        private String value;
+
+        Status(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 }

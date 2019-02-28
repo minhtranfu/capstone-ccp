@@ -42,20 +42,30 @@
                                         <input th:field="*{name}" class="form-control" placeholder="Name">
                                     </div>
                                     <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
                                         <label>Status:</label><br/>
-                                        <span th:switch="${contractor.status}">
-                                            <span type="" th:case="0" class="form-control" style="color: #1ab7ea">Not Verify</span>
-                                            <span type="" th:case="1" class="form-control" style="color: green">Active</span>
-                                            <span type="" th:case="2" class="form-control" style="color: red">Deactive</span>
-                                            </span>
+                                        <span th:switch="${contractor.status.toString()}">
+                                            <span th:case="NOT_VERIFIED" class="form-control-static"
+                                                  style="color: #1ab7ea">Not Verified</span>
+                                            <span th:case="ACTIVATED" class="form-control-static" style="color: green">Activated</span>
+                                            <span th:case="DEACTIVATED" class="form-control-static" style="color: red">Deactivated</span>
+                                        </span>
                                     </div>
                                     <div class="form-group">
                                         <label>Email:</label>
-                                        <input th:field="*{email}" class="form-control" placeholder="Email">
+                                        <input th:field="*{email}" class="form-control" placeholder="Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Phone Number:</label>
                                         <input th:field="*{phone}" class="form-control" placeholder="Phone Number">
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Picture:</label>
@@ -64,25 +74,29 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Created Time:</label>
-                                        <input th:field="*{createdTime}" class="form-control"
-                                               placeholder="Created Time">
+                                        <p th:text="*{createdTime}" class="form-control-static"
+                                           placeholder="Created Time"></p>
                                     </div>
                                     <div class="form-group">
                                         <label>Updated Time:</label>
-                                        <input th:field="*{updatedTime}" class="form-control"
-                                               placeholder="Updated Time">
+                                        <p th:text="*{updatedTime}" class="form-control-static"
+                                           placeholder="Updated Time"></p>
                                     </div>
                                     <div class="form-group">
                                         <label>Number Of Feedbacked</label>
-                                        <span th:text="${numberOfFeedbacked}" class="form-control"></span>
+                                        <p th:text="*{countReceivedFeedbackEntity()}" class="form-control-static"
+                                           placeholder="Number Of Feedbacked"></p>
                                     </div>
                                     <div class="form-group">
-                                        <span th:switch="${contractor.status}" th:value="${contractor.status}">
-                                            <a th:case="0" th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
+                                        <span th:switch="${contractor.status.toString()}">
+                                            <a th:case="NOT_VERIFIED"
+                                               th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
                                                class="link btn btn-primary">Verify Contractor</a>
-                                            <a th:case="1" th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
+                                            <a th:case="ACTIVATED"
+                                               th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
                                                class="link btn btn-danger">Deactive Contractor</a>
-                                            <a th:case="2" th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
+                                            <a th:case="DEACTIVATED"
+                                               th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
                                                class="link btn btn-success">Active Contractor</a>
                                         </span>
                                         <input type="Submit" value="Save" class="btn btn-success">

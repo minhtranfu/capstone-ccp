@@ -1,14 +1,17 @@
 package com.ccp.webadmin.entities;
 
 import org.hibernate.annotations.Where;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "equipment_type")
+//@Where(clause = "is_deleted='false'")
 public class EquipmentTypeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +26,17 @@ public class EquipmentTypeEntity implements Serializable {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "general_equipment_type_id")
     private GeneralEquipmentTypeEntity generalEquipmentType;
+
+    @Column(name = "created_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private Timestamp createdTime;
+
+    @Column(name = "updated_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private Timestamp updatedTime;
 
     public EquipmentTypeEntity() {
     }
@@ -65,5 +76,21 @@ public class EquipmentTypeEntity implements Serializable {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public Timestamp getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Timestamp createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public Timestamp getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(Timestamp updatedTime) {
+        this.updatedTime = updatedTime;
     }
 }

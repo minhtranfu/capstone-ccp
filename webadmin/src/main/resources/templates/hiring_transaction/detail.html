@@ -19,7 +19,7 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Equipment Type Information</h1>
+                <h1 class="page-header">Hiring Transaction Information</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -37,48 +37,88 @@
                                       th:object="${transaction}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{id}">
                                     <div class="form-group">
-                                        <label>Status:</label>
-                                        <input th:field="*{status}" class="form-control" disabled="disabled" placeholder="Status">
+                                        <label>Status</label>
+                                        <select th:field="*{status}" class="form-control">
+                                            <option th:each="status : ${transactionStatus}"
+                                                    th:value="${status}"
+                                                    th:text="${status.getValue()}">
+                                            </option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label>Equipment:</label>
                                         <a th:href="@{/equipment/detail/{id}(id = *{equipment.id})}">
                                             <span th:text="*{equipment.name}" class="link form-control"></span></a>
+                                        <input type="hidden" th:field="*{equipment.id}">
                                     </div>
                                     <div class="form-group">
                                         <label>Requester:</label>
                                         <a th:href="@{/contractor/detail/{id}(id = *{requester.id})}">
                                             <span th:text="*{requester.name}" class="link form-control"></span></a>
+                                        <input type="hidden" th:field="*{requester.id}">
                                     </div>
                                     <div class="form-group">
                                         <label>Daily Price:</label>
-                                        <input th:field="*{dailyPrice}" class="form-control" disabled="disabled" placeholder="Created Time">
+                                        <input th:field="*{dailyPrice}" class="form-control" disabled="disabled"
+                                               placeholder="Daily Price">
                                     </div>
+
                                     <div class="form-group">
                                         <label>Delivery Price:</label>
-                                        <input th:field="*{deliveryPrice}" class="form-control" disabled="disabled" placeholder="Created Time">
+                                        <input th:field="*{deliveryPrice}" class="form-control" disabled="disabled"
+                                               placeholder="Delivery Price">
                                     </div>
-                                    <!--<div class="form-group">-->
-                                        <!--<label>Total Price:</label>-->
-                                        <!--<input th:field="*{deliveryPrice}" class="form-control" disabled="disabled" placeholder="Created Time">-->
-                                    <!--</div>-->
                                     <div class="form-group">
                                         <label>Equipment Address:</label>
-                                        <input th:field="*{equipmentAddress}" class="form-control" disabled="disabled" placeholder="Created Time">
+                                        <input th:field="*{equipmentAddress}" class="form-control" disabled="disabled"
+                                               placeholder="Equipment Address">
                                     </div>
                                     <div class="form-group">
                                         <label>Requester Address:</label>
-                                        <input th:field="*{requesterAddress}" class="form-control" disabled="disabled" placeholder="Created Time">
+                                        <input th:field="*{requesterAddress}" class="form-control" disabled="disabled"
+                                               placeholder="Requester Address"/>
                                     </div>
                                     <div class="form-group">
-                                        <label>Create Timed:</label>
-                                        <input th:field="*{createdTime}" class="form-control" disabled="disabled" placeholder="Created Time">
+                                        <label>Created Time:</label>
+                                        <input th:field="*{createdTime}" class="form-control" disabled="disabled"
+                                               placeholder="Created Time"/>
                                     </div>
                                     <div class="form-group">
-                                        <label>Update Timed:</label>
-                                        <input th:field="*{updatedTime}" class="form-control" disabled="disabled" placeholder="Created Time">
+                                        <label>Updated Time:</label>
+                                        <input th:field="*{updatedTime}" class="form-control" disabled="disabled"
+                                               placeholder="Updated Time"/>
                                     </div>
 
+                                    <div class="form-group">
+                                        <input type="submit" class="btn btn-success"
+                                               onclick="succcessAlert()" value="Save">
+                                        <a href="#" class="btn btn-danger" data-toggle="modal"
+                                           data-target="#smallModal">Cancel</a>
+
+                                        <div class="modal fade" id="smallModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="smallModal" aria-hidden="true">
+                                            <div class="modal-dialog modal-sm">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-hidden="true">&times;
+                                                        </button>
+                                                        <h4 class="modal-title" id="myModalLabel">Confirm</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <h4>Do you want to cancel?</h4>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default"
+                                                                data-dismiss="modal">
+                                                            No
+                                                        </button>
+                                                        <a th:href="@{/hiring_transaction/index}" class="link btn btn-danger">Yes</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                             <!-- /.col-lg-6 (nested) -->
@@ -113,7 +153,13 @@
             responsive: true
         });
     });
+
+    function succcessAlert() {
+        swal("Saved !", "", "success");
+    }
+
 </script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </body>
 
 </html>

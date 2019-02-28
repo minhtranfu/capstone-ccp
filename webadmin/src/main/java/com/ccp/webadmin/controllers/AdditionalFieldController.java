@@ -1,8 +1,8 @@
 package com.ccp.webadmin.controllers;
 
-import com.ccp.webadmin.contains.Contains;
 import com.ccp.webadmin.entities.AdditionalSpecialFieldEntity;
 import com.ccp.webadmin.entities.EquipmentTypeEntity;
+import com.ccp.webadmin.entities.HiringTransactionEntity;
 import com.ccp.webadmin.services.AdditionalSpecialFieldService;
 import com.ccp.webadmin.services.EquipmentTypeService;
 import com.ccp.webadmin.services.GeneralEquipmentTypeService;
@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -32,14 +33,14 @@ public class AdditionalFieldController {
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("additionalSpecialField", additionalSpecialFieldService.findById(id));
-        model.addAttribute("datatypes", Contains.ADDITION_FIELDS_DATATYPE);
+        model.addAttribute("dataTypes", Arrays.asList(HiringTransactionEntity.Status.values()));
         return "additional_special_field/detail";
     }
 
     @GetMapping("/create/{id}")
     public String create(@PathVariable Integer id, Model model) {
         model.addAttribute("additionalSpecialField", new AdditionalSpecialFieldEntity(equipmentTypeService.findEquipmentTypeById(id)));
-        model.addAttribute("datatypes", Contains.ADDITION_FIELDS_DATATYPE);
+        model.addAttribute("dataTypes", Arrays.asList(HiringTransactionEntity.Status.values()));
         return "additional_special_field/create";
     }
 
@@ -49,14 +50,14 @@ public class AdditionalFieldController {
             BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             if(additionalSpecialFieldEntity.getId() != null){
-                model.addAttribute("datatypes", Contains.ADDITION_FIELDS_DATATYPE);
+                model.addAttribute("dataTypes", Arrays.asList(HiringTransactionEntity.Status.values()));
                 return "additional_special_field/detail";
             } else{
-                model.addAttribute("datatypes", Contains.ADDITION_FIELDS_DATATYPE);
+                model.addAttribute("dataTypes", Arrays.asList(HiringTransactionEntity.Status.values()));
                 return "additional_special_field/create";
             }
         }
-        model.addAttribute("datatypes", Contains.ADDITION_FIELDS_DATATYPE);
+        model.addAttribute("dataTypes", Arrays.asList(HiringTransactionEntity.Status.values()));
         additionalSpecialFieldService.save(additionalSpecialFieldEntity);
         Integer id = additionalSpecialFieldEntity.getId();
         return "redirect:detail/" + id;

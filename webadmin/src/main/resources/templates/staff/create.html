@@ -44,15 +44,10 @@
                                         <input th:field="*{username}" class="form-control" placeholder="User Name">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></span>
+                                        <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                                              style="color: red"></span>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Full Name</label>
-                                        <input th:field="*{account.name}" class="form-control" placeholder="Full Name">
-                                    </div>
-                                    <div class="form-group">
-                                        <!--<span th:if="${#fields.hasErrors('account.name')}" th:errors="*{account.name}" style="color: red"></span>-->
-                                    </div>
+
                                     <div class="form-group">
                                         <label>Password (required)</label>
                                         <input th:field="*{password}" class="form-control" type="password" id="password"
@@ -60,7 +55,16 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Confirm Password </label>
-                                        <input class="form-control" type="password" placeholder="Confirm Password" id="confirm_password">
+                                        <input class="form-control" type="password" placeholder="Confirm Password"
+                                               id="confirm_password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Full Name</label>
+                                        <input th:field="*{account.name}" class="form-control" placeholder="Full Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('account.name')}" th:errors="*{account.name}"
+                                              style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Phone Number</label>
@@ -68,7 +72,8 @@
                                                placeholder="Phone Number">
                                     </div>
                                     <div class="form-group">
-                                        <!--<span th:if="${#fields.hasErrors('account.phone')}" th:errors="*{account.phone}" style="color: red"></span>-->
+                                        <span th:if="${#fields.hasErrors('account.phone')}" th:errors="*{account.phone}"
+                                              style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Email Address (required)</label>
@@ -76,7 +81,8 @@
                                                placeholder="Email Address">
                                     </div>
                                     <div class="form-group">
-                                        <!--<span th:if="${#fields.hasErrors('account.email')}" th:errors="*{account.email}" style="color:red"></span>-->
+                                        <span th:if="${#fields.hasErrors('account.email')}" th:errors="*{account.email}"
+                                              style="color:red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Gender</label>
@@ -123,11 +129,12 @@
     var password = document.getElementById("password")
         , confirm_password = document.getElementById("confirm_password");
 
-    function validatePassword(){
-        if(password.value != confirm_password.value) {
+    function validatePassword() {
+        console.log(password.value, confirm_password.value);
+        if (password.value != confirm_password.value) {
             confirm_password.setCustomValidity("Passwords Don't Match");
         } else {
-            confirm_password.setCustomValidity('Matching');
+            confirm_password.setCustomValidity("");
         }
     }
 

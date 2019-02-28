@@ -1,6 +1,7 @@
 package com.ccp.webadmin.controllers;
 
 import com.ccp.webadmin.entities.ContractorEntity;
+import com.ccp.webadmin.entities.HiringTransactionEntity;
 import com.ccp.webadmin.services.ContractorService;
 import com.ccp.webadmin.services.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("contractor")
@@ -28,47 +30,38 @@ public class ContractorController {
     @GetMapping({"", "/", "/index"})
     public String getcontractor(Model model) {
         model.addAttribute("contractors", contractorService.findAll());
-        for (ContractorEntity contractor: contractorService.findAll()) {
-            System.out.println("aaa" + feedbackService.countFeedbackByContractor(contractor));
-            model.addAttribute("numberOfFeedbacked", feedbackService.countFeedbackByContractor(contractor));
-        }
-
         return "contractor/index";
     }
 
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("contractor", contractorService.findById(id));
-        model.addAttribute("numberOfFeedbacked", feedbackService.countFeedbackByContractor(contractorService.findById(id)));
         return "contractor/detail";
     }
-
-//    @GetMapping("/active/{id}")
-//    public String active(@PathVariable("id") Integer id, Model model) {
-//        ContractorEntity contractorEntity = contractorService.findById(id);
-//        contractorEntity.setActivated(true);c
-//        contractorService.save(contractorEntity);
-//        return "contractor/index";
-//    }
-//
-//    @GetMapping("/deactive/{id}")
-//    public String deactive(@PathVariable("id") Integer id, Model model) {
-//        ContractorEntity contractorEntity = contractorService.findById(id);
-//        contractorEntity.setActivated(false);
-//        contractorService.save(contractorEntity);
-//        return "contractor/index";
-//    }
 
     @PostMapping("/saveProcess")
     public String saveProcess(
             @Valid @ModelAttribute("contractor") ContractorEntity contractorEntity,
             BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            Integer id = contractorEntity.getId();
-            return "contractor/detail/" + id;
+
+            //todo updatedTime null !
+            ContractorEntity foundContractor = contractorService.findById(contractorEntity.getId());
+            contractorEntity.setCreatedTime(foundContractor.getCreatedTime());
+            contractorEntity.setUpdatedTime(foundContractor.getUpdatedTime());
+//            System.out.println(contractorEntity.getStatus().getValue());
+                return "contractor/detail";
         }
 
-        contractorService.save(contractorEntity);
+        ContractorEntity foundContractor = contractorService.findById(contractorEntity.getId());
+
+        // lay nhung cai can lay
+        foundContractor.setName(contractorEntity.getName());
+        foundContractor.setPhone(contractorEntity.getPhone());
+        foundContractor.setEmail(contractorEntity.getEmail());
+
+
+        contractorService.save(foundContractor);
         Integer id = contractorEntity.getId();
         return "redirect:detail/" + id;
     }
@@ -79,17 +72,14 @@ public class ContractorController {
 
         //change contractor status Not Verify into Active
         switch (contractorEntity.getStatus()) {
-            case 0:
-                contractorEntity.setStatus(1);
-                contractorEntity.setUpdatedTime(LocalDateTime.now());
+            case NOT_VERIFIED:
+                contractorEntity.setStatus(ContractorEntity.Status.ACTIVATED);
                 break;
-            case 1:
-                contractorEntity.setStatus(2);
-                contractorEntity.setUpdatedTime(LocalDateTime.now());
+            case ACTIVATED:
+                contractorEntity.setStatus(ContractorEntity.Status.DEACTIVATED);
                 break;
-            case 2:
-                contractorEntity.setStatus(1);
-                contractorEntity.setUpdatedTime(LocalDateTime.now());
+            case DEACTIVATED:
+                contractorEntity.setStatus(ContractorEntity.Status.ACTIVATED);
                 break;
         }
         contractorService.save(contractorEntity);

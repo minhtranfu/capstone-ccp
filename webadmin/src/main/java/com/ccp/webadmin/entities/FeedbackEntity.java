@@ -1,10 +1,12 @@
 package com.ccp.webadmin.entities;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "feedback")
@@ -19,17 +21,18 @@ public class FeedbackEntity implements Serializable {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "created_time")
-    private LocalDateTime createdTime;
+    @Column(name = "created_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private Timestamp createdTime;
 
     @Column(name = "is_read")
     private boolean isRead;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "to_contractor_id")
     private ContractorEntity contractorIsFeedbacked;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "from_contractor_id")
     private ContractorEntity contractorFeedback;
 
@@ -41,7 +44,7 @@ public class FeedbackEntity implements Serializable {
     public FeedbackEntity() {
     }
 
-    public FeedbackEntity(@NotNull(message = "Content is required not empty") @Size(max = 100, message = "Content is required less than 100 word") String content, LocalDateTime createdTime, boolean isRead, ContractorEntity contractorIsFeedbacked, ContractorEntity contractorFeedback, FeedbackTypeEntity feedbackTypeEntity) {
+    public FeedbackEntity(@NotNull(message = "Content is required not empty") @Size(max = 100, message = "Content is required less than 100 word") String content, Timestamp createdTime, boolean isRead, ContractorEntity contractorIsFeedbacked, ContractorEntity contractorFeedback, FeedbackTypeEntity feedbackTypeEntity) {
         this.content = content;
         this.createdTime = createdTime;
         this.isRead = isRead;
@@ -66,11 +69,11 @@ public class FeedbackEntity implements Serializable {
         this.content = content;
     }
 
-    public LocalDateTime getCreatedTime() {
+    public Timestamp getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(LocalDateTime createdTime) {
+    public void setCreatedTime(Timestamp createdTime) {
         this.createdTime = createdTime;
     }
 

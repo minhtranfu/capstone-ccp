@@ -29,9 +29,10 @@ public class AdminAccountEntity {
     @Column(name = "password")
     private String password;
 
-    @NotNull
-    @OneToOne(mappedBy = "adminAccountEntity", cascade = CascadeType.ALL,
+    @OneToOne(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "admin_user_id")
+    @Valid
     private AdminUserEntity account;
 
 //    @Override
@@ -105,7 +106,9 @@ public class AdminAccountEntity {
                 this.account.setAdminAccountEntity(null);
             }
         } else {
-            account.setRoleId(2);
+            RoleEntity role = new RoleEntity();
+            role.setId(2);
+            account.setRole(role);
             account.setAdminAccountEntity(this);
         }
         this.account = account;
