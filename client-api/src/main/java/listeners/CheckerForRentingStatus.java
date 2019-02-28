@@ -1,36 +1,42 @@
 package listeners;
 
+import daos.EquipmentDAO;
 import entities.EquipmentEntity;
-import entities.HiringTransactionEntity;
+import listeners.events.EquipmentDataChangedEvent;
 
+import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import java.awt.*;
 import java.time.LocalDate;
 
 //singleton for better stability and also this task is not that urgent for asynchronous
-public class CheckerForRentingStatus implements DataChangeSubscriber<EquipmentEntity> {
+@Stateless
+public class CheckerForRentingStatus{
 
-	private CheckerForRentingStatus() {
-	}
-	private static CheckerForRentingStatus instance;
-	public static final CheckerForRentingStatus getInstance() {
-		if (instance == null) {
-			instance = new CheckerForRentingStatus();
-
-		}
-		return instance;
+	public CheckerForRentingStatus() {
 	}
 
-	@Override
-	public void onDataChange(EquipmentEntity equipmentEntity) {
 
+	@Inject
+	EquipmentDAO equipmentDAO;
+
+	public void onDataChange(@Observes EquipmentDataChangedEvent equipmentDataChangedEvent) {
+
+		System.out.println(String.format("CHECKER receieved equipment id=%s", equipmentDataChangedEvent.getEquipmentEntity().getId()));
+		EquipmentEntity equipmentEntity = equipmentDataChangedEvent.getEquipmentEntity();
 
 		if (isOverdate(equipmentEntity)) {
-			// TODO: 2/22/19 notify if it does
+			// TODO: 2/22/19 notify if it is
 			onOverdate(equipmentEntity);
 
 		}
 	}
 
 	private boolean isOverdate(EquipmentEntity equipmentEntity) {
+
 		if (equipmentEntity.getStatus() != EquipmentEntity.Status.RENTING) {
 			return false;
 		}
@@ -44,7 +50,11 @@ public class CheckerForRentingStatus implements DataChangeSubscriber<EquipmentEn
 	}
 
 	private void onOverdate(EquipmentEntity equipmentEntity) {
-		System.out.println(String.format("equipment id=%d is overdate", equipmentEntity));
+		System.out.println(String.format("CHECKER equipment id=%d is overdate, changing to WAITING_FOR_RETURNING", equipmentEntity.getId()));
+
+		// TODO: 2/28/19 change status to waiting_for_returning
+		equipmentEntity.setStatus(EquipmentEntity.Status.WAITING_FOR_RETURNING);
+		equipmentDAO.merge(equipmentEntity);
 	}
 
 

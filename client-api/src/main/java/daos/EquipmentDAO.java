@@ -2,15 +2,12 @@ package daos;
 
 import entities.AvailableTimeRangeEntity;
 import entities.EquipmentEntity;
-import listeners.DataChangeListener;
 import listeners.DataChangeSubscriber;
-import utils.DBUtils;
+import listeners.events.EquipmentDataChangedEvent;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
 import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -18,7 +15,6 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +26,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>   {
 	EntityManager entityManager;
 
 
+	@Inject
+	Event<EquipmentDataChangedEvent> equipmentStatusChangedEvent;
 
 	private static final String REGEX_ORDERBY_SINGLEITEM = "(\\w+)\\.(asc|desc)($|,)";
 	public List<EquipmentEntity> searchEquipment(LocalDate beginDate, LocalDate endDate,
@@ -214,30 +212,23 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>   {
 
 	List<DataChangeSubscriber<EquipmentEntity>> subscriberList = new ArrayList<>() ;
 
-	public void subscribe(DataChangeSubscriber<EquipmentEntity> subscriber) {
-		subscriberList.add(subscriber);
-	}
+	private void notifyEquipmentChanged(EquipmentEntity equipmentEntity) {
 
-	public void unsubscribe(DataChangeSubscriber<EquipmentEntity> subscriber) {
-		subscriberList.remove(subscriber);
-	}
-
-	public void notifyAllWhenDataChange(EquipmentEntity equipmentEntity) {
-		for (DataChangeSubscriber<EquipmentEntity> subscriber : subscriberList) {
-			subscriber.onDataChange(equipmentEntity);
-		}
+		System.out.println("EQUIPMENTDAO notifyEquipmentChanged");
+		equipmentStatusChangedEvent.fire(new EquipmentDataChangedEvent(equipmentEntity));
 	}
 
 	@Override
 	public void persist(EquipmentEntity equipmentEntity) {
 		super.persist(equipmentEntity);
-		notifyAllWhenDataChange(equipmentEntity);
+		notifyEquipmentChanged(equipmentEntity);
 	}
 
 	@Override
 	public EquipmentEntity merge(EquipmentEntity equipmentEntity) {
 		EquipmentEntity mergedEntity = super.merge(equipmentEntity);
-		notifyAllWhenDataChange(mergedEntity);
+		// TODO: 2/28/19 mereged or not merged entity ?
+		notifyEquipmentChanged(mergedEntity);
 		return mergedEntity;
 	}
 
