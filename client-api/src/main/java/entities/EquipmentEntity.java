@@ -3,6 +3,7 @@ package entities;
 import dtos.wrappers.IndependentHiringTransactionWrapper;
 import org.hibernate.annotations.Where;
 
+import javax.inject.Named;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.xml.bind.annotation.XmlTransient;
@@ -19,6 +20,7 @@ import java.util.List;
 @NamedQueries({
 		@NamedQuery(name = "EquipmentEntity.searchEquipment", query = "select e from EquipmentEntity  e where exists (select t from e.availableTimeRanges t where t.beginDate <= :curBeginDate and :curBeginDate <= :curEndDate  and  :curEndDate <= t.endDate)")
 		, @NamedQuery(name = "EquipmentEntity.getAll", query = "select  e from EquipmentEntity e")
+		,@NamedQuery(name = "EquipmentEntity.getOverdateRenting", query = "select e from EquipmentEntity  e where e.status = 'RENTING' and exists (select t from e.processingHiringTransactions t where t.endDate < current_date )")
 })
 
 public class EquipmentEntity implements Serializable {

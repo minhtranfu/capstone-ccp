@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.time.LocalDate;
 
-//singleton for better stability and also this task is not that urgent for asynchronous
+//should be  singleton for better stability and also this task is not that urgent for asynchronous
 @Stateless
 public class CheckerForRentingStatus{
 

@@ -233,6 +233,20 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>   {
 	}
 
 
+	public List<EquipmentEntity> getOverdateRentingEquipments() {
+		List<EquipmentEntity> resultList = entityManager.createNamedQuery("EquipmentEntity.getOverdateRenting", EquipmentEntity.class)
+				.getResultList();
+
+		return resultList;
+	}
+
+	public void changeAllStatusToWaitingForReturning(List<EquipmentEntity> overdateRentingEquipments) {
+		for (EquipmentEntity equipmentEntity : overdateRentingEquipments) {
+			equipmentEntity.setStatus(EquipmentEntity.Status.WAITING_FOR_RETURNING);
+			entityManager.merge(equipmentEntity);
+		}
+	}
+
 }
 
 // TODO: 2/22/19 make the dao singleton for a publisher pattern !
