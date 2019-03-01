@@ -167,16 +167,6 @@ class MyRequests extends Component {
         statusClasses += ' badge-info';
         changeStatusButtons = (
           <div className="mt-2">
-            <button className="btn btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.ACCEPTED)}>Accept</button>
-            <button className="btn btn-outline-danger ml-2" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.DENIED)}>Deny</button>
-          </div>
-        );
-        break;
-
-      case TRANSACTION_STATUSES.ACCEPTED:
-        statusClasses += ' badge-success';
-        changeStatusButtons = (
-          <div className="mt-2">
             <button className="btn btn-outline-danger ml-2" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.CANCELED)}>Cancel</button>
           </div>
         );
@@ -203,11 +193,6 @@ class MyRequests extends Component {
 
       case TRANSACTION_STATUSES.WAITING_FOR_RETURNING:
         statusClasses += 'badge-warning';
-        changeStatusButtons = (
-          <div className="mt-2">
-            <button className="btn btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.FINISHED)}>Finish</button>
-          </div>
-        );
         break;
 
       case TRANSACTION_STATUSES.FINISHED:
