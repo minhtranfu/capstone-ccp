@@ -51,6 +51,11 @@ const modules = [
     name: 'RequesterRequests',
     path: '/dashboard/requester/',
     modulePath: './requester-dashboard/MyRequests'
+  },
+  {
+    name: 'TransactionDetail',
+    path: '/dashboard/transaction/:id',
+    modulePath: './transaction-detail'
   }
 ];
 
