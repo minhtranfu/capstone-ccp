@@ -30,6 +30,7 @@ public class ContractorResource {
 	@Inject
 	CartRequestResource cartRequestResource;
 
+
 	@GET
 	@Path("{id:\\d+}")
 	public Response getContractorById(@PathParam("id") long id) {

@@ -190,6 +190,8 @@ public class EquipmentResource {
 			}
 		}
 
+
+
 		//todo validate for additionalSpecsValues
 		if (equipmentEntity.getAdditionalSpecsValues() != null) {
 
@@ -235,8 +237,6 @@ public class EquipmentResource {
 			}
 		}
 
-		//delete status
-		equipmentEntity.setStatus(null);
 
 		//delete all children of the old equipment
 //		foundEquipment.deleteAllAvailableTimeRange();
