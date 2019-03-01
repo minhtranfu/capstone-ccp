@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
+import { EQUIPMENT_SHOWABLE_STATUSES } from '../../../common/consts';
 
 class MyEquipments extends PureComponent {
   constructor (props) {
@@ -27,7 +28,7 @@ class MyEquipments extends PureComponent {
       const { equipments } = this.state;
 
       return (
-        <div>
+        <div className="container py-4">
           <h4>My equipments</h4>
           {equipments && equipments.map(equipment => {
             return (
@@ -44,6 +45,7 @@ class MyEquipments extends PureComponent {
                     </span>
                     <span className="clearfix"></span>
                   </h6>
+                  <div>Status: {EQUIPMENT_SHOWABLE_STATUSES[equipment.status]}</div>
                 </div>
               </div>
             );

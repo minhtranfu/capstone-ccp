@@ -26,7 +26,7 @@ class MyConstructions extends PureComponent {
       const { constructions } = this.state;
 
       return (
-        <div>
+        <div className="container py-4">
           <h4>My Constructions <button className="btn btn-success btn-sm float-right"><i className="fa fa-plus"></i> Add new</button></h4>
           {constructions && constructions.map(construction => {
             return (

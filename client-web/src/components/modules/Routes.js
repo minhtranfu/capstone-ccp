@@ -38,6 +38,16 @@ const modules = [
     modulePath: './supplier-dashboard/MyRequests'
   },
   {
+    name: 'SupplierConstructions',
+    path: '/dashboard/supplier/constructions',
+    modulePath: './supplier-dashboard/MyConstructions'
+  },
+  {
+    name: 'SupplierEquipments',
+    path: '/dashboard/supplier/equipments',
+    modulePath: './supplier-dashboard/MyEquipments'
+  },
+  {
     name: 'RequesterRequests',
     path: '/dashboard/requester/',
     modulePath: './requester-dashboard/MyRequests'

@@ -6,7 +6,10 @@ import { CSSTransition } from 'react-transition-group';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Skeleton from 'react-loading-skeleton';
 
-import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES } from '../../../common/consts';
+import {
+  TRANSACTION_STATUSES,
+  EQUIPMENT_STATUSES,
+  EQUIPMENT_SHOWABLE_STATUSES } from '../../../common/consts';
 import ccpApiService from '../../../services/domain/ccp-api-service';
 
 class MyRequests extends Component {
@@ -237,6 +240,7 @@ class MyRequests extends Component {
             <div>
               <span className="">Daily Price: ${equipment.dailyPrice}</span>
               <span className="ml-2 pl-2 border-left">Total fee: ${equipment.dailyPrice * days}</span>
+              <div className="">Equipment: {EQUIPMENT_SHOWABLE_STATUSES[equipment.status]}</div>
             </div>
             {changeStatusButtons}
           </div>
