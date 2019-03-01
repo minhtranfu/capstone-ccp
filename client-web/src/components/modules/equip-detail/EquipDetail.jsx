@@ -182,23 +182,30 @@ class EquipDetail extends Component {
       return true;
     }
 
-    let inHiringTimeRange = false;
-    equip.activeHiringTransactions.forEach(hiringTransaction => {
-      if ((date.isAfter(hiringTransaction.beginDate) || date.isSame(hiringTransaction.beginDate, 'day'))
-        && (date.isBefore(hiringTransaction.endDate) || date.isSame(hiringTransaction.endDate, 'day'))) {
-        inHiringTimeRange = true;
-        return;
+    if (equip.activeHiringTransactions && equip.activeHiringTransactions.length > 0) {
+      let inHiringTimeRange = false;
+      equip.activeHiringTransactions.forEach(hiringTransaction => {
+        if ((date.isAfter(hiringTransaction.beginDate) || date.isSame(hiringTransaction.beginDate, 'day'))
+          && (date.isBefore(hiringTransaction.endDate) || date.isSame(hiringTransaction.endDate, 'day'))) {
+          inHiringTimeRange = true;
+          return;
+        }
+      });
+
+      if (inHiringTimeRange) {
+        return inHiringTimeRange;
       }
-    });
-
-    if (inHiringTimeRange) {
-      return inHiringTimeRange;
     }
 
-    if ((date.isAfter(equip.processingHiringTransaction.beginDate) || date.isSame(equip.processingHiringTransaction.beginDate, 'day'))
-      && (date.isBefore(equip.processingHiringTransaction.endDate) || date.isSame(equip.processingHiringTransaction.endDate, 'day'))) {
-      return true;
+    if (equip.processingHiringTransaction) {
+      if ((date.isAfter(equip.processingHiringTransaction.beginDate) || date.isSame(equip.processingHiringTransaction.beginDate, 'day'))
+        && (date.isBefore(equip.processingHiringTransaction.endDate) || date.isSame(equip.processingHiringTransaction.endDate, 'day'))) {
+        return true;
+      }
     }
+
+    return false;
+
   };
 
   render() {
@@ -275,21 +282,33 @@ class EquipDetail extends Component {
                 {equip.images.map((src, index) => <div key={index} onClick={() => this._showImage(index)} className="item"><img src={src} alt={equip.name} /></div>)}
               </OwlCarousel>
             ) || <Skeleton height={65} />}
-            <h1 className="product-title">{equip.name || <Skeleton />}</h1>
-            <div className="row">
-              <div className="col-md-4">Construction: {equip.construction && equip.construction.name}</div>
-              <div className="col-md-4">Daily price: <i className="fa fa-dollar"></i>{equip.dailyPrice}</div>
-              <div className="col-md-4">Delivery price: <i className="fa fa-dollar"></i>{equip.deliveryPrice}</div>
-              <div className="col-md-12">Address: {equip.address}</div>
-            </div>
-            <h5>Available Time Ranges:</h5>
-            <div className="time-ranges">
-              {equip.availableTimeRanges &&
-                equip.availableTimeRanges.map((range, index) => <p key={index}>{moment(range.beginDate).format('YYYY/MM/DD')} - {moment(range.endDate).format('YYYY/MM/DD')}</p>)
-              }
-            </div>
-            <h5>Description:</h5>
-            <div className="description" dangerouslySetInnerHTML={{__html: equip.description}}>
+            <div className="py-2 px-3 shadow-sm bg-white">
+              <h1 className="">{equip.name || <Skeleton />}</h1>
+              <div className="row">
+                <div className="col-md-4">
+                  <h6>Construction: {equip.construction && equip.construction.name}</h6>
+                </div>
+                <div className="col-md-4">
+                  <h6>Daily price: <i className="fa fa-dollar"></i>{equip.dailyPrice}</h6>
+                </div>
+                <div className="col-md-4">
+                  <h6>Delivery price: <i className="fa fa-dollar"></i>{equip.deliveryPrice}</h6>
+                </div>
+                <div className="col-md-12">
+                  <h6>Address: {equip.address}</h6>
+                </div>
+              </div>
+              <h5 className="mt-2">Available Time Ranges:</h5>
+              <div className="time-ranges">
+                {equip.availableTimeRanges &&
+                  equip.availableTimeRanges.map((range, index) => <span className="badge badge-success badge-pill mr-2" key={index}>
+                    <h4 className="m-0 px-2 pb-1">{moment(range.beginDate).format('YYYY/MM/DD')} - {moment(range.endDate).format('YYYY/MM/DD')}</h4>
+                  </span>)
+                }
+              </div>
+              <h5 className="mt-3">Description:</h5>
+              <div className="description" dangerouslySetInnerHTML={{ __html: equip.description }}>
+              </div>
             </div>
             {!equip.id &&
               <Skeleton count={10} />
