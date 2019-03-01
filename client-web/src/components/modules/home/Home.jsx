@@ -56,7 +56,7 @@ class Home extends Component {
     return (
       <div>
         <Helmet>
-          <title>Trang chủ</title>
+          <title>Home</title>
         </Helmet>
         <div className="section-search text-light">
           <div className="container">
@@ -69,7 +69,9 @@ class Home extends Component {
               <h3>Result</h3>
             </div>
             {(!products || products.length === 0) && !isFetching &&
-              <h2 className="text-center">There is no result!</h2>
+              <div className="col-md-12 text-center py-4 alert alert-info">
+                <h2>No equipment found, please try again with another criteria!</h2>
+              </div>
             }
             {isFetching &&
               <div className="bg-white p-4 w-100">

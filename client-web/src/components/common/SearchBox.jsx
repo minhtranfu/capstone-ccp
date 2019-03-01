@@ -46,13 +46,13 @@ class SearchBox extends PureComponent {
     return (
       <div className="row">
         <div className="col-md-12">
-          <h3>Tìm thuê thiết bị</h3>
+          <h3>Search</h3>
         </div>
         <div className="col-md-6">
           <div className="form-group">
-            <label htmlFor="equipment_type">Loại thiết bị:</label>
+            <label htmlFor="equipment_type">Equipment type:</label>
             <select name="equipmentTypeId" id="equipment_type" className="form-control" onChange={this._handleChangeCriteria}>
-              <option value="">--Chọn--</option>
+              <option value="">--Choose--</option>
               {
                 equipmentTypes && equipmentTypes.map(equipmentType => <option value={equipmentType.id}>{equipmentType.name}</option>)
               }
@@ -61,7 +61,7 @@ class SearchBox extends PureComponent {
         </div>
         <div className="col-md-6">
           <div className="form-group">
-            <label htmlFor="time">Thời gian</label>
+            <label htmlFor="time">Time</label>
             <div className="row">
               <div className="col-md-6">
                 <input type="date" className="form-control" name="beginDate" id="begin_date" onChange={this._handleChangeCriteria} defaultValue={moment().format('YYYY-MM-DD')} />
@@ -77,7 +77,7 @@ class SearchBox extends PureComponent {
             {isFetching &&
               <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
             }
-            Tìm
+            Search
           </button>
         </div>
       </div>
