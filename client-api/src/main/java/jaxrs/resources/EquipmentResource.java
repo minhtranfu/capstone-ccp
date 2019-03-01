@@ -258,9 +258,10 @@ public class EquipmentResource {
 		//todo delete image
 		//todo delete location
 		//todo delete construction
-
-
+		;
 		//add all children from new equipment
+		equipmentEntity.setStatus(foundEquipment.getStatus());
+		
 		equipmentDAO.merge(equipmentEntity);
 		Response.ResponseBuilder builder = Response.status(Response.Status.OK).entity(
 				equipmentDAO.findByID(equipmentEntity.getId())
