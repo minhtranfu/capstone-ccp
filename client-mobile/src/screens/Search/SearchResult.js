@@ -6,7 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
-  Modal
+  Modal,
+  Alert
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -23,8 +24,12 @@ import EquipmentItem from "../MyTransaction/components/EquipmentItem";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
+const ITEM_HEIGHT = 217;
+
 @connect(
   state => ({
+    status: state.status,
+    loading: state.equipment.loading,
     listSearch: state.equipment.listSearch
   }),
   dispatch => ({
@@ -50,9 +55,31 @@ class SearchResult extends Component {
     this.props.fetchSearchEquipment(query.main_text, lat, long);
   }
 
-  componentWillUnmount() {
-    this.props.fetchClearSearchEquipment();
+  shouldComponentUpdate(nextProps) {
+    const { status } = this.props;
+    if (status.message !== nextProps.status.message) return true;
+    return false;
   }
+
+  componentDidUpdate(prevProps) {
+    const { status, navigation } = this.props;
+    if (status.type === "error" && navigation.state.routeName === "Result") {
+      this._showAlert("Error", this.props.status.message);
+    }
+    if (status.type === "success" && navigation.state.routeName === "Result") {
+      this._showAlert("Success", this.props.status.message);
+    }
+  }
+
+  _showAlert = (title, msg) => {
+    Alert.alert(title, msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
+
+  // componentWillUnmount() {
+  //   this.props.fetchClearSearchEquipment();
+  // }
 
   _setModalVisible(visible) {
     this.setState({ modalVisible: visible });
@@ -69,8 +96,26 @@ class SearchResult extends Component {
   //   return result ? result : equipment;
   // };
 
+  _renderItem = ({ item }) => (
+    <EquipmentItem
+      onPress={() =>
+        this.props.navigation.navigate("SearchDetail", {
+          id: item.equipmentEntity.id
+        })
+      }
+      key={`eq_${item.equipmentEntity.id}`}
+      id={item.equipmentEntity.id}
+      name={item.equipmentEntity.name}
+      imageURL={
+        "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+      }
+      address={item.equipmentEntity.address}
+      price={item.equipmentEntity.dailyPrice}
+    />
+  );
+
   render() {
-    const { equipment, listSearch } = this.props;
+    const { listSearch, loading } = this.props;
     const { query } = this.props.navigation.state.params;
     //const result = this._findResultByAddress(equipment);
     return (
@@ -82,7 +127,6 @@ class SearchResult extends Component {
           renderLeftButton={() => (
             <TouchableOpacity
               onPress={() => {
-                this.props.fetchClearSearchEquipment();
                 this.props.navigation.goBack();
               }}
             >
@@ -96,7 +140,7 @@ class SearchResult extends Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  this._setModalVisible(true);
+                  this.props.navigation.push("Search");
                 }}
               >
                 <Feather name="search" size={24} />
@@ -107,31 +151,14 @@ class SearchResult extends Component {
           <Text style={styles.title}>{query.main_text}</Text>
         </Header>
 
-        {listSearch && listSearch.data ? (
-          <View style={{ flex: 1 }}>
-            <FlatList
-              style={{ paddingHorizontal: 15 }}
-              data={listSearch.data}
-              renderItem={({ item, index }) => (
-                <EquipmentItem
-                  onPress={() =>
-                    this.props.navigation.navigate("Detail", {
-                      id: item.equipmentEntity.id
-                    })
-                  }
-                  key={`eq_${index}`}
-                  id={item.equipmentEntity.id}
-                  name={item.equipmentEntity.name}
-                  imageURL={
-                    "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-                  }
-                  address={item.equipmentEntity.address}
-                  price={item.equipmentEntity.dailyPrice}
-                />
-              )}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </View>
+        {listSearch ? (
+          <FlatList
+            style={{ flex: 1, paddingHorizontal: 15 }}
+            data={listSearch}
+            renderItem={this._renderItem}
+            removeClippedSubviews={false}
+            keyExtractor={(item, index) => index.toString()}
+          />
         ) : (
           <Loading />
         )}

@@ -19,6 +19,7 @@ import CallOrTextUs from "../screens/Account/CallOrTextUs";
 import AboutUs from "../screens/Account/AboutUs";
 import Search from "../screens/Search";
 import SearchResult from "../screens/Search/SearchResult";
+import SearchDetail from "../screens/Search/Detail";
 import MyTransaction from "../screens/MyTransaction";
 import MyTransactionDetail from "../screens/MyTransaction/Detail";
 import EquipmentDetail from "../screens/EquipmentDetail";
@@ -50,7 +51,8 @@ const DiscoverStack = createStackNavigator(
     Detail: EquipmentDetail,
     Transaction: Transaction,
     Search: Search,
-    Result: SearchResult
+    Result: SearchResult,
+    SearchDetail: SearchDetail
   },
   {
     headerMode: "none"
@@ -62,7 +64,7 @@ DiscoverStack.navigationOptions = ({ navigation }) => {
 
   let routeName = navigation.state.routes[navigation.state.index].routeName;
 
-  if (routeName == "Detail") {
+  if (routeName == "SearchDetail") {
     tabBarVisible = false;
   }
 
@@ -80,15 +82,6 @@ const AccountStack = createStackNavigator(
     AboutUs: AboutUs,
     Construction: Construction,
     ConstructionDetail: ConstructionDetail
-  },
-  {
-    headerMode: "none"
-  }
-);
-
-const SearchStack = createStackNavigator(
-  {
-    Search: Search
   },
   {
     headerMode: "none"
@@ -200,7 +193,7 @@ const TabNavigator = createBottomTabNavigator(
           <Image
             source={icon}
             style={{
-              height: 29,
+              height: 28,
               aspectRatio: 1,
               marginTop: 2
             }}

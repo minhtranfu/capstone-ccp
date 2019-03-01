@@ -18,6 +18,8 @@ import { isSignedIn } from "../../config/auth";
 import RequireLogin from "../Login/RequireLogin";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
+import Dropdown from "../../components/Dropdown";
+import EquipmentStatus from "../../components/EquipmentStatus";
 import EquipmentItem from "./components/EquipmentItem";
 import StepProgress from "./components/StepProgress";
 
@@ -43,9 +45,60 @@ const STEP_PROGRESS_OPTIONS = [
   },
   {
     id: 4,
-    name: "Returning",
-    value: "RETURNING"
+    name: "Finished",
+    value: "FINISHED"
   }
+];
+
+const DROPDOWN_OPTIONS = [
+  {
+    id: 0,
+    name: "All Statuses",
+    value: "all"
+  },
+  {
+    id: 1,
+    name: "Pending",
+    value: "PENDING"
+  },
+  {
+    id: 2,
+    name: "Accepted",
+    value: "ACCEPTED"
+  },
+  {
+    id: 3,
+    name: "Processing",
+    value: "PROCESSING"
+  },
+  {
+    id: 4,
+    name: "Finished",
+    value: "FINISHED"
+  }
+];
+
+const EQUIPMENT_STATUSES = [
+  {
+    code: "PENDING",
+    title: "Pending"
+  },
+  {
+    code: "ACCEPTED",
+    title: "Accepted"
+  },
+  {
+    code: "PROCESSING",
+    title: "Processing"
+  },
+  {
+    code: "FINISHED",
+    title: "Finished"
+  }
+  // {
+  //   code: "WAITING_FOR_RETURNING",
+  //   title: "Waiting for returning"
+  // }
 ];
 
 @connect(
@@ -68,7 +121,8 @@ class Activity extends Component {
     this.state = {
       signedIn: false,
       checkedSignIn: false,
-      selectedIndex: 0
+      selectedIndex: 0,
+      status: "All Statuses"
     };
   }
 
@@ -78,18 +132,20 @@ class Activity extends Component {
 
   _handleFilterStatusResult = status => {
     const { listTransaction } = this.props;
-    const result = listTransaction.data.filter(item => item.status === status);
-    return result;
+    if (listTransaction) {
+      return listTransaction.filter(item => item.status === status) || [];
+    }
+    return [];
   };
 
-  renderContent = ({ listTransaction }) => {
+  renderContent = listTransaction => {
     const { selectedIndex } = this.state;
     if (listTransaction.length > 0) {
       switch (selectedIndex) {
         case 0:
-          return this._renderFlatList("PENDING");
+          return this._renderStatusFlatList();
         case 1:
-          return this._renderFlatList("ACCEPTED");
+          return this._renderFlatList("RENTING");
       }
     } else {
       return (
@@ -98,6 +154,73 @@ class Activity extends Component {
         </View>
       );
     }
+  };
+
+  _handleFilter = () => {
+    if (this.state.status === "All Statuses") {
+      return EQUIPMENT_STATUSES;
+    } else {
+      return EQUIPMENT_STATUSES.filter(
+        status => status.code === this.state.status.toUpperCase()
+      );
+    }
+  };
+
+  _renderStatusFlatList = () => {
+    return (
+      <ScrollView style={{ flex: 1, paddingHorizontal: 15 }}>
+        <Dropdown
+          label={"Filter"}
+          defaultText={"All Statuses"}
+          onSelectValue={value => this.setState({ status: value })}
+          options={DROPDOWN_OPTIONS}
+          isHorizontal={true}
+        />
+        <View>
+          {this._handleFilter().map((status, idx) => {
+            const equipmentList = this._handleFilterStatusResult(status.code);
+            //Hide section if there is no equipment
+            if (equipmentList.length === 0) return null;
+
+            // Otherwise, display the whole list
+            return (
+              <View key={`sec_${idx}`}>
+                <EquipmentStatus
+                  count={equipmentList.length}
+                  title={status.title}
+                  code={status.code}
+                />
+                {equipmentList.map((item, index) => (
+                  <View key={`eq_${item.id}`}>
+                    <EquipmentItem
+                      onPress={() =>
+                        this.props.navigation.navigate("Detail", {
+                          id: item.id
+                        })
+                      }
+                      id={item.id}
+                      name={item.equipment.name}
+                      imageURL={
+                        "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+                      }
+                      status={item.status}
+                      contractor={item.equipment.contractor.name}
+                      phone={item.equipment.contractor.phoneNumber}
+                      beginDate={item.beginDate}
+                      endDate={item.endDate}
+                    />
+                    <StepProgress
+                      options={STEP_PROGRESS_OPTIONS}
+                      status={item.status}
+                    />
+                  </View>
+                ))}
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+    );
   };
 
   //Render flat list base on status
@@ -134,7 +257,7 @@ class Activity extends Component {
         beginDate={item.beginDate}
         endDate={item.endDate}
       />
-      {status !== "ACCEPTED" ? (
+      {status !== "RENTING" ? (
         <StepProgress options={STEP_PROGRESS_OPTIONS} status={item.status} />
       ) : null}
     </View>
@@ -143,7 +266,7 @@ class Activity extends Component {
   render() {
     const { checkedSignIn, signedIn } = this.state;
     const { navigation, auth, listTransaction, loading } = this.props;
-
+    console.log(listTransaction.map(item => item.status));
     if (auth) {
       return (
         <SafeAreaView
@@ -161,7 +284,7 @@ class Activity extends Component {
           >
             <SegmentedControlIOS
               style={{ width: 300 }}
-              values={["Pending", "Hired"]}
+              values={["Manage status", "Renting"]}
               selectedIndex={this.state.selectedIndex}
               onChange={event => {
                 this.setState({

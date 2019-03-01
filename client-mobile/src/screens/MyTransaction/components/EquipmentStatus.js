@@ -6,9 +6,11 @@ import colors from "../../../config/colors";
 import fontSize from "../../../config/fontSize";
 
 const COLORS = {
+  AVAILABLE: "#4DB781",
   ACCEPTED: "#4DB781", //green
   DENIED: "#FF5C5C", //red
   PENDING: "#F9AA33",
+  DELIVERING: "#7199FE",
   PROCESSING: "#7199FE",
   default: "#3E3E3E"
   // blue: 7199FE, yellow: FFDF49

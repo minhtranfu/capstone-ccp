@@ -17,13 +17,14 @@ export function listTransactionBySupplierId(id) {
 
 export function listTransactionByRequesterId(id) {
   return async dispatch => {
-    try {
-      const res = await axios.get(`transactions/requester/${id}`);
-      dispatch({
-        type: Actions.LIST_REQUESTER_TRANSACTION.SUCCESS,
-        payload: res
-      });
-    } catch {}
+    dispatch({
+      type: Actions.LIST_REQUESTER_TRANSACTION.REQUEST
+    });
+    const res = await axios.get(`transactions/requester/${id}`);
+    dispatch({
+      type: Actions.LIST_REQUESTER_TRANSACTION.SUCCESS,
+      payload: res
+    });
   };
 }
 
@@ -44,7 +45,7 @@ export function requestTransaction(id, transactionStatus) {
     const res = await axios.put(`transactions/${id}`, transactionStatus);
     dispatch({
       type: Actions.REQUEST_TRANSACTION.SUCCESS,
-      payload: res
+      payload: { data: res, id: id }
     });
   };
 }

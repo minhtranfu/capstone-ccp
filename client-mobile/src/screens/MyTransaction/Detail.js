@@ -64,18 +64,17 @@ const COLORS = {
     };
   },
   dispatch => ({
-    actions: bindActionCreators(
-      {
-        fetchRequestTransaction: requestTransaction,
-        fetchCancelTransaction: cancelTransaction
-      },
-      dispatch
-    )
+    fetchRequestTransaction: (id, transactionStatus) => {
+      dispatch(requestTransaction(id, transactionStatus));
+    },
+    fetchCancelTransaction: id => {
+      dispatch(cancelTransaction(id));
+    }
   })
 )
 class MyTransactionDetail extends Component {
   _handleRequestTransaction = (id, status) => {
-    this.props.actions.fetchRequestTransaction(id, { status: status });
+    this.props.fetchRequestTransaction(id, { status: status });
     this.props.navigation.goBack();
   };
 
@@ -115,7 +114,7 @@ class MyTransactionDetail extends Component {
       <Button
         text={"Cancel"}
         onPress={() => {
-          this.props.actions.fetchCancelTransaction(id);
+          this.props.fetchCancelTransaction(id);
           this.props.navigation.goBack();
         }}
       />

@@ -52,7 +52,7 @@ export default function transactionReducer(state = initialState, action) {
         ...state,
         loading: false,
         listSupplierTransaction: state.listSupplierTransaction.map(item =>
-          item.id === payload.id ? item === payload.data.data : item
+          item.id === payload.id ? (item = payload.data.data) : item
         )
       };
     }
@@ -66,8 +66,8 @@ export default function transactionReducer(state = initialState, action) {
     case Actions.CANCEL_TRANSACTION_SUCCESS:
       return {
         ...state,
-        listSupplierTransaction: state.listSupplierTransaction.filter(
-          item => item.id !== payload.id
+        listSupplierTransaction: state.listSupplierTransaction.map(item =>
+          item.id === payload.id ? (item = payload.data.data) : item
         )
       };
     case Actions.CLEAR_SUPPLIER_TRANSACTION_SUCCESS:

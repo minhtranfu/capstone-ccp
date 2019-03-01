@@ -92,7 +92,6 @@ class ParallaxList extends Component {
   );
 
   render() {
-    console.log(this.props.renderScrollItem);
     return (
       <View style={styles.container}>
         {this.renderNavigation()}

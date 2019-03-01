@@ -16,11 +16,23 @@ import fontSize from "../../../config/fontSize";
 const { width } = Dimensions.get("window");
 
 const COLORS = {
+  AVAILABLE: "#4DB781",
   ACCEPTED: "#4DB781", //green
   DENIED: "#FF5C5C", //red
-  PENDING: "#FFDF49",
-  default: "red"
+  CANCEL: "#FF5C5C",
+  PENDING: "#F9AA33",
+  PROCESSING: "#7199FE",
+  FINISHED: "#FFDF49",
+  default: "#3E3E3E"
   // blue: 7199FE, yellow: FFDF49
+};
+
+const EQUIPMENT_IN_PROGRESS = {
+  PENDING: "Wait for supplier accept",
+  ACCEPTED: "Supplier has been accepted",
+  DENIED: "Supplier has been denied your transaction",
+  PROCESSING: "Equipment is on delivering",
+  FINISHED: "Equipment has been returned"
 };
 
 class StepProgress extends Component {
@@ -40,7 +52,7 @@ class StepProgress extends Component {
   }
 
   render() {
-    const { status, options } = this.props;
+    const { status, options, equipmentStatus } = this.props;
     return (
       <View style={styles.container}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -51,7 +63,9 @@ class StepProgress extends Component {
               backgroundColor: COLORS[status || "default"]
             }}
           />
-          <Text style={styles.text}> Status: {status}</Text>
+          <Text style={styles.text}>
+            Status: {EQUIPMENT_IN_PROGRESS[status]}
+          </Text>
         </View>
         <View style={styles.rowWrapper}>
           {options.map((step, index) => (

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
@@ -6,7 +6,7 @@ import { Entypo, Ionicons } from "@expo/vector-icons";
 import colors from "../../../config/colors";
 import fontSize from "../../../config/fontSize";
 
-class EquipmentItem extends Component {
+class EquipmentItem extends PureComponent {
   static propTypes = {
     name: PropTypes.string,
     id: PropTypes.number,
@@ -82,8 +82,7 @@ class EquipmentItem extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    overflow: "hidden"
+    flex: 1
   },
   wrapper: {
     flexDirection: "row"

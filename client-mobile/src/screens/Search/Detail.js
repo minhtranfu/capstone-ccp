@@ -37,19 +37,14 @@ const IMAGE_LIST = [
   "https://s3.amazonaws.com/toyotaforklifts/content/20150902212609/mid-electric-hero.png"
 ];
 
-@connect(
-  (state, ownProps) => {
-    const { id } = ownProps.navigation.state.params;
-    return {
-      detail: state.equipment.listSearch.find(item => item.id === id)
-    };
-  },
-  dispatch => ({
-    fetchGetEquipmentDetail: id => {
-      dispatch(getEquipmentDetail(id));
-    }
-  })
-)
+@connect((state, ownProps) => {
+  const { id } = ownProps.navigation.state.params;
+  return {
+    detail: state.equipment.listSearch.find(
+      item => item.equipmentEntity.id === id
+    )
+  };
+})
 class SearchDetail extends Component {
   constructor(props) {
     super(props);
@@ -64,11 +59,6 @@ class SearchDetail extends Component {
     };
   }
 
-  componentDidMount() {
-    const { id } = this.props.navigation.state.params;
-    this.props.fetchGetEquipmentDetail(id);
-  }
-
   _setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
@@ -80,7 +70,12 @@ class SearchDetail extends Component {
   };
 
   _confirmDate = ({ startDate, endDate }) => {
-    const { id, dailyPrice, deliveryPrice, name } = this.props.detail;
+    const {
+      id,
+      dailyPrice,
+      deliveryPrice,
+      name
+    } = this.props.detail.equipmentEntity;
     this.setState({
       startDate,
       endDate
@@ -92,7 +87,7 @@ class SearchDetail extends Component {
       requesterLatitude: 123123,
       requesterLongitude: 123123,
       equipmentId: id,
-      requesterId: 13
+      requesterId: 12
     };
     this.props.navigation.navigate("Transaction", {
       equipment: newEquipment,
@@ -184,7 +179,7 @@ class SearchDetail extends Component {
       dailyPrice,
       deliveryPrice,
       description
-    } = this.props.detail;
+    } = this.props.detail.equipmentEntity;
     return (
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.textWrapper}>
@@ -295,43 +290,40 @@ class SearchDetail extends Component {
       subColor: "#f0f0f0"
     };
     return (
-      <SafeAreaView style={styles.container}>
-        {detail ? (
-          <View>
-            <ParallaxList
-              title={detail.name}
-              removeTitle={true}
-              hasThumbnail={true}
-              hasLeft={true}
-              hasFavorite={true}
-              scrollElement={<Animated.ScrollView />}
-              renderScrollItem={this._renderScrollItem}
-            />
-            <View style={styles.bottomWrapper}>
-              <Button
-                text={"Book Now"}
-                onPress={this._openCalendar}
-                wrapperStyle={{ marginTop: 0 }}
-              />
-              <Calendar
-                i18n="en"
-                ref={calendar => {
-                  this.calendar = calendar;
-                }}
-                customI18n={customI18n}
-                color={color}
-                format="YYYY-MM-DD"
-                minDate={this._handleFormatDate(new Date())}
-                maxDate="2019-03-12"
-                startDate={this.state.startDate}
-                endDate={this.state.endDate}
-                onConfirm={this._confirmDate}
-              />
-            </View>
-          </View>
-        ) : (
-          <Loading />
-        )}
+      <SafeAreaView
+        style={styles.container}
+        forceInset={{ bottom: "always", top: "always" }}
+      >
+        <ParallaxList
+          title={detail.equipmentEntity.name}
+          removeTitle={true}
+          hasThumbnail={true}
+          hasLeft={true}
+          hasFavorite={true}
+          scrollElement={<Animated.ScrollView />}
+          renderScrollItem={this._renderScrollItem}
+        />
+        <View style={styles.bottomWrapper}>
+          <Button
+            text={"Book Now"}
+            onPress={this._openCalendar}
+            wrapperStyle={{ marginTop: 0 }}
+          />
+          <Calendar
+            i18n="en"
+            ref={calendar => {
+              this.calendar = calendar;
+            }}
+            customI18n={customI18n}
+            color={color}
+            format="YYYY-MM-DD"
+            minDate={this._handleFormatDate(new Date())}
+            maxDate="2019-03-12"
+            startDate={this.state.startDate}
+            endDate={this.state.endDate}
+            onConfirm={this._confirmDate}
+          />
+        </View>
       </SafeAreaView>
     );
   }

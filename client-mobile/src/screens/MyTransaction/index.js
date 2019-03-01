@@ -98,6 +98,7 @@ const DROPDOWN_OPTIONS = [
 
 @connect(
   state => {
+    console.log(state.transaction.listSupplierTransaction);
     return {
       listTransaction: state.transaction.listSupplierTransaction,
       loading: state.transaction.loading,
@@ -159,9 +160,19 @@ class MyTransaction extends Component {
     return listTransaction.filter(item => item.status === status) || [];
   };
 
+  _handleFilter = () => {
+    if (this.state.status === "All Statuses") {
+      return EQUIPMENT_STATUSES;
+    } else {
+      return EQUIPMENT_STATUSES.filter(
+        status => status.code === this.state.status.toUpperCase()
+      );
+    }
+  };
+
   _renderAllTransaction = () => (
     <View>
-      {EQUIPMENT_STATUSES.map((status, idx) => {
+      {this._handleFilter().map((status, idx) => {
         const equipmentList = this._getEquipementByStatus(status.code);
         //Hide section if there is no equipment
         if (equipmentList.length === 0) return null;
@@ -199,40 +210,6 @@ class MyTransaction extends Component {
     </View>
   );
 
-  _renderFilterTransaction = status => {
-    const equipmentList = this._getEquipementByStatus(status.toUpperCase());
-    if (equipmentList.length === 0) return null;
-    return (
-      <View>
-        <EquipmentStatus
-          count={equipmentList.length}
-          title={status}
-          code={status.toUpperCase()}
-        />
-
-        {equipmentList.map((item, index) => (
-          <EquipmentItem
-            key={`status${index}`}
-            onPress={() => {
-              this._handleOnPressItem(item.id);
-              this.props.navigation.navigate("MyTransactionDetail", {
-                id: item.id
-              });
-            }}
-            id={item.id}
-            name={item.equipment.name}
-            imageURL={
-              "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-            }
-            address={item.equipmentAddress}
-            requesterThumbnail={item.requester.thumbnailImage}
-            price={item.dailyPrice}
-          />
-        ))}
-      </View>
-    );
-  };
-
   _renderContent = listTransaction => {
     const { status } = this.state;
 
@@ -247,9 +224,7 @@ class MyTransaction extends Component {
               options={DROPDOWN_OPTIONS}
               isHorizontal={true}
             />
-            {status === "All Statuses"
-              ? this._renderAllTransaction()
-              : this._renderFilterTransaction(status)}
+            {this._renderAllTransaction()}
           </View>
         ) : (
           <Text>No Data</Text>
@@ -260,15 +235,16 @@ class MyTransaction extends Component {
 
   render() {
     const { listTransaction, loading, error, status } = this.props;
+    console.log(listTransaction, loading);
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "always", top: "always" }}
+        forceInset={{ bottom: "never", top: "always" }}
       >
         <Header>
           <Text style={styles.header}>My Transaction</Text>
         </Header>
-        {!loading ? (
+        {listTransaction ? (
           <ScrollView
             style={{ flex: 1 }}
             contentContainerStyle={styles.scrollContent}

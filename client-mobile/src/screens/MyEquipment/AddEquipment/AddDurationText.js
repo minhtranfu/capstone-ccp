@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
+import Loading from "../../../components/Loading";
 import Header from "../../../components/Header";
 import InputField from "../../../components/InputField";
 
@@ -20,39 +21,68 @@ class AddDurationText extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      valueArray: [],
-      duration: [],
+      // dateRanges: { 0: { id: 0, beginDate: "", endDate: "" } },
+      dataRangeList: [{ id: 0, beginDate: "", endDate: "" }],
+      index: 0
+    };
+  }
+
+  _handleAddMore = () => {
+    const { beginDate, endDate, index } = this.state;
+    // Add new empty data range
+    const newRow = {
+      id: index + 1,
       beginDate: "",
       endDate: ""
     };
 
-    this.index = 0;
-    this.animatedValue = new Animated.Value(0);
-  }
-
-  _handleOnPressAddMore = () => {
-    this.animatedValue.setValue(0);
-    let newlyAddedValue = { index: this.index };
-    this.setState(
-      {
-        disabled: true,
-        valueArray: [...this.state.valueArray, newlyAddedValue]
-      },
-      () => {
-        Animated.timing(this.animatedValue, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true
-        }).start(() => {
-          this.index = this.index + 1;
-          this.setState({ disabled: false });
-        });
-      }
-    );
+    // Append new data range to dateRanges
+    this.setState({
+      // dateRanges: {
+      //   ...this.state.dateRanges,
+      //   [newRow.id]: newRow
+      // },
+      dataRangeList: [...this.state.dataRangeList, newRow],
+      index: index + 1
+    });
   };
 
-  _renderScrollViewItem = () => {
-    const { beginDate, endDate } = this.state;
+  _handleRemove = id => {
+    // const { dateRanges } = this.state;
+    // const newRange = Object.keys(dateRanges).reduce((result, key) => {
+    //   if (key !== id.toString()) {
+    //     result[key] = dateRanges[key];
+    //   }
+    //   return result;
+    // }, {});
+    // //const newRange = delete dateRanges.id;
+    // const { [id]: deletedItem, ...otherItems } = dateRanges;
+    // this.setState({ dateRanges: otherItems });
+    this.setState({
+      dataRangeList: this.state.dataRangeList.filter(item => item.id !== id)
+    });
+
+    // this.setState({ dateRanges: newRange });
+  };
+
+  _handleDateChanged = (id, value, field) => {
+    const { dataRangeList } = this.state;
+    this.setState({
+      // dateRanges: {
+      //   ...dateRanges,
+      //   [id]: {
+      //     ...dateRanges[id],
+      //     [field]: value
+      //   }
+      // },
+      dataRangeList: this.state.dataRangeList.map(item =>
+        item.id === id ? { ...item, [field]: value } : item
+      )
+    });
+  };
+
+  _renderDateRange = item => {
+    const itemId = item.id;
     return (
       <View>
         <InputField
@@ -60,8 +90,10 @@ class AddDurationText extends Component {
           placeholder={"yyyy-mm-dd"}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          onChangeText={value => this.setState({ beginDate: value })}
-          value={beginDate}
+          onChangeText={value =>
+            this._handleDateChanged(itemId, value, "beginDate")
+          }
+          value={item.beginDate}
           returnKeyType={"next"}
         />
         <InputField
@@ -69,21 +101,28 @@ class AddDurationText extends Component {
           placeholder={"yyyy-mm-dd"}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          onChangeText={value => this.setState({ endDate: value })}
-          value={endDate}
+          onChangeText={value =>
+            this._handleDateChanged(itemId, value, "endDate")
+          }
+          value={item.endDate}
           returnKeyType={"next"}
         />
+        {item.id !== 0 ? (
+          <TouchableOpacity onPress={() => this._handleRemove(itemId)}>
+            <Text>Remove</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
     );
   };
 
-  _renderBottomButton = (data, timeRange) => (
+  _renderBottomButton = (data, dateRange) => (
     <TouchableOpacity
       style={[styles.buttonWrapper, styles.buttonEnable]}
       onPress={() =>
         this.props.navigation.navigate("AddImage", {
           data: Object.assign({}, data, {
-            availableTimeRanges: [timeRange]
+            availableTimeRanges: dateRange
           })
         })
       }
@@ -99,9 +138,10 @@ class AddDurationText extends Component {
   );
 
   render() {
-    const { beginDate, endDate } = this.state;
+    const { beginDate, endDate, dataRangeList } = this.state;
     const { data } = this.props.navigation.state.params;
-    const timeRange = { beginDate, endDate };
+    // const timeRange = { beginDate, endDate };
+
     return (
       <SafeAreaView
         style={styles.container}
@@ -117,10 +157,18 @@ class AddDurationText extends Component {
           <Text style={styles.header}>Available time range</Text>
         </Header>
         <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-          {this._renderScrollViewItem()}
+          {this.state.dataRangeList.map(item => this._renderDateRange(item))}
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.buttonPlus}
+            onPress={this._handleAddMore}
+          >
+            <Feather name="plus" size={24} color={"white"} />
+          </TouchableOpacity>
         </ScrollView>
         <View style={styles.bottomWrapper}>
-          {this._renderBottomButton(data, timeRange)}
+          {this._renderBottomButton(data, dataRangeList)}
         </View>
       </SafeAreaView>
     );
@@ -157,6 +205,14 @@ const styles = StyleSheet.create({
   },
   buttonDisable: {
     backgroundColor: colors.text25
+  },
+  buttonPlus: {
+    backgroundColor: "green",
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center"
   },
   header: {
     fontSize: fontSize.h4,

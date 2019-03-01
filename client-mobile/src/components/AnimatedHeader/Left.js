@@ -5,7 +5,6 @@ import Button from "./Button";
 
 class Left extends React.PureComponent {
   render() {
-    console.log("Press to back");
     return (
       <View
         style={{

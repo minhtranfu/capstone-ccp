@@ -32,7 +32,7 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         contractorEquipment: state.contractorEquipment.map(item =>
-          item.id === payload.id ? item === payload.data.data : item
+          item.id === payload.id ? (item = payload.data.data) : item
         )
       };
     }
@@ -40,7 +40,7 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         contractorEquipment: state.contractorEquipment.map(item =>
-          item.id === payload.id ? item === payload.data.data : item
+          item.id === payload.id ? (item = payload.data.data) : item
         )
       };
     }
@@ -48,9 +48,16 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       return {
         ...state
       };
+    case Actions.SEARCH_EQUIPMENT.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
     case Actions.SEARCH_EQUIPMENT.SUCCESS:
       return {
         ...state,
+        loading: false,
         listSearch: payload.data
       };
     case Actions.CLEAR_SEARCH_RESULT.SUCCESS:

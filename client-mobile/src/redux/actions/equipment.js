@@ -67,6 +67,9 @@ export function searchEquipment(address, long, lat, beginDate, endDate) {
       ? `equipments?begin_date=${beginDate}&end_date=${endDate}&long=${long}&lad=${lat}&lquery=${address}`
       : `equipments?long=${long}&lad=${lat}&lquery=${address}`;
   return async dispatch => {
+    dispatch({
+      type: Actions.SEARCH_EQUIPMENT.REQUEST
+    });
     const res = await axios.get(url);
     dispatch({
       type: Actions.SEARCH_EQUIPMENT.SUCCESS,

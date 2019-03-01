@@ -2,7 +2,7 @@ import axios from "axios";
 import StatusAction from "../redux/actions/status";
 
 export default function configAPI(config) {
-  axios.defaults.baseURL = "http://ccp.hoctot.net:8080/";
+  axios.defaults.baseURL = "http://ccp.hoctot.net:8080/api/";
   axios.defaults.headers.common["Authorization"] = "AUTH_TOKEN";
   axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -18,7 +18,9 @@ export default function configAPI(config) {
             config.store.dispatch(StatusAction.error("401", Date.now()));
             break;
           case 400:
-            console.log("Nono logging out ...");
+            config.store.dispatch(
+              StatusAction.error("400 nonononononono", Date.now())
+            );
             break;
           case 404:
             config.store.dispatch(StatusAction.error("404 nono", Date.now()));

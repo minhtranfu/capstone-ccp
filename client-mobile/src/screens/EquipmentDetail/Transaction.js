@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
+import { NavigationActions } from "react-navigation";
 import { sendTransactionRequest } from "../../redux/actions/transaction";
 
 import Header from "../../components/Header";
@@ -20,7 +21,9 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
 @connect(
-  state => ({}),
+  state => ({
+    status: state.status
+  }),
   dispatch => ({
     fetchSendRequest: transactionDetail => {
       dispatch(sendTransactionRequest(transactionDetail));
@@ -62,7 +65,7 @@ class ConfirmTransaction extends Component {
               text={"Confirm Booking"}
               onPress={() => {
                 this._handleConfirmBooking(equipment);
-                this.props.navigation.navigate("Result");
+                this.props.navigation.push("Result");
               }}
             />
           </ScrollView>

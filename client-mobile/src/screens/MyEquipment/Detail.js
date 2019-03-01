@@ -108,29 +108,27 @@ class MyEquipmentDetail extends Component {
     this.props.navigation.goBack();
   };
 
-  _renderDeliveringBottom = id => {
-    return (
-      <View style={styles.bottomWrapper}>
-        <Button
-          text={"RENTING"}
-          onPress={() => {
-            this._handleUpdateStatus(id, "RENTING");
-          }}
-        />
-        <Button
-          text={"CANCEL"}
-          onPress={() => this.props.navigation.goBack()}
-        />
-      </View>
-    );
-  };
+  // _renderDeliveringBottom = id => {
+  //   return (
+  //     <View style={styles.bottomWrapper}>
+  //       <Button
+  //         text={"RENTING"}
+  //         onPress={() => {
+  //           this._handleUpdateStatus(id, "RENTING");
+  //         }}
+  //       />
+  //       <Button
+  //         text={"CANCEL"}
+  //         onPress={() => this.props.navigation.goBack()}
+  //       />
+  //     </View>
+  //   );
+  // };
 
   _renderBottomButton = (status, id) => {
     switch (status) {
       case "AVAILABLE":
         return this._renderAvailableBottom(id);
-      case "DELIVERING":
-        return this._renderDeliveringBottom(id);
       default:
         return null;
     }
@@ -270,7 +268,6 @@ class MyEquipmentDetail extends Component {
           renderLeftButton={() => (
             <TouchableOpacity
               onPress={() => {
-                this.props.fetchClearEquipmentDetail();
                 this.props.navigation.goBack();
               }}
             >

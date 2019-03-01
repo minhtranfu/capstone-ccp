@@ -14,7 +14,7 @@ export default function typeReducer(state = INITIAL_STATE, action) {
         loading: true
       };
     }
-    case Actions.GET_GENERAL_EQUIPMENT_TYPE_SUCCESS: {
+    case Actions.GET_GENERAL_EQUIPMENT_TYPE.SUCCESS: {
       return {
         ...state,
         loading: false,

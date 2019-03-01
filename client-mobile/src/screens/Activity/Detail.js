@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import PropTypes from "prop-types";
 import { Feather } from "@expo/vector-icons";
+import { requestTransaction } from "../../redux/actions/transaction";
 
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -33,24 +34,31 @@ const STEP_PROGRESS_OPTIONS = [
   },
   {
     id: 3,
-    name: "Delivery",
-    value: "DELIVERY"
+    name: "Processing",
+    value: "PROCESSING"
   },
   {
     id: 4,
-    name: "Returning",
-    value: "RETURNING"
+    name: "Finished",
+    value: "FINISHED"
   }
 ];
 
-@connect((state, ownProps) => {
-  const { id } = ownProps.navigation.state.params;
-  return {
-    detail: state.transaction.listRequesterTransaction.find(
-      item => item.id === id
-    )
-  };
-})
+@connect(
+  (state, ownProps) => {
+    const { id } = ownProps.navigation.state.params;
+    return {
+      detail: state.transaction.listRequesterTransaction.find(
+        item => item.id === id
+      )
+    };
+  },
+  dispatch => ({
+    fetchUpdateEquipmentStatus: (equipmentId, status) => {
+      dispatch(requestTransaction(equipmentId, status));
+    }
+  })
+)
 class ActivityDetail extends Component {
   constructor(props) {
     super(props);
@@ -74,6 +82,11 @@ class ActivityDetail extends Component {
     return totalDay > 1 ? totalDay : 1;
   };
 
+  _handleRequestTransaction = (id, status) => {
+    this.props.fetchRequestTransaction(id, { status: status });
+    this.props.navigation.goBack();
+  };
+
   //If status is renting, return null
   _renderStepProgress = status => {
     if (status !== "RENTING")
@@ -86,6 +99,7 @@ class ActivityDetail extends Component {
   };
 
   _renderBottomButton = status => {
+    const { id } = this.props.navigation.state.params;
     if (status === "RENTING") {
       return (
         <View style={styles.columnWrapper}>
@@ -98,11 +112,20 @@ class ActivityDetail extends Component {
           <Button text={"Cancel"} />
         </View>
       );
+    } else if (status === "PROCESSING") {
+      return (
+        <View style={styles.columnWrapper}>
+          <Button
+            text={"Rent"}
+            onPress={() => this._handleRequestTransaction(id, "RENTING")}
+          />
+        </View>
+      );
     }
     return null;
   };
 
-  _renderScrollViewItem = ({ detail }) => {
+  _renderScrollViewItem = detail => {
     const totalDay = this._countTotalDay(detail.beginDate, detail.endDate);
     const totalPrice = totalDay * detail.dailyPrice;
     return (
@@ -160,6 +183,7 @@ class ActivityDetail extends Component {
 
   render() {
     const { detail } = this.props;
+    console.log(detail);
     return (
       <SafeAreaView
         style={styles.container}
@@ -169,7 +193,6 @@ class ActivityDetail extends Component {
           renderLeftButton={() => (
             <TouchableOpacity
               onPress={() => {
-                this.props.fetchClearDetail();
                 this.props.navigation.goBack();
               }}
             >

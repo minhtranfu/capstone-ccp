@@ -21,11 +21,6 @@ class EquipmentItem extends PureComponent {
       "https://drupway.com/wp-content/uploads/2018/10/person-male.png"
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   render() {
     const {
       id,

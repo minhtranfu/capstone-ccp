@@ -123,7 +123,7 @@ class MyEquipment extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: "",
+      status: "All Statuses",
       id: null,
       transactionStatus: ""
     };
@@ -134,20 +134,24 @@ class MyEquipment extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    if (this.props.status.message === nextProps.status.message) return false;
-    return true;
+    const { navigation, status, listEquipment } = this.props;
+    if (status.message !== nextProps.status.message) {
+      return true;
+    }
+    if (listEquipment.length !== nextProps.listEquipment.length) return true;
+    return false;
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { listEquipment, status } = this.props;
+    const { listEquipment, status, navigation } = this.props;
     // const { id } = this.state;
-    if (
-      prevProps.listEquipmentist &&
-      listEquipment.length !== prevProps.listEquipment.length
-    ) {
+    if (prevProps.listEquipmentist && listEquipment) {
       this.props.fetchContractorEquipment(13);
     }
-    if (status.type === "error") {
+    if (
+      navigation.state.routeName === "MyEquipmentDetail" &&
+      status.type === "error"
+    ) {
       this._showAlert("Error", status.message);
     } else if (status.type === "success") {
       this._showAlert("Success", status.message);
@@ -177,10 +181,20 @@ class MyEquipment extends Component {
     return listEquipment.filter(item => item.status === status) || [];
   };
 
+  _handleFilter = () => {
+    if (this.state.status === "All Statuses") {
+      return EQUIPMENT_STATUSES;
+    } else {
+      return EQUIPMENT_STATUSES.filter(
+        status => status.code === this.state.status.toUpperCase()
+      );
+    }
+  };
+
   _renderContent = listEquipment => {
     return (
       <View style={styles.scrollWrapper}>
-        {listEquipment.length > 0 ? (
+        {listEquipment ? (
           <View>
             <Dropdown
               label={"Filter"}
@@ -190,7 +204,7 @@ class MyEquipment extends Component {
               isHorizontal={true}
             />
             <View>
-              {EQUIPMENT_STATUSES.map((status, idx) => {
+              {this._handleFilter().map((status, idx) => {
                 const equipmentList = this._getEquipementByStatus(status.code);
                 //Hide section if there is no equipment
                 if (equipmentList.length === 0) return null;
