@@ -1,72 +1,87 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import SearchBox from '../../common/SearchBox';
 import EquipmentCard from '../../common/EquipmentCard';
 import Helmet from 'react-helmet-async';
+import moment from 'moment';
+import Skeleton from 'react-loading-skeleton';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
 
-class Home extends PureComponent {
-  constructor (props) {
+class Home extends Component {
+  constructor(props) {
     super(props);
 
     this.state = {
-      products: []
+      products: [],
+      isFetching: true
     };
   }
 
-    _loadData = async () => {
-      const products = await ccpApiService.searchEquipment({});
+  _loadData = async () => {
+    const products = await ccpApiService.searchEquipment({
+      beginDate: moment().format('YYYY-MM-DD')
+    });
 
-      if (products.length === 0) {
-        alert('Data is empty!');
-      }
-
-      this.setState({
-        products
-      });
-    };
-
-    _handleSearch = async (criteria) => {
-      console.log(criteria);
-      const products = await ccpApiService.searchEquipment(criteria);
-
-      if (products.length === 0) {
-        alert('Data is empty!');
-      }
-
-      this.setState({
-        products
-      });
-    };
-
-    componentDidMount () {
-      this._loadData();
+    if (products.length === 0) {
+      alert('Data is empty!');
     }
 
-    render () {
-      const { products } = this.state;
+    this.setState({
+      products,
+      isFetching: false
+    });
+  };
 
-      return (
-        <div>
-          <Helmet>
-            <title>Trang chủ</title>
-          </Helmet>
-          <div className="section-search text-light">
-            <div className="container">
-              <SearchBox onSearch={this._handleSearch} />
-            </div>
-          </div>
+  _handleSearch = async (criteria) => {
+    console.log(criteria);
+
+    this.setState({
+      isFetching: true
+    });
+    const products = await ccpApiService.searchEquipment(criteria);
+
+    this.setState({
+      products,
+      isFetching: false
+    });
+  };
+
+  componentDidMount() {
+    this._loadData();
+  }
+
+  render() {
+    const { products, isFetching } = this.state;
+
+    return (
+      <div>
+        <Helmet>
+          <title>Trang chủ</title>
+        </Helmet>
+        <div className="section-search text-light">
           <div className="container">
-            <div className="row py-3">
-              <div className="col-md-12">
-                <h3>Kết quả phù hợp</h3>
-              </div>
-              {products && products.map(product => <EquipmentCard key={product.id} className="col-md-4" product={product}/>)}
-            </div>
+            <SearchBox onSearch={this._handleSearch} isFetching={isFetching} />
           </div>
         </div>
-      );
-    }
+        <div className="container">
+          <div className="row py-3">
+            <div className="col-md-12">
+              <h3>Result</h3>
+            </div>
+            {(!products || products.length === 0) && !isFetching &&
+              <h2 className="text-center">There is no result!</h2>
+            }
+            {isFetching &&
+              <div className="bg-white p-4 w-100">
+                <Skeleton height={210} count={5} />
+              </div>
+            }
+            {!isFetching && products && products.map(product => <EquipmentCard key={product.id} className="col-md-4" product={product} />)}
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default Home;
