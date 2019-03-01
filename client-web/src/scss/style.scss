@@ -315,3 +315,9 @@ nav.navbar {
   transition-delay: 0;
   width: 100%;
 }
+
+.image-dropzone {
+  cursor: pointer;
+  height: 200px;
+  border: 2px dashed #888;
+}
