@@ -17,7 +17,7 @@ class AddEquipment extends Component {
     super(props);
 
     this.state = {
-      activeStep: 0,
+      activeStep: null,
       data: {}
     };
 
@@ -41,6 +41,10 @@ class AddEquipment extends Component {
         component: Step3
       }
     ];
+  }
+
+  componentDidMount() {
+    setTimeout(() => this.setState({ activeStep: 0 }), 350);
   }
 
   toggle = tab => {
@@ -103,9 +107,9 @@ class AddEquipment extends Component {
 
     this.steps.forEach((step, index) => {
       tabs.push(
-        <NavItem key={index}>
+        <NavItem key={index} className="flex-fill text-center">
           <NavLink
-            className={classnames({ active: this.state.activeStep === index })}
+            className={classnames('disabled', { active: this.state.activeStep === index, pass: this.state.activeStep > index })}
             onClick={() => { this.toggle(index); }}
           >
             {step.name}
@@ -150,7 +154,7 @@ class AddEquipment extends Component {
       <div className="container pb-5">
         <div className="row">
           <div className="col-12">
-            <h2 className="my-4">Post equipment</h2>
+            <h2 className="my-4 text-center">Post equipment</h2>
             <hr />
           </div>
         </div>

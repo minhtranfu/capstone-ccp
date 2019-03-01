@@ -22,7 +22,8 @@ class AddEquipmentStep1 extends Step {
     super(props);
 
     this.state = {
-      constructions: []
+      constructions: [],
+      numOfRange: 1
     };
   }
 
@@ -62,28 +63,25 @@ class AddEquipmentStep1 extends Step {
     this.setState({ description });
   };
 
-  _onChangeDateRanage = (e, picker) => {
-    // let { ranges } = this.state;
-    // if (!ranges) {
-    //     ranges = [];
-    // }
-    // console.log(e, picker);
-    // const rangeId = e.target.dataset.rangeId;
+  _onChangeDateRanage = (picker, rangeId) => {
+    let { availableTimeRanges } = this.state;
+    if (!availableTimeRanges) {
+      availableTimeRanges = [];
+    }
 
-    // if (ranges[rangeId] == undefined) {
-    //     ranges[rangeId] = {};
+    // if (availableTimeRanges[rangeId] == undefined) {
+    //   availableTimeRanges[rangeId] = {};
     // }
+    availableTimeRanges[rangeId] = {
+      beginDate: picker.startDate.format('YYYY-MM-DD'),
+      endDate: picker.endDate.format('YYYY-MM-DD')
+    };
 
     // ranges[rangeId].startDate = picker.startDate;
     // ranges[rangeId].endDate = picker.endDate;
     // console.log(ranges);
     this.setState({
-      availableTimeRanges: [
-        {
-          beginDate: picker.startDate.format('YYYY-MM-DD'),
-          endDate: picker.endDate.format('YYYY-MM-DD')
-        }
-      ]
+      availableTimeRanges
     });
   };
 
@@ -125,6 +123,38 @@ class AddEquipmentStep1 extends Step {
     });
   };
 
+  _renderDateRangePickers = () => {
+    const { numOfRange } = this.state;
+
+    const dateRangePickers = [];
+    for (let i = 0; i < numOfRange; i++) {
+      dateRangePickers.push(
+        <div className="form-group">
+          <label htmlFor="">Available time</label>
+          <DateRangePicker minDate={moment()} onApply={(e, picker) => this._onChangeDateRanage(picker, i)} containerClass="w-100" startDate="1/1/2014" endDate="3/1/2014" autoUpdateInput timePicker timePicker24Hour>
+            <div className="input-group date-range-picker">
+              <input type="text" className="form-control" readOnly value={this._getLabelOfRange(i) || ''} />
+              <div className="input-group-append">
+                <span className="input-group-text" id="basic-addon2"><i className="fa fa-calendar"></i></span>
+              </div>
+            </div>
+          </DateRangePicker>
+        </div>
+      );
+    }
+
+    return dateRangePickers;
+  };
+
+  _addTimeRangePicker = () => {
+    let { numOfRange } = this.state;
+    numOfRange++;
+
+    this.setState({
+      numOfRange
+    });
+  };
+
   render() {
     const { entities } = this.props;
     const equipmentTypes = entities[ENTITY_KEY.EQUIPMENT_TYPES];
@@ -138,15 +168,19 @@ class AddEquipmentStep1 extends Step {
           </div>
           <div className="col-md-6">
             <div className="form-group">
-              <label htmlFor="">Equipment name <i className="text-danger">*</i></label>
+              <label htmlFor="">Equipment name: <i className="text-danger">*</i></label>
               <input type="text" name="name" onChange={this._handleFieldChange} value={this.state.name || ''} className="form-control" maxLength="80" required />
             </div>
             <div className="form-group">
-              <label htmlFor="">Construction <i className="text-danger">*</i></label>
+              <label htmlFor="">Construction: <i className="text-danger">*</i></label>
               <select name="constructionId" onChange={this._handleFieldChange} value={this.state.constructionId || ''} id="construction_id" className="form-control" required>
                 <option value="">Choose...</option>
                 {constructions.map(construction => <option key={construction.id} value={construction.id}>{construction.name}</option>)}
               </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="">Address: <i className="text-danger">*</i></label>
+              <input type="text" className="form-control" />
             </div>
             <div className="form-group">
               <label htmlFor="">Equipment type <i className="text-danger">*</i></label>
@@ -167,16 +201,9 @@ class AddEquipmentStep1 extends Step {
               <label htmlFor="delivery_price">Delivery price per km <i className="text-danger">*</i></label>
               <input type="number" name="deliveryPrice" onChange={this._handleFieldChange} value={this.state.deliveryPrice || ''} className="form-control" id="delivery_price" required />
             </div>
-            <div className="form-group">
-              <label htmlFor="">Available time</label>
-              <DateRangePicker minDate={moment()} onApply={this._onChangeDateRanage} containerClass="w-100" data-range-id="1" startDate="1/1/2014" endDate="3/1/2014" autoUpdateInput timePicker timePicker24Hour>
-                <div className="input-group date-range-picker">
-                  <input type="text" className="form-control" readOnly value={this._getLabelOfRange(0) || ''} />
-                  <div className="input-group-append">
-                    <span className="input-group-text" id="basic-addon2"><i className="fa fa-calendar"></i></span>
-                  </div>
-                </div>
-              </DateRangePicker>
+            {this._renderDateRangePickers()}
+            <div className="form-group text-center">
+              <button className="btn btn-outline-primary mt-4" onClick={this._addTimeRangePicker}><i className="fa fa-plus"></i> Add more time range</button>
             </div>
           </div>
           <div className="col-12 text-center">

@@ -1,9 +1,11 @@
 body {
-  background-color: #f8f9fa!important;
+  background-color: #f8f9fa !important;
 }
+
 a:hover {
   text-decoration: none;
 }
+
 .section-search {
   background: url("https://images.pexels.com/photos/313032/pexels-photo-313032.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260");
   padding: 80px 0;
@@ -11,6 +13,7 @@ a:hover {
   background-attachment: fixed;
   position: relative;
 }
+
 .section-search::before {
   content: "";
   position: absolute;
@@ -18,14 +21,17 @@ a:hover {
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(0,0,0,.4);
+  background: rgba(0, 0, 0, .4);
 }
+
 .navbar-brand {
   line-height: 40px;
 }
+
 nav.navbar {
-  box-shadow: 0 0 5px rgba(0,0,0,.17);
+  box-shadow: 0 0 5px rgba(0, 0, 0, .17);
 }
+
 .nav-tabs .nav-link {
   cursor: pointer;
 }
@@ -35,38 +41,47 @@ nav.navbar {
   opacity: 0;
   z-index: 1;
 }
+
 .fade-enter-active {
   opacity: 1;
   transition: opacity 500ms ease-in;
 }
+
 .fade-exit {
   opacity: 1;
   display: none;
 }
+
 .fade-exit-active {
   opacity: 0.01;
   transition: opacity 500ms ease-in;
 }
+
 .fade-enter.fade-enter-active {
   opacity: 1;
   transition: opacity 500ms ease-in;
 }
+
 .product-images .owl-dots {
   margin-top: -25px !important;
   position: relative;
 }
-.owl-theme .owl-dots .owl-dot.active span, .owl-theme .owl-dots .owl-dot:hover span {
+
+.owl-theme .owl-dots .owl-dot.active span,
+.owl-theme .owl-dots .owl-dot:hover span {
   background: #eabf00 !important;
 }
+
 .owl-theme .owl-dots .owl-dot span {
   box-shadow: 0 0 0 1.5px #fff;
 }
+
 .product-title {
   font-size: 24px;
 }
 
 // Constructor card
-.constructor-card > img {
+.constructor-card>img {
   background-color: #e8e8e8;
 }
 
@@ -84,7 +99,8 @@ nav.navbar {
   background: #fff !important;
 }
 
-.owl-carousel .owl-nav button.owl-prev, .owl-carousel .owl-nav button.owl-next {
+.owl-carousel .owl-nav button.owl-prev,
+.owl-carousel .owl-nav button.owl-next {
   position: absolute;
   right: 0;
   top: 0;
@@ -149,6 +165,7 @@ nav.navbar {
 .white-space-normal {
   white-space: normal;
 }
+
 .btn-lg .spinner-border {
   width: 1.6rem;
   height: 1.6rem;
@@ -162,7 +179,8 @@ nav.navbar {
 @media (max-width: 991.98px) {
   .offcanvas-collapse {
     position: fixed;
-    top: 56px; /* Height of navbar */
+    top: 56px;
+    /* Height of navbar */
     bottom: 0;
     left: 100%;
     width: 100%;
@@ -218,12 +236,82 @@ nav.navbar {
   font-weight: 500;
   color: #343a40;
 }
+
 .construction-card {
   max-height: 106px;
   transition: max-height .3s ease-out;
   overflow: hidden;
 }
+
 .construction-card.editting {
   max-height: 252px;
   transition: max-height .3s ease-out;
+}
+
+/* Style for wizard post equipment page */
+
+.nav-tabs {
+  border-bottom-width: 8px;
+}
+
+.nav-tabs .nav-link {
+  position: relative;
+  border: 0;
+  padding-bottom: 20px;
+  font-size: 1.2rem;
+}
+
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  border: 0;
+}
+
+.nav-tabs .nav-link::after {
+  content: "";
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  background: #dee2e6;
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  transition: all .5s ease;
+}
+
+.nav-tabs .nav-link.active::after,
+.nav-tabs .nav-link.pass::after {
+  background: orange;
+  transition-delay: 1s;
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-size: 1rem 1rem;
+  -webkit-animation: progress-bar-stripes 1s linear infinite;
+  animation: progress-bar-stripes 1s linear infinite;
+}
+
+.nav-tabs .nav-link::before {
+  content: "";
+  width: 0;
+  height: 8px;
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  background: orange;
+  transition: all .5s linear;
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-size: 1rem 1rem;
+  -webkit-animation: progress-bar-stripes 1s linear infinite;
+  animation: progress-bar-stripes 1s linear infinite;
+}
+
+.nav-tabs .nav-link.active::before {
+  transition-delay: .5s;
+  width: 50%;
+}
+
+.nav-tabs .nav-link.pass::before {
+  transition-delay: 0;
+  width: 100%;
 }
