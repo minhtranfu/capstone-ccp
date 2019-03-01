@@ -21,6 +21,9 @@ const CcpApiService = {
   postTransaction(transaction) {
     return DataAccessService.post('/transactions', transaction);
   },
+  getTransactionsById(id) {
+    return DataAccessService.get(`/transactions/${id}`);
+  },
   getEquipmentsByContractorId(constractorId) {
     return DataAccessService.get(`contractors/${constractorId}/equipments`);
   },
