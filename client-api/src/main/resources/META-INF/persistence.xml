@@ -42,7 +42,8 @@
 
             <!--create more session for additional lazy fetching-->
             <property name="hibernate.enable_lazy_load_no_trans" value="true"/>
-            
+
+            <!--change default id generation stratety to IDENTIFY-->
             <property name="hibernate.id.new_generator_mappings" value="false"/>
             <property name="hibernate.show_sql" value="true"/>
         </properties>

@@ -4,6 +4,8 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,8 +16,13 @@ import java.util.List;
 @Where(clause = "is_deleted=0")
 public class ContractorEntity {
 	private long id;
+
+	@NotNull
 	private String name;
+
+	@Email
 	private String email;
+
 	private String phoneNumber;
 	private String thumbnailImage;
 

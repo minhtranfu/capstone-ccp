@@ -22,6 +22,9 @@ public class ContractorResource {
 	@Inject
 	ConstructionDAO constructionDao;
 
+	@Inject
+	ConstructionResource constructionResource;
+
 
 	//todo refactore this bullshit subresource for a better life
 	@Inject
@@ -98,174 +101,21 @@ public class ContractorResource {
 //	}
 
 
-	@GET
 	@Path("{id:\\d+}/constructions")
-	public Response getConstructionsByContractorId(
+	public ConstructionResource toConstructionResource(
 			@PathParam("id") long contractorId
 	) {
-
-
+		// TODO: 3/1/19 validate contractor id
 		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
 		if (foundContractor == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("contractor id=%s not found!", contractorId)
-			)).build();
+			throw new NotFoundException(String.format("contractor id=%s not found!", contractorId));
 		}
 
-		return Response.ok(foundContractor.getConstructions()).build();
+		constructionResource.setContractorEntity(foundContractor);
+		return constructionResource;
 	}
 
 
-	@GET
-	@Path("{id:\\d+}/constructions/{constructionId:\\d+}")
-	public Response getConstructionByConstructionId(
-			@PathParam("id") long contractorId,
-			@PathParam("constructionId") long constructionId
-	) {
-
-		//validate contractor id
-		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
-		if (foundContractor == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("contractor id=%s not found!", contractorId)
-			)).build();
-		}
-
-		//validate construction id
-		ConstructionEntity foundConstruction = constructionDao.findByID(constructionId);
-		if (foundConstruction == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("construction id=%s not found!", constructionId)
-			)).build();
-		}
-
-
-		boolean validateConstructionBelongsToConstructor = false;
-		for (ConstructionEntity construction : foundContractor.getConstructions()) {
-			if (construction.getId() == constructionId) {
-				validateConstructionBelongsToConstructor = true;
-				return Response.ok(construction).build();
-			}
-		}
-
-
-		return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-				String.format("construction id=%s not belongs to contractor id=%s!", constructionId
-						, contractorId)
-		)).build();
-
-	}
-
-	@POST
-	@Path("{id:\\d+}/constructions")
-	public Response postConstructionByContractorId(
-			@PathParam("id") long contractorId,
-			ConstructionEntity constructionEntity
-	) {
-		//validate contractor id
-		constructionEntity.setId(0);
-		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
-		if (foundContractor == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("contractor id=%s not found!", contractorId)
-			)).build();
-		}
-
-		constructionEntity.setContractor(foundContractor);
-		constructionDao.persist(constructionEntity);
-
-		return Response.status(Response.Status.CREATED).entity(constructionDao.findByID(constructionEntity.getId())).build();
-	}
-
-
-	@PUT
-	@Path("{id:\\d+}/constructions/{constructionId:\\d+}")
-	public Response updateConstructionByContractorId(
-			@PathParam("id") long contractorId,
-			@PathParam("constructionId") long constructionId,
-			ConstructionEntity constructionEntity
-	) {
-		constructionEntity.setId(constructionId);
-
-
-		//validate contractor id
-		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
-		if (foundContractor == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("contractor id=%s not found!", contractorId)
-			)).build();
-		}
-
-		//validate construction id
-		ConstructionEntity foundConstruction = constructionDao.findByID(constructionId);
-		if (foundConstruction == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("construction id=%s not found!", constructionId)
-			)).build();
-		}
-
-		boolean validateConstructionBelongsToConstructor = false;
-		for (ConstructionEntity construction : foundContractor.getConstructions()) {
-			if (construction.getId() == constructionId) {
-				validateConstructionBelongsToConstructor = true;
-
-				ContractorEntity contractorEntity = new ContractorEntity();
-				contractorEntity.setId(contractorId);
-
-				constructionEntity.setContractor(contractorEntity);
-
-				constructionDao.merge(constructionEntity);
-				return Response.ok(constructionEntity).build();
-			}
-		}
-
-
-		return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-				String.format("construction id=%s not belongs to contractor id=%s!", constructionId
-						, contractorId)
-		)).build();
-
-
-	}
-
-	@DELETE
-	@Path("{id:\\d+}/constructions/{constructionId:\\d+}")
-	public Response deleteConstructionByContractorId(
-			@PathParam("id") long contractorId,
-			@PathParam("constructionId") long constructionId) {
-		//validate contractor id
-		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
-		if (foundContractor == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("contractor id=%s not found!", contractorId)
-			)).build();
-		}
-
-		//validate construction id
-		ConstructionEntity foundConstruction = constructionDao.findByID(constructionId);
-		if (foundConstruction == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("construction id=%s not found!", constructionId)
-			)).build();
-		}
-
-		boolean validateConstructionBelongsToConstructor = false;
-		for (ConstructionEntity construction : foundContractor.getConstructions()) {
-			if (construction.getId() == constructionId) {
-				validateConstructionBelongsToConstructor = true;
-
-				foundConstruction.setDeleted(true);
-				constructionDao.merge(foundConstruction);
-				return Response.ok().build();
-			}
-		}
-
-
-		return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-				String.format("construction id=%s not belongs to contractor id=%s!", constructionId
-						, contractorId)
-		)).build();
-	}
 
 	@GET
 	@Path("{id:\\d+}/equipments")

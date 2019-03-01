@@ -5,6 +5,7 @@ import org.hibernate.annotations.WhereJoinTable;
 
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
@@ -12,10 +13,19 @@ import javax.xml.bind.annotation.XmlTransient;
 @Where(clause = "is_deleted = 0")
 public class ConstructionEntity {
 	private long id;
+
+	@NotNull()
 	private String name;
+
+	@NotNull()
 	private String address;
+
+	@NotNull
 	private double longitude;
+
+	@NotNull
 	private double latitude;
+
 	private boolean isDeleted;
 	private ContractorEntity contractor;
 
