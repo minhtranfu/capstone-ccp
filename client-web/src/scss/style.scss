@@ -218,3 +218,12 @@ nav.navbar {
   font-weight: 500;
   color: #343a40;
 }
+.construction-card {
+  max-height: 106px;
+  transition: max-height .3s ease-out;
+  overflow: hidden;
+}
+.construction-card.editting {
+  max-height: 252px;
+  transition: max-height .3s ease-out;
+}
