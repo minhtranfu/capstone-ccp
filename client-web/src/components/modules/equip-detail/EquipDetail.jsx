@@ -82,12 +82,13 @@ class EquipDetail extends Component {
       const { latitude, longitude } = coords;
 
       const { transaction } = this.state;
+      // TODO: Remove hard code for address
       this.setState({
         transaction: {
           ...transaction,
           requesterLatitude: latitude,
           requesterLongitude: longitude,
-          requesterAddress: ''
+          requesterAddress: 'Test address'
         }
       });
     });
