@@ -45,7 +45,8 @@ class MyConstructions extends PureComponent {
         </div>
         <div className="form-group">
           <span className="float-right">
-            <button className="btn btn-outline-success btn-sm" onClick={() => this._setEdittingConstructionId(null)}><i className="fa fa-save"></i> Save</button>
+            <button className="btn btn-success btn-sm" onClick={() => this._setEdittingConstructionId(null)}><i className="fa fa-save"></i> Save</button>
+            <button className="btn btn-outline-success btn-sm ml-2" onClick={() => this._setEdittingConstructionId(null)}><i className="fa fa-times"></i> Cancel</button>
           </span>
           <span className="clearfix"></span>
         </div>
