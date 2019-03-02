@@ -34,6 +34,12 @@ class Header extends Component {
     });
   };
 
+  _closeOffCanvas = () => {
+    this.setState({
+      showOffCanvas: false
+    });
+  };
+
   _isMenuActive = (menu) => {
     const { location } = this.props;
 
@@ -62,7 +68,7 @@ class Header extends Component {
               {this.menus.map(menu => {
                 return (
                   <li key={menu.name} className={`nav-item ${this._isMenuActive(menu) ? 'active' : ''}`}>
-                    <Link className="nav-link" to={menu.to}>{menu.name}</Link>
+                    <Link className="nav-link" to={menu.to} onClick={this._closeOffCanvas}>{menu.name}</Link>
                   </li>
                 );
               })}
