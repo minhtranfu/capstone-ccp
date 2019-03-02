@@ -73,7 +73,6 @@ class Header extends Component {
                 );
               })}
             </ul>
-            <Link to="/add-equipment"><button className="btn btn-danger my-2 my-sm-0 mx-2" type="submit"><i className="fa fa-plus"></i></button></Link>
             <Link to="/signup"><button className="btn btn-success my-2 my-sm-0 mx-2" type="submit">Đăng ký</button></Link>
             <Link to="/login"><button className="btn btn-outline-primary my-2 my-sm-0 mx-2" type="submit">Đăng nhập</button></Link>
           </div>
