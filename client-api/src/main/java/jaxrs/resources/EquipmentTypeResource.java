@@ -26,7 +26,7 @@ public class EquipmentTypeResource {
 	public Response getEquipmentTypeById(@PathParam("id") long id) {
 		EquipmentTypeEntity foundEquipmentTypeEntity = equipmentTypeDAO.findByID(id);
 		if (foundEquipmentTypeEntity == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Id not found!!")).build();
+			throw new BadRequestException(String.format("Equipment Type Id=%d not found", id));
 		}
 
 		return Response.ok(foundEquipmentTypeEntity).build();

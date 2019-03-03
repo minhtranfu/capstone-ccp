@@ -27,8 +27,6 @@ import java.util.List;
 public class EquipmentResource {
 
 	@Inject
-	@Default
-	@Any
 	EquipmentDAO equipmentDAO;
 	@Inject
 	EquipmentTypeDAO equipmentTypeDAO;
@@ -64,7 +62,7 @@ public class EquipmentResource {
 
 		// TODO: 2/14/19 validate orderBy pattern
 		if (!orderBy.matches(REGEX_ORDERBY)) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("orderBy param format must be " + REGEX_ORDERBY)).build();
+			throw new BadRequestException("orderBy param format must be " + REGEX_ORDERBY);
 		}
 
 		LocalDate beginDate = null;
@@ -83,11 +81,10 @@ public class EquipmentResource {
 				e.printStackTrace();
 
 				// TODO: 2/12/19 always return somethings even when format is shit for risk preventing
-
-				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Date format must be yyyy-MM-dd")).build();
+				throw new BadRequestException("Date format must be yyyy-MM-dd");
 			}
 			if (beginDate.isAfter(endDate)) {
-				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Error: beginDate > endDate")).build();
+				throw new BadRequestException("Error: beginDate > endDate");
 
 			}
 		}
@@ -198,7 +195,7 @@ public class EquipmentResource {
 			for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValues()) {
 				AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByID(additionalSpecsValueEntity.getAdditionalSpecsField().getId());
 				if (foundAdditionalSpecsFieldEntity == null) {
-					return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()))).build();
+					throw new BadRequestException(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()));
 				}
 
 				//remove id for persist transaction
@@ -350,7 +347,7 @@ public class EquipmentResource {
 		for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValues()) {
 			AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByID(additionalSpecsValueEntity.getAdditionalSpecsField().getId());
 			if (foundAdditionalSpecsFieldEntity == null) {
-				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()))).build();
+				throw new BadRequestException(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()));
 			}
 
 			//remove id for persist transaction
@@ -432,8 +429,9 @@ public class EquipmentResource {
 
 		EquipmentEntity foundEquipment = equipmentDAO.findByID(id);
 		if (foundEquipment == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("id not found!")).build();
+			throw new BadRequestException(String.format("Equipment id=%s not found!", id));
 		}
+
 		EquipmentEntity.Status status = entity.getStatus();
 		switch (status) {
 			case AVAILABLE:

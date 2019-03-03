@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Where(clause = "is_deleted=0")
-@Table(name = "equipment_type", schema = "capstone_ccp", catalog = "")
+@Table(name = "equipment_type", schema = "capstone_ccp")
 @NamedQuery(name = "EquipmentTypeEntity.getAllEquipmentType", query = "select p from EquipmentTypeEntity p")
 public class EquipmentTypeEntity {
 	private long id;

@@ -129,8 +129,6 @@ public class CartRequestResource {
 	public Response sendAllRequestFromCart() {
 
 		cartRequestDao.transferFromCartToTransaction(contractorEntity.getId());
-
-		// TODO: 3/3/19 send all requests from cart
 		return Response.ok().build();
 	}
 

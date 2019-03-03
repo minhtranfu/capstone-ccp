@@ -8,17 +8,20 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.BadRequestException;
 import java.util.List;
 
 @Stateless
 public class TransactionDateChangeRequestDAO extends BaseDAO<TransactionDateChangeRequestEntity, Long> {
 	@PersistenceContext
 	EntityManager entityManager;
-	public boolean validateNewRequest(long transactionId) {
+	public void validateOnlyOnePendingRequest(long transactionId) {
 		int count =  entityManager.createNamedQuery("TransactionDateChangeRequestEntity.getPendingRequestByTransactionId")
 				.setParameter("transactionId", transactionId)
 				.getResultList().size();
-		return count == 0;
+		if (count != 0) {
+			throw new BadRequestException("this transaction already has another pending requests!");
+		}
 	}
 
 	public List<TransactionDateChangeRequestEntity> getRequestsByTransactionId(long transactionId) {

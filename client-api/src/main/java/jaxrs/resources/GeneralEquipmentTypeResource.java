@@ -7,10 +7,7 @@ import dtos.responses.MessageResponse;
 import entities.GeneralEquipmentTypeEntity;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -39,7 +36,8 @@ public class GeneralEquipmentTypeResource {
 	public Response getGeneralEquipmentTypeById(@PathParam("id") long id) {
 		GeneralEquipmentTypeEntity foundGeneralEquipmentTypeEntity = generalEquipmentTypeDAO.findByID(id);
 		if (foundGeneralEquipmentTypeEntity == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Id not found!!")).build();
+			throw new BadRequestException(String.format("General Equipment Type Id=%d not found", id));
+
 		}
 
 		GeneralEquipmentTypeResponse responseDto = new GeneralEquipmentTypeResponse(foundGeneralEquipmentTypeEntity);
