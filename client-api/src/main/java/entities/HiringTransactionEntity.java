@@ -1,6 +1,7 @@
 package entities;
 
 
+import dtos.IdOnly;
 import dtos.requests.HiringTransactionRequest;
 import org.hibernate.annotations.Where;
 
@@ -49,14 +50,19 @@ public class HiringTransactionEntity {
 	public HiringTransactionEntity() {
 	}
 
-	public HiringTransactionEntity(HiringTransactionRequest request, EquipmentEntity equipment, ContractorEntity requester) {
+	public HiringTransactionEntity(HiringTransactionRequest request) {
 		this.beginDate = request.getBeginDate();
 		this.endDate = request.getEndDate();
 		this.requesterAddress = request.getRequesterAddress();
 		this.requesterLatitude = request.getRequesterLatitude();
 		this.requesterLongitude = request.getRequesterLongitude();
 
-		this.equipment = equipment;
+		EquipmentEntity equipmentEntity = new EquipmentEntity();
+		equipmentEntity.setId(request.getEquipmentId());
+		this.equipment = equipmentEntity;
+
+		ContractorEntity requester = new ContractorEntity();
+		requester.setId(request.getRequesterId());
 		this.requester = requester;
 
 		this.dailyPrice = equipment.getDailyPrice();

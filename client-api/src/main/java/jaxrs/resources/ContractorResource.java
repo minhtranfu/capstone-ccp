@@ -61,24 +61,21 @@ public class ContractorResource {
 	@PUT
 	@Path("{id:\\d+}")
 	public Response putContractorById(
-			@PathParam("id") long constractorId,
+			@PathParam("id") long contractorId,
 			ContractorEntity contractorEntity) {
 
 
-		contractorEntity.setId(constractorId);
 
 
 		// TODO: 2/16/19 validate shits here
 
 		//validate contractor id
-		ContractorEntity foundContractorEntity = contractorDao.findByID(constractorId);
-		if (foundContractorEntity == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("contractor id=%s not found!", constractorId)
-			)).build();
-		}
+		ContractorEntity foundContractorEntity = validateContractorId(contractorId);
 
 
+		contractorEntity.setId(contractorId);
+
+		//todo get what needed here
 		//no allowed to edit the construction list
 		contractorEntity.setConstructions(foundContractorEntity.getConstructions());
 
@@ -87,49 +84,31 @@ public class ContractorResource {
 
 	}
 
-//	@Path("{id:\\d+}/constructions")
-//	public ConstructionService toConstructionService(@PathParam("id") long contractorId) {
-//		// TODO: 2/20/19 validate contractor id
-//		//validate contractor id
-//		ContractorEntity foundContractorEntity = contractorDao.findByID(contractorId);
-//		if (foundContractorEntity == null) {
-//			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-//					String.format("contractor id=%s not found!", contractorId)
-//			)).build();
-//		}
-//
-//		return new ConstructionService(foundContractorEntity);
-//	}
-
 
 	@Path("{id:\\d+}/constructions")
 	public ConstructionResource toConstructionResource(
 			@PathParam("id") long contractorId
 	) {
 		// TODO: 3/1/19 validate contractor id
-		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
-		if (foundContractor == null) {
-			throw new NotFoundException(String.format("contractor id=%s not found!", contractorId));
-		}
-
+		ContractorEntity foundContractor = validateContractorId(contractorId);
 		constructionResource.setContractorEntity(foundContractor);
 		return constructionResource;
 	}
 
 
+	private ContractorEntity validateContractorId(long contractorId) {
+		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
+		if (foundContractor == null) {
+			throw new NotFoundException(String.format("contractor id=%s not found!", contractorId));
+		}
+		return foundContractor;
+	}
 
 	@GET
 	@Path("{id:\\d+}/equipments")
 	public Response getEquipmentsBySupplierId(@PathParam("id") long id) {
 
-		//validate contractor id
-		ContractorEntity foundContractor = contractorDao.findByID(id);
-		if (foundContractor == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("contractor id=%s not found!", id)
-			)).build();
-		}
-
+		ContractorEntity foundContractor = validateContractorId(id);
 		return Response.ok(foundContractor.getEquipments()).build();
 	}
 
@@ -152,7 +131,8 @@ public class ContractorResource {
 
 	@Path("{id:\\d+}/cart")
 	public CartRequestResource toCartResource(@PathParam("id") long contractorId) {
-
+		ContractorEntity foundContractor = validateContractorId(contractorId);
+		cartRequestResource.setContractorEntity(foundContractor);
 		return cartRequestResource;
 
 	}

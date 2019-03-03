@@ -4,14 +4,17 @@ package jaxrs.resources;
 import daos.CartRequestDAO;
 import daos.ContractorDAO;
 import daos.EquipmentDAO;
+import dtos.requests.HiringTransactionRequest;
 import dtos.responses.MessageResponse;
 import entities.CartRequestEntity;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
+import jaxrs.validators.HiringTransactionValidator;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -24,110 +27,68 @@ public class CartRequestResource {
 	CartRequestDAO cartRequestDao;
 
 	@Inject
-	ContractorDAO contractorDao;
-
-	@Inject @Default @Any
 	EquipmentDAO equipmentDao;
 
+	@Inject
+	HiringTransactionValidator hiringTransactionValidator;
 
 	public CartRequestResource() {
 	}
 
-	long contractorId;
+	ContractorEntity contractorEntity;
 
-
-	public long getContractorId() {
-		return contractorId;
+	public ContractorEntity getContractorEntity() {
+		return contractorEntity;
 	}
 
-	public void setContractorId(long contractorId) {
-		this.contractorId = contractorId;
+	public void setContractorEntity(ContractorEntity contractorEntity) {
+		this.contractorEntity = contractorEntity;
 	}
 
 
-	public CartRequestResource(long contractorId) {
-		this.contractorId = contractorId;
-	}
-
-	private Response validateContractorId(long contractorId) {
-		//validate contractor id
-		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
-		if (foundContractor == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("contractor id=%s not found!", contractorId)
-			)).build();
-		}
-		return null;
-	}
-
-	private Response validateEquipmentId(long equipmentId) {
+	private EquipmentEntity validateEquipmentId(long equipmentId) {
 		//validate equipment id
 		EquipmentEntity foundEquipment = equipmentDao.findByID(equipmentId);
 
 		if (foundEquipment == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("equipment id=%s not found!", equipmentId)
-			)).build();
+			throw new NotFoundException(String.format("equipment id=%s not found!", equipmentId));
 		}
-		return null;
+		return foundEquipment;
 	}
 
-	private Response validateCartRequestId(long cartRequestId) {
+
+	private CartRequestEntity validateCartRequestId(long cartRequestId) {
 		CartRequestEntity foundCartRequestEntity = cartRequestDao.findByID(cartRequestId);
 		if (foundCartRequestEntity == null) {
-			return Response.status(Response.Status.BAD_REQUEST)
-					.entity(new MessageResponse(
-							String.format("cartRequestId =%s not found", cartRequestId)
-					)).build();
+			throw new NotFoundException(String.format("cartRequestId =%s not found", cartRequestId));
 		}
-		return null;
+		return foundCartRequestEntity;
 	}
 
 	@GET
 	public Response getCart() {
-		Response validateResult = validateContractorId(contractorId);
-		if (validateResult != null) {
-			return validateResult;
-		}
-
-
-		List<CartRequestEntity> cartRequestList = cartRequestDao.getCartByContractorId(contractorId);
+		List<CartRequestEntity> cartRequestList = cartRequestDao.getCartByContractorId(contractorEntity.getId());
 		return Response.ok(cartRequestList).build();
 	}
 
 
 	@POST
-	public Response addToCart(CartRequestEntity cartRequestEntity) {
-
-		//todo check null fields
+	public Response addToCart(@Valid CartRequestEntity cartRequestEntity) {
 
 
-		//validate contractor id
+		HiringTransactionRequest hiringTransactionRequest = new HiringTransactionRequest(
+				cartRequestEntity.getBeginDate(),
+				cartRequestEntity.getEndDate(),
+				cartRequestEntity.getRequesterAddress(),
+				cartRequestEntity.getRequesterLat(),
+				cartRequestEntity.getRequesterLong(),
+				cartRequestEntity.getEquipment().getId(),
+				contractorEntity.getId()
+		);
 
-		// TODO: 2/27/19 validate contractor
-//		Response validateResult = validateContractorId(contractorId);
-//		if (validateResult != null) {
-//			return validateResult;
-//		}
-		Response validateResult;
+		hiringTransactionValidator.validateAddHiringTransaction(hiringTransactionRequest);
 
-		//check equipment not null
-		if (cartRequestEntity.getEquipment() == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(
-					new MessageResponse("Equipment id must not null")
-			).build();
-
-		}
-		validateResult = validateEquipmentId(cartRequestEntity.getEquipment().getId());
-		if (validateResult != null) {
-			return validateResult;
-		}
-
-
-		cartRequestEntity.setId(0);
-		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
-		cartRequestEntity.setContractor(foundContractor);
-
+		// TODO: 3/3/19 model mapper
 
 		cartRequestDao.persist(cartRequestEntity);
 		return Response.status(Response.Status.CREATED)
@@ -138,48 +99,26 @@ public class CartRequestResource {
 	@Path("{cartRequestId:\\d+}")
 	public Response putCartRequestItem(
 			@PathParam("cartRequestId") long cartRequestId
-			, CartRequestEntity cartRequestEntity) {
+			,@Valid CartRequestEntity cartRequestEntity) {
 
 		cartRequestEntity.setId(cartRequestId);
 
+		validateEquipmentId(cartRequestEntity.getEquipment().getId());
 
-		Response validateResult = validateCartRequestId(cartRequestId);
-		if (validateResult != null) {
-			return validateResult;
-		}
-		validateResult = validateContractorId(contractorId);
-		if (validateResult != null) {
-			return validateResult;
-		}
+		cartRequestEntity.setContractor(contractorEntity);
+		CartRequestEntity merged = cartRequestDao.merge(cartRequestEntity);
 
-		validateResult = validateEquipmentId(cartRequestEntity.getEquipment().getId());
-		if (validateResult != null) {
-			return validateResult;
-		}
-
-		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
-		cartRequestEntity.setContractor(foundContractor);
-
-		cartRequestDao.merge(cartRequestEntity);
-		return Response.ok(cartRequestDao.findByID(cartRequestId)).build();
+		return Response.ok(merged).build();
 	}
 
 	@DELETE
 	@Path("{cartRequestId:\\d+}")
 	public Response deleteCartRequest(@PathParam("cartRequestId") long cartRequestId) {
 
-		Response validateResult = validateCartRequestId(cartRequestId);
-		if (validateResult != null) {
-			return validateResult;
-		}
-		validateResult = validateContractorId(contractorId);
-		if (validateResult != null) {
-			return validateResult;
-		}
+		CartRequestEntity foundCartRequest = validateCartRequestId(cartRequestId);
 
-
-		CartRequestEntity foundCartRequestEntity = cartRequestDao.findByID(cartRequestId);
-		cartRequestDao.delete(foundCartRequestEntity);
+		//not soft delete
+		cartRequestDao.delete(foundCartRequest);
 		return Response.ok().build();
 	}
 
@@ -188,13 +127,10 @@ public class CartRequestResource {
 	@POST
 	@Path("send")
 	public Response sendAllRequestFromCart() {
-		Response validateResult = validateContractorId(contractorId);
-		if (validateResult != null) {
-			return validateResult;
-		}
 
-//			List<CartRequestEntity> cartRequestEntityList = cartRequestDao.getCartByContractorId(contractorId);
+		cartRequestDao.transferFromCartToTransaction(contractorEntity.getId());
 
+		// TODO: 3/3/19 send all requests from cart
 		return Response.ok().build();
 	}
 

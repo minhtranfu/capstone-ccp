@@ -10,6 +10,7 @@ import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 import entities.TransactionDateChangeRequestEntity;
+import jaxrs.validators.HiringTransactionValidator;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
@@ -27,7 +28,7 @@ public class HiringTransactionResource {
 	@Inject
 	HiringTransactionDAO hiringTransactionDAO;
 
-	@Inject @Default @Any
+	@Inject
 	public EquipmentDAO equipmentDAO;
 
 	@Inject
@@ -36,73 +37,42 @@ public class HiringTransactionResource {
 	@Inject
 	TransactionDateChangeRequestDAO transactionDateChangeRequestDAO;
 
+	@Inject
+	HiringTransactionValidator validator;
+
+
+	private EquipmentEntity validateEquipment(long id) {
+		EquipmentEntity foundEquipment = equipmentDAO.findByID(id);
+		if (foundEquipment == null) {
+			throw new NotFoundException(String.format("Equipment id=%d not found!", id));
+		}
+		return foundEquipment;
+	}
+
+	private ContractorEntity validateContractorId(long contractorId) {
+		ContractorEntity foundContractor = contractorDAO.findByID(contractorId);
+		if (foundContractor == null) {
+			throw new NotFoundException(String.format("Contractor id=%d not found!", contractorId));
+		}
+		return foundContractor;
+	}
+
 
 	@POST
 	public Response requestTransaction(@Valid HiringTransactionRequest hiringTransactionRequest) {
 
-
-		//  check equipment id
-		EquipmentEntity foundEquipment = equipmentDAO.findByID(hiringTransactionRequest.getEquipmentId());
-		if (foundEquipment == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Equipment id not found!")).build();
-		}
-
-		ContractorEntity foundRequester = contractorDAO.findByID(hiringTransactionRequest.getRequesterId());
-		if (foundRequester == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Requester id not found!")).build();
-		}
-		// TODO: 2/17/19 get requester id from cookie
+		validator.validateAddHiringTransaction(hiringTransactionRequest);
 
 
 		// TODO: 2/17/19 map this properly with modelmapper
-		HiringTransactionEntity hiringTransactionEntity = new HiringTransactionEntity(
-				hiringTransactionRequest, foundEquipment, foundRequester
-		);
+		HiringTransactionEntity hiringTransactionEntity = new HiringTransactionEntity(hiringTransactionRequest);
 
 
-		//already checked by DTO validation
-//		if (hiringTransactionEntity.getBeginDate() == null || hiringTransactionEntity.getEndDate() == null) {
-//			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("Date is missing!")).build();
-//
-//		}
-		// TODO: 1/30/19 check not null for other data
+		EquipmentEntity foundEquipment = validateEquipment(hiringTransactionRequest.getEquipmentId());
 
-
-		//validate begindate enddate
-		if (hiringTransactionEntity.getBeginDate().isAfter(hiringTransactionEntity.getEndDate())) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("beginDate>endDate")).build();
-		}
-
-		//  1/30/19 check requester activation
-		if (!foundRequester.isActivated()) {
-			return Response.status((Response.Status.BAD_REQUEST)).entity(new MessageResponse("Requester is not activated!")).build();
-		}
-		//  1/30/19 set equipment location from equipment id
-
-		if (
-				foundEquipment.getAddress() == null
-						||
-						foundEquipment.getAddress().isEmpty()
-						||
-						foundEquipment.getLongitude() == null
-						|| foundEquipment.getLatitude() == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("equipment id=%d location data not completed", foundEquipment.getId()))).build();
-		}
 		hiringTransactionEntity.setEquipmentAddress(foundEquipment.getAddress());
 		hiringTransactionEntity.setEquipmentLongitude(foundEquipment.getLongitude());
 		hiringTransactionEntity.setEquipmentLatitude(foundEquipment.getLatitude());
-
-
-		// todo  1/30/19 validate equipment is available at that date
-		if (!equipmentDAO.validateEquipmentAvailable(
-				foundEquipment.getId(),
-				hiringTransactionEntity.getBeginDate()
-				, hiringTransactionEntity.getEndDate())) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new
-					MessageResponse("equipment not available on that date!")).build();
-		}
-
-
 		//  1/30/19 set status to pending
 		hiringTransactionEntity.setStatus(HiringTransactionEntity.Status.PENDING);
 

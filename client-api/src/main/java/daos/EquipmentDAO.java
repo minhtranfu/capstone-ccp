@@ -247,6 +247,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>   {
 		}
 	}
 
+
 }
 
 // TODO: 2/22/19 make the dao singleton for a publisher pattern !

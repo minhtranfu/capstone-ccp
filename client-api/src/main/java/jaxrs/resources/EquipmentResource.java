@@ -261,7 +261,7 @@ public class EquipmentResource {
 		;
 		//add all children from new equipment
 		equipmentEntity.setStatus(foundEquipment.getStatus());
-		
+
 		equipmentDAO.merge(equipmentEntity);
 		Response.ResponseBuilder builder = Response.status(Response.Status.OK).entity(
 				equipmentDAO.findByID(equipmentEntity.getId())

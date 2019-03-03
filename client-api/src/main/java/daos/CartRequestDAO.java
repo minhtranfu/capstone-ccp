@@ -22,4 +22,9 @@ public class CartRequestDAO extends BaseDAO<CartRequestEntity, Long> {
 				.getResultList();
 	}
 
+	public void transferFromCartToTransaction(long requesterId) {
+		entityManager.createNamedStoredProcedureQuery("CartRequestEntity.transferFromCartToTransaction")
+				.setParameter("$requester_id", requesterId)
+				.execute();
+	}
 }

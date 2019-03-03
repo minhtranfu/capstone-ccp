@@ -1,7 +1,10 @@
 package entities;
 
 
+import dtos.requests.HiringTransactionRequest;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -9,23 +12,61 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "cart_request", schema = "capstone_ccp", catalog = "")
 @NamedQuery(name = "CartRequestEntity.getByContractorId", query = "select e from CartRequestEntity e where e.sent = false and  e.contractor.id = :contractorId")
+@NamedStoredProcedureQuery(
+		name = "CartRequestEntity.transferFromCartToTransaction"
+		, procedureName = "transfer_from_cart_to_transaction"
+		, parameters = {
+		@StoredProcedureParameter(mode = ParameterMode.IN, type = Long.class, name = "$requester_id")
+})
 public class CartRequestEntity {
 	private long id;
+	@NotNull
 	private LocalDate beginDate;
+	@NotNull
 	private LocalDate endDate;
+	@NotNull
 	private String requesterAddress;
+	@NotNull
 	private Double requesterLong;
+	@NotNull
 	private Double requesterLat;
+
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 
+	@NotNull
 	private EquipmentEntity equipment;
+
 	private ContractorEntity contractor;
 
 	private boolean isSent;
 
 
-	// TODO: 2/27/19 fixing generation strategy for hibernte not found hibernate_sequence
+	public CartRequestEntity() {
+	}
+
+	// TODO: 3/3/19 model mapper here
+	public CartRequestEntity(HiringTransactionRequest hiringTransactionRequest) {
+		beginDate = hiringTransactionRequest.getBeginDate();
+		endDate = hiringTransactionRequest.getEndDate();
+		requesterAddress = hiringTransactionRequest.getRequesterAddress();
+		requesterLong = hiringTransactionRequest.getRequesterLongitude();
+
+		requesterLat = hiringTransactionRequest.getRequesterLatitude();
+
+		EquipmentEntity equipment = new EquipmentEntity();
+		equipment.setId(hiringTransactionRequest.getEquipmentId());
+
+		this.equipment = equipment;
+
+
+		ContractorEntity contractorEntity = new ContractorEntity();
+		contractorEntity.setId(hiringTransactionRequest.getRequesterId());
+
+		this.contractor = contractorEntity;
+		isSent = false;
+	}
+
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)

@@ -21,9 +21,20 @@ public class HiringTransactionRequest {
 	@NotNull
 	private long equipmentId;
 
+	@NotNull
 	private long requesterId;
 
 	public HiringTransactionRequest() {
+	}
+
+	public HiringTransactionRequest(@NotNull LocalDate beginDate, @NotNull LocalDate endDate, @NotNull String requesterAddress, @NotNull double requesterLatitude, @NotNull double requesterLongitude, @NotNull long equipmentId, @NotNull long requesterId) {
+		this.beginDate = beginDate;
+		this.endDate = endDate;
+		this.requesterAddress = requesterAddress;
+		this.requesterLatitude = requesterLatitude;
+		this.requesterLongitude = requesterLongitude;
+		this.equipmentId = equipmentId;
+		this.requesterId = requesterId;
 	}
 
 	public LocalDate getBeginDate() {
