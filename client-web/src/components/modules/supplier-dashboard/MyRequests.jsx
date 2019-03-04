@@ -31,11 +31,6 @@ class MyRequests extends Component {
     [TRANSACTION_STATUSES.DENIED]: 'Denied'
   };
 
-  needActionStatuses = [
-    TRANSACTION_STATUSES.PENDING,
-    TRANSACTION_STATUSES.ACCEPTED
-  ];
-
   tabContents = {};
 
   needActionCounters = {};
@@ -373,7 +368,6 @@ class MyRequests extends Component {
   render() {
 
     this._renderTabContents();
-    console.log(this.needActionCounters);
 
     return (
       <div className="container py-5 user-dashboard">
