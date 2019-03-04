@@ -145,16 +145,12 @@ class MyTransaction extends Component {
     this.props.fetchListMyTransaction(13);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { listTransaction, detail, status } = this.props;
-    if (
-      listTransaction &&
-      prevProps.listTransaction &&
-      listTransaction.length !== prevProps.listTransaction.length
-    ) {
-      this.props.fetchListMyTransaction(13);
-    }
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   const { listTransaction, detail, status } = this.props;
+  //   if (listTransaction.length !== prevProps.listTransaction.length) {
+  //     this.props.fetchListMyTransaction(13);
+  //   }
+  // }
 
   _capitalizeCharacter = string => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -164,10 +160,12 @@ class MyTransaction extends Component {
     let newDate = new Date(date);
     let year = newDate.getFullYear();
     let month = newDate.getMonth() + 1;
+    let newMonth = month < 10 ? "0" + month : month;
     let day = newDate.getDate();
+    let newDay = day < 10 ? "0" + day : day;
     let dayOfWeek = weekDays[newDate.getDay()];
 
-    return dayOfWeek + ", " + day + "/" + month + "/" + year;
+    return dayOfWeek + ", " + newDay + "/" + newMonth + "/" + year;
   };
 
   _showAlert = (title, msg) => {
@@ -301,8 +299,8 @@ const styles = StyleSheet.create({
   rowWrapper: {
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.secondaryColorOpacity,
-    marginBottom: 10,
-    paddingBottom: 10
+    marginBottom: 15,
+    paddingBottom: 5
   },
   scrollContent: {
     flex: 0,

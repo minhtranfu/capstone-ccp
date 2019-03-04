@@ -5,9 +5,11 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  TouchableHighlight,
   FlatList,
   Modal,
-  Alert
+  Alert,
+  Dimensions
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -25,6 +27,7 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
 const ITEM_HEIGHT = 217;
+const width = Dimensions.get("window").width;
 
 @connect(
   state => ({
@@ -45,7 +48,10 @@ class SearchResult extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      modalVisible: false
+      modalVisible: true,
+      filterModalVisible: false,
+      fromDate: "",
+      toDate: ""
     };
   }
 
@@ -54,16 +60,16 @@ class SearchResult extends Component {
       query,
       lat,
       long,
-      fromDate,
-      toDate
+      beginDate,
+      endDate
     } = this.props.navigation.state.params;
     const fullAddress = query.main_text.concat(", ", query.secondary_text);
     this.props.fetchSearchEquipment(
       query.main_text,
       lat,
       long,
-      fromDate,
-      toDate
+      beginDate,
+      endDate
     );
   }
 
@@ -84,45 +90,12 @@ class SearchResult extends Component {
     });
   };
 
-  // componentWillUnmount() {
-  //   this.props.fetchClearSearchEquipment();
-  // }
-
-  _setModalVisible(visible) {
+  _setModalVisible = visible => {
     this.setState({ modalVisible: visible });
-  }
+  };
 
-  // _findResultByAddress = equipment => {
-  //   //Query response: main_text & secondary_text
-  //   const { query, lat, long } = this.props.navigation.state.params;
-  //   const result = equipment.filter(
-  //     item =>
-  //       item.address === query.main_text.concat(", ", query.secondary_text) &&
-  //       item.status === "AVAILABLE"
-  //   );
-  //   return result ? result : equipment;
-  // };
-
-  _renderItem = ({ item }) => {
-    const { query } = this.props.navigation.state.params;
-    return (
-      <EquipmentItem
-        onPress={() =>
-          this.props.navigation.navigate("SearchDetail", {
-            id: item.equipmentEntity.id,
-            query: query
-          })
-        }
-        key={`eq_${item.equipmentEntity.id}`}
-        id={item.equipmentEntity.id}
-        name={item.equipmentEntity.name}
-        imageURL={
-          "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-        }
-        address={item.equipmentEntity.address}
-        price={item.equipmentEntity.dailyPrice}
-      />
-    );
+  _setFilterModalVisible = visible => {
+    this.setState({ filterModalVisible: visible });
   };
 
   _formatDate = date => {
@@ -149,9 +122,130 @@ class SearchResult extends Component {
     return monthNames[monthIndex] + " " + day + newYear;
   };
 
+  _handleSubmitSearch = () => {
+    const {
+      query,
+      lat,
+      long,
+      beginDate,
+      endDate
+    } = this.props.navigation.state.params;
+    const { fromDate, toDate } = this.state;
+    if (fromDate && toDate) {
+      this.props.fetchSearchEquipment(
+        query.main_text,
+        lat,
+        long,
+        newBeginDate,
+        newEndDate
+      );
+    }
+    this._setModalVisible(!this.state.modalVisible);
+  };
+
+  _renderSearchModal = () => {
+    const { query, beginDate, endDate } = this.props.navigation.state.params;
+    return (
+      <Modal transparent={true} visible={this.state.modalVisible}>
+        <TouchableOpacity
+          activeOpacity={0}
+          style={styles.modalContainer}
+          onPress={() => this._setModalVisible(false)}
+        >
+          <SafeAreaView
+            forceInset={{ bottom: "always", top: "always" }}
+            style={styles.modalWrapper}
+          >
+            <View style={{ paddingHorizontal: 15 }}>
+              <View style={styles.rowWrapper}>
+                <Text style={styles.text}>Location</Text>
+                <Text style={styles.text}> {query.main_text}</Text>
+              </View>
+              <View style={styles.rowWrapper}>
+                <Text style={styles.text}>From</Text>
+                <Text style={styles.text}>{this._formatDate(beginDate)}</Text>
+              </View>
+              <View style={[styles.rowWrapper, { borderBottomWidth: 0 }]}>
+                <Text style={styles.text}>To</Text>
+                <Text style={styles.text}>{this._formatDate(endDate)}</Text>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.buttonWrapper}
+              onPress={() => {
+                this._handleSubmitSearch();
+              }}
+            >
+              <Text style={[styles.text, { color: "white" }]}>
+                Find equipment
+              </Text>
+            </TouchableOpacity>
+          </SafeAreaView>
+        </TouchableOpacity>
+      </Modal>
+    );
+  };
+
+  _renderFilterModal = () => {
+    return (
+      <Modal transparent={true} visible={this.state.filterModalVisible}>
+        <View style={styles.filterContainer}>
+          <View style={styles.filterWrapper}>
+            <TouchableOpacity
+              style={{
+                alignSelf: "flex-end",
+                marginRight: 15
+              }}
+              onPress={() => this._setFilterModalVisible(false)}
+            >
+              <Text style={styles.textDone}>Done</Text>
+            </TouchableOpacity>
+            <View style={styles.rowWrapper}>
+              <Text style={styles.text}>Sort By</Text>
+              <Text style={styles.text}>Desc | Asc </Text>
+            </View>
+            <View>
+              <Text>Hello World!</Text>
+
+              <TouchableHighlight
+                onPress={() => {
+                  this._setFilterModalVisible(!this.state.filterModalVisible);
+                }}
+              >
+                <Text>Hide Modal</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
+  _renderItem = ({ item }) => {
+    const { query } = this.props.navigation.state.params;
+    return (
+      <EquipmentItem
+        onPress={() =>
+          this.props.navigation.navigate("SearchDetail", {
+            id: item.equipmentEntity.id,
+            query: query
+          })
+        }
+        key={`eq_${item.equipmentEntity.id}`}
+        id={item.equipmentEntity.id}
+        name={item.equipmentEntity.name}
+        imageURL={
+          "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+        }
+        address={item.equipmentEntity.address}
+        price={item.equipmentEntity.dailyPrice}
+      />
+    );
+  };
+
   render() {
     const { listSearch, loading } = this.props;
-    const { query, fromDate, toDate } = this.props.navigation.state.params;
+    const { query, beginDate, endDate } = this.props.navigation.state.params;
     //const result = this._findResultByAddress(equipment);
     return (
       <SafeAreaView
@@ -173,12 +267,17 @@ class SearchResult extends Component {
               <TouchableOpacity
                 style={{ marginRight: 10 }}
                 onPress={() => {
-                  this.props.navigation.push("Search");
+                  this.setState({ modalVisible: true });
                 }}
               >
                 <Feather name="search" size={24} />
               </TouchableOpacity>
-              <TouchableOpacity style={{ marginRight: 10 }}>
+              <TouchableOpacity
+                style={{ marginRight: 10 }}
+                onPress={() => {
+                  this.setState({ filterModalVisible: true });
+                }}
+              >
                 <Feather name="sliders" size={24} />
               </TouchableOpacity>
               <TouchableOpacity>
@@ -187,29 +286,34 @@ class SearchResult extends Component {
             </View>
           )}
         >
-          <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <TouchableOpacity
+            style={{ alignItems: "center", justifyContent: "center" }}
+            onPress={() => this._setModalVisible(true)}
+          >
             <Text style={styles.title}>{query.main_text}</Text>
-            {fromDate && toDate ? (
-              <Text style={styles.caption}>
-                {this._formatDate(fromDate) + " - " + this._formatDate(toDate)}
-              </Text>
-            ) : null}
-          </View>
+            <Text style={styles.caption}>
+              {this._formatDate(beginDate) + " - " + this._formatDate(endDate)}
+            </Text>
+          </TouchableOpacity>
         </Header>
 
         {!loading ? (
-          <FlatList
-            style={{ flex: 1, paddingHorizontal: 15 }}
-            data={listSearch}
-            removeClippedSubviews={false}
-            renderItem={this._renderItem}
-            getItemLayout={(data, index) => ({
-              length: ITEM_HEIGHT,
-              offset: ITEM_HEIGHT * index,
-              index
-            })}
-            keyExtractor={(item, index) => index.toString()}
-          />
+          <View style={{ flex: 1 }}>
+            {this._renderSearchModal()}
+            {this._renderFilterModal()}
+            <FlatList
+              style={{ paddingTop: 15, paddingHorizontal: 15 }}
+              data={listSearch}
+              removeClippedSubviews={false}
+              renderItem={this._renderItem}
+              getItemLayout={(data, index) => ({
+                length: ITEM_HEIGHT,
+                offset: ITEM_HEIGHT * index,
+                index
+              })}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
         ) : (
           <Loading />
         )}
@@ -222,6 +326,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "flex-start",
+    backgroundColor: "rgba(0, 0, 0, 0.4)"
+  },
+  filterContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.4)"
+  },
+  modalWrapper: {
+    borderRadius: 5,
+    width: width,
+    height: 160,
+    backgroundColor: "white"
+  },
+  filterWrapper: {
+    borderRadius: 5,
+    width: width,
+    height: 200,
+    backgroundColor: "white",
+    paddingHorizontal: 15
+  },
+  rowWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottomWidth: 1,
+    paddingVertical: 10
+  },
+  buttonWrapper: {
+    backgroundColor: "green",
+    width: width,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center"
+  },
   title: {
     fontSize: fontSize.h4,
     fontWeight: "600"
@@ -229,6 +370,17 @@ const styles = StyleSheet.create({
   caption: {
     fontSize: fontSize.caption,
     fontWeight: "400"
+  },
+  text: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500"
+  },
+  textDone: {
+    fontWeight: "500",
+    fontSize: fontSize.bodyText,
+    color: colors.secondaryColor,
+    paddingTop: 15,
+    paddingBottom: 15
   }
 });
 

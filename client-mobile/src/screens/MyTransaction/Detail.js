@@ -22,6 +22,7 @@ import {
   cancelTransaction
 } from "../../redux/actions/transaction";
 
+import Item from "./components/Item";
 import InputField from "../../components/InputField";
 import Dropdown from "../../components/Dropdown";
 import Header from "../../components/Header";
@@ -195,18 +196,43 @@ class MyTransactionDetail extends Component {
     </View>
   );
 
+  _renderTransactionOnProcess = (status, equipment) => {
+    if (status === "ACCEPTED" && equipment.processingHiringTransaction) {
+      return (
+        <View style={styles.columnWrapper}>
+          <Text style={styles.title}>Transaction on processing</Text>
+          <Item
+            imageURL={
+              "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+            }
+            name={equipment.name}
+            beginDate={equipment.processingHiringTransaction.beginDate}
+            endDate={equipment.processingHiringTransaction.endDate}
+            status={equipment.processingHiringTransaction.status}
+            onPress={() =>
+              this.props.navigation.navigate("MyTransactionDetail", {
+                id: equipment.processingHiringTransaction.id
+              })
+            }
+          />
+        </View>
+      );
+    }
+    return null;
+  };
+
   _renderScrollViewItem = detail => {
+    console.log(detail);
     const totalDay = this._countTotalDay(detail.beginDate, detail.endDate);
     const totalPrice = totalDay * detail.dailyPrice;
     const { id } = this.props.navigation.state.params;
     return (
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.imageWrapper}>
-          <Image
-            source={{
-              uri:
-                "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-            }}
+          <ImageCache
+            uri={
+              "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+            }
             resizeMode={"cover"}
             style={styles.image}
           />
@@ -241,7 +267,7 @@ class MyTransactionDetail extends Component {
           </View>
         </View>
         {this._renderContractor(detail)}
-        <View style={styles.columnWrapper} />
+        {this._renderTransactionOnProcess(detail.status, detail.equipment)}
         {this._renderBottomButton(detail.status, id)}
       </View>
     );
@@ -317,9 +343,10 @@ const styles = StyleSheet.create({
     fontWeight: "500"
   },
   title: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "500",
-    color: colors.text
+    fontSize: fontSize.h4,
+    fontWeight: "400",
+    color: colors.text,
+    marginBottom: 10
   },
   text: {
     fontSize: fontSize.bodyText,

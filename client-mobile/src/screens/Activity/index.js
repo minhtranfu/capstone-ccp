@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: fontSize.h4,
-    fontWeight: "600"
+    fontWeight: "500"
   },
   text: {
     fontSize: fontSize.bodyText,

@@ -73,10 +73,7 @@ export function searchEquipment(
   pageNo
 ) {
   const page = pageNo > 0 ? pageNo : 0;
-  let url =
-    beginDate && endDate
-      ? `equipments?begin_date=${beginDate}&end_date=${endDate}&long=${long}&lad=${lat}&lquery=${address}&offset=${page}&limit=10`
-      : `equipments?long=${long}&lad=${lat}&lquery=${address}&offset=${page}&limit=10`;
+  let url = `equipments?begin_date=${beginDate}&end_date=${endDate}&long=${long}&lad=${lat}&lquery=${address}&offset=${page}&limit=100`;
   return async dispatch => {
     try {
       dispatch({

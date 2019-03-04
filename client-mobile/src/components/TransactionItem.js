@@ -101,10 +101,16 @@ const styles = StyleSheet.create({
     marginVertical: 5
   },
   dateWrapper: {
-    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 15
+    marginTop: 10
+  },
+  dateBorder: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.secondaryColorOpacity,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5
   },
   statusWrapper: {
     alignItems: "center",

@@ -77,47 +77,42 @@ class Search extends Component {
     this.setState({ fromDate, toDate });
   };
 
-  _renderRowItem = (item, index) => (
-    <TouchableOpacity
-      key={index}
-      style={styles.buttonWrapper}
-      onPress={() =>
-        this.props.navigation.navigate("Result", {
-          query: item,
-          lat: this.state.currentLat,
-          long: this.state.currentLong,
-          fromDate: this.state.fromDate,
-          toDate: this.state.toDate
-        })
-      }
-    >
-      <Text style={styles.text}>{item.main_text}</Text>
-      <Text style={styles.secondaryText}>{item.secondary_text}</Text>
-    </TouchableOpacity>
-  );
-
   _formatDate = date => {
-    var monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec"
-    ];
     let newDate = new Date(date);
     let year = newDate.getFullYear();
-    let monthIndex = newDate.getMonth();
+    let month = newDate.getMonth() + 1;
     let day = newDate.getDate();
+    return year + "-" + month + "-" + day;
+  };
 
-    let newYear = year === 2019 ? "" : "," + year;
-    return monthNames[monthIndex] + " " + day + newYear;
+  _handleDateRange = days => {
+    let today = new Date();
+    let result = today.setDate(today.getDate() + days);
+    return this._formatDate(result);
+  };
+
+  _renderRowItem = (item, index) => {
+    const { currentLat, currentLong, fromDate, toDate } = this.state;
+    const beginDate = this._formatDate(Date.now());
+    const endDate = this._handleDateRange(30);
+    return (
+      <TouchableOpacity
+        key={index}
+        style={styles.buttonWrapper}
+        onPress={() =>
+          this.props.navigation.navigate("Result", {
+            query: item,
+            lat: currentLat,
+            long: currentLong,
+            beginDate: beginDate,
+            endDate: endDate
+          })
+        }
+      >
+        <Text style={styles.text}>{item.main_text}</Text>
+        <Text style={styles.secondaryText}>{item.secondary_text}</Text>
+      </TouchableOpacity>
+    );
   };
 
   _renderCalendar = () => {
@@ -168,7 +163,7 @@ class Search extends Component {
             </TouchableOpacity>
           )}
         />
-        <View
+        {/* <View
           style={{
             marginVertical: 5,
             height: 30,
@@ -190,21 +185,8 @@ class Search extends Component {
                 ? `${this._formatDate(fromDate)} - ${this._formatDate(toDate)}`
                 : "Dates"}
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              paddingHorizontal: 15,
-              alignItems: "center",
-              justifyContent: "center",
-              borderWidth: StyleSheet.hairlineWidth,
-              borderRadius: 5
-            }}
-          >
-            <Text style={{ fontSize: fontSize.caption, fontWeight: "500" }}>
-              Filters
-            </Text>
-          </TouchableOpacity>
-        </View>
+          </TouchableOpacity> */}
+        {/* </View> */}
         <ScrollView>
           {this._renderCalendar()}
           {location.length > 0 ? (
