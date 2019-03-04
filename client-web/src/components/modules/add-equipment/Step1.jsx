@@ -51,14 +51,6 @@ class AddEquipmentStep1 extends Step {
     fetchEquipmentTypes();
   };
 
-  _onChangeEquipType = (e) => {
-    // const equipTypeId = e.target.value;
-    // const { fetchEquipmentTypeSpecs } = this.props;
-
-    // fetchEquipmentTypeSpecs(equipTypeId);
-    this._handleFieldChange(e);
-  };
-
   _onChangeDescription = (description) => {
     this.setState({ description });
   };
@@ -69,17 +61,11 @@ class AddEquipmentStep1 extends Step {
       availableTimeRanges = [];
     }
 
-    // if (availableTimeRanges[rangeId] == undefined) {
-    //   availableTimeRanges[rangeId] = {};
-    // }
     availableTimeRanges[rangeId] = {
       beginDate: picker.startDate.format('YYYY-MM-DD'),
       endDate: picker.endDate.format('YYYY-MM-DD')
     };
 
-    // ranges[rangeId].startDate = picker.startDate;
-    // ranges[rangeId].endDate = picker.endDate;
-    // console.log(ranges);
     this.setState({
       availableTimeRanges
     });
@@ -104,12 +90,24 @@ class AddEquipmentStep1 extends Step {
   _handleFieldChange = e => {
     const name = e.target.name;
     let value = e.target.value;
+
+    if (name === 'constructionId') {
+      this._handleSelectConstruction(value);
+    }
+
     if (!isNaN(value)) {
       value = +value;
     }
-    this.setState({
+
+    const newState = {
       [name]: value
-    });
+    };
+
+    if (name === 'address') {
+      newState.isAddressEditted = true;
+    }
+
+    this.setState(newState);
   };
 
   _handleSubmitForm = () => {
@@ -130,7 +128,7 @@ class AddEquipmentStep1 extends Step {
     for (let i = 0; i < numOfRange; i++) {
       dateRangePickers.push(
         <div className="form-group">
-          <label htmlFor="">Available time</label>
+          <label htmlFor="">Available time:</label>
           <DateRangePicker minDate={moment()} onApply={(e, picker) => this._onChangeDateRanage(picker, i)} containerClass="w-100" startDate="1/1/2014" endDate="3/1/2014" autoUpdateInput timePicker timePicker24Hour>
             <div className="input-group date-range-picker">
               <input type="text" className="form-control" readOnly value={this._getLabelOfRange(i) || ''} />
@@ -153,6 +151,41 @@ class AddEquipmentStep1 extends Step {
     this.setState({
       numOfRange
     });
+  };
+
+  // When select construction, change address of equipment too
+  _handleSelectConstruction = constructionId => {
+    const { isAddressEditted, constructions } = this.state;
+
+    if (isAddressEditted) {
+      return;
+    }
+
+    const selectedContruction = constructions.find(construction => +construction.id === +constructionId);
+    this.setState({
+      address: selectedContruction.address
+    });
+  };
+
+  _getShowablePrice = (amount, decimalCount = 2, decimal = ".", thousands = ",") => {
+
+    if (!amount) {
+      return '';
+    }
+  
+    try {
+      decimalCount = Math.abs(decimalCount);
+      decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+  
+      const negativeSign = amount < 0 ? "-" : "";
+  
+      let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+      let j = (i.length > 3) ? i.length % 3 : 0;
+  
+      return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+    } catch (e) {
+      return '';
+    }
   };
 
   render() {
@@ -180,11 +213,11 @@ class AddEquipmentStep1 extends Step {
             </div>
             <div className="form-group">
               <label htmlFor="">Address: <i className="text-danger">*</i></label>
-              <input type="text" className="form-control" />
+              <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" />
             </div>
             <div className="form-group">
-              <label htmlFor="">Equipment type <i className="text-danger">*</i></label>
-              <select name="equipmentTypeId" onChange={this._onChangeEquipType} data-live-search="true" value={this.state.equipmentTypeId || ''} id="equip_type_id" className="form-control selectpicker">
+              <label htmlFor="">Equipment type: <i className="text-danger">*</i></label>
+              <select name="equipmentTypeId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.equipmentTypeId || ''} id="equip_type_id" className="form-control selectpicker">
                 <option value="">Choose...</option>
                 {equipmentTypes && equipmentTypes.data && equipmentTypes.data.map(type => {
                   return (<option value={type.id} key={type.id}>{type.name}</option>);
@@ -194,12 +227,12 @@ class AddEquipmentStep1 extends Step {
           </div>
           <div className="col-md-6">
             <div className="form-group">
-              <label htmlFor="daily_price">Price per day <i className="text-danger">*</i></label>
-              <input type="number" name="dailyPrice" onChange={this._handleFieldChange} value={this.state.dailyPrice || ''} className="form-control" id="daily_price" required />
+              <label htmlFor="daily_price">Price per day (K): <i className="text-danger">*</i></label>
+              <input type="number" name="dailyPrice" onChange={this._handleFieldChange} defaultValue={this._getShowablePrice(this.state.showableDailyPrice)} className="form-control" id="daily_price" required />
             </div>
             <div className="form-group">
-              <label htmlFor="delivery_price">Delivery price per km <i className="text-danger">*</i></label>
-              <input type="number" name="deliveryPrice" onChange={this._handleFieldChange} value={this.state.deliveryPrice || ''} className="form-control" id="delivery_price" required />
+              <label htmlFor="delivery_price">Delivery price per km (K): <i className="text-danger">*</i></label>
+              <input type="number" name="deliveryPrice" onChange={this._handleFieldChange} defaultValue={this._getShowablePrice(this.state.showableDeliveryPrice)} className="form-control" id="delivery_price" required />
             </div>
             {this._renderDateRangePickers()}
             <div className="form-group text-center">
