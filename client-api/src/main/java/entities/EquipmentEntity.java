@@ -20,7 +20,7 @@ import java.util.List;
 @NamedQueries({
 		@NamedQuery(name = "EquipmentEntity.searchEquipment", query = "select e from EquipmentEntity  e where exists (select t from e.availableTimeRanges t where t.beginDate <= :curBeginDate and :curBeginDate <= :curEndDate  and  :curEndDate <= t.endDate)")
 		, @NamedQuery(name = "EquipmentEntity.getAll", query = "select  e from EquipmentEntity e")
-		,@NamedQuery(name = "EquipmentEntity.getOverdateRenting", query = "select e from EquipmentEntity  e where e.status = 'RENTING' and exists (select t from e.processingHiringTransactions t where t.endDate < current_date )")
+		, @NamedQuery(name = "EquipmentEntity.getOverdateRenting", query = "select e from EquipmentEntity  e where e.status = 'RENTING' and exists (select t from e.processingHiringTransactions t where t.endDate < current_date )")
 })
 
 public class EquipmentEntity implements Serializable {
@@ -44,7 +44,7 @@ public class EquipmentEntity implements Serializable {
 	private EquipmentTypeEntity equipmentType;
 
 	private ContractorEntity contractor;
-	private ConstructionEntity  construction;
+	private ConstructionEntity construction;
 
 	private List<AvailableTimeRangeEntity> availableTimeRanges;
 	private Collection<DescriptionImageEntity> descriptionImages;
@@ -155,7 +155,7 @@ public class EquipmentEntity implements Serializable {
 	}
 
 	// TODO: 2/27/19 orphan removal here !
-	@OneToMany(mappedBy = "equipment",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<AvailableTimeRangeEntity> getAvailableTimeRanges() {
 		return availableTimeRanges;
 	}
@@ -285,7 +285,6 @@ public class EquipmentEntity implements Serializable {
 	}
 
 
-
 	@JsonbTransient
 	@XmlTransient
 	@OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)
@@ -300,7 +299,7 @@ public class EquipmentEntity implements Serializable {
 
 	@JsonbTransient
 	@XmlTransient
-	@OneToMany(mappedBy = "equipment",fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)
 	@Where(clause = "status = 'PROCESSING' and is_deleted=0")
 	public List<HiringTransactionEntity> getProcessingHiringTransactions() {
 		return processingHiringTransactions;
@@ -312,7 +311,7 @@ public class EquipmentEntity implements Serializable {
 
 	@Transient
 	public IndependentHiringTransactionWrapper getProcessingHiringTransaction() {
-		if (getProcessingHiringTransactions().size() > 0) {
+		if (getProcessingHiringTransactions() != null && getProcessingHiringTransactions().size() > 0) {
 			return new IndependentHiringTransactionWrapper(getProcessingHiringTransactions().get(0));
 		} else {
 			return null;
@@ -321,7 +320,7 @@ public class EquipmentEntity implements Serializable {
 
 	@JsonbTransient
 	@XmlTransient
-	@OneToMany(mappedBy = "equipment",fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "equipment", fetch = FetchType.LAZY)
 	@Where(clause = "(status = 'PROCESSING' or status='ACCEPTED') and is_deleted=0")
 	public List<HiringTransactionEntity> getActiveHiringTransactionEntities() {
 		return activeHiringTransactionEntities;
@@ -334,8 +333,11 @@ public class EquipmentEntity implements Serializable {
 	@Transient
 	public List<IndependentHiringTransactionWrapper> getActiveHiringTransactions() {
 		ArrayList<IndependentHiringTransactionWrapper> result = new ArrayList<>();
-		for (HiringTransactionEntity activeHiringTransactionEntity : getActiveHiringTransactionEntities()) {
-			result.add(new IndependentHiringTransactionWrapper(activeHiringTransactionEntity));
+		if (getActiveHiringTransactionEntities() != null) {
+
+			for (HiringTransactionEntity activeHiringTransactionEntity : getActiveHiringTransactionEntities()) {
+				result.add(new IndependentHiringTransactionWrapper(activeHiringTransactionEntity));
+			}
 		}
 		return result;
 	}

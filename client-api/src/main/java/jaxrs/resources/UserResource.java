@@ -1,10 +1,8 @@
 package jaxrs.resources;
 
 //import com.sun.jersey.spi.container.ResourceFilters;
-import utils.DBUtils;
 
 //import javax.enterprise.context.RequestScoped;
-import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;

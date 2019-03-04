@@ -7,7 +7,6 @@ import dtos.responses.MessageResponse;
 import entities.ContractorEntity;
 import entities.FeedbackEntity;
 import entities.FeedbackTypeEntity;
-import utils.DBUtils;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;

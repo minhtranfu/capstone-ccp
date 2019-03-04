@@ -2,11 +2,8 @@ package daos;
 
 import entities.EquipmentEntity;
 import entities.SubscriptionEntity;
-import utils.DBUtils;
 
-import javax.ejb.Singleton;
 import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -16,7 +13,7 @@ import java.util.List;
 @Stateless
 public class SubscriptionDAO extends BaseDAO<SubscriptionEntity, Long> {
 
-	@PersistenceContext(unitName = DBUtils.PERSISTANCE_UNIT)
+	@PersistenceContext
 	EntityManager entityManager;
 	public List<SubscriptionEntity> getMatchedSubscriptions(EquipmentEntity equipmentEntity) {
 		if (equipmentEntity.getStatus() != EquipmentEntity.Status.AVAILABLE) {

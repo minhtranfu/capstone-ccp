@@ -2,9 +2,7 @@ package jaxrs.resources;
 
 import daos.FeedbackDAO;
 import daos.SubscriptionDAO;
-import entities.FeedbackEntity;
 import entities.SubscriptionEntity;
-import utils.DBUtils;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;

@@ -6,6 +6,7 @@ import javax.json.bind.annotation.JsonbTransient;
 import javax.naming.Name;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 import java.time.LocalDate;
 

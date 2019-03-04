@@ -1,6 +1,9 @@
 package dtos;
 
+import javax.validation.constraints.NotNull;
+
 public class IdOnly {
+	@NotNull
 	private long id;
 
 

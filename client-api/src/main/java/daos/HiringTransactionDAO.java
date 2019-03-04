@@ -1,12 +1,8 @@
 package daos;
 
-import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
-import utils.DBUtils;
 
-import javax.ejb.Singleton;
 import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
