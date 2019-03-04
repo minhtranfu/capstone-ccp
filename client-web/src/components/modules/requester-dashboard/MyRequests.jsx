@@ -9,7 +9,8 @@ import Skeleton from 'react-loading-skeleton';
 import {
   TRANSACTION_STATUSES,
   EQUIPMENT_STATUSES,
-  EQUIPMENT_SHOWABLE_STATUSES } from '../../../common/consts';
+  EQUIPMENT_SHOWABLE_STATUSES
+} from '../../../common/consts';
 import ccpApiService from '../../../services/domain/ccp-api-service';
 
 class MyRequests extends Component {
@@ -173,16 +174,16 @@ class MyRequests extends Component {
     switch (transaction.status) {
       case TRANSACTION_STATUSES.PENDING:
         statusClasses += ' badge-info';
+        break;
+
+      case TRANSACTION_STATUSES.ACCEPTED:
+        statusClasses += 'badge-success';
         this._countNeedActionForStatus(transaction.status);
         changeStatusButtons = (
           <div className="mt-2">
             <button className="btn btn-sm btn-outline-danger" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.CANCELED)}>Cancel</button>
           </div>
         );
-        break;
-
-      case TRANSACTION_STATUSES.ACCEPTED:
-        statusClasses += 'badge-success';
         break;
 
       case TRANSACTION_STATUSES.DENIED:
@@ -433,7 +434,7 @@ class MyRequests extends Component {
           },
           confirm: {}
         });
-        
+
         return;
       }
 
@@ -486,7 +487,7 @@ class MyRequests extends Component {
           </SweetAlert>
         }
         {alert.title &&
-          <SweetAlert onConfirm={this._removeAlert} {...alert}/>
+          <SweetAlert onConfirm={this._removeAlert} {...alert} />
         }
       </div>
     );
