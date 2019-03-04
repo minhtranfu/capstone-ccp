@@ -41,7 +41,10 @@ const CcpApiService = {
   },
   updateEquipmentStatus(equipmentId, status) {
     return DataAccessService.put(`/equipments/${equipmentId}/status`, { status });
-  }
+  },
+  updateConstruction(constractorId, constructionId, data) {
+    return DataAccessService.put(`/contractors/${constractorId}/constructions/${constructionId}`, data);
+  },
 };
 
 export default CcpApiService;
