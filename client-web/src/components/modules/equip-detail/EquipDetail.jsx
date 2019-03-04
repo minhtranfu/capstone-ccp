@@ -87,8 +87,7 @@ class EquipDetail extends Component {
         transaction: {
           ...transaction,
           requesterLatitude: latitude,
-          requesterLongitude: longitude,
-          requesterAddress: 'Test address'
+          requesterLongitude: longitude
         }
       });
     });
@@ -104,6 +103,22 @@ class EquipDetail extends Component {
         ...transaction,
         beginDate: picker.startDate,
         endDate: picker.endDate
+      }
+    });
+  };
+
+  /**
+   * Handle chaning requester address
+   */
+  _handleChangeAddress = e => {
+    const { transaction } = this.state;
+    const name = e.target.name;
+    const value = e.target.value;
+
+    this.setState({
+      transaction: {
+        ...transaction,
+        [name]: value
       }
     });
   };
@@ -330,15 +345,24 @@ class EquipDetail extends Component {
               </div>
               <div className="request-card bg-white shadow">
                 <div className="my-2">Daily price: <span className="float-right"><i className="fa fa-dollar"></i>{equip.dailyPrice}</span></div>
-                <div className="my-2">Delivery price: <span className="float-right"><i className="fa fa-dollar"></i>{equip.deliveryPrice}</span></div>
-                <DateRangePicker isInvalidDate={this._isInvalidDate} minDate={moment()} onApply={this._onChangeDateRanage} containerClass="w-100" data-range-id="1" startDate="1/1/2014" endDate="3/1/2014">
-                  <div className="input-group date-range-picker">
-                    <input type="text" className="form-control" readOnly value={this._getLabelOfRange(0) || ''} />
-                    <div className="input-group-append">
-                      <span className="input-group-text" id="basic-addon2"><i className="fa fa-calendar"></i></span>
+                <div className="my-2 pb-2 border-bottom">Delivery price: <span className="float-right"><i className="fa fa-dollar"></i>{equip.deliveryPrice}</span></div>
+                
+                <div className="form-group">
+                  <label htmlFor="requesterAddress"><strong>Receive address:</strong></label>
+                  <input type="text" name="requesterAddress" id="requesterAddress" onChange={this._handleChangeAddress} className="form-control" placeholder="Where you want to receive equipment"/>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="timeRange"><strong>Time:</strong></label>
+                  <DateRangePicker isInvalidDate={this._isInvalidDate} minDate={moment()} onApply={this._onChangeDateRanage} containerClass="w-100" data-range-id="1" startDate="1/1/2014" endDate="3/1/2014">
+                    <div className="input-group date-range-picker">
+                      <input type="text" id="timeRange" className="form-control" readOnly value={this._getLabelOfRange(0) || ''} />
+                      <div className="input-group-append">
+                        <span className="input-group-text" id="basic-addon2"><i className="fa fa-calendar"></i></span>
+                      </div>
                     </div>
-                  </div>
-                </DateRangePicker>
+                  </DateRangePicker>
+                </div>
                 <div className="text-center border-top border-bottom my-3 py-2">
                   {!transaction.beginDate &&
                     <span className="text-muted">Pick a time range to see fee</span>
@@ -350,12 +374,12 @@ class EquipDetail extends Component {
                     </div>
                   }
                 </div>
-                <button className="btn btn-success btn-block mt-2" disabled={isFetching || !transaction.beginDate} onClick={this._postTransaction}>
+                <button className="btn btn-success btn-block mt-2" disabled={isFetching || !transaction.beginDate || !transaction.requesterAddress} onClick={this._postTransaction}>
                   {isFetching &&
                     <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
                   }
                   Request for hiring
-                  </button>
+                </button>
               </div>
             </div>
           </div>
