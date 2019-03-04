@@ -1,7 +1,6 @@
 package jaxrs.resources;
 
 import daos.ConstructionDAO;
-import dtos.responses.MessageResponse;
 import entities.ConstructionEntity;
 import entities.ContractorEntity;
 
@@ -41,22 +40,11 @@ public class ConstructionResource {
 		return Response.ok(contractorEntity.getConstructions()).build();
 	}
 
-	public void validateContructionId(long constructionId) {
+	public void validateContructionAll(long constructionId) {
 		//validate construction id
-		ConstructionEntity foundConstruction = constructionDao.findByID(constructionId);
-		if (foundConstruction == null) {
-			throw new NotFoundException(String.format("construction id=%s not found!", constructionId));
-		}
+		ConstructionEntity foundConstruction = constructionDao.findByIdWithValidation(constructionId);
 
-
-		boolean validateConstructionBelongsToConstructor = false;
-
-		for (ConstructionEntity construction : contractorEntity.getConstructions()) {
-			if (construction.getId() == constructionId) {
-				validateConstructionBelongsToConstructor = true;
-			}
-		}
-		if (!validateConstructionBelongsToConstructor) {
+		if (foundConstruction.getContractor().getId() != contractorEntity.getId()) {
 			throw new BadRequestException(String.format("construction id=%s not belongs to contractor id=%s!"
 					, constructionId, contractorEntity.getId()
 			));
@@ -72,7 +60,7 @@ public class ConstructionResource {
 			@PathParam("constructionId") long constructionId
 	) {
 
-		validateContructionId(constructionId);
+		validateContructionAll(constructionId);
 		return Response.ok(constructionDao.findByID(constructionId)).build();
 	}
 
@@ -94,7 +82,7 @@ public class ConstructionResource {
 			@Valid ConstructionEntity constructionEntity
 	) {
 
-		validateContructionId(constructionId);
+		validateContructionAll(constructionId);
 
 
 		ConstructionEntity foundConstruction = constructionDao.findByID(constructionId);
@@ -118,7 +106,7 @@ public class ConstructionResource {
 	public Response deleteConstructionByContractorId(
 			@PathParam("constructionId") long constructionId) {
 
-		validateContructionId(constructionId);
+		validateContructionAll(constructionId);
 		ConstructionEntity foundConstruction = constructionDao.findByID(constructionId);
 		foundConstruction.setDeleted(true);
 		constructionDao.merge(foundConstruction);

@@ -1,25 +1,24 @@
 package jaxrs.resources;
 
 import daos.*;
+import dtos.requests.EquipmentPostRequest;
+import dtos.requests.EquipmentRequest;
 import dtos.responses.EquipmentResponse;
 import dtos.wrappers.LocationWrapper;
 import dtos.responses.MessageResponse;
 import entities.*;
 import utils.CommonUtils;
+import utils.ModelConverter;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.time.LocalDate;
 import java.util.List;
 
 @Path("/equipments")
@@ -38,6 +37,9 @@ public class EquipmentResource {
 
 	@Inject
 	AdditionalSpecsFieldDAO additionalSpecsFieldDAO;
+
+	@Inject
+	ModelConverter modelConverter;
 
 
 	/*========Constants============*/
@@ -188,7 +190,6 @@ public class EquipmentResource {
 		}
 
 
-
 		//todo validate for additionalSpecsValues
 		if (equipmentEntity.getAdditionalSpecsValues() != null) {
 
@@ -239,21 +240,18 @@ public class EquipmentResource {
 //		foundEquipment.deleteAllAvailableTimeRange();
 
 		// validate time range begin end correct
-		if (!equipmentDAO.validateBeginEndDate(equipmentEntity.getAvailableTimeRanges())) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("beginDate > endDate !!!"));
-			return responseBuilder.build();
-		}
+		validateBeginEndDate(equipmentEntity.getAvailableTimeRanges());
 
 		// validate time range not intersect !!!
 		if (!equipmentDAO.validateNoIntersect(equipmentEntity.getAvailableTimeRanges())) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("TimeRanges must not be intersect !!!"));
-			return responseBuilder.build();
+			throw new BadRequestException("TimeRanges must not be intersect !!!");
 		}
-//		equipmentDAO.merge(foundEquipment);
 
 
 		//todo delete image
+
 		//todo delete location
+
 		//todo delete construction
 		;
 		//add all children from new equipment
@@ -266,71 +264,42 @@ public class EquipmentResource {
 		return CommonUtils.addFilterHeader(builder).build();
 	}
 
+	private void validateBeginEndDate(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {
+		for (AvailableTimeRangeEntity availableTimeRangeEntity : availableTimeRangeEntities) {
+			if (availableTimeRangeEntity.getBeginDate().isAfter(availableTimeRangeEntity.getEndDate())) {
+				throw new BadRequestException("TimeRange: beginDate must <= endDate !!!");
+			}
+		}
+	}
 
 	@POST
-	public Response postEquipment(EquipmentEntity equipmentEntity) {
+	public Response postEquipment(@Valid EquipmentPostRequest equipmentRequest) {
 		//clean equipment entity
 
-		//remove id
-		equipmentEntity.setId(0);
-
-		//remove status
-		equipmentEntity.setStatus(null);
-
-		if (equipmentEntity.getLatitude() == null) {
-			equipmentEntity.setLatitude(Double.parseDouble(DEFAULT_LAT));
-		}
-
-		if (equipmentEntity.getLongitude() == null) {
-			equipmentEntity.setLongitude(Double.parseDouble(DEFAULT_LONG));
-		}
+		EquipmentEntity equipmentEntity = modelConverter.toEntity(equipmentRequest);
 
 
-		//check for constructor id
-		if (equipmentEntity.getContractor() == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor is null"));
-			return responseBuilder.build();
+		//check for constructor id null
+		long contractorId = equipmentEntity.getContractor().getId();
 
-		}
-		long constructorId = equipmentEntity.getContractor().getId();
+		ContractorEntity foundContractor = contractorDAO.findByIdWithValidation(contractorId);
 
-		ContractorEntity foundContractor = contractorDAO.findByID(constructorId);
-		if (foundContractor == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor not found"));
-			return responseBuilder.build();
-		}
+		//check for equipment type null
 
-		//check for equipment type
-
-		if (equipmentEntity.getEquipmentType() == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType is null"));
-			return responseBuilder.build();
-
-		}
 		long equipmentTypeId = equipmentEntity.getEquipmentType().getId();
 
-		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByID(equipmentTypeId);
-		if (foundEquipmentType == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType not found"));
-			return responseBuilder.build();
-		}
+		//validate equipment tye
+		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByIdWithValidation(equipmentTypeId);
 
 		//check construction
-		if (equipmentEntity.getConstruction() != null) {
-			long constructionId = equipmentEntity.getConstruction().getId();
-			ConstructionEntity foundConstructionEntity = constructionDAO.findByID(constructionId);
-			if (foundConstructionEntity == null) {
-				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("construction id=%d not found", constructionId))).build();
-			}
-
-			//todo validate
-			if (foundConstructionEntity.getContractor().getId() != equipmentEntity.getContractor().getId()) {
-				return Response.status(Response.Status.BAD_REQUEST).entity
-						(new MessageResponse(String.format("construction id=%d not belongs to contractor id=%d"
-								, constructionId
-								, foundContractor.getId()))).build();
-			}
+		long constructionId = equipmentEntity.getConstruction().getId();
+		ConstructionEntity foundConstructionEntity = constructionDAO.findByIdWithValidation(constructionId);
+		if (foundConstructionEntity.getContractor().getId() != equipmentEntity.getContractor().getId()) {
+			throw new BadRequestException(String.format("construction id=%d not belongs to contractor id=%d"
+					, constructionId
+					, foundContractor.getId()));
 		}
+
 
 		// TODO: 2/19/19 add available time ranges
 		for (AvailableTimeRangeEntity availableTimeRange : equipmentEntity.getAvailableTimeRanges()) {
@@ -345,10 +314,9 @@ public class EquipmentResource {
 
 		//todo validate for additionalSpecsValues
 		for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValues()) {
-			AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByID(additionalSpecsValueEntity.getAdditionalSpecsField().getId());
-			if (foundAdditionalSpecsFieldEntity == null) {
-				throw new BadRequestException(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()));
-			}
+			//validate field id
+			AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByIdWithValidation(
+					additionalSpecsValueEntity.getAdditionalSpecsField().getId());
 
 			//remove id for persist transaction
 			additionalSpecsValueEntity.setId(0);
@@ -361,12 +329,10 @@ public class EquipmentResource {
 					try {
 						Double.parseDouble(additionalSpecsValueEntity.getValue());
 					} catch (NumberFormatException e) {
-						return Response.status(Response.Status.BAD_REQUEST)
-								.entity(new MessageResponse(
-										String.format("AdditionalSpecsField value=%s is not %s"
-												, additionalSpecsValueEntity.getValue()
-												, foundAdditionalSpecsFieldEntity.getDataType())
-								)).build();
+						throw new BadRequestException(String.format("AdditionalSpecsField value=%s is not %s"
+								, additionalSpecsValueEntity.getValue()
+								, foundAdditionalSpecsFieldEntity.getDataType())
+						);
 					}
 
 					break;
@@ -374,22 +340,17 @@ public class EquipmentResource {
 					try {
 						Integer.parseInt(additionalSpecsValueEntity.getValue());
 					} catch (NumberFormatException e) {
-						return Response.status(Response.Status.BAD_REQUEST)
-								.entity(new MessageResponse(
-										String.format("AdditionalSpecsField value=%s is not %s"
-												, additionalSpecsValueEntity.getValue()
-												, foundAdditionalSpecsFieldEntity.getDataType())
-								)).build();
+						throw new BadRequestException(String.format("AdditionalSpecsField value=%s is not %s"
+								, additionalSpecsValueEntity.getValue()
+								, foundAdditionalSpecsFieldEntity.getDataType())
+						);
 					}
 					break;
 			}
 		}
 
 		//validate time range begin end correct
-		if (!equipmentDAO.validateBeginEndDate(equipmentEntity.getAvailableTimeRanges())) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("TimeRange: beginDate must <= endDate !!!"));
-			return responseBuilder.build();
-		}
+		validateBeginEndDate(equipmentEntity.getAvailableTimeRanges());
 
 		//validate time range not intersect !!!
 		if (!equipmentDAO.validateNoIntersect(equipmentEntity.getAvailableTimeRanges())) {
@@ -401,26 +362,12 @@ public class EquipmentResource {
 		equipmentEntity.setEquipmentType(foundEquipmentType);
 
 		equipmentDAO.persist(equipmentEntity);
-		Response.ResponseBuilder builder = Response.status(Response.Status.CREATED).entity(
+		return Response.status(Response.Status.CREATED).entity(
 				equipmentDAO.findByID(equipmentEntity.getId())
-		);
-		return builder.build();
-
+		).build();
 
 	}
 
-
-//
-//	@GET
-//	@Path("/types")
-//	public Response getEquipmentTypes() {
-////        List<EquipmentType> resultList = manager.createQuery("SELECT et FROM EquipmentType et WHERE et.isActive = 1", EquipmentType.class).getResultList();
-//
-//
-//		DBUtils.getEntityManager().createNamedQuery("EquipmentTypeEntity.getAllEquipmentType").getResultList();
-//		List<EquipmentTypeEntity> result = equipmentTypeDAO.getAll("EquipmentTypeEntity.getAllEquipmentType");
-//		return CommonUtils.responseFilterOk(result);
-//	}
 
 
 	@PUT

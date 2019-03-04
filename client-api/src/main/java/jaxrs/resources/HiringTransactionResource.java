@@ -9,7 +9,6 @@ import dtos.responses.MessageResponse;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
-import entities.TransactionDateChangeRequestEntity;
 import jaxrs.validators.HiringTransactionValidator;
 
 import javax.inject.Inject;
@@ -43,21 +42,6 @@ public class HiringTransactionResource {
 	TransactionDateChangeResource transactionDateChangeResource;
 
 
-	private EquipmentEntity validateEquipment(long id) {
-		EquipmentEntity foundEquipment = equipmentDAO.findByID(id);
-		if (foundEquipment == null) {
-			throw new NotFoundException(String.format("Equipment id=%d not found!", id));
-		}
-		return foundEquipment;
-	}
-
-	private ContractorEntity validateContractorId(long contractorId) {
-		ContractorEntity foundContractor = contractorDAO.findByID(contractorId);
-		if (foundContractor == null) {
-			throw new NotFoundException(String.format("Contractor id=%d not found!", contractorId));
-		}
-		return foundContractor;
-	}
 
 
 	@POST
@@ -70,7 +54,7 @@ public class HiringTransactionResource {
 		HiringTransactionEntity hiringTransactionEntity = new HiringTransactionEntity(hiringTransactionRequest);
 
 
-		EquipmentEntity foundEquipment = validateEquipment(hiringTransactionRequest.getEquipmentId());
+		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(hiringTransactionRequest.getEquipmentId());
 
 		hiringTransactionEntity.setEquipmentAddress(foundEquipment.getAddress());
 		hiringTransactionEntity.setEquipmentLongitude(foundEquipment.getLongitude());
@@ -256,6 +240,7 @@ public class HiringTransactionResource {
 		//validate supplierId
 		ContractorEntity foundContractor = contractorDAO.findByID(supplierId);
 		if (foundContractor == null) {
+			//custom message for supplier not contractor
 			throw new BadRequestException(String.format("Supplier id=%d not found", supplierId));
 		}
 
@@ -271,6 +256,7 @@ public class HiringTransactionResource {
 	public Response getSentTransactionsAsRequester(@PathParam("id") long requesterId) {
 		ContractorEntity foundContractor = contractorDAO.findByID(requesterId);
 		if (foundContractor == null) {
+			//custom message for requester not contractor
 			throw new BadRequestException(String.format("requester id=%s not found!", requesterId));
 		}
 

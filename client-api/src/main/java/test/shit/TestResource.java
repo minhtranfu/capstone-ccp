@@ -1,6 +1,7 @@
 package test.shit;
 
 
+import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentRequest;
 import entities.EquipmentEntity;
 import org.modelmapper.ModelMapper;
@@ -55,7 +56,7 @@ public class TestResource extends HttpServlet {
 
 	@POST
 	@Path("equipment")
-	public Response testPostEquipment(@Valid EquipmentRequest equipmentRequest) {
+	public Response testPostEquipment(@Valid EquipmentPostRequest equipmentRequest) {
 		EquipmentEntity equipmentEntity = modelConverter.toEntity(equipmentRequest);
 		EquipmentRequest equipmentRequest1 = modelConverter.toRequest(equipmentEntity);
 		return Response.ok(equipmentRequest1).build();

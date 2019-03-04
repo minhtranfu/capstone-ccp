@@ -9,12 +9,13 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-public class EquipmentRequest {
+public abstract class EquipmentRequest {
 
 	@NotNull
 	public String name;
 
 	@NotNull
+
 	public Integer dailyPrice;
 
 	@NotNull
@@ -50,8 +51,5 @@ public class EquipmentRequest {
 	// TODO: 3/4/19 chekc this when do description image upload
 	public Collection<DescriptionImageRequest> descriptionImages;
 
-	@Valid
-	@NotNull
-	public List<AdditionalSpecsValueRequest> additionalSpecsValues;
 
 }

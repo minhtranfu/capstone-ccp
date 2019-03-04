@@ -1,9 +1,11 @@
 package dtos;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 public class IdOnly {
 	@NotNull
+	@Positive
 	private long id;
 
 

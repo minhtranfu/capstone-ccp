@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+import javax.ws.rs.BadRequestException;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
@@ -50,5 +51,13 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 	public List<T> getAll(String queryName) {
 		Query namedQuery = entityManager.createNamedQuery(queryName);
 		return namedQuery.getResultList();
+	}
+
+	public T findByIdWithValidation(PK id) {
+		T entity = this.findByID(id);
+		if (entity == null) {
+			throw new BadRequestException(String.format("%s id=%s not found!", entityClass.getSimpleName(), id));
+		}
+		return entity;
 	}
 }

@@ -2,13 +2,10 @@ package jaxrs.resources;
 
 import daos.ConstructionDAO;
 import daos.ContractorDAO;
-import dtos.responses.MessageResponse;
-import entities.ConstructionEntity;
 import entities.ContractorEntity;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -34,12 +31,7 @@ public class ContractorResource {
 	@GET
 	@Path("{id:\\d+}")
 	public Response getContractorById(@PathParam("id") long id) {
-		ContractorEntity foundContractor = contractorDao.findByID(id);
-		if (foundContractor == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-					String.format("contractor id=%s not found!", id)
-			)).build();
-		}
+		ContractorEntity foundContractor = validateContractorId(id);
 		return Response.ok(foundContractor).build();
 	}
 
@@ -97,11 +89,7 @@ public class ContractorResource {
 
 
 	private ContractorEntity validateContractorId(long contractorId) {
-		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
-		if (foundContractor == null) {
-			throw new NotFoundException(String.format("contractor id=%s not found!", contractorId));
-		}
-		return foundContractor;
+		return contractorDao.findByIdWithValidation(contractorId);
 	}
 
 	@GET

@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import javax.ws.rs.BadRequestException;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
@@ -171,15 +172,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>   {
 	}
 
 
-	public boolean validateBeginEndDate(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {
-		for (AvailableTimeRangeEntity availableTimeRangeEntity : availableTimeRangeEntities) {
-			if (availableTimeRangeEntity.getBeginDate().isAfter(availableTimeRangeEntity.getEndDate())) {
-				return false;
-			}
-		}
-		return true;
 
-	}
 
 	//validate that there must be no time range that intersect to another
 	public boolean validateNoIntersect(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {

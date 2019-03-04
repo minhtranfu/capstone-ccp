@@ -6,7 +6,6 @@ import daos.EquipmentDAO;
 import dtos.requests.HiringTransactionRequest;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
-import entities.HiringTransactionEntity;
 
 import javax.ejb.Singleton;
 import javax.inject.Inject;
@@ -27,11 +26,11 @@ public class HiringTransactionValidator {
 
 	public void validateAddHiringTransaction(HiringTransactionRequest hiringTransactionRequest) {
 		//  check equipment id
-		EquipmentEntity foundEquipment = validateEquipment(hiringTransactionRequest.getEquipmentId());
+		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(hiringTransactionRequest.getEquipmentId());
 
 
 		// TODO: 2/17/19 get requester id from cookie
-		ContractorEntity foundRequester = validateContractorId(hiringTransactionRequest.getRequesterId());
+		ContractorEntity foundRequester = contractorDAO.findByIdWithValidation(hiringTransactionRequest.getRequesterId());
 
 
 
@@ -73,21 +72,6 @@ public class HiringTransactionValidator {
 
 	}
 
-	private EquipmentEntity validateEquipment(long id) {
-		EquipmentEntity foundEquipment = equipmentDAO.findByID(id);
-		if (foundEquipment == null) {
-			throw new NotFoundException(String.format("Equipment id=%d not found!", id));
-		}
-		return foundEquipment;
-	}
-
-	private ContractorEntity validateContractorId(long contractorId) {
-		ContractorEntity foundContractor = contractorDAO.findByID(contractorId);
-		if (foundContractor == null) {
-			throw new NotFoundException(String.format("Contractor id=%d not found!", contractorId));
-		}
-		return foundContractor;
-	}
 
 }
 

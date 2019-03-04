@@ -2,17 +2,13 @@ package jaxrs.resources;
 
 
 import daos.CartRequestDAO;
-import daos.ContractorDAO;
 import daos.EquipmentDAO;
 import dtos.requests.HiringTransactionRequest;
-import dtos.responses.MessageResponse;
 import entities.CartRequestEntity;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import jaxrs.validators.HiringTransactionValidator;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -58,11 +54,7 @@ public class CartRequestResource {
 
 
 	private CartRequestEntity validateCartRequestId(long cartRequestId) {
-		CartRequestEntity foundCartRequestEntity = cartRequestDao.findByID(cartRequestId);
-		if (foundCartRequestEntity == null) {
-			throw new NotFoundException(String.format("cartRequestId =%s not found", cartRequestId));
-		}
-		return foundCartRequestEntity;
+		return cartRequestDao.findByIdWithValidation(cartRequestId);
 	}
 
 	@GET
@@ -71,6 +63,12 @@ public class CartRequestResource {
 		return Response.ok(cartRequestList).build();
 	}
 
+
+	@GET
+	@Path("{cartId:\\d+}")
+	public Response getCartById(@PathParam("cartId") long cartId) {
+		return Response.ok(cartRequestDao.findByIdWithValidation(cartId)).build();
+	}
 
 	@POST
 	public Response addToCart(@Valid CartRequestEntity cartRequestEntity) {
@@ -103,7 +101,7 @@ public class CartRequestResource {
 
 		cartRequestEntity.setId(cartRequestId);
 
-		validateEquipmentId(cartRequestEntity.getEquipment().getId());
+		equipmentDao.findByIdWithValidation(cartRequestEntity.getEquipment().getId());
 
 		cartRequestEntity.setContractor(contractorEntity);
 		CartRequestEntity merged = cartRequestDao.merge(cartRequestEntity);
