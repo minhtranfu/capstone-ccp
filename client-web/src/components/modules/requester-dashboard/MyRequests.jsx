@@ -181,6 +181,10 @@ class MyRequests extends Component {
         );
         break;
 
+      case TRANSACTION_STATUSES.ACCEPTED:
+        statusClasses += 'badge-success';
+        break;
+
       case TRANSACTION_STATUSES.DENIED:
         statusClasses += 'badge-danger';
         break;
@@ -194,7 +198,7 @@ class MyRequests extends Component {
           this._countNeedActionForStatus(transaction.status);
           changeStatusButtons = (
             <div className="mt-2">
-              <button className="btn btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction.equipment.id, EQUIPMENT_STATUSES.RENTING)}>Rent</button>
+              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction.equipment.id, EQUIPMENT_STATUSES.RENTING)}>Rent</button>
             </div>
           );
         }
@@ -210,7 +214,7 @@ class MyRequests extends Component {
         // TODO: Feedback function
         changeStatusButtons = (
           <div className="mt-2">
-            <button className="btn btn-success" onClick={() => window.alert('Feedback chưa xong')}>Feedback</button>
+            <button className="btn btn-sm btn-success" onClick={() => window.alert('Feedback chưa xong')}>Feedback</button>
           </div>
         );
         break;
