@@ -21,8 +21,8 @@ import {
 import ParallaxList from "../../components/ParallaxList";
 import Dropdown from "../../components/Dropdown";
 import Button from "../../components/Button";
-import EquipmentItem from "./components/EquipmentItem";
-import EquipmentStatus from "./components/EquipmentStatus";
+import TransactionItem from "../../components/TransactionItem";
+import EquipmentStatus from "../../components/EquipmentStatus";
 import Header from "../../components/Header";
 
 import colors from "../../config/colors";
@@ -62,43 +62,58 @@ const DROPDOWN_OPTIONS = [
   {
     id: 0,
     name: "All Statuses",
-    value: "all"
+    value: "All Statuses"
   },
   {
     id: 1,
     name: "Pending",
-    value: "PENDING"
+    value: "Pending"
   },
   {
     id: 2,
     name: "Accepted",
-    value: "ACCEPTED"
+    value: "Accepted"
   },
   {
     id: 3,
     name: "Processing",
-    value: "PROCESSING"
+    value: "Processing"
   },
   {
     id: 4,
     name: "Finished",
-    value: "FINISHED"
+    value: "Finished"
   },
   {
     id: 5,
     name: "Denied",
-    value: "DENIED"
+    value: "Denied"
   },
   {
     id: 6,
     name: "Cancel",
-    value: "CANCEL"
+    value: "Cancel"
   }
 ];
 
+const COLORS = {
+  AVAILABLE: "#4DB781",
+  ACCEPTED: "#4DB781", //green
+  DENIED: "#FF5C5C", //red
+  CANCEL: "#FF5C5C",
+  PENDING: "#F9AA33",
+  DELIVERING: "#7199FE",
+  WAITING_FOR_RETURNING: "#7199FE",
+  FINISHED: "#FFDF49",
+  PROCESSING: "#7199FE",
+  default: "#3E3E3E"
+  // blue: 7199FE, yellow: FFDF49
+};
+
+const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 @connect(
   state => {
-    console.log(state.transaction.listSupplierTransaction);
     return {
       listTransaction: state.transaction.listSupplierTransaction,
       loading: state.transaction.loading,
@@ -140,6 +155,20 @@ class MyTransaction extends Component {
       this.props.fetchListMyTransaction(13);
     }
   }
+
+  _capitalizeCharacter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+  _formatDate = date => {
+    let newDate = new Date(date);
+    let year = newDate.getFullYear();
+    let month = newDate.getMonth() + 1;
+    let day = newDate.getDate();
+    let dayOfWeek = weekDays[newDate.getDay()];
+
+    return dayOfWeek + ", " + day + "/" + month + "/" + year;
+  };
 
   _showAlert = (title, msg) => {
     Alert.alert(title, msg, [{ text: "OK" }], {
@@ -186,23 +215,30 @@ class MyTransaction extends Component {
               code={status.code}
             />
             {equipmentList.map((item, index) => (
-              <EquipmentItem
-                onPress={() => {
-                  this._handleOnPressItem(item.id);
-                  this.props.navigation.navigate("MyTransactionDetail", {
-                    id: item.id
-                  });
-                }}
-                key={`eq_${index}`}
-                id={item.id}
-                name={item.equipment.name}
-                imageURL={
-                  "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-                }
-                address={item.equipmentAddress}
-                requesterThumbnail={item.requester.thumbnailImage}
-                price={item.dailyPrice}
-              />
+              <View key={`eq_${item.id}`} style={styles.rowWrapper}>
+                <TransactionItem
+                  onPress={() =>
+                    this.props.navigation.navigate("MyTransactionDetail", {
+                      id: item.id
+                    })
+                  }
+                  role={"Requester"}
+                  id={item.id}
+                  name={item.equipment.name}
+                  imageURL={
+                    "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+                  }
+                  avatarURL={
+                    "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
+                  }
+                  status={this._capitalizeCharacter(item.status)}
+                  statusBackgroundColor={COLORS[item.status]}
+                  contractor={item.requester.name}
+                  phone={item.requester.phoneNumber}
+                  beginDate={this._formatDate(item.beginDate)}
+                  endDate={this._formatDate(item.endDate)}
+                />
+              </View>
             ))}
           </View>
         );
@@ -235,7 +271,6 @@ class MyTransaction extends Component {
 
   render() {
     const { listTransaction, loading, error, status } = this.props;
-    console.log(listTransaction, loading);
     return (
       <SafeAreaView
         style={styles.container}
@@ -244,7 +279,7 @@ class MyTransaction extends Component {
         <Header>
           <Text style={styles.header}>My Transaction</Text>
         </Header>
-        {listTransaction ? (
+        {!loading ? (
           <ScrollView
             style={{ flex: 1 }}
             contentContainerStyle={styles.scrollContent}
@@ -262,6 +297,12 @@ class MyTransaction extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  rowWrapper: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.secondaryColorOpacity,
+    marginBottom: 10,
+    paddingBottom: 10
   },
   scrollContent: {
     flex: 0,

@@ -15,17 +15,21 @@ export default function configAPI(config) {
       if (error.response) {
         switch (error.response.status) {
           case 401:
+            console.log(error.response);
             config.store.dispatch(StatusAction.error("401", Date.now()));
             break;
           case 400:
+            console.log(error.response);
             config.store.dispatch(
-              StatusAction.error("400 nonononononono", Date.now())
+              StatusAction.error(error.response.data.message, Date.now())
             );
             break;
           case 404:
+            console.log(error.response.data.message);
             config.store.dispatch(StatusAction.error("404 nono", Date.now()));
             break;
           case 500:
+            console.log(error.response);
             config.store.dispatch(StatusAction.error("500 fuck", Date.now()));
             break;
           default:

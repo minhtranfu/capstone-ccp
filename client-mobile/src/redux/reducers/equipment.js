@@ -2,6 +2,7 @@ import * as Actions from "../types";
 
 const INITIAL_STATE = {
   loading: false,
+  searchLoading: false,
   listSearch: [],
   contractorEquipment: []
 };
@@ -22,23 +23,44 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
         contractorEquipment: payload.data
       };
     }
+    case Actions.ADD_EQUIPMENT.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
     case Actions.ADD_EQUIPMENT.SUCCESS: {
       return {
         ...state,
+        loading: false,
         contractorEquipment: [...state.contractorEquipment, payload.data]
+      };
+    }
+    case Actions.UPDATE_EQUIPMENT.REQUEST: {
+      return {
+        ...state,
+        loading: true
       };
     }
     case Actions.UPDATE_EQUIPMENT.SUCCESS: {
       return {
         ...state,
+        loading: false,
         contractorEquipment: state.contractorEquipment.map(item =>
           item.id === payload.id ? (item = payload.data.data) : item
         )
       };
     }
+    case Actions.UPDATE_EQUIPMENT_STATUS.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
     case Actions.UPDATE_EQUIPMENT_STATUS.SUCCESS: {
       return {
         ...state,
+        loaing: false,
         contractorEquipment: state.contractorEquipment.map(item =>
           item.id === payload.id ? (item = payload.data.data) : item
         )
@@ -51,14 +73,19 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
     case Actions.SEARCH_EQUIPMENT.REQUEST: {
       return {
         ...state,
-        loading: true
+        searchLoading: true
       };
     }
     case Actions.SEARCH_EQUIPMENT.SUCCESS:
       return {
         ...state,
-        loading: false,
+        searchLoading: false,
         listSearch: payload.data
+      };
+    case Actions.SEARCH_EQUIPMENT.ERROR:
+      return {
+        ...state,
+        searchLoading: false
       };
     case Actions.CLEAR_SEARCH_RESULT.SUCCESS:
       return {

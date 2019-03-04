@@ -66,16 +66,23 @@ export const STATUS_SUCCESS = "@@status/SUCCESS";
 export const STATUS_ERROR = "@@status/ERROR";
 
 //CONTRACTOR
-export const GET_CONTRACTOR_SUCCESS = "@@contractor/GET_CONTRACTOR_SUCCESS";
-export const CONTRACTOR_REGISTER_SUCCESS =
-  "@@contractor/CONTRACTOR_REGISTER_SUCCESS";
-export const UPDATE_CONTRACTOR_SUCCESS =
-  "@@contractor/UPDATE_CONTRACTOR_SUCCESS";
+export const GET_CONTRACTOR = renderActions("@@contractor/GET_CONTRACTOR");
+export const CONTRACTOR_REGISTER = renderActions(
+  "@@contractor/CONTRACTOR_REGISTER"
+);
+export const UPDATE_CONTRACTOR_DETAIL = renderActions(
+  "@@contractor/UPDATE_CONTRACTOR_DETAIL"
+);
 
-export const GET_CONSTRUCTION_SUCCESS = "@@contractor/GET_CONSTRUCTION_SUCCESS";
-export const CREATE_CONSTRUCTION_SUCCESS =
-  "@@contractor/CREATE_CONSTRUCTION_SUCCESS";
-export const UPDATE_CONSTRUCTION_SUCCESS =
-  "@@contractor/UPDATE_CONSTRUCTION_SUCCESS";
-export const DELETE_CONSTRUCTION_SUCCESS =
-  "@@contractor/DELETE_CONSTRUCTION_SUCCESS";
+export const GET_CONSTRUCTION_LIST = renderActions(
+  "@@contractor/GET_CONSTRUCTION_LIST"
+);
+export const CREATE_CONSTRUCTION = renderActions(
+  "@@contractor/CREATE_CONSTRUCTION"
+);
+export const UPDATE_CONSTRUCTION = renderActions(
+  "@@contractor/UPDATE_CONSTRUCTION"
+);
+export const DELETE_CONSTRUCTION = renderActions(
+  "@@contractor/DELETE_CONSTRUCTION"
+);

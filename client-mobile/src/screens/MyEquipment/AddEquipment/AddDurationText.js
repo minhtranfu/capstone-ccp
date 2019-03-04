@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
+import Calendar from '../../../components/Calendar';
 import Loading from "../../../components/Loading";
 import Header from "../../../components/Header";
 import InputField from "../../../components/InputField";
@@ -84,7 +85,7 @@ class AddDurationText extends Component {
   _renderDateRange = item => {
     const itemId = item.id;
     return (
-      <View>
+      <View key={item.id}>
         <InputField
           label={"From"}
           placeholder={"yyyy-mm-dd"}
@@ -122,7 +123,10 @@ class AddDurationText extends Component {
       onPress={() =>
         this.props.navigation.navigate("AddImage", {
           data: Object.assign({}, data, {
-            availableTimeRanges: dateRange
+            availableTimeRanges: dateRange.map(item => {
+              delete item.id;
+              return item;
+            })
           })
         })
       }

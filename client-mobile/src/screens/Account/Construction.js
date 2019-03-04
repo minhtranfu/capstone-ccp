@@ -106,11 +106,7 @@ class Construction extends Component {
       longitude: 10.312,
       latitude: 10.312
     };
-    try {
-      this.props.fetchCreateConstruction(contractorId, construction);
-    } catch (error) {
-      this._showAlert(error);
-    }
+    this.props.fetchCreateConstruction(contractorId, construction);
     this.setState({ address: "", name: "" });
     this._setModalVisible(!modalVisible);
   };

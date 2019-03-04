@@ -7,11 +7,13 @@ import {
   TouchableOpacity,
   ScrollView
 } from "react-native";
+import { Image as ImageCache } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import PropTypes from "prop-types";
 import { Feather } from "@expo/vector-icons";
-import { requestTransaction } from "../../redux/actions/transaction";
+import { updateEquipmentStatus } from "../../redux/actions/equipment";
+import { cancelTransaction } from "../../redux/actions/transaction";
 
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -44,6 +46,17 @@ const STEP_PROGRESS_OPTIONS = [
   }
 ];
 
+const EQUIPMENT_IN_PROGRESS = {
+  PENDING: "Wait for supplier accept",
+  ACCEPTED: "Supplier has been accepted",
+  CANCEL: "Requester has been canceled",
+  DELIVERING: "Equipment is on delivering",
+  WAITING_FOR_RETURNING: "Return equipment to supplier",
+  FINISHED: "Equipment has been returned"
+};
+
+const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 @connect(
   (state, ownProps) => {
     const { id } = ownProps.navigation.state.params;
@@ -55,7 +68,10 @@ const STEP_PROGRESS_OPTIONS = [
   },
   dispatch => ({
     fetchUpdateEquipmentStatus: (equipmentId, status) => {
-      dispatch(requestTransaction(equipmentId, status));
+      dispatch(updateEquipmentStatus(equipmentId, status));
+    },
+    fetchCancelRequest: transactionId => {
+      dispatch(cancelTransaction(transactionId));
     }
   })
 )
@@ -65,63 +81,80 @@ class ActivityDetail extends Component {
     this.state = {};
   }
 
-  //Replace Splash -> ','  from date
-  _replaceSplash = date => {
-    let regex = /-/g;
-    return date.replace(regex, ",");
-  };
-
   //Count total day from begin date to end date
-  _countTotalDay = (firstDate, secondDate) => {
-    let oneDay = 24 * 60 * 60 * 1000; //hours,mintues,sec, milisec
-    let startDate = new Date(this._replaceSplash(firstDate));
-    let endDate = new Date(this._replaceSplash(secondDate));
-    let totalDay = Math.round(
-      Math.abs((startDate.getTime() - endDate.getTime()) / oneDay)
+  _countTotalDay = (fromDate, toDate) => {
+    let firstDate = new Date(fromDate);
+    let secondDate = new Date(toDate);
+    let oneDay = 24 * 60 * 60 * 1000;
+    totalDay = Math.round(
+      Math.abs((secondDate.getTime() - firstDate.getTime()) / oneDay)
     );
     return totalDay > 1 ? totalDay : 1;
   };
 
-  _handleRequestTransaction = (id, status) => {
-    this.props.fetchRequestTransaction(id, { status: status });
+  //Update equipment status to renting
+  _handleUpdateEquipmentStatus = (id, status) => {
+    this.props.fetchUpdateEquipmentStatus(id, { status: status });
     this.props.navigation.goBack();
   };
 
-  //If status is renting, return null
-  _renderStepProgress = status => {
-    if (status !== "RENTING")
-      return (
-        <View style={styles.columnWrapper}>
-          <StepProgress options={STEP_PROGRESS_OPTIONS} status={status} />
-        </View>
-      );
-    return null;
+  //Cancel transaction request
+  _handleCancelRequestTransaction = () => {
+    const { id } = this.props.navigation.state.params;
+    this.props.fetchCancelRequest(id);
+    this.props.navigation.goBack();
   };
 
-  _renderBottomButton = status => {
-    const { id } = this.props.navigation.state.params;
-    if (status === "RENTING") {
-      return (
-        <View style={styles.columnWrapper}>
-          <Button text={"Extend Duration"} />
-        </View>
-      );
-    } else if (status === "PENDING") {
-      return (
-        <View style={styles.columnWrapper}>
-          <Button text={"Cancel"} />
-        </View>
-      );
-    } else if (status === "PROCESSING") {
-      return (
-        <View style={styles.columnWrapper}>
-          <Button
-            text={"Rent"}
-            onPress={() => this._handleRequestTransaction(id, "RENTING")}
-          />
-        </View>
-      );
+  _formatDate = date => {
+    let newDate = new Date(date);
+    let year = newDate.getFullYear();
+    let month = newDate.getMonth() + 1;
+    let day = newDate.getDate();
+    let dayOfWeek = weekDays[newDate.getDay()];
+
+    return dayOfWeek + ", " + day + "/" + month + "/" + year;
+  };
+
+  //If status is renting, return null
+  _renderStepProgress = (status, equipmentStatus) => {
+    console.log(status, equipmentStatus);
+    return (
+      <View style={styles.columnWrapper}>
+        <StepProgress
+          options={STEP_PROGRESS_OPTIONS}
+          status={status}
+          equipmentStatus={EQUIPMENT_IN_PROGRESS[equipmentStatus]}
+        />
+      </View>
+    );
+  };
+
+  _renderBottomButton = (equipmentId, status, equipmentStatus) => {
+    switch (status) {
+      case "PENDING":
+        return (
+          <View style={styles.columnWrapper}>
+            <Button
+              text={"Cancel"}
+              onPress={this._handleCancelRequestTransaction}
+            />
+          </View>
+        );
+      case "PROCESSING":
+        return equipmentStatus === "WAITING_FOR_RETURNING" ? null : (
+          <View style={styles.columnWrapper}>
+            <Button
+              text={"Receive"}
+              onPress={() =>
+                this._handleUpdateEquipmentStatus(equipmentId, "RENTING")
+              }
+            />
+          </View>
+        );
+      default:
+        return null;
     }
+
     return null;
   };
 
@@ -141,26 +174,20 @@ class ActivityDetail extends Component {
           />
           <View style={{ flexDirection: "column", paddingLeft: 10 }}>
             <Text style={styles.title}>{detail.equipment.name}</Text>
-            <Text style={styles.text}>
-              Contractor: {detail.equipment.contractor.name}
-            </Text>
-            <Text style={styles.text}>
-              Phone: {detail.equipment.contractor.phoneNumber}
-            </Text>
           </View>
         </View>
         <View style={styles.columnWrapper}>
-          <Text style={styles.title}>Duration</Text>
+          <Text style={styles.title}>Available time ranges</Text>
           <Text style={styles.text}>
             From:{" "}
             <Text style={[styles.text, { paddingLeft: 10 }]}>
-              {detail.beginDate}
+              {this._formatDate(detail.beginDate)}
             </Text>
           </Text>
           <Text style={styles.text}>
             To:{" "}
             <Text style={[styles.text, { paddingLeft: 10 }]}>
-              {detail.endDate}
+              {this._formatDate(detail.endDate)}
             </Text>
           </Text>
         </View>
@@ -168,22 +195,50 @@ class ActivityDetail extends Component {
           <Text style={styles.title}>Price</Text>
           <View style={styles.priceItemWrapper}>
             <Text style={styles.text}>Price/day:</Text>
-            <Text style={styles.text}>{detail.dailyPrice} $</Text>
+            <Text style={styles.text}>{detail.dailyPrice} K</Text>
           </View>
           <View style={styles.priceItemWrapper}>
             <Text style={styles.text}>Total price:</Text>
-            <Text style={styles.text}>{totalPrice} $</Text>
+            <Text style={styles.text}>{totalPrice} K</Text>
           </View>
         </View>
-        {this._renderStepProgress(detail.status)}
-        {this._renderBottomButton(detail.status)}
+        <View style={styles.columnWrapper}>
+          <Text style={styles.title}>Contractor</Text>
+          <View style={styles.rowWrapper}>
+            <ImageCache
+              uri={
+                "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
+              }
+              style={styles.avatar}
+              resizeMode={"cover"}
+            />
+            <TouchableOpacity
+              style={{ flexDirection: "column", paddingLeft: 15 }}
+            >
+              <Text style={styles.text}>
+                Name: {detail.equipment.contractor.name}
+              </Text>
+              <Text style={styles.text}>
+                Phone: {detail.equipment.contractor.phoneNumber}
+              </Text>
+              <Text style={styles.text}>
+                Email: {detail.equipment.contractor.email}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        {this._renderStepProgress(detail.status, detail.equipment.status)}
+        {this._renderBottomButton(
+          detail.equipment.id,
+          detail.status,
+          detail.equipment.status
+        )}
       </View>
     );
   };
 
   render() {
     const { detail } = this.props;
-    console.log(detail);
     return (
       <SafeAreaView
         style={styles.container}
@@ -196,13 +251,14 @@ class ActivityDetail extends Component {
                 this.props.navigation.goBack();
               }}
             >
-              <Feather name="x" size={24} />
+              <Feather name="x" size={26} />
             </TouchableOpacity>
           )}
         >
-          <Text style={styles.header}>Detail Transaction</Text>
+          <Text style={styles.header}>Request Transaction</Text>
         </Header>
-        {Object.keys(detail).length > 0 ? (
+
+        {detail ? (
           <ScrollView>{this._renderScrollViewItem(detail)}</ScrollView>
         ) : (
           <Loading />
@@ -228,6 +284,10 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center"
   },
+  rowWrapper: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
   priceItemWrapper: {
     flexDirection: "row",
     alignItems: "center",
@@ -239,8 +299,8 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   header: {
-    fontSize: fontSize.h3,
-    fontWeight: "600"
+    fontSize: fontSize.h4,
+    fontWeight: "500"
   },
   title: {
     fontSize: fontSize.h4,
@@ -251,6 +311,11 @@ const styles = StyleSheet.create({
     fontSize: fontSize.bodyText,
     fontWeight: "500",
     paddingBottom: 5
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25
   }
 });
 

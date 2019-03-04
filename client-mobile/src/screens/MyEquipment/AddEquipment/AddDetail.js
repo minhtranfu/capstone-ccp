@@ -31,7 +31,7 @@ const DROPDOWN_GENERAL_TYPES_OPTIONS = [
   {
     id: 0,
     name: "Select general equipment types",
-    value: "all"
+    value: "aSelect general equipment typesll"
   }
 ];
 
@@ -39,7 +39,16 @@ const DROPDOWN_TYPES_OPTIONS = [
   {
     id: 0,
     name: "Select equipment types",
-    value: "all"
+    value: "Select equipment types",
+    additionalSpecsFields: []
+  }
+];
+
+const DROPDOWN_CONSTRUCTION_OPTIONS = [
+  {
+    id: 0,
+    name: "Select your construction",
+    value: "Select your construction"
   }
 ];
 
@@ -47,7 +56,8 @@ const DROPDOWN_TYPES_OPTIONS = [
   state => {
     return {
       loading: state.type.loading,
-      generalType: state.type.listGeneralEquipmentType
+      generalType: state.type.listGeneralEquipmentType,
+      construction: state.contractor.constructionList
     };
   },
   dispatch => ({
@@ -68,8 +78,11 @@ class AddDetail extends Component {
       generalType: null,
       typeIndex: 0,
       type: null,
+      address: "",
+      addressIndex: 0,
       deliveryPrice: null,
-      description: ""
+      description: "",
+      additionalSpecsFields: []
     };
   }
 
@@ -91,55 +104,119 @@ class AddDetail extends Component {
   };
 
   //Create new dropdown options for general type
-  _handleNewGeneralEquipmentType = () => {
+  _handleGeneralEquipmentType = () => {
     const { generalType } = this.props;
-    let newData = generalType.map(item => ({
+    let newGeneralEquipmentTypeArray = generalType.map(item => ({
       id: item.id,
       name: this._capitalizeLetter(item.name),
       value: this._capitalizeLetter(item.name)
     }));
-    return [...DROPDOWN_GENERAL_TYPES_OPTIONS, ...newData];
+    return [...DROPDOWN_GENERAL_TYPES_OPTIONS, ...newGeneralEquipmentTypeArray];
   };
 
   //Create new dropdown options for type
-  _handleNewEquipmentType = generalTypeIndex => {
+  _handleEquipmentType = generalTypeIndex => {
     const { generalType } = this.props;
-    let newGeneralTypeArray = this._handleNewGeneralEquipmentType();
+    let generalTypeArray = this._handleGeneralEquipmentType();
     let result = generalType.find(
-      item => item.id === newGeneralTypeArray[generalTypeIndex].id
+      item => item.id === generalTypeArray[generalTypeIndex].id
     );
 
     if (result) {
-      let newData = result.equipmentTypes.map(item => ({
+      let newEquipmentTypeArray = result.equipmentTypes.map(item => ({
         id: item.id,
         name: this._capitalizeLetter(item.name),
-        value: this._capitalizeLetter(item.name)
+        value: this._capitalizeLetter(item.name),
+        additionalSpecsFields: item.additionalSpecsFields
       }));
-      return [...DROPDOWN_TYPES_OPTIONS, ...newData];
+      return [...DROPDOWN_TYPES_OPTIONS, ...newEquipmentTypeArray];
     }
     return DROPDOWN_TYPES_OPTIONS;
   };
 
+  _handleInputSpecsField = (specId, value) => {
+    const { additionalSpecsFields } = this.state;
+    this.setState({
+      additionalSpecsFields: [
+        ...additionalSpecsFields,
+        {
+          value: value,
+          additionalSpecsField: {
+            id: specId
+          }
+        }
+      ]
+    });
+  };
+
+  _handleAdditionalSpecsField = () => {
+    const { generalTypeIndex, typeIndex } = this.state;
+    const newTypeOptions = this._handleEquipmentType(generalTypeIndex);
+    if (
+      newTypeOptions[typeIndex].additionalSpecsFields &&
+      newTypeOptions[typeIndex].additionalSpecsFields.length > 0
+    ) {
+      return (
+        <View>
+          <Text style={styles.text}>Additional Specs Fields</Text>
+          {newTypeOptions[typeIndex].additionalSpecsFields.map(item => (
+            <InputField
+              key={item.id}
+              label={this._capitalizeLetter(item.name)}
+              placeholder={item.name}
+              customWrapperStyle={{ marginBottom: 20 }}
+              inputType="text"
+              onChangeText={value =>
+                this._handleInputSpecsField(item.id, value)
+              }
+              returnKeyType={"next"}
+            />
+          ))}
+        </View>
+      );
+    }
+    return null;
+  };
+
+  _handleConstructionDropdown = () => {
+    const { construction } = this.props;
+    const newConstructionDropdown = construction.map(item => ({
+      id: item.id,
+      name: item.name,
+      value: item.address
+    }));
+    return [...DROPDOWN_CONSTRUCTION_OPTIONS, ...newConstructionDropdown];
+  };
+
   //Create new data before move to next screen
-  _handleNewData = () => {
+  _handleSubmit = () => {
     const {
       name,
       dailyPrice,
       typeIndex,
       generalTypeIndex,
       deliveryPrice,
-      description
+      description,
+      address,
+      additionalSpecsFields
     } = this.state;
-    const newTypeOptions = this._handleNewEquipmentType(generalTypeIndex);
+    const newTypeOptions = this._handleEquipmentType(generalTypeIndex);
     let type = { id: newTypeOptions[typeIndex].id };
-    const newData = {
+    const getConstructionByAddress = this.props.construction.find(
+      item => item.address === address
+    );
+    const equipment = {
       name: name,
       dailyPrice: parseInt(dailyPrice),
       deliveryPrice: parseInt(deliveryPrice),
       description: description,
-      equipmentType: type
+      equipmentType: type,
+      address: address,
+      longitude: getConstructionByAddress.longitude,
+      latitude: getConstructionByAddress.latitude,
+      additionalSpecsValues: additionalSpecsFields
     };
-    return newData;
+    return equipment;
   };
 
   _renderScrollViewItem = () => {
@@ -151,8 +228,8 @@ class AddDetail extends Component {
       deliveryPrice,
       description
     } = this.state;
-    const NEW_DROPDOWN_GENERAL_TYPES_OPTIONS = this._handleNewGeneralEquipmentType();
-    const NEW_DROPDOWN_TYPES_OPTIONS = this._handleNewEquipmentType(
+    const NEW_DROPDOWN_GENERAL_TYPES_OPTIONS = this._handleGeneralEquipmentType();
+    const NEW_DROPDOWN_TYPES_OPTIONS = this._handleEquipmentType(
       generalTypeIndex
     );
     return (
@@ -168,7 +245,7 @@ class AddDetail extends Component {
         />
         <InputField
           label={"Daily price"}
-          placeholder={"$"}
+          placeholder={"VND"}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this.setState({ dailyPrice: value })}
@@ -178,20 +255,12 @@ class AddDetail extends Component {
         />
         <InputField
           label={"Delivery price"}
-          placeholder={"$"}
+          placeholder={"VND"}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this.setState({ deliveryPrice: value })}
           keyboardType={"numeric"}
           value={deliveryPrice}
-        />
-        <InputField
-          label={"Description"}
-          placeholder={"Input your description"}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          onChangeText={value => this.setState({ description: value })}
-          value={description}
         />
         <Dropdown
           label={"General Equipment Type"}
@@ -209,6 +278,23 @@ class AddDetail extends Component {
           }
           options={NEW_DROPDOWN_TYPES_OPTIONS}
         />
+        {this._handleAdditionalSpecsField()}
+        <Dropdown
+          label={"Construction"}
+          defaultText={"Select your construction"}
+          onSelectValue={(value, index) =>
+            this.setState({ address: value, addressIndex: index })
+          }
+          options={this._handleConstructionDropdown()}
+        />
+        <InputField
+          label={"Description"}
+          placeholder={"Input your description"}
+          customWrapperStyle={{ marginBottom: 20 }}
+          inputType="text"
+          onChangeText={value => this.setState({ description: value })}
+          value={description}
+        />
       </View>
     );
   };
@@ -224,7 +310,7 @@ class AddDetail extends Component {
         result
           ? null
           : this.props.navigation.navigate("AddDurationText", {
-              data: this._handleNewData()
+              data: this._handleSubmit()
             })
       }
     >
@@ -287,14 +373,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 15
   },
-  buttonStyle: {
-    backgroundColor: "grey",
-    borderRadius: 5,
-    height: 100
-  },
-  titleStyle: {
-    fontSize: fontSize.secondaryText
-  },
   bottomWrapper: {
     backgroundColor: "transparent",
     justifyContent: "center",
@@ -331,6 +409,11 @@ const styles = StyleSheet.create({
   header: {
     fontSize: fontSize.h4,
     fontWeight: "500"
+  },
+  text: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    paddingVertical: 15
   }
 });
 

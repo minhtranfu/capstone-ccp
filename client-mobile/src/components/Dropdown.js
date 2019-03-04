@@ -72,7 +72,7 @@ class Dropdown extends Component {
                   <Picker.Item
                     key={option.id}
                     label={option.name}
-                    value={option.name}
+                    value={option.value}
                   />
                 ))}
               </Picker>

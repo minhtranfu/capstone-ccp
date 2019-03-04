@@ -12,22 +12,22 @@ export function register(contractor) {
   };
 }
 
-export function updateContractorDetail(contractorId, contractor) {
-  return async dispatch => {
-    const res = await axios.put(`contractors/${contractorId}`, contractor);
-
-    dispatch({
-      type: Actions.UPDATE_CONTRACTOR_SUCCESS
-    });
-  };
-}
-
 export function getContractorDetail(contractorId) {
   return async dispatch => {
     const res = await axios.get(`contractors/${contractorId}`);
     dispatch({
-      type: Actions.GET_CONTRACTOR_SUCCESS,
-      payload: res.data
+      type: Actions.GET_CONTRACTOR.SUCCESS,
+      payload: res
+    });
+  };
+}
+
+export function updateContractorDetail(contractorId, contractor) {
+  return async dispatch => {
+    const res = await axios.put(`contractors/${contractorId}`, contractor);
+    dispatch({
+      type: Actions.UPDATE_CONTRACTOR_DETAIL.SUCCESS,
+      payload: res
     });
   };
 }
@@ -36,8 +36,8 @@ export function getConstructionList(contractorId) {
   return async dispatch => {
     const res = await axios.get(`contractors/${contractorId}/constructions`);
     dispatch({
-      type: Actions.GET_CONSTRUCTION_SUCCESS,
-      payload: res.data
+      type: Actions.GET_CONSTRUCTION_LIST.SUCCESS,
+      payload: res
     });
   };
 }
@@ -49,8 +49,8 @@ export function createConstruction(contractorId, construction) {
       construction
     );
     dispatch({
-      type: Actions.CREATE_CONSTRUCTION_SUCCESS,
-      payload: res.data
+      type: Actions.CREATE_CONSTRUCTION.SUCCESS,
+      payload: res
     });
   };
 }
@@ -63,7 +63,8 @@ export function updateConstruction(contractorId, constructionId, construction) {
     );
 
     dispatch({
-      type: Actions.UPDATE_CONSTRUCTION_SUCCESS
+      type: Actions.UPDATE_CONSTRUCTION.SUCCESS,
+      payload: { data: res, id: constructionId }
     });
   };
 }
@@ -74,7 +75,8 @@ export function deleteConstruction(contractorId, constructionId) {
       `contractors/${contractorId}/constructions/${constructionId}`
     );
     dispatch({
-      type: Actions.DELETE_CONSTRUCTION_SUCCESS
+      type: Actions.DELETE_CONSTRUCTION.SUCCESS,
+      payload: { data: res, id: constructionId }
     });
   };
 }

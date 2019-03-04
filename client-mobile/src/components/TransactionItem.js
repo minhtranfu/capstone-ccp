@@ -4,10 +4,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Image as ImageCache } from "react-native-expo-image-cache";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 
-import colors from "../../../config/colors";
-import fontSize from "../../../config/fontSize";
+import colors from "../config/colors";
+import fontSize from "../config/fontSize";
 
-class EquipmentItem extends PureComponent {
+class TransactionItem extends PureComponent {
   static propTypes = {
     name: PropTypes.string,
     id: PropTypes.number,
@@ -28,11 +28,10 @@ class EquipmentItem extends PureComponent {
       beginDate,
       endDate,
       onPress,
-      onRenewPress,
-      hasRenewButton,
       status,
       statusBackgroundColor,
-      avatarURL
+      avatarURL,
+      role
     } = this.props;
     return (
       <View style={styles.container}>
@@ -55,7 +54,14 @@ class EquipmentItem extends PureComponent {
               <Text style={styles.title} numberOfLines={1}>
                 {name}
               </Text>
-              <View style={{ alignItems: "flex-end" }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between"
+                }}
+              >
+                <Text style={styles.text}>{role}</Text>
                 <Text style={styles.text}>{contractor}</Text>
               </View>
             </View>
@@ -147,4 +153,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default EquipmentItem;
+export default TransactionItem;

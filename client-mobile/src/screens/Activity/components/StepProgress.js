@@ -27,14 +27,6 @@ const COLORS = {
   // blue: 7199FE, yellow: FFDF49
 };
 
-const EQUIPMENT_IN_PROGRESS = {
-  PENDING: "Wait for supplier accept",
-  ACCEPTED: "Supplier has been accepted",
-  DENIED: "Supplier has been denied your transaction",
-  PROCESSING: "Equipment is on delivering",
-  FINISHED: "Equipment has been returned"
-};
-
 class StepProgress extends Component {
   static propTypes = {
     status: PropTypes.string,
@@ -46,10 +38,6 @@ class StepProgress extends Component {
       })
     ).isRequired
   };
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
 
   render() {
     const { status, options, equipmentStatus } = this.props;
@@ -60,12 +48,11 @@ class StepProgress extends Component {
             style={{
               width: 15,
               height: 15,
+              marginRight: 5,
               backgroundColor: COLORS[status || "default"]
             }}
           />
-          <Text style={styles.text}>
-            Status: {EQUIPMENT_IN_PROGRESS[status]}
-          </Text>
+          <Text style={styles.text}>Status: {equipmentStatus}</Text>
         </View>
         <View style={styles.rowWrapper}>
           {options.map((step, index) => (

@@ -7,10 +7,9 @@ import {
   ScrollView,
   Alert
 } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { SafeAreaView, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
-import { NavigationActions } from "react-navigation";
 import { sendTransactionRequest } from "../../redux/actions/transaction";
 
 import Header from "../../components/Header";
@@ -36,12 +35,17 @@ class ConfirmTransaction extends Component {
     this.state = {};
   }
 
-  _handleConfirmBooking = transactionDetail => {
-    this.props.fetchSendRequest(transactionDetail);
+  _handleConfirmBooking = async transactionDetail => {
+    await this.props.fetchSendRequest(transactionDetail);
   };
 
   render() {
     const { equipment, name } = this.props.navigation.state.params;
+    const { query } = this.props.navigation.state.params;
+    const backAction = NavigationActions.back({
+      key: "Result"
+    });
+    console.log(query);
     return (
       <SafeAreaView
         style={styles.container}
@@ -65,7 +69,7 @@ class ConfirmTransaction extends Component {
               text={"Confirm Booking"}
               onPress={() => {
                 this._handleConfirmBooking(equipment);
-                this.props.navigation.push("Result");
+                this.props.navigation.goBack();
               }}
             />
           </ScrollView>

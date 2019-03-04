@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { Image as ImageCache } from "react-native-expo-image-cache";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
@@ -21,11 +22,6 @@ class EquipmentItem extends Component {
       "https://drupway.com/wp-content/uploads/2018/10/person-male.png"
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   render() {
     const {
       id,
@@ -42,23 +38,18 @@ class EquipmentItem extends Component {
           onPress={onPress}
           style={{ overflow: "hidden", borderRadius: 10 }}
         >
-          <Image
-            source={{ uri: imageURL }}
+          <ImageCache
+            uri={imageURL}
             style={{ height: 160 }}
             resizeMode={"cover"}
           />
           <View style={styles.titleWrapper}>
-            {/* <Image
-              source={{ uri: requesterThumbnail || 'https://i.pinimg.com/originals/d1/1a/45/d11a452f5ce6ab534e083cdc11e8035e.png' }}
-              style={{ height: 40, aspectRatio: 1, borderRadius: 20, backgroundColor: colors.secondaryColor, marginRight: 10, marginLeft: -3 }}
-              resizeMode={"cover"}
-            /> */}
             <View style={{ flexDirection: "column", flex: 1 }}>
               <Text style={styles.equipmentName}>{name}</Text>
               <Text style={styles.equipmentStatus}>{address}</Text>
             </View>
             <View style={styles.priceWrapper}>
-              <Text style={styles.equipmentPrice}>{price} $</Text>
+              <Text style={styles.equipmentPrice}>{price} K</Text>
             </View>
           </View>
         </TouchableOpacity>

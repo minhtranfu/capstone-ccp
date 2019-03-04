@@ -19,7 +19,7 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
 @connect(
-  state => ({}),
+  (state, ownProps) => ({}),
   dispatch => ({
     fetchUpdateConstruction: (contractorId, constructionId, construction) => {
       dispatch(updateConstruction(contractorId, constructionId, construction));

@@ -1,4 +1,4 @@
-import * as ACTIONS from "../types";
+import * as Actions from "../types";
 
 const initialState = {
   loading: false,
@@ -9,22 +9,44 @@ const initialState = {
 export default function contractorReducer(state = initialState, action) {
   const { type, payload } = action;
   switch (action.type) {
-    case ACTIONS.GET_CONTRACTOR_SUCCESS: {
+    case Actions.GET_CONTRACTOR.SUCCESS: {
       return {
         ...state,
-        info: payload
+        info: payload.data
       };
     }
-    case ACTIONS.GET_CONSTRUCTION_SUCCESS: {
+    case Actions.UPDATE_CONTRACTOR_DETAIL.SUCCESS: {
       return {
         ...state,
-        constructionList: payload
+        info: payload.data
       };
     }
-    case ACTIONS.CREATE_CONSTRUCTION_SUCCESS: {
+    case Actions.GET_CONSTRUCTION_LIST.SUCCESS: {
       return {
         ...state,
-        constructionList: [...state.constructionList, payload]
+        constructionList: payload.data
+      };
+    }
+    case Actions.CREATE_CONSTRUCTION.SUCCESS: {
+      return {
+        ...state,
+        constructionList: [...state.constructionList, payload.data]
+      };
+    }
+    case Actions.UPDATE_CONSTRUCTION.SUCCESS: {
+      return {
+        ...state,
+        constructionList: state.constructionList.map(item =>
+          item.id === payload.id ? (item = payload.data.data) : item
+        )
+      };
+    }
+    case Actions.DELETE_CONSTRUCTION.SUCCESS: {
+      return {
+        ...state,
+        constructionList: state.constructionList.filter(
+          item => item.id !== payload.id
+        )
       };
     }
     default:

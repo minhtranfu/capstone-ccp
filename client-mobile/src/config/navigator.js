@@ -35,6 +35,7 @@ import AddDuration from "../screens/MyEquipment/AddEquipment/AddDuration";
 import AddDurationText from "../screens/MyEquipment/AddEquipment/AddDurationText";
 import AddImage from "../screens/MyEquipment/AddEquipment/AddImage";
 import RequireLogin from "../screens/Login/RequireLogin";
+import Calendar from "../components/Calendar";
 
 const EquipmentDetailStack = createStackNavigator(
   {
@@ -213,8 +214,12 @@ const TabNavigator = createBottomTabNavigator(
   }
 );
 
-const AppNavigator = createSwitchNavigator({
-  App: TabNavigator
-});
+const AppNavigator = createSwitchNavigator(
+  {
+    Calendar: Calendar,
+    App: TabNavigator
+  },
+  { initialRouteName: "App" }
+);
 
 export default createAppContainer(AppNavigator);

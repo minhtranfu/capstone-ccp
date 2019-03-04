@@ -4,7 +4,9 @@ import {
   Text,
   View,
   TouchableOpacity,
-  ScrollView
+  TouchableHighlight,
+  ScrollView,
+  Modal
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -12,8 +14,9 @@ import { Location } from "expo";
 import { grantPermission } from "../../redux/reducers/permission";
 import { autoCompleteSearch } from "../../redux/actions/location";
 import { searchEquipment } from "../../redux/actions/equipment";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 
+import Calendar from "../../components/Calendar";
 import SearchBar from "../../components/SearchBar";
 import Header from "../../components/Header";
 import { FlatList } from "react-native-gesture-handler";
@@ -27,7 +30,10 @@ class Search extends Component {
     this.state = {
       location: [],
       currentLat: "",
-      currentLong: ""
+      currentLong: "",
+      modalVisible: false,
+      fromDate: "",
+      toDate: ""
     };
   }
 
@@ -47,6 +53,10 @@ class Search extends Component {
     this.setState({ location: [], currentLat: "", currentLong: "" });
   };
 
+  _setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
+  }
+
   _handleOnChangeText = async address => {
     const { currentLat, currentLong } = this.state;
     this.setState({
@@ -62,6 +72,11 @@ class Search extends Component {
     </TouchableOpacity>
   );
 
+  _onSelectDate = (fromDate, toDate, modalVisible) => {
+    this._setModalVisible(modalVisible);
+    this.setState({ fromDate, toDate });
+  };
+
   _renderRowItem = (item, index) => (
     <TouchableOpacity
       key={index}
@@ -70,7 +85,9 @@ class Search extends Component {
         this.props.navigation.navigate("Result", {
           query: item,
           lat: this.state.currentLat,
-          long: this.state.currentLong
+          long: this.state.currentLong,
+          fromDate: this.state.fromDate,
+          toDate: this.state.toDate
         })
       }
     >
@@ -79,8 +96,65 @@ class Search extends Component {
     </TouchableOpacity>
   );
 
+  _formatDate = date => {
+    var monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ];
+    let newDate = new Date(date);
+    let year = newDate.getFullYear();
+    let monthIndex = newDate.getMonth();
+    let day = newDate.getDate();
+
+    let newYear = year === 2019 ? "" : "," + year;
+    return monthNames[monthIndex] + " " + day + newYear;
+  };
+
+  _renderCalendar = () => {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={this.state.modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+        }}
+      >
+        <SafeAreaView
+          style={{ flex: 1 }}
+          forceInset={{ bottom: "always", top: "always" }}
+        >
+          <Header
+            renderLeftButton={() => (
+              <TouchableHighlight
+                onPress={() => {
+                  this._setModalVisible(!this.state.modalVisible);
+                }}
+              >
+                <Feather name={"x"} size={24} />
+              </TouchableHighlight>
+            )}
+          >
+            <Text>Calendar</Text>
+          </Header>
+          <Calendar onSelectDate={this._onSelectDate} />
+        </SafeAreaView>
+      </Modal>
+    );
+  };
+
   render() {
-    const { location } = this.state;
+    const { location, fromDate, toDate } = this.state;
     return (
       <SafeAreaView
         style={styles.container}
@@ -94,7 +168,45 @@ class Search extends Component {
             </TouchableOpacity>
           )}
         />
+        <View
+          style={{
+            marginVertical: 5,
+            height: 30,
+            paddingHorizontal: 15,
+            flexDirection: "row"
+          }}
+        >
+          <TouchableOpacity
+            style={[
+              styles.dateButton,
+              fromDate && toDate ? { backgroundColor: "green" } : null
+            ]}
+            onPress={() => {
+              this._setModalVisible(true);
+            }}
+          >
+            <Text style={{ fontSize: fontSize.caption, fontWeight: "500" }}>
+              {fromDate && toDate
+                ? `${this._formatDate(fromDate)} - ${this._formatDate(toDate)}`
+                : "Dates"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              paddingHorizontal: 15,
+              alignItems: "center",
+              justifyContent: "center",
+              borderWidth: StyleSheet.hairlineWidth,
+              borderRadius: 5
+            }}
+          >
+            <Text style={{ fontSize: fontSize.caption, fontWeight: "500" }}>
+              Filters
+            </Text>
+          </TouchableOpacity>
+        </View>
         <ScrollView>
+          {this._renderCalendar()}
           {location.length > 0 ? (
             <View style={styles.columnWrapper}>
               {location.map((item, index) => this._renderRowItem(item, index))}
@@ -148,6 +260,14 @@ const styles = StyleSheet.create({
   secondaryText: {
     fontSize: fontSize.secondaryText,
     color: colors.secondaryColorOpacity
+  },
+  dateButton: {
+    paddingHorizontal: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 5,
+    marginRight: 10
   }
 });
 

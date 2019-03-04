@@ -40,19 +40,24 @@ export function sendTransactionRequest(transaction) {
 }
 
 export function requestTransaction(id, transactionStatus) {
+  console.log(transactionStatus);
   return async dispatch => {
-    dispatch({ type: Actions.REQUEST_TRANSACTION.REQUEST });
-    const res = await axios.put(`transactions/${id}`, transactionStatus);
-    dispatch({
-      type: Actions.REQUEST_TRANSACTION.SUCCESS,
-      payload: { data: res, id: id }
-    });
+    try {
+      dispatch({ type: Actions.REQUEST_TRANSACTION.REQUEST });
+      const res = await axios.put(`transactions/${id}`, transactionStatus);
+      dispatch({
+        type: Actions.REQUEST_TRANSACTION.SUCCESS,
+        payload: { data: res, id: id }
+      });
+    } catch (error) {
+      dispatch({ type: Actions.REQUEST_TRANSACTION.ERROR });
+    }
   };
 }
 
 export function cancelTransaction(id) {
   return async dispatch => {
-    const res = await axios.post(`transactions/${id}`);
+    const res = await axios.delete(`transactions/${id}`);
     dispatch({
       type: Actions.CANCEL_TRANSACTION.SUCCESS,
       payload: { id }

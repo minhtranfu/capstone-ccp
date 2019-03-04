@@ -76,6 +76,8 @@ class SearchDetail extends Component {
       deliveryPrice,
       name
     } = this.props.detail.equipmentEntity;
+    const { query } = this.props.navigation.state.params;
+    console.log("Detail", query);
     this.setState({
       startDate,
       endDate
@@ -91,7 +93,8 @@ class SearchDetail extends Component {
     };
     this.props.navigation.navigate("Transaction", {
       equipment: newEquipment,
-      name: name
+      name: name,
+      query: query
     });
   };
 

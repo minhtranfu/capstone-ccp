@@ -10,6 +10,7 @@ import {
   Image,
   Alert
 } from "react-native";
+import { Image as ImageCache } from "react-native-expo-image-cache";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -29,6 +30,8 @@ import Loading from "../../components/Loading";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+
+const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const DROPDOWN_GENERAL_TYPES_OPTIONS = [
   {
@@ -78,6 +81,27 @@ class MyTransactionDetail extends Component {
     this.props.navigation.goBack();
   };
 
+  //Count total day from begin date to end date
+  _countTotalDay = (fromDate, toDate) => {
+    let firstDate = new Date(fromDate);
+    let secondDate = new Date(toDate);
+    let oneDay = 24 * 60 * 60 * 1000;
+    totalDay = Math.round(
+      Math.abs((secondDate.getTime() - firstDate.getTime()) / oneDay)
+    );
+    return totalDay > 1 ? totalDay : 1;
+  };
+
+  _formatDate = date => {
+    let newDate = new Date(date);
+    let year = newDate.getFullYear();
+    let month = newDate.getMonth() + 1;
+    let day = newDate.getDate();
+    let dayOfWeek = weekDays[newDate.getDay()];
+
+    return dayOfWeek + ", " + day + "/" + month + "/" + year;
+  };
+
   _renderPendingBottom = id => {
     return (
       <View style={styles.bottomWrapper}>
@@ -88,7 +112,7 @@ class MyTransactionDetail extends Component {
           }}
         />
         <Button
-          text={"Denied"}
+          text={"Deny"}
           onPress={() => {
             this._handleRequestTransaction(id, "DENIED");
           }}
@@ -145,97 +169,80 @@ class MyTransactionDetail extends Component {
     }
   };
 
-  _renderScrollItem = () => {
+  _renderContractor = detail => (
+    <View style={styles.columnWrapper}>
+      <Text style={styles.title}>Contractor</Text>
+      <View style={styles.rowWrapper}>
+        <ImageCache
+          uri={
+            "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
+          }
+          style={styles.avatar}
+          resizeMode={"cover"}
+        />
+        <TouchableOpacity style={{ flexDirection: "column", paddingLeft: 15 }}>
+          <Text style={styles.text}>
+            Name: {detail.equipment.contractor.name}
+          </Text>
+          <Text style={styles.text}>
+            Phone: {detail.equipment.contractor.phoneNumber}
+          </Text>
+          <Text style={styles.text}>
+            Email: {detail.equipment.contractor.email}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  _renderScrollViewItem = detail => {
+    const totalDay = this._countTotalDay(detail.beginDate, detail.endDate);
+    const totalPrice = totalDay * detail.dailyPrice;
     const { id } = this.props.navigation.state.params;
-    const { transactionDetail } = this.props;
     return (
       <View style={{ paddingHorizontal: 15 }}>
-        <View style={styles.landscapeImgWrapper}>
+        <View style={styles.imageWrapper}>
           <Image
             source={{
               uri:
                 "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
             }}
-            style={styles.landscapeImg}
             resizeMode={"cover"}
+            style={styles.image}
           />
+          <View style={{ flexDirection: "column", paddingLeft: 10 }}>
+            <Text style={styles.title}>{detail.equipment.name}</Text>
+          </View>
         </View>
-        <InputField
-          label={"Equipment Name"}
-          placeholder={"Input your equipment name"}
-          placeholderTextColor={colors.text68}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          editable={false}
-          value={transactionDetail.equipment.name}
-          returnKeyType={"next"}
-        />
-        <InputField
-          label={"Daily price"}
-          placeholderTextColor={colors.text68}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          editable={false}
-          value={transactionDetail.dailyPrice.toString()}
-          keyboardType={"numeric"}
-          returnKeyType={"next"}
-        />
-        <InputField
-          label={"Delivery price"}
-          placeholderTextColor={colors.text68}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          editable={false}
-          keyboardType={"numeric"}
-          value={transactionDetail.deliveryPrice.toString()}
-        />
-        <InputField
-          label={"General Type"}
-          placeholderTextColor={colors.text68}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          editable={false}
-          value={
-            transactionDetail.equipment.equipmentType.generalEquipment.name
-          }
-        />
-        <InputField
-          label={"Type"}
-          placeholderTextColor={colors.text68}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          editable={false}
-          value={transactionDetail.equipment.equipmentType.name}
-        />
-        <Text style={styles.title}>Available time range</Text>
-        <InputField
-          label={"From"}
-          placeholder={"dd-mm-yyyy"}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          editable={false}
-          value={transactionDetail.beginDate}
-          returnKeyType={"next"}
-        />
-        <InputField
-          label={"To"}
-          placeholder={"dd-mm-yyyy"}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          editable={false}
-          value={transactionDetail.endDate}
-        />
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <View
-            style={{
-              width: 15,
-              height: 15,
-              backgroundColor: COLORS[transactionDetail.status || "default"]
-            }}
-          />
-          <Text style={styles.text}> Status: {transactionDetail.status}</Text>
+        <View style={styles.columnWrapper}>
+          <Text style={styles.title}>Available time ranges</Text>
+          <Text style={styles.text}>
+            From:{" "}
+            <Text style={[styles.text, { paddingLeft: 10 }]}>
+              {this._formatDate(detail.beginDate)}
+            </Text>
+          </Text>
+          <Text style={styles.text}>
+            To:{" "}
+            <Text style={[styles.text, { paddingLeft: 10 }]}>
+              {this._formatDate(detail.endDate)}
+            </Text>
+          </Text>
         </View>
-        {this._renderBottomButton(transactionDetail.status, id)}
+        <View style={styles.columnWrapper}>
+          <Text style={styles.title}>Price</Text>
+          <View style={styles.priceItemWrapper}>
+            <Text style={styles.text}>Price/day:</Text>
+            <Text style={styles.text}>{detail.dailyPrice} K</Text>
+          </View>
+          <View style={styles.priceItemWrapper}>
+            <Text style={styles.text}>Total price:</Text>
+            <Text style={styles.text}>{totalPrice} K</Text>
+          </View>
+        </View>
+        {this._renderContractor(detail)}
+        <View style={styles.columnWrapper} />
+        {this._renderBottomButton(detail.status, id)}
       </View>
     );
   };
@@ -254,14 +261,16 @@ class MyTransactionDetail extends Component {
                 this.props.navigation.goBack();
               }}
             >
-              <Feather name="x" size={24} />
+              <Feather name="x" size={26} />
             </TouchableOpacity>
           )}
         >
           <Text style={styles.header}>My Transaction Detail</Text>
         </Header>
         {Object.keys(transactionDetail).length > 0 ? (
-          <ScrollView>{this._renderScrollItem()}</ScrollView>
+          <ScrollView>
+            {this._renderScrollViewItem(transactionDetail)}
+          </ScrollView>
         ) : (
           <Loading />
         )}
@@ -277,23 +286,31 @@ const styles = StyleSheet.create({
   bottomWrapper: {
     marginBottom: 10
   },
-  landscapeImgWrapper: {
-    height: 200,
-    marginBottom: 15
+  imageWrapper: {
+    paddingVertical: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    flexDirection: "row",
+    alignItems: "center"
   },
-  landscapeImg: {
-    flex: 1
-  },
-  buttonChangeImage: {
-    position: "absolute",
-    bottom: 15,
-    right: 15,
-    backgroundColor: colors.primaryColor,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
+  columnWrapper: {
+    paddingVertical: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    flexDirection: "column",
     justifyContent: "center"
+  },
+  rowWrapper: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  priceItemWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  image: {
+    width: 120,
+    height: 80,
+    borderRadius: 10
   },
   header: {
     fontSize: fontSize.h4,
@@ -303,6 +320,16 @@ const styles = StyleSheet.create({
     fontSize: fontSize.bodyText,
     fontWeight: "500",
     color: colors.text
+  },
+  text: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    paddingBottom: 5
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25
   }
 });
 

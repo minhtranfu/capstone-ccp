@@ -17,6 +17,7 @@ import {
   updateEquipment,
   updateEquipmentStatus
 } from "../../redux/actions/equipment";
+import { getGeneralEquipmentType } from "../../redux/actions/type";
 
 import InputField from "../../components/InputField";
 import Dropdown from "../../components/Dropdown";
@@ -58,15 +59,17 @@ const COLORS = {
     return {
       equipmentDetail: state.equipment.contractorEquipment.find(
         item => item.id === id
-      )
+      ),
+      generalType: state.type.listGeneralEquipmentType,
+      loading: state.type.loading
     };
   },
   dispatch => ({
     fetchUpdateEquipment: (equipmentId, equipment) => {
       dispatch(updateEquipment(equipmentId, equipment));
     },
-    fetchUpdateEquipmentStatus: (equipmentId, status) => {
-      dispatch(updateEquipmentStatus(equipmentId, status));
+    fetchGeneralType: () => {
+      dispatch(getGeneralEquipmentType());
     }
   })
 )
@@ -74,7 +77,12 @@ class MyEquipmentDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: {}
+      data: {},
+      generalTypeIndex: 0,
+      generalType: null,
+      typeIndex: 0,
+      type: null,
+      typeIdDefault: 0
     };
   }
 
@@ -85,10 +93,48 @@ class MyEquipmentDetail extends Component {
       nextProps.equipmentDetail !== prevState.data
     ) {
       return {
-        data: nextProps.equipmentDetail
+        data: nextProps.equipmentDetail,
+        generalType:
+          nextProps.equipmentDetail.equipmentType.generalEquipment.name,
+        type: nextProps.equipmentDetail.equipmentType.name,
+        typeIdDefault: nextProps.equipmentDetail.equipmentType.id
       };
     } else return null;
   }
+
+  _capitalizeLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  //Create new dropdown options for general type
+  _handleGeneralEquipmentType = () => {
+    const { generalType } = this.props;
+    let newGeneralEquipmentTypeArray = generalType.map(item => ({
+      id: item.id,
+      name: this._capitalizeLetter(item.name),
+      value: this._capitalizeLetter(item.name)
+    }));
+    return [...DROPDOWN_GENERAL_TYPES_OPTIONS, ...newGeneralEquipmentTypeArray];
+  };
+
+  //Create new dropdown options for type
+  _handleEquipmentType = generalTypeIndex => {
+    const { generalType } = this.props;
+    let generalTypeArray = this._handleGeneralEquipmentType();
+    let result = generalType.find(
+      item => item.id === generalTypeArray[generalTypeIndex].id
+    );
+
+    if (result) {
+      let newEquipmentTypeArray = result.equipmentTypes.map(item => ({
+        id: item.id,
+        name: this._capitalizeLetter(item.name),
+        value: this._capitalizeLetter(item.name)
+      }));
+      return [...DROPDOWN_TYPES_OPTIONS, ...newEquipmentTypeArray];
+    }
+    return DROPDOWN_TYPES_OPTIONS;
+  };
 
   _handleChangeBackgroundImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -97,33 +143,41 @@ class MyEquipmentDetail extends Component {
     }
   };
 
-  _renderAvailableBottom = id => (
-    <View style={styles.bottomWrapper}>
-      <Button text={"Update"} />
-    </View>
-  );
+  _handleSubmitEdit = () => {
+    const { id } = this.props.navigation.state.params;
+    const { data, typeIndex, generalTypeIndex, typeIdDefault } = this.state;
 
-  _handleUpdateStatus = async (id, status) => {
-    await this.props.fetchUpdateEquipmentStatus(id, { status: status });
+    //need to optimize
+    const newTypeOptions = this._handleEquipmentType(generalTypeIndex);
+    let equipmentTypeId = { id: newTypeOptions[typeIndex].id };
+    if (equipmentTypeId.id === 0) equipmentTypeId.id = typeIdDefault;
+
+    const newEquipmentDetail = {
+      name: data.name,
+      dailyPrice: data.dailyPrice,
+      status: "AVAILABLE",
+      deliveryPrice: data.deliveryPrice,
+      description: data.description,
+      thumbnailImage: null,
+      address: "Phú Nhuận",
+      latitude: 10.806488,
+      longitude: 106.676364,
+      equipmentType: { id: equipmentTypeId.id },
+      contractor: { id: 13 },
+      constructionId: null,
+      availableTimeRanges: data.availableTimeRanges,
+      descriptionImages: []
+    };
+
+    this.props.fetchUpdateEquipment(id, newEquipmentDetail);
     this.props.navigation.goBack();
   };
 
-  // _renderDeliveringBottom = id => {
-  //   return (
-  //     <View style={styles.bottomWrapper}>
-  //       <Button
-  //         text={"RENTING"}
-  //         onPress={() => {
-  //           this._handleUpdateStatus(id, "RENTING");
-  //         }}
-  //       />
-  //       <Button
-  //         text={"CANCEL"}
-  //         onPress={() => this.props.navigation.goBack()}
-  //       />
-  //     </View>
-  //   );
-  // };
+  _renderAvailableBottom = id => (
+    <View style={styles.bottomWrapper}>
+      <Button text={"Update"} onPress={this._handleSubmitEdit} />
+    </View>
+  );
 
   _renderBottomButton = (status, id) => {
     switch (status) {
@@ -134,27 +188,60 @@ class MyEquipmentDetail extends Component {
     }
   };
 
-  _handleInputChange = (field, value) => {
-    let newData = { ...this.setState.data };
-    newData[field] = value;
-    this.setState({ data: newData });
-  };
-
-  _handleInputChangeDate = (field, value) => {
+  _handleInputChanged = (field, value) => {
     this.setState({
       data: {
-        ...state.data,
-        equipment: {
-          ...state.data.equipment,
-          [field]: value
-        }
+        ...this.state.data,
+        [field]: value
       }
     });
   };
 
+  _handleDateChanged = (id, field, value) => {
+    const { data } = this.state;
+    this.setState({
+      data: {
+        ...data,
+        availableTimeRanges: data.availableTimeRanges.map((item, index) =>
+          index === id ? { ...item, [field]: value } : item
+        )
+      }
+    });
+  };
+
+  _renderDateRange = (item, index) => (
+    <View key={index}>
+      <InputField
+        label={"From"}
+        placeholder={"dd-mm-yyyy"}
+        customWrapperStyle={{ marginBottom: 20 }}
+        inputType="text"
+        onChangeText={value =>
+          this._handleDateChanged(index, "beginDate", value)
+        }
+        value={item.beginDate}
+        returnKeyType={"next"}
+      />
+      <InputField
+        label={"To"}
+        placeholder={"dd-mm-yyyy"}
+        customWrapperStyle={{ marginBottom: 20 }}
+        inputType="text"
+        onChangeText={value => this._handleDateChanged(index, "endDate", value)}
+        value={item.endDate}
+        returnKeyType={"go"}
+      />
+    </View>
+  );
+
   _renderScrollItem = () => {
     const { id } = this.props.navigation.state.params;
-    const { data } = this.state;
+    const { data, typeIndex, generalTypeIndex } = this.state;
+    const NEW_DROPDOWN_GENERAL_TYPES_OPTIONS = this._handleGeneralEquipmentType();
+    const NEW_DROPDOWN_TYPES_OPTIONS = this._handleEquipmentType(
+      generalTypeIndex
+    );
+
     return (
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.landscapeImgWrapper}>
@@ -179,7 +266,7 @@ class MyEquipmentDetail extends Component {
           placeholderTextColor={colors.text68}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          onChangeText={value => this._handleInputChange("name", value)}
+          onChangeText={value => this._handleInputChanged("name", value)}
           value={data.name}
           editable={data.status === "AVAILABLE" ? true : false}
           returnKeyType={"next"}
@@ -190,10 +277,10 @@ class MyEquipmentDetail extends Component {
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value =>
-            this._handleInputChange("dailyPrice", parseInt(value))
+            this._handleInputChanged("dailyPrice", parseInt(value))
           }
           editable={data.status === "AVAILABLE" ? true : false}
-          value={data.dailyPrice.toString()}
+          value={data.dailyPrice.toLocaleString("en")}
           keyboardType={"numeric"}
           returnKeyType={"next"}
         />
@@ -204,53 +291,54 @@ class MyEquipmentDetail extends Component {
           inputType="text"
           editable={data.status === "AVAILABLE" ? true : false}
           onChangeText={value =>
-            this._handleInputChange("deliveryPrice", parseInt(value))
+            this._handleInputChanged("deliveryPrice", parseInt(value))
           }
           keyboardType={"numeric"}
-          value={data.deliveryPrice.toString()}
+          value={data.deliveryPrice.toLocaleString()}
         />
         <Dropdown
           label={"General Type"}
-          defaultText={data.equipmentType.generalEquipment.name}
-          onSelectValue={value => this.setState({ categories: value })}
-          options={DROPDOWN_GENERAL_TYPES_OPTIONS}
+          defaultText={this.state.generalType}
+          options={NEW_DROPDOWN_GENERAL_TYPES_OPTIONS}
+          onSelectValue={(value, index) =>
+            this.setState({ generalTypeIndex: index, generalType: value })
+          }
         />
         <Dropdown
           label={"Type"}
-          defaultText={data.equipmentType.name}
-          onSelectValue={value => this.setState({ type: value })}
-          options={DROPDOWN_TYPES_OPTIONS}
+          defaultText={this.state.type}
+          options={NEW_DROPDOWN_TYPES_OPTIONS}
+          onSelectValue={(value, index) =>
+            this.setState({ type: value, typeIndex: index })
+          }
         />
-        <Text style={styles.title}>Available time range</Text>
+        <Text style={[styles.title, { marginBottom: 10 }]}>
+          Available time range
+        </Text>
+        {data.availableTimeRanges.map((item, index) =>
+          this._renderDateRange(item, index)
+        )}
         <InputField
-          label={"From"}
-          placeholder={"dd-mm-yyyy"}
+          label={"Description"}
+          placeholder={"Input your description"}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          editable={data.status === "AVAILABLE" ? true : false}
-          onChangeText={value => this._handleInputChange("beginDate", value)}
-          value={data.beginDate}
-          returnKeyType={"next"}
+          onChangeText={value => this._handleInputChanged("description", value)}
+          value={data.description}
         />
-        <InputField
-          label={"To"}
-          placeholder={"dd-mm-yyyy"}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          editable={data.status === "AVAILABLE" ? true : false}
-          onChangeText={value => this.setState({ endDate: value })}
-          value={data.endDate}
-        />
+
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View
             style={{
               width: 15,
               height: 15,
-              marginBottom: 10,
-              backgroundColor: COLORS[data.status || "default"]
+              backgroundColor:
+                COLORS[data.status ? data.status : "AVAILABLE" || "default"]
             }}
           />
-          <Text style={styles.text}> Status: {data.status}</Text>
+          <Text style={styles.text}>
+            Status: {data.status ? data.status : "AVAILABLE"}
+          </Text>
         </View>
         {this._renderBottomButton(data.status, id)}
       </View>

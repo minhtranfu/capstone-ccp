@@ -14,7 +14,10 @@ import { connect } from "react-redux";
 import { Location } from "expo";
 import { grantPermission } from "../../../redux/reducers/permission";
 import { addEquipment } from "../../../redux/actions/equipment";
-import { getAddressByLatLong } from "../../../redux/actions/location";
+import {
+  getAddressByLatLong,
+  getLatLongByAddress
+} from "../../../redux/actions/location";
 
 import Header from "../../../components/Header";
 import Button from "../../../components/Button";
@@ -35,28 +38,30 @@ class AddImage extends Component {
     super(props);
     this.state = {
       thumbnailImage: "",
-      descriptionImages: [],
-      long: "",
-      lat: "",
-      address: ""
+      descriptionImages: []
     };
   }
 
-  componentDidMount = async () => {
-    const locationStatus = await grantPermission("location");
-    if (locationStatus === "granted") {
-      const currentLocation = await Location.getCurrentPositionAsync({});
-      const coords = currentLocation.coords;
-      const lat = coords.latitude;
-      const long = coords.longitude;
-      console.log(lat);
-      this.setState({
-        lat: lat,
-        long: long,
-        address: await getAddressByLatLong(lat, long)
-      });
-    }
-  };
+  // componentDidMount = async () => {
+  //   const { data } = this.props.navigation.state.params;
+  //   const latLong = await this.props.getLatLongByAddress(data.address);
+  //   this.setState({
+  //     lat: latLong.lat
+  //   })
+  //   // const locationStatus = await grantPermission("location");
+  //   // if (locationStatus === "granted") {
+  //   //   const currentLocation = await Location.getCurrentPositionAsync({});
+  //   //   const coords = currentLocation.coords;
+  //   //   const lat = coords.latitude;
+  //   //   const long = coords.longitude;
+  //   //   console.log(lat);
+  //   //   this.setState({
+  //   //     lat: lat,
+  //   //     long: long,
+  //   //     address: await getAddressByLatLong(lat, long)
+  //   //   });
+  //   // }
+  // };
 
   _handleOnPressThumbnailImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -83,13 +88,7 @@ class AddImage extends Component {
   };
 
   _handleAddEquipment = () => {
-    const {
-      descriptionImages,
-      thumbnailImage,
-      address,
-      lat,
-      long
-    } = this.state;
+    const { descriptionImages, thumbnailImage, lat, long } = this.state;
     const { data } = this.props.navigation.state.params;
     const contractor = {
       constructionId: null,
@@ -97,18 +96,7 @@ class AddImage extends Component {
       contractor: {
         id: 13
       },
-      thumbnailImage: null,
-      address: address,
-      latitude: lat,
-      longitude: long,
-      additionalSpecsValues: [
-        {
-          value: "động cơ 300 mã lực",
-          additionalSpecsField: {
-            id: 3
-          }
-        }
-      ]
+      thumbnailImage: null
     };
     const newData = Object.assign({}, data, contractor);
     this.props.fetchAddEquipment(newData);

@@ -4,22 +4,22 @@ import {
   Text,
   View,
   AsyncStorage,
-  Button,
   TouchableOpacity,
-  SegmentedControlIOS,
   ScrollView,
   FlatList
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { listTransactionByRequesterId } from "../../redux/actions/transaction";
-
 import { isSignedIn } from "../../config/auth";
 import RequireLogin from "../Login/RequireLogin";
+
+import Button from "../../components/Button";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
 import Dropdown from "../../components/Dropdown";
 import EquipmentStatus from "../../components/EquipmentStatus";
+import TransactionItem from "../../components/TransactionItem";
 import EquipmentItem from "./components/EquipmentItem";
 import StepProgress from "./components/StepProgress";
 
@@ -27,58 +27,40 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const STEP_PROGRESS_OPTIONS = [
-  {
-    id: 1,
-    name: "Pending",
-    value: "PENDING"
-  },
-  {
-    id: 2,
-    name: "Accepted",
-    value: "ACCEPTED"
-  },
-  {
-    id: 3,
-    name: "Processing",
-    value: "PROCESSING"
-  },
-  {
-    id: 4,
-    name: "Finished",
-    value: "FINISHED"
-  }
-];
-
 const DROPDOWN_OPTIONS = [
   {
     id: 0,
     name: "All Statuses",
-    value: "all"
+    value: "All Statuses"
   },
   {
     id: 1,
     name: "Pending",
-    value: "PENDING"
+    value: "Pending"
   },
   {
     id: 2,
     name: "Accepted",
-    value: "ACCEPTED"
+    value: "Accepted"
   },
   {
     id: 3,
     name: "Processing",
-    value: "PROCESSING"
+    value: "Processing"
   },
   {
     id: 4,
     name: "Finished",
-    value: "FINISHED"
+    value: "Finished"
+  },
+  {
+    id: 5,
+    name: "Denied",
+    value: "Denied"
   }
 ];
 
-const EQUIPMENT_STATUSES = [
+const TRANSACTION_STATUSES = [
   {
     code: "PENDING",
     title: "Pending"
@@ -94,12 +76,38 @@ const EQUIPMENT_STATUSES = [
   {
     code: "FINISHED",
     title: "Finished"
+  },
+  {
+    code: "DENIED",
+    title: "Denied"
   }
-  // {
-  //   code: "WAITING_FOR_RETURNING",
-  //   title: "Waiting for returning"
-  // }
 ];
+
+const EQUIPMENT_STATUS = {
+  AVAILABLE: "Available",
+  PENDING: "Wait for supplier accept",
+  ACCEPTED: "Supplier has been accepted",
+  CANCEL: "Requester has been canceled",
+  DELIVERING: "Equipment is on delivering",
+  WAITING_FOR_RETURNING: "Equipment is turning back",
+  FINISHED: "Equipment has been returned"
+};
+
+const COLORS = {
+  AVAILABLE: "#4DB781",
+  ACCEPTED: "#4DB781", //green
+  DENIED: "#FF5C5C", //red
+  CANCEL: "#FF5C5C",
+  PENDING: "#F9AA33",
+  DELIVERING: "#7199FE",
+  WAITING_FOR_RETURNING: "#7199FE",
+  FINISHED: "#FFDF49",
+  PROCESSING: "#7199FE",
+  default: "#3E3E3E"
+  // blue: 7199FE, yellow: FFDF49
+};
+
+const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 @connect(
   state => {
@@ -130,6 +138,22 @@ class Activity extends Component {
     this.props.fetchRequesterTransaction(12);
   }
 
+  _capitalizeCharacter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+  _formatDate = date => {
+    let newDate = new Date(date);
+    let year = newDate.getFullYear();
+    let month = newDate.getMonth() + 1;
+    let newMonth = month < 10 ? "0" + month : month;
+    let day = newDate.getDate();
+    let newDay = day < 10 ? "0" + day : day;
+    let dayOfWeek = weekDays[newDate.getDay()];
+
+    return dayOfWeek + ", " + newDay + "/" + newMonth + "/" + year;
+  };
+
   _handleFilterStatusResult = status => {
     const { listTransaction } = this.props;
     if (listTransaction) {
@@ -138,35 +162,73 @@ class Activity extends Component {
     return [];
   };
 
-  renderContent = listTransaction => {
+  _renderContent = listTransaction => {
     const { selectedIndex } = this.state;
     if (listTransaction.length > 0) {
-      switch (selectedIndex) {
-        case 0:
-          return this._renderStatusFlatList();
-        case 1:
-          return this._renderFlatList("RENTING");
-      }
-    } else {
-      return (
-        <View style={styles.actionWrapper}>
-          <Text style={styles.text}>No data</Text>
-        </View>
-      );
+      return this._renderRequesterItemList();
     }
+    return (
+      <View style={styles.actionWrapper}>
+        <Text style={styles.text}>No data</Text>
+      </View>
+    );
   };
 
   _handleFilter = () => {
     if (this.state.status === "All Statuses") {
-      return EQUIPMENT_STATUSES;
+      return TRANSACTION_STATUSES;
     } else {
-      return EQUIPMENT_STATUSES.filter(
+      return TRANSACTION_STATUSES.filter(
         status => status.code === this.state.status.toUpperCase()
       );
     }
   };
 
-  _renderStatusFlatList = () => {
+  _renderBottomStatus = (status, equipmentStatus) => {
+    switch (status) {
+      case "FINISHED":
+        return (
+          <Button
+            text={"Feedback"}
+            wrapperStyle={{
+              paddingHorizontal: 15,
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+            buttonStyle={{
+              height: 35,
+              width: 120
+            }}
+          />
+        );
+      case "PROCESSING":
+        return (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginTop: 10
+            }}
+          >
+            <View
+              style={{
+                width: 15,
+                height: 15,
+                marginRight: 5,
+                backgroundColor: COLORS[equipmentStatus || "default"]
+              }}
+            />
+            <Text style={styles.text}>
+              Status: {EQUIPMENT_STATUS[equipmentStatus]}
+            </Text>
+          </View>
+        );
+      default:
+        return null;
+    }
+  };
+
+  _renderRequesterItemList = () => {
     return (
       <ScrollView style={{ flex: 1, paddingHorizontal: 15 }}>
         <Dropdown
@@ -191,8 +253,8 @@ class Activity extends Component {
                   code={status.code}
                 />
                 {equipmentList.map((item, index) => (
-                  <View key={`eq_${item.id}`}>
-                    <EquipmentItem
+                  <View key={`eq_${item.id}`} style={styles.rowWrapper}>
+                    <TransactionItem
                       onPress={() =>
                         this.props.navigation.navigate("Detail", {
                           id: item.id
@@ -203,16 +265,21 @@ class Activity extends Component {
                       imageURL={
                         "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
                       }
-                      status={item.status}
+                      avatarURL={
+                        "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
+                      }
+                      status={this._capitalizeCharacter(item.status)}
+                      statusBackgroundColor={COLORS[item.status]}
                       contractor={item.equipment.contractor.name}
                       phone={item.equipment.contractor.phoneNumber}
-                      beginDate={item.beginDate}
-                      endDate={item.endDate}
+                      beginDate={this._formatDate(item.beginDate)}
+                      endDate={this._formatDate(item.endDate)}
+                      role={"Supplier"}
                     />
-                    <StepProgress
-                      options={STEP_PROGRESS_OPTIONS}
-                      status={item.status}
-                    />
+                    {this._renderBottomStatus(
+                      item.status,
+                      item.equipment.status
+                    )}
                   </View>
                 ))}
               </View>
@@ -223,50 +290,9 @@ class Activity extends Component {
     );
   };
 
-  //Render flat list base on status
-  _renderFlatList = status =>
-    this._handleFilterStatusResult(status).length > 0 ? (
-      <FlatList
-        style={{ flex: 1, paddingHorizontal: 15 }}
-        data={this._handleFilterStatusResult(status)}
-        renderItem={({ item }) => this._renderItem(status, { item })}
-        keyExtractor={(item, index) => index.toString()}
-      />
-    ) : (
-      <View style={styles.actionWrapper}>
-        <Text style={styles.text}>No data</Text>
-      </View>
-    );
-
-  //Render row item
-  _renderItem = (status, { item }) => (
-    <View style={styles.pendingRowItem}>
-      <EquipmentItem
-        onPress={() =>
-          this.props.navigation.navigate("Detail", { id: item.id })
-        }
-        key={`eq_${item.id}`}
-        id={item.id}
-        name={item.equipment.name}
-        imageURL={
-          "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-        }
-        status={item.status}
-        contractor={item.equipment.contractor.name}
-        phone={item.equipment.contractor.phoneNumber}
-        beginDate={item.beginDate}
-        endDate={item.endDate}
-      />
-      {status !== "RENTING" ? (
-        <StepProgress options={STEP_PROGRESS_OPTIONS} status={item.status} />
-      ) : null}
-    </View>
-  );
-
   render() {
     const { checkedSignIn, signedIn } = this.state;
     const { navigation, auth, listTransaction, loading } = this.props;
-    console.log(listTransaction.map(item => item.status));
     if (auth) {
       return (
         <SafeAreaView
@@ -282,19 +308,9 @@ class Activity extends Component {
               </TouchableOpacity>
             )}
           >
-            <SegmentedControlIOS
-              style={{ width: 300 }}
-              values={["Manage status", "Renting"]}
-              selectedIndex={this.state.selectedIndex}
-              onChange={event => {
-                this.setState({
-                  selectedIndex: event.nativeEvent.selectedSegmentIndex
-                });
-              }}
-              tintColor={colors.primaryColor}
-            />
+            <Text style={styles.header}>My Request</Text>
           </Header>
-          {!loading ? this.renderContent(listTransaction) : <Loading />}
+          {!loading ? this._renderContent(listTransaction) : <Loading />}
         </SafeAreaView>
       );
     } else {
@@ -306,6 +322,12 @@ class Activity extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  rowWrapper: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.secondaryColorOpacity,
+    marginBottom: 10,
+    paddingBottom: 10
   },
   pendingRowItem: {
     borderRadius: 15,
@@ -326,6 +348,10 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: "#DEE4E3",
     padding: 30
+  },
+  header: {
+    fontSize: fontSize.h4,
+    fontWeight: "600"
   },
   text: {
     fontSize: fontSize.bodyText,

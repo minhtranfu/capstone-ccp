@@ -3,7 +3,8 @@ import * as Actions from "../types";
 const initialState = {
   loading: false,
   listSupplierTransaction: [],
-  listRequesterTransaction: []
+  listRequesterTransaction: [],
+  error: ""
 };
 
 export default function transactionReducer(state = initialState, action) {
@@ -59,15 +60,14 @@ export default function transactionReducer(state = initialState, action) {
     case Actions.REQUEST_TRANSACTION.ERROR: {
       return {
         ...state,
-        loading: true,
-        error: payload.message
+        loading: false
       };
     }
-    case Actions.CANCEL_TRANSACTION_SUCCESS:
+    case Actions.CANCEL_TRANSACTION.SUCCESS:
       return {
         ...state,
-        listSupplierTransaction: state.listSupplierTransaction.map(item =>
-          item.id === payload.id ? (item = payload.data.data) : item
+        listRequesterTransaction: state.listRequesterTransaction.filter(
+          item => item.id !== payload.id
         )
       };
     case Actions.CLEAR_SUPPLIER_TRANSACTION_SUCCESS:
