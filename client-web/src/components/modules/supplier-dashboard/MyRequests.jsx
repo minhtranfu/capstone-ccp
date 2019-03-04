@@ -285,8 +285,8 @@ class MyRequests extends Component {
         statusClasses += ' badge-info';
         changeStatusButtons = (
           <div className="mt-2">
-            <button className="btn btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.ACCEPTED)}>Accept</button>
-            <button className="btn btn-outline-danger ml-2" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.DENIED)}>Deny</button>
+            <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.ACCEPTED)}>Accept</button>
+            <button className="btn btn-sm btn-outline-danger ml-2" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.DENIED)}>Deny</button>
           </div>
         );
         break;
@@ -297,7 +297,7 @@ class MyRequests extends Component {
         if (transaction.equipment.status === EQUIPMENT_STATUSES.AVAILABLE) {
           changeStatusButtons = (
             <div className="mt-2">
-              <button className="btn btn-warning" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.PROCESSING)}>Deliver</button>
+              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.PROCESSING)}>Deliver</button>
             </div>
           );
         }
@@ -319,7 +319,7 @@ class MyRequests extends Component {
 
           changeStatusButtons = (
             <div className="mt-2">
-              <button className="btn btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.FINISHED)}>Finish</button>
+              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.FINISHED)}>Finish</button>
             </div>
           );
         }
