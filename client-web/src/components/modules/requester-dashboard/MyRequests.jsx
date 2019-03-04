@@ -44,11 +44,8 @@ class MyRequests extends Component {
     [TRANSACTION_STATUSES.DENIED]: 'Denied'
   };
 
-  // Statuses need to show with badge n. transactions
-  needActionStatuses = [
-    TRANSACTION_STATUSES.PENDING,
-    TRANSACTION_STATUSES.ACCEPTED
-  ];
+  // Store counter for status that need an action
+  needActionCounters = {};
 
   /**
    * Load transaction of current user (requester)
@@ -74,8 +71,8 @@ class MyRequests extends Component {
       return (
         <a key={status} className={`nav-link ${status == TRANSACTION_STATUSES.PENDING ? 'active' : ''}`} id={`v-pills-${status}-tab`} data-toggle="pill" href={`#v-pills-${status}`} role="tab" aria-controls={`v-pills-${status}`} aria-selected={status == TRANSACTION_STATUSES.PENDING}>
           {this.showableStatuses[status]}
-          {this.needActionStatuses.includes(status) && this.tabContents[status] && this.tabContents[status].length &&
-            <span className="badge badge-pill badge-danger ml-1">{this.tabContents[status] ? this.tabContents[status].length : 0}</span>
+          {this.needActionCounters[status] &&
+            <span className="badge badge-pill badge-danger ml-1">{this.needActionCounters[status]}</span>
           }
         </a>
       );
@@ -132,6 +129,7 @@ class MyRequests extends Component {
     const { transactions } = this.state;
 
     this.tabContents = {};
+    this.needActionCounters = {};
 
     if (!transactions || transactions.length === 0) {
       return;
@@ -146,6 +144,16 @@ class MyRequests extends Component {
       this.tabContents[transaction.status].push(transactionItem);
     });
   }
+
+  /**
+   * Count number of transaction need an action
+   */
+  _countNeedActionForStatus = (status) => {
+    if (!this.needActionCounters[status]) {
+      this.needActionCounters[status] = 0;
+    }
+    this.needActionCounters[status]++;
+  };
 
   /**
    * Render a transaction element
@@ -165,9 +173,10 @@ class MyRequests extends Component {
     switch (transaction.status) {
       case TRANSACTION_STATUSES.PENDING:
         statusClasses += ' badge-info';
+        this._countNeedActionForStatus(transaction.status);
         changeStatusButtons = (
           <div className="mt-2">
-            <button className="btn btn-outline-danger ml-2" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.CANCELED)}>Cancel</button>
+            <button className="btn btn-sm btn-outline-danger" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.CANCELED)}>Cancel</button>
           </div>
         );
         break;
@@ -182,6 +191,7 @@ class MyRequests extends Component {
 
       case TRANSACTION_STATUSES.PROCESSING:
         if (transaction.equipment.status === EQUIPMENT_STATUSES.DELIVERING) {
+          this._countNeedActionForStatus(transaction.status);
           changeStatusButtons = (
             <div className="mt-2">
               <button className="btn btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction.equipment.id, EQUIPMENT_STATUSES.RENTING)}>Rent</button>
