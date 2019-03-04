@@ -43,11 +43,11 @@
         <!--</dependency>-->
 
 
-        <!-- https://mvnrepository.com/artifact/javax/javaee-api -->
+        <!--https://mvnrepository.com/artifact/javax/javaee-api-->
         <!--<dependency>-->
         <!--<groupId>javax</groupId>-->
         <!--<artifactId>javaee-api</artifactId>-->
-        <!--<version>6.0</version>-->
+        <!--<version>8.0</version>-->
         <!--<scope>provided</scope>-->
         <!--</dependency>-->
 
@@ -180,6 +180,13 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>2.6.14</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -252,23 +259,23 @@
                 <!--<debugPort>5050</debugPort>-->
                 <!--<debug>true</debug>-->
                 <!--<synchronization>-->
-                    <!--<extensions>-->
-                        <!--<extension>.class-->
-                        <!--</extension> &lt;!&ndash; if you want to update each time you build with mvn compile &ndash;&gt;-->
-                    <!--</extensions>-->
+                <!--<extensions>-->
+                <!--<extension>.class-->
+                <!--</extension> &lt;!&ndash; if you want to update each time you build with mvn compile &ndash;&gt;-->
+                <!--</extensions>-->
                 <!--</synchronization>-->
                 <!--<reloadOnUpdate>true</reloadOnUpdate>-->
 
             </plugin>
             <!--<plugin>-->
-                <!--<groupId>org.apache.tomcat.maven</groupId>-->
-                <!--<artifactId>tomcat7-maven-plugin</artifactId>-->
-                <!--<version>2.2</version>-->
-                <!--<configuration>-->
-                    <!--<path>/</path>-->
-                    <!--<finalName>client-api.jar</finalName>-->
-                    <!--<port>8089</port>-->
-                <!--</configuration>-->
+            <!--<groupId>org.apache.tomcat.maven</groupId>-->
+            <!--<artifactId>tomcat7-maven-plugin</artifactId>-->
+            <!--<version>2.2</version>-->
+            <!--<configuration>-->
+            <!--<path>/</path>-->
+            <!--<finalName>client-api.jar</finalName>-->
+            <!--<port>8089</port>-->
+            <!--</configuration>-->
             <!--</plugin>-->
 
             <!--<plugin>-->
