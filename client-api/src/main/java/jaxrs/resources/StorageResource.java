@@ -34,7 +34,7 @@ import static utils.Constants.BUCKET_NAME;
 
 @Path("storage")
 @Produces(MediaType.APPLICATION_JSON)
-public class StorageService {
+public class StorageResource {
 
 	@Context
 	private ServletContext servletContext;
@@ -68,7 +68,6 @@ public class StorageService {
 
 
 	@POST
-	@Path("multi")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadMultiple(List<Attachment> attachmentList) throws IOException {
 		ArrayList<String> urlList = new ArrayList<>();
