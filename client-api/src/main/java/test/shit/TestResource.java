@@ -21,6 +21,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("cdiTest")
 @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
@@ -73,6 +75,18 @@ public class TestResource extends HttpServlet {
 
 		return Response.ok(attachment.getContentDisposition().getParameter("filename")).build();
 	}
+
+	@POST
+	@Path("multifiles")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response testUploadMultipleFiles(List<Attachment> attachmentList) {
+		ArrayList<String> names = new ArrayList<>();
+		for (Attachment attachment : attachmentList) {
+			names.add(attachment.getContentDisposition().getParameter("filename"));
+		}
+		return Response.ok(names).build();
+	}
+
 //	@Override
 //	public void init() {
 //		messageB = new MessageB();

@@ -253,7 +253,7 @@ public class EquipmentEntity implements Serializable {
 		this.longitude = longitude;
 	}
 
-	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "equipment", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	public Collection<DescriptionImageEntity> getDescriptionImages() {
 		return descriptionImages;
 	}

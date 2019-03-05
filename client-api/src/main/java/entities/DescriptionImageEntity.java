@@ -2,6 +2,7 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 
 @Entity
@@ -36,6 +37,7 @@ public class DescriptionImageEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "equipment_id", referencedColumnName = "id")
+	@JsonbTransient
 	public EquipmentEntity getEquipment() {
 		return equipment;
 	}

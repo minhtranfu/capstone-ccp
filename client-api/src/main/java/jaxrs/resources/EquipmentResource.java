@@ -41,6 +41,9 @@ public class EquipmentResource {
 	@Inject
 	ModelConverter modelConverter;
 
+	@Inject
+	DescriptionImageResource descriptionImageResource;
+
 
 	/*========Constants============*/
 //	Nghia's house address
@@ -292,15 +295,17 @@ public class EquipmentResource {
 		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByIdWithValidation(equipmentTypeId);
 
 		//check construction
-		long constructionId = equipmentEntity.getConstruction().getId();
-		ConstructionEntity foundConstructionEntity = constructionDAO.findByIdWithValidation(constructionId);
-		if (foundConstructionEntity.getContractor().getId() != equipmentEntity.getContractor().getId()) {
-			throw new BadRequestException(String.format("construction id=%d not belongs to contractor id=%d"
-					, constructionId
-					, foundContractor.getId()));
+		if (equipmentEntity.getConstruction() != null) {
+
+			long constructionId = equipmentEntity.getConstruction().getId();
+			ConstructionEntity foundConstructionEntity = constructionDAO.findByIdWithValidation(constructionId);
+			if (foundConstructionEntity.getContractor().getId() != equipmentEntity.getContractor().getId()) {
+				throw new BadRequestException(String.format("construction id=%d not belongs to contractor id=%d"
+						, constructionId
+						, foundContractor.getId()));
+			}
+
 		}
-
-
 		// TODO: 2/19/19 add available time ranges
 		for (AvailableTimeRangeEntity availableTimeRange : equipmentEntity.getAvailableTimeRanges()) {
 			availableTimeRange.setEquipment(equipmentEntity);
@@ -369,7 +374,6 @@ public class EquipmentResource {
 	}
 
 
-
 	@PUT
 	@Path("{id:\\d+}/status")
 	public Response updateEquipmentStatus(@PathParam("id") long id, EquipmentEntity entity) {
@@ -416,4 +420,12 @@ public class EquipmentResource {
 	}
 
 
+	@Path("{id:\\d+}/images")
+	public DescriptionImageResource toDescriptionImageResource(@PathParam("id") long equipmentId) {
+		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(equipmentId);
+
+		descriptionImageResource.setEquipmentEntity(foundEquipment);
+
+		return descriptionImageResource;
+	}
 }
