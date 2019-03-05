@@ -24,7 +24,7 @@ const modules = [
   },
   {
     name: 'AddEquipment',
-    path: '/add-equipment',
+    path: '/dashboard/supplier/equipments/add',
     modulePath: './add-equipment/AddEquipment'
   },
   // {
