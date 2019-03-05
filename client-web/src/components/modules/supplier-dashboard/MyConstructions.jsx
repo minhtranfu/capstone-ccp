@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
+import className from 'classnames';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
 
 class MyConstructions extends Component {
   state = {
-    isFetching: true
+    isFetching: true,
+    isAddingConstruction: false
   };
 
   _loadData = async () => {
@@ -38,7 +40,39 @@ class MyConstructions extends Component {
     });
   };
 
-  _handleSaveConstruction = async () => {
+  _handleSaveConstruction = () => {
+    const { construction } = this.state;
+
+    if (construction.id) {
+      return this._updateConstruction();
+    }
+
+    this._postConstruction();
+  };
+
+  _postConstruction = async () => {
+    const { user } = this.props;
+    const { construction, constructions } = this.state;
+
+    try {
+      this.setState({ isFetching: true });
+      const savedConstruction = await ccpApiService.postConstruction(user.id, construction);
+
+      this.setState({
+        constructions: [
+          savedConstruction,
+          ...constructions
+        ],
+        construction: null,
+        isFetching: false,
+        isAddingConstruction: false
+      });
+    } catch (error) {
+      window.alert('Save error! ' + error.response.data.message);
+    }
+  };
+
+  _updateConstruction = async () => {
     const { user } = this.props;
     const { construction, constructions } = this.state;
 
@@ -68,11 +102,11 @@ class MyConstructions extends Component {
     return (
       <div>
         <div className="form-group">
-          <label htmlFor="">Construction name:</label>
+          <label htmlFor="">Construction name: <i className="text-danger">*</i></label>
           <input type="text" className="form-control" name="name" onChange={this._handleChangeField} defaultValue={construction.name} autoFocus />
         </div>
         <div className="form-group">
-          <label htmlFor="">Address:</label>
+          <label htmlFor="">Address: <i className="text-danger">*</i></label>
           <input type="text" className="form-control" name="address" onChange={this._handleChangeField} defaultValue={construction.address} />
         </div>
         <div className="form-group">
@@ -103,7 +137,11 @@ class MyConstructions extends Component {
   };
 
   _setEdittingConstructionId = (edittingId, construction) => {
-    this.setState({ edittingId, construction });
+    this.setState({
+      edittingId,
+      construction,
+      isAddingConstruction: false
+    });
   };
 
   _generatePlaceholders = () => {
@@ -132,15 +170,35 @@ class MyConstructions extends Component {
     return result;
   };
 
+  _toggleAddNewConstruction = () => {
+    const { isAddingConstruction } = this.state;
+    const newState = {
+      isAddingConstruction: !isAddingConstruction,
+      edittingId: null,
+      construction: {}
+    };
+
+    this.setState(newState);
+  };
+
   render() {
-    const { constructions, isFetching, edittingId } = this.state;
+    const { constructions, isFetching, edittingId, isAddingConstruction, construction } = this.state;
 
     return (
       <div className="container py-4">
         <div className="row">
           <div className="col-md-9">
-            <h4>My Constructions <button className="btn btn-success btn-sm float-right"><i className="fa fa-plus"></i> Add new</button></h4>
+            <h4>My Constructions
+              <button className="btn btn-success btn-sm float-right" onClick={this._toggleAddNewConstruction}>
+                <i className={className('fa', {'fa-times': isAddingConstruction, 'fa-plus': !isAddingConstruction})}></i> {isAddingConstruction ? 'Close' : 'Add new'}
+              </button>
+            </h4>
             {!constructions && isFetching && this._generatePlaceholders()}
+            {isAddingConstruction &&
+              <div className={`construction-card editting bg-white shadow-sm my-3 p-3 rounded`}>
+                {this._renderEditingConstructionCard(construction || {})}
+              </div>
+            }
             {constructions && constructions.map(construction => {
               return (
                 <div key={construction.id} className={`construction-card ${construction.id === edittingId ? 'editting' : ''} bg-white shadow-sm my-3 p-3 rounded`}>
