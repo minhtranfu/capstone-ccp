@@ -99,6 +99,28 @@ nav.navbar {
   background: #fff !important;
 }
 
+.date-range-picker {
+  .custom-file-label {
+    padding-left: 3rem;
+  }
+  .custom-file-label::after {
+    right: auto;
+    left: 0;
+    border-left: none;
+    border-right: inherit;
+    border-radius: 0.25rem 0 0 0.25rem;
+    font-family: FontAwesome;
+    content: "\F073" !important;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+}
+
 .owl-carousel .owl-nav button.owl-prev,
 .owl-carousel .owl-nav button.owl-next {
   position: absolute;

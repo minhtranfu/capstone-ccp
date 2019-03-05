@@ -23,7 +23,9 @@ class AddEquipmentStep1 extends Step {
 
     this.state = {
       constructions: [],
-      numOfRange: 1
+      availableTimeRanges: [
+        {}
+      ]
     };
   }
 
@@ -122,34 +124,52 @@ class AddEquipmentStep1 extends Step {
   };
 
   _renderDateRangePickers = () => {
-    const { numOfRange } = this.state;
+    const { availableTimeRanges } = this.state;
+    const numOfRange = availableTimeRanges.length;
 
-    const dateRangePickers = [];
-    for (let i = 0; i < numOfRange; i++) {
-      dateRangePickers.push(
-        <div className="form-group">
+    return availableTimeRanges.map((range, i) => {
+      return (
+        <div className="form-group" key={i}>
           <label htmlFor="">Available time:</label>
-          <DateRangePicker minDate={moment()} onApply={(e, picker) => this._onChangeDateRanage(picker, i)} containerClass="w-100" startDate="1/1/2014" endDate="3/1/2014" autoUpdateInput timePicker timePicker24Hour>
-            <div className="input-group date-range-picker">
-              <input type="text" className="form-control" readOnly value={this._getLabelOfRange(i) || ''} />
+          <div className="input-group date-range-picker">
+            <DateRangePicker minDate={moment()} onApply={(e, picker) => this._onChangeDateRanage(picker, i)} containerClass="custom-file" autoApply alwaysShowCalendars>
+            {/* <input type="text" className="form-control" readOnly value={this._getLabelOfRange(i) || ''} /> */}
+              <input type="text" class="custom-file-input" id={`inputDate${i}`} />
+              <label className="custom-file-label" for={`inputDate${i}`} aria-describedby={`inputDate${i}`}>{this._getLabelOfRange(i) || 'Select time range'}</label>
+            </DateRangePicker>
+            {numOfRange > 1 &&
               <div className="input-group-append">
-                <span className="input-group-text" id="basic-addon2"><i className="fa fa-calendar"></i></span>
+                <button className="btn btn-outline-danger" onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  this._removeTimeRangePicker(i);
+                  return false;
+                }}><i className="fa fa-trash"></i></button>
               </div>
-            </div>
-          </DateRangePicker>
+            }
+          </div>
         </div>
       );
-    }
-
-    return dateRangePickers;
+    });
   };
 
   _addTimeRangePicker = () => {
-    let { numOfRange } = this.state;
-    numOfRange++;
+    const { availableTimeRanges } = this.state;
 
     this.setState({
-      numOfRange
+      availableTimeRanges: [
+        ...availableTimeRanges,
+        {}
+      ]
+    });
+  };
+
+  _removeTimeRangePicker = rangeId => {
+    let { availableTimeRanges } = this.state;
+    availableTimeRanges = availableTimeRanges.filter((range, id) => id !== rangeId);
+
+    this.setState({
+      availableTimeRanges
     });
   };
 
@@ -172,16 +192,16 @@ class AddEquipmentStep1 extends Step {
     if (!amount) {
       return '';
     }
-  
+
     try {
       decimalCount = Math.abs(decimalCount);
       decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
-  
+
       const negativeSign = amount < 0 ? "-" : "";
-  
+
       let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
       let j = (i.length > 3) ? i.length % 3 : 0;
-  
+
       return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
     } catch (e) {
       return '';
