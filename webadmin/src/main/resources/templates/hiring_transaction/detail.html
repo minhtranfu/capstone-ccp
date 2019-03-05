@@ -37,14 +37,28 @@
                                       th:object="${transaction}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{id}">
                                     <div class="form-group">
-                                        <label>Status</label>
-                                        <select th:field="*{status}" class="form-control">
+                                        <label>Hiring Transaction Status</label>
+                                        <select th:field="*{status}" class="form-control" id="mySelect" th:onchange="myFunction(event)">
                                             <option th:each="status : ${transactionStatus}"
                                                     th:value="${status}"
                                                     th:text="${status.getValue()}">
                                             </option>
                                         </select>
                                     </div>
+                                    <div class="form-group">
+                                        <label>Equipment Status</label>
+                                        <select th:field="*{equipment.status}" class="form-control" id="myChange">
+                                            <option th:each="status : ${equipmentStatus}"
+                                                    th:value="${status}"
+                                                    th:text="${status.getValue()}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <span th:if="${errorMessage}" th:text="${errorMessage}" style="color: red"></span>
+                                    </div>
+
                                     <div class="form-group">
                                         <label>Equipment:</label>
                                         <a th:href="@{/equipment/detail/{id}(id = *{equipment.id})}">
@@ -90,8 +104,8 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <input type="submit" class="btn btn-success"
-                                               onclick="succcessAlert()" value="Save">
+                                        <input type="submit" class="btn btn-success" value="Save">
+                                        <!--onclick="succcessAlert()" value="Save">-->
                                         <a href="#" class="btn btn-danger" data-toggle="modal"
                                            data-target="#smallModal">Cancel</a>
 
@@ -113,7 +127,8 @@
                                                                 data-dismiss="modal">
                                                             No
                                                         </button>
-                                                        <a th:href="@{/hiring_transaction/index}" class="link btn btn-danger">Yes</a>
+                                                        <a th:href="@{/hiring_transaction/index}"
+                                                           class="link btn btn-danger">Yes</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -152,11 +167,50 @@
         $('#dataTables-example').DataTable({
             responsive: true
         });
+        myFunction();
     });
+    // var equipmentStatus =
+    function myFunction(e) {
+        if (!e) {
+            var x = document.getElementById('mySelect').value;
+        } else {
+            var x = e.target.value;
+        }
+        if (x == "DENIED" || x == 'PENDING' || x == 'ACCEPTED' || x == 'FINISHED' || x == 'CANCELED') {
+            var options = [
+                {name: "Available", value: "AVAILABLE"}
+            ];
+            changeEquipmentStatusOptions(options);
+            return;
+        }
 
-    function succcessAlert() {
-        swal("Saved !", "", "success");
+        var options = [
+            {
+                name: "Delivering",
+                value: "DELIVERING"
+            },
+            {
+                name: "Renting",
+                value: "RENTING"
+            },
+            {
+                name: "Waiting for returning",
+                value: "WAITING_FOR_RETURNING"
+            }
+        ];
+        changeEquipmentStatusOptions(options);
     }
+    function changeEquipmentStatusOptions(options) {
+        var selectBox = $('#myChange');
+        selectBox.html('');
+        options.forEach(option => {
+            selectBox.append(`<option value="${option.value}">${option.name}</option>`);
+        });
+    }
+
+    // function succcessAlert() {
+    //     swal("Saved !", "", "success");
+    // }
 
 </script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

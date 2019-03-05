@@ -42,7 +42,8 @@
                                         <input th:field="*{name}" class="form-control" placeholder="Name">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red"></span>
+                                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
+                                              style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Status:</label><br/>
@@ -58,14 +59,16 @@
                                         <input th:field="*{email}" class="form-control" placeholder="Name">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></span>
+                                        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                                              style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Phone Number:</label>
                                         <input th:field="*{phone}" class="form-control" placeholder="Phone Number">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" style="color: red"></span>
+                                        <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"
+                                              style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Picture:</label>
@@ -83,11 +86,14 @@
                                            placeholder="Updated Time"></p>
                                     </div>
                                     <div class="form-group">
-                                        <label>Number Of Feedbacked</label>
+                                        <label>Number Of Feedback</label>
                                         <p th:text="*{countReceivedFeedbackEntity()}" class="form-control-static"
                                            placeholder="Number Of Feedbacked"></p>
                                     </div>
                                     <div class="form-group">
+
+
+                                        <input type="Submit" value="Save" class="btn btn-success">
                                         <span th:switch="${contractor.status.toString()}">
                                             <a th:case="NOT_VERIFIED"
                                                th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
@@ -99,29 +105,55 @@
                                                th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
                                                class="link btn btn-success">Active Contractor</a>
                                         </span>
-                                        <input type="Submit" value="Save" class="btn btn-success">
+
+                                        <a href="#" class="btn btn-danger" data-toggle="modal"
+                                           data-target="#smallModal">Cancel</a>
+                                        <div class="modal fade" id="smallModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="smallModal" aria-hidden="true">
+                                            <div class="modal-dialog modal-sm">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-hidden="true">&times;
+                                                        </button>
+                                                        <h4 class="modal-title" id="myModalLabel">Confirm</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <h4>Do you want to cancel?</h4>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default"
+                                                                data-dismiss="modal">
+                                                            No
+                                                        </button>
+                                                        <a th:href="@{/contractor/index}"
+                                                           class="link btn btn-danger">Yes</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-
-                                </form>
                             </div>
-                            <!-- /.col-lg-6 (nested) -->
-                            <div class="col-lg-6">
-
-                                <!--/.table-responsive -->
-                            </div>
-                            <!-- /.col-lg-6 (nested) -->
+                            </form>
                         </div>
-                        <!-- /.row (nested) -->
+                        <!-- /.col-lg-6 (nested) -->
+                        <div class="col-lg-6">
+
+                            <!--/.table-responsive -->
+                        </div>
+                        <!-- /.col-lg-6 (nested) -->
                     </div>
-                    <!-- /.panel-body -->
+                    <!-- /.row (nested) -->
                 </div>
-                <!-- /.panel -->
+                <!-- /.panel-body -->
             </div>
-            <!-- /.col-lg-12 -->
+            <!-- /.panel -->
         </div>
-        <!-- /.row -->
+        <!-- /.col-lg-12 -->
     </div>
-    <!-- /#page-wrapper -->
+    <!-- /.row -->
+</div>
+<!-- /#page-wrapper -->
 
 </div>
 <!-- /#wrapper -->

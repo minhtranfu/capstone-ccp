@@ -1,5 +1,6 @@
 package com.ccp.webadmin.repositories;
 
+import com.ccp.webadmin.entities.EquipmentEntity;
 import com.ccp.webadmin.entities.FeedbackEntity;
 import com.ccp.webadmin.entities.FeedbackTypeEntity;
 import com.ccp.webadmin.entities.HiringTransactionEntity;

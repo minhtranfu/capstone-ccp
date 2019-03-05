@@ -25,11 +25,12 @@ public class ContractorEntity implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @NotNull(message = "Email required not null")
     @Email(message = "Email required")
     @Column(name = "email")
     private String email;
 
-    @Pattern(regexp = "\\d{10}", message = "Invalid Phone Number")
+    @Pattern(regexp = "^0(\\d{9})$", message = "Invalid Phone Number")
     @Column(name = "phone_number")
     private String phone;
 

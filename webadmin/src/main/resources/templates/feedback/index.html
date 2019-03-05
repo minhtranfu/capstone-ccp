@@ -49,10 +49,10 @@
                                 <th>No</th>
                                 <th>Id</th>
                                 <th>Content</th>
-                                <th>Create Time</th>
                                 <th>Feedback Type</th>
                                 <th>From Contractor</th>
                                 <th>To Contractor</th>
+                                <th>Created Time</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -62,7 +62,6 @@
                                     <span th:text="${item.id}" class="link"></span></a>
                                 </td>
                                 <td th:text="${item.content}"></td>
-                                <td th:text="${{item.createdTime}}"></td>
                                 <td th:text="${item.feedbackTypeEntity.name}"></td>
                                 <td><a th:href="@{/contractor/detail/{id}(id = ${item.contractorFeedback.id})}">
                                     <span th:text="${item.contractorFeedback.name}" class="link"></span></a>
@@ -70,6 +69,7 @@
                                 <td><a th:href="@{/contractor/detail/{id}(id = ${item.contractorIsFeedbacked.id})}">
                                     <span th:text="${item.contractorIsFeedbacked.name}" class="link"></span></a>
                                 </td>
+                                <td th:text="${{item.createdTime}}"></td>
 
                             </tr>
 

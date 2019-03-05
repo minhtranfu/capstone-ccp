@@ -20,6 +20,7 @@ public class EquipmentEntity {
     @Column(name = "name")
     private String name;
 
+
     @Column(name = "daily_price")
     private Double dailyPrice;
 

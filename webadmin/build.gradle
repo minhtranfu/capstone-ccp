@@ -25,6 +25,8 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 //    implementation 'org.springframework.boot:spring-boot-starter-security'
+    compile group: 'org.passay', name: 'passay', version: '1.4.0'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.1.2.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'

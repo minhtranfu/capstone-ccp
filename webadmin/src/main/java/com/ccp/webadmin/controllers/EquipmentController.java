@@ -46,14 +46,22 @@ public class EquipmentController {
     public String saveProcess(
             @Valid @ModelAttribute("equipment") EquipmentEntity equipmentEntity,
             BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
 
+            //todo updatedTime null
+            EquipmentEntity foundEquipment = equipmentService.findById(equipmentEntity.getId());
+            equipmentEntity.setContractorEntity(foundEquipment.getContractorEntity());
+            equipmentEntity.setStatus(foundEquipment.getStatus());
+            equipmentEntity.setCreatedTime(foundEquipment.getCreatedTime());
+            equipmentEntity.setUpdatedTime(foundEquipment.getUpdatedTime());
+            return "equipment/detail";
+        }
         model.addAttribute("equipmentStatus", Arrays.asList(HiringTransactionEntity.Status.values()));
         EquipmentEntity foundEquipment = equipmentService.findById(equipmentEntity.getId());
-
-        // TODO: 2019-02-26 set attributes
-        foundEquipment.setStatus(equipmentEntity.getStatus());
-        System.out.println("bbbb" + equipmentEntity.toString());
-        System.out.println("aaa" + foundEquipment.toString());
+        foundEquipment.setName(equipmentEntity.getName());
+        foundEquipment.setDailyPrice(equipmentEntity.getDailyPrice());
+        foundEquipment.setDeliveryPrice(equipmentEntity.getDeliveryPrice());
+        foundEquipment.setAddress(equipmentEntity.getAddress());
 
         equipmentService.save(foundEquipment);
         Integer id = foundEquipment.getId();

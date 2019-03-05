@@ -2,6 +2,7 @@ package com.ccp.webadmin.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -22,10 +23,11 @@ public class AdminUserEntity implements Serializable {
     @Column(name = "is_male")
     private boolean isMale;
 
-    @Pattern(regexp = "\\d{10}", message = "Invalid Phone Number")
+    @Pattern(regexp = "^0(\\d{9})$", message = "Invalid Phone Number")
     @Column(name = "phone", length = 10)
     private String phone;
 
+    @NotNull(message = "Email required not null")
     @Email(message = "Email not correct")
     @Column(name = "email")
     private String email;

@@ -1,9 +1,9 @@
 package com.ccp.webadmin.controllers;
 
 import com.ccp.webadmin.entities.ContractorEntity;
-import com.ccp.webadmin.entities.HiringTransactionEntity;
 import com.ccp.webadmin.services.ContractorService;
 import com.ccp.webadmin.services.FeedbackService;
+import com.ccp.webadmin.utils.PasswordAutoGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,8 +11,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 
 @Controller
 @RequestMapping("contractor")
@@ -20,6 +18,7 @@ public class ContractorController {
 
     private final ContractorService contractorService;
     private final FeedbackService feedbackService;
+
 
     @Autowired
     public ContractorController(ContractorService contractorService, FeedbackService feedbackService) {
@@ -49,17 +48,15 @@ public class ContractorController {
             ContractorEntity foundContractor = contractorService.findById(contractorEntity.getId());
             contractorEntity.setCreatedTime(foundContractor.getCreatedTime());
             contractorEntity.setUpdatedTime(foundContractor.getUpdatedTime());
-//            System.out.println(contractorEntity.getStatus().getValue());
-                return "contractor/detail";
+            return "contractor/detail";
         }
 
         ContractorEntity foundContractor = contractorService.findById(contractorEntity.getId());
 
-        // lay nhung cai can lay
+
         foundContractor.setName(contractorEntity.getName());
         foundContractor.setPhone(contractorEntity.getPhone());
         foundContractor.setEmail(contractorEntity.getEmail());
-
 
         contractorService.save(foundContractor);
         Integer id = contractorEntity.getId();

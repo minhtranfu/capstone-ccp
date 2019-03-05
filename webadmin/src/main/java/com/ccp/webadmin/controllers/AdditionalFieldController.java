@@ -33,14 +33,14 @@ public class AdditionalFieldController {
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("additionalSpecialField", additionalSpecialFieldService.findById(id));
-        model.addAttribute("dataTypes", Arrays.asList(HiringTransactionEntity.Status.values()));
+        model.addAttribute("dataTypes", Arrays.asList(AdditionalSpecialFieldEntity.Datatype.values()));
         return "additional_special_field/detail";
     }
 
     @GetMapping("/create/{id}")
     public String create(@PathVariable Integer id, Model model) {
         model.addAttribute("additionalSpecialField", new AdditionalSpecialFieldEntity(equipmentTypeService.findEquipmentTypeById(id)));
-        model.addAttribute("dataTypes", Arrays.asList(HiringTransactionEntity.Status.values()));
+        model.addAttribute("dataTypes", Arrays.asList(AdditionalSpecialFieldEntity.Datatype.values()));
         return "additional_special_field/create";
     }
 
@@ -50,14 +50,14 @@ public class AdditionalFieldController {
             BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             if(additionalSpecialFieldEntity.getId() != null){
-                model.addAttribute("dataTypes", Arrays.asList(HiringTransactionEntity.Status.values()));
+                model.addAttribute("dataTypes", Arrays.asList(AdditionalSpecialFieldEntity.Datatype.values()));
                 return "additional_special_field/detail";
             } else{
-                model.addAttribute("dataTypes", Arrays.asList(HiringTransactionEntity.Status.values()));
+                model.addAttribute("dataTypes", Arrays.asList(AdditionalSpecialFieldEntity.Datatype.values()));
                 return "additional_special_field/create";
             }
         }
-        model.addAttribute("dataTypes", Arrays.asList(HiringTransactionEntity.Status.values()));
+        model.addAttribute("dataTypes", Arrays.asList(AdditionalSpecialFieldEntity.Datatype.values()));
         additionalSpecialFieldService.save(additionalSpecialFieldEntity);
         Integer id = additionalSpecialFieldEntity.getId();
         return "redirect:detail/" + id;
@@ -67,6 +67,6 @@ public class AdditionalFieldController {
     public String delete(@RequestParam("id") Integer id) {
         AdditionalSpecialFieldEntity  additionalSpecialFieldEntity = additionalSpecialFieldService.findById(id);
         additionalSpecialFieldService.deleteById(id);
-        return "redirect:index";
+        return "equipment_type/index";
     }
 }
