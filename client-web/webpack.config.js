@@ -16,8 +16,8 @@ const appConfig = require('./config/config');
 const config = {
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: '[name].bundle.js',
-    chunkFilename: '[name].bundle.js',
+    filename: '[name].bundle.[hash].js',
+    chunkFilename: '[name].bundle.[hash].js',
     publicPath: '/',
   },
   resolve: {
