@@ -17,7 +17,7 @@ deploy_stage:
     - export SSHPASS=$USER_PASS
     - export GITUSER=$GIT_USER
     - export GITPASS=$GIT_PASS
-    - sshpass -e ssh -o StrictHostKeyChecking=no root@ccp.hoctot.net "
+    - sshpass -e ssh -o StrictHostKeyChecking=no root@nccp.hoctot.net "
         cd /home/capstone/capstone-ccp-run-web/ &&
         git pull https://$GITUSER:$GITPASS@github.com/minhtranfu/capstone-ccp.git web-client &&
         cd client-web &&
