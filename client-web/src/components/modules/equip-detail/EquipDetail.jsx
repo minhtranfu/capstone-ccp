@@ -305,10 +305,10 @@ class EquipDetail extends Component {
                   <h6>Construction: {equip.construction && equip.construction.name}</h6>
                 </div>
                 <div className="col-md-4">
-                  <h6>Daily price: <i className="fa fa-dollar"></i>{equip.dailyPrice}</h6>
+                  <h6>Daily price:{equip.dailyPrice}K</h6>
                 </div>
                 <div className="col-md-4">
-                  <h6>Delivery price: <i className="fa fa-dollar"></i>{equip.deliveryPrice}</h6>
+                  <h6>Delivery price: {equip.deliveryPrice}K</h6>
                 </div>
                 <div className="col-md-12">
                   <h6>Address: {equip.address}</h6>
@@ -344,8 +344,8 @@ class EquipDetail extends Component {
                 </p>
               </div>
               <div className="request-card bg-white shadow">
-                <div className="my-2">Daily price: <span className="float-right"><i className="fa fa-dollar"></i>{equip.dailyPrice}</span></div>
-                <div className="my-2 pb-2 border-bottom">Delivery price: <span className="float-right"><i className="fa fa-dollar"></i>{equip.deliveryPrice}</span></div>
+                <div className="my-2">Daily price: <span className="float-right">{equip.dailyPrice}K</span></div>
+                <div className="my-2 pb-2 border-bottom">Delivery price: <span className="float-right">{equip.deliveryPrice}K</span></div>
                 
                 <div className="form-group">
                   <label htmlFor="requesterAddress"><strong>Receive address:</strong></label>
@@ -370,7 +370,7 @@ class EquipDetail extends Component {
                   {transaction.beginDate &&
                     <div>
                       <div className="text-left">Days: <span className="float-right">{numOfDays}</span></div>
-                      <div className="text-left">Fee: <span className="float-right"><i className="fa fa-dollar"></i>{numOfDays * equip.dailyPrice}</span></div>
+                      <div className="text-left">Fee: <span className="float-right">{numOfDays * equip.dailyPrice}K</span></div>
                     </div>
                   }
                 </div>
