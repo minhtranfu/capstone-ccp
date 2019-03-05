@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class FeedbackEntity {
 	private long id;
 	private String content;
-	private Boolean isRead;
+	private Status status;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 	private ContractorEntity toContractor;
@@ -48,14 +48,16 @@ public class FeedbackEntity {
 		this.content = content;
 	}
 
+
 	@Basic
-	@Column(name = "is_read", nullable = true)
-	public Boolean getRead() {
-		return isRead;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	public Status getStatus() {
+		return status;
 	}
 
-	public void setRead(Boolean read) {
-		isRead = read;
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 	@Basic
@@ -109,5 +111,11 @@ public class FeedbackEntity {
 
 	public void setUpdatedTime(LocalDateTime updatedTime) {
 		this.updatedTime = updatedTime;
+	}
+
+	enum Status{
+		PENDING,
+		VERIFIED,
+		NOT_VERIFIED,
 	}
 }
