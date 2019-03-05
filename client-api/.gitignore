@@ -94,5 +94,5 @@ buildNumber.properties
 #Custom gitignore
 .idea/dataSources/*
 
-client-api/src/main/tomee/conf/
+src/main/tomee/conf/*
 

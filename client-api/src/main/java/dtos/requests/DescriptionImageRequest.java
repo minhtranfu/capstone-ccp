@@ -6,7 +6,9 @@ import javax.validation.constraints.NotNull;
 
 public class DescriptionImageRequest {
 
+	
+	public long id;
 	@NotNull
-	private String url;
+	public String url;
 
 }

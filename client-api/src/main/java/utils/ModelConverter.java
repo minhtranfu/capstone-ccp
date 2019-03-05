@@ -1,14 +1,20 @@
 package utils;
 
+import dtos.requests.DescriptionImageRequest;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentPutRequest;
 import dtos.requests.EquipmentRequest;
+import entities.AdditionalSpecsValueEntity;
+import entities.AvailableTimeRangeEntity;
+import entities.DescriptionImageEntity;
 import entities.EquipmentEntity;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.convention.MatchingStrategies;
 
 import javax.ejb.Singleton;
+import java.util.Collection;
+import java.util.List;
 
 
 @Singleton
@@ -30,8 +36,19 @@ public class ModelConverter {
 		return result;
 	}
 
-	public EquipmentEntity toEntity(EquipmentPutRequest equipmentPutRequest) {
-		return modelMapper.map(equipmentPutRequest, EquipmentEntity.class);
+	public EquipmentEntity toEntity(EquipmentPutRequest equipmentPutRequest, EquipmentEntity foundEntity) {
+
+		modelMapper.map(equipmentPutRequest, foundEntity);
+		if (equipmentPutRequest.construction == null) {
+			foundEntity.setConstruction(null);
+		}
+
+
+
+//		foundEntity.setDescriptionImages((Collection<DescriptionImageEntity>) modelMapper.map(equipmentPutRequest.descriptionImages, foundEntity.getDescriptionImages().getClass()));
+//		foundEntity.setAvailableTimeRanges((List<AvailableTimeRangeEntity>) modelMapper.map(equipmentPutRequest.availableTimeRanges, foundEntity.getAvailableTimeRanges().getClass()));
+//		foundEntity.setAdditionalSpecsValues((List<AdditionalSpecsValueEntity>) modelMapper.map(equipmentPutRequest.additionalSpecsValues, foundEntity.getAdditionalSpecsValues().getClass()));
+		return foundEntity;
 	}
 
 

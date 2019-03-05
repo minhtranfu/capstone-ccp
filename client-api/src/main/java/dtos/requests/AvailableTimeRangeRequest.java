@@ -7,6 +7,8 @@ import java.time.LocalDate;
 
 public class AvailableTimeRangeRequest {
 
+
+
 	@NotNull
 	public LocalDate beginDate;
 

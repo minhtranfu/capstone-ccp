@@ -1,28 +1,31 @@
 package test.shit;
 
 
+import daos.EquipmentDAO;
+import dtos.requests.EquipmentPutRequest;
+import dtos.validationObjects.LocationValidator;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentRequest;
 import entities.EquipmentEntity;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.modelmapper.ModelMapper;
 import utils.ModelConverter;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import javax.validation.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.ws.rs.*;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Path("cdiTest")
 @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
@@ -35,6 +38,8 @@ public class TestResource extends HttpServlet {
 	@Inject
 	TestDAO testDAO;
 
+	@Inject
+	EquipmentDAO equipmentDAO;
 	@Inject
 	ModelConverter modelConverter;
 
@@ -65,7 +70,24 @@ public class TestResource extends HttpServlet {
 		EquipmentRequest equipmentRequest1 = modelConverter.toRequest(equipmentEntity);
 		return Response.ok(equipmentRequest1).build();
 	}
+	@PUT
+	@Path("equipment/{id:\\d+}")
+	public Response testPutEquipment(@PathParam("id") long equipmentId, @Valid EquipmentPutRequest equipmentRequest) {
 
+		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(equipmentId);
+		 modelConverter.toEntity(equipmentRequest,foundEquipment );
+
+		return Response.ok(foundEquipment).build();
+	}
+
+//	@PUT
+//	@Path("equipment")
+//	public Response testSaveOrMupdateEquipment(@Valid EquipmentPutRequest equipmentPutRequest) {
+//
+//
+//
+//
+//	}
 	@POST
 	@Path("file")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -86,6 +108,30 @@ public class TestResource extends HttpServlet {
 		}
 		return Response.ok(names).build();
 	}
+
+	public void validateLocationData(@NotNull @NotBlank @Size(min = 3) String address, @NotNull double latitude, @NotNull double longitude) {
+	}
+
+
+	@Resource
+	Validator validator;
+	@GET
+	@Path("validate")
+	public Response testValidation(LocationValidator validatioObject) throws NoSuchMethodException {
+		;
+		Set<ConstraintViolation<LocationValidator>> validate = validator.validate(validatioObject);
+
+
+
+		if (!validate.isEmpty()) {
+			throw new ConstraintViolationException(validate);
+		}
+
+		return Response.ok().build();
+	}
+
+
+
 
 //	@Override
 //	public void init() {

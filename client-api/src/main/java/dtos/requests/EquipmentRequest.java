@@ -3,7 +3,9 @@ package dtos.requests;
 import dtos.IdOnly;
 import entities.*;
 
+import javax.json.bind.annotation.JsonbNillable;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -25,11 +27,8 @@ public abstract class EquipmentRequest {
 	public String description;
 	public String thumbnailImage;
 
-	@NotNull
 	public String address;
-	@NotNull
 	public Double latitude;
-	@NotNull
 	public Double longitude;
 
 	@NotNull
@@ -40,7 +39,7 @@ public abstract class EquipmentRequest {
 	@Valid
 	public IdOnly contractor;
 
-	@Valid
+
 	public IdOnly construction;
 
 
@@ -49,6 +48,8 @@ public abstract class EquipmentRequest {
 	public List<AvailableTimeRangeRequest> availableTimeRanges;
 
 	// TODO: 3/4/19 chekc this when do description image upload
+	@Valid
+	@NotNull
 	public Collection<DescriptionImageRequest> descriptionImages;
 
 

@@ -3,6 +3,8 @@ package utils;
 import dtos.responses.MessageResponse;
 
 import javax.ws.rs.core.Response;
+import java.util.Iterator;
+import java.util.List;
 
 public class CommonUtils {
     public static Response responseFilterOk(Object data) {
@@ -31,6 +33,7 @@ public class CommonUtils {
 	public static Response responseError(Response.Status status, String message) {
 		return Response.status(status).entity(new MessageResponse(message)).build();
 	}
+
 
 
 

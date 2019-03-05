@@ -4,6 +4,7 @@ import dtos.wrappers.IndependentHiringTransactionWrapper;
 import org.hibernate.annotations.Where;
 
 import javax.inject.Named;
+import javax.json.bind.annotation.JsonbNillable;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.xml.bind.annotation.XmlTransient;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Where(clause = "is_deleted=0")
@@ -23,6 +25,8 @@ import java.util.List;
 		, @NamedQuery(name = "EquipmentEntity.getOverdateRenting", query = "select e from EquipmentEntity  e where e.status = 'RENTING' and exists (select t from e.processingHiringTransactions t where t.endDate < current_date )")
 })
 
+//for serializing null values ( not hide it)
+@JsonbNillable
 public class EquipmentEntity implements Serializable {
 	private long id;
 	private String name;
@@ -57,6 +61,12 @@ public class EquipmentEntity implements Serializable {
 	private List<HiringTransactionEntity> activeHiringTransactionEntities;
 
 	public EquipmentEntity() {
+		availableTimeRanges = new ArrayList<>();
+		descriptionImages = new ArrayList<>();
+		additionalSpecsValues = new ArrayList<>();
+		hiringTransactions = new ArrayList<>();
+		processingHiringTransactions = new ArrayList<>();
+		activeHiringTransactionEntities = new ArrayList<>();
 	}
 
 
@@ -155,7 +165,7 @@ public class EquipmentEntity implements Serializable {
 	}
 
 	// TODO: 2/27/19 orphan removal here !
-	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	public List<AvailableTimeRangeEntity> getAvailableTimeRanges() {
 		return availableTimeRanges;
 	}
@@ -165,17 +175,26 @@ public class EquipmentEntity implements Serializable {
 	}
 
 	public void addAvailableTimeRange(AvailableTimeRangeEntity availableTimeRangeEntity) {
+		if (availableTimeRanges == null) {
+			return;
+		}
 		this.availableTimeRanges.add(availableTimeRangeEntity);
 		availableTimeRangeEntity.setEquipment(this);
 	}
 
 	public void deleteAvailableTimeRange(AvailableTimeRangeEntity availableTimeRangeEntity) {
+		if (availableTimeRanges == null) {
+			return;
+		}
 		this.availableTimeRanges.remove(availableTimeRangeEntity);
 		availableTimeRangeEntity.setEquipment(null);
 	}
 
 
 	public void deleteAllAvailableTimeRange() {
+		if (availableTimeRanges == null) {
+			return;
+		}
 		for (AvailableTimeRangeEntity availableTimeRange : availableTimeRanges) {
 			availableTimeRange.setEquipment(null);
 		}
@@ -226,17 +245,37 @@ public class EquipmentEntity implements Serializable {
 	@Basic
 	@Column(name = "address")
 	public String getAddress() {
-		return address;
+		return this.address;
 	}
 
 	public void setAddress(String address) {
 		this.address = address;
 	}
 
+
+	@JsonbTransient
+	@Transient
+	public String getFinalAddress() {
+		return this.getConstruction() != null ? this.getConstruction().getAddress() : address;
+	}
+
+	@JsonbTransient
+	@Transient
+	public Double getFinalLongitude() {
+		return this.getConstruction() != null ? this.getConstruction().getLongitude() : longitude;
+	}
+
+	@JsonbTransient
+	@Transient
+	public Double getFinalLatitude() {
+		return this.getConstruction() != null ? this.getConstruction().getLatitude() : latitude;
+	}
+
+
 	@Basic
 	@Column(name = "lat")
 	public Double getLatitude() {
-		return latitude;
+		return this.latitude;
 	}
 
 	public void setLatitude(Double latitude) {
@@ -246,14 +285,14 @@ public class EquipmentEntity implements Serializable {
 	@Basic
 	@Column(name = "`long`")
 	public Double getLongitude() {
-		return longitude;
+		return this.longitude;
 	}
 
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
 	}
 
-	@OneToMany(mappedBy = "equipment", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	public Collection<DescriptionImageEntity> getDescriptionImages() {
 		return descriptionImages;
 	}
@@ -262,10 +301,33 @@ public class EquipmentEntity implements Serializable {
 		this.descriptionImages = descriptionImagesById;
 	}
 
+	public void addDescriptionImage(DescriptionImageEntity descriptionImageEntity) {
+		this.descriptionImages.add(descriptionImageEntity);
+		descriptionImageEntity.setEquipment(this);
+	}
+
+	public void removeDescriptionImage(DescriptionImageEntity descriptionImageEntity) {
+		this.descriptionImages.remove(descriptionImageEntity);
+		descriptionImageEntity.setEquipment(null);
+	}
+
+	public void deleteAllDescriptionImage() {
+
+		for (DescriptionImageEntity descriptionImage : descriptionImages) {
+			descriptionImage.setEquipment(null);
+		}
+		this.descriptionImages.clear();
+
+	}
+
+
+
+
+
 
 	// TODO: 2/27/19 orphan removal here !
 
-	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = false)
 	public List<AdditionalSpecsValueEntity> getAdditionalSpecsValues() {
 		return additionalSpecsValues;
 	}
@@ -340,6 +402,20 @@ public class EquipmentEntity implements Serializable {
 			}
 		}
 		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		EquipmentEntity that = (EquipmentEntity) o;
+		return id == that.id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 
 	public enum Status {

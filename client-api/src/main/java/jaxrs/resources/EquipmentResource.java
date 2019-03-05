@@ -2,16 +2,26 @@ package jaxrs.resources;
 
 import daos.*;
 import dtos.requests.EquipmentPostRequest;
+import dtos.requests.EquipmentPutRequest;
 import dtos.requests.EquipmentRequest;
 import dtos.responses.EquipmentResponse;
+import dtos.validationObjects.LocationValidator;
 import dtos.wrappers.LocationWrapper;
 import dtos.responses.MessageResponse;
 import entities.*;
 import utils.CommonUtils;
 import utils.ModelConverter;
 
+import javax.annotation.Resource;
+import javax.ejb.Local;
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import javax.validation.Validator;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -20,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Path("/equipments")
 @Produces(MediaType.APPLICATION_JSON)
@@ -44,6 +55,9 @@ public class EquipmentResource {
 	@Inject
 	DescriptionImageResource descriptionImageResource;
 
+	@Resource
+	Validator validator;
+
 
 	/*========Constants============*/
 //	Nghia's house address
@@ -52,6 +66,16 @@ public class EquipmentResource {
 	private static final String DEFAULT_RESULT_LIMIT = "1000";
 
 	private static final String REGEX_ORDERBY = "(\\w+\\.(asc|desc)($|,))+";
+
+
+	private void validateBeginEndDate(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {
+		for (AvailableTimeRangeEntity availableTimeRangeEntity : availableTimeRangeEntities) {
+			if (availableTimeRangeEntity.getBeginDate().isAfter(availableTimeRangeEntity.getEndDate())) {
+				throw new BadRequestException("TimeRange: beginDate must <= endDate !!!");
+			}
+		}
+	}
+
 
 	@GET
 	public Response searchEquipment(
@@ -121,181 +145,54 @@ public class EquipmentResource {
 	}
 
 
-	@PUT
-	@Path("{id:\\d+}")
-	public Response updateEquipmentById(@PathParam("id") long id, EquipmentEntity equipmentEntity) {
-
-
-		if (equipmentEntity == null) {
-			return CommonUtils.responseFilterBadRequest(new MessageResponse("no equipment information"));
-		}
-		equipmentEntity.setId(id);
-
-		EquipmentEntity foundEquipment = equipmentDAO.findByID(id);
-		if (foundEquipment == null) {
-			return CommonUtils.responseFilterBadRequest(new MessageResponse("Not found equipment with id=" + id));
-		}
-
-		if (equipmentEntity.getLatitude() == null) {
-			equipmentEntity.setLatitude(Double.parseDouble(DEFAULT_LAT));
-		}
-
-		if (equipmentEntity.getLongitude() == null) {
-			equipmentEntity.setLongitude(Double.parseDouble(DEFAULT_LONG));
-		}
-
-
-		//check for constructor id
-		if (equipmentEntity.getContractor() == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor is null"));
-			return responseBuilder.build();
-
-		}
-		long constructorId = equipmentEntity.getContractor().getId();
-
-		ContractorEntity foundContractor = contractorDAO.findByID(constructorId);
-		if (foundContractor == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("constructor not found"));
-			return responseBuilder.build();
-		}
-
-		//check for equipment type
-
-		if (equipmentEntity.getEquipmentType() == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType is null"));
-			return responseBuilder.build();
-
-		}
-		long equipmentTypeId = equipmentEntity.getEquipmentType().getId();
-
-		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByID(equipmentTypeId);
-		if (foundEquipmentType == null) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("equipmentType not found"));
-			return responseBuilder.build();
-		}
-
-
-		//check construction
-		if (equipmentEntity.getConstruction() != null) {
-			long constructionId = equipmentEntity.getConstruction().getId();
-			ConstructionEntity foundConstructionEntity = constructionDAO.findByID(constructionId);
-			if (foundConstructionEntity == null) {
-				return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(String.format("construction id=%d not found", constructionId))).build();
-			}
-
-			//todo validate
-			if (foundConstructionEntity.getContractor().getId() != equipmentEntity.getContractor().getId()) {
-				return Response.status(Response.Status.BAD_REQUEST).entity
-						(new MessageResponse(String.format("construction id=%d not belongs to contractor id=%d"
-								, constructionId
-								, foundContractor.getId()))).build();
-			}
-		}
-
-
-		//todo validate for additionalSpecsValues
-		if (equipmentEntity.getAdditionalSpecsValues() != null) {
-
-			for (AdditionalSpecsValueEntity additionalSpecsValueEntity : equipmentEntity.getAdditionalSpecsValues()) {
-				AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByID(additionalSpecsValueEntity.getAdditionalSpecsField().getId());
-				if (foundAdditionalSpecsFieldEntity == null) {
-					throw new BadRequestException(String.format("AdditionalSpecsField id=%d not found", additionalSpecsValueEntity.getAdditionalSpecsField().getId()));
-				}
-
-				//remove id for persist transaction
-				additionalSpecsValueEntity.setId(0);
-
-				//validate datatype
-				switch (foundAdditionalSpecsFieldEntity.getDataType()) {
-					case STRING:
-						break;
-					case DOUBLE:
-						try {
-							Double.parseDouble(additionalSpecsValueEntity.getValue());
-						} catch (NumberFormatException e) {
-							return Response.status(Response.Status.BAD_REQUEST)
-									.entity(new MessageResponse(
-											String.format("AdditionalSpecsField value=%s is not %s"
-													, additionalSpecsValueEntity.getValue()
-													, foundAdditionalSpecsFieldEntity.getDataType())
-									)).build();
-						}
-
-						break;
-					case INTEGER:
-						try {
-							Integer.parseInt(additionalSpecsValueEntity.getValue());
-						} catch (NumberFormatException e) {
-							return Response.status(Response.Status.BAD_REQUEST)
-									.entity(new MessageResponse(
-											String.format("AdditionalSpecsField value=%s is not %s"
-													, additionalSpecsValueEntity.getValue()
-													, foundAdditionalSpecsFieldEntity.getDataType())
-									)).build();
-						}
-						break;
-				}
-			}
-		}
-
-
-		//delete all children of the old equipment
-//		foundEquipment.deleteAllAvailableTimeRange();
-
-		// validate time range begin end correct
-		validateBeginEndDate(equipmentEntity.getAvailableTimeRanges());
-
-		// validate time range not intersect !!!
-		if (!equipmentDAO.validateNoIntersect(equipmentEntity.getAvailableTimeRanges())) {
-			throw new BadRequestException("TimeRanges must not be intersect !!!");
-		}
-
-
-		//todo delete image
-
-		//todo delete location
-
-		//todo delete construction
-		;
-		//add all children from new equipment
-		equipmentEntity.setStatus(foundEquipment.getStatus());
-
-		equipmentDAO.merge(equipmentEntity);
-		Response.ResponseBuilder builder = Response.status(Response.Status.OK).entity(
-				equipmentDAO.findByID(equipmentEntity.getId())
-		);
-		return CommonUtils.addFilterHeader(builder).build();
-	}
-
-	private void validateBeginEndDate(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {
-		for (AvailableTimeRangeEntity availableTimeRangeEntity : availableTimeRangeEntities) {
-			if (availableTimeRangeEntity.getBeginDate().isAfter(availableTimeRangeEntity.getEndDate())) {
-				throw new BadRequestException("TimeRange: beginDate must <= endDate !!!");
-			}
-		}
-	}
-
 	@POST
-	public Response postEquipment(@Valid EquipmentPostRequest equipmentRequest) {
+	public Response postEquipment(@NotNull @Valid EquipmentPostRequest equipmentRequest) {
 		//clean equipment entity
 
 		EquipmentEntity equipmentEntity = modelConverter.toEntity(equipmentRequest);
 
 
+		validatePostPutEquipment(equipmentEntity);
+//  2/19/19 add available time ranges
+		for (AvailableTimeRangeEntity availableTimeRange : equipmentEntity.getAvailableTimeRanges()) {
+			availableTimeRange.setEquipment(equipmentEntity);
+		}
+
+		//  2/19/19 add addtionalsepecs
+		for (AdditionalSpecsValueEntity additionalSpecsValue : equipmentEntity.getAdditionalSpecsValues()) {
+			additionalSpecsValue.setEquipment(equipmentEntity);
+		}
+
+		// 3/5/19 add description images
+		for (DescriptionImageEntity descriptionImage : equipmentEntity.getDescriptionImages()) {
+			descriptionImage.setEquipment(equipmentEntity);
+		}
+
+		equipmentDAO.persist(equipmentEntity);
+		return Response.status(Response.Status.CREATED).entity(
+				equipmentDAO.findByID(equipmentEntity.getId())
+		).build();
+
+	}
+
+	private void validatePostPutEquipment(EquipmentEntity equipmentEntity) {
 		//check for constructor id null
 		long contractorId = equipmentEntity.getContractor().getId();
-
 		ContractorEntity foundContractor = contractorDAO.findByIdWithValidation(contractorId);
 
-		//check for equipment type null
+		//set found entity to use addtional property more than just ID !
+		equipmentEntity.setContractor(foundContractor);
 
+		//check for equipment type null
 		long equipmentTypeId = equipmentEntity.getEquipmentType().getId();
+
 
 		//validate equipment tye
 		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByIdWithValidation(equipmentTypeId);
+		equipmentEntity.setEquipmentType(foundEquipmentType);
 
 		//check construction
-		if (equipmentEntity.getConstruction() != null) {
+		if (equipmentEntity.getConstruction() != null && equipmentEntity.getConstruction().getId()!=0) {
 
 			long constructionId = equipmentEntity.getConstruction().getId();
 			ConstructionEntity foundConstructionEntity = constructionDAO.findByIdWithValidation(constructionId);
@@ -305,15 +202,21 @@ public class EquipmentResource {
 						, foundContractor.getId()));
 			}
 
-		}
-		// TODO: 2/19/19 add available time ranges
-		for (AvailableTimeRangeEntity availableTimeRange : equipmentEntity.getAvailableTimeRanges()) {
-			availableTimeRange.setEquipment(equipmentEntity);
-		}
+			equipmentEntity.setConstruction(foundConstructionEntity);
+			// TODO: 3/5/19 take address from construction
+			//not so necessary but for future bug in construction delete
+			equipmentEntity.setAddress(foundConstructionEntity.getAddress());
+			equipmentEntity.setLatitude(foundConstructionEntity.getLatitude());
+			equipmentEntity.setLongitude(foundConstructionEntity.getLongitude());
 
-		// TODO: 2/19/19 add addtionalsepecs
-		for (AdditionalSpecsValueEntity additionalSpecsValue : equipmentEntity.getAdditionalSpecsValues()) {
-			additionalSpecsValue.setEquipment(equipmentEntity);
+		} else {
+			//validate long lat address
+			LocationValidator locationValidator = new LocationValidator(equipmentEntity.getAddress(), equipmentEntity.getLongitude(), equipmentEntity.getLatitude());
+			Set<ConstraintViolation<LocationValidator>> validationResult = validator.validate(locationValidator);
+			if (!validationResult.isEmpty()) {
+				throw new ConstraintViolationException(validationResult);
+			}
+
 		}
 
 
@@ -322,9 +225,17 @@ public class EquipmentResource {
 			//validate field id
 			AdditionalSpecsFieldEntity foundAdditionalSpecsFieldEntity = additionalSpecsFieldDAO.findByIdWithValidation(
 					additionalSpecsValueEntity.getAdditionalSpecsField().getId());
+			additionalSpecsValueEntity.setAdditionalSpecsField(foundAdditionalSpecsFieldEntity);
 
-			//remove id for persist transaction
-			additionalSpecsValueEntity.setId(0);
+			// TODO: 3/5/19 validate field belongs to equipment types
+			if (
+					foundAdditionalSpecsFieldEntity.getEquipmentType().getId() !=
+							foundEquipmentType.getId()) {
+				throw new BadRequestException(String.format("AdditionalSpecsField id=%d not belongs to EquipmentType id=%d",
+						foundAdditionalSpecsFieldEntity.getId()
+						, foundEquipmentType.getId()));
+			}
+
 
 			//validate datatype
 			switch (foundAdditionalSpecsFieldEntity.getDataType()) {
@@ -359,18 +270,55 @@ public class EquipmentResource {
 
 		//validate time range not intersect !!!
 		if (!equipmentDAO.validateNoIntersect(equipmentEntity.getAvailableTimeRanges())) {
-			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse("TimeRanges must not be intersect !!!"));
-			return responseBuilder.build();
+			throw new BadRequestException("TimeRanges must not be intersect !!!");
+		}
+	}
+
+	@PUT
+	@Path("{id:\\d+}")
+	public Response updateEquipmentById(@PathParam("id") long id, @NotNull @Valid EquipmentPutRequest equipmentPutRequest) {
+
+
+		// TODO: 3/5/19 delete all necessary list
+
+		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(id);
+
+		//already deleted with orphanRemoval
+//		foundEquipment.deleteAllAvailableTimeRange();
+//		foundEquipment.deleteAllDescriptionImage();
+		foundEquipment.getDescriptionImages().clear();
+		foundEquipment.getAdditionalSpecsValues().clear();
+		foundEquipment.getAvailableTimeRanges().clear();
+
+		modelConverter.toEntity(equipmentPutRequest, foundEquipment);
+
+
+		validatePostPutEquipment(foundEquipment);
+		// todo validate available time range in dto
+		for (AvailableTimeRangeEntity availableTimeRange : foundEquipment.getAvailableTimeRanges()) {
+			availableTimeRange.setEquipment(foundEquipment);
 		}
 
-		equipmentEntity.setContractor(foundContractor);
-		equipmentEntity.setEquipmentType(foundEquipmentType);
+		//  todo validate additional specs in dto
+		for (AdditionalSpecsValueEntity additionalSpecsValue : foundEquipment.getAdditionalSpecsValues()) {
+			additionalSpecsValue.setEquipment(foundEquipment);
+		}
 
-		equipmentDAO.persist(equipmentEntity);
-		return Response.status(Response.Status.CREATED).entity(
-				equipmentDAO.findByID(equipmentEntity.getId())
-		).build();
+		// todo vaildate description image in dto
 
+		// TODO: 3/5/19 issue: what if client want to delete some image, and inserting new ones ?
+		// TODO: 3/5/19 issuse: what if client just want to delete some image ?
+		for (DescriptionImageEntity descriptionImage : foundEquipment.getDescriptionImages()) {
+			descriptionImage.setEquipment(foundEquipment);
+		}
+
+		//delete all children of the old equipment
+//		foundEquipment.deleteAllAvailableTimeRange();
+
+
+
+		return Response.status(Response.Status.OK).entity(
+				equipmentDAO.merge(foundEquipment)).build();
 	}
 
 
@@ -378,10 +326,7 @@ public class EquipmentResource {
 	@Path("{id:\\d+}/status")
 	public Response updateEquipmentStatus(@PathParam("id") long id, EquipmentEntity entity) {
 
-		EquipmentEntity foundEquipment = equipmentDAO.findByID(id);
-		if (foundEquipment == null) {
-			throw new BadRequestException(String.format("Equipment id=%s not found!", id));
-		}
+		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(id);
 
 		EquipmentEntity.Status status = entity.getStatus();
 		switch (status) {
@@ -422,6 +367,7 @@ public class EquipmentResource {
 
 	@Path("{id:\\d+}/images")
 	public DescriptionImageResource toDescriptionImageResource(@PathParam("id") long equipmentId) {
+
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(equipmentId);
 
 		descriptionImageResource.setEquipmentEntity(foundEquipment);
