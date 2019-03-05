@@ -2,12 +2,6 @@ import React from 'react';
 import Step from './Step';
 import PropTypes from 'prop-types';
 import DropZone from 'react-dropzone';
-// Require Editor JS files.
-import 'froala-editor/js/froala_editor.pkgd.min.js';
-// Require Editor CSS files.
-import 'froala-editor/css/froala_style.min.css';
-import 'froala-editor/css/froala_editor.pkgd.min.css';
-import FroalaEditor from 'react-froala-wysiwyg';
 
 import 'bootstrap-daterangepicker/daterangepicker.css';
 
@@ -143,15 +137,13 @@ class AddEquipmentStep3 extends Step {
           <div className="col-md-6">
             <div className="form-group">
               <label htmlFor="">Mô tả</label>
-              <FroalaEditor tag="textarea" config={{
-                placeholderText: 'Mô tả thiết bị của bạn',
-                maxLength: 10,
-                height: 260,
-                htmlExecuteScripts: false
-              }} rows="10"
-                model={this.state.description}
-                onModelChange={this._onChangeDescription}
-              />
+              <textarea tag="textarea"
+                className="form-control"
+                rows="8"
+                name="description"
+                value={this.state.description || ''}
+                onChange={this._handleFieldChange}
+              ></textarea>
             </div>
           </div>
           <div className="col-md-12 text-center">
