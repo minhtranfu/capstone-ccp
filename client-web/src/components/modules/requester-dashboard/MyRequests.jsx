@@ -199,7 +199,7 @@ class MyRequests extends Component {
           this._countNeedActionForStatus(transaction.status);
           changeStatusButtons = (
             <div className="mt-2">
-              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction.equipment.id, EQUIPMENT_STATUSES.RENTING)}>Rent</button>
+              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction.equipment.id, EQUIPMENT_STATUSES.RENTING)}>Receive</button>
             </div>
           );
         }

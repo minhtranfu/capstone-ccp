@@ -34,7 +34,7 @@ class MyEquipments extends PureComponent {
           <div className="col-md-9">
             <h4>
               My equipments
-            <Link to="/add-equipment" className="float-right">
+            <Link to="/dashboard/supplier/equipments/add" className="float-right">
                 <button className="btn btn-success">
                   <i className="fa fa-plus"></i> New equipment
               </button>
