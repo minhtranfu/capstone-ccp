@@ -7,6 +7,7 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <jta-data-source>MySQLDatabase</jta-data-source>
+        <class>entities.ContractorAccountEntity</class>
         <class>entities.AdditionalSpecsFieldEntity</class>
         <class>entities.AdditionalSpecsValueEntity</class>
         <class>entities.AdminUserEntity</class>
@@ -29,7 +30,7 @@
 
             <!--<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>-->
             <!--<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/capstone_ccp"/>-->
-            <!--<property name="javax.persistence.jdbc.user" value="root"/>-->
+            <!--<property name="javax.persistence.jdbc.username" value="root"/>-->
             <!--<property name="javax.persistence.jdbc.password" value="12345678"/>-->
             <!--<property name="hbm2ddl.auto" value=""/>-->
 
