@@ -3,6 +3,7 @@ package jaxrs.resources;
 import daos.ConstructionDAO;
 import entities.ConstructionEntity;
 import entities.ContractorEntity;
+import entities.EquipmentEntity;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -108,6 +109,15 @@ public class ConstructionResource {
 
 		validateContructionAll(constructionId);
 		ConstructionEntity foundConstruction = constructionDao.findByID(constructionId);
+
+		// TODO: 3/6/19 update address for equipment 
+		for (EquipmentEntity equipmentEntity : foundConstruction.getEquipmentEntities()) {
+			equipmentEntity.setAddress(foundConstruction.getAddress());
+			equipmentEntity.setLatitude(foundConstruction.getLatitude());
+			equipmentEntity.setLongitude(foundConstruction.getLongitude());
+			equipmentEntity.setConstruction(null);
+		}
+
 		foundConstruction.setDeleted(true);
 		constructionDao.merge(foundConstruction);
 		return Response.ok().build();

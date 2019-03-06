@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
+import java.util.List;
 
 @Entity
 @Table(name = "construction", schema = "capstone_ccp")
@@ -28,6 +29,9 @@ public class ConstructionEntity {
 
 	private boolean isDeleted;
 	private ContractorEntity contractor;
+
+
+	private List<EquipmentEntity> equipmentEntities;
 
 
 	@Id
@@ -104,6 +108,18 @@ public class ConstructionEntity {
 
 	public void setContractor(ContractorEntity contractorEntity) {
 		this.contractor = contractorEntity;
+
+	}
+
+	@OneToMany(mappedBy = "construction", cascade = CascadeType.MERGE)
+	@JsonbTransient
+	@XmlTransient
+	public List<EquipmentEntity> getEquipmentEntities() {
+		return equipmentEntities;
+	}
+
+	public void setEquipmentEntities(List<EquipmentEntity> equipmentEntities) {
+		this.equipmentEntities = equipmentEntities;
 	}
 }
 
