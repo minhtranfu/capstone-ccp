@@ -1,6 +1,6 @@
 {
   "example": {
     "port": 3060,
-    "baseUrl": "http://ccp.hoctot.net:8080/api"
+    "baseUrl": "https://ccp.hoctot.net/api"
   }
 }

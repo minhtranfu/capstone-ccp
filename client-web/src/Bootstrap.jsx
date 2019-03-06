@@ -15,6 +15,7 @@ import 'lodash';
 import $ from 'jquery';
 import Popper from 'popper.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import { initializeFirebase, askForPermissioToReceiveNotifications } from './push-notification';
 
 const store = configureStore(INITIAL_STATE);
 
@@ -26,6 +27,10 @@ ReactDOM.render(
   </AppContainer>,
   document.getElementById(ROOT_ELEMENT_ID_AS_DEFINED_IN_INDEX_HTML)
 );
+
+// Init firebase message
+initializeFirebase();
+askForPermissioToReceiveNotifications();
 
 // Hot Module Replacement API
 if (module.hot) {
