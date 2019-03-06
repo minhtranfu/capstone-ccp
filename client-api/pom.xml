@@ -172,7 +172,7 @@
             <version>${tomee.version}</version>
             <type>zip</type>
             <classifier>microprofile</classifier>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

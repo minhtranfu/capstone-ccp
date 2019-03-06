@@ -1,5 +1,6 @@
 package jaxrs.resources;
 
+import annotations.Secured;
 import daos.FeedbackDAO;
 import daos.SubscriptionDAO;
 import entities.SubscriptionEntity;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Path("subscriptions")
 @Produces(MediaType.APPLICATION_JSON)
+@Secured
 public class SubscriptionResource {
 
 

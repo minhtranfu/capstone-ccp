@@ -14,6 +14,7 @@ import java.util.List;
 
 @Table(name = "contractor", schema = "capstone_ccp")
 @Where(clause = "is_deleted=0")
+
 public class ContractorEntity {
 	private long id;
 

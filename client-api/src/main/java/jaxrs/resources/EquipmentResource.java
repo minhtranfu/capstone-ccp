@@ -13,6 +13,7 @@ import utils.CommonUtils;
 import utils.ModelConverter;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
@@ -146,6 +147,7 @@ public class EquipmentResource {
 
 
 	@POST
+//	@RolesAllowed({"USER"})
 	public Response postEquipment(@NotNull @Valid EquipmentPostRequest equipmentRequest) {
 		//clean equipment entity
 
