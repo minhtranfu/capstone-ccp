@@ -16,7 +16,6 @@ import { autoCompleteSearch } from "../../redux/actions/location";
 import { searchEquipment } from "../../redux/actions/equipment";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 
-import Calendar from "../../components/Calendar";
 import SearchBar from "../../components/SearchBar";
 import Header from "../../components/Header";
 import { FlatList } from "react-native-gesture-handler";
@@ -72,11 +71,6 @@ class Search extends Component {
     </TouchableOpacity>
   );
 
-  _onSelectDate = (fromDate, toDate, modalVisible) => {
-    this._setModalVisible(modalVisible);
-    this.setState({ fromDate, toDate });
-  };
-
   _formatDate = date => {
     let newDate = new Date(date);
     let year = newDate.getFullYear();
@@ -112,39 +106,6 @@ class Search extends Component {
         <Text style={styles.text}>{item.main_text}</Text>
         <Text style={styles.secondaryText}>{item.secondary_text}</Text>
       </TouchableOpacity>
-    );
-  };
-
-  _renderCalendar = () => {
-    return (
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={this.state.modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-        }}
-      >
-        <SafeAreaView
-          style={{ flex: 1 }}
-          forceInset={{ bottom: "always", top: "always" }}
-        >
-          <Header
-            renderLeftButton={() => (
-              <TouchableHighlight
-                onPress={() => {
-                  this._setModalVisible(!this.state.modalVisible);
-                }}
-              >
-                <Feather name={"x"} size={24} />
-              </TouchableHighlight>
-            )}
-          >
-            <Text>Calendar</Text>
-          </Header>
-          <Calendar onSelectDate={this._onSelectDate} />
-        </SafeAreaView>
-      </Modal>
     );
   };
 
@@ -188,7 +149,6 @@ class Search extends Component {
           </TouchableOpacity> */}
         {/* </View> */}
         <ScrollView>
-          {this._renderCalendar()}
           {location.length > 0 ? (
             <View style={styles.columnWrapper}>
               {location.map((item, index) => this._renderRowItem(item, index))}

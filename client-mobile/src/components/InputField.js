@@ -6,7 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableNativeFeedback,
-  Platform
+  Platform,
+  KeyboardAvoidingView
 } from "react-native";
 
 import colors from "../config/colors";

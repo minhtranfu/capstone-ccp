@@ -53,6 +53,9 @@ export const CLEAR_SUPPLIER_TRANSACTION_SUCCESS =
 
 //SEARCH EQUIPMENT
 export const SEARCH_EQUIPMENT = renderActions("@@equip/SEARCH_EQUIPMENT");
+export const SEARCH_FILTER_EQUIPMENT = renderActions(
+  "@@equip/SEARCH_FILTER_EQUIPMENT"
+);
 
 //CART
 export const ADD_NEW_CART = "@@cart/ADD_NEW_CART";

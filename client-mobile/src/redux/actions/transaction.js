@@ -49,6 +49,7 @@ export function requestTransaction(id, transactionStatus) {
         type: Actions.REQUEST_TRANSACTION.SUCCESS,
         payload: { data: res, id: id }
       });
+      // dispatch(StatusAction.success("Request success"));
     } catch (error) {
       dispatch({ type: Actions.REQUEST_TRANSACTION.ERROR });
     }
@@ -62,6 +63,7 @@ export function cancelTransaction(id) {
       type: Actions.CANCEL_TRANSACTION.SUCCESS,
       payload: { id }
     });
+    dispatch(StatusAction.success("Send success"));
   };
 }
 

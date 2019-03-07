@@ -31,7 +31,7 @@ import Loading from "../../components/Loading";
 
 const { width, height } = Dimensions.get("window");
 
-const EQUIPMENT_STATUSES = [
+const TRANSACTION_STATUSES = [
   {
     code: "PENDING",
     title: "Pending" // On Waiting,
@@ -102,12 +102,24 @@ const COLORS = {
   DENIED: "#FF5C5C", //red
   CANCEL: "#FF5C5C",
   PENDING: "#F9AA33",
+  RENTING: "#7199FE",
   DELIVERING: "#7199FE",
   WAITING_FOR_RETURNING: "#7199FE",
   FINISHED: "#FFDF49",
   PROCESSING: "#7199FE",
   default: "#3E3E3E"
   // blue: 7199FE, yellow: FFDF49
+};
+
+const EQUIPMENT_STATUS = {
+  AVAILABLE: "Available",
+  PENDING: "Wait for supplier accept",
+  ACCEPTED: "Supplier has been accepted",
+  CANCEL: "Requester has been canceled",
+  DELIVERING: "Equipment is on delivering",
+  RENTING: "Equipment is being rented",
+  WAITING_FOR_RETURNING: "Equipment is turning back",
+  FINISHED: "Equipment has been returned"
 };
 
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -145,12 +157,32 @@ class MyTransaction extends Component {
     this.props.fetchListMyTransaction(13);
   }
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   const { listTransaction, detail, status } = this.props;
-  //   if (listTransaction.length !== prevProps.listTransaction.length) {
-  //     this.props.fetchListMyTransaction(13);
-  //   }
-  // }
+  componentDidUpdate(prevProps, prevState) {
+    const { navigation, status } = this.props;
+    // if (listTransaction.length !== prevProps.listTransaction.length) {
+    //   this.props.fetchListMyTransaction(13);
+    // }
+    if (
+      navigation.state.routeName === "MyTransaction" &&
+      status.type === "error" &&
+      status.time !== prevProps.status.time
+    ) {
+      this._showAlert("Error", status.message);
+    }
+    if (
+      navigation.state.routeName === "MyTransaction" &&
+      status.type === "success" &&
+      status.time !== prevProps.status.time
+    ) {
+      this._showAlert("Success", status.message);
+    }
+  }
+
+  _showAlert = (title, msg) => {
+    Alert.alert(title, msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
 
   _capitalizeCharacter = string => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -168,12 +200,6 @@ class MyTransaction extends Component {
     return dayOfWeek + ", " + newDay + "/" + newMonth + "/" + year;
   };
 
-  _showAlert = (title, msg) => {
-    Alert.alert(title, msg, [{ text: "OK" }], {
-      cancelable: true
-    });
-  };
-
   _handleOnPressItem = id => {
     this.setState({ id });
   };
@@ -189,13 +215,35 @@ class MyTransaction extends Component {
 
   _handleFilter = () => {
     if (this.state.status === "All Statuses") {
-      return EQUIPMENT_STATUSES;
+      return TRANSACTION_STATUSES;
     } else {
-      return EQUIPMENT_STATUSES.filter(
+      return TRANSACTION_STATUSES.filter(
         status => status.code === this.state.status.toUpperCase()
       );
     }
   };
+
+  _renderBottomStatus = equipmentStatus => (
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 10
+      }}
+    >
+      <View
+        style={{
+          width: 15,
+          height: 15,
+          marginRight: 5,
+          backgroundColor: COLORS[equipmentStatus || "default"]
+        }}
+      />
+      <Text style={styles.text}>
+        Equipment status: {EQUIPMENT_STATUS[equipmentStatus]}
+      </Text>
+    </View>
+  );
 
   _renderAllTransaction = () => (
     <View>
@@ -236,6 +284,9 @@ class MyTransaction extends Component {
                   beginDate={this._formatDate(item.beginDate)}
                   endDate={this._formatDate(item.endDate)}
                 />
+                {item.status !== "DENIED"
+                  ? this._renderBottomStatus(item.equipment.status)
+                  : null}
               </View>
             ))}
           </View>
@@ -246,7 +297,7 @@ class MyTransaction extends Component {
 
   _renderContent = listTransaction => {
     const { status } = this.state;
-
+    console.log(listTransaction.map(item => item.equipment.status));
     return (
       <View style={styles.scrollWrapper}>
         {listTransaction.length > 0 ? (
@@ -318,6 +369,9 @@ const styles = StyleSheet.create({
     fontSize: fontSize.h4,
     fontWeight: "500",
     color: colors.text
+  },
+  text: {
+    fontSize: fontSize.bodyText
   }
 });
 

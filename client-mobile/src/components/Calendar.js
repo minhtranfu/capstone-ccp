@@ -14,8 +14,8 @@ class Calendar extends Component {
       isFromDatePicked: false,
       isToDatePicked: false,
       markedDates: {},
-      fromDate: "",
-      endDate: ""
+      fromDate: props.fromDate ? props.fromDate : "",
+      endDate: props.endDate ? props.endDate : ""
     };
   }
 
@@ -159,7 +159,7 @@ class Calendar extends Component {
           <Text>Clear</Text>
         </TouchableOpacity>
         <CalendarPeriod
-          disabledByDefault={true}
+          // disabledByDefault={true}
           onDayPress={day => {
             this._handleDateRangeSelect(day);
           }}

@@ -19,6 +19,7 @@ import {
   clearSearchResult
 } from "../../redux/actions/equipment";
 
+import Calendar from "../../components/Calendar";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import EquipmentItem from "../../components/EquipmentItem";
@@ -50,6 +51,7 @@ class SearchResult extends Component {
     this.state = {
       modalVisible: true,
       filterModalVisible: false,
+      calendarVisible: false,
       fromDate: "",
       toDate: ""
     };
@@ -143,6 +145,46 @@ class SearchResult extends Component {
     this._setModalVisible(!this.state.modalVisible);
   };
 
+  _onSelectDate = (fromDate, toDate, modalVisible) => {
+    this.setState({ fromDate, toDate, calendarVisible: false });
+  };
+
+  _renderCalendar = (beginDate, endDate) => {
+    console.log(this.state.calendarVisible);
+    return (
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={this.state.calendarVisible}
+      >
+        <SafeAreaView
+          style={{ flex: 1, backgroundColor: "red" }}
+          forceInset={{ bottom: "always", top: "always" }}
+        >
+          <Header
+            renderLeftButton={() => (
+              <TouchableHighlight
+                onPress={() => {
+                  this.setState({ calendarVisible: false });
+                  this.setState({ modalVisible: true });
+                }}
+              >
+                <Feather name={"x"} size={24} />
+              </TouchableHighlight>
+            )}
+          >
+            <Text>Calendar</Text>
+          </Header>
+          <Calendar
+            onSelectDate={this._onSelectDate}
+            fromDate={beginDate}
+            endDate={endDate}
+          />
+        </SafeAreaView>
+      </Modal>
+    );
+  };
+
   _renderSearchModal = () => {
     const { query, beginDate, endDate } = this.props.navigation.state.params;
     return (
@@ -157,18 +199,31 @@ class SearchResult extends Component {
             style={styles.modalWrapper}
           >
             <View style={{ paddingHorizontal: 15 }}>
-              <View style={styles.rowWrapper}>
+              <TouchableOpacity
+                style={styles.rowWrapper}
+                onPress={() => this.props.navigation.navigate("Search")}
+              >
                 <Text style={styles.text}>Location</Text>
                 <Text style={styles.text}> {query.main_text}</Text>
-              </View>
-              <View style={styles.rowWrapper}>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.rowWrapper}
+                onPress={() =>
+                  this.setState({ calendarVisible: true, modalVisible: false })
+                }
+              >
                 <Text style={styles.text}>From</Text>
                 <Text style={styles.text}>{this._formatDate(beginDate)}</Text>
-              </View>
-              <View style={[styles.rowWrapper, { borderBottomWidth: 0 }]}>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.rowWrapper, { borderBottomWidth: 0 }]}
+                onPress={() =>
+                  this.setState({ calendarVisible: true, modalVisible: false })
+                }
+              >
                 <Text style={styles.text}>To</Text>
                 <Text style={styles.text}>{this._formatDate(endDate)}</Text>
-              </View>
+              </TouchableOpacity>
             </View>
             <TouchableOpacity
               style={styles.buttonWrapper}
@@ -301,6 +356,7 @@ class SearchResult extends Component {
           <View style={{ flex: 1 }}>
             {this._renderSearchModal()}
             {this._renderFilterModal()}
+            {this._renderCalendar(beginDate, endDate)}
             <FlatList
               style={{ paddingTop: 15, paddingHorizontal: 15 }}
               data={listSearch}

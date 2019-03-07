@@ -146,6 +146,7 @@ class MyEquipment extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { listEquipment, status, navigation } = this.props;
+    console.log(navigation);
     // const { id } = this.state;
     if (prevProps.listEquipmentist && listEquipment) {
       this.props.fetchContractorEquipment(13);
@@ -153,7 +154,7 @@ class MyEquipment extends Component {
     if (
       navigation.state.routeName === "MyEquipment" &&
       status.type === "error" &&
-      status.time !== nextProps.status.time
+      status.time !== prevProps.status.time
     ) {
       this._showAlert("Error", status.message);
     }

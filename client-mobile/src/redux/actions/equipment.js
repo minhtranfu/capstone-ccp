@@ -19,14 +19,18 @@ export function getContractorEquipmentList(contractorId) {
 export function addEquipment(equipment) {
   console.log(equipment);
   return async dispatch => {
-    dispatch({
-      type: Actions.ADD_EQUIPMENT.REQUEST
-    });
-    const res = await axios.post(`equipments`, equipment);
-    dispatch({
-      type: Actions.ADD_EQUIPMENT.SUCCESS,
-      payload: res
-    });
+    try {
+      dispatch({
+        type: Actions.ADD_EQUIPMENT.REQUEST
+      });
+      const res = await axios.post(`equipments`, equipment);
+      dispatch({
+        type: Actions.ADD_EQUIPMENT.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({ type: Actions.ADD_EQUIPMENT.ERROR });
+    }
   };
 }
 
@@ -65,6 +69,34 @@ export function removeEquipment(id) {
 }
 
 export function searchEquipment(
+  address,
+  long,
+  lat,
+  beginDate,
+  endDate,
+  pageNo
+) {
+  const page = pageNo > 0 ? pageNo : 0;
+  let url = `equipments?begin_date=${beginDate}&end_date=${endDate}&long=${long}&lad=${lat}&lquery=${address}&offset=${page}&limit=100`;
+  return async dispatch => {
+    try {
+      dispatch({
+        type: Actions.SEARCH_EQUIPMENT.REQUEST
+      });
+      const res = await axios.get(url);
+      dispatch({
+        type: Actions.SEARCH_EQUIPMENT.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.SEARCH_EQUIPMENT.ERROR
+      });
+    }
+  };
+}
+
+export function searchFilterEquipment(
   address,
   long,
   lat,

@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  ScrollView
+  ScrollView,
+  KeyboardAvoidingView
 } from "react-native";
 import { SafeAreaView, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
@@ -78,8 +79,8 @@ class AddDetail extends Component {
       generalType: null,
       typeIndex: 0,
       type: null,
-      address: "",
-      addressIndex: 0,
+      construction: "",
+      constructionIndex: 0,
       deliveryPrice: null,
       description: "",
       additionalSpecsFields: []
@@ -88,6 +89,20 @@ class AddDetail extends Component {
 
   componentDidMount() {
     this.props.fetchGeneralType();
+  }
+  static getDerivedStateFromProps(props, state) {
+    console.log(state.construction);
+    if (state.construction) {
+      const getConstructionByAddress = props.construction.find(
+        item => item.name === state.construction
+      );
+      if (!state.address) {
+        return {
+          address: getConstructionByAddress.address
+        };
+      }
+      return null;
+    }
   }
 
   //All data must be fill before move to next screen
@@ -183,7 +198,7 @@ class AddDetail extends Component {
     const newConstructionDropdown = construction.map(item => ({
       id: item.id,
       name: item.name,
-      value: item.address
+      value: item.name
     }));
     return [...DROPDOWN_CONSTRUCTION_OPTIONS, ...newConstructionDropdown];
   };
@@ -197,7 +212,7 @@ class AddDetail extends Component {
       generalTypeIndex,
       deliveryPrice,
       description,
-      address,
+      construction,
       additionalSpecsFields
     } = this.state;
     const newTypeOptions = this._handleEquipmentType(generalTypeIndex);
@@ -219,6 +234,10 @@ class AddDetail extends Component {
     return equipment;
   };
 
+  _handleInputChange = (field, value) => {
+    this.setState({ [field]: value });
+  };
+
   _renderScrollViewItem = () => {
     const {
       name,
@@ -226,7 +245,9 @@ class AddDetail extends Component {
       typeIndex,
       generalTypeIndex,
       deliveryPrice,
-      description
+      description,
+      construction,
+      address
     } = this.state;
     const NEW_DROPDOWN_GENERAL_TYPES_OPTIONS = this._handleGeneralEquipmentType();
     const NEW_DROPDOWN_TYPES_OPTIONS = this._handleEquipmentType(
@@ -282,10 +303,18 @@ class AddDetail extends Component {
         <Dropdown
           label={"Construction"}
           defaultText={"Select your construction"}
-          onSelectValue={(value, index) =>
-            this.setState({ address: value, addressIndex: index })
-          }
+          onSelectValue={(value, index) => {
+            this.setState({ construction: value, constructionIndex: index });
+          }}
           options={this._handleConstructionDropdown()}
+        />
+        <InputField
+          label={"Address"}
+          placeholder={"Input your address"}
+          customWrapperStyle={{ marginBottom: 20 }}
+          inputType="text"
+          onChangeText={value => this._handleInputChange("address", value)}
+          value={address}
         />
         <InputField
           label={"Description"}
@@ -346,17 +375,17 @@ class AddDetail extends Component {
           <Text style={styles.header}>Add Detail</Text>
         </Header>
         {!loading ? (
-          <View style={{ flex: 1 }}>
+          <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
             <ScrollView
               style={styles.scrollWrapper}
               contentContainerStyle={{ paddingTop: 20 }}
             >
               {this._renderScrollViewItem()}
+              <View style={styles.bottomWrapper}>
+                {this._renderNextButton(result)}
+              </View>
             </ScrollView>
-            <View style={styles.bottomWrapper}>
-              {this._renderNextButton(result)}
-            </View>
-          </View>
+          </KeyboardAvoidingView>
         ) : (
           <Loading />
         )}

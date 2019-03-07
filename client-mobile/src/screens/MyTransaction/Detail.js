@@ -77,7 +77,7 @@ const COLORS = {
   })
 )
 class MyTransactionDetail extends Component {
-  _handleRequestTransaction = (id, status) => {
+  _handleRequestButton = (id, status) => {
     this.props.fetchRequestTransaction(id, { status: status });
     this.props.navigation.goBack();
   };
@@ -103,29 +103,29 @@ class MyTransactionDetail extends Component {
     return dayOfWeek + ", " + day + "/" + month + "/" + year;
   };
 
-  _renderPendingBottom = id => {
-    return (
-      <View style={styles.bottomWrapper}>
-        <Button
-          text={"Accept"}
-          onPress={() => {
-            this._handleRequestTransaction(id, "ACCEPTED");
-          }}
-        />
-        <Button
-          text={"Deny"}
-          onPress={() => {
-            this._handleRequestTransaction(id, "DENIED");
-          }}
-        />
-      </View>
-    );
-  };
-
   _showAlert = msg => {
     Alert.alert("Error", msg, [{ text: "OK" }], {
       cancelable: true
     });
+  };
+
+  _handleRequestTransaction = (
+    transactionId,
+    transactionStatus,
+    transactionTitle
+  ) => {
+    Alert.alert(transactionTitle, undefined, [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel"
+      },
+      {
+        text: "OK",
+        onPress: () =>
+          this._handleRequestButton(transactionId, transactionStatus)
+      }
+    ]);
   };
 
   _renderAcceptedBottom = id => (
@@ -133,7 +133,11 @@ class MyTransactionDetail extends Component {
       <Button
         text={"Delivery"}
         onPress={() => {
-          this._handleRequestTransaction(id, "PROCESSING");
+          this._handleRequestTransaction(
+            id,
+            "PROCESSING",
+            "Are you sure you want delivery now?"
+          );
         }}
       />
       <Button
@@ -146,25 +150,54 @@ class MyTransactionDetail extends Component {
     </View>
   );
 
-  _renderProcessingBottom = id => (
+  _renderPendingBottom = id => {
+    return (
+      <View style={styles.bottomWrapper}>
+        <Button
+          text={"Accept"}
+          onPress={() => {
+            this._handleRequestTransaction(
+              id,
+              "ACCEPTED",
+              "Are you sure to accept?"
+            );
+          }}
+        />
+        <Button
+          text={"Deny"}
+          onPress={() => {
+            this._handleRequestTransaction(
+              id,
+              "DENIED",
+              "Are you sure to deny transaction?"
+            );
+          }}
+        />
+      </View>
+    );
+  };
+
+  _renderProcessingBottom = (id, equipmentStatus) => (
     <View style={styles.bottomWrapper}>
-      <Button
-        text={"FINISH"}
-        onPress={() => {
-          this._handleRequestTransaction(id, "FINISHED");
-        }}
-      />
+      {equipmentStatus !== "AVAILABLE" ? (
+        <Button
+          text={"FINISH"}
+          onPress={() => {
+            this._handleRequestButton(id, "FINISHED");
+          }}
+        />
+      ) : null}
     </View>
   );
 
-  _renderBottomButton = (status, id) => {
+  _renderBottomButton = (status, id, equipmentStatus) => {
     switch (status) {
       case "ACCEPTED":
         return this._renderAcceptedBottom(id);
       case "PENDING":
         return this._renderPendingBottom(id);
       case "PROCESSING":
-        return this._renderProcessingBottom(id);
+        return this._renderProcessingBottom(id, equipmentStatus);
       default:
         return null;
     }
@@ -268,7 +301,7 @@ class MyTransactionDetail extends Component {
         </View>
         {this._renderContractor(detail)}
         {this._renderTransactionOnProcess(detail.status, detail.equipment)}
-        {this._renderBottomButton(detail.status, id)}
+        {this._renderBottomButton(detail.status, id, detail.equipment.status)}
       </View>
     );
   };
