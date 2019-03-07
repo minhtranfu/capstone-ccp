@@ -80,3 +80,23 @@ export function deleteConstruction(contractorId, constructionId) {
     });
   };
 }
+
+export function getListFeedback(id) {
+  return async dispatch => {
+    const res = await axios.get(`feedbacks/${id}`);
+    dispatch({
+      type: Actions.GET_LIST_FEEDBACK.SUCCESS,
+      payload: res
+    });
+  };
+}
+
+export function createNewFeedback(feedback) {
+  return async dispatch => {
+    const res = await axios.post(`feedbacks`, feedback);
+    dispatch({
+      type: Actions.CREATE_NEW_FEEDBACK.SUCCESS,
+      payload: res
+    });
+  };
+}

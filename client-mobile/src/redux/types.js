@@ -80,7 +80,6 @@ export const CONTRACTOR_REGISTER = renderActions(
 export const UPDATE_CONTRACTOR_DETAIL = renderActions(
   "@@contractor/UPDATE_CONTRACTOR_DETAIL"
 );
-
 export const GET_CONSTRUCTION_LIST = renderActions(
   "@@contractor/GET_CONSTRUCTION_LIST"
 );
@@ -92,4 +91,10 @@ export const UPDATE_CONSTRUCTION = renderActions(
 );
 export const DELETE_CONSTRUCTION = renderActions(
   "@@contractor/DELETE_CONSTRUCTION"
+);
+export const GET_LIST_FEEDBACK = renderActions(
+  "@@contractor/GET_LIST_FEEDBACK"
+);
+export const CREATE_NEW_FEEDBACK = renderActions(
+  "@@contractor/CREATE_NEW_FEEDBACK"
 );

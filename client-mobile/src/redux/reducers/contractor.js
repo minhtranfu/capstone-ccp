@@ -3,7 +3,8 @@ import * as Actions from "../types";
 const initialState = {
   loading: false,
   info: {},
-  constructionList: []
+  constructionList: [],
+  feedbackList: []
 };
 
 export default function contractorReducer(state = initialState, action) {
@@ -47,6 +48,18 @@ export default function contractorReducer(state = initialState, action) {
         constructionList: state.constructionList.filter(
           item => item.id !== payload.id
         )
+      };
+    }
+    case Actions.GET_LIST_FEEDBACK.SUCCESS: {
+      return {
+        ...state,
+        feedbackList: payload.data
+      };
+    }
+    case Actions.CREATE_NEW_FEEDBACK.SUCCESS: {
+      return {
+        ...state,
+        feedbackList: [...state.feedbackList, payload.data]
       };
     }
     default:
