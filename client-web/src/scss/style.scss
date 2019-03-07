@@ -343,3 +343,19 @@ nav.navbar {
   height: 200px;
   border: 2px dashed #888;
 }
+
+// React places auto complete
+.autocomplete-dropdown-container {
+  z-index: 2;
+  position: absolute;
+  width: 100%;
+  transform: translateY(1px);
+  .suggestion-item {
+    padding: 5px 10px;
+    border-top: 1px solid #eee;
+  }
+  .suggestion-item.active {
+    background-color: #007bff !important;
+    color: #fff;
+  }
+}

@@ -7,6 +7,10 @@ import 'owl.carousel/dist/assets/owl.theme.default.css';
 import Helmet from 'react-helmet-async';
 import moment from 'moment';
 import Image from '../../common/Image';
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
 
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
@@ -24,7 +28,8 @@ class EquipDetail extends Component {
       availableTimeRanges: [],
       transaction: {},
       error: {},
-      redirectToTransaction: false
+      redirectToTransaction: false,
+      address: ''
     };
   }
 
@@ -103,22 +108,6 @@ class EquipDetail extends Component {
         ...transaction,
         beginDate: picker.startDate,
         endDate: picker.endDate
-      }
-    });
-  };
-
-  /**
-   * Handle chaning requester address
-   */
-  _handleChangeAddress = e => {
-    const { transaction } = this.state;
-    const name = e.target.name;
-    const value = e.target.value;
-
-    this.setState({
-      transaction: {
-        ...transaction,
-        [name]: value
       }
     });
   };
@@ -222,6 +211,29 @@ class EquipDetail extends Component {
 
     return false;
 
+  };
+
+  handleChange = address => {
+    this.setState({ address });
+  };
+
+  handleSelect = address => {
+
+    geocodeByAddress(address)
+      .then(results => getLatLng(results[0]))
+      .then(latLng => {
+        const { transaction } = this.state;
+        this.setState({
+          address,
+          transaction: {
+            ...transaction,
+            requesterAddress: address,
+            requesterLatitude: latLng.lat,
+            requesterLongitude: latLng.lng
+          }
+        });
+      })
+      .catch(error => console.error('Error', error));
   };
 
   render() {
@@ -346,10 +358,53 @@ class EquipDetail extends Component {
               <div className="request-card bg-white shadow">
                 <div className="my-2">Daily price: <span className="float-right">{equip.dailyPrice}K</span></div>
                 <div className="my-2 pb-2 border-bottom">Delivery price: <span className="float-right">{equip.deliveryPrice}K</span></div>
-                
+
                 <div className="form-group">
                   <label htmlFor="requesterAddress"><strong>Receive address:</strong></label>
-                  <input type="text" name="requesterAddress" id="requesterAddress" onChange={this._handleChangeAddress} className="form-control" placeholder="Where you want to receive equipment"/>
+                  <PlacesAutocomplete
+                    value={this.state.address}
+                    onChange={this.handleChange}
+                    onSelect={this.handleSelect}
+                  >
+                    {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => {
+
+                      return (
+                        <div>
+                          <input
+                            {...getInputProps({
+                              placeholder: 'Search Places ...',
+                              className: 'form-control location-search-input',
+                            })}
+                          />
+                          {(loading || suggestions.length > 0) &&
+                            <div className="autocomplete-dropdown-container shadow-lg border bg-white">
+                            {loading &&
+                              <div className="suggestion-item">
+                                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span> Loading...
+                            </div>
+                            }
+                            {suggestions.map(suggestion => {
+                              const className = suggestion.active
+                                ? 'suggestion-item active'
+                                : 'suggestion-item';
+
+                              return (
+                                <div
+                                  {...getSuggestionItemProps(suggestion, {
+                                    className
+                                  })}
+                                >
+                                  <span>{suggestion.description}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          }
+                        </div>
+                      )
+                    }}
+                  </PlacesAutocomplete>
+                  {/* <input type="text" name="requesterAddress" id="requesterAddress" onChange={this._handleChangeAddress} className="form-control" placeholder="Where you want to receive equipment" /> */}
                 </div>
 
                 <div className="form-group">
