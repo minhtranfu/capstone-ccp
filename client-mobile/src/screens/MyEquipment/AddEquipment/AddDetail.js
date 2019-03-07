@@ -91,7 +91,6 @@ class AddDetail extends Component {
     this.props.fetchGeneralType();
   }
   static getDerivedStateFromProps(props, state) {
-    console.log(state.construction);
     if (state.construction) {
       const getConstructionByAddress = props.construction.find(
         item => item.name === state.construction

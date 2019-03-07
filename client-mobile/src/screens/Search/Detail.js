@@ -302,7 +302,7 @@ class SearchDetail extends Component {
           removeTitle={true}
           hasThumbnail={true}
           hasLeft={true}
-          hasFavorite={true}
+          hasCart={true}
           scrollElement={<Animated.ScrollView />}
           renderScrollItem={this._renderScrollItem}
         />
@@ -392,7 +392,6 @@ const styles = StyleSheet.create({
   bottomWrapper: {
     justifyContent: "center",
     width: width,
-    height: 50,
     backgroundColor: "white",
     borderTopWidth: 1,
     borderTopColor: colors.secondaryColorOpacity,

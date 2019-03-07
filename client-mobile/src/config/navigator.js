@@ -37,6 +37,7 @@ import AddImage from "../screens/MyEquipment/AddEquipment/AddImage";
 import RequireLogin from "../screens/Login/RequireLogin";
 import Calendar from "../components/Calendar";
 import ConfirmAdjustDate from "../screens/Activity/ConfirmAdjustDate";
+import Cart from "../screens/Cart";
 
 const EquipmentDetailStack = createStackNavigator(
   {
@@ -54,7 +55,8 @@ const DiscoverStack = createStackNavigator(
     Transaction: Transaction,
     Search: Search,
     Result: SearchResult,
-    SearchDetail: SearchDetail
+    SearchDetail: SearchDetail,
+    Cart: Cart
   },
   {
     headerMode: "none"

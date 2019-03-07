@@ -8,32 +8,45 @@ const INITIAL_STATE = {
 export default function cartReducer(state = INITIAL_STATE, action) {
   const { type, payload } = action;
   switch (type) {
-    case Actions.ADD_NEW_CART: {
+    case Actions.GET_LIST_CART.REQUEST: {
       return {
         ...state,
-        list: [...state.list, ...payload]
+        loading: true
       };
     }
-    case Actions.UPDATE_CART: {
+    case Actions.GET_LIST_CART.SUCCESS: {
       return {
         ...state,
-        list: state.list.map(item => {
-          if (item.id === payload.id)
-            return Object.assign({}, item, { quantity: payload.quantity });
-          return item;
-        })
+        loading: false,
+        list: payload.data
       };
     }
-    case Actions.REMOVE_ITEM_EQUIPMENT:
+    case Actions.ADD_ITEM_CART.SUCCESS: {
       return {
         ...state,
-        list: state.list.filter(x => x.id !== action.id)
+        list: [...state.list, payload.data]
       };
-    case Actions.REMOVE_EQUIPMENT:
+    }
+    case Actions.UPDATE_ITEM_CART.SUCCESS: {
+      return {
+        ...state,
+        list: state.list.map(item =>
+          item.id === payload.id ? (item = payload.data.data) : item
+        )
+      };
+    }
+    case Actions.REMOVE_ITEM_CART.SUCCESS: {
+      return {
+        ...state,
+        list: state.list.filter(item => item.id !== payload.id)
+      };
+    }
+    case Actions.CART_CHECK_OUT.SUCCESS: {
       return {
         ...state,
         list: []
       };
+    }
     default:
       return state;
   }

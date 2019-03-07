@@ -1,28 +1,60 @@
 import * as Actions from "../types";
+import axios from "axios";
 
-export function addNewEquipment(data) {
-  return {
-    type: Actions.ADD_NEW_CART,
-    payload: data
+export function getCartList(contractorId) {
+  return async dispatch => {
+    dispatch({
+      type: Actions.GET_LIST_CART.REQUEST
+    });
+    const res = await axios.get(`contractors/${contractorId}/cart`);
+    dispatch({
+      type: Actions.GET_LIST_CART.SUCCESS,
+      payload: res
+    });
   };
 }
 
-export function updateCart(id, quantity) {
-  return {
-    type: Actions.UPDATE_CART,
-    payload: { id, quantity }
+export function addItemToCart(contractorId, equipment) {
+  return async dispatch => {
+    const res = await axios.post(`contractors/${contractorId}/cart`, equipment);
+    dispatch({
+      type: Actions.ADD_ITEM_CART.SUCCESS,
+      payload: res
+    });
   };
 }
 
-export function removeItemCart(id) {
-  return {
-    type: Actions.REMOVE_ITEM_CART,
-    id
+export function updateCartItem(contractorId, cartItemId, equipment) {
+  return async dispatch => {
+    const res = await axios.put(
+      `contractors/${contractorId}/cart/${cartItemId}`,
+      equipment
+    );
+    dispatch({
+      type: Actions.UPDATE_ITEM_CART.SUCCESS,
+      payload: { data: res, id: cartItemId }
+    });
   };
 }
 
-export function removeCart() {
-  return {
-    type: Actions.REMOVE_CART
+export function removeItemCart(contractorId, cartItemId) {
+  return async dispatch => {
+    const res = await axios.delete(
+      `contractors/${contractorId}/cart/${cartItemId}`
+    );
+    dispatch({
+      type: Actions.REMOVE_ITEM_CART.SUCCESS,
+      payload: { data: res, id: cartItemId }
+    });
+  };
+}
+
+export function cartCheckout(contractorId) {
+  return async dispatch => {
+    const res = await axios.post(`contractors/${contractorId}/cart/send`);
+    dispatch({
+      type: Actions.CART_CHECK_OUT.SUCCESS,
+      payload: res
+    });
   };
 }

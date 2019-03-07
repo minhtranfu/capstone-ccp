@@ -60,10 +60,12 @@ export const SEARCH_FILTER_EQUIPMENT = renderActions(
 );
 
 //CART
-export const ADD_NEW_CART = "@@cart/ADD_NEW_CART";
-export const UPDATE_CART = "@@cart/UPDATE_CART";
-export const REMOVE_ITEM_CART = "@@cart/REMOVE_ITEM_CART";
-export const REMOVE_CART = "@@cart/REMOVE_CART";
+export const GET_LIST_CART = renderActions("@@cart/GET_LIST_CART");
+export const ADD_ITEM_CART = renderActions("@@cart/ADD_ITEM_CART");
+export const UPDATE_ITEM_CART = renderActions("@@cart/UPDATE_ITEM_CART");
+export const REMOVE_ITEM_CART = renderActions("@@cart/REMOVE_ITEM_CART");
+export const REMOVE_ALL_ITEM = renderActions("@@cart/REMOVE_ALL_ITEM");
+export const CART_CHECK_OUT = renderActions("@@cart/CART_CHECK_OUT");
 
 // STATUS
 export const STATUS_LOADING = "@@status/LOADING";

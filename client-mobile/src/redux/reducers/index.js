@@ -5,6 +5,7 @@ import typeReducer from "./type";
 import statusReducer from "./status";
 import transactionReducer from "./transaction";
 import contractorReducer from "./contractor";
+import cartReducer from "./cart";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
   type: typeReducer,
   status: statusReducer,
   transaction: transactionReducer,
-  contractor: contractorReducer
+  contractor: contractorReducer,
+  cart: cartReducer
 });
 
 export default rootReducer;

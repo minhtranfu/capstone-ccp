@@ -57,6 +57,8 @@ class ParallaxList extends Component {
         hasAdd={this.props.hasAdd}
         hasClose={this.props.hasClose}
         onPress={this.props.onRightPress}
+        onCartPress={this.props.onCartPress}
+        hasCart={this.props.hasCart}
       />
     </AnimatedHeader>
   );

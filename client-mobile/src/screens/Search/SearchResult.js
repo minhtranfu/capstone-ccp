@@ -312,7 +312,9 @@ class SearchResult extends Component {
               >
                 <Feather name="sliders" size={24} />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate("Cart")}
+              >
                 <Feather name="shopping-cart" size={24} />
               </TouchableOpacity>
             </View>

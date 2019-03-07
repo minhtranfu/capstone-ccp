@@ -1,8 +1,7 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, View, Image } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Image, Text } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { withNavigation, NavigationActions } from "react-navigation";
-import { connect } from "react-redux";
 
 import colors from "../../config/colors";
 
@@ -103,8 +102,15 @@ const Search = ({ onPress }) => (
   </TouchableOpacity>
 );
 
+const Cart = ({ onPress }) => (
+  <TouchableOpacity onPress={onPress}>
+    <Feather name={"shopping-cart"} size={24} />
+  </TouchableOpacity>
+);
+
 export default {
   Back,
+  Cart,
   Favorite,
   Profile,
   Add,

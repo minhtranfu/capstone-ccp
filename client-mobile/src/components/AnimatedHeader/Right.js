@@ -17,6 +17,9 @@ class Right extends React.PureComponent {
         }}
       >
         {this.props.hasRight ? <Button.Profile /> : null}
+        {this.props.hasCart ? (
+          <Button.Cart onPress={this.props.onCartPress} />
+        ) : null}
         {this.props.hasSearch ? (
           <Button.Search onPress={this.props.onPress} />
         ) : null}

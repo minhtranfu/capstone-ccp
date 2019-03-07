@@ -11,7 +11,10 @@ import { SafeAreaView, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { sendTransactionRequest } from "../../redux/actions/transaction";
+import { getConstructionList } from "../../redux/actions/contractor";
 
+import Dropdown from "../../components/Dropdown";
+import InputField from "../../components/InputField";
 import Header from "../../components/Header";
 import Button from "../../components/Button";
 import Loading from "../../components/Loading";
@@ -19,33 +22,79 @@ import Loading from "../../components/Loading";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
+const DROPDOWN_CONSTRUCTION_OPTIONS = [
+  {
+    id: 0,
+    name: "Select your construction",
+    value: "Select your construction"
+  }
+];
+
 @connect(
   state => ({
-    status: state.status
+    status: state.status,
+    construction: state.contractor.constructionList
   }),
   dispatch => ({
     fetchSendRequest: transactionDetail => {
       dispatch(sendTransactionRequest(transactionDetail));
+    },
+    fetchGetConstruction: contractorId => {
+      dispatch(getConstructionList(contractorId));
     }
   })
 )
 class ConfirmTransaction extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      address: "",
+      construction: "",
+      constructionIndex: 0
+    };
+  }
+
+  componentDidMount() {
+    this.props.fetchGetConstruction(12);
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (state.construction) {
+      const getConstructionByAddress = props.construction.find(
+        item => item.name === state.construction
+      );
+      if (!state.address) {
+        return {
+          address: getConstructionByAddress.address
+        };
+      }
+      return null;
+    }
+    return undefined;
   }
 
   _handleConfirmBooking = async transactionDetail => {
     await this.props.fetchSendRequest(transactionDetail);
   };
 
+  _handleInputChange = (field, value) => {
+    this.setState({ [field]: value });
+  };
+
+  _handleConstructionDropdown = () => {
+    const { construction } = this.props;
+    const newConstructionDropdown = construction.map(item => ({
+      id: item.id,
+      name: item.name,
+      value: item.name
+    }));
+    return [...DROPDOWN_CONSTRUCTION_OPTIONS, ...newConstructionDropdown];
+  };
+
   render() {
     const { equipment, name } = this.props.navigation.state.params;
     const { query } = this.props.navigation.state.params;
-    const backAction = NavigationActions.back({
-      key: "Result"
-    });
-    console.log(query);
+    const { address, construction, constructionIndex } = this.state;
     return (
       <SafeAreaView
         style={styles.container}
@@ -65,6 +114,25 @@ class ConfirmTransaction extends Component {
             <Text style={styles.text}>Name: {name}</Text>
             <Text style={styles.text}>Begin date: {equipment.beginDate}</Text>
             <Text style={styles.text}>End date:{equipment.endDate}</Text>
+            <Dropdown
+              label={"Construction"}
+              defaultText={"Select your construction"}
+              onSelectValue={(value, index) => {
+                this.setState({
+                  construction: value,
+                  constructionIndex: index
+                });
+              }}
+              options={this._handleConstructionDropdown()}
+            />
+            <InputField
+              label={"Address"}
+              placeholder={"Input your address"}
+              customWrapperStyle={{ marginBottom: 20 }}
+              inputType="text"
+              onChangeText={value => this._handleInputChange("address", value)}
+              value={address}
+            />
             <Button
               text={"Confirm Booking"}
               onPress={() => {
