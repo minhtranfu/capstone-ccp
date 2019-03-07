@@ -2,6 +2,7 @@ import * as Actions from "../types";
 
 const initialState = {
   loading: false,
+  adjustLoading: false,
   listSupplierTransaction: [],
   listRequesterTransaction: [],
   error: ""
@@ -69,6 +70,16 @@ export default function transactionReducer(state = initialState, action) {
         listRequesterTransaction: state.listRequesterTransaction.filter(
           item => item.id !== payload.id
         )
+      };
+    case Actions.ADJUST_TRANSACTION.REQUEST:
+      return {
+        ...state,
+        adjustLoading: true
+      };
+    case Actions.ADJUST_TRANSACTION.SUCCESS:
+      return {
+        ...state,
+        adjustLoading: false
       };
     case Actions.CLEAR_SUPPLIER_TRANSACTION_SUCCESS:
       return {

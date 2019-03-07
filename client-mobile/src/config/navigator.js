@@ -36,6 +36,7 @@ import AddDurationText from "../screens/MyEquipment/AddEquipment/AddDurationText
 import AddImage from "../screens/MyEquipment/AddEquipment/AddImage";
 import RequireLogin from "../screens/Login/RequireLogin";
 import Calendar from "../components/Calendar";
+import ConfirmAdjustDate from "../screens/Activity/ConfirmAdjustDate";
 
 const EquipmentDetailStack = createStackNavigator(
   {
@@ -145,7 +146,8 @@ const ActivityStack = createStackNavigator(
   {
     Activity: Activity,
     Notification: Notification,
-    Detail: ActivityDetail
+    Detail: ActivityDetail,
+    ConfirmAdjustDate: ConfirmAdjustDate
   },
   {
     mode: "modal",
@@ -216,7 +218,6 @@ const TabNavigator = createBottomTabNavigator(
 
 const AppNavigator = createSwitchNavigator(
   {
-    Calendar: Calendar,
     App: TabNavigator
   },
   { initialRouteName: "App" }

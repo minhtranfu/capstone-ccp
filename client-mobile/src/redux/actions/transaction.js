@@ -40,7 +40,6 @@ export function sendTransactionRequest(transaction) {
 }
 
 export function requestTransaction(id, transactionStatus) {
-  console.log(transactionStatus);
   return async dispatch => {
     try {
       dispatch({ type: Actions.REQUEST_TRANSACTION.REQUEST });
@@ -53,6 +52,22 @@ export function requestTransaction(id, transactionStatus) {
     } catch (error) {
       dispatch({ type: Actions.REQUEST_TRANSACTION.ERROR });
     }
+  };
+}
+
+export function adjustDateTransaction(transactionId, date) {
+  return async dispatch => {
+    dispatch({
+      type: Actions.ADJUST_TRANSACTION.REQUEST
+    });
+    const res = await axios.post(
+      `transactions/${transactionId}/adjustDateRequests`,
+      date
+    );
+    dispatch({
+      type: Actions.ADJUST_TRANSACTION.SUCCESS,
+      payload: { data: res, id: transactionId }
+    });
   };
 }
 

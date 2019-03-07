@@ -42,9 +42,11 @@ export const SEND_TRANSACTION_REQUEST = renderActions(
   "@@transaction/SEND_REQUEST"
 );
 export const REQUEST_TRANSACTION = renderActions(
-  "@transaction/REQUEST_TRANSACTION"
+  "@@transaction/REQUEST_TRANSACTION"
 );
-
+export const ADJUST_TRANSACTION = renderActions(
+  "@@transaction/ADJUST_TRANSACTION"
+);
 export const CANCEL_TRANSACTION = renderActions(
   "@@transaction/CANCEL_TRANSACTION"
 );

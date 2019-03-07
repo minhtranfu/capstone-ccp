@@ -89,6 +89,7 @@ const EQUIPMENT_STATUS = {
   ACCEPTED: "Supplier has been accepted",
   CANCEL: "Requester has been canceled",
   DELIVERING: "Equipment is on delivering",
+  RENTING: "Renting",
   WAITING_FOR_RETURNING: "Equipment is turning back",
   FINISHED: "Equipment has been returned"
 };
@@ -100,6 +101,7 @@ const COLORS = {
   CANCEL: "#FF5C5C",
   PENDING: "#F9AA33",
   DELIVERING: "#7199FE",
+  RENTING: "#7199FE",
   WAITING_FOR_RETURNING: "#7199FE",
   FINISHED: "#FFDF49",
   PROCESSING: "#7199FE",
@@ -324,10 +326,11 @@ const styles = StyleSheet.create({
     flex: 1
   },
   rowWrapper: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.secondaryColorOpacity,
-    marginBottom: 10,
-    paddingBottom: 10
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: colors.secondaryColorOpacity,
+    marginVertical: 15,
+    padding: 10
   },
   pendingRowItem: {
     borderRadius: 15,

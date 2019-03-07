@@ -51,9 +51,8 @@ class TransactionItem extends PureComponent {
               >
                 <Text style={styles.statusText}>{status}</Text>
               </View>
-              <Text style={styles.title} numberOfLines={1}>
-                {name}
-              </Text>
+              <Text style={styles.title}>{name}</Text>
+
               <View
                 style={{
                   flexDirection: "row",
@@ -116,10 +115,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 5,
-    height: 30,
-    width: 90,
+    height: 25,
+    width: 80,
     paddingHorizontal: 5,
-    paddingVertical: 5
+    paddingVertical: 5,
+    marginBottom: 10
   },
   buttonWrapper: {
     height: 40,
@@ -139,15 +139,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: fontSize.h4,
     fontWeight: "500",
-    paddingTop: 5
+    marginBottom: 10
   },
   text: {
     fontSize: fontSize.bodyText,
     fontWeight: "500"
   },
   statusText: {
-    fontSize: fontSize.secondaryText,
-    fontWeight: "bold"
+    fontSize: fontSize.caption,
+    fontWeight: "bold",
+    color: "white"
   },
   image: {
     height: 90

@@ -15,6 +15,7 @@ import { Feather } from "@expo/vector-icons";
 import { updateEquipmentStatus } from "../../redux/actions/equipment";
 import { cancelTransaction } from "../../redux/actions/transaction";
 
+import Calendar from "../../components/Calendar";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import Button from "../../components/Button";
@@ -78,7 +79,11 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 class ActivityDetail extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      calendarVisible: false,
+      fromDate: "",
+      toDate: ""
+    };
   }
 
   //Count total day from begin date to end date
@@ -115,9 +120,49 @@ class ActivityDetail extends Component {
     return dayOfWeek + ", " + day + "/" + month + "/" + year;
   };
 
+  _setCalendarVisible = visible => {
+    this.setState({ calendarVisible: visible });
+  };
+
+  _renderCalendar = (minDate, maxDate) => (
+    <Calendar
+      animationType={"slide"}
+      transparent={false}
+      minDate={minDate}
+      maxDate={maxDate}
+      visible={this.state.calendarVisible}
+      onLeftButtonPres={() => this._setCalendarVisible(false)}
+      onSelectDate={this._handleSelectDate}
+    />
+  );
+
+  _handleSelectDate = (fromDate, toDate, visible) => {
+    const { id } = this.props.navigation.state.params;
+    this.setState({ calendarVisible: visible });
+    this.props.navigation.navigate("ConfirmAdjustDate", {
+      fromDate,
+      toDate,
+      id
+    });
+  };
+
+  _handleAddDay = (date, days) => {
+    let result = new Date(date);
+    result.setDate(result.getDate() + days);
+    year = result.getFullYear();
+    month = result.getMonth() + 1;
+    dt = result.getDate();
+    if (dt < 10) {
+      dt = "0" + dt;
+    }
+    if (month < 10) {
+      month = "0" + month;
+    }
+    return year + "-" + month + "-" + dt;
+  };
+
   //If status is renting, return null
   _renderStepProgress = (status, equipmentStatus) => {
-    console.log(status, equipmentStatus);
     return (
       <View style={styles.columnWrapper}>
         <StepProgress
@@ -143,12 +188,19 @@ class ActivityDetail extends Component {
       case "PROCESSING":
         return equipmentStatus === "WAITING_FOR_RETURNING" ? null : (
           <View style={styles.columnWrapper}>
-            <Button
-              text={"Receive"}
-              onPress={() =>
-                this._handleUpdateEquipmentStatus(equipmentId, "RENTING")
-              }
-            />
+            {equipmentStatus === "RENTING" ? (
+              <Button
+                text={"Extend Time Range"}
+                onPress={() => this._setCalendarVisible(true)}
+              />
+            ) : (
+              <Button
+                text={"Receive"}
+                onPress={() =>
+                  this._handleUpdateEquipmentStatus(equipmentId, "RENTING")
+                }
+              />
+            )}
           </View>
         );
       default:
@@ -159,6 +211,7 @@ class ActivityDetail extends Component {
   };
 
   _renderScrollViewItem = detail => {
+    console.log(detail);
     const totalDay = this._countTotalDay(detail.beginDate, detail.endDate);
     const totalPrice = totalDay * detail.dailyPrice;
     return (
@@ -227,6 +280,7 @@ class ActivityDetail extends Component {
             </TouchableOpacity>
           </View>
         </View>
+        {this._renderCalendar(this._handleAddDay(detail.endDate, 1))}
         {this._renderStepProgress(detail.status, detail.equipment.status)}
         {this._renderBottomButton(
           detail.equipment.id,
@@ -257,7 +311,6 @@ class ActivityDetail extends Component {
         >
           <Text style={styles.header}>Request Transaction</Text>
         </Header>
-
         {detail ? (
           <ScrollView>{this._renderScrollViewItem(detail)}</ScrollView>
         ) : (

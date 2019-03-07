@@ -1,13 +1,23 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import PropTypes from "prop-types";
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { CalendarList as CalendarPeriod } from "react-native-calendars";
+import Feather from "@expo/vector-icons/Feather";
 
+import Header from "../components/Header";
 import Button from "../components/Button";
 import fontSize from "../config/fontSize";
 import colors from "../config/colors";
 
 class Calendar extends Component {
+  static propTypes = {
+    minDate: PropTypes.string,
+    maxDate: PropTypes.string,
+    animationType: PropTypes.string,
+    visible: PropTypes.bool
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -145,73 +155,92 @@ class Calendar extends Component {
   };
 
   render() {
-    const { minDate, maxDate, onSelectDate } = this.props;
+    const {
+      minDate,
+      maxDate,
+      onSelectDate,
+      animationType,
+      transparent,
+      visible,
+      onLeftButtonPress
+    } = this.props;
     const { fromDate, endDate } = this.state;
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          flexDirection: "column"
-        }}
+      <Modal
+        animationType={animationType}
+        transparent={transparent}
+        visible={visible}
       >
-        <TouchableOpacity onPress={() => this._handleClearDate()}>
-          <Text>Clear</Text>
-        </TouchableOpacity>
-        <CalendarPeriod
-          // disabledByDefault={true}
-          onDayPress={day => {
-            this._handleDateRangeSelect(day);
-          }}
-          hideArrows={true}
-          style={styles.calendar}
-          current={this._handleDateFormat(Date.now())}
-          minDate={
-            minDate
-              ? this._handleDateFormat(minDate)
-              : this._handleDateFormat(Date.now())
-          }
-          markingType={"period"}
-          scrollEnabled={true}
-          pastScrollRange={2}
-          futureScrollRange={10}
-          showScrollIndicator={true}
-          theme={{
-            calendarBackground: "#333248",
-            textSectionTitleColor: "white",
-            dayTextColor: "white",
-            todayTextColor: "yellow",
-            selectedDayTextColor: "white",
-            monthTextColor: "white",
-            selectedDayBackgroundColor: "#333248",
-            textDisabledColor: "gray",
-            "stylesheet.calendar.header": {
-              week: {
-                marginTop: 5,
-                flexDirection: "row",
-                justifyContent: "space-between"
-              }
+        <SafeAreaView
+          forceInset={{ bottom: "always", top: "always" }}
+          style={styles.container}
+        >
+          <Header
+            renderLeftButton={() => (
+              <TouchableOpacity>
+                <Feather name={"x"} size={26} onPress={onLeftButtonPress} />
+              </TouchableOpacity>
+            )}
+            renderRightButton={() => (
+              <TouchableOpacity onPress={() => this._handleClearDate()}>
+                <Text>Clear</Text>
+              </TouchableOpacity>
+            )}
+          />
+
+          <CalendarPeriod
+            // disabledByDefault={true}
+            onDayPress={day => {
+              this._handleDateRangeSelect(day);
+            }}
+            hideArrows={true}
+            style={styles.calendar}
+            current={this._handleDateFormat(Date.now())}
+            minDate={
+              minDate
+                ? this._handleDateFormat(minDate)
+                : this._handleDateFormat(Date.now())
             }
-          }}
-          markedDates={this.state.markedDates}
-          {...this.props}
-        />
-        <Button
-          text={"Confirm"}
-          wrapperStyle={{
-            backgroundColor: "white",
-            paddingVertical: 10,
-            paddingHorizontal: 15,
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0
-          }}
-          onPress={() => {
-            this.props.onSelectDate(fromDate, endDate, false);
-          }}
-        />
-      </View>
+            markingType={"period"}
+            scrollEnabled={true}
+            pastScrollRange={2}
+            futureScrollRange={10}
+            showScrollIndicator={true}
+            theme={{
+              calendarBackground: "#333248",
+              textSectionTitleColor: "white",
+              dayTextColor: "white",
+              todayTextColor: "yellow",
+              selectedDayTextColor: "white",
+              monthTextColor: "white",
+              selectedDayBackgroundColor: "#333248",
+              textDisabledColor: "gray",
+              "stylesheet.calendar.header": {
+                week: {
+                  marginTop: 5,
+                  flexDirection: "row",
+                  justifyContent: "space-between"
+                }
+              }
+            }}
+            markedDates={this.state.markedDates}
+            {...this.props}
+          />
+          <Button
+            text={"Confirm"}
+            wrapperStyle={{
+              backgroundColor: "white",
+              paddingVertical: 10,
+              paddingHorizontal: 15,
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0
+            }}
+            onPress={() => onSelectDate(fromDate, endDate, false)}
+          />
+        </SafeAreaView>
+      </Modal>
     );
   }
 }
@@ -231,7 +260,9 @@ const styles = StyleSheet.create({
     padding: 10
   },
   container: {
-    flex: 1
+    flex: 1,
+    justifyContent: "center",
+    flexDirection: "column"
   }
 });
 

@@ -113,12 +113,12 @@ const COLORS = {
 
 const EQUIPMENT_STATUS = {
   AVAILABLE: "Available",
-  PENDING: "Wait for supplier accept",
-  ACCEPTED: "Supplier has been accepted",
-  CANCEL: "Requester has been canceled",
+  PENDING: "Pending",
+  ACCEPTED: "Accepted",
+  CANCEL: "Cancel",
   DELIVERING: "Equipment is on delivering",
-  RENTING: "Equipment is being rented",
-  WAITING_FOR_RETURNING: "Equipment is turning back",
+  RENTING: "Renting",
+  WAITING_FOR_RETURNING: "Equipment is waiting for return",
   FINISHED: "Equipment has been returned"
 };
 
@@ -348,10 +348,11 @@ const styles = StyleSheet.create({
     flex: 1
   },
   rowWrapper: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.secondaryColorOpacity,
-    marginBottom: 15,
-    paddingBottom: 5
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: colors.secondaryColorOpacity,
+    marginVertical: 15,
+    padding: 10
   },
   scrollContent: {
     flex: 0,
