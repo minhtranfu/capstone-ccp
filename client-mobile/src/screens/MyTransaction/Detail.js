@@ -207,13 +207,21 @@ class MyTransactionDetail extends Component {
     <View style={styles.columnWrapper}>
       <Text style={styles.title}>Contractor</Text>
       <View style={styles.rowWrapper}>
-        <ImageCache
-          uri={
-            "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
+        <TouchableOpacity
+          onPress={() =>
+            this.props.navigation.navigate("ContractorProfile", {
+              id: detail.equipment.contractor.id
+            })
           }
-          style={styles.avatar}
-          resizeMode={"cover"}
-        />
+        >
+          <ImageCache
+            uri={
+              "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
+            }
+            style={styles.avatar}
+            resizeMode={"cover"}
+          />
+        </TouchableOpacity>
         <TouchableOpacity style={{ flexDirection: "column", paddingLeft: 15 }}>
           <Text style={styles.text}>
             Name: {detail.equipment.contractor.name}

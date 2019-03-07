@@ -38,6 +38,7 @@ import RequireLogin from "../screens/Login/RequireLogin";
 import Calendar from "../components/Calendar";
 import ConfirmAdjustDate from "../screens/Activity/ConfirmAdjustDate";
 import Cart from "../screens/Cart";
+import ContractorProfile from "../screens/Account/ContractorProfile";
 
 const EquipmentDetailStack = createStackNavigator(
   {
@@ -135,7 +136,8 @@ MyEquipmentStack.navigationOptions = ({ navigation }) => {
 const MyTransactionStack = createStackNavigator(
   {
     MyTransaction: MyTransaction,
-    MyTransactionDetail: MyTransactionDetail
+    MyTransactionDetail: MyTransactionDetail,
+    ContractorProfile: ContractorProfile
   },
   {
     mode: "modal",
@@ -149,7 +151,8 @@ const ActivityStack = createStackNavigator(
     Activity: Activity,
     Notification: Notification,
     Detail: ActivityDetail,
-    ConfirmAdjustDate: ConfirmAdjustDate
+    ConfirmAdjustDate: ConfirmAdjustDate,
+    ContractorProfile: ContractorProfile
   },
   {
     mode: "modal",

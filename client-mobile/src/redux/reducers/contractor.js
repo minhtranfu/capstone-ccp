@@ -10,10 +10,23 @@ const initialState = {
 export default function contractorReducer(state = initialState, action) {
   const { type, payload } = action;
   switch (action.type) {
+    case Actions.GET_CONTRACTOR.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
     case Actions.GET_CONTRACTOR.SUCCESS: {
       return {
         ...state,
+        loading: false,
         info: payload.data
+      };
+    }
+    case Actions.GET_CONTRACTOR.ERROR: {
+      return {
+        ...state,
+        loading: false
       };
     }
     case Actions.UPDATE_CONTRACTOR_DETAIL.SUCCESS: {
@@ -58,8 +71,7 @@ export default function contractorReducer(state = initialState, action) {
     }
     case Actions.CREATE_NEW_FEEDBACK.SUCCESS: {
       return {
-        ...state,
-        feedbackList: [...state.feedbackList, payload.data]
+        ...state
       };
     }
     default:

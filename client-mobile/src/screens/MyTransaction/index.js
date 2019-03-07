@@ -297,7 +297,6 @@ class MyTransaction extends Component {
 
   _renderContent = listTransaction => {
     const { status } = this.state;
-    console.log(listTransaction.map(item => item.equipment.status));
     return (
       <View style={styles.scrollWrapper}>
         {listTransaction.length > 0 ? (

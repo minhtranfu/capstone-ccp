@@ -14,11 +14,18 @@ export function register(contractor) {
 
 export function getContractorDetail(contractorId) {
   return async dispatch => {
-    const res = await axios.get(`contractors/${contractorId}`);
     dispatch({
-      type: Actions.GET_CONTRACTOR.SUCCESS,
-      payload: res
+      type: Actions.GET_CONTRACTOR.REQUEST
     });
+    try {
+      const res = await axios.get(`contractors/${contractorId}`);
+      dispatch({
+        type: Actions.GET_CONTRACTOR.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({ type: Actions.GET_CONTRACTOR.ERROR });
+    }
   };
 }
 

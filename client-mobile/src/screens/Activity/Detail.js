@@ -211,7 +211,6 @@ class ActivityDetail extends Component {
   };
 
   _renderScrollViewItem = detail => {
-    console.log(detail);
     const totalDay = this._countTotalDay(detail.beginDate, detail.endDate);
     const totalPrice = totalDay * detail.dailyPrice;
     return (
@@ -258,13 +257,21 @@ class ActivityDetail extends Component {
         <View style={styles.columnWrapper}>
           <Text style={styles.title}>Contractor</Text>
           <View style={styles.rowWrapper}>
-            <ImageCache
-              uri={
-                "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
+            <TouchableOpacity
+              onPress={() =>
+                this.props.navigation.navigate("ContractorProfile", {
+                  id: detail.equipment.contractor.id
+                })
               }
-              style={styles.avatar}
-              resizeMode={"cover"}
-            />
+            >
+              <ImageCache
+                uri={
+                  "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
+                }
+                style={styles.avatar}
+                resizeMode={"cover"}
+              />
+            </TouchableOpacity>
             <TouchableOpacity
               style={{ flexDirection: "column", paddingLeft: 15 }}
             >
