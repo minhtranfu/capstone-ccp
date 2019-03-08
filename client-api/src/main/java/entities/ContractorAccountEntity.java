@@ -1,11 +1,10 @@
 package entities;
 
-import javax.annotation.Priority;
 import javax.persistence.*;
 
 @Entity
 @Table(name = "contractor_account",schema = "capstone_ccp")
-@NamedQuery(name = "ContractorAccountEntity.validateAccount", query = "select count(e) > 0 from ContractorAccountEntity  e where e.username = :username and e.password = :password")
+@NamedQuery(name = "ContractorAccountEntity.validateAccount", query = "select e from ContractorAccountEntity  e where e.username = :username and e.password = :password")
 public class ContractorAccountEntity
 {
 
@@ -13,6 +12,7 @@ public class ContractorAccountEntity
 	private String username;
 	private String password;
 
+	private ContractorEntity contractor;
 	public ContractorAccountEntity() {
 	}
 
@@ -44,6 +44,17 @@ public class ContractorAccountEntity
 	}
 
 	public void setPassword(String password) {
+
 		this.password = password;
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "contractor_id")
+	public ContractorEntity getContractor() {
+		return contractor;
+	}
+
+	public void setContractor(ContractorEntity contractorAccount) {
+		this.contractor = contractorAccount;
 	}
 }

@@ -11,6 +11,7 @@ import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 import jaxrs.validators.HiringTransactionValidator;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -20,6 +21,8 @@ import java.util.List;
 
 @Path("transactions")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("contractor")
+
 public class HiringTransactionResource {
 
 	@Inject

@@ -9,6 +9,7 @@ import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import jaxrs.validators.HiringTransactionValidator;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("contractor")
 public class CartRequestResource {
 
 	@Inject

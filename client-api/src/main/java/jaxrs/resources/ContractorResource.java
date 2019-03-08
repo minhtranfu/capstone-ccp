@@ -4,6 +4,7 @@ import daos.ConstructionDAO;
 import daos.ContractorDAO;
 import entities.ContractorEntity;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -11,6 +12,8 @@ import javax.ws.rs.core.Response;
 
 @Path("contractors")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("contractor")
+
 public class ContractorResource {
 
 	@Inject

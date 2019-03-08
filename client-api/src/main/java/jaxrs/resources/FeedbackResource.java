@@ -8,6 +8,7 @@ import entities.ContractorEntity;
 import entities.FeedbackEntity;
 import entities.FeedbackTypeEntity;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,6 +20,8 @@ import java.util.List;
 
 @Path("feedbacks")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("contractor")
+
 public class FeedbackResource {
 
 	//	public static final FeedbackDAO feedbackDao = new FeedbackDAO();

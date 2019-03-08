@@ -5,6 +5,7 @@ import daos.FeedbackDAO;
 import daos.SubscriptionDAO;
 import entities.SubscriptionEntity;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,6 +20,8 @@ import java.util.List;
 @Path("subscriptions")
 @Produces(MediaType.APPLICATION_JSON)
 @Secured
+@RolesAllowed("contractor")
+
 public class SubscriptionResource {
 
 

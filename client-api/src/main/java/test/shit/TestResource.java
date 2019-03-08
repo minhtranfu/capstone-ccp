@@ -7,11 +7,18 @@ import dtos.validationObjects.LocationValidator;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentRequest;
 import entities.EquipmentEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import utils.ModelConverter;
 
 import javax.annotation.Resource;
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServlet;
 import javax.validation.*;
@@ -29,7 +36,8 @@ import java.util.Set;
 
 @Path("cdiTest")
 @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
-public class TestResource extends HttpServlet {
+@RequestScoped
+public class TestResource  {
 
 
 	@Inject
@@ -131,6 +139,40 @@ public class TestResource extends HttpServlet {
 	}
 
 
+	@Inject
+	private JsonWebToken jsonWebToken;
+	@GET
+	@Path("authen")
+//	@PermitAll
+	@RolesAllowed("contractor")
+//	@DenyAll
+	public Response testAuthenByJWT() {
+		return Response.ok(toIdentityString()).build();
+	}
+
+	@Claim("username")
+	String username;
+
+	@Claim("sub")
+	long contractorId;
+
+	@Claim
+	String name;
+	private String toIdentityString() {
+		if (jsonWebToken == null) {
+			return "no authenticated user.";
+		}
+
+		final StringBuilder builder = new StringBuilder();
+
+		builder.append(username);
+		builder.append(String.format(" (id=%s)", contractorId));
+		builder.append(String.format(" (name=%s)", name));
+		builder.append(String.format(" (jti=%s)", jsonWebToken.getIssuedAtTime()));
+		builder.append(String.format(" (exp=%s)", jsonWebToken.getExpirationTime()));
+		builder.append(String.format(" (groups=%s)", StringUtils.join(jsonWebToken.getGroups(), ", ")));
+		return builder.toString();
+	}
 
 
 //	@Override

@@ -7,10 +7,12 @@ import dtos.responses.MessageResponse;
 import entities.HiringTransactionEntity;
 import entities.TransactionDateChangeRequestEntity;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.List;
+@RolesAllowed("contractor")
 
 public class TransactionDateChangeResource {
 
