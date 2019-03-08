@@ -53,7 +53,6 @@ import java.util.Set;
 public class TokenUtil {
 
 	public static final String PRIVATE_KEY_PEM = "/privateKey-pkcs8.pem";
-	private static final long DEFAULT_EXPIRATION_TIME = 300;
 
 	private TokenUtil() {
 	}
@@ -136,7 +135,7 @@ public class TokenUtil {
 		}
 
 		long currentTimeInSecs = currentTimeInSecs();
-		long exp = currentTimeInSecs + DEFAULT_EXPIRATION_TIME;
+		long exp = currentTimeInSecs + 300;
 
 		// Check for an input exp to override the default of now + 300 seconds
 		if (timeClaims != null && timeClaims.containsKey(Claims.exp.name())) {
