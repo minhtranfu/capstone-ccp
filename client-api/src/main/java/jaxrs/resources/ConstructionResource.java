@@ -5,6 +5,7 @@ import entities.ConstructionEntity;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -12,6 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 @Stateless
+@RolesAllowed("contractor")
 public class ConstructionResource {
 	private ContractorEntity contractorEntity;
 

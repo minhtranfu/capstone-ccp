@@ -16,6 +16,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import utils.Constants;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -34,6 +35,8 @@ import static utils.Constants.CREDENTIAL_JSON_FILENAME;
 @Path("image")
 @Stateless
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("contractor")
+
 public class DescriptionImageResource {
 	private EquipmentEntity equipmentEntity;
 

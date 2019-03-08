@@ -148,6 +148,7 @@ public class EquipmentResource {
 
 	@POST
 //	@RolesAllowed({"USER"})
+	@RolesAllowed("contractor")
 	public Response postEquipment(@NotNull @Valid EquipmentPostRequest equipmentRequest) {
 		//clean equipment entity
 
@@ -278,6 +279,7 @@ public class EquipmentResource {
 
 	@PUT
 	@Path("{id:\\d+}")
+	@RolesAllowed("contractor")
 	public Response updateEquipmentById(@PathParam("id") long id, @NotNull @Valid EquipmentPutRequest equipmentPutRequest) {
 
 
@@ -326,6 +328,7 @@ public class EquipmentResource {
 
 	@PUT
 	@Path("{id:\\d+}/status")
+	@RolesAllowed("contractor")
 	public Response updateEquipmentStatus(@PathParam("id") long id, EquipmentEntity entity) {
 
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(id);
@@ -368,6 +371,7 @@ public class EquipmentResource {
 
 
 	@Path("{id:\\d+}/images")
+	@RolesAllowed("contractor")
 	public DescriptionImageResource toDescriptionImageResource(@PathParam("id") long equipmentId) {
 
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(equipmentId);

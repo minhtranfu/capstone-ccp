@@ -11,9 +11,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
-@Secured
-@Provider
-@Priority(Priorities.AUTHENTICATION)
+//@Secured
+//@Provider
+//@Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
 	private static final String REALM = "cutomRealm";
 	private static final String AUTHENTICATION_SCHEME = "Bearer";
@@ -31,6 +31,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 			abortWithUnauthorized(requestContext);
 			return;
 		}
+
 
 		String token = authorizationHeader.substring(AUTHENTICATION_SCHEME.length()).trim();
 
