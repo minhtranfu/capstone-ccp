@@ -30,6 +30,7 @@ export const UPDATE_EQUIPMENT_STATUS = renderActions(
   "@@equip/UPDATE_EQUIPMENT_STATUS"
 );
 export const CLEAR_SEARCH_RESULT = renderActions("@@equip/CLEAR_SEARCH_RESULT");
+export const UPLOAD_IMAGE = renderActions("@@equip/UPLOAD_IMAGE");
 
 //TRANSACTION
 export const LIST_SUPPLIER_TRANSACTION = renderActions(

@@ -34,6 +34,25 @@ export function addEquipment(equipment) {
   };
 }
 
+export function uploadImage(image) {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: Actions.UPLOAD_IMAGE.REQUEST
+      });
+      const res = await axios.post(`storage`, image);
+      dispatch({
+        type: Actions.UPLOAD_IMAGE.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.UPLOAD_IMAGE.ERROR
+      });
+    }
+  };
+}
+
 export function updateEquipment(equipmentId, equipment) {
   console.log("edit", JSON.stringify(equipment));
   return async dispatch => {

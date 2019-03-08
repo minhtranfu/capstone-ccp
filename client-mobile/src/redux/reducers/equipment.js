@@ -3,8 +3,10 @@ import * as Actions from "../types";
 const INITIAL_STATE = {
   loading: false,
   searchLoading: false,
+  imageLoading: false,
   listSearch: [],
-  contractorEquipment: []
+  contractorEquipment: [],
+  imageURL: ""
 };
 
 export default function equipmentReducer(state = INITIAL_STATE, action) {
@@ -40,6 +42,25 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         loading: false
+      };
+    }
+    case Actions.UPLOAD_IMAGE.REQUEST: {
+      return {
+        ...state,
+        imageLoading: true
+      };
+    }
+    case Actions.UPLOAD_IMAGE.SUCCESS: {
+      return {
+        ...state,
+        imageLoading: false,
+        imageURL: payload.data
+      };
+    }
+    case Actions.UPLOAD_IMAGE.ERROR: {
+      return {
+        ...state,
+        imageLoading: false
       };
     }
     case Actions.UPDATE_EQUIPMENT.REQUEST: {

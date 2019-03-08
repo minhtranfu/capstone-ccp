@@ -13,7 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import { Location } from "expo";
 import { grantPermission } from "../../../redux/reducers/permission";
-import { addEquipment } from "../../../redux/actions/equipment";
+import { addEquipment, uploadImage } from "../../../redux/actions/equipment";
 import {
   getAddressByLatLong,
   getLatLongByAddress
@@ -27,10 +27,14 @@ import fontSize from "../../../config/fontSize";
 
 @connect(
   state => ({
-    equipment: state.equipment.equipment
+    equipment: state.equipment.equipment,
+    imageUrl: state.equipment.imageURL
   }),
   dispatch => ({
-    fetchAddEquipment: data => dispatch(addEquipment(data))
+    fetchAddEquipment: data => dispatch(addEquipment(data)),
+    fetchUploadImage: image => {
+      dispatch(uploadImage(image));
+    }
   })
 )
 class AddImage extends Component {

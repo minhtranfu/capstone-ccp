@@ -18,6 +18,8 @@ import fontSize from "../../config/fontSize";
   status: state.transaction.status
 }))
 class Discover extends Component {
+  _handleGetCurrentLocation = () => {};
+
   _renderDiscoverItem = ({ item }) => {
     return (
       <Item
