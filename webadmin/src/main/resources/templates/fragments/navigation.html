@@ -1,4 +1,5 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <div th:fragment="navigation">
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -15,8 +16,9 @@
         <!-- /.navbar-header -->
 
         <ul class="nav navbar-top-links navbar-right">
-
-
+            <li>
+                <h5 sec:authorize="isAuthenticated()">Welcome, <span style="color: #1ab7ea" sec:authentication="name"></span></h5>
+            </li>
             <!-- /.dropdown notification-->
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" th:href="@{/home/index}">
@@ -88,8 +90,9 @@
                     <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                     </li>
                     <li class="divider"></li>
-                    <li><a href="${pageContext.request.contextPath}/staff/login.jsp"><i
+                    <li><a th:href="@{/logout}"><i
                             class="fa fa-sign-out fa-fw"></i>Logout</a>
+
                     </li>
                 </ul>
                 <!-- /.dropdown-user -->
@@ -117,8 +120,8 @@
                                 class="fa fa-dashboard fa-fw"></i>Dashboard</a>
                     </li>
 
-                    <li>
-                        <a th:href="@{/staff/index}"><i
+                    <li sec:authorize="hasRole('ROLE_ADMIN')">
+                        <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/staff/index}"><i
                                 class="fa fa-user-plus fa-fw"></i>Staff</a>
                     </li>
                     <li>

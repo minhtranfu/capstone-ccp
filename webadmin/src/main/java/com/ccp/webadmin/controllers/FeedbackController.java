@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("feedback")
@@ -35,6 +36,7 @@ public class FeedbackController {
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("feedback", feedbackService.findById(id));
         model.addAttribute("feedbackTypes", feedbackTypeService.findAll());
+        model.addAttribute("feedbackStatus", Arrays.asList(FeedbackEntity.Status.values()));
         return "feedback/detail";
     }
 
@@ -49,19 +51,13 @@ public class FeedbackController {
     public String saveProcess(
             @Valid @ModelAttribute("feedback") FeedbackEntity feedbackEntity,
             BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-
-            if(feedbackEntity.getId() != null){
-                model.addAttribute("feedbackTypes", feedbackTypeService.findAll());
-                return "feedback/detail";
-            } else{
-                model.addAttribute("feedbackTypes", feedbackTypeService.findAll());
-                return "feedback/create";
-            }
-
-        }
+        FeedbackEntity foundFeedback = feedbackService.findById(feedbackEntity.getId());
+        model.addAttribute("feedbackStatus", Arrays.asList(FeedbackEntity.Status.values()));
         model.addAttribute("feedbackTypes", feedbackTypeService.findAll());
-        feedbackService.save(feedbackEntity);
+
+        foundFeedback.setStatus(feedbackEntity.getStatus());
+        System.out.println(foundFeedback);
+        feedbackService.save(foundFeedback);
         Integer id = feedbackEntity.getId();
         return "redirect:detail/" +  id;
     }

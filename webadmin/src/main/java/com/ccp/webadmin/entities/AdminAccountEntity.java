@@ -1,21 +1,19 @@
 package com.ccp.webadmin.entities;
-
-//import org.springframework.security.core.GrantedAuthority;
-//import org.springframework.security.core.authority.SimpleGrantedAuthority;
-//import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "admin_account")
-public class AdminAccountEntity {
+public class AdminAccountEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -30,18 +28,18 @@ public class AdminAccountEntity {
     private String password;
 
     @OneToOne(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, optional = false)
+             optional = false)
     @JoinColumn(name = "admin_user_id")
     @Valid
     private AdminUserEntity account;
 
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        List<GrantedAuthority> authorities = new ArrayList<>();
-//        GrantedAuthority authority = new SimpleGrantedAuthority(this.getAccount().getRoleId().toString());
-//        authorities.add(authority);
-//        return authorities;
-//    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        GrantedAuthority authority = new SimpleGrantedAuthority(this.getAccount().getRole().getRoleName());
+        authorities.add(authority);
+        return authorities;
+    }
 
     public AdminAccountEntity() {
     }
@@ -64,25 +62,25 @@ public class AdminAccountEntity {
         return username;
     }
 
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return false;
-//    }
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
     public void setUsername(String username) {
         this.username = username;

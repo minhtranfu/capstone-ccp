@@ -25,8 +25,9 @@ public class FeedbackEntity implements Serializable {
     @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
     private Timestamp createdTime;
 
-    @Column(name = "is_read")
-    private boolean isRead;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status;
 
     @ManyToOne()
     @JoinColumn(name = "to_contractor_id")
@@ -44,14 +45,7 @@ public class FeedbackEntity implements Serializable {
     public FeedbackEntity() {
     }
 
-    public FeedbackEntity(@NotNull(message = "Content is required not empty") @Size(max = 100, message = "Content is required less than 100 word") String content, Timestamp createdTime, boolean isRead, ContractorEntity contractorIsFeedbacked, ContractorEntity contractorFeedback, FeedbackTypeEntity feedbackTypeEntity) {
-        this.content = content;
-        this.createdTime = createdTime;
-        this.isRead = isRead;
-        this.contractorIsFeedbacked = contractorIsFeedbacked;
-        this.contractorFeedback = contractorFeedback;
-        this.feedbackTypeEntity = feedbackTypeEntity;
-    }
+
 
     public Integer getId() {
         return id;
@@ -77,14 +71,6 @@ public class FeedbackEntity implements Serializable {
         this.createdTime = createdTime;
     }
 
-    public boolean isRead() {
-        return isRead;
-    }
-
-    public void setRead(boolean read) {
-        isRead = read;
-    }
-
     public ContractorEntity getContractorIsFeedbacked() {
         return contractorIsFeedbacked;
     }
@@ -101,11 +87,47 @@ public class FeedbackEntity implements Serializable {
         this.contractorFeedback = contractorFeedback;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public FeedbackTypeEntity getFeedbackTypeEntity() {
         return feedbackTypeEntity;
     }
 
     public void setFeedbackTypeEntity(FeedbackTypeEntity feedbackTypeEntity) {
         this.feedbackTypeEntity = feedbackTypeEntity;
+    }
+    public enum Status {
+        PENDING("Pending"),
+        VERIFIED("Verified"),
+        NOT_VERIFIED("Not Verified");
+
+        private String value;
+
+        Status(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "FeedbackEntity{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", createdTime=" + createdTime +
+                ", status=" + status +
+                ", contractorIsFeedbacked=" + contractorIsFeedbacked +
+                ", contractorFeedback=" + contractorFeedback +
+                ", feedbackTypeEntity=" + feedbackTypeEntity +
+                '}';
     }
 }

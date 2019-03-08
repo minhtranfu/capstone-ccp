@@ -22,14 +22,11 @@ import java.io.IOException;
 public class AdminAccountController {
 
     private final AdminAccountService adminAccountService;
-    private final PasswordAutoGenerator passwordAutoGenerator;
-    private final SendEmailService sendEmailService;
+
 
     @Autowired
-    public AdminAccountController(AdminAccountService adminAccountService, PasswordAutoGenerator passwordAutoGenerator, SendEmailService sendEmailService) {
+    public AdminAccountController(AdminAccountService adminAccountService) {
         this.adminAccountService = adminAccountService;
-        this.passwordAutoGenerator = passwordAutoGenerator;
-        this.sendEmailService = sendEmailService;
     }
 
     @GetMapping({"", "/", "/index"})
@@ -41,9 +38,6 @@ public class AdminAccountController {
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("staff", adminAccountService.findById(id));
-
-
-
         return "staff/detail";
     }
 
@@ -66,15 +60,6 @@ public class AdminAccountController {
         }
 
 
-        String password = passwordAutoGenerator.generatePassayPassword();
-        try {
-            sendEmailService.sendmail(adminAccountEntity.getUsername(),password, adminAccountEntity.getAccount().getEmail());
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        adminAccountEntity.setPassword(password);
         adminAccountService.save(adminAccountEntity);
         Integer id = adminAccountEntity.getId();
         return "redirect:detail/" + id;
