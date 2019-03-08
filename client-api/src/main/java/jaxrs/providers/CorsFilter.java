@@ -60,7 +60,7 @@ public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilt
                     "GET, POST, PUT, DELETE, OPTIONS, HEAD");
             response.getHeaders().add("Access-Control-Allow-Headers",
                     "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With," +
-                            "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
+                            "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers" +
                     // Whatever other non-standard/safe headers (see list above)
                     // you want the client to be able to send to the server,
                     // put it in this list. And remove the ones you don't want.
