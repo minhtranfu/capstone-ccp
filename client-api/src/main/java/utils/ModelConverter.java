@@ -1,13 +1,11 @@
 package utils;
 
+import dtos.Credentials;
 import dtos.requests.DescriptionImageRequest;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentPutRequest;
 import dtos.requests.EquipmentRequest;
-import entities.AdditionalSpecsValueEntity;
-import entities.AvailableTimeRangeEntity;
-import entities.DescriptionImageEntity;
-import entities.EquipmentEntity;
+import entities.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.convention.MatchingStrategies;
@@ -53,8 +51,10 @@ public class ModelConverter {
 
 
 
+
 	public EquipmentPostRequest toRequest(EquipmentEntity equipmentEntity) {
 		return modelMapper.map(equipmentEntity, EquipmentPostRequest.class);
 	}
+
 
 }

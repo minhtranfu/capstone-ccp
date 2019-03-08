@@ -153,7 +153,7 @@ public class TestResource  {
 	@Claim("username")
 	String username;
 
-	@Claim("sub")
+	@Claim("id")
 	long contractorId;
 
 	@Claim
@@ -168,8 +168,10 @@ public class TestResource  {
 		builder.append(username);
 		builder.append(String.format(" (id=%s)", contractorId));
 		builder.append(String.format(" (name=%s)", name));
+		builder.append(String.format(" (username=%s)", username));
 		builder.append(String.format(" (jti=%s)", jsonWebToken.getIssuedAtTime()));
 		builder.append(String.format(" (exp=%s)", jsonWebToken.getExpirationTime()));
+
 		builder.append(String.format(" (groups=%s)", StringUtils.join(jsonWebToken.getGroups(), ", ")));
 		return builder.toString();
 	}
