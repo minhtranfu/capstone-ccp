@@ -45,14 +45,23 @@ export const SEND_TRANSACTION_REQUEST = renderActions(
 export const REQUEST_TRANSACTION = renderActions(
   "@@transaction/REQUEST_TRANSACTION"
 );
-export const ADJUST_TRANSACTION = renderActions(
-  "@@transaction/ADJUST_TRANSACTION"
-);
 export const CANCEL_TRANSACTION = renderActions(
   "@@transaction/CANCEL_TRANSACTION"
 );
 export const CLEAR_SUPPLIER_TRANSACTION_SUCCESS =
   "@@equip/CLEAR_SUPPLIER_TRANSACTION_SUCCESS";
+export const GET_ADJUST_TRANSACTION = renderActions(
+  "@@transaction/GET_ADJUST_TRANSACTION"
+);
+export const SEND_ADJUST_TRANSACTION = renderActions(
+  "@@transaction/SEND_ADJUST_TRANSACTION"
+);
+export const REQUEST_ADJUST_TRANSACTION = renderActions(
+  "@@transaction/REQUEST_ADJUST_TRANSACTION"
+);
+export const DELETE_ADJUST_TRANSACTION = renderActions(
+  "@@transaction/DELETE_ADJUST_TRANSACTION"
+);
 
 //SEARCH EQUIPMENT
 export const SEARCH_EQUIPMENT = renderActions("@@equip/SEARCH_EQUIPMENT");

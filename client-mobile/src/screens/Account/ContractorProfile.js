@@ -18,6 +18,7 @@ import {
 } from "../../redux/actions/contractor";
 import { Feather } from "@expo/vector-icons";
 
+import Button from "../../components/Button";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 
@@ -57,7 +58,7 @@ class ContractorProfile extends Component {
     this.state = {
       modalVisible: false,
       text: "",
-      textLength: 0,
+      textLength: maxLength - text.length,
       checked: 0
     };
   }
@@ -96,42 +97,53 @@ class ContractorProfile extends Component {
       <Modal animationType="slide" transparent={false} visible={modalVisible}>
         <SafeAreaView
           forceInset={{ bottom: "never", top: "always" }}
-          style={[styles.container, { paddingHorizontal: 15 }]}
+          style={styles.container}
         >
-          <Text>Content</Text>
-          <TextInput
-            style={{ height: 200, borderColor: "#000000", borderWidth: 1 }}
-            multiline={true}
-            numberOfLines={4}
-            onChangeText={text =>
-              this.setState({ text, textLength: maxLength - text.length })
-            }
-            value={this.state.text}
-            editable={true}
-            maxLength={maxLength}
-          />
-          <Text>
-            {textLength} / {maxLength}
-          </Text>
-          <Text>Reason to feedback</Text>
-          {RADIO_BUTON_DATA.map((item, key) => (
-            <View key={key}>
-              {checked === key ? (
-                <TouchableOpacity>
-                  <Text>{item.value} checked</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  onPress={() => this.setState({ checked: key })}
-                >
-                  <Text>{item.value}</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          ))}
-          <TouchableOpacity onPress={() => this._handleOnSubmit()}>
-            <Text style={styles.text}>Submit</Text>
-          </TouchableOpacity>
+          <Header
+            renderLeftButton={() => (
+              <TouchableOpacity onPress={() => this._setModalVisible(false)}>
+                <Feather name={"x"} size={24} />
+              </TouchableOpacity>
+            )}
+          >
+            <Text style={styles.header}>Feedback</Text>
+          </Header>
+          <View style={{ paddingHorizontal: 15 }}>
+            <Text>Content</Text>
+            <TextInput
+              style={{ height: 200, borderColor: "#000000", borderWidth: 1 }}
+              multiline={true}
+              numberOfLines={4}
+              onChangeText={text =>
+                this.setState({ text, textLength: maxLength - text.length })
+              }
+              value={this.state.text}
+              editable={true}
+              maxLength={maxLength}
+            />
+            <Text>
+              {maxLength} / {textLength}
+            </Text>
+            <Text>Reason to feedback</Text>
+            {RADIO_BUTON_DATA.map((item, key) => (
+              <View key={key}>
+                {checked === key ? (
+                  <TouchableOpacity>
+                    <Text>{item.value} checked</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    onPress={() => this.setState({ checked: key })}
+                  >
+                    <Text>{item.value}</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))}
+            <TouchableOpacity onPress={() => this._handleOnSubmit()}>
+              <Text style={styles.text}>Submit</Text>
+            </TouchableOpacity>
+          </View>
         </SafeAreaView>
       </Modal>
     );
@@ -167,14 +179,13 @@ class ContractorProfile extends Component {
           <Text style={styles.text}>Email: {email}</Text>
         </View>
         {this._renderFeedbackModal()}
-        <TouchableOpacity
-          style={{ maringLeft: 15 }}
+        <Button
+          wrapperStyle={{ marginHorizontal: 15 }}
+          text={"Feedback"}
           onPress={() => {
             this._setModalVisible(true);
           }}
-        >
-          <Text style={styles.text}>Feedback</Text>
-        </TouchableOpacity>
+        />
       </ScrollView>
     );
   };

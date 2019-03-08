@@ -5,6 +5,7 @@ const initialState = {
   adjustLoading: false,
   listSupplierTransaction: [],
   listRequesterTransaction: [],
+  adjustTransaction: [],
   error: ""
 };
 
@@ -71,16 +72,53 @@ export default function transactionReducer(state = initialState, action) {
           item => item.id !== payload.id
         )
       };
-    case Actions.ADJUST_TRANSACTION.REQUEST:
+    case Actions.GET_ADJUST_TRANSACTION.REQUEST:
       return {
         ...state,
         adjustLoading: true
       };
-    case Actions.ADJUST_TRANSACTION.SUCCESS:
+    case Actions.GET_ADJUST_TRANSACTION.SUCCESS:
       return {
         ...state,
-        adjustLoading: false
+        adjustLoading: false,
+        adjustTransaction: payload.data
       };
+    case Actions.SEND_ADJUST_TRANSACTION.REQUEST:
+      return {
+        ...state,
+        adjustLoading: true
+      };
+    case Actions.SEND_ADJUST_TRANSACTION.SUCCESS:
+      return {
+        ...state,
+        adjustLoading: false,
+        adjustTransaction: payload.data
+      };
+    case Actions.REQUEST_ADJUST_TRANSACTION.REQUEST:
+      return {
+        ...state,
+        adjustLoading: true
+      };
+    case Actions.REQUEST_ADJUST_TRANSACTION.SUCCESS:
+      return {
+        ...state,
+        adjustLoading: false,
+        adjustTransaction: payload.data
+      };
+    case Actions.DELETE_ADJUST_TRANSACTION.REQUEST:
+      return {
+        ...state,
+        adjustLoading: true
+      };
+    case Actions.DELETE_ADJUST_TRANSACTION.SUCCESS:
+      return {
+        ...state,
+        adjustLoading: false,
+        adjustTransaction: state.adjustTransaction.filter(
+          item => item.id !== payload.id
+        )
+      };
+
     case Actions.CLEAR_SUPPLIER_TRANSACTION_SUCCESS:
       return {
         ...state,

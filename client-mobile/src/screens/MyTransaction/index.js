@@ -223,27 +223,32 @@ class MyTransaction extends Component {
     }
   };
 
-  _renderBottomStatus = equipmentStatus => (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: 10
-      }}
-    >
-      <View
-        style={{
-          width: 15,
-          height: 15,
-          marginRight: 5,
-          backgroundColor: COLORS[equipmentStatus || "default"]
-        }}
-      />
-      <Text style={styles.text}>
-        Equipment status: {EQUIPMENT_STATUS[equipmentStatus]}
-      </Text>
-    </View>
-  );
+  _renderBottomStatus = (transactionStatus, equipmentStatus) => {
+    if (transactionStatus !== "DENIED") {
+      return (
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: 10
+          }}
+        >
+          <View
+            style={{
+              width: 15,
+              height: 15,
+              marginRight: 5,
+              backgroundColor: COLORS[equipmentStatus || "default"]
+            }}
+          />
+          <Text style={styles.text}>
+            Equipment status: {EQUIPMENT_STATUS[equipmentStatus]}
+          </Text>
+        </View>
+      );
+    }
+    return null;
+  };
 
   _renderAllTransaction = () => (
     <View>
@@ -283,10 +288,11 @@ class MyTransaction extends Component {
                   phone={item.requester.phoneNumber}
                   beginDate={this._formatDate(item.beginDate)}
                   endDate={this._formatDate(item.endDate)}
+                  hasEquipmentStatus={this._renderBottomStatus(
+                    item.status,
+                    item.equipment.status
+                  )}
                 />
-                {item.status !== "DENIED"
-                  ? this._renderBottomStatus(item.equipment.status)
-                  : null}
               </View>
             ))}
           </View>

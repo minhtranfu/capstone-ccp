@@ -2,7 +2,7 @@ import axios from "axios";
 import StatusAction from "../redux/actions/status";
 
 export default function configAPI(config) {
-  axios.defaults.baseURL = "http://ccp.hoctot.net/api/";
+  axios.defaults.baseURL = "https://ccp.hoctot.net/api/";
   axios.defaults.headers.common["Authorization"] = "AUTH_TOKEN";
   axios.defaults.headers.post["Content-Type"] = "application/json";
 

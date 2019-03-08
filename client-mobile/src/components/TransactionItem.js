@@ -31,7 +31,8 @@ class TransactionItem extends PureComponent {
       status,
       statusBackgroundColor,
       avatarURL,
-      role
+      role,
+      hasEquipmentStatus
     } = this.props;
     return (
       <View style={styles.container}>
@@ -75,6 +76,7 @@ class TransactionItem extends PureComponent {
               {beginDate} - {endDate}
             </Text>
           </View>
+          {hasEquipmentStatus ? hasEquipmentStatus : null}
         </TouchableOpacity>
       </View>
     );

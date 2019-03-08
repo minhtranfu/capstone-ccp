@@ -19,7 +19,9 @@ import { ImagePicker, Permissions } from "expo";
 import {
   getTransactionDetail,
   requestTransaction,
-  cancelTransaction
+  cancelTransaction,
+  getAdjustTransaction,
+  requestAdjustTransaction
 } from "../../redux/actions/transaction";
 
 import Item from "./components/Item";
@@ -64,7 +66,9 @@ const COLORS = {
     return {
       transactionDetail: state.transaction.listSupplierTransaction.find(
         item => item.id === id
-      )
+      ),
+      loading: state.transaction.adjustLoading,
+      adjustTransactionList: state.transaction.adjustTransaction
     };
   },
   dispatch => ({
@@ -73,10 +77,21 @@ const COLORS = {
     },
     fetchCancelTransaction: id => {
       dispatch(cancelTransaction(id));
+    },
+    fetchGetAdjustTransaction: id => {
+      dispatch(getAdjustTransaction(id));
+    },
+    fetchRequestTransaction: (id, status) => {
+      dispatch(requestAdjustTransaction(id, status));
     }
   })
 )
 class MyTransactionDetail extends Component {
+  componentDidMount() {
+    const { id } = this.props.navigation.state.params;
+    this.props.fetchGetAdjustTransaction(id);
+  }
+
   _handleRequestButton = (id, status) => {
     this.props.fetchRequestTransaction(id, { status: status });
     this.props.navigation.goBack();
@@ -177,18 +192,59 @@ class MyTransactionDetail extends Component {
     );
   };
 
-  _renderProcessingBottom = (id, equipmentStatus) => (
-    <View style={styles.bottomWrapper}>
-      {equipmentStatus !== "AVAILABLE" ? (
-        <Button
-          text={"FINISH"}
-          onPress={() => {
-            this._handleRequestButton(id, "FINISHED");
-          }}
-        />
-      ) : null}
-    </View>
-  );
+  _handleRequestAdjustTransaction = (transactionId, status) => {
+    this.props.requestAdjustTransaction(transactionId, { status: status });
+  };
+
+  _renderAdjustDateTransaction = (id, equipmentStatus) => {
+    const { adjustTransactionList } = this.props;
+    console.log(adjustTransactionList);
+    if (equipmentStatus === "RENTING" && adjustTransactionList.length > 0) {
+      return (
+        <View>
+          <Text>New Adjust Transaction Request</Text>
+          <Text>{adjustTransactionList.requestedBeginDate}</Text>
+          <Text>{adjustTransactionList.requestedEndDate}</Text>
+          <Text>Status: {adjustTransactionList.status}</Text>
+          {adjustTransactionList.status === "PENDING" ? (
+            <View>
+              <TouchableOpacity
+                onPress={() =>
+                  this._handleRequestAdjustTransaction(id, "ACCEPTED")
+                }
+              >
+                <Text>Accept</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  this._handleRequestAdjustTransaction(id, "DENIED")
+                }
+              >
+                <Text>Deny</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+        </View>
+      );
+    }
+    return null;
+  };
+
+  _renderProcessingBottom = (id, equipmentStatus) => {
+    console.log(equipmentStatus);
+    return (
+      <View style={styles.bottomWrapper}>
+        {equipmentStatus !== "AVAILABLE" ? (
+          <Button
+            text={"FINISH"}
+            onPress={() => {
+              this._handleRequestButton(id, "FINISHED");
+            }}
+          />
+        ) : null}
+      </View>
+    );
+  };
 
   _renderBottomButton = (status, id, equipmentStatus) => {
     switch (status) {
@@ -309,13 +365,14 @@ class MyTransactionDetail extends Component {
         </View>
         {this._renderContractor(detail)}
         {this._renderTransactionOnProcess(detail.status, detail.equipment)}
+        {this._renderAdjustDateTransaction(id, detail.equipment.status)}
         {this._renderBottomButton(detail.status, id, detail.equipment.status)}
       </View>
     );
   };
 
   render() {
-    const { transactionDetail } = this.props;
+    const { transactionDetail, loading } = this.props;
     return (
       <SafeAreaView
         style={styles.container}
@@ -334,7 +391,7 @@ class MyTransactionDetail extends Component {
         >
           <Text style={styles.header}>My Transaction Detail</Text>
         </Header>
-        {Object.keys(transactionDetail).length > 0 ? (
+        {Object.keys(transactionDetail).length > 0 && !loading ? (
           <ScrollView>
             {this._renderScrollViewItem(transactionDetail)}
           </ScrollView>

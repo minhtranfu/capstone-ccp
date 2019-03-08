@@ -54,18 +54,63 @@ export function requestTransaction(id, transactionStatus) {
     }
   };
 }
-
-export function adjustDateTransaction(transactionId, date) {
+export function getAdjustTransaction(transactionId) {
   return async dispatch => {
     dispatch({
-      type: Actions.ADJUST_TRANSACTION.REQUEST
+      type: Actions.GET_ADJUST_TRANSACTION.REQUEST
+    });
+    const res = await axios.get(
+      `transactions/${transactionId}/adjustDateRequests`
+    );
+    dispatch({
+      type: Actions.GET_ADJUST_TRANSACTION.SUCCESS,
+      payload: res
+    });
+  };
+}
+
+export function sendAdjustTransaction(transactionId, date) {
+  return async dispatch => {
+    dispatch({
+      type: Actions.SEND_ADJUST_TRANSACTION.REQUEST
     });
     const res = await axios.post(
       `transactions/${transactionId}/adjustDateRequests`,
       date
     );
     dispatch({
-      type: Actions.ADJUST_TRANSACTION.SUCCESS,
+      type: Actions.SEND_ADJUST_TRANSACTION.SUCCESS,
+      payload: { data: res, id: transactionId }
+    });
+  };
+}
+
+export function requestAdjustTransaction(transactionId, status) {
+  return async dispatch => {
+    dispatch({
+      type: Actions.REQUEST_ADJUST_TRANSACTION.REQUEST
+    });
+    const res = await axios.put(
+      `transactions/${transactionId}/adjustDateRequests`,
+      status
+    );
+    dispatch({
+      type: Actions.REQUEST_ADJUST_TRANSACTION.SUCCESS,
+      payload: { data: res, id: transactionId }
+    });
+  };
+}
+
+export function deleteAdjustTransaction(transactionId) {
+  return async dispatch => {
+    dispatch({
+      type: Actions.DELETE_ADJUST_TRANSACTION.REQUEST
+    });
+    const res = await axios.delete(
+      `transactions/${transactionId}/adjustDateRequests`
+    );
+    dispatch({
+      type: Actions.DELETE_ADJUST_TRANSACTION.SUCCESS,
       payload: { data: res, id: transactionId }
     });
   };

@@ -2,13 +2,13 @@ import React, { Component } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-import { adjustDateTransaction } from "../../redux/actions/transaction";
+import { requestAdjustTransaction } from "../../redux/actions/transaction";
 
 @connect(
   state => ({}),
   dispatch => ({
     fetchAdjustDate: (id, date) => {
-      dispatch(adjustDateTransaction(id, date));
+      dispatch(requestAdjustTransaction(id, date));
     }
   })
 )
@@ -33,8 +33,8 @@ class ConfirmAdjustDate extends Component {
     return (
       <SafeAreaView forceInset={{ top: "always", bottom: "always" }}>
         <Text>Adjust Transaction Date</Text>
-        <Text />
-        <Text />
+        <Text>From: {fromDate}</Text>
+        <Text>To: {toDate}</Text>
         <TouchableOpacity
           onPress={() => this._handleConfirmAdjustDate(fromDate, toDate, id)}
         >

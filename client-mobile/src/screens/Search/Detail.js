@@ -187,9 +187,11 @@ class SearchDetail extends Component {
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.textWrapper}>
           <Text style={styles.title}>{name}</Text>
-          <Text style={{ color: colors.secondaryColorOpacity }}>
-            {status ? status.toUpperCase() : "AVAILABLE"}
-          </Text>
+          <TouchableOpacity>
+            <Text style={{ color: colors.secondaryColorOpacity }}>
+              Add to cart
+            </Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.textWrapper}>
           <View style={{ flexDirection: "column", justifyContent: "center" }}>
