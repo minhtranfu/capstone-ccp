@@ -1120,8 +1120,8 @@
     <table id="286" parent="2" name="contractor"/>
     <table id="287" parent="2" name="contractor_account"/>
     <table id="288" parent="2" name="contractor_verifying_image"/>
-    <table id="289" parent="2" name="description_image"/>
-    <table id="290" parent="2" name="equipment"/>
+    <table id="289" parent="2" name="equipment"/>
+    <table id="290" parent="2" name="equipment_image"/>
     <table id="291" parent="2" name="equipment_type"/>
     <table id="292" parent="2" name="feedback"/>
     <table id="293" parent="2" name="feedback_type"/>
@@ -1662,156 +1662,156 @@
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="399" parent="289" name="url">
+    <column id="399" parent="289" name="name">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="400" parent="289" name="equipment_id">
-      <Position>3</Position>
-      <DataType>int(11)|0s</DataType>
-      <ColumnKind>normal</ColumnKind>
-    </column>
-    <index id="401" parent="289" name="fk_description_image_equipment_idx">
-      <ColNames>equipment_id</ColNames>
-      <Type>btree</Type>
-    </index>
-    <key id="402" parent="289" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <ColNames>id</ColNames>
-      <Primary>1</Primary>
-    </key>
-    <foreign-key id="403" parent="289" name="fk_description_image_equipment">
-      <ColNames>equipment_id</ColNames>
-      <RefSchemaName>capstone_ccp</RefSchemaName>
-      <RefTableName>equipment</RefTableName>
-      <RefColNames>id</RefColNames>
-    </foreign-key>
-    <column id="404" parent="290" name="id">
-      <Position>1</Position>
-      <DataType>int(11)|0s</DataType>
-      <NotNull>1</NotNull>
-      <SequenceIdentity>1</SequenceIdentity>
-      <ColumnKind>normal</ColumnKind>
-    </column>
-    <column id="405" parent="290" name="name">
-      <Position>2</Position>
-      <DataType>varchar(255)|0s</DataType>
-      <ColumnKind>normal</ColumnKind>
-    </column>
-    <column id="406" parent="290" name="daily_price">
+    <column id="400" parent="289" name="daily_price">
       <Position>3</Position>
       <DataType>double|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="407" parent="290" name="delivery_price">
+    <column id="401" parent="289" name="delivery_price">
       <Position>4</Position>
       <DataType>double|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="408" parent="290" name="description">
+    <column id="402" parent="289" name="description">
       <Position>5</Position>
       <DataType>text|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="409" parent="290" name="status">
+    <column id="403" parent="289" name="status">
       <Position>6</Position>
       <DataType>varchar(45)|0s</DataType>
       <DefaultExpression>&apos;AVAILABLE&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="410" parent="290" name="thumbnail_image_id">
+    <column id="404" parent="289" name="thumbnail_image_id">
       <Position>7</Position>
       <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="411" parent="290" name="is_deleted">
+    <column id="405" parent="289" name="is_deleted">
       <Position>8</Position>
       <DataType>tinyint(1)|0s</DataType>
       <DefaultExpression>&apos;0&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="412" parent="290" name="created_time">
+    <column id="406" parent="289" name="created_time">
       <Position>9</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="413" parent="290" name="updated_time">
+    <column id="407" parent="289" name="updated_time">
       <Position>10</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
-    <column id="414" parent="290" name="equipment_type_id">
+    <column id="408" parent="289" name="equipment_type_id">
       <Position>11</Position>
       <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="415" parent="290" name="contractor_id">
+    <column id="409" parent="289" name="contractor_id">
       <Position>12</Position>
       <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="416" parent="290" name="construction_id">
+    <column id="410" parent="289" name="construction_id">
       <Position>13</Position>
       <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="417" parent="290" name="address">
+    <column id="411" parent="289" name="address">
       <Position>14</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="418" parent="290" name="long">
+    <column id="412" parent="289" name="long">
       <Position>15</Position>
       <DataType>double|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="419" parent="290" name="lat">
+    <column id="413" parent="289" name="lat">
       <Position>16</Position>
       <DataType>double|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="420" parent="290" name="description_image_id">
+    <column id="414" parent="289" name="description_image_id">
       <Position>17</Position>
       <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="421" parent="290" name="equipment_equipment_type_id_fk">
+    <index id="415" parent="289" name="equipment_equipment_type_id_fk">
       <ColNames>equipment_type_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="422" parent="290" name="equipment_contractor_id_fk">
+    <index id="416" parent="289" name="equipment_contractor_id_fk">
       <ColNames>contractor_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="423" parent="290" name="equipment_construction_id_fk">
+    <index id="417" parent="289" name="equipment_construction_id_fk">
       <ColNames>construction_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="424" parent="290" name="PRIMARY">
+    <key id="418" parent="289" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="425" parent="290" name="equipment_equipment_type_id_fk">
+    <foreign-key id="419" parent="289" name="equipment_equipment_type_id_fk">
       <ColNames>equipment_type_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>equipment_type</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <foreign-key id="426" parent="290" name="equipment_contractor_id_fk">
+    <foreign-key id="420" parent="289" name="equipment_contractor_id_fk">
       <ColNames>contractor_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>contractor</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <foreign-key id="427" parent="290" name="equipment_construction_id_fk">
+    <foreign-key id="421" parent="289" name="equipment_construction_id_fk">
       <ColNames>construction_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>construction</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <column id="422" parent="290" name="id">
+      <Position>1</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>1</SequenceIdentity>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="423" parent="290" name="url">
+      <Position>2</Position>
+      <DataType>varchar(255)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="424" parent="290" name="equipment_id">
+      <Position>3</Position>
+      <DataType>int(11)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="425" parent="290" name="fk_description_image_equipment_idx">
+      <ColNames>equipment_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="426" parent="290" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="427" parent="290" name="fk_description_image_equipment">
+      <ColNames>equipment_id</ColNames>
+      <RefSchemaName>capstone_ccp</RefSchemaName>
+      <RefTableName>equipment</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
     <column id="428" parent="291" name="id">

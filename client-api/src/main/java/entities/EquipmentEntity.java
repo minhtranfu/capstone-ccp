@@ -33,7 +33,7 @@ public class EquipmentEntity implements Serializable {
 	private Integer deliveryPrice;
 	private String description;
 	private Status status;
-	private DescriptionImageEntity thumbnailImage;
+	private EquipmentImageEntity thumbnailImage;
 
 	private boolean isDeleted;
 	private LocalDateTime createdTime;
@@ -50,7 +50,7 @@ public class EquipmentEntity implements Serializable {
 	private ConstructionEntity construction;
 
 	private List<AvailableTimeRangeEntity> availableTimeRanges;
-	private Collection<DescriptionImageEntity> descriptionImages;
+	private Collection<EquipmentImageEntity> equipmentImages;
 
 
 	private List<AdditionalSpecsValueEntity> additionalSpecsValues;
@@ -61,7 +61,7 @@ public class EquipmentEntity implements Serializable {
 
 	public EquipmentEntity() {
 		availableTimeRanges = new ArrayList<>();
-		descriptionImages = new ArrayList<>();
+		equipmentImages = new ArrayList<>();
 		additionalSpecsValues = new ArrayList<>();
 		hiringTransactions = new ArrayList<>();
 		processingHiringTransactions = new ArrayList<>();
@@ -203,13 +203,13 @@ public class EquipmentEntity implements Serializable {
 
 
 
-	@OneToOne
+	@OneToOne(cascade = {})
 	@JoinColumn(name = "thumbnail_image_id")
-	public DescriptionImageEntity getThumbnailImage() {
+	public EquipmentImageEntity getThumbnailImage() {
 		return thumbnailImage;
 	}
 
-	public void setThumbnailImage(DescriptionImageEntity thumbnailImage) {
+	public void setThumbnailImage(EquipmentImageEntity thumbnailImage) {
 		this.thumbnailImage = thumbnailImage;
 	}
 	@Basic
@@ -292,31 +292,31 @@ public class EquipmentEntity implements Serializable {
 		this.longitude = longitude;
 	}
 
-	@OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	public Collection<DescriptionImageEntity> getDescriptionImages() {
-		return descriptionImages;
+	@OneToMany(mappedBy = "equipment", cascade = {}, fetch = FetchType.LAZY, orphanRemoval = false)
+	public Collection<EquipmentImageEntity> getEquipmentImages() {
+		return equipmentImages;
 	}
 
-	public void setDescriptionImages(Collection<DescriptionImageEntity> descriptionImagesById) {
-		this.descriptionImages = descriptionImagesById;
+	public void setEquipmentImages(Collection<EquipmentImageEntity> equipmentImages) {
+		this.equipmentImages = equipmentImages;
 	}
 
-	public void addDescriptionImage(DescriptionImageEntity descriptionImageEntity) {
-		this.descriptionImages.add(descriptionImageEntity);
-		descriptionImageEntity.setEquipment(this);
+	public void addEquipmentImage(EquipmentImageEntity equipmentImageEntity) {
+		this.equipmentImages.add(equipmentImageEntity);
+		equipmentImageEntity.setEquipment(this);
 	}
 
-	public void removeDescriptionImage(DescriptionImageEntity descriptionImageEntity) {
-		this.descriptionImages.remove(descriptionImageEntity);
-		descriptionImageEntity.setEquipment(null);
+	public void removeEquipmentImage(EquipmentImageEntity equipmentImageEntity) {
+		this.equipmentImages.remove(equipmentImageEntity);
+		equipmentImageEntity.setEquipment(null);
 	}
 
-	public void deleteAllDescriptionImage() {
+	public void deleteAllEquipmentImage() {
 
-		for (DescriptionImageEntity descriptionImage : descriptionImages) {
-			descriptionImage.setEquipment(null);
+		for (EquipmentImageEntity equipmentImage : equipmentImages) {
+			equipmentImage.setEquipment(null);
 		}
-		this.descriptionImages.clear();
+		this.equipmentImages.clear();
 
 	}
 

@@ -15,7 +15,7 @@
         <class>entities.AvailableTimeRangeEntity</class>
         <class>entities.ConstructionEntity</class>
         <class>entities.ContractorEntity</class>
-        <class>entities.DescriptionImageEntity</class>
+        <class>entities.EquipmentImageEntity</class>
         <class>entities.EquipmentEntity</class>
         <class>entities.EquipmentTypeEntity</class>
         <class>entities.FeedbackEntity</class>

@@ -3,12 +3,13 @@ package dtos.requests;
 import entities.EquipmentEntity;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
-public class DescriptionImageRequest {
+public class EquipmentImageRequest {
 
-	
-	public long id;
+
 	@NotNull
-	public String url;
+	@Positive
+	public long id;
 
 }
