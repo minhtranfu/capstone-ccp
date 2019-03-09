@@ -1,5 +1,6 @@
 package jaxrs.resources;
 
+import com.google.common.base.Function;
 import daos.*;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentPutRequest;
@@ -25,8 +26,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 @Path("/equipments")
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,20 +39,21 @@ public class EquipmentResource {
 	EquipmentDAO equipmentDAO;
 	@Inject
 	EquipmentTypeDAO equipmentTypeDAO;
-
 	@Inject
 	ContractorDAO contractorDAO;
 	@Inject
 	ConstructionDAO constructionDAO;
-
 	@Inject
 	AdditionalSpecsFieldDAO additionalSpecsFieldDAO;
+	@Inject
+	EquipmentImageDAO equipmentImageDAO;
 
 	@Inject
 	ModelConverter modelConverter;
 
 	@Inject
 	EquipmentImageSubResource equipmentImageSubResource;
+
 
 	@Resource
 	Validator validator;
@@ -151,24 +155,24 @@ public class EquipmentResource {
 
 
 		validatePostPutEquipment(equipmentEntity);
-//  2/19/19 add available time ranges
+		//  2/19/19 add available time ranges
 		for (AvailableTimeRangeEntity availableTimeRange : equipmentEntity.getAvailableTimeRanges()) {
 			availableTimeRange.setEquipment(equipmentEntity);
 		}
-
 		//  2/19/19 add addtionalsepecs
 		for (AdditionalSpecsValueEntity additionalSpecsValue : equipmentEntity.getAdditionalSpecsValues()) {
 			additionalSpecsValue.setEquipment(equipmentEntity);
 		}
 
-		// 3/5/19 add description images
+		equipmentDAO.persist(equipmentEntity);
+
 		for (EquipmentImageEntity equipmentImage : equipmentEntity.getEquipmentImages()) {
-			equipmentImage.setEquipment(equipmentEntity);
+			EquipmentImageEntity imageEntity = equipmentImageDAO.findByIdWithValidation(equipmentImage.getId());
+			imageEntity.setEquipment(equipmentEntity);
 		}
 
-		equipmentDAO.persist(equipmentEntity);
 		return Response.status(Response.Status.CREATED).entity(
-				equipmentDAO.findByID(equipmentEntity.getId())
+				equipmentEntity
 		).build();
 
 	}
@@ -185,12 +189,21 @@ public class EquipmentResource {
 		long equipmentTypeId = equipmentEntity.getEquipmentType().getId();
 
 
+		// TODO: 3/9/19 validate thumbnail image is one of the equipment's images
+		EquipmentImageEntity foundThumbnail = equipmentImageDAO.findByIdWithValidation(equipmentEntity.getThumbnailImage().getId());
+
+		equipmentEntity.getEquipmentImages().stream()
+				.filter(equipmentImageEntity -> equipmentImageEntity.getId() == foundThumbnail.getId())
+				.findAny().orElseThrow(() -> new BadRequestException(String.format(
+				"thumbnail id=%d not included in image list", foundContractor.getId())));
+
+
 		//validate equipment tye
 		EquipmentTypeEntity foundEquipmentType = equipmentTypeDAO.findByIdWithValidation(equipmentTypeId);
 		equipmentEntity.setEquipmentType(foundEquipmentType);
 
 		//check construction
-		if (equipmentEntity.getConstruction() != null && equipmentEntity.getConstruction().getId()!=0) {
+		if (equipmentEntity.getConstruction() != null && equipmentEntity.getConstruction().getId() != 0) {
 
 			long constructionId = equipmentEntity.getConstruction().getId();
 			ConstructionEntity foundConstructionEntity = constructionDAO.findByIdWithValidation(constructionId);
@@ -285,7 +298,10 @@ public class EquipmentResource {
 		//already deleted with orphanRemoval
 //		foundEquipment.deleteAllAvailableTimeRange();
 //		foundEquipment.deleteAllEquipmentImage();
-		foundEquipment.getEquipmentImages().clear();
+
+
+		//we dont update image information with put equipment anymore
+
 		foundEquipment.getAdditionalSpecsValues().clear();
 		foundEquipment.getAvailableTimeRanges().clear();
 
@@ -303,17 +319,9 @@ public class EquipmentResource {
 			additionalSpecsValue.setEquipment(foundEquipment);
 		}
 
-		// todo vaildate description image in dto
-
-		// TODO: 3/5/19 issue: what if client want to delete some image, and inserting new ones ?
-		// TODO: 3/5/19 issuse: what if client just want to delete some image ?
-		for (EquipmentImageEntity equipmentImage : foundEquipment.getEquipmentImages()) {
-			equipmentImage.setEquipment(foundEquipment);
-		}
 
 		//delete all children of the old equipment
 //		foundEquipment.deleteAllAvailableTimeRange();
-
 
 
 		return Response.status(Response.Status.OK).entity(
