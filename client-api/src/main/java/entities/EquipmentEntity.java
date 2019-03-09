@@ -3,7 +3,6 @@ package entities;
 import dtos.wrappers.IndependentHiringTransactionWrapper;
 import org.hibernate.annotations.Where;
 
-import javax.inject.Named;
 import javax.json.bind.annotation.JsonbNillable;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
@@ -34,7 +33,7 @@ public class EquipmentEntity implements Serializable {
 	private Integer deliveryPrice;
 	private String description;
 	private Status status;
-	private String thumbnailImage;
+	private DescriptionImageEntity thumbnailImage;
 
 	private boolean isDeleted;
 	private LocalDateTime createdTime;
@@ -202,16 +201,17 @@ public class EquipmentEntity implements Serializable {
 	}
 
 
-	@Basic
-	@Column(name = "thumbnail_image")
-	public String getThumbnailImage() {
+
+
+	@OneToOne
+	@JoinColumn(name = "thumbnail_image_id")
+	public DescriptionImageEntity getThumbnailImage() {
 		return thumbnailImage;
 	}
 
-	public void setThumbnailImage(String thumbnailImage) {
+	public void setThumbnailImage(DescriptionImageEntity thumbnailImage) {
 		this.thumbnailImage = thumbnailImage;
 	}
-
 	@Basic
 	@Column(name = "is_deleted", insertable = false, nullable = false)
 	public boolean isDeleted() {

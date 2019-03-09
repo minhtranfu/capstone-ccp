@@ -2,7 +2,9 @@ package jaxrs.resources;
 
 import daos.ConstructionDAO;
 import daos.ContractorDAO;
+import dtos.requests.ContractorRequest;
 import entities.ContractorEntity;
+import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -25,6 +27,9 @@ public class ContractorResource {
 	@Inject
 	ConstructionResource constructionResource;
 
+	@Inject
+	ModelConverter modelConverter;
+
 
 	//todo refactore this bullshit subresource for a better life
 	@Inject
@@ -40,14 +45,9 @@ public class ContractorResource {
 
 
 	@POST
-	public Response postContractor(ContractorEntity contractorEntity) {
-		contractorEntity.setId(0);
+	public Response postContractor(ContractorRequest contractorRequest) {
 
-		contractorEntity.setConstructions(null);
-
-		// TODO: 2/16/19 validate shits here
-
-
+		ContractorEntity contractorEntity = modelConverter.toEntity(contractorRequest);
 		contractorDao.persist(contractorEntity);
 		return Response.status(Response.Status.CREATED).entity(contractorDao.findByID(contractorEntity.getId())).build();
 	}

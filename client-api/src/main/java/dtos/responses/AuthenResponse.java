@@ -6,7 +6,7 @@ import entities.ContractorEntity;
 public class AuthenResponse {
 	public TokenWrapper tokenWrapper;
 	public ContractorEntity contractor;
-	public Credentials credentials;
+	public String username;
 
 
 	public TokenWrapper getTokenWrapper() {
@@ -25,11 +25,12 @@ public class AuthenResponse {
 		this.contractor = contractor;
 	}
 
-	public Credentials getCredentials() {
-		return credentials;
+
+	public String getUsername() {
+		return username;
 	}
 
-	public void setCredentials(Credentials credentials) {
-		this.credentials = credentials;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 }

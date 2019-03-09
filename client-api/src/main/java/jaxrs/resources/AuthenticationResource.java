@@ -44,7 +44,7 @@ public class AuthenticationResource {
 		String token = issueToken(contractorAccount,expiresIn);
 		AuthenResponse authenResponse = new AuthenResponse();
 		authenResponse.setContractor(contractorAccount.getContractor());
-		authenResponse.setCredentials(credentials);
+		authenResponse.setUsername(username);
 		authenResponse.setTokenWrapper(new TokenWrapper(
 				token,
 				"bearer",
