@@ -9,7 +9,8 @@ const _request = (method, url, data, options) => {
   const defaultOptions = {
     method: method,
     url: url,
-    responseType: 'json'
+    responseType: 'json',
+    headers: {}
   };
 
   if (data) {
@@ -17,6 +18,10 @@ const _request = (method, url, data, options) => {
     defaultOptions.headers = {
       'Content-Type': 'application/json'
     };
+  }
+  const token = localStorage.getItem('JWT_TOKEN');
+  if (token) {
+    defaultOptions.headers.Authorization = `Bearer ${token}`;
   }
 
   let requestOptions = defaultOptions;

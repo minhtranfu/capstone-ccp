@@ -5,6 +5,7 @@ import { Switch, Route } from 'react-router-dom';
 import NotFound from './notfound/NotFound';
 import Loading from 'react-loading-skeleton';
 import PageLoader from '../common/PageLoader';
+import PrivateRoute from '../common/PrivateRoute';
 
 const modules = [
   {
@@ -25,7 +26,8 @@ const modules = [
   {
     name: 'AddEquipment',
     path: '/dashboard/supplier/equipments/add',
-    modulePath: './add-equipment/AddEquipment'
+    modulePath: './add-equipment/AddEquipment',
+    isPrivate: true
   },
   // {
   //   name: 'SupplierDashboard',
@@ -35,27 +37,32 @@ const modules = [
   {
     name: 'MyReceivedRequests',
     path: '/dashboard/supplier/',
-    modulePath: './supplier-dashboard/MyRequests'
+    modulePath: './supplier-dashboard/MyRequests',
+    isPrivate: true
   },
   {
     name: 'SupplierConstructions',
     path: '/dashboard/supplier/constructions',
-    modulePath: './supplier-dashboard/MyConstructions'
+    modulePath: './supplier-dashboard/MyConstructions',
+    isPrivate: true
   },
   {
     name: 'SupplierEquipments',
     path: '/dashboard/supplier/equipments',
-    modulePath: './supplier-dashboard/MyEquipments'
+    modulePath: './supplier-dashboard/MyEquipments',
+    isPrivate: true
   },
   {
     name: 'RequesterRequests',
     path: '/dashboard/requester/',
-    modulePath: './requester-dashboard/MyRequests'
+    modulePath: './requester-dashboard/MyRequests',
+    isPrivate: true
   },
   {
     name: 'TransactionDetail',
     path: '/dashboard/transaction/:id',
-    modulePath: './transaction-detail'
+    modulePath: './transaction-detail',
+    isPrivate: true
   }
 ];
 
@@ -66,6 +73,17 @@ const routes = modules.map(module => {
     modules: [module.modulePath],
     webpack: () => [require.resolveWeak(module.modulePath)]
   });
+
+  const routeProps = {
+    exact: true,
+    path: module.path,
+    component: component,
+    key: module.path
+  };
+
+  if (module.isPrivate) {
+    return (<PrivateRoute {...routeProps} />)
+  }
 
   return (<Route
     exact

@@ -27,3 +27,10 @@ export function makeActionCreator (type, ...keys) {
     return action;
   };
 }
+
+export function createAction(type, data) {
+  return {
+    type,
+    ...data
+  };
+}

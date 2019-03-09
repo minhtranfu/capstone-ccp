@@ -1,4 +1,5 @@
 import DataAccessService from '../data/data-access-service';
+import * as userServices from './ccp/user.services';
 
 const CcpApiService = {
   getEquipmentTypes() {
@@ -48,6 +49,7 @@ const CcpApiService = {
   updateConstruction(constractorId, constructionId, data) {
     return DataAccessService.put(`/contractors/${constractorId}/constructions/${constructionId}`, data);
   },
+  userServices
 };
 
 export default CcpApiService;
