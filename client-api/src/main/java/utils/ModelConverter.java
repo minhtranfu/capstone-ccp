@@ -40,11 +40,12 @@ public class ModelConverter {
 
 
 
-//		foundEntity.setDescriptionImages((Collection<DescriptionImageEntity>) modelMapper.map(equipmentPutRequest.descriptionImages, foundEntity.getDescriptionImages().getClass()));
+//		foundEntity.setEquipmentImages((Collection<DescriptionImageEntity>) modelMapper.map(equipmentPutRequest.equipmentImages, foundEntity.getDescriptionImages().getClass()));
 //		foundEntity.setAvailableTimeRanges((List<AvailableTimeRangeEntity>) modelMapper.map(equipmentPutRequest.availableTimeRanges, foundEntity.getAvailableTimeRanges().getClass()));
 //		foundEntity.setAdditionalSpecsValues((List<AdditionalSpecsValueEntity>) modelMapper.map(equipmentPutRequest.additionalSpecsValues, foundEntity.getAdditionalSpecsValues().getClass()));
 		return foundEntity;
 	}
+
 
 
 

@@ -1,14 +1,12 @@
 package entities;
 
-import org.hibernate.annotations.Where;
-
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 
 @Entity
 //@Where(clause = "is_deleted=0")
-@Table(name = "description_image", schema = "capstone_ccp", catalog = "")
-public class DescriptionImageEntity {
+@Table(name = "equipment_image", schema = "capstone_ccp", catalog = "")
+public class EquipmentImageEntity {
 	private long id;
 	private String url;
 	private EquipmentEntity equipment;

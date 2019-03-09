@@ -3,25 +3,20 @@ package jaxrs.resources;
 import daos.*;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentPutRequest;
-import dtos.requests.EquipmentRequest;
 import dtos.responses.EquipmentResponse;
 import dtos.validationObjects.LocationValidator;
 import dtos.wrappers.LocationWrapper;
 import dtos.responses.MessageResponse;
 import entities.*;
-import utils.CommonUtils;
 import utils.ModelConverter;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.Local;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -54,7 +49,7 @@ public class EquipmentResource {
 	ModelConverter modelConverter;
 
 	@Inject
-	DescriptionImageResource descriptionImageResource;
+	EquipmentImageSubResource equipmentImageSubResource;
 
 	@Resource
 	Validator validator;
@@ -167,8 +162,8 @@ public class EquipmentResource {
 		}
 
 		// 3/5/19 add description images
-		for (DescriptionImageEntity descriptionImage : equipmentEntity.getDescriptionImages()) {
-			descriptionImage.setEquipment(equipmentEntity);
+		for (EquipmentImageEntity equipmentImage : equipmentEntity.getEquipmentImages()) {
+			equipmentImage.setEquipment(equipmentEntity);
 		}
 
 		equipmentDAO.persist(equipmentEntity);
@@ -289,8 +284,8 @@ public class EquipmentResource {
 
 		//already deleted with orphanRemoval
 //		foundEquipment.deleteAllAvailableTimeRange();
-//		foundEquipment.deleteAllDescriptionImage();
-		foundEquipment.getDescriptionImages().clear();
+//		foundEquipment.deleteAllEquipmentImage();
+		foundEquipment.getEquipmentImages().clear();
 		foundEquipment.getAdditionalSpecsValues().clear();
 		foundEquipment.getAvailableTimeRanges().clear();
 
@@ -312,8 +307,8 @@ public class EquipmentResource {
 
 		// TODO: 3/5/19 issue: what if client want to delete some image, and inserting new ones ?
 		// TODO: 3/5/19 issuse: what if client just want to delete some image ?
-		for (DescriptionImageEntity descriptionImage : foundEquipment.getDescriptionImages()) {
-			descriptionImage.setEquipment(foundEquipment);
+		for (EquipmentImageEntity equipmentImage : foundEquipment.getEquipmentImages()) {
+			equipmentImage.setEquipment(foundEquipment);
 		}
 
 		//delete all children of the old equipment
@@ -372,12 +367,12 @@ public class EquipmentResource {
 
 	@Path("{id:\\d+}/images")
 //	@RolesAllowed("contractor")
-	public DescriptionImageResource toDescriptionImageResource(@PathParam("id") long equipmentId) {
+	public EquipmentImageSubResource toEquipmentImageResource(@PathParam("id") long equipmentId) {
 
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(equipmentId);
 
-		descriptionImageResource.setEquipmentEntity(foundEquipment);
+		equipmentImageSubResource.setEquipmentEntity(foundEquipment);
 
-		return descriptionImageResource;
+		return equipmentImageSubResource;
 	}
 }
