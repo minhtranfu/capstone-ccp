@@ -1,15 +1,16 @@
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/messaging';
 
 export const initializeFirebase = () => {
   firebase.initializeApp({
     messagingSenderId: "479160953028"
   });
 
-  navigator.serviceWorker
-    .register('/public/my-sw.js')
-    .then((registration) => {
-      firebase.messaging().useServiceWorker(registration);
-    });
+  // navigator.serviceWorker
+  //   .register('/public/my-sw.js')
+  //   .then((registration) => {
+  //     firebase.messaging().useServiceWorker(registration);
+  //   });
 }
 
 export const askForPermissioToReceiveNotifications = async () => {

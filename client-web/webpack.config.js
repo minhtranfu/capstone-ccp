@@ -5,6 +5,11 @@ const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+// Plugin for service worker
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 // const MinifyPlugin = require("babel-minify-webpack-plugin");
 // const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
@@ -65,16 +70,16 @@ const config = {
         use:
           NodeUtils.isProduction()
             ? [MiniCssExtractPlugin.loader, 'css-loader',
-              {
-                loader: 'postcss-loader',
-                options: {
-                  plugins: () => [
-                    autoprefixer({
-                      browsers: ['last 2 version']
-                    })
-                  ]
-                }
-              }, 'sass-loader']
+            {
+              loader: 'postcss-loader',
+              options: {
+                plugins: () => [
+                  autoprefixer({
+                    browsers: ['last 2 version']
+                  })
+                ]
+              }
+            }, 'sass-loader']
             : ['style-loader', 'css-loader', 'sass-loader'],
         include: [
           path.join(__dirname, 'src'),
@@ -85,7 +90,7 @@ const config = {
         test: /\.(eot|woff|woff2|ttf|svg|png|jpg)$/,
         loader: 'url-loader?limit=10000&name=[name]-[hash].[ext]',
         include: [
-          path.join(__dirname, 'src'),path.join(__dirname, 'node_modules')
+          path.join(__dirname, 'src'), path.join(__dirname, 'node_modules')
         ]
       },
       {
@@ -115,7 +120,13 @@ if (NodeUtils.isProduction()) {
     './src/Bootstrap'
   ];
   config.plugins.push(
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    new ServiceWorkerWebpackPlugin({
+      entry: path.join(__dirname, './src/firebase-messaging-sw.js'),
+    }),
+    new CopyWebpackPlugin([
+      'src/firebase-messaging-sw.js',
+    ])
   );
 }
 

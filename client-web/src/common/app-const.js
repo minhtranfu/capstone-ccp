@@ -1,5 +1,9 @@
 import { increment, decrement, reset } from '../redux/actions/action-creators';
 
+export const authConsts = {
+  JWT_KEY: 'JWT_TOKEN'
+};
+
 export const ENTITY_KEY = {
   FOO: 'foo',
   BAR: 'bar',
@@ -7,6 +11,8 @@ export const ENTITY_KEY = {
   EQUIPMENT_TYPES: 'equipment_types',
   EQUIPMENT_TYPE_INFOS: 'equipment_type_infos'
 };
+
+let user = JSON.parse(localStorage.getItem('user'));
 
 export const INITIAL_STATE = {
   entities: {
@@ -20,7 +26,7 @@ export const INITIAL_STATE = {
   user: {
     // TODO: Remove hard code for user data
     id: 12
-  }
+  },
 };
 
 export const ROUTES = [

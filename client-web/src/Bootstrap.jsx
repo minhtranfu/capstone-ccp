@@ -19,6 +19,10 @@ import { initializeFirebase, askForPermissioToReceiveNotifications } from './pus
 
 const store = configureStore(INITIAL_STATE);
 
+// Init firebase message
+initializeFirebase();
+askForPermissioToReceiveNotifications();
+
 const ROOT_ELEMENT_ID_AS_DEFINED_IN_INDEX_HTML = 'app-root';
 
 ReactDOM.render(
@@ -27,10 +31,6 @@ ReactDOM.render(
   </AppContainer>,
   document.getElementById(ROOT_ELEMENT_ID_AS_DEFINED_IN_INDEX_HTML)
 );
-
-// Init firebase message
-initializeFirebase();
-askForPermissioToReceiveNotifications();
 
 // Hot Module Replacement API
 if (module.hot) {
