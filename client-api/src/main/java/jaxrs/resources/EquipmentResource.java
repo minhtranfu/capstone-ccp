@@ -371,7 +371,7 @@ public class EquipmentResource {
 
 
 	@Path("{id:\\d+}/images")
-	@RolesAllowed("contractor")
+//	@RolesAllowed("contractor")
 	public DescriptionImageResource toDescriptionImageResource(@PathParam("id") long equipmentId) {
 
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(equipmentId);

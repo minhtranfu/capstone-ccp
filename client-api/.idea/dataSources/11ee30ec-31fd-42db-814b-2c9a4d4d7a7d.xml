@@ -1551,7 +1551,7 @@
       <DataType>varchar(45)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="379" parent="286" name="thumbnail_image">
+    <column id="379" parent="286" name="thumbnail_image_url">
       <Position>5</Position>
       <DataType>varchar(255)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
@@ -1720,9 +1720,9 @@
       <DefaultExpression>&apos;AVAILABLE&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="410" parent="290" name="thumbnail_image">
+    <column id="410" parent="290" name="thumbnail_image_id">
       <Position>7</Position>
-      <DataType>varchar(255)|0s</DataType>
+      <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="411" parent="290" name="is_deleted">

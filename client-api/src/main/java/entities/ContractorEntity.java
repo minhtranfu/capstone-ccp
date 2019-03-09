@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.DefaultValue;
 import javax.xml.bind.annotation.XmlTransient;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,10 +19,8 @@ import java.util.List;
 public class ContractorEntity {
 	private long id;
 
-	@NotNull
 	private String name;
 
-	@Email
 	private String email;
 
 	private String phoneNumber;
@@ -97,7 +96,7 @@ public class ContractorEntity {
 	}
 
 	@Basic
-	@Column(name = "thumbnail_image", nullable = true, length = 255)
+	@Column(name = "thumbnail_image_url", nullable = true, length = 255)
 	public String getThumbnailImage() {
 		return thumbnailImage;
 	}

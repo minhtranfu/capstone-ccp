@@ -1,10 +1,7 @@
 package utils;
 
 import dtos.Credentials;
-import dtos.requests.DescriptionImageRequest;
-import dtos.requests.EquipmentPostRequest;
-import dtos.requests.EquipmentPutRequest;
-import dtos.requests.EquipmentRequest;
+import dtos.requests.*;
 import entities.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -55,6 +52,16 @@ public class ModelConverter {
 	public EquipmentPostRequest toRequest(EquipmentEntity equipmentEntity) {
 		return modelMapper.map(equipmentEntity, EquipmentPostRequest.class);
 	}
+
+	public ContractorEntity toEntity(ContractorRequest contractorRequest) {
+		return modelMapper.map(contractorRequest,ContractorEntity.class);
+
+	}
+
+	public ContractorAccountEntity toEntity(Credentials credentials) {
+		return modelMapper.map(credentials, ContractorAccountEntity.class);
+	}
+
 
 
 }

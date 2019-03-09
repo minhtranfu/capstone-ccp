@@ -64,10 +64,9 @@ public class TestResource  {
 	}
 
 	@GET
-
 	@Path("null")
 	public Response testNull() {
-		System.out.println("null here ");
+		System.out.println("null here !");
 		return Response.ok(null).build();
 	}
 
@@ -156,7 +155,7 @@ public class TestResource  {
 	@Claim("id")
 	long contractorId;
 
-	@Claim
+	@Claim("name")
 	String name;
 	private String toIdentityString() {
 		if (jsonWebToken == null) {
@@ -166,7 +165,8 @@ public class TestResource  {
 		final StringBuilder builder = new StringBuilder();
 
 		builder.append(username);
-		builder.append(String.format(" (id=%s)", contractorId));
+		builder.append(String.format(" (contractorId=%s)", (long)jsonWebToken.getClaim("id")));
+		builder.append(String.format(" (idInjected=%s)", contractorId));
 		builder.append(String.format(" (name=%s)", name));
 		builder.append(String.format(" (username=%s)", username));
 		builder.append(String.format(" (jti=%s)", jsonWebToken.getIssuedAtTime()));

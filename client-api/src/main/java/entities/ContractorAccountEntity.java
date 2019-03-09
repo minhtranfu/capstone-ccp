@@ -4,7 +4,11 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "contractor_account",schema = "capstone_ccp")
-@NamedQuery(name = "ContractorAccountEntity.validateAccount", query = "select e from ContractorAccountEntity  e where e.username = :username and e.password = :password")
+@NamedQueries({
+		@NamedQuery(name = "ContractorAccountEntity.validateAccount", query = "select e from ContractorAccountEntity  e where e.username = :username and e.password = :password")
+		,@NamedQuery(name = "ContractorAccountEntity.findByUsername", query = "select e from ContractorAccountEntity  e where e.username = :username ")
+
+})
 public class ContractorAccountEntity
 {
 
