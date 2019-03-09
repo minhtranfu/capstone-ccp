@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static utils.Constants.BUCKET_NAME;
 
@@ -91,7 +92,7 @@ public class EquipmentImageSubResource {
 		for (IdOnly equipmentImageRequest : equipmentImageRequests) {
 			EquipmentImageEntity equipmentImageEntity = equipmentImageDAO.findByIdWithValidation(equipmentImageRequest.getId());
 
-			// TODO: 3/9/19 validate equipment image
+			// validate equipment image
 			if (equipmentImageEntity.getEquipment() != null
 			&& equipmentImageEntity.getEquipment().getId() != equipmentEntity.getId()) {
 				throw new BadRequestException(String.format("EquipmentImage id=%d is already belongs to Equipment id=%d",
@@ -117,9 +118,10 @@ public class EquipmentImageSubResource {
 
 		//check if delete thumbnail image
 		if (equipmentEntity.getThumbnailImage().getId() == imageId) {
-			equipmentEntity.setThumbnailImage(equipmentEntity.getEquipmentImages().stream().findAny().filter(
-					equipmentImageEntity -> equipmentImageEntity.getId()==imageId
-			).orElseThrow(BadRequestException::new));
+			//set thumbnail to another image
+			equipmentEntity.setThumbnailImage(equipmentEntity.getEquipmentImages().stream().filter(
+					equipmentImageEntity -> equipmentImageEntity.getId()!=imageId
+			).findAny().orElseThrow(() -> new BadRequestException("You are deleting thumbnail with no other replacement")));
 			equipmentEntity = equipmentDAO.merge(equipmentEntity);
 		}
 
