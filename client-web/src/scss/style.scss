@@ -384,6 +384,9 @@ nav.navbar {
       background: #fff;
     }
   }
+  &.notification-container-empty {
+    display: none;
+  }
 }
 
 .notification,.notification-container {
