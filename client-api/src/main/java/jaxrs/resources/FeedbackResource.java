@@ -105,6 +105,7 @@ public class FeedbackResource {
 	@RolesAllowed("contractor")
 	public Response postFeedback(@Valid FeedbackRequest feedbackRequest) {
 
+
 		FeedbackEntity feedbackEntity = modelConverter.toEntity(feedbackRequest);
 
 		ContractorEntity fromContractor = contractorDao.findByIdWithValidation(claimContractorId.getValue().longValue());

@@ -93,10 +93,7 @@ public class HiringTransactionResource {
 	@Path("{id:\\d+}")
 	public Response getTransaction(@PathParam("id") long id) {
 
-		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByID(id);
-		if (foundTransaction == null) {
-			return Response.status(Response.Status.NOT_FOUND).entity(new MessageResponse("id not found!")).build();
-		}
+		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByIdWithValidation(id);
 		return Response.ok(foundTransaction).build();
 	}
 
@@ -152,7 +149,7 @@ public class HiringTransactionResource {
 							foundTransaction.getStatus(), transactionEntity.getStatus()));
 
 				}
-				//todo deny other pending requests that intersect with this accepted transaction
+				// deny other pending requests that intersect with this accepted transaction
 
 				List<HiringTransactionEntity> pendingTransactionIntersectingWith = hiringTransactionDAO.getPendingTransactionIntersectingWith(
 						foundEquipment.getId(),
