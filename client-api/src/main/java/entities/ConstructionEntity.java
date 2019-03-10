@@ -1,30 +1,38 @@
 package entities;
 
+import listeners.entityListenters.ConstructionEntityListener;
 import org.hibernate.annotations.Where;
 import org.hibernate.annotations.WhereJoinTable;
 
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
 
 @Entity
 @Table(name = "construction", schema = "capstone_ccp")
 @Where(clause = "is_deleted = 0")
+@EntityListeners(ConstructionEntityListener.class)
 public class ConstructionEntity {
 	private long id;
 
-	@NotNull()
+	@NotNull
+	@NotEmpty
 	private String name;
 
-	@NotNull()
+	@NotNull
+	@NotEmpty
 	private String address;
 
 	@NotNull
+	@Positive
 	private double longitude;
 
 	@NotNull
+	@Positive
 	private double latitude;
 
 	private boolean isDeleted;

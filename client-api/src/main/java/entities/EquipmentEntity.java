@@ -1,6 +1,7 @@
 package entities;
 
 import dtos.wrappers.IndependentHiringTransactionWrapper;
+import listeners.entityListenters.EquipmentEntityListener;
 import org.hibernate.annotations.Where;
 
 import javax.json.bind.annotation.JsonbNillable;
@@ -23,7 +24,7 @@ import java.util.Objects;
 		, @NamedQuery(name = "EquipmentEntity.getAll", query = "select  e from EquipmentEntity e")
 		, @NamedQuery(name = "EquipmentEntity.getOverdateRenting", query = "select e from EquipmentEntity  e where e.status = 'RENTING' and exists (select t from e.processingHiringTransactions t where t.endDate < current_date )")
 })
-
+@EntityListeners(EquipmentEntityListener.class)
 //for serializing null values ( not hide it)
 @JsonbNillable
 public class EquipmentEntity implements Serializable {
@@ -416,6 +417,23 @@ public class EquipmentEntity implements Serializable {
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
+	}
+
+
+	@PrePersist
+	void prePersist() {
+
+	}
+
+	@PreUpdate
+	void preUpdate() {
+		setAddress(getFinalAddress());
+		setLongitude(getFinalLongitude());
+		setLatitude(getFinalLatitude());
+	}
+
+	@PreRemove
+	void preRemove() {
 	}
 
 	public enum Status {

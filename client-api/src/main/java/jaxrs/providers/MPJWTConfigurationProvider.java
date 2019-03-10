@@ -25,18 +25,10 @@ public class MPJWTConfigurationProvider {
 		final KeyFactory kf = KeyFactory.getInstance("RSA");
 		final RSAPublicKey pk = (RSAPublicKey) kf.generatePublic(spec);
 		contextInfo.setSignerKey(pk);
+
+		//time after expired time while token still accepted
 		contextInfo.setExpGracePeriodSecs(10);
 		return Optional.of(contextInfo);
-
-		/*    byte[] encodedBytes = TokenUtil.readPublicKey("/publicKey.pem").getEncoded();
-
-        final X509EncodedKeySpec spec = new X509EncodedKeySpec(encodedBytes);
-        final KeyFactory kf = KeyFactory.getInstance("RSA");
-        final RSAPublicKey pk = (RSAPublicKey) kf.generatePublic(spec);
-
-        JWTAuthContextInfo contextInfo =  JWTAuthContextInfo.authContextInfo(pk,ISSUED_BY);
-
-        return Optional.of(contextInfo);*/
 	}
 
 	@Produces

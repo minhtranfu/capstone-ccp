@@ -6,6 +6,7 @@ import daos.EquipmentDAO;
 import dtos.requests.HiringTransactionRequest;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
+import entities.HiringTransactionEntity;
 
 import javax.ejb.Singleton;
 import javax.inject.Inject;
@@ -24,16 +25,15 @@ public class HiringTransactionValidator {
 	ContractorDAO contractorDAO;
 
 
-	public void validateAddHiringTransaction(HiringTransactionRequest hiringTransactionRequest) {
-		//  check equipment id
+	public void validateHiringTransactionRequestBeforeSend(HiringTransactionRequest hiringTransactionRequest) {
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(hiringTransactionRequest.getEquipmentId());
-
-
-		// TODO: 2/17/19 get requester id from cookie
 		ContractorEntity foundRequester = contractorDAO.findByIdWithValidation(hiringTransactionRequest.getRequesterId());
 
 
-
+		//todo validate supplier cannot request his own equipment
+		if (foundEquipment.getContractor().getId() == foundRequester.getId()) {
+			throw new BadRequestException("You cannot request your own equipment!");
+		}
 
 		//validate begindate enddate
 		if (hiringTransactionRequest.getBeginDate().isAfter(hiringTransactionRequest.getEndDate())) {
@@ -41,9 +41,7 @@ public class HiringTransactionValidator {
 		}
 
 		//  1/30/19 check requester activation
-		if (!foundRequester.isActivated()) {
-			throw new BadRequestException("Requester is not activated!");
-		}
+		contractorDAO.validateContractorActivated(foundRequester);
 
 		//  1/30/19 set equipment location from equipment id
 

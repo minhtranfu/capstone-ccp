@@ -3,15 +3,21 @@ package jaxrs.resources;
 import daos.ContractorDAO;
 import daos.FeedbackDAO;
 import daos.FeedbackTypeDAO;
+import dtos.requests.FeedbackRequest;
 import dtos.responses.MessageResponse;
 import entities.ContractorEntity;
 import entities.FeedbackEntity;
 import entities.FeedbackTypeEntity;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.json.JsonNumber;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -38,6 +44,14 @@ public class FeedbackResource {
 
 	@PersistenceContext
 	EntityManager entityManager;
+
+	@Inject
+	@Claim("contractorId")
+	ClaimValue<JsonNumber> claimContractorId;
+
+	@Inject
+	ModelConverter modelConverter;
+
 
 	@GET
 	@Path("status")
@@ -88,46 +102,21 @@ public class FeedbackResource {
 
 
 	@POST
-	public Response postFeedback(FeedbackEntity feedbackEntity) {
-		feedbackEntity.setId(0);
+	@RolesAllowed("contractor")
+	public Response postFeedback(@Valid FeedbackRequest feedbackRequest) {
 
-		// TODO: 2/21/19 check from contractor
+		FeedbackEntity feedbackEntity = modelConverter.toEntity(feedbackRequest);
 
-		long fromContractorId = feedbackEntity.getFromContractor() != null
-				? feedbackEntity.getFromContractor().getId()
-				: 0;
-
-		ContractorEntity foundContractor = contractorDao.findByID(fromContractorId);
-		if (foundContractor == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(
-					new MessageResponse(String.format("contractor id = %s not found", fromContractorId))
-			).build();
-		}
+		ContractorEntity fromContractor = contractorDao.findByIdWithValidation(claimContractorId.getValue().longValue());
+		feedbackEntity.setFromContractor(fromContractor);
 
 
-		// TODO: 2/21/19 check to contractor
+		ContractorEntity toContractor = contractorDao.findByIdWithValidation(feedbackEntity.getToContractor().getId());
+		feedbackEntity.setToContractor(toContractor);
 
-		long toContractorId = feedbackEntity.getFromContractor() != null
-				? feedbackEntity.getToContractor().getId()
-				: 0;
 
-		ContractorEntity toContractor = contractorDao.findByID(toContractorId);
-		if (toContractor == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(
-					new MessageResponse(String.format("contractor id = %s not found", toContractorId))
-			).build();
-		}
-		// TODO: 2/21/19 check feedback_type_id
-		long feedbackTypeId = feedbackEntity.getFeedbackType() != null
-				? feedbackEntity.getFeedbackType().getId()
-				: 0;
-		FeedbackTypeEntity foundFeedbackType = feedbackTypeDAO.findByID(feedbackTypeId);
-		if (foundFeedbackType == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(
-					new MessageResponse(String.format("feedbackTypeId = %s not found", feedbackTypeId))
-			).build();
-		}
-
+		FeedbackTypeEntity foundFeedbackType = feedbackTypeDAO.findByIdWithValidation(feedbackEntity.getFeedbackType().getId());
+		feedbackEntity.setFeedbackType(foundFeedbackType);
 
 		feedbackDao.persist(feedbackEntity);
 		return Response.ok(feedbackDao.findByID(feedbackEntity.getId())).build();

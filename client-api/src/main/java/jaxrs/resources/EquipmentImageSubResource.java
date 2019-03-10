@@ -49,7 +49,6 @@ public class EquipmentImageSubResource {
 	EquipmentDAO equipmentDAO;
 
 
-
 	private EquipmentEntity equipmentEntity;
 
 	public EquipmentImageSubResource() {
@@ -68,12 +67,12 @@ public class EquipmentImageSubResource {
 		EquipmentImageEntity foundImage = equipmentImageDAO.findByIdWithValidation(imageId);
 		if (foundImage.getEquipment().getId() != equipmentEntity.getId()) {
 			throw new BadRequestException(String.format("Equipment id=%d not contain EquipmentImage id=%d",
-					equipmentEntity.getId(), imageId))
-					;
+					equipmentEntity.getId(), imageId));
 		}
 
 		return foundImage;
 	}
+
 	@GET
 	@Path("{id:\\d+}")
 	public Response getImageById(@PathParam("id") long imageId) {
@@ -86,7 +85,7 @@ public class EquipmentImageSubResource {
 	}
 
 	@POST
-	public Response addUploadedImageWithId(@NotNull List<@Valid IdOnly> equipmentImageRequests)  {
+	public Response addUploadedImageWithId(@NotNull List<@Valid IdOnly> equipmentImageRequests) {
 
 
 		for (IdOnly equipmentImageRequest : equipmentImageRequests) {
@@ -94,7 +93,7 @@ public class EquipmentImageSubResource {
 
 			// validate equipment image
 			if (equipmentImageEntity.getEquipment() != null
-			&& equipmentImageEntity.getEquipment().getId() != equipmentEntity.getId()) {
+					&& equipmentImageEntity.getEquipment().getId() != equipmentEntity.getId()) {
 				throw new BadRequestException(String.format("EquipmentImage id=%d is already belongs to Equipment id=%d",
 						equipmentImageEntity.getId(),
 						equipmentImageEntity.getEquipment().getId()));
@@ -120,7 +119,7 @@ public class EquipmentImageSubResource {
 		if (equipmentEntity.getThumbnailImage().getId() == imageId) {
 			//set thumbnail to another image
 			equipmentEntity.setThumbnailImage(equipmentEntity.getEquipmentImages().stream().filter(
-					equipmentImageEntity -> equipmentImageEntity.getId()!=imageId
+					equipmentImageEntity -> equipmentImageEntity.getId() != imageId
 			).findAny().orElseThrow(() -> new BadRequestException("You are deleting thumbnail with no other replacement")));
 			equipmentEntity = equipmentDAO.merge(equipmentEntity);
 		}

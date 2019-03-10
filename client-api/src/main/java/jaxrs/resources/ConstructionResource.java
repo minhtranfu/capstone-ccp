@@ -4,10 +4,13 @@ import daos.ConstructionDAO;
 import entities.ConstructionEntity;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.json.JsonNumber;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -20,21 +23,16 @@ public class ConstructionResource {
 	@Inject
 	ConstructionDAO constructionDao;
 
+	@Inject
+	@Claim("contractorId")
+	ClaimValue<JsonNumber> claimId;
 	public ConstructionResource() {
-	}
-
-
-	public ContractorEntity getContractorEntity() {
-		return contractorEntity;
 	}
 
 	public void setContractorEntity(ContractorEntity contractorEntity) {
 		this.contractorEntity = contractorEntity;
 	}
 
-	public ConstructionResource(ContractorEntity contractorEntity) {
-		this.contractorEntity = contractorEntity;
-	}
 
 
 	@GET
@@ -68,9 +66,15 @@ public class ConstructionResource {
 	}
 
 	@POST
+	@RolesAllowed("contractor")
 	public Response postConstructionByContractorId(
 			@Valid ConstructionEntity constructionEntity
 	) {
+
+		if (contractorEntity.getId() != claimId.getValue().longValue()) {
+			throw new BadRequestException("You cannot edit other people's construction");
+		}
+
 		constructionEntity.setContractor(contractorEntity);
 		constructionDao.persist(constructionEntity);
 
@@ -80,10 +84,15 @@ public class ConstructionResource {
 
 	@PUT
 	@Path("{constructionId:\\d+}")
+	@RolesAllowed("contractor")
 	public Response updateConstructionByContractorId(
 			@PathParam("constructionId") long constructionId,
 			@Valid ConstructionEntity constructionEntity
 	) {
+
+		if (contractorEntity.getId() != claimId.getValue().longValue()) {
+			throw new BadRequestException("You cannot edit other people's construction");
+		}
 
 		validateContructionAll(constructionId);
 
@@ -106,8 +115,13 @@ public class ConstructionResource {
 
 	@DELETE
 	@Path("{constructionId:\\d+}")
+	@RolesAllowed("contractor")
 	public Response deleteConstructionByContractorId(
 			@PathParam("constructionId") long constructionId) {
+
+		if (contractorEntity.getId() != claimId.getValue().longValue()) {
+			throw new BadRequestException("You cannot edit other people's construction");
+		}
 
 		validateContructionAll(constructionId);
 		ConstructionEntity foundConstruction = constructionDao.findByID(constructionId);

@@ -3,17 +3,23 @@ package jaxrs.resources;
 import daos.EquipmentDAO;
 import daos.HiringTransactionDAO;
 import daos.TransactionDateChangeRequestDAO;
+import dtos.requests.TransactionDateChangeRequestRequest;
 import dtos.responses.MessageResponse;
 import entities.HiringTransactionEntity;
 import entities.TransactionDateChangeRequestEntity;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.json.JsonNumber;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.List;
-@RolesAllowed("contractor")
 
+@RolesAllowed("contractor")
 public class TransactionDateChangeResource {
 
 	@Inject
@@ -24,6 +30,17 @@ public class TransactionDateChangeResource {
 
 	@Inject
 	EquipmentDAO equipmentDAO;
+
+	@Inject
+	@Claim("contractorId")
+	ClaimValue<JsonNumber> claimContractorId;
+
+	private long getClaimContractId() {
+		return claimContractorId.getValue().longValue();
+	}
+
+	@Inject
+	ModelConverter modelConverter;
 
 	private HiringTransactionEntity hiringTransactionEntity;
 
@@ -39,15 +56,19 @@ public class TransactionDateChangeResource {
 	}
 
 	@POST
-	@Path("")
-	public Response requestChangingHiringDate(@PathParam("id") long transactionId,
-											  TransactionDateChangeRequestEntity transactionDateChangeRequestEntity) {
+	public Response requestChangingHiringDate(@Valid TransactionDateChangeRequestRequest transactionDateChangeRequestRequest) {
 
-		//remove id
-		transactionDateChangeRequestEntity.setId(0);
+		TransactionDateChangeRequestEntity transactionDateChangeRequestEntity = modelConverter.toEntity(transactionDateChangeRequestRequest);
 
-		// TODO: 2/10/19 validate authority
+		//set transaction id
+		transactionDateChangeRequestEntity.setHiringTransactionEntity(hiringTransactionEntity);
 
+		// 2/10/19 validate authority of requester
+		if (hiringTransactionEntity.getRequester().getId() != claimContractorId.getValue().longValue()) {
+			throw new BadRequestException(String.format("Contractor id=%d cannot request transaction change of requester id=%d",
+					claimContractorId.getValue().longValue(),
+					hiringTransactionEntity.getRequester().getId()));
+		}
 
 		// validate transaction status must be ACCEPTED
 		if (hiringTransactionEntity.getStatus() != HiringTransactionEntity.Status.ACCEPTED) {
@@ -56,7 +77,7 @@ public class TransactionDateChangeResource {
 
 
 		// validate if there's no other pending requests
-		transactionDateChangeRequestDAO.validateOnlyOnePendingRequest(transactionId);
+		transactionDateChangeRequestDAO.validateOnlyOnePendingRequest(hiringTransactionEntity.getId());
 
 
 		//leave validateing timerange when contractor approve
@@ -64,8 +85,6 @@ public class TransactionDateChangeResource {
 		//  1/30/19 set status to pending
 		transactionDateChangeRequestEntity.setStatus(TransactionDateChangeRequestEntity.Status.PENDING);
 
-		//set transaction id
-		transactionDateChangeRequestEntity.setHiringTransactionEntity(hiringTransactionEntity);
 		transactionDateChangeRequestDAO.persist(transactionDateChangeRequestEntity);
 
 		// TODO: 2/10/19 notify to supplier
@@ -75,20 +94,28 @@ public class TransactionDateChangeResource {
 	}
 
 	@GET
-	@Path("")
-	public Response getRequestForChangingHiringDate(@PathParam("id") long transactionId) {
-		// TODO: 2/10/19 validate authority
-
-
-		List<TransactionDateChangeRequestEntity> results = transactionDateChangeRequestDAO.getRequestsByTransactionId(transactionId);
+	public Response getRequestForChangingHiringDate() {
+		//  2/10/19 validate authority
+		//supplier or requester is ok
+		if (getClaimContractId() != hiringTransactionEntity.getRequester().getId()
+				&& getClaimContractId() != hiringTransactionEntity.getEquipment().getContractor().getId()) {
+			throw new BadRequestException("Only requester or supplier can see this!");
+		}
+		List<TransactionDateChangeRequestEntity> results =
+				transactionDateChangeRequestDAO.getRequestsByTransactionId(hiringTransactionEntity.getId());
 		return Response.ok(results).build();
 	}
 
-	@DELETE
-	@Path("")
-	public Response cancelRequestForChangingHiringDate(@PathParam("id") long transactionId) {
-		// TODO: 2/10/19 validate authority
 
+
+
+	@DELETE
+	public Response cancelRequestForChangingHiringDate(@PathParam("id") long transactionId) {
+		// 2/10/19 validate authority
+		//only requester can cancel this
+		if (getClaimContractId() != hiringTransactionEntity.getRequester().getId()) {
+			throw new BadRequestException("Only requester can cancel this date request");
+		}
 
 		//validate if existing pending requests
 		List<TransactionDateChangeRequestEntity> pendingRequestByTransactionId = transactionDateChangeRequestDAO.getPendingRequestByTransactionId(transactionId);
@@ -106,11 +133,14 @@ public class TransactionDateChangeResource {
 	}
 
 	@PUT
-	@Path("")
 	public Response approveRequestForChangingHiringDate(@PathParam("id") long transactionId
 			, TransactionDateChangeRequestEntity entity) {
 
+		// TODO: 3/10/19 validate authority
+		if (getClaimContractId() != hiringTransactionEntity.getEquipment().getContractor().getId()) {
+			throw new BadRequestException("Only supplier can accept or deny date request");
 
+		}
 		//validate if existing pending requests
 		List<TransactionDateChangeRequestEntity> pendingRequestByTransactionId = transactionDateChangeRequestDAO.getPendingRequestByTransactionId(transactionId);
 		if (pendingRequestByTransactionId.size() < 1) {

@@ -69,9 +69,9 @@ public class AuthenticationResource {
 				.jwtID(UUID.randomUUID().toString())
 				.claim("groups", scopes)
 				.claim("username", account.getUsername())
-				.claim("name", account.getUsername())
-				.subject(account.getUsername())
-				.claim("id", account.getContractor().getId())
+				.claim("name", account.getContractor().getName())
+				.claim("contractorId",new Long(account.getContractor().getId()))
+				.subject(""+account.getContractor().getId())
 				.issuer(MPJWTConfigurationProvider.ISSUED_BY)
 				.build();
 

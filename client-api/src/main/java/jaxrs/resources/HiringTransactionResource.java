@@ -10,9 +10,13 @@ import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 import jaxrs.validators.HiringTransactionValidator;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.json.JsonNumber;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -43,25 +47,38 @@ public class HiringTransactionResource {
 
 	@Inject
 	TransactionDateChangeResource transactionDateChangeResource;
+	@Inject
+	ModelConverter modelConverter;
 
 
+	@Inject
+	@Claim("contractorId")
+	ClaimValue<JsonNumber> claimContractorId;
 
+	private long getClaimContractorId() {
+		return claimContractorId.getValue().longValue();
+	}
 
 	@POST
 	public Response requestTransaction(@Valid HiringTransactionRequest hiringTransactionRequest) {
 
-		validator.validateAddHiringTransaction(hiringTransactionRequest);
 
+		//3/10/19 get requester id from token
+		hiringTransactionRequest.setRequesterId(claimContractorId.getValue().longValue());
 
-		// TODO: 2/17/19 map this properly with modelmapper
-		HiringTransactionEntity hiringTransactionEntity = new HiringTransactionEntity(hiringTransactionRequest);
+		validator.validateHiringTransactionRequestBeforeSend(hiringTransactionRequest);
+		HiringTransactionEntity hiringTransactionEntity = modelConverter.toEntity(hiringTransactionRequest);
 
 
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(hiringTransactionRequest.getEquipmentId());
 
-		hiringTransactionEntity.setEquipmentAddress(foundEquipment.getAddress());
-		hiringTransactionEntity.setEquipmentLongitude(foundEquipment.getLongitude());
-		hiringTransactionEntity.setEquipmentLatitude(foundEquipment.getLatitude());
+		hiringTransactionEntity.setEquipmentAddress(foundEquipment.getFinalAddress());
+		hiringTransactionEntity.setEquipmentLongitude(foundEquipment.getFinalLongitude());
+		hiringTransactionEntity.setEquipmentLatitude(foundEquipment.getFinalLatitude());
+
+		hiringTransactionEntity.setDeliveryPrice(foundEquipment.getDeliveryPrice());
+		hiringTransactionEntity.setDailyPrice(foundEquipment.getDailyPrice());
+
 		//  1/30/19 set status to pending
 		hiringTransactionEntity.setStatus(HiringTransactionEntity.Status.PENDING);
 
@@ -75,6 +92,7 @@ public class HiringTransactionResource {
 	@GET
 	@Path("{id:\\d+}")
 	public Response getTransaction(@PathParam("id") long id) {
+
 		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByID(id);
 		if (foundTransaction == null) {
 			return Response.status(Response.Status.NOT_FOUND).entity(new MessageResponse("id not found!")).build();
@@ -85,11 +103,12 @@ public class HiringTransactionResource {
 	@DELETE
 	@Path("{id:\\d+}")
 	public Response cancelTransaction(@PathParam("id") long id) {
-		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByID(id);
-		if (foundTransaction == null) {
-			return Response.status(Response.Status.NOT_FOUND).entity(new MessageResponse("id not found!")).build();
-		}
+		// TODO: 3/10/19 validate authority for requester
 
+		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByIdWithValidation(id);
+		if (getClaimContractorId() == foundTransaction.getRequester().getId()) {
+			throw new BadRequestException("Only requester can cancel request");
+		}
 
 		foundTransaction.setDeleted(true);
 		hiringTransactionDAO.merge(foundTransaction);
@@ -101,20 +120,18 @@ public class HiringTransactionResource {
 	@Path("{id:\\d+}")
 	public Response updateTransactionStatus(@PathParam("id") long id, HiringTransactionEntity transactionEntity) {
 
+		// TODO: 3/10/19 validate authority
+
 		// TODO: 2/9/19 if approved, auto deny all intersected requests
 
+		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByIdWithValidation(id);
 
-		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByID(id);
-		if (foundTransaction == null) {
-			throw new BadRequestException(String.format("Transaction id = %d not found", id));
-		}
 
-		// TODO: 3/3/19 validate null by bean validation
+		//todo not validate authority for ease
+
 		if (transactionEntity.getStatus() == null) {
-
 			throw new BadRequestException("Status is null!");
 		}
-
 
 		EquipmentEntity foundEquipment = foundTransaction.getEquipment();
 		switch (transactionEntity.getStatus()) {
@@ -240,6 +257,10 @@ public class HiringTransactionResource {
 	public Response getReceivedTransactionAsSupplier(@PathParam("id") long supplierId) {
 
 
+		if (supplierId != claimContractorId.getValue().longValue()) {
+			throw new BadRequestException("You cannot view other people's transaction");
+		}
+
 		//validate supplierId
 		ContractorEntity foundContractor = contractorDAO.findByID(supplierId);
 		if (foundContractor == null) {
@@ -257,6 +278,11 @@ public class HiringTransactionResource {
 	@GET
 	@Path("requester/{id:\\d+}")
 	public Response getSentTransactionsAsRequester(@PathParam("id") long requesterId) {
+
+		if (requesterId != claimContractorId.getValue().longValue()) {
+			throw new BadRequestException("You cannot view other people's transaction");
+		}
+
 		ContractorEntity foundContractor = contractorDAO.findByID(requesterId);
 		if (foundContractor == null) {
 			//custom message for requester not contractor
@@ -271,6 +297,7 @@ public class HiringTransactionResource {
 
 	@Path("{id:\\d+}/adjustDateRequests")
 	public TransactionDateChangeResource toTransactionDateChangeResource(@PathParam("id") long transactionId) {
+
 
 		HiringTransactionEntity transactionEntity = validateHiringTransactionEntity(transactionId);
 
