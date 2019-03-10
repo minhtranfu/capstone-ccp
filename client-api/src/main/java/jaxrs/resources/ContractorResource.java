@@ -4,18 +4,23 @@ import daos.ConstructionDAO;
 import daos.ContractorDAO;
 import dtos.requests.ContractorRequest;
 import entities.ContractorEntity;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.json.JsonNumber;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("contractors")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("contractor")
-
 public class ContractorResource {
 
 	@Inject
@@ -36,14 +41,21 @@ public class ContractorResource {
 	CartRequestResource cartRequestResource;
 
 
+	@Inject
+	@Claim("contractorId")
+	ClaimValue<JsonNumber> claimId;
+
 	@GET
 	@Path("{id:\\d+}")
 	public Response getContractorById(@PathParam("id") long id) {
+
+
 		ContractorEntity foundContractor = validateContractorId(id);
 		return Response.ok(foundContractor).build();
 	}
 
 
+	@RolesAllowed("contractor")
 	@POST
 	public Response postContractor(ContractorRequest contractorRequest) {
 
@@ -54,28 +66,23 @@ public class ContractorResource {
 
 
 	@PUT
+	@RolesAllowed("contractor")
 	@Path("{id:\\d+}")
 	public Response putContractorById(
 			@PathParam("id") long contractorId,
-			ContractorEntity contractorEntity) {
+			@Valid @NotNull ContractorRequest contractorRequest) {
 
-
-
-
-		// TODO: 2/16/19 validate shits here
+		//validate contractorid = claimid
+		if (contractorId != claimId.getValue().longValue()) {
+			throw new BadRequestException("You cannot edit other people's profile");
+		}
 
 		//validate contractor id
 		ContractorEntity foundContractorEntity = validateContractorId(contractorId);
 
+		modelConverter.toEntity(contractorRequest, foundContractorEntity);
 
-		contractorEntity.setId(contractorId);
-
-		//todo get what needed here
-		//no allowed to edit the construction list
-		contractorEntity.setConstructions(foundContractorEntity.getConstructions());
-
-		contractorDao.merge(contractorEntity);
-		return Response.ok(contractorDao.findByID(contractorEntity.getId())).build();
+		return Response.ok(contractorDao.merge(foundContractorEntity)).build();
 
 	}
 
@@ -96,6 +103,7 @@ public class ContractorResource {
 	}
 
 	@GET
+	@RolesAllowed("contractor")
 	@Path("{id:\\d+}/equipments")
 	public Response getEquipmentsBySupplierId(@PathParam("id") long id) {
 
@@ -103,22 +111,6 @@ public class ContractorResource {
 		return Response.ok(foundContractor.getEquipments()).build();
 	}
 
-
-	/*============================Cart Service=================*/
-//	@GET
-//	@Path("{id:\\d+}/cart")
-//	public Response getCart(@PathParam("id")long contractorId) {
-//		//validate contractor id
-//		ContractorEntity foundContractor = contractorDao.findByID(contractorId);
-//		if (foundContractor == null) {
-//			return Response.status(Response.Status.BAD_REQUEST).entity(new MessageResponse(
-//					String.format("contractor id=%s not found!", contractorId)
-//			)).build();
-//		}
-//
-//
-//
-//	}
 
 	@Path("{id:\\d+}/cart")
 	public CartRequestResource toCartResource(@PathParam("id") long contractorId) {

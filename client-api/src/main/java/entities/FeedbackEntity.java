@@ -113,7 +113,7 @@ public class FeedbackEntity {
 		this.updatedTime = updatedTime;
 	}
 
-	enum Status{
+	public enum Status{
 		PENDING,
 		VERIFIED,
 		NOT_VERIFIED,

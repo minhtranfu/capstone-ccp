@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
+import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import utils.ModelConverter;
 
@@ -20,6 +22,7 @@ import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.http.HttpServlet;
 import javax.validation.*;
 import javax.validation.constraints.NotBlank;
@@ -27,8 +30,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.*;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,37 +143,62 @@ public class TestResource  {
 	}
 
 
+
+	@Context
+	SecurityContext securityContext;
+
 	@Inject
-	private JsonWebToken jsonWebToken;
+	Provider<JsonWebToken> jsonWebToken;
+
+	@Inject
+	@Claim("username")
+	ClaimValue<String> username;
+
+
 	@GET
 	@Path("authen")
-//	@PermitAll
-	@RolesAllowed("contractor")
+	@PermitAll
+//	@RolesAllowed("contractor")
 //	@DenyAll
 	public Response testAuthenByJWT() {
-		return Response.ok(toIdentityString()).build();
+//		securityContext.getUserPrincipal();
+		return Response.ok(
+				username.getValue()
+//				toIdentityString()
+		).build();
 	}
 
-	@Claim("username")
-	String username;
+	@GET
+	@Path("authen/notoken")
+	public Response testAuthenWithoutJWT() {
+		return Response.ok().build();
+	}
+//
+//	@Inject
+//	@Claim("username")
+//	String username;
+//
+//	@Inject
+//	@Claim("contractorId")
+//	long contractorId;
+//
+//	@Inject
+//	@Claim("name")
+//	String name;
 
-	@Claim("id")
-	long contractorId;
 
-	@Claim("name")
-	String name;
 	private String toIdentityString() {
+//		JsonWebToken jsonWebToken = (JsonWebToken) securityContext.getUserPrincipal();
+		JsonWebToken jsonWebToken = this.jsonWebToken.get();
 		if (jsonWebToken == null) {
 			return "no authenticated user.";
 		}
 
 		final StringBuilder builder = new StringBuilder();
 
-		builder.append(username);
-		builder.append(String.format(" (contractorId=%s)", (long)jsonWebToken.getClaim("id")));
-		builder.append(String.format(" (idInjected=%s)", contractorId));
-		builder.append(String.format(" (name=%s)", name));
-		builder.append(String.format(" (username=%s)", username));
+		builder.append(String.format(" (contractorId=%s)", jsonWebToken.claim("sub").orElse(0)));
+		builder.append(String.format(" (name=%s)", jsonWebToken.claim("name").orElse("not availalbe")));
+		builder.append(String.format(" (username=%s)", jsonWebToken.claim("username").orElse("not available")));
 		builder.append(String.format(" (jti=%s)", jsonWebToken.getIssuedAtTime()));
 		builder.append(String.format(" (exp=%s)", jsonWebToken.getExpirationTime()));
 

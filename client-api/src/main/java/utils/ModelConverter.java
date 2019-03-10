@@ -24,6 +24,19 @@ public class ModelConverter {
 				.setFieldMatchingEnabled(true)
 		;
 
+		modelMapper.addMappings(new PropertyMap<CartRequestEntity, HiringTransactionRequest>() {
+			@Override
+			protected void configure() {
+				destination.setRequesterId(source.getContractor().getId());
+				destination.setBeginDate(source.getBeginDate());
+				destination.setEndDate(source.getEndDate());
+				destination.setRequesterAddress(source.getRequesterAddress());
+				destination.setRequesterLatitude(source.getRequesterLat());
+				destination.setRequesterLongitude(source.getRequesterLong());
+				destination.setEquipmentId(source.getEquipment().getId());
+			}
+		});
+
 	}
 
 	public EquipmentEntity toEntity(EquipmentPostRequest equipmentRequest) {
@@ -56,13 +69,35 @@ public class ModelConverter {
 
 	public ContractorEntity toEntity(ContractorRequest contractorRequest) {
 		return modelMapper.map(contractorRequest,ContractorEntity.class);
-
 	}
+
+	public ContractorEntity toEntity(ContractorRequest contractorRequest, ContractorEntity managedContractor) {
+		 modelMapper.map(contractorRequest,managedContractor);
+		return managedContractor;
+	}
+
 
 	public ContractorAccountEntity toEntity(Credentials credentials) {
 		return modelMapper.map(credentials, ContractorAccountEntity.class);
 	}
 
 
+	public FeedbackEntity toEntity(FeedbackRequest feedbackRequest) {
+		return modelMapper.map(feedbackRequest, FeedbackEntity.class);
+	}
+
+	public HiringTransactionEntity toEntity(HiringTransactionRequest hiringTransactionRequest) {
+		return modelMapper.map(hiringTransactionRequest,HiringTransactionEntity.class);
+	}
+
+	public HiringTransactionRequest toRequest(CartRequestEntity cartRequestEntity) {
+
+
+		return modelMapper.map(cartRequestEntity, HiringTransactionRequest.class);
+	}
+
+	public TransactionDateChangeRequestEntity toEntity(TransactionDateChangeRequestRequest transactionDateChangeRequestRequest) {
+		return modelMapper.map(transactionDateChangeRequestRequest, TransactionDateChangeRequestEntity.class);
+	}
 
 }

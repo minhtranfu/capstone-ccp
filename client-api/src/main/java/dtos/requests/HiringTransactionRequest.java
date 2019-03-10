@@ -1,42 +1,26 @@
 package dtos.requests;
 
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 
 public class HiringTransactionRequest {
 
-	@NotNull
 	private LocalDate beginDate;
-
-	@NotNull
 	private LocalDate endDate;
-	@NotNull
 	private String requesterAddress;
-	@NotNull
 	private double requesterLatitude;
-	@NotNull
 	private double requesterLongitude;
-
-	@NotNull
 	private long equipmentId;
-
-	@NotNull
 	private long requesterId;
 
 	public HiringTransactionRequest() {
 	}
 
-	public HiringTransactionRequest(@NotNull LocalDate beginDate, @NotNull LocalDate endDate, @NotNull String requesterAddress, @NotNull double requesterLatitude, @NotNull double requesterLongitude, @NotNull long equipmentId, @NotNull long requesterId) {
-		this.beginDate = beginDate;
-		this.endDate = endDate;
-		this.requesterAddress = requesterAddress;
-		this.requesterLatitude = requesterLatitude;
-		this.requesterLongitude = requesterLongitude;
-		this.equipmentId = equipmentId;
-		this.requesterId = requesterId;
-	}
 
+	@NotNull
 	public LocalDate getBeginDate() {
 		return beginDate;
 	}
@@ -45,6 +29,7 @@ public class HiringTransactionRequest {
 		this.beginDate = beginDate;
 	}
 
+	@NotNull
 	public LocalDate getEndDate() {
 		return endDate;
 	}
@@ -53,6 +38,8 @@ public class HiringTransactionRequest {
 		this.endDate = endDate;
 	}
 
+	@NotNull
+	@NotEmpty
 	public String getRequesterAddress() {
 		return requesterAddress;
 	}
@@ -61,6 +48,8 @@ public class HiringTransactionRequest {
 		this.requesterAddress = requesterAddress;
 	}
 
+	@NotNull
+	@Positive
 	public double getRequesterLatitude() {
 		return requesterLatitude;
 	}
@@ -69,6 +58,8 @@ public class HiringTransactionRequest {
 		this.requesterLatitude = requesterLatitude;
 	}
 
+	@NotNull
+	@Positive
 	public double getRequesterLongitude() {
 		return requesterLongitude;
 	}
@@ -77,11 +68,16 @@ public class HiringTransactionRequest {
 		this.requesterLongitude = requesterLongitude;
 	}
 
+
+	@NotNull
+	@Positive
 	public long getEquipmentId() {
 		return equipmentId;
 	}
 
 	public void setEquipmentId(long equipmentId) {
+
+
 		this.equipmentId = equipmentId;
 	}
 

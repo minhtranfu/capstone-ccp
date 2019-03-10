@@ -1742,7 +1742,7 @@
       <DataType>double|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="414" parent="289" name="description_image_id">
+    <column id="414" parent="289" name="equipment_image_id">
       <Position>17</Position>
       <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>

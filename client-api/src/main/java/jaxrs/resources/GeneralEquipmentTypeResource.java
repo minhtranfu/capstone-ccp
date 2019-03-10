@@ -18,7 +18,7 @@ import java.util.List;
 public class GeneralEquipmentTypeResource {
 
 	@Inject
-	  GeneralEquipmentTypeDAO generalEquipmentTypeDAO ;
+	GeneralEquipmentTypeDAO generalEquipmentTypeDAO;
 
 	@GET
 	public Response getAllGeneralEquipmentType() {

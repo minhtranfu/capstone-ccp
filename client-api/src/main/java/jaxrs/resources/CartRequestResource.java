@@ -8,9 +8,13 @@ import entities.CartRequestEntity;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import jaxrs.validators.HiringTransactionValidator;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.json.JsonNumber;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -30,10 +34,17 @@ public class CartRequestResource {
 	@Inject
 	HiringTransactionValidator hiringTransactionValidator;
 
+	@Inject
+	@Claim("contractorId")
+	ClaimValue<JsonNumber> claimId;
+
+	@Inject
+	ModelConverter modelConverter;
+
 	public CartRequestResource() {
 	}
 
-	ContractorEntity contractorEntity;
+	private ContractorEntity contractorEntity;
 
 	public ContractorEntity getContractorEntity() {
 		return contractorEntity;
@@ -75,21 +86,15 @@ public class CartRequestResource {
 	@POST
 	public Response addToCart(@Valid CartRequestEntity cartRequestEntity) {
 
+		if (contractorEntity.getId() != claimId.getValue().longValue()) {
+			throw new BadRequestException("You cannot edit other people's construction");
+		}
 
-		HiringTransactionRequest hiringTransactionRequest = new HiringTransactionRequest(
-				cartRequestEntity.getBeginDate(),
-				cartRequestEntity.getEndDate(),
-				cartRequestEntity.getRequesterAddress(),
-				cartRequestEntity.getRequesterLat(),
-				cartRequestEntity.getRequesterLong(),
-				cartRequestEntity.getEquipment().getId(),
-				contractorEntity.getId()
-		);
 
-		hiringTransactionValidator.validateAddHiringTransaction(hiringTransactionRequest);
+		// 3/3/19 model mapper
+		HiringTransactionRequest hiringTransactionRequest = modelConverter.toRequest(cartRequestEntity);
 
-		// TODO: 3/3/19 model mapper
-
+		hiringTransactionValidator.validateHiringTransactionRequestBeforeSend(hiringTransactionRequest);
 		cartRequestDao.persist(cartRequestEntity);
 		return Response.status(Response.Status.CREATED)
 				.entity(cartRequestDao.findByID(cartRequestEntity.getId())).build();
@@ -100,6 +105,10 @@ public class CartRequestResource {
 	public Response putCartRequestItem(
 			@PathParam("cartRequestId") long cartRequestId
 			,@Valid CartRequestEntity cartRequestEntity) {
+
+		if (contractorEntity.getId() != claimId.getValue().longValue()) {
+			throw new BadRequestException("You cannot edit other people's construction");
+		}
 
 		cartRequestEntity.setId(cartRequestId);
 
@@ -115,6 +124,11 @@ public class CartRequestResource {
 	@Path("{cartRequestId:\\d+}")
 	public Response deleteCartRequest(@PathParam("cartRequestId") long cartRequestId) {
 
+
+		if (contractorEntity.getId() != claimId.getValue().longValue()) {
+			throw new BadRequestException("You cannot edit other people's construction");
+		}
+
 		CartRequestEntity foundCartRequest = validateCartRequestId(cartRequestId);
 
 		//not soft delete
@@ -123,11 +137,14 @@ public class CartRequestResource {
 	}
 
 
-	// TODO: 2/20/19 send all request from cart
+	// TODO: 2/20/19 send a request from cart
 	@POST
 	@Path("send")
 	public Response sendAllRequestFromCart() {
 
+		if (contractorEntity.getId() != claimId.getValue().longValue()) {
+			throw new BadRequestException("You cannot edit other people's construction");
+		}
 		cartRequestDao.transferFromCartToTransaction(contractorEntity.getId());
 		return Response.ok().build();
 	}

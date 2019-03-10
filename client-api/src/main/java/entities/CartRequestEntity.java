@@ -4,7 +4,9 @@ package entities;
 import dtos.requests.HiringTransactionRequest;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -25,10 +27,14 @@ public class CartRequestEntity {
 	@NotNull
 	private LocalDate endDate;
 	@NotNull
+	@NotEmpty
 	private String requesterAddress;
+
 	@NotNull
+	@Positive
 	private Double requesterLong;
 	@NotNull
+	@Positive
 	private Double requesterLat;
 
 	private LocalDateTime createdTime;

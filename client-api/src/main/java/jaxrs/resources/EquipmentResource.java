@@ -9,11 +9,14 @@ import dtos.validationObjects.LocationValidator;
 import dtos.wrappers.LocationWrapper;
 import dtos.responses.MessageResponse;
 import entities.*;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
 import utils.ModelConverter;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.json.JsonNumber;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
@@ -57,6 +60,10 @@ public class EquipmentResource {
 
 	@Resource
 	Validator validator;
+
+	@Inject
+	@Claim("contractorId")
+	ClaimValue<JsonNumber> claimId;
 
 
 	/*========Constants============*/
@@ -149,9 +156,13 @@ public class EquipmentResource {
 //	@RolesAllowed({"USER"})
 	@RolesAllowed("contractor")
 	public Response postEquipment(@NotNull @Valid EquipmentPostRequest equipmentRequest) {
-		//clean equipment entity
+
 
 		EquipmentEntity equipmentEntity = modelConverter.toEntity(equipmentRequest);
+
+		//get contractor from token
+		ContractorEntity foundContractor = contractorDAO.findByIdWithValidation(claimId.getValue().longValue());
+		equipmentEntity.setContractor(foundContractor);
 
 
 		validatePostPutEquipment(equipmentEntity);
@@ -167,23 +178,27 @@ public class EquipmentResource {
 		equipmentDAO.persist(equipmentEntity);
 
 		for (EquipmentImageEntity equipmentImage : equipmentEntity.getEquipmentImages()) {
-			EquipmentImageEntity imageEntity = equipmentImageDAO.findByIdWithValidation(equipmentImage.getId());
-			imageEntity.setEquipment(equipmentEntity);
+			EquipmentImageEntity managedImage = equipmentImageDAO.findByIdWithValidation(equipmentImage.getId());
+			managedImage.setEquipment(equipmentEntity);
+			equipmentImageDAO.merge(managedImage);
 		}
 
 		return Response.status(Response.Status.CREATED).entity(
-				equipmentEntity
+				equipmentDAO.findByID(equipmentEntity.getId())
 		).build();
 
 	}
 
 	private void validatePostPutEquipment(EquipmentEntity equipmentEntity) {
-		//check for constructor id null
+		//check for constructor id
 		long contractorId = equipmentEntity.getContractor().getId();
 		ContractorEntity foundContractor = contractorDAO.findByIdWithValidation(contractorId);
 
 		//set found entity to use addtional property more than just ID !
 		equipmentEntity.setContractor(foundContractor);
+
+		//validate contractor activated
+		contractorDAO.validateContractorActivated(foundContractor);
 
 		//check for equipment type null
 		long equipmentTypeId = equipmentEntity.getEquipmentType().getId();
@@ -374,7 +389,6 @@ public class EquipmentResource {
 
 
 	@Path("{id:\\d+}/images")
-//	@RolesAllowed("contractor")
 	public EquipmentImageSubResource toEquipmentImageResource(@PathParam("id") long equipmentId) {
 
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(equipmentId);

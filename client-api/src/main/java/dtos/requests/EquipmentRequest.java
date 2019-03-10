@@ -35,9 +35,10 @@ public abstract class EquipmentRequest {
 	@Valid
 	public IdOnly equipmentType;
 
-	@NotNull
-	@Valid
-	public IdOnly contractor;
+	//take this information from token
+//	@NotNull
+//	@Valid
+//	public IdOnly contractor;
 
 
 	public IdOnly construction;
