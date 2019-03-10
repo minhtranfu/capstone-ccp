@@ -55,7 +55,14 @@ const config = {
           appConfig
         )
       }
-    })
+    }),
+    // For service worker
+    new ServiceWorkerWebpackPlugin({
+      entry: path.join(__dirname, './src/firebase-messaging-sw.js'),
+    }),
+    new CopyWebpackPlugin([
+      'src/firebase-messaging-sw.js',
+    ])
   ],
   module: {
     exprContextCritical: false, // Suppress "The request of a dependency is an expression"
@@ -111,11 +118,11 @@ if (NodeUtils.isProduction()) {
   config.mode = 'production';
   // config.optimization.push(new MinifyPlugin());
   // Copy firebase message worker to dist folder
-  config.plugins.push(
-    new CopyWebpackPlugin([
-      'src/firebase-messaging-sw.js',
-    ])
-  );
+  // config.plugins.push(
+  //   new CopyWebpackPlugin([
+  //     'src/firebase-messaging-sw.js',
+  //   ])
+  // );
 } else {
   config.devtool = 'eval';
   config.mode = 'development';
@@ -126,10 +133,7 @@ if (NodeUtils.isProduction()) {
     './src/Bootstrap'
   ];
   config.plugins.push(
-    new webpack.HotModuleReplacementPlugin(),
-    new ServiceWorkerWebpackPlugin({
-      entry: path.join(__dirname, './src/firebase-messaging-sw.js'),
-    }),
+    new webpack.HotModuleReplacementPlugin()
   );
 }
 
