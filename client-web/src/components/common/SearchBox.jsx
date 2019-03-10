@@ -54,7 +54,7 @@ class SearchBox extends PureComponent {
             <select name="equipmentTypeId" id="equipment_type" className="form-control" onChange={this._handleChangeCriteria}>
               <option value="">--Choose--</option>
               {
-                equipmentTypes && equipmentTypes.map(equipmentType => <option value={equipmentType.id}>{equipmentType.name}</option>)
+                equipmentTypes && equipmentTypes.map(equipmentType => <option key={equipmentType.id} value={equipmentType.id}>{equipmentType.name}</option>)
               }
             </select>
           </div>
