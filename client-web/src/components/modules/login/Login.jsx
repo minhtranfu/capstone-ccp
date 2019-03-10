@@ -4,7 +4,11 @@ import LoginForm from './LoginForm';
 const Login = () => {
   return (
     <div className="container">
-      <LoginForm />
+      <div className="row">
+        <div className="col-md-8 offset-md-2">
+          <LoginForm />
+        </div>
+      </div>
     </div>
   );
 };
