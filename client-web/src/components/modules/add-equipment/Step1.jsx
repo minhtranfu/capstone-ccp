@@ -35,10 +35,10 @@ class AddEquipmentStep1 extends Step {
   }
 
   _loadConstructions = async () => {
-    const { user } = this.props;
+    const { constractor } = this.props;
 
     try {
-      const constructions = await ccpApiService.getConstructionsByContractorId(user.id);
+      const constructions = await ccpApiService.getConstructionsByContractorId(constractor.id);
       this.setState({
         constructions
       });
@@ -276,12 +276,17 @@ AddEquipmentStep1.propTypes = {
   fetchEquipmentTypeSpecs: PropTypes.func.isRequired
 };
 
-export default connect(
-  (state) => {
-    return {
-      entities: { ...state.entities },
-      user: state.user,
-    };
-  },
-  { fetchEquipmentTypes, fetchEquipmentTypeSpecs }
-)(AddEquipmentStep1);
+const mapStateToProps = state => {
+  const { authentication } = state;
+  const { user } = authentication;
+  const { constractor } = user;
+
+  return {
+    constractor
+  };
+};
+
+export default connect(mapStateToProps, {
+  fetchEquipmentTypes,
+  fetchEquipmentTypeSpecs
+})(AddEquipmentStep1);

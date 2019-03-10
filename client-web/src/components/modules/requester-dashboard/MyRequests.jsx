@@ -52,8 +52,8 @@ class MyRequests extends Component {
    * Load transaction of current user (requester)
    */
   _loadTransactions = async () => {
-    const { user } = this.props;
-    const transactions = await ccpApiService.getTransactionsByRequesterId(user.id);
+    const { contractor } = this.props;
+    const transactions = await ccpApiService.getTransactionsByRequesterId(contractor.id);
 
     this.setState({
       transactions
@@ -520,12 +520,16 @@ class MyRequests extends Component {
 }
 
 MyRequests.props = {
-  user: PropTypes.object.isRequired
+  contractor: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
+  const { authentication } = state;
+  const { user } = authentication;
+  const { contractor } = user;
+
   return {
-    user: state.user
+    contractor
   };
 };
 

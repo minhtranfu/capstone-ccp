@@ -5,9 +5,9 @@ import { connect } from 'react-redux';
 class PrivateRoute extends Component {
 
   render() {
-    const {user, ...otherProps} = this.props;
+    const {authentication, ...otherProps} = this.props;
     
-    if (!user.isAuthenticated) {
+    if (!authentication.isAuthenticated) {
       return <Redirect to={{
         pathname: "/login",
         state: { referrer: otherProps.path }
@@ -21,9 +21,9 @@ class PrivateRoute extends Component {
 }
 
 const mapStateToProps = state => {
-  const { user } = state;
+  const { authentication } = state;
   return {
-    user
+    authentication
   };
 };
 

@@ -55,19 +55,19 @@ function logout() {
 function loadUserFromToken() {
   return async dispatch => {
     let token = localStorage.getItem(authConsts.JWT_KEY);
-    console.log('Token', token);
+    console.log('Current JWT token', token);
     if (!token || token === '') {//if there is no token, dont bother
       return;
     }
 
     try {
-      // TODO: change to user API get user info from token
-      const user = await ccpServices.userServices.login('nghia', '123');
-      localStorage.setItem(authConsts.JWT_KEY, user.tokenWrapper.accessToken);
+      const contractor = await ccpServices.userServices.getUserInfo();
 
       dispatch({
         type: userConstants.LOGIN_SUCCESS,
-        user
+        user: {
+          contractor
+        }
       });
     } catch (error) {
       console.log('Error!', error);

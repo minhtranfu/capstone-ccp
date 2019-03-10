@@ -1,7 +1,7 @@
 import { INITIAL_STATE } from '../../common/app-const';
 import { userConstants } from '../_constants';
 
-const user = (state = INITIAL_STATE.user, action) => {
+const authentication = (state = INITIAL_STATE.authentication, action) => {
   switch (action.type) {
     case userConstants.LOGIN_SUCCESS:
       return {
@@ -29,4 +29,4 @@ const user = (state = INITIAL_STATE.user, action) => {
   }
 };
 
-export default user;
+export default authentication;

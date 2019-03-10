@@ -13,9 +13,9 @@ class MyConstructions extends Component {
   };
 
   _loadData = async () => {
-    const { user } = this.props;
+    const { contractor } = this.props;
     
-    const constructions = await ccpApiService.getConstructionsByContractorId(user.id);
+    const constructions = await ccpApiService.getConstructionsByContractorId(contractor.id);
     this.setState({
       constructions,
       isFetching: false
@@ -51,12 +51,12 @@ class MyConstructions extends Component {
   };
 
   _postConstruction = async () => {
-    const { user } = this.props;
+    const { constractor } = this.props;
     const { construction, constructions } = this.state;
 
     try {
       this.setState({ isFetching: true });
-      const savedConstruction = await ccpApiService.postConstruction(user.id, construction);
+      const savedConstruction = await ccpApiService.postConstruction(constractor.id, construction);
 
       this.setState({
         constructions: [
@@ -73,12 +73,12 @@ class MyConstructions extends Component {
   };
 
   _updateConstruction = async () => {
-    const { user } = this.props;
+    const { constractor } = this.props;
     const { construction, constructions } = this.state;
 
     try {
       this.setState({ isFetching: true });
-      const res = await ccpApiService.updateConstruction(user.id, construction.id, construction);
+      const res = await ccpApiService.updateConstruction(constractor.id, construction.id, construction);
       const updatedConstructions = constructions.map(item => {
         if (item.id !== construction.id) {
           return item;
@@ -190,7 +190,10 @@ class MyConstructions extends Component {
           <div className="col-md-9">
             <h4>My Constructions
               <button className="btn btn-success btn-sm float-right" onClick={this._toggleAddNewConstruction}>
-                <i className={className('fa', {'fa-times': isAddingConstruction, 'fa-plus': !isAddingConstruction})}></i> {isAddingConstruction ? 'Close' : 'Add new'}
+                <i className={className('fa',{
+                  'fa-times': isAddingConstruction,
+                  'fa-plus': !isAddingConstruction
+                  })}></i> {isAddingConstruction ? 'Close' : 'Add new'}
               </button>
             </h4>
             {!constructions && isFetching && this._generatePlaceholders()}
@@ -219,14 +222,16 @@ class MyConstructions extends Component {
 }
 
 MyConstructions.props = {
-  user: PropTypes.object.isRequired
+  authentication: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
-  const { user } = state;
+  const { authentication } = state;
+  const { user } = authentication;
+  const { contractor } = user;
 
   return {
-    user
+    contractor
   };
 };
 

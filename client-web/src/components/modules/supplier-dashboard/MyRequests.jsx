@@ -4,6 +4,7 @@ import moment from 'moment';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Skeleton from 'react-loading-skeleton';
+import PropTypes from 'prop-types';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
 import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES } from '../../../common/consts';
@@ -36,8 +37,8 @@ class MyRequests extends Component {
   needActionCounters = {};
 
   _loadData = async () => {
-    const REQUESTER_ID = 12;
-    const transactions = await ccpApiService.getTransactionsBySupplierId(REQUESTER_ID);
+    const { contractor } = this.props;
+    const transactions = await ccpApiService.getTransactionsBySupplierId(contractor.id);
     this.setState({
       transactions
     });
@@ -408,8 +409,17 @@ class MyRequests extends Component {
   }
 }
 
+MyRequests.props = {
+  user: PropTypes.object.isRequired
+};
+
 const mapStateToProps = state => {
-  return state;
+  const { authentication } = state;
+  const { contractor } = authentication.user;
+
+  return {
+    contractor
+  };
 };
 
 export default connect(mapStateToProps)(MyRequests);

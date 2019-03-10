@@ -25,9 +25,9 @@ class LoginForm extends Component {
   };
 
   render() {
-    const { user, location } = this.props;
+    const { authentication, location } = this.props;
 
-    if (user.isAuthenticated) {
+    if (authentication.isAuthenticated) {
       let redirectTo = '/';
       if (location.state && location.state.referrer) {
         redirectTo = location.state.referrer;
@@ -49,11 +49,11 @@ class LoginForm extends Component {
               <input name="password" id="password" onChange={this._handleFieldChange} type="password" className="form-control" placeholder="********" />
             </div>
             <div className="form-group text-center">
-              <button className="btn btn-success" type="submit" disabled={user.loggingIn}>
-                {user.loggingIn &&
+              <button className="btn btn-success" type="submit" disabled={authentication.loggingIn}>
+                {authentication.loggingIn &&
                   <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
                 }
-                {!user.loggingIn &&
+                {!authentication.loggingIn &&
                   <i className="fa fa-sign-in mr-1"></i>
                 }
                 Login
@@ -79,10 +79,10 @@ LoginForm.props = {
 };
 
 const mapStateToProps = state => {
-  const { user } = state;
+  const { authentication } = state;
 
   return {
-    user
+    authentication
   }
 };
 

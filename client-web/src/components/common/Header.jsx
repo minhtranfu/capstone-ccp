@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, withRouter, Redirect } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { userActions } from '../../redux/actions';
@@ -80,7 +80,7 @@ class Header extends Component {
 
   render() {
     const { showOffCanvas, isShowLoginModal } = this.state;
-    const { user } = this.props;
+    const { authentication } = this.props;
 
     return (
       <nav className="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
@@ -96,7 +96,7 @@ class Header extends Component {
             <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
               {this.menus.map(menu => {
                 
-                if (menu.requiredAuth && !user.isAuthenticated) {
+                if (menu.requiredAuth && !authentication.isAuthenticated) {
                   return null;
                 }
 
@@ -107,11 +107,11 @@ class Header extends Component {
                 );
               })}
             </ul>
-            {user.isAuthenticated &&
+            {authentication.isAuthenticated &&
               <span className="dropdown">
                 <a className="dropdown-toggle text-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                  <img src={user.user.contractor.thumbnailImage} className="rounded-circle mr-2" width={40} height={40} />
-                  {user.user.contractor.name}
+                  <img src={authentication.user.contractor.thumbnailImage} className="rounded-circle mr-2" width={40} height={40} />
+                  {authentication.user.contractor.name}
                 </a>
                 <div className="dropdown-menu shadow mt-2 rounded-top-0">
                   <a className="dropdown-item" href="#"><i className="fa fa-user-circle"></i> Profile</a>
@@ -121,7 +121,7 @@ class Header extends Component {
                 </div>
               </span>
             }
-            {!user.isAuthenticated &&
+            {!authentication.isAuthenticated &&
               <span>
                 <button className="btn btn-outline-primary my-2 my-sm-0 mx-2" onClick={this._toggleLoginModal}>Login</button>
                 <Link to="/signup"><button className="btn btn-success my-2 my-sm-0 mx-2" type="submit">Sign Up</button></Link>
@@ -129,7 +129,7 @@ class Header extends Component {
             }
           </div>
         </div>
-        {!user.isAuthenticated &&
+        {!authentication.isAuthenticated &&
           <LoginModal isOpen={isShowLoginModal} onClose={this._toggleLoginModal} />
         }
       </nav>
@@ -138,10 +138,10 @@ class Header extends Component {
 }
 
 const mapStateToProps = state => {
-  const { user } = state;
+  const { authentication } = state;
 
   return {
-    user
+    authentication
   };
 };
 
