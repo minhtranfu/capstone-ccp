@@ -74,6 +74,7 @@ class Header extends Component {
     }
 
     this.setState({
+      showOffCanvas: false, // Close offcanvas too
       isShowLoginModal: !this.state.isShowLoginModal
     });
   };
@@ -87,7 +88,7 @@ class Header extends Component {
         <div className="container">
           <Link className="navbar-brand py-0 text-uppercase font-weight-bold text-monospace" to="/">
             <img src="/public/assets/images/logo.png" width="40" height="40" className="d-inline-block align-top mr-1" alt="" />
-            Constuction Sharing
+            CCP
           </Link>
           <button className="navbar-toggler" type="button" onClick={this._toggleOffCanvas}>
             <span className="navbar-toggler-icon"></span>
@@ -124,7 +125,7 @@ class Header extends Component {
             {!authentication.isAuthenticated &&
               <span>
                 <button className="btn btn-outline-primary my-2 my-sm-0 mx-2" onClick={this._toggleLoginModal}>Login</button>
-                <Link to="/signup"><button className="btn btn-success my-2 my-sm-0 mx-2" type="submit">Sign Up</button></Link>
+                <Link to="/signup"><button className="btn btn-success my-2 my-sm-0 mx-2" onClick={this._closeOffCanvas}>Sign Up</button></Link>
               </span>
             }
           </div>
