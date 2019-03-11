@@ -25,6 +25,12 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
         contractorEquipment: payload.data
       };
     }
+    case Actions.LIST_CONTRACTOR_EQUIPMENT.ERROR: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
     case Actions.ADD_EQUIPMENT.REQUEST: {
       return {
         ...state,

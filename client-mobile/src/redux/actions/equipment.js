@@ -1,17 +1,21 @@
 import axios from "axios";
 import StatusAction from "./status";
+import { AsyncStorage } from "react-native";
 import * as Actions from "../types";
 import { ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS } from "expo/build/IntentLauncherAndroid";
 
 export function getContractorEquipmentList(contractorId) {
   return async dispatch => {
     dispatch({ type: Actions.LIST_CONTRACTOR_EQUIPMENT.REQUEST });
-    const res = await axios.get(`contractors/${contractorId}/equipments`);
-    if (res) {
+    try {
+      const res = await axios.get(`contractors/${contractorId}/equipments`);
       dispatch({
         type: Actions.LIST_CONTRACTOR_EQUIPMENT.SUCCESS,
         payload: res
       });
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: Actions.LIST_CONTRACTOR_EQUIPMENT.ERROR });
     }
   };
 }
@@ -30,25 +34,6 @@ export function addEquipment(equipment) {
       });
     } catch (error) {
       dispatch({ type: Actions.ADD_EQUIPMENT.ERROR });
-    }
-  };
-}
-
-export function uploadImage(image) {
-  return async dispatch => {
-    try {
-      dispatch({
-        type: Actions.UPLOAD_IMAGE.REQUEST
-      });
-      const res = await axios.post(`storage`, image);
-      dispatch({
-        type: Actions.UPLOAD_IMAGE.SUCCESS,
-        payload: res
-      });
-    } catch (error) {
-      dispatch({
-        type: Actions.UPLOAD_IMAGE.ERROR
-      });
     }
   };
 }

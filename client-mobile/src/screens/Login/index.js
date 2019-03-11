@@ -7,7 +7,9 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Dimensions,
-  AsyncStorage
+  AsyncStorage,
+  TouchableOpacity,
+  StatusBar
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -19,7 +21,6 @@ import Button from "../../components/Button";
 import CircleIcon from "./CircleIcon";
 
 import { logIn } from "../../redux/actions/auth";
-import { onSignIn } from "../../config/auth";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
@@ -30,56 +31,85 @@ const { width, height } = Dimensions.get("window");
     return {};
   },
   dispatch => ({
-    fetchLogin: () => {
-      dispatch(logIn());
+    fetchLogin: user => {
+      dispatch(logIn(user));
     }
   })
 )
 class Login extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      username: "",
+      password: ""
+    };
   }
 
-  _signIn = () => {
-    this.props.fetchLogin();
-    this.props.navigation.navigate("Settings");
+  _signIn = user => {
+    const { username, password } = this.state;
+    const { navigation } = this.props;
+    this.props.fetchLogin({ username, password });
+    if (navigation.state.params) {
+      const { screen } = navigation.state.params;
+      navigation.navigate(screen);
+    } else {
+      navigation.navigate("Account");
+    }
   };
 
   render() {
+    const { username, password } = this.state;
     return (
-      <View style={styles.container}>
+      <SafeAreaView
+        style={styles.container}
+        forceInset={{ bottom: "always", top: "never" }}
+      >
+        <StatusBar barStyle="dark-content" />
         <Image
           source={require("../../../assets/images/excavator3.png")}
           resizeMode={"cover"}
           style={{ width: width, height: height }}
         />
-        <View style={styles.overlay}>
-          <Image
-            source={require("../../../assets/images/logo.png")}
-            style={styles.logo}
-          />
-          <KeyboardAvoidingView style={styles.formWrapper}>
+
+        <ScrollView
+          style={styles.overlay}
+          contentContainerStyle={{
+            justifyContent: "center",
+            marginTop: 60,
+            paddingHorizontal: 15
+          }}
+        >
+          <Header>
+            <Image
+              source={require("../../../assets/images/logo.png")}
+              style={styles.logo}
+            />
+          </Header>
+          <KeyboardAvoidingView style={styles.formWrapper} behavior="position">
             <InputField
               label={"EMAIL ADDRESS"}
-              placeholder={"Username"}
+              labelStyle={{ color: "white" }}
+              placeholder={"Input your username"}
+              customWrapperStyle={{ marginBottom: 10 }}
+              placeholderStyle={{ borderBottomColor: "white" }}
               autoCapitalize={"none"}
-              labelTextSize={fontSize.secondaryText}
-              labelColor={colors.white}
-              textColor={colors.white}
-              borderBottomColor={colors.white}
-              inputType="email"
-              customWrapperStyle={{ marginBottom: 30 }}
+              inputType="text"
+              placeholderTextColor={"white"}
+              onChangeText={value => this.setState({ username: value })}
+              value={username}
+              returnKeyType={"next"}
             />
             <InputField
               label={"PASSWORD"}
+              labelStyle={{ color: "white" }}
               placeholder={"Password"}
-              labelTextSize={fontSize.secondaryText}
-              labelColor={colors.white}
-              textColor={colors.white}
-              borderBottomColor={colors.white}
+              autoCapitalize={"none"}
+              customWrapperStyle={{ marginBottom: 10 }}
+              placeholderStyle={{ borderBottomColor: "white" }}
+              placeholderTextColor={"white"}
               inputType="password"
-              customWrapperStyle={{ marginBottom: 30 }}
+              onChangeText={value => this.setState({ password: value })}
+              value={password}
             />
           </KeyboardAvoidingView>
           <Button
@@ -87,9 +117,11 @@ class Login extends Component {
             wrapperStyle={styles.wrapperStyle}
             buttonStyle={styles.buttonStyle}
             textStyle={styles.textStyle}
-            onPress={this._signIn}
+            onPress={() => this._signIn()}
           />
-          <Text style={styles.text}>Forgot your password?</Text>
+          <Text style={[styles.text, { alignSelf: "center" }]}>
+            Forgot your password?
+          </Text>
           <View style={styles.dividerWrapper}>
             <View style={styles.divider} />
             <Text style={styles.textOr}>Or Sign in with</Text>
@@ -100,7 +132,9 @@ class Login extends Component {
             <CircleIcon name="twitter" />
             <CircleIcon name="google-plus" />
           </View>
-          <Text style={[styles.text, { marginVertical: 10 }]}>
+          <Text
+            style={[styles.text, { marginVertical: 10, alignSelf: "center" }]}
+          >
             Don't Have an Account?
           </Text>
           <Button
@@ -109,8 +143,8 @@ class Login extends Component {
             buttonStyle={styles.buttonStyle}
             textStyle={styles.textStyle}
           />
-        </View>
-      </View>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }
@@ -120,26 +154,23 @@ const styles = StyleSheet.create({
     flex: 1
   },
   overlay: {
-    flex: 1,
-    ...StyleSheet.absoluteFillObject,
-    width: width,
     height: height,
-    justifyContent: "center",
-    alignItems: "center"
+    width: width,
+    ...StyleSheet.absoluteFillObject
   },
   formWrapper: {
-    width: width,
-    paddingHorizontal: 15
+    flex: 1,
+    marginTop: 10
   },
   text: {
     color: colors.white,
-    fontSize: fontSize.secondaryText,
+    fontSize: fontSize.bodyText,
     fontWeight: "500"
   },
   logo: {
     width: 85,
     height: 52,
-    marginVertical: 15
+    alignSelf: "center"
   },
   title: {
     fontSize: fontSize.bodyText,
@@ -173,7 +204,8 @@ const styles = StyleSheet.create({
   },
   circleWrapper: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
+
+    justifyContent: "center",
     alignItems: "center"
   }
 });

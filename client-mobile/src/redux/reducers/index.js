@@ -6,6 +6,7 @@ import statusReducer from "./status";
 import transactionReducer from "./transaction";
 import contractorReducer from "./contractor";
 import cartReducer from "./cart";
+import uploadReducer from "./upload";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
   status: statusReducer,
   transaction: transactionReducer,
   contractor: contractorReducer,
-  cart: cartReducer
+  cart: cartReducer,
+  upload: uploadReducer
 });
 
 export default rootReducer;

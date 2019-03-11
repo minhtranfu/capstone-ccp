@@ -102,6 +102,7 @@ class AddDetail extends Component {
       }
       return null;
     }
+    return undefined;
   }
 
   //All data must be fill before move to next screen
@@ -212,7 +213,8 @@ class AddDetail extends Component {
       deliveryPrice,
       description,
       construction,
-      additionalSpecsFields
+      additionalSpecsFields,
+      address
     } = this.state;
     const newTypeOptions = this._handleEquipmentType(generalTypeIndex);
     let type = { id: newTypeOptions[typeIndex].id };

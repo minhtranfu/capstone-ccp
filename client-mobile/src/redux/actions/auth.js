@@ -1,27 +1,36 @@
 import * as Actions from "../types";
 import { AsyncStorage } from "react-native";
+import axios from "axios";
 
-const user = {
-  email: "a@gmail.com",
-  password: "a"
-};
-
-export function logIn() {
+export function logIn(user) {
   return async dispatch => {
-    await AsyncStorage.setItem("userToken", user.email);
-    dispatch({
-      type: Actions.LOGIN_SUCCESS,
-      payload: true
-    });
+    // await AsyncStorage.setItem("userToken", user.email);
+    const res = await axios.post("authen", user);
+    if (res) {
+      await AsyncStorage.setItem(
+        "userToken",
+        res.data.tokenWrapper.accessToken
+      );
+      dispatch({
+        type: Actions.LOGIN_SUCCESS,
+        payload: {
+          signIn: true,
+          data: res,
+          token: res.data.tokenWrapper.accessToken
+        }
+      });
+    } else {
+      console.log("error");
+    }
   };
 }
 
 export function logOut() {
   return async dispatch => {
-    await AsyncStorage.removeItem("userToken");
+    AsyncStorage.removeItem("userToken");
     dispatch({
       type: Actions.LOGOUT_SUCCESS,
-      payload: false
+      payload: { signIn: false }
     });
   };
 }
@@ -32,12 +41,12 @@ export function isSignedIn() {
     if (userToken) {
       dispatch({
         type: Actions.LOGIN_SUCCESS,
-        payload: true
+        payload: { signIn: true }
       });
     } else {
       dispatch({
         type: Actions.LOGIN_SUCCESS,
-        payload: false
+        payload: { signIn: false }
       });
     }
   };

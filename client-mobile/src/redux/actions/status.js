@@ -19,13 +19,14 @@ function success(message, time) {
   };
 }
 
-function error(message, time) {
+function error(status, message, time) {
   console.log("actions message", message);
   return {
     type: ACTIONS.STATUS_ERROR,
     payload: {
       message,
-      time
+      time,
+      status
     }
   };
 }

@@ -1,0 +1,33 @@
+import * as Actions from "../types";
+
+const INITIAL_STATE = {
+  loading: false,
+  imageURL: []
+};
+
+export default function uploadReducer(state = INITIAL_STATE, action) {
+  const { type, payload } = action;
+  switch (type) {
+    case Actions.UPLOAD_IMAGE.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+    case Actions.UPLOAD_IMAGE.SUCCESS: {
+      return {
+        ...state,
+        loading: false,
+        imageURL: payload.data
+      };
+    }
+    case Actions.UPLOAD_IMAGE.ERROR: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+    default:
+      return state;
+  }
+}

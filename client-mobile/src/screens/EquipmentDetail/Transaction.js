@@ -50,13 +50,24 @@ class ConfirmTransaction extends Component {
     this.state = {
       address: "",
       construction: "",
-      constructionIndex: 0
+      constructionIndex: 0,
+      location: [],
+      currentLat: "",
+      currentLong: ""
     };
   }
-
-  componentDidMount() {
+  componentDidMount = async () => {
     this.props.fetchGetConstruction(12);
-  }
+    const locationStatus = await grantPermission("location");
+    if (locationStatus === "granted") {
+      const currentLocation = await Location.getCurrentPositionAsync({});
+      const coords = currentLocation.coords;
+      this.setState({
+        currentLat: coords.latitude,
+        currentLong: coords.longitude
+      });
+    }
+  };
 
   static getDerivedStateFromProps(props, state) {
     if (state.construction) {
@@ -79,6 +90,13 @@ class ConfirmTransaction extends Component {
 
   _handleInputChange = (field, value) => {
     this.setState({ [field]: value });
+  };
+
+  _handleOnChangeText = async address => {
+    const { currentLat, currentLong } = this.state;
+    this.setState({
+      location: await autoCompleteSearch(address, currentLat, currentLong)
+    });
   };
 
   _handleConstructionDropdown = () => {
@@ -130,7 +148,7 @@ class ConfirmTransaction extends Component {
               placeholder={"Input your address"}
               customWrapperStyle={{ marginBottom: 20 }}
               inputType="text"
-              onChangeText={value => this._handleInputChange("address", value)}
+              onChangeText={value => this._handleOnChangeText(value)}
               value={address}
             />
             <Button

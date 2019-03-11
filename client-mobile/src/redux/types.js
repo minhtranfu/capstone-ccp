@@ -30,7 +30,12 @@ export const UPDATE_EQUIPMENT_STATUS = renderActions(
   "@@equip/UPDATE_EQUIPMENT_STATUS"
 );
 export const CLEAR_SEARCH_RESULT = renderActions("@@equip/CLEAR_SEARCH_RESULT");
+
+//UPLOAD IMAGE
 export const UPLOAD_IMAGE = renderActions("@@equip/UPLOAD_IMAGE");
+export const INSERT_NEW_IMAGE = renderActions("@@equip/INSERT_NEW_IMAGE");
+export const GET_IMAGE_BY_ID = renderActions("@@equip/GET_IMAGE_BY_ID");
+export const DELETE_IMAGE = renderActions("@@equip/DELETE_IMAGE");
 
 //TRANSACTION
 export const LIST_SUPPLIER_TRANSACTION = renderActions(

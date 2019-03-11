@@ -22,6 +22,9 @@ export default function transactionReducer(state = initialState, action) {
         listSupplierTransaction: payload.data
       };
     }
+    case Actions.LIST_SUPPLIER_TRANSACTION.REQUEST: {
+      return { ...state, loading: false };
+    }
     case Actions.LIST_REQUESTER_TRANSACTION.REQUEST: {
       return {
         ...state,
@@ -34,6 +37,9 @@ export default function transactionReducer(state = initialState, action) {
         loading: false,
         listRequesterTransaction: payload.data
       };
+    }
+    case Actions.LIST_REQUESTER_TRANSACTION.ERROR: {
+      return { ...state, loading: false };
     }
     case Actions.SEND_TRANSACTION_REQUEST.SUCCESS:
       return {

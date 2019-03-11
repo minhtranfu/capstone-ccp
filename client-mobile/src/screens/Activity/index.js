@@ -6,7 +6,8 @@ import {
   AsyncStorage,
   TouchableOpacity,
   ScrollView,
-  FlatList
+  FlatList,
+  RefreshControl
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -114,9 +115,11 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 @connect(
   state => {
     return {
-      auth: state.auth.userIsLoggin,
+      isLoggedIn: state.auth.userIsLoggin,
       loading: state.transaction.loading,
-      listTransaction: state.transaction.listRequesterTransaction
+      listTransaction: state.transaction.listRequesterTransaction,
+      status: state.status,
+      token: state.auth.token
     };
   },
   dispatch => ({
@@ -129,15 +132,21 @@ class Activity extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      signedIn: false,
-      checkedSignIn: false,
       selectedIndex: 0,
-      status: "All Statuses"
+      status: "All Statuses",
+      refreshing: false
     };
   }
 
   componentDidMount() {
     this.props.fetchRequesterTransaction(12);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { listEquipment, status, navigation, token } = this.props;
+    if (prevProps.token !== token && token) {
+      this.props.fetchRequesterTransaction(12);
+    }
   }
 
   _capitalizeCharacter = string => {
@@ -162,6 +171,18 @@ class Activity extends Component {
       return listTransaction.filter(item => item.status === status) || [];
     }
     return [];
+  };
+
+  _onRefresh = async () => {
+    this.setState({ refreshing: true });
+    const res = await this.props.fetchRequesterTransaction(12);
+    if (res) {
+      this.setState({ refreshing: false });
+    } else {
+      setTimeout(() => {
+        this.setState({ refreshing: false });
+      }, 1000);
+    }
   };
 
   _renderContent = listTransaction => {
@@ -232,7 +253,15 @@ class Activity extends Component {
 
   _renderRequesterItemList = () => {
     return (
-      <ScrollView style={{ flex: 1, paddingHorizontal: 15 }}>
+      <ScrollView
+        style={{ flex: 1, paddingHorizontal: 15 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh}
+          />
+        }
+      >
         <Dropdown
           label={"Filter"}
           defaultText={"All Statuses"}
@@ -293,9 +322,14 @@ class Activity extends Component {
   };
 
   render() {
-    const { checkedSignIn, signedIn } = this.state;
-    const { navigation, auth, listTransaction, loading } = this.props;
-    if (auth) {
+    const {
+      navigation,
+      isLoggedIn,
+      listTransaction,
+      loading,
+      status
+    } = this.props;
+    if (isLoggedIn) {
       return (
         <SafeAreaView
           style={styles.container}

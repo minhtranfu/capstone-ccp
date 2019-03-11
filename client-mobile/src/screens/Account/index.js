@@ -71,15 +71,14 @@ const ROW_ITEM_VALUE = [
   state => {
     return {
       auth: state.auth.userIsLoggin,
-      contractor: state.contractor.info
+      contractor: state.contractor.info,
+      user: state.auth.data,
+      status: state.status
     };
   },
   dispatch => ({
     fetchLogout: () => {
       dispatch(logOut());
-    },
-    fetchContractorInfo: id => {
-      dispatch(getContractorDetail(id));
     }
   })
 )
@@ -92,12 +91,13 @@ class Account extends Component {
     };
   }
 
-  componentDidMount() {
-    const { auth } = this.props;
-    if (auth) {
-      this.props.fetchContractorInfo(12);
-    }
-  }
+  // componentDidMount() {
+  //   const { auth, user } = this.props;
+  //   console.log(user, auth);
+  //   if (auth) {
+  //     this.props.fetchContractorInfo(user.contractor.id);
+  //   }
+  // }
 
   _renderImageProfile = thumbnailImage => (
     <View style={{ flex: 1 }}>
@@ -142,7 +142,7 @@ class Account extends Component {
   };
 
   render() {
-    const { auth, contractor } = this.props;
+    const { auth, contractor, status, user } = this.props;
     const { name, thumbnailImage, createdTime } = this.props.contractor;
     if (auth) {
       return (
@@ -158,9 +158,9 @@ class Account extends Component {
               <View>
                 {this._renderImageProfile(thumbnailImage)}
                 <View style={styles.nameWrapper}>
-                  <Text style={styles.text}>{name}</Text>
+                  <Text style={styles.text}>{user.contractor.name}</Text>
                   <Text style={styles.text}>
-                    Created: {this._dateConverter(createdTime)}
+                    Created: {this._dateConverter(user.contractor.createdTime)}
                   </Text>
                 </View>
                 <View style={styles.contentWrapper}>
@@ -170,7 +170,7 @@ class Account extends Component {
                       value={item.value}
                       onPress={() =>
                         this.props.navigation.navigate(item.code, {
-                          contractorId: 12
+                          contractorId: user.contractor.id
                         })
                       }
                     />

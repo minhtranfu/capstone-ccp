@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,8 @@ import {
   ScrollView,
   FlatList,
   Alert,
-  RefreshControl
+  RefreshControl,
+  AsyncStorage
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -23,6 +24,7 @@ import {
   clearSupplierTransactionList
 } from "../../redux/actions/transaction";
 
+import RequireLogin from "../Login/RequireLogin";
 import ParallaxList from "../../components/ParallaxList";
 import Dropdown from "../../components/Dropdown";
 import Button from "../../components/Button";
@@ -106,7 +108,9 @@ const DROPDOWN_OPTIONS = [
     return {
       loading: state.equipment.loading,
       listEquipment: state.equipment.contractorEquipment,
-      status: state.status
+      status: state.status,
+      isLoggedIn: state.auth.userIsLoggin,
+      token: state.auth.token
     };
   },
   dispatch => ({
@@ -121,48 +125,26 @@ const DROPDOWN_OPTIONS = [
     }
   })
 )
-class MyEquipment extends Component {
+class MyEquipment extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       status: "All Statuses",
       id: null,
-      refreshing: false
+      refreshing: false,
+      hasError: false
     };
   }
 
   componentDidMount() {
-    this.props.fetchContractorEquipment(13);
+    this.props.fetchContractorEquipment(12);
   }
 
-  // shouldComponentUpdate(nextProps) {
-  //   const { navigation, status, listEquipment } = this.props;
-  //   if (status.time !== nextProps.status.time) {
-  //     return true;
-  //   }
-  //   if (listEquipment.length !== nextProps.listEquipment.length) return true;
-  //   return false;
-  // }
-
   componentDidUpdate(prevProps, prevState) {
-    const { listEquipment, status, navigation } = this.props;
-    console.log(navigation);
-    // const { id } = this.state;
-    if (prevProps.listEquipmentist && listEquipment) {
-      this.props.fetchContractorEquipment(13);
-    }
-    if (
-      navigation.state.routeName === "MyEquipment" &&
-      status.type === "error" &&
-      status.time !== prevProps.status.time
-    ) {
-      this._showAlert("Error", status.message);
-    }
-    if (
-      navigation.state.routeName === "MyEquipment" &&
-      status.type === "success"
-    ) {
-      this._showAlert("Success", status.message);
+    const { listEquipment, status, navigation, token } = this.props;
+    //Check user is login or not. If yes, fetch data
+    if (prevProps.token !== token && token) {
+      this.props.fetchContractorEquipment(12);
     }
   }
 
@@ -176,10 +158,6 @@ class MyEquipment extends Component {
         this.setState({ refreshing: false });
       }, 1000);
     }
-
-    // fetchData().then(() => {
-    //   this.setState({refreshing: false});
-    // });
   };
 
   _showAlert = (title, msg) => {
@@ -281,40 +259,50 @@ class MyEquipment extends Component {
   };
 
   render() {
-    const { listEquipment, loading } = this.props;
-    return (
-      <SafeAreaView
-        style={styles.container}
-        forceInset={{ bottom: "always", top: "always" }}
-      >
-        <Header
-          renderRightButton={() => (
-            <TouchableOpacity onPress={this._handleAddButton}>
-              <Feather name="plus" size={22} />
-            </TouchableOpacity>
-          )}
+    const {
+      listEquipment,
+      loading,
+      status,
+      isLoggedIn,
+      navigation
+    } = this.props;
+    if (isLoggedIn) {
+      return (
+        <SafeAreaView
+          style={styles.container}
+          forceInset={{ bottom: "always", top: "always" }}
         >
-          <Text style={styles.header}>My Equipment</Text>
-        </Header>
-        <View style={{ flex: 1 }}>
-          {!loading && listEquipment ? (
-            <ScrollView
-              contentContainerStyle={styles.scrollContent}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh}
-                />
-              }
-            >
-              {this._renderContent(listEquipment)}
-            </ScrollView>
-          ) : (
-            <Loading />
-          )}
-        </View>
-      </SafeAreaView>
-    );
+          <Header
+            renderRightButton={() => (
+              <TouchableOpacity onPress={this._handleAddButton}>
+                <Feather name="plus" size={22} />
+              </TouchableOpacity>
+            )}
+          >
+            <Text style={styles.header}>My Equipment</Text>
+          </Header>
+          <View style={{ flex: 1 }}>
+            {!loading && listEquipment ? (
+              <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={this._onRefresh}
+                  />
+                }
+              >
+                {this._renderContent(listEquipment)}
+              </ScrollView>
+            ) : (
+              <Loading />
+            )}
+          </View>
+        </SafeAreaView>
+      );
+    } else {
+      return <RequireLogin navigation={navigation} />;
+    }
   }
 }
 

@@ -7,11 +7,18 @@ export function listTransactionBySupplierId(id) {
     dispatch({
       type: Actions.LIST_SUPPLIER_TRANSACTION.REQUEST
     });
-    const res = await axios.get(`transactions/supplier/${id}`);
-    dispatch({
-      type: Actions.LIST_SUPPLIER_TRANSACTION.SUCCESS,
-      payload: res
-    });
+    try {
+      const res = await axios.get(`transactions/supplier/${id}`);
+      dispatch({
+        type: Actions.LIST_SUPPLIER_TRANSACTION.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: Actions.LIST_SUPPLIER_TRANSACTION.ERROR
+      });
+    }
   };
 }
 
@@ -20,11 +27,17 @@ export function listTransactionByRequesterId(id) {
     dispatch({
       type: Actions.LIST_REQUESTER_TRANSACTION.REQUEST
     });
-    const res = await axios.get(`transactions/requester/${id}`);
-    dispatch({
-      type: Actions.LIST_REQUESTER_TRANSACTION.SUCCESS,
-      payload: res
-    });
+    try {
+      const res = await axios.get(`transactions/requester/${id}`);
+      dispatch({
+        type: Actions.LIST_REQUESTER_TRANSACTION.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.LIST_REQUESTER_TRANSACTION.ERROR
+      });
+    }
   };
 }
 

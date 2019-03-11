@@ -3,6 +3,7 @@ import * as ACTIONS from "../types";
 const initialState = {
   type: "loading",
   message: "...",
+  status: "",
   time: null
 };
 
@@ -16,6 +17,7 @@ export default function statusReducer(state = initialState, action) {
       };
     case ACTIONS.STATUS_SUCCESS:
       return {
+        ...state,
         message: payload.message,
         type: "success",
         time: payload.time
@@ -24,7 +26,8 @@ export default function statusReducer(state = initialState, action) {
       return {
         message: payload.message,
         type: "error",
-        time: payload.time
+        time: payload.time,
+        status: payload.status
       };
     default:
       return state;

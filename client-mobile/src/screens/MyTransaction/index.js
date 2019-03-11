@@ -12,12 +12,12 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
-import { removeEquipment } from "../../redux/actions/equipment";
 import {
   listTransactionBySupplierId,
   clearSupplierTransactionList
 } from "../../redux/actions/transaction";
 
+import RequireLogin from "../Login/RequireLogin";
 import ParallaxList from "../../components/ParallaxList";
 import Dropdown from "../../components/Dropdown";
 import Button from "../../components/Button";
@@ -130,7 +130,9 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       listTransaction: state.transaction.listSupplierTransaction,
       loading: state.transaction.loading,
       error: state.transaction.error,
-      status: state.status
+      status: state.status,
+      isLoggedIn: state.auth.userIsLoggin,
+      token: state.auth.token
     };
   },
   dispatch => ({
@@ -154,28 +156,19 @@ class MyTransaction extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchListMyTransaction(13);
+    this.props.fetchListMyTransaction(12);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { navigation, status } = this.props;
-    // if (listTransaction.length !== prevProps.listTransaction.length) {
-    //   this.props.fetchListMyTransaction(13);
+    const { listEquipment, status, navigation, token } = this.props;
+    if (prevProps.token !== token) {
+      this.props.fetchListMyTransaction(12);
+    }
+
+    console.log("Transaction renderrr");
+    // if (status.type === "success" && status.time !== prevProps.status.time) {
+    //   this._showAlert("Success", status.message);
     // }
-    if (
-      navigation.state.routeName === "MyTransaction" &&
-      status.type === "error" &&
-      status.time !== prevProps.status.time
-    ) {
-      this._showAlert("Error", status.message);
-    }
-    if (
-      navigation.state.routeName === "MyTransaction" &&
-      status.type === "success" &&
-      status.time !== prevProps.status.time
-    ) {
-      this._showAlert("Success", status.message);
-    }
   }
 
   _showAlert = (title, msg) => {
@@ -324,27 +317,31 @@ class MyTransaction extends Component {
   };
 
   render() {
-    const { listTransaction, loading, error, status } = this.props;
-    return (
-      <SafeAreaView
-        style={styles.container}
-        forceInset={{ bottom: "never", top: "always" }}
-      >
-        <Header>
-          <Text style={styles.header}>My Transaction</Text>
-        </Header>
-        {!loading ? (
-          <ScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={styles.scrollContent}
-          >
-            {this._renderContent(listTransaction)}
-          </ScrollView>
-        ) : (
-          <Loading />
-        )}
-      </SafeAreaView>
-    );
+    const { listTransaction, loading, navigation, isLoggedIn } = this.props;
+    if (isLoggedIn) {
+      return (
+        <SafeAreaView
+          style={styles.container}
+          forceInset={{ bottom: "never", top: "always" }}
+        >
+          <Header>
+            <Text style={styles.header}>My Transaction</Text>
+          </Header>
+          {!loading ? (
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={styles.scrollContent}
+            >
+              {this._renderContent(listTransaction)}
+            </ScrollView>
+          ) : (
+            <Loading />
+          )}
+        </SafeAreaView>
+      );
+    } else {
+      return <RequireLogin navigation={navigation} />;
+    }
   }
 }
 

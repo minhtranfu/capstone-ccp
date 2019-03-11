@@ -11,7 +11,7 @@ import { ImagePicker, Permissions } from "expo";
 import { SafeAreaView, NavigationActions } from "react-navigation";
 import { Feather } from "@expo/vector-icons";
 import { connect } from "react-redux";
-import { Location } from "expo";
+import { Location, ImageManipulator } from "expo";
 import { grantPermission } from "../../../redux/reducers/permission";
 import { addEquipment, uploadImage } from "../../../redux/actions/equipment";
 import {
@@ -46,27 +46,6 @@ class AddImage extends Component {
     };
   }
 
-  // componentDidMount = async () => {
-  //   const { data } = this.props.navigation.state.params;
-  //   const latLong = await this.props.getLatLongByAddress(data.address);
-  //   this.setState({
-  //     lat: latLong.lat
-  //   })
-  //   // const locationStatus = await grantPermission("location");
-  //   // if (locationStatus === "granted") {
-  //   //   const currentLocation = await Location.getCurrentPositionAsync({});
-  //   //   const coords = currentLocation.coords;
-  //   //   const lat = coords.latitude;
-  //   //   const long = coords.longitude;
-  //   //   console.log(lat);
-  //   //   this.setState({
-  //   //     lat: lat,
-  //   //     long: long,
-  //   //     address: await getAddressByLatLong(lat, long)
-  //   //   });
-  //   // }
-  // };
-
   _handleOnPressThumbnailImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
@@ -74,6 +53,19 @@ class AddImage extends Component {
       let result = await ImagePicker.launchImageLibraryAsync();
       if (!result.cancelled) {
         this.setState({ thumbnailImage: result.uri });
+        console.log(result);
+        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [
+          { resize: { width: 100 }, height: 100 }
+        ]);
+        console.log(manipResult);
+        const form = new FormData();
+
+        form.append("image", {
+          uri: manipResult.uri,
+          type: "image/jpg",
+          name: "image.jpg"
+        });
+        this.props.fetchUploadImage(form);
       }
     }
   };

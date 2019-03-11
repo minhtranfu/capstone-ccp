@@ -9,6 +9,8 @@ import configAPI from "./src/config/api";
 import { Permissions, Notifications } from "expo";
 import * as firebase from "firebase";
 import { firebaseConfig } from "./src/config/apiKey";
+import ShowAlert from "./src/Utils/Alert";
+import ShowToast from "./src/components/Toast";
 
 const config = configureStorage();
 configAPI(config);
@@ -16,10 +18,22 @@ configAPI(config);
 export default class App extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      notification: {}
+    };
     firebase.initializeApp(firebaseConfig);
     this.onLogin();
-    this.registerForPushNotificationsAsync();
   }
+  componentDidMount() {
+    this.registerForPushNotificationsAsync();
+    this._notificationSubscription = Notifications.addListener(
+      this._handleNotification
+    );
+  }
+
+  _handleNotification = notification => {
+    this.setState({ notification: notification });
+  };
 
   onLogin = () => {
     firebase
@@ -34,16 +48,12 @@ export default class App extends React.Component {
   };
 
   registerForPushNotificationsAsync = async () => {
-    const { status: existingStatus } = await Permissions.getAsync(
+    const { existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
     );
     let finalStatus = existingStatus;
 
-    // only ask if permissions have not already been determined, because
-    // iOS won't necessarily prompt the user a second time.
     if (existingStatus !== "granted") {
-      // Android remote notification permissions are granted during the app
-      // install, so this will only ask on iOS
       const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
       finalStatus = status;
     }
@@ -71,10 +81,17 @@ export default class App extends React.Component {
   };
 
   render() {
+    console.log(this.state.notification.origin);
+    console.log(JSON.stringify(this.state.notification.data));
+
     return (
       <Provider store={config.store}>
         <PersistGate loading={<Loading />} persistor={config.persistor}>
           <AppNavigator />
+          {this.state.notification.data ? (
+            <ShowToast message={this.state.notification.data.content} />
+          ) : null}
+          <ShowAlert />
         </PersistGate>
       </Provider>
     );

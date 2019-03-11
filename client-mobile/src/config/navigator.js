@@ -39,6 +39,8 @@ import Calendar from "../components/Calendar";
 import ConfirmAdjustDate from "../screens/Activity/ConfirmAdjustDate";
 import Cart from "../screens/Cart";
 import ContractorProfile from "../screens/Account/ContractorProfile";
+import Login from "../screens/Login";
+import AuthLoading from "../screens/Login/AuthLoading";
 
 const EquipmentDetailStack = createStackNavigator(
   {
@@ -78,6 +80,15 @@ DiscoverStack.navigationOptions = ({ navigation }) => {
   };
 };
 
+const AuthStack = createStackNavigator(
+  {
+    Login: Login
+  },
+  {
+    headerMode: "none"
+  }
+);
+
 const AccountStack = createStackNavigator(
   {
     Account: Account,
@@ -87,8 +98,11 @@ const AccountStack = createStackNavigator(
     AboutUs: AboutUs,
     Construction: Construction,
     ConstructionDetail: ConstructionDetail
+    // AuthLoading: AuthLoading,
+    // Auth: AuthStack
   },
   {
+    initialRouteName: "Account",
     headerMode: "none"
   }
 );
@@ -110,7 +124,8 @@ const MyEquipmentStack = createStackNavigator(
   {
     MyEquipment: MyEquipment,
     MyEquipmentDetail: MyEquipmentDetail,
-    AddNewEquipment: AddNewEquipmentStack
+    AddNewEquipment: AddNewEquipmentStack,
+    Login: Login
   },
   {
     mode: "modal",
@@ -137,7 +152,8 @@ const MyTransactionStack = createStackNavigator(
   {
     MyTransaction: MyTransaction,
     MyTransactionDetail: MyTransactionDetail,
-    ContractorProfile: ContractorProfile
+    ContractorProfile: ContractorProfile,
+    Login: Login
   },
   {
     mode: "modal",
@@ -170,7 +186,7 @@ const TabNavigator = createBottomTabNavigator(
     Account: AccountStack
   },
   {
-    initialRouteName: "Equipment",
+    initialRouteName: "Discover",
     defaultNavigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, horizontal, tintColor }) => {
         const { routeName } = navigation.state;
@@ -223,6 +239,8 @@ const TabNavigator = createBottomTabNavigator(
 
 const AppNavigator = createSwitchNavigator(
   {
+    // Auth: AuthStack,
+    // AuthLoading: AuthLoading,
     App: TabNavigator
   },
   { initialRouteName: "App" }
