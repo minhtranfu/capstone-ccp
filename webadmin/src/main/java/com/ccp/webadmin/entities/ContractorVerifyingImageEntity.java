@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "contractor_verifying_image")
-//@Where(clause = "is_deleted='false'")
 public class ContractorVerifyingImageEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

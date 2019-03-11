@@ -28,7 +28,7 @@
             <div class="col-lg-10">
             </div>
             <div class="col-lg-2">
-                <a th:href="@{/feedback_type/create}" class="link btn btn-default spacing">Create</a>
+                <a th:href="@{/feedback_type/create}" class="link btn btn-success spacing">Create</a>
             </div>
 
             <!-- /.col-lg-12 -->
@@ -48,7 +48,6 @@
                             <tr>
                                 <th>No</th>
                                 <th>Name</th>
-                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -56,34 +55,6 @@
                                 <td th:text="${iter.index + 1}"></td>
                                 <td><a th:href="@{/feedback_type/detail/{id}(id = ${item.id})}">
                                     <span th:text="${item.name}" class="link"></span></a></td>
-                                <td>
-                                    <a href="#" class="btn btn-danger" data-toggle="modal"
-                                       data-target="#smallModal">Delete</a>
-
-                                    <div class="modal fade" id="smallModal" tabindex="-1" role="dialog"
-                                         aria-labelledby="smallModal" aria-hidden="true">
-                                        <div class="modal-dialog modal-sm">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                            aria-hidden="true">&times;
-                                                    </button>
-                                                    <h4 class="modal-title" id="myModalLabel">Confirm</h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <h4>Do you want to delete?</h4>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default"
-                                                            data-dismiss="modal">
-                                                        No
-                                                    </button>
-                                                    <a th:href="@{/feedback_type/delete(id = ${item.id})}" class="link btn btn-danger">Yes</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
                             </tr>
 
                             </tbody>

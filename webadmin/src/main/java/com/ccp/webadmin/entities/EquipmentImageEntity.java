@@ -4,9 +4,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "description_image")
+@Table(name = "equipment_image")
 //@Where(clause = "is_deleted='false'")
-public class DescriptionImageEntity implements Serializable {
+public class EquipmentImageEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -20,7 +20,7 @@ public class DescriptionImageEntity implements Serializable {
     private EquipmentEntity equipmentEntity;
 
 
-    public DescriptionImageEntity() {
+    public EquipmentImageEntity() {
     }
 
     public Integer getId() {

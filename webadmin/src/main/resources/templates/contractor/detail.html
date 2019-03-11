@@ -71,18 +71,27 @@
                                               style="color: red"></span>
                                     </div>
                                     <div class="form-group">
-                                        <label>Picture:</label>
+                                        <label>Avarta:</label>
                                         <img th:src="*{thumbnail}" style="width: 100px; height: 100px"/>
                                         <input type="hidden" th:field="*{thumbnail}">
                                     </div>
                                     <div class="form-group">
+                                        <label>Verify Picture:</label>
+                                        <div class="col-lg-12">
+                                            <div th:each="item: ${verifyImages}" class="col-lg-3">
+                                                <img th:src="${item.name}" style="width: 100px; height: 100px"/>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" th:field="*{thumbnail}">
+                                    </div>
+                                    <div class="form-group">
                                         <label>Created Time:</label>
-                                        <p th:text="*{createdTime}" class="form-control-static"
+                                        <p th:text="*{{createdTime}}" class="form-control-static"
                                            placeholder="Created Time"></p>
                                     </div>
                                     <div class="form-group">
                                         <label>Updated Time:</label>
-                                        <p th:text="*{updatedTime}" class="form-control-static"
+                                        <p th:text="*{{updatedTime}}" class="form-control-static"
                                            placeholder="Updated Time"></p>
                                     </div>
                                     <div class="form-group">
@@ -91,69 +100,72 @@
                                            placeholder="Feedbacks Received"></p>
                                     </div>
                                     <div class="form-group">
-
-
-                                        <input type="Submit" value="Save" class="btn btn-success">
-                                        <span th:switch="${contractor.status.toString()}">
-                                            <a th:case="NOT_VERIFIED"
-                                               th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
-                                               class="link btn btn-primary">Verify Contractor</a>
-                                            <a th:case="ACTIVATED"
-                                               th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
-                                               class="link btn btn-danger">Deactive Contractor</a>
-                                            <a th:case="DEACTIVATED"
-                                               th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
-                                               class="link btn btn-success">Active Contractor</a>
-                                        </span>
-
-                                        <a href="#" class="btn btn-danger" data-toggle="modal"
-                                           data-target="#smallModal">Cancel</a>
-                                        <div class="modal fade" id="smallModal" tabindex="-1" role="dialog"
-                                             aria-labelledby="smallModal" aria-hidden="true">
-                                            <div class="modal-dialog modal-sm">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                                aria-hidden="true">&times;
-                                                        </button>
-                                                        <h4 class="modal-title" id="myModalLabel">Confirm</h4>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <h4>Do you want to cancel?</h4>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-default"
-                                                                data-dismiss="modal">
-                                                            No
-                                                        </button>
-                                                        <a th:href="@{/contractor/index}"
-                                                           class="link btn btn-danger">Yes</a>
+                                        <div class="col-lg-4">
+                                            <input type="Submit" value="Save" class="btn btn-success">
+                                            <a href="#" class="btn btn-danger" data-toggle="modal"
+                                               data-target="#smallModal">Cancel</a>
+                                            <div class="modal fade" id="smallModal" tabindex="-1" role="dialog"
+                                                 aria-labelledby="smallModal" aria-hidden="true">
+                                                <div class="modal-dialog modal-sm">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-hidden="true">&times;
+                                                            </button>
+                                                            <h4 class="modal-title" id="myModalLabel">Confirm</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <h4>Do you want to cancel?</h4>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default"
+                                                                    data-dismiss="modal">
+                                                                No
+                                                            </button>
+                                                            <a th:href="@{/contractor/index}"
+                                                               class="link btn btn-danger">Yes</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-lg-8" style="text-align: right">
+                                            <a th:switch="${contractor.status.toString()}">
+                                                <a th:case="NOT_VERIFIED"
+                                                   th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
+                                                   class="link btn btn-primary">Verify Contractor</a>
+                                                <a th:case="ACTIVATED"
+                                                   th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
+                                                   class="link btn btn-danger">Deactive Contractor</a>
+                                                <a th:case="DEACTIVATED"
+                                                   th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
+                                                   class="link btn btn-success">Active Contractor</a>
+                                            </a>
+                                            <a th:href="@{/notification/create/{id}(id = *{id})}"
+                                               class="link btn btn-primary">Create Notification</a>
+                                        </div>
                                     </div>
-                            </div>
-                            </form>
-                        </div>
-                        <!-- /.col-lg-6 (nested) -->
-                        <div class="col-lg-6">
 
-                            <!--/.table-responsive -->
+                                </form>
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
+                            <div class="col-lg-6">
+
+                                <!--/.table-responsive -->
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
                         </div>
-                        <!-- /.col-lg-6 (nested) -->
+                        <!-- /.row (nested) -->
                     </div>
-                    <!-- /.row (nested) -->
+                    <!-- /.panel-body -->
                 </div>
-                <!-- /.panel-body -->
+                <!-- /.panel -->
             </div>
-            <!-- /.panel -->
+            <!-- /.col-lg-12 -->
         </div>
-        <!-- /.col-lg-12 -->
+        <!-- /.row -->
     </div>
-    <!-- /.row -->
-</div>
-<!-- /#page-wrapper -->
+    <!-- /#page-wrapper -->
 
 </div>
 <!-- /#wrapper -->

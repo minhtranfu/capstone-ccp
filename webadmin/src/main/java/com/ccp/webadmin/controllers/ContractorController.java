@@ -2,6 +2,7 @@ package com.ccp.webadmin.controllers;
 
 import com.ccp.webadmin.entities.ContractorEntity;
 import com.ccp.webadmin.services.ContractorService;
+import com.ccp.webadmin.services.ContractorVerifyingImageService;
 import com.ccp.webadmin.services.FeedbackService;
 import com.ccp.webadmin.utils.PasswordAutoGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,13 @@ public class ContractorController {
 
     private final ContractorService contractorService;
     private final FeedbackService feedbackService;
-
+    private final ContractorVerifyingImageService contractorVerifyingImageService;
 
     @Autowired
-    public ContractorController(ContractorService contractorService, FeedbackService feedbackService) {
+    public ContractorController(ContractorService contractorService, FeedbackService feedbackService, ContractorVerifyingImageService contractorVerifyingImageService) {
         this.contractorService = contractorService;
         this.feedbackService = feedbackService;
+        this.contractorVerifyingImageService = contractorVerifyingImageService;
     }
 
     @GetMapping({"", "/", "/index"})
@@ -34,7 +36,10 @@ public class ContractorController {
 
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
-        model.addAttribute("contractor", contractorService.findById(id));
+        ContractorEntity contractorEntity = contractorService.findById(id);
+        model.addAttribute("contractor", contractorEntity);
+        model.addAttribute("verifyImages",contractorVerifyingImageService.findByContractor(contractorEntity));
+
         return "contractor/detail";
     }
 
@@ -46,8 +51,6 @@ public class ContractorController {
 
             //todo updatedTime null !
             ContractorEntity foundContractor = contractorService.findById(contractorEntity.getId());
-            contractorEntity.setCreatedTime(foundContractor.getCreatedTime());
-            contractorEntity.setUpdatedTime(foundContractor.getUpdatedTime());
             return "contractor/detail";
         }
 

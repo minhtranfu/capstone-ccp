@@ -45,9 +45,7 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone Number</th>
-                                <th>Created Time</th>
-                                <th>Updated Time</th>
-                                <th> Feedbacks Received</th>
+                                <th>Feedbacks Received</th>
                                 <th>Status</th>
                             </tr>
                             </thead>
@@ -59,8 +57,6 @@
                                 </td>
                                 <td th:text="${item.email}"></td>
                                 <td th:text="${item.phone}"></td>
-                                <td th:text="${{item.createdTime}}"></td>
-                                <td th:text="${{item.updatedTime}}"></td>
                                 <td th:text="${item.countReceivedFeedbackEntity()}"></td>
                                 <td th:switch="${item.status.toString()}">
                                     <a th:case="NOT_VERIFIED" th:href="@{/contractor/deactive/{id}(id = ${item.id})}" class=""

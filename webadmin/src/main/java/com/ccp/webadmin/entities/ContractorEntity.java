@@ -34,7 +34,7 @@ public class ContractorEntity implements Serializable {
     @Column(name = "phone_number")
     private String phone;
 
-    @Column(name = "thumbnail_image")
+    @Column(name = "thumbnail_image_url")
     private String thumbnail;
 
     @Enumerated(EnumType.STRING)
@@ -49,6 +49,7 @@ public class ContractorEntity implements Serializable {
     @Column(name = "updated_time", updatable = false, insertable = false)
     @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
     private Timestamp updatedTime;
+
 
     @OneToMany(mappedBy = "contractorIsFeedbacked")
     private List<FeedbackEntity> receivedFeedbackEntities;

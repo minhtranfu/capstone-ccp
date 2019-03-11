@@ -58,37 +58,67 @@
                                         </a>
                                     </div>
 
-                                    <div class="form-group">
-                                        <input type="submit" class="btn btn-success"
-                                               onclick="succcessAlert()" value="Save">
-                                        <a href="#" class="btn btn-danger" data-toggle="modal"
-                                           data-target="#smallModal">Cancel</a>
 
-                                        <div class="modal fade" id="smallModal" tabindex="-1" role="dialog"
-                                             aria-labelledby="smallModal" aria-hidden="true">
-                                            <div class="modal-dialog modal-sm">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                                aria-hidden="true">&times;
-                                                        </button>
-                                                        <h4 class="modal-title" id="myModalLabel">Confirm</h4>
+                                    <div class="form-group">
+                                        <div class="col-lg-10">
+                                            <input type="submit" class="btn btn-success"
+                                                   onclick="succcessAlert()" value="Save">
+                                            <a href="#" class="btn btn-danger" data-toggle="modal"
+                                               data-target="#smallModalCancel">Cancel</a>
+
+                                            <div class="modal fade" id="smallModalCancel" tabindex="-1" role="dialog"
+                                                 aria-labelledby="smallModalCancel" aria-hidden="true">
+                                                <div class="modal-dialog modal-sm">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-hidden="true">&times;
+                                                            </button>
+                                                            <h4 class="modal-title" id="myModalLabelCancel">Confirm</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <h4>Do you want to cancel?</h4>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default"
+                                                                    data-dismiss="modal">
+                                                                No
+                                                            </button>
+                                                            <a th:href="@{/additional_special_field/index}" class="link btn btn-danger">Yes</a>
+                                                        </div>
                                                     </div>
-                                                    <div class="modal-body">
-                                                        <h4>Do you want to cancel?</h4>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-default"
-                                                                data-dismiss="modal">
-                                                            No
-                                                        </button>
-                                                        <a th:href="@{/additional_special_field/index}" class="link btn btn-danger">Yes</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <a href="#" class="btn btn-danger" data-toggle="modal"
+                                               data-target="#smallModal">Delete</a>
+
+                                            <div class="modal fade" id="smallModal" tabindex="-1" role="dialog"
+                                                 aria-labelledby="smallModal" aria-hidden="true">
+                                                <div class="modal-dialog modal-sm">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-hidden="true">&times;
+                                                            </button>
+                                                            <h4 class="modal-title" id="myModalLabel">Confirm</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <h4>Do you want to delete?</h4>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default"
+                                                                    data-dismiss="modal">
+                                                                No
+                                                            </button>
+                                                            <a th:href="@{/additional_special_field/delete(id = *{id})}" class="link btn btn-danger">Yes</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
                                 </form>
                             </div>
                             <!-- /.col-lg-6 (nested) -->

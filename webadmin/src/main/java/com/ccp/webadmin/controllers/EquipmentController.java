@@ -2,6 +2,7 @@ package com.ccp.webadmin.controllers;
 
 import com.ccp.webadmin.entities.EquipmentEntity;
 import com.ccp.webadmin.entities.HiringTransactionEntity;
+import com.ccp.webadmin.services.EquipmentImageService;
 import com.ccp.webadmin.services.EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,10 +18,13 @@ import java.util.Arrays;
 public class EquipmentController {
 
     private final EquipmentService equipmentService;
+    private final EquipmentImageService equipmentImageService;
+
 
     @Autowired
-    public EquipmentController(EquipmentService equipmentService) {
+    public EquipmentController(EquipmentService equipmentService, EquipmentImageService equipmentImageService) {
         this.equipmentService = equipmentService;
+        this.equipmentImageService = equipmentImageService;
     }
 
     @GetMapping({"", "/", "/index"})

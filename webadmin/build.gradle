@@ -33,6 +33,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
+    compile group: 'org.json', name: 'json', version: '20180813'
 
 //    runtimeOnly 'com.h2database:h2'
     compileOnly 'org.projectlombok:lombok'

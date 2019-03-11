@@ -27,7 +27,6 @@ public class EquipmentEntity {
     @Column(name = "delivery_price")
     private Double deliveryPrice;
 
-
     @Column(name = "description", nullable = true, length = -1, columnDefinition = "TEXT")
     private String description;
 
@@ -35,7 +34,7 @@ public class EquipmentEntity {
     @Column(name = "status")
     private Status status;
 
-    @Column(name = "thumbnail_image")
+    @Column(name = "thumbnail_image_id")
     private String thumbnailImage;
 
     @Column(name = "is_deleted")
