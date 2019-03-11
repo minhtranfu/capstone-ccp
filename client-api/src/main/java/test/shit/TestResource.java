@@ -7,6 +7,7 @@ import dtos.validationObjects.LocationValidator;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentRequest;
 import entities.EquipmentEntity;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
@@ -15,6 +16,7 @@ import org.eclipse.microprofile.jwt.ClaimValue;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import utils.ModelConverter;
+import utils.NotificationHelper;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DenyAll;
@@ -23,6 +25,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.json.bind.JsonbBuilder;
 import javax.servlet.http.HttpServlet;
 import javax.validation.*;
 import javax.validation.constraints.NotBlank;
@@ -34,7 +37,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -173,20 +178,6 @@ public class TestResource  {
 	public Response testAuthenWithoutJWT() {
 		return Response.ok().build();
 	}
-//
-//	@Inject
-//	@Claim("username")
-//	String username;
-//
-//	@Inject
-//	@Claim("contractorId")
-//	long contractorId;
-//
-//	@Inject
-//	@Claim("name")
-//	String name;
-
-
 	private String toIdentityString() {
 //		JsonWebToken jsonWebToken = (JsonWebToken) securityContext.getUserPrincipal();
 		JsonWebToken jsonWebToken = this.jsonWebToken.get();
@@ -206,10 +197,15 @@ public class TestResource  {
 		return builder.toString();
 	}
 
+	@GET
+	@Path("noti")
+	public Response testPushNoti() throws IOException {
+		InputStream inputStream = NotificationHelper.sendNotiWithHTTP();
+		StringWriter stringWriter = new StringWriter();
+		IOUtils.copy(inputStream, stringWriter);
+		return Response.ok(stringWriter.toString()).build();
+	}
 
-//	@Override
-//	public void init() {
-//		messageB = new MessageB();
-//	}
+
 
 }

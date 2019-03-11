@@ -31,14 +31,13 @@ public class ContractorResource {
 
 	@Inject
 	ConstructionResource constructionResource;
+	@Inject
+	CartRequestResource cartRequestResource;
+	@Inject
+	NotificationDeviceTokenResource notificationDeviceTokenResource;
 
 	@Inject
 	ModelConverter modelConverter;
-
-
-	//todo refactore this bullshit subresource for a better life
-	@Inject
-	CartRequestResource cartRequestResource;
 
 
 	@Inject
@@ -117,6 +116,14 @@ public class ContractorResource {
 		ContractorEntity foundContractor = validateContractorId(contractorId);
 		cartRequestResource.setContractorEntity(foundContractor);
 		return cartRequestResource;
+
+	}
+
+	@Path("{id:\\d+}/notifications")
+	public NotificationDeviceTokenResource toNotificationDeviceTokenResource(@PathParam("id") long contractorId) {
+		ContractorEntity foundContractor = validateContractorId(contractorId);
+		notificationDeviceTokenResource.setContractorEntity(foundContractor);
+		return notificationDeviceTokenResource;
 
 	}
 
