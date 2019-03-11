@@ -27,13 +27,21 @@ public class ModelConverter {
 		modelMapper.addMappings(new PropertyMap<CartRequestEntity, HiringTransactionRequest>() {
 			@Override
 			protected void configure() {
-				destination.setRequesterId(source.getContractor().getId());
-				destination.setBeginDate(source.getBeginDate());
-				destination.setEndDate(source.getEndDate());
-				destination.setRequesterAddress(source.getRequesterAddress());
-				destination.setRequesterLatitude(source.getRequesterLat());
-				destination.setRequesterLongitude(source.getRequesterLong());
-				destination.setEquipmentId(source.getEquipment().getId());
+				map().setRequesterId(source.getContractor().getId());
+				map().setBeginDate(source.getBeginDate());
+				map().setEndDate(source.getEndDate());
+				map().setRequesterAddress(source.getRequesterAddress());
+				map().setRequesterLatitude(source.getRequesterLat());
+				map().setRequesterLongitude(source.getRequesterLong());
+				map().setEquipmentId(source.getEquipment().getId());
+			}
+		});
+
+		modelMapper.addMappings(new PropertyMap<HiringTransactionRequest, HiringTransactionEntity>() {
+			@Override
+			protected void configure() {
+				map().getRequester().setId(source.getRequesterId());
+				map().getEquipment().setId(source.getEquipmentId());
 			}
 		});
 

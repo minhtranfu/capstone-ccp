@@ -1,32 +1,28 @@
 package test.shit;
 
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import daos.EquipmentDAO;
 import dtos.requests.EquipmentPutRequest;
 import dtos.validationObjects.LocationValidator;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentRequest;
 import entities.EquipmentEntity;
+import managers.FirebaseMessagingManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
-import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import utils.ModelConverter;
-import utils.NotificationHelper;
 
 import javax.annotation.Resource;
-import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.json.bind.JsonbBuilder;
-import javax.servlet.http.HttpServlet;
 import javax.validation.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -60,6 +56,9 @@ public class TestResource  {
 	EquipmentDAO equipmentDAO;
 	@Inject
 	ModelConverter modelConverter;
+
+	@Inject
+	FirebaseMessagingManager messagingManager;
 
 	@GET
 	public String doGet() {
@@ -192,18 +191,25 @@ public class TestResource  {
 		builder.append(String.format(" (username=%s)", jsonWebToken.claim("username").orElse("not available")));
 		builder.append(String.format(" (jti=%s)", jsonWebToken.getIssuedAtTime()));
 		builder.append(String.format(" (exp=%s)", jsonWebToken.getExpirationTime()));
-
 		builder.append(String.format(" (groups=%s)", StringUtils.join(jsonWebToken.getGroups(), ", ")));
 		return builder.toString();
 	}
 
+
 	@GET
-	@Path("noti")
-	public Response testPushNoti() throws IOException {
-		InputStream inputStream = NotificationHelper.sendNotiWithHTTP();
+	@Path("noti/http")
+	public Response testPushNotiWithHttpLegacyMethod() throws IOException {
+		InputStream inputStream = messagingManager.sendNotiWithHTTP();
 		StringWriter stringWriter = new StringWriter();
 		IOUtils.copy(inputStream, stringWriter);
 		return Response.ok(stringWriter.toString()).build();
+	}
+
+	@GET
+	@Path("noti")
+	public Response testPushNoti() throws FirebaseMessagingException {
+		String response = messagingManager.sendNotification();
+		return Response.ok(response).build();
 	}
 
 

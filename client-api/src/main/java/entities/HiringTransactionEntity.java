@@ -3,6 +3,7 @@ package entities;
 
 import dtos.IdOnly;
 import dtos.requests.HiringTransactionRequest;
+import listeners.entityListenters.HiringTransactionEntityListener;
 import org.hibernate.annotations.Where;
 
 import javax.json.bind.annotation.JsonbDateFormat;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 		,@NamedQuery(name = "HiringTransactionEntity.getProcessingTransactionsByEquipmentId",query = "select e from HiringTransactionEntity  e where e.equipment.id = :equipmentId and e.status = 'PROCESSING'")
 }
 )
+@EntityListeners(HiringTransactionEntityListener.class)
 public class HiringTransactionEntity {
 	private long id;
 	private Status status;
@@ -245,7 +247,28 @@ public class HiringTransactionEntity {
 		this.equipment = equipment;
 	}
 
-
+	@Override
+	public String toString() {
+		return "HiringTransactionEntity{" +
+				"id=" + id +
+				", status=" + status +
+				", dailyPrice=" + dailyPrice +
+				", deliveryPrice=" + deliveryPrice +
+				", createdTime=" + createdTime +
+				", updatedTime=" + updatedTime +
+				", beginDate=" + beginDate +
+				", endDate=" + endDate +
+				", equipmentAddress='" + equipmentAddress + '\'' +
+				", equipmentLatitude=" + equipmentLatitude +
+				", equipmentLongitude=" + equipmentLongitude +
+				", requesterAddress='" + requesterAddress + '\'' +
+				", requesterLatitude=" + requesterLatitude +
+				", requesterLongitude=" + requesterLongitude +
+				", isDeleted=" + isDeleted +
+				", equipment=" + equipment +
+				", requester=" + requester +
+				'}';
+	}
 
 	public enum Status {
 		PENDING,
