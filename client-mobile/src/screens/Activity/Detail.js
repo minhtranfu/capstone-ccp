@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-navigation";
 import PropTypes from "prop-types";
 import { Feather } from "@expo/vector-icons";
 import { updateEquipmentStatus } from "../../redux/actions/equipment";
+import { listTransactionByRequesterId } from "../../redux/actions/transaction";
 import { cancelTransaction } from "../../redux/actions/transaction";
 
 import Calendar from "../../components/Calendar";
@@ -64,7 +65,8 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     return {
       detail: state.transaction.listRequesterTransaction.find(
         item => item.id === id
-      )
+      ),
+      user: state.auth.data
     };
   },
   dispatch => ({
@@ -73,6 +75,9 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     },
     fetchCancelRequest: transactionId => {
       dispatch(cancelTransaction(transactionId));
+    },
+    fetchRequesterTransaction: id => {
+      dispatch(listTransactionByRequesterId(id));
     }
   })
 )
@@ -99,7 +104,9 @@ class ActivityDetail extends Component {
 
   //Update equipment status to renting
   _handleUpdateEquipmentStatus = (id, status) => {
+    const { user } = this.props;
     this.props.fetchUpdateEquipmentStatus(id, { status: status });
+    this.props.fetchRequesterTransaction(user.contractor.id);
     this.props.navigation.goBack();
   };
 

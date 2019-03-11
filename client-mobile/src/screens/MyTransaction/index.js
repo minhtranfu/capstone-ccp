@@ -130,7 +130,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       listTransaction: state.transaction.listSupplierTransaction,
       loading: state.transaction.loading,
       error: state.transaction.error,
-      status: state.status,
+      user: state.auth.data,
       isLoggedIn: state.auth.userIsLoggin,
       token: state.auth.token
     };
@@ -156,13 +156,14 @@ class MyTransaction extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchListMyTransaction(12);
+    const { user } = this.props;
+    this.props.fetchListMyTransaction(user.contractor.id);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { listEquipment, status, navigation, token } = this.props;
+    const { user, token } = this.props;
     if (prevProps.token !== token) {
-      this.props.fetchListMyTransaction(12);
+      this.props.fetchListMyTransaction(user.contractor.id);
     }
 
     console.log("Transaction renderrr");

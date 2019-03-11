@@ -89,3 +89,11 @@ export function deleteImageById(equipmentId, imageId) {
     }
   };
 }
+
+export function clearImageList() {
+  return dispatch => {
+    dispatch({
+      type: Actions.CLEAR_IMAGE_LIST
+    });
+  };
+}

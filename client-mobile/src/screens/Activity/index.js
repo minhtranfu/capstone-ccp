@@ -118,7 +118,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       isLoggedIn: state.auth.userIsLoggin,
       loading: state.transaction.loading,
       listTransaction: state.transaction.listRequesterTransaction,
-      status: state.status,
+      user: state.auth.data,
       token: state.auth.token
     };
   },
@@ -139,13 +139,14 @@ class Activity extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchRequesterTransaction(12);
+    const { user } = this.props;
+    this.props.fetchRequesterTransaction(user.contractor.id);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { listEquipment, status, navigation, token } = this.props;
+    const { user, token } = this.props;
     if (prevProps.token !== token && token) {
-      this.props.fetchRequesterTransaction(12);
+      this.props.fetchRequesterTransaction(user.contractor.id);
     }
   }
 

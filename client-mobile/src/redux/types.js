@@ -36,6 +36,7 @@ export const UPLOAD_IMAGE = renderActions("@@equip/UPLOAD_IMAGE");
 export const INSERT_NEW_IMAGE = renderActions("@@equip/INSERT_NEW_IMAGE");
 export const GET_IMAGE_BY_ID = renderActions("@@equip/GET_IMAGE_BY_ID");
 export const DELETE_IMAGE = renderActions("@@equip/DELETE_IMAGE");
+export const CLEAR_IMAGE_LIST = "@@equip/CLEAR_IMAGE_LIST";
 
 //TRANSACTION
 export const LIST_SUPPLIER_TRANSACTION = renderActions(

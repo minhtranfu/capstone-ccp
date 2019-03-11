@@ -10,7 +10,7 @@ import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 
-import { getContractorDetail } from "../../redux/actions/contractor";
+import { getConstructionList } from "../../redux/actions/contractor";
 import { logOut } from "../../redux/actions/auth";
 import { isSignedIn, onSignOut } from "../../config/auth";
 
@@ -79,6 +79,9 @@ const ROW_ITEM_VALUE = [
   dispatch => ({
     fetchLogout: () => {
       dispatch(logOut());
+    },
+    fetchGetConstructionList: userId => {
+      dispatch(getConstructionList(userId));
     }
   })
 )
@@ -91,13 +94,10 @@ class Account extends Component {
     };
   }
 
-  // componentDidMount() {
-  //   const { auth, user } = this.props;
-  //   console.log(user, auth);
-  //   if (auth) {
-  //     this.props.fetchContractorInfo(user.contractor.id);
-  //   }
-  // }
+  componentDidMount() {
+    const { user } = this.props;
+    this.props.fetchGetConstructionList(user.contractor.id);
+  }
 
   _renderImageProfile = thumbnailImage => (
     <View style={{ flex: 1 }}>

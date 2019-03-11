@@ -27,6 +27,12 @@ export default function uploadReducer(state = INITIAL_STATE, action) {
         loading: false
       };
     }
+    case Actions.CLEAR_IMAGE_LIST: {
+      return {
+        loading: false,
+        imageURL: []
+      };
+    }
     default:
       return state;
   }

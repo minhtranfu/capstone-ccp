@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  ScrollView
+  ScrollView,
+  Alert
 } from "react-native";
 import { ImagePicker, Permissions } from "expo";
 import { SafeAreaView, NavigationActions } from "react-navigation";
@@ -13,7 +14,8 @@ import { Feather } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import { Location, ImageManipulator } from "expo";
 import { grantPermission } from "../../../redux/reducers/permission";
-import { addEquipment, uploadImage } from "../../../redux/actions/equipment";
+import { addEquipment } from "../../../redux/actions/equipment";
+import { uploadImage, deleteImageById } from "../../../redux/actions/upload";
 import {
   getAddressByLatLong,
   getLatLongByAddress
@@ -27,13 +29,18 @@ import fontSize from "../../../config/fontSize";
 
 @connect(
   state => ({
-    equipment: state.equipment.equipment,
-    imageUrl: state.equipment.imageURL
+    imageUrl: state.upload.imageURL,
+    loading: state.upload.loading
   }),
   dispatch => ({
-    fetchAddEquipment: data => dispatch(addEquipment(data)),
     fetchUploadImage: image => {
       dispatch(uploadImage(image));
+    },
+    fetcDeleteImage: imageId => {
+      dispatch(deleteImageById(imageId));
+    },
+    fetchAddEquipment: equipment => {
+      dispatch(addEquipment(equipment));
     }
   })
 )
@@ -41,65 +48,71 @@ class AddImage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      thumbnailImage: "",
+      images: [],
       descriptionImages: []
     };
   }
 
-  _handleOnPressThumbnailImage = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+  componentDiDUpdate(prevProps) {}
 
-    if (status === "granted") {
-      let result = await ImagePicker.launchImageLibraryAsync();
-      if (!result.cancelled) {
-        this.setState({ thumbnailImage: result.uri });
-        console.log(result);
-        const manipResult = await ImageManipulator.manipulateAsync(result.uri, [
-          { resize: { width: 100 }, height: 100 }
-        ]);
-        console.log(manipResult);
-        const form = new FormData();
-
-        form.append("image", {
-          uri: manipResult.uri,
-          type: "image/jpg",
-          name: "image.jpg"
-        });
-        this.props.fetchUploadImage(form);
-      }
-    }
-  };
-
-  _handleOnPressDescriptionImage = async () => {
+  _handleAddImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
     if (status === "granted") {
       let result = await ImagePicker.launchImageLibraryAsync();
       if (!result.cancelled) {
         this.setState({
-          descriptionImages: [...this.state.descriptionImages, result.uri]
+          images: [...this.state.images, result.uri]
         });
       }
     }
   };
 
+  _handleUploadImage = () => {
+    const form = new FormData();
+    this.state.images.map((item, i) => {
+      form.append("image", {
+        uri: item.uri,
+        type: "image/jpg",
+        name: "image.jpg"
+      });
+    });
+
+    this.props.fetchUploadImage(form);
+  };
+
   _handleAddEquipment = () => {
     const { descriptionImages, thumbnailImage, lat, long } = this.state;
+    const { imageUrl } = this.props;
     const { data } = this.props.navigation.state.params;
-    const contractor = {
-      constructionId: null,
-      descriptionImages: descriptionImages,
-      contractor: {
-        id: 13
-      },
-      thumbnailImage: null
+    const image = {
+      equipmentImages: imageUrl,
+      thumbnailImage: imageUrl[0]
     };
-    const newData = Object.assign({}, data, contractor);
-    this.props.fetchAddEquipment(newData);
+    const newEquipment = Object.assign({}, data, image);
+    this.props.fetchAddEquipment(newEquipment);
+  };
+
+  _showAlert = (title, msg) => {
+    Alert.alert(title, msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
+
+  _handleSubmit = () => {
+    const { loading, imageUrl } = this.props;
+    if (!loading && imageUrl.length > 0) {
+      this._handleAddEquipment();
+      this.props.navigation.dismiss();
+    } else {
+      this._showAlert("Warning", "You have to upload images before submit");
+    }
   };
 
   render() {
     const { data } = this.props.navigation.state.params;
+    const { loading } = this.props;
+    const { images } = this.state;
     return (
       <SafeAreaView
         style={styles.container}
@@ -126,44 +139,56 @@ class AddImage extends Component {
           style={{ flex: 1 }}
           contentContainerStyle={{ paddingHorizontal: 15 }}
         >
-          <Button
-            buttonStyle={styles.buttonStyle}
-            text={"Add Thumbnail Image"}
-            onPress={this._handleOnPressThumbnailImage}
-          />
-          <Image
-            source={{ uri: this.state.thumbnailImage || "" }}
-            style={styles.landscapeImg}
-            resizeMode={"cover"}
-          />
-          <Text>Add another image (Optional)</Text>
-          <Button
-            buttonStyle={styles.buttonStyle}
-            text={"Add Description Image"}
-            onPress={this._handleOnPressDescriptionImage}
-          />
-          {this.state.descriptionImages.length > 0
-            ? this.state.descriptionImages.map((item, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: item }}
-                  style={styles.landscapeImg}
-                  resizeMode={"cover"}
-                />
-              ))
-            : null}
-        </ScrollView>
-        <View style={styles.bottomWrapper}>
-          <TouchableOpacity
-            style={[styles.buttonWrapper, styles.buttonEnable]}
-            onPress={() => {
-              this._handleAddEquipment();
-              this.props.navigation.dismiss();
+          {images.length > 0 ? (
+            <View>
+              <Image
+                source={{ uri: images[0] }}
+                style={styles.landscapeImg}
+                resizeMode={"cover"}
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  flexWrap: "wrap"
+                }}
+              >
+                {images.slice(1).map((item, index) => (
+                  <Image
+                    key={index}
+                    source={{ uri: item }}
+                    style={styles.smallImage}
+                    resizeMode={"cover"}
+                  />
+                ))}
+              </View>
+            </View>
+          ) : null}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between"
             }}
+          >
+            <Button
+              buttonStyle={styles.buttonStyle}
+              text={"Add Image"}
+              onPress={this._handleAddImage}
+            />
+            <Button
+              buttonStyle={styles.buttonStyle}
+              text={"Upload Image"}
+              onPress={this._handleUploadImage}
+            />
+          </View>
+          <TouchableOpacity
+            style={styles.buttonEnable}
+            onPress={() => this._handleSubmit()}
           >
             <Text style={styles.textEnable}>Submit</Text>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -174,16 +199,13 @@ const styles = StyleSheet.create({
     flex: 1
   },
   landscapeImg: {
-    marginHorizontal: 15,
     height: 200
   },
-  bottomWrapper: {
-    backgroundColor: "transparent",
-    position: "absolute",
-    bottom: 30,
-    right: 15,
-    justifyContent: "center",
-    alignItems: "flex-end"
+  smallImage: {
+    marginTop: 10,
+    marginRight: 10,
+    height: 50,
+    width: 80
   },
   buttonWrapper: {
     marginRight: 15,
@@ -195,6 +217,12 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   buttonEnable: {
+    marginTop: 20,
+    marginHorizontal: 15,
+    height: 40,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: colors.primaryColor
   },
   textEnable: {

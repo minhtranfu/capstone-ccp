@@ -97,7 +97,7 @@ const Add = ({ onPress }) => (
 );
 
 const Search = ({ onPress }) => (
-  <TouchableOpacity onPress={onPress}>
+  <TouchableOpacity onPress={onPress} style={{ marginRight: 10 }}>
     <Feather name={"search"} size={24} />
   </TouchableOpacity>
 );

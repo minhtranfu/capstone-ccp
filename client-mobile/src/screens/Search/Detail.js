@@ -161,11 +161,15 @@ class SearchDetail extends Component {
           To: {new Date(item.endDate).toDateString()}
         </Text>
       </View>
-      <TouchableOpacity style={{ flexDirection: "row" }}>
-        <Text style={[styles.text, { color: "blue", paddingRight: 5 }]}>
-          Change
+      <TouchableOpacity>
+        <Text
+          style={{
+            color: colors.secondaryColorOpacity,
+            fontSize: fontSize.secondaryText
+          }}
+        >
+          Add to cart
         </Text>
-        <Ionicons name="ios-arrow-forward" size={22} color={"blue"} />
       </TouchableOpacity>
     </View>
   );
@@ -187,11 +191,15 @@ class SearchDetail extends Component {
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.textWrapper}>
           <Text style={styles.title}>{name}</Text>
-          <TouchableOpacity>
-            <Text style={{ color: colors.secondaryColorOpacity }}>
-              Add to cart
-            </Text>
-          </TouchableOpacity>
+          <Text
+            style={{
+              color: colors.secondaryColorOpacity,
+              fontSize: fontSize.bodyText,
+              fontWeight: "500"
+            }}
+          >
+            Add to cart
+          </Text>
         </View>
         <View style={styles.textWrapper}>
           <View style={{ flexDirection: "column", justifyContent: "center" }}>
@@ -323,7 +331,7 @@ class SearchDetail extends Component {
             color={color}
             format="YYYY-MM-DD"
             minDate={this._handleFormatDate(new Date())}
-            maxDate="2019-03-12"
+            maxDate="2019-04-30"
             startDate={this.state.startDate}
             endDate={this.state.endDate}
             onConfirm={this._confirmDate}
@@ -397,7 +405,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopWidth: 1,
     borderTopColor: colors.secondaryColorOpacity,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+    marginBottom: 5,
+    paddingTop: 5
   },
   slideWrapper: {
     height: 200

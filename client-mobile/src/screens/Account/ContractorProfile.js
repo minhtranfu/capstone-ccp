@@ -41,7 +41,8 @@ const RADIO_BUTON_DATA = [
 @connect(
   state => ({
     contractor: state.contractor.info,
-    loading: state.contractor.loading
+    loading: state.contractor.loading,
+    user: state.auth.data
   }),
   dispatch => ({
     fetchGetContractorDetail: id => {
@@ -58,7 +59,7 @@ class ContractorProfile extends Component {
     this.state = {
       modalVisible: false,
       text: "",
-      textLength: maxLength - text.length,
+      textLength: maxLength,
       checked: 0
     };
   }
@@ -75,13 +76,14 @@ class ContractorProfile extends Component {
   _handleOnSubmit = () => {
     const { id } = this.props.navigation.state.params;
     const { text, checked } = this.state;
+    const { user } = this.props;
     const feedback = {
       content: text,
       toContractor: {
         id: id
       },
       fromContractor: {
-        id: 12
+        id: user.contractor.id
       },
       feedbackType: {
         id: RADIO_BUTON_DATA[checked].id
@@ -109,39 +111,78 @@ class ContractorProfile extends Component {
             <Text style={styles.header}>Feedback</Text>
           </Header>
           <View style={{ paddingHorizontal: 15 }}>
-            <Text>Content</Text>
+            <Text style={styles.text}>Content</Text>
             <TextInput
               style={{ height: 200, borderColor: "#000000", borderWidth: 1 }}
               multiline={true}
               numberOfLines={4}
-              onChangeText={text =>
-                this.setState({ text, textLength: maxLength - text.length })
+              onChangeText={value =>
+                this.setState({
+                  text: value,
+                  textLength: maxLength - text.length
+                })
               }
-              value={this.state.text}
+              value={text}
               editable={true}
               maxLength={maxLength}
             />
-            <Text>
+            <Text style={styles.text}>
               {maxLength} / {textLength}
             </Text>
-            <Text>Reason to feedback</Text>
-            {RADIO_BUTON_DATA.map((item, key) => (
-              <View key={key}>
-                {checked === key ? (
-                  <TouchableOpacity>
-                    <Text>{item.value} checked</Text>
+            <Text style={styles.text}>Reason to feedback</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginVertical: 10
+              }}
+            >
+              {RADIO_BUTON_DATA.map((item, key) =>
+                checked === key ? (
+                  <TouchableOpacity
+                    key={key}
+                    style={{
+                      marginRight: 10,
+                      flexDirection: "row",
+                      alignItems: "center"
+                    }}
+                  >
+                    <View
+                      style={[
+                        styles.cirleIcon,
+                        { backgroundColor: colors.secondaryColor }
+                      ]}
+                    />
+                    <Text style={styles.text}>{item.value}</Text>
                   </TouchableOpacity>
                 ) : (
                   <TouchableOpacity
+                    key={key}
+                    style={{
+                      marginRight: 10,
+                      flexDirection: "row",
+                      alignItems: "center"
+                    }}
                     onPress={() => this.setState({ checked: key })}
                   >
-                    <Text>{item.value}</Text>
+                    <View style={styles.cirleIcon} />
+                    <Text style={styles.text}>{item.value}</Text>
                   </TouchableOpacity>
-                )}
-              </View>
-            ))}
-            <TouchableOpacity onPress={() => this._handleOnSubmit()}>
-              <Text style={styles.text}>Submit</Text>
+                )
+              )}
+            </View>
+            <TouchableOpacity
+              onPress={() => this._handleOnSubmit()}
+              style={{
+                marginTop: 10,
+                backgroundColor: colors.primaryColor,
+                borderRadius: 10,
+                padding: 10,
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+            >
+              <Text style={[styles.text, { color: "white" }]}>Submit</Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -200,7 +241,7 @@ class ContractorProfile extends Component {
         <Header
           renderLeftButton={() => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Feather name={"arrow-left"} size={24} />
+              <Feather name={"x"} size={24} />
             </TouchableOpacity>
           )}
         >
@@ -251,6 +292,14 @@ const styles = StyleSheet.create({
   },
   thumbnail: {
     height: 120
+  },
+  cirleIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.secondaryColor,
+    marginRight: 10
   }
 });
 

@@ -209,6 +209,24 @@ class MyEquipmentDetail extends Component {
     });
   };
 
+  _handleInputSpecsField = (specId, value) => {
+    const { additionalSpecsFields, data } = this.state;
+    this.setState({
+      data: {
+        ...data,
+        additionalSpecsFields: [
+          ...additionalSpecsFields,
+          {
+            value: value,
+            additionalSpecsField: {
+              id: specId
+            }
+          }
+        ]
+      }
+    });
+  };
+
   _renderDateRange = (item, index) => (
     <View key={index}>
       <InputField
@@ -312,12 +330,33 @@ class MyEquipmentDetail extends Component {
             this.setState({ type: value, typeIndex: index })
           }
         />
-        <Text style={[styles.title, { marginBottom: 10 }]}>
-          Available time range
-        </Text>
-        {data.availableTimeRanges.map((item, index) =>
-          this._renderDateRange(item, index)
-        )}
+        {data.availableTimeRanges.length > 0 ? (
+          <View>
+            <Text style={[styles.title, { marginBottom: 10 }]}>
+              Available time range
+            </Text>
+            {data.availableTimeRanges.map((item, index) =>
+              this._renderDateRange(item, index)
+            )}
+          </View>
+        ) : null}
+        {data.additionalSpecsValues.length > 0 ? (
+          <View>
+            <Text>Addition Specs Value</Text>
+            {data.additionalSpecsValues.map((item, index) => (
+              <InputField
+                key={item.id}
+                label={this._capitalizeLetter(item.name)}
+                placeholder={item.name}
+                customWrapperStyle={{ marginBottom: 20 }}
+                inputType="text"
+                onChangeText={value =>
+                  this._handleInputSpecsField(item.id, value)
+                }
+              />
+            ))}
+          </View>
+        ) : null}
         <InputField
           label={"Description"}
           placeholder={"Input your description"}
@@ -347,6 +386,7 @@ class MyEquipmentDetail extends Component {
 
   render() {
     const { equipmentDetail } = this.props;
+    console.log(equipmentDetail);
     return (
       <SafeAreaView
         style={styles.container}

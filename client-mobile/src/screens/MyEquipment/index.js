@@ -108,7 +108,7 @@ const DROPDOWN_OPTIONS = [
     return {
       loading: state.equipment.loading,
       listEquipment: state.equipment.contractorEquipment,
-      status: state.status,
+      user: state.auth.data,
       isLoggedIn: state.auth.userIsLoggin,
       token: state.auth.token
     };
@@ -137,20 +137,22 @@ class MyEquipment extends PureComponent {
   }
 
   componentDidMount() {
-    this.props.fetchContractorEquipment(12);
+    const { user } = this.props;
+    this.props.fetchContractorEquipment(user.contractor.id);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { listEquipment, status, navigation, token } = this.props;
+    const { user, token } = this.props;
     //Check user is login or not. If yes, fetch data
     if (prevProps.token !== token && token) {
-      this.props.fetchContractorEquipment(12);
+      this.props.fetchContractorEquipment(user.contractor.id);
     }
   }
 
   _onRefresh = async () => {
     this.setState({ refreshing: true });
-    const res = await this.props.fetchContractorEquipment(13);
+    const { user } = this.props;
+    const res = await this.props.fetchContractorEquipment(user.contractor.id);
     if (res) {
       this.setState({ refreshing: false });
     } else {
