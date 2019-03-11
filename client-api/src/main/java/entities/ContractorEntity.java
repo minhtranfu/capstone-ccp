@@ -37,6 +37,7 @@ public class ContractorEntity {
 
 	private List<FeedbackEntity> sentFeedback;
 	private List<FeedbackEntity> receivedFeedback;
+	private List<NotificationDeviceTokenEntity> notificationDeviceTokens;
 
 	@JsonbTransient
 	@XmlTransient
@@ -186,6 +187,16 @@ public class ContractorEntity {
 		this.constructions = constructions;
 	}
 
+
+	@OneToMany(mappedBy = "contractor")
+	@JsonbTransient
+	public List<NotificationDeviceTokenEntity> getNotificationDeviceTokens() {
+		return notificationDeviceTokens;
+	}
+
+	public void setNotificationDeviceTokens(List<NotificationDeviceTokenEntity> notificationDeviceTokens) {
+		this.notificationDeviceTokens = notificationDeviceTokens;
+	}
 
 	@JsonbTransient
 	@Transient
