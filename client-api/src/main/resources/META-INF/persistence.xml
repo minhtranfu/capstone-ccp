@@ -26,6 +26,7 @@
         <class>entities.SubscriptionEntity</class>
         <class>entities.CartRequestEntity</class>
         <class>entities.TransactionDateChangeRequestEntity</class>
+        <class>entities.NotificationDeviceTokenEntity</class>
         <properties>
 
             <!--<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>-->
@@ -47,6 +48,14 @@
             <!--change default id generation stratety to IDENTIFY-->
             <property name="hibernate.id.new_generator_mappings" value="false"/>
             <property name="hibernate.show_sql" value="true"/>
+            <property name="toplink.jdbc.url" value="jdbc:mysql://localhost:3306/capstone_ccp"/>
+            <property name="toplink.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/capstone_ccp"/>
+            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
+            <property name="openjpa.ConnectionURL" value="jdbc:mysql://localhost:3306/capstone_ccp"/>
+            <property name="openjpa.ConnectionDriverName" value="com.mysql.jdbc.Driver"/>
+            <property name="eclipselink.jdbc.url" value="jdbc:mysql://localhost:3306/capstone_ccp"/>
+            <property name="eclipselink.jdbc.driver" value="com.mysql.jdbc.Driver"/>
         </properties>
 
     </persistence-unit>
