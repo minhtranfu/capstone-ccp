@@ -1,7 +1,7 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 
-class PageLoader extends PureComponent {
-  constructor (props) {
+class PageLoader extends Component {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -9,23 +9,26 @@ class PageLoader extends PureComponent {
     };
   }
 
-  componentWillUnmount () {
-
-  }
-
-  render () {
+  render() {
     const props = this.props;
+
     if (props.error) {
       console.log('ERROR LOAD COMPONENT!');
       console.log(props.error);
-      return <div>Error! <button onClick={ props.retry } className="btn btn-success">Retry</button></div>;
+      return <div>Error! <button onClick={props.retry} className="btn btn-success">Retry</button></div>;
     } else if (props.timedOut) {
-      return <div>Taking a long time... <button onClick={ props.retry }>Retry</button></div>;
-    } else if (props.pastDelay) {
-      return <div className="page-loader"></div>;
+      return <div>Taking a long time... <button className="btn btn-success" onClick={props.retry}>Retry</button></div>;
     }
-    
-    return null;
+
+    return (
+      <div className="page-loader d-flex flex-column justify-content-center align-items-center">
+        <div className="spinner-border" style={{ width: '5rem', height: '5rem' }} role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
+        <h5 className="mt-2">Loading...</h5>
+      </div>
+    );
+
   }
 }
 

@@ -69,7 +69,7 @@ const modules = [
 const routes = modules.map(module => {
   const component = Loadable({
     loader: () => import(/* webpackPrefetch: true */ `${module.modulePath}`),
-    loading: () => <PageLoader/>,
+    loading: props => <PageLoader {...props}/>,
     modules: [module.modulePath],
     webpack: () => [require.resolveWeak(module.modulePath)]
   });

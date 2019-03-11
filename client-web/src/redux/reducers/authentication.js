@@ -24,6 +24,15 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
     case userConstants.LOGOUT:
       return {};
 
+    case userConstants.LOAD_USER_SUCCESS:
+      return {
+        isAuthenticated: true,
+        user: action.user
+      };
+    
+    case userConstants.LOAD_USER_FAILURE:
+      return {};
+
     default:
       return state;
   }

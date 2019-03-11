@@ -12,6 +12,8 @@ import NotificationRoot from './common/NotificationRoot';
 
 import { userActions } from '../redux/actions';
 
+import PageLoader from './common/PageLoader';
+
 class App extends Component {
 
   componentDidUpdate() {
@@ -27,6 +29,11 @@ class App extends Component {
   }
 
   render() {
+    const { authentication } = this.props;
+
+    if (authentication.authenticating) {
+      return <PageLoader pastDelay />;
+    }
 
     return (
       <div>
@@ -44,11 +51,19 @@ class App extends Component {
 App.propTypes = {
   location: PropTypes.instanceOf(Object),
   history: PropTypes.instanceOf(Object),
+  authentication: PropTypes.object.isRequired,
   loadUserFromToken: PropTypes.func.isRequired
+};
+
+const mapStateToProps = state => {
+  const { authentication } = state;
+  return {
+    authentication
+  };
 };
 
 const mapDispatchToProps = {
   loadUserFromToken: userActions.loadUserFromToken
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(App));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

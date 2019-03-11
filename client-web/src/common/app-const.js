@@ -12,8 +12,7 @@ export const ENTITY_KEY = {
   EQUIPMENT_TYPE_INFOS: 'equipment_type_infos'
 };
 
-let user = JSON.parse(localStorage.getItem('user'));
-console.log(user);
+const jwt = localStorage.getItem(authConsts.JWT_KEY);
 
 export const INITIAL_STATE = {
   entities: {
@@ -25,8 +24,7 @@ export const INITIAL_STATE = {
   },
   counter: 0,
   authentication: {
-    // TODO: Remove hard code for user data
-    user: user || {}
+    authenticating: !!jwt
   },
 };
 

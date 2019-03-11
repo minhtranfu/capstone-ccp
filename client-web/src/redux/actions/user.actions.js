@@ -64,7 +64,7 @@ function loadUserFromToken() {
       const contractor = await ccpServices.userServices.getUserInfo();
 
       dispatch({
-        type: userConstants.LOGIN_SUCCESS,
+        type: userConstants.LOAD_USER_SUCCESS,
         user: {
           contractor
         }
@@ -72,7 +72,7 @@ function loadUserFromToken() {
     } catch (error) {
       console.log('Error!', error);
       localStorage.removeItem(authConsts.JWT_KEY);
-      dispatch({ type: userConstants.LOGOUT });
+      dispatch({ type: userConstants.LOAD_USER_FAILURE });
     }
   };
 }
