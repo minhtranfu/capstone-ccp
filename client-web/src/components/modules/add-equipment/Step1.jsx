@@ -43,7 +43,6 @@ class AddEquipmentStep1 extends Step {
         constructions
       });
     } catch (error) {
-      console.log(error);
       alert('Error while loading constructions');
     }
   };
