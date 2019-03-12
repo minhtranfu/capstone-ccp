@@ -25,6 +25,8 @@ import java.util.List;
 @Startup
 public class FirebaseMessagingManager {
 	private static final String SERVER_TOKEN_KEY = "AAAAb5A36MQ:APA91bHH4d0d2Qxf9wJjrIL7bUBJblSTB3aNnToPSQPnEtBBnzhuqnK7f9MudQZn9RuEouKVPndX-GCCEgh5rbxMTSof9Con2GCk-CLl8sskMXn1QKo3Wtr9YN9CvShvzqg0X_pA6MHG";
+	private static final String DEFAULT_NOTI_ICON = "https://ccp.hoctot.net/public/assets/images/logo.png";
+
 
 	@Inject
 	ContractorDAO contractorDAO;
@@ -112,13 +114,19 @@ public class FirebaseMessagingManager {
 
 	}
 
+
+	private WebpushConfig getDefaultWebpushConfig() {
+		return
+				WebpushConfig.builder()
+						.setNotification(WebpushNotification.builder()
+								.setIcon(DEFAULT_NOTI_ICON)
+								.build()).build();
+	}
+
+
 	private Message.Builder getDefaultMessageBuilder() {
 		return Message.builder()
-				.setWebpushConfig(WebpushConfig.builder()
-						.setNotification(WebpushNotification.builder()
-								.setIcon("https://ccp.hoctot.net/public/assets/images/logo.png")
-								.build())
-						.build());
+				.setWebpushConfig(getDefaultWebpushConfig());
 	}
 
 }
