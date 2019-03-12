@@ -13,6 +13,7 @@ import org.eclipse.microprofile.jwt.ClaimValue;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
 import javax.validation.Valid;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("contractor")
+@Stateless
 public class CartRequestResource {
 
 	@Inject
@@ -87,17 +89,15 @@ public class CartRequestResource {
 	public Response addToCart(@Valid CartRequestEntity cartRequestEntity) {
 
 		if (contractorEntity.getId() != claimId.getValue().longValue()) {
-			throw new BadRequestException("You cannot edit other people's construction");
+			throw new BadRequestException("You cannot edit other people's cart");
 		}
-
 
 		// 3/3/19 model mapper
 		HiringTransactionRequest hiringTransactionRequest = modelConverter.toRequest(cartRequestEntity);
+		hiringTransactionRequest.setRequesterId(contractorEntity.getId());
+		hiringTransactionValidator.validateHiringTransactionRequestBeforeSend(hiringTransactionRequest);
 
 		cartRequestEntity.setContractor(contractorEntity);
-
-		// TODO: 3/12/19 get id
-		hiringTransactionValidator.validateHiringTransactionRequestBeforeSend(hiringTransactionRequest);
 		cartRequestDao.persist(cartRequestEntity);
 		return Response.status(Response.Status.CREATED)
 				.entity(cartRequestDao.findByID(cartRequestEntity.getId())).build();

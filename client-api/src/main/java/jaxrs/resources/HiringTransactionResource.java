@@ -65,7 +65,6 @@ public class HiringTransactionResource {
 
 		//3/10/19 get requester id from token
 		hiringTransactionRequest.setRequesterId(claimContractorId.getValue().longValue());
-
 		validator.validateHiringTransactionRequestBeforeSend(hiringTransactionRequest);
 		HiringTransactionEntity hiringTransactionEntity = modelConverter.toEntity(hiringTransactionRequest);
 
