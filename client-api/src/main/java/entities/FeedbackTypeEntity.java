@@ -7,6 +7,7 @@ import javax.persistence.*;
 @Entity
 @Where(clause = "is_deleted=0")
 @Table(name = "feedback_type", schema = "capstone_ccp", catalog = "")
+@NamedQuery(name = "FeedbackTypeEntity.getAll",query = "select e from FeedbackTypeEntity  e where e.deleted = false ")
 public class FeedbackTypeEntity {
 	private long id;
 	private String name;
