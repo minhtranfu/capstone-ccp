@@ -94,6 +94,9 @@ public class CartRequestResource {
 		// 3/3/19 model mapper
 		HiringTransactionRequest hiringTransactionRequest = modelConverter.toRequest(cartRequestEntity);
 
+		cartRequestEntity.setContractor(contractorEntity);
+
+		// TODO: 3/12/19 get id
 		hiringTransactionValidator.validateHiringTransactionRequestBeforeSend(hiringTransactionRequest);
 		cartRequestDao.persist(cartRequestEntity);
 		return Response.status(Response.Status.CREATED)

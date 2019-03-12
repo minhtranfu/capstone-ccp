@@ -8,10 +8,7 @@ import dtos.validationObjects.LocationValidator;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentRequest;
 import entities.EquipmentEntity;
-<<<<<<< HEAD
-=======
 import managers.FirebaseMessagingManager;
->>>>>>> 8a1ad40ff45a36c4250d2c7fdda150974da3d61c
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -27,11 +24,6 @@ import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Provider;
-<<<<<<< HEAD
-import javax.json.bind.JsonbBuilder;
-import javax.servlet.http.HttpServlet;
-=======
->>>>>>> 8a1ad40ff45a36c4250d2c7fdda150974da3d61c
 import javax.validation.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -205,18 +197,6 @@ public class TestResource  {
 	}
 
 	@GET
-	@Path("noti")
-	public Response testPushNoti() throws IOException {
-		InputStream inputStream = NotificationHelper.sendNotiWithHTTP();
-		StringWriter stringWriter = new StringWriter();
-		IOUtils.copy(inputStream, stringWriter);
-		return Response.ok(stringWriter.toString()).build();
-	}
-
-
-<<<<<<< HEAD
-=======
-	@GET
 	@Path("noti/http")
 	public Response testPushNotiWithHttpLegacyMethod() throws IOException {
 		InputStream inputStream = messagingManager.sendNotiWithHTTP();
@@ -233,6 +213,6 @@ public class TestResource  {
 	}
 
 
->>>>>>> 8a1ad40ff45a36c4250d2c7fdda150974da3d61c
+
 
 }

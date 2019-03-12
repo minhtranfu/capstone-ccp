@@ -1,7 +1,6 @@
 package entities;
 
 
-import dtos.IdOnly;
 import dtos.requests.HiringTransactionRequest;
 import listeners.entityListenters.HiringTransactionEntityListener;
 import org.hibernate.annotations.Where;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "hiring_transaction", schema = "capstone_ccp", catalog = "")
+@Table(name = "hiring_transaction", schema = "capstone_ccp")
 @Where(clause = "is_deleted=0")
 @NamedQueries({
 		@NamedQuery(name = "HiringTransactionEntity.getTransactionBySupplierId", query = "select e from HiringTransactionEntity  e where e.equipment.contractor.id = :supplierId")
