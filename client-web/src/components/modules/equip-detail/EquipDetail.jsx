@@ -365,6 +365,11 @@ class EquipDetail extends Component {
                     value={this.state.address}
                     onChange={this.handleChange}
                     onSelect={this.handleSelect}
+                    searchOptions={{
+                      componentRestrictions: {
+                        country: 'VN'
+                      }
+                    }}
                   >
                     {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => {
 
