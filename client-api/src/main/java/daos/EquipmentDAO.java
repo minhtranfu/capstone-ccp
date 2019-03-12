@@ -2,6 +2,7 @@ package daos;
 
 import entities.AvailableTimeRangeEntity;
 import entities.EquipmentEntity;
+import entities.HiringTransactionEntity;
 import listeners.DataChangeSubscriber;
 import listeners.events.EquipmentDataChangedEvent;
 
@@ -20,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Stateless
-public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>   {
+public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 
 	@PersistenceContext
@@ -31,12 +32,14 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>   {
 	Event<EquipmentDataChangedEvent> equipmentStatusChangedEvent;
 
 	private static final String REGEX_ORDERBY_SINGLEITEM = "(\\w+)\\.(asc|desc)($|,)";
+
 	public List<EquipmentEntity> searchEquipment(LocalDate beginDate, LocalDate endDate,
 												 long equipmentTypeId,
 												 String orderBy, int offset, int limit) {
 
 
 		//"select e from EquipmentEntity  e where e.equipmentType.id = :equipmentTypeIdParam and exists (select t from AvailableTimeRangeEntity t where t.equipment.id = e.id  and  t.beginDate <= :curBeginDate and  :curEndDate <= t.endDate)"
+		//and not exists (select a from HiringTransactionEntity a where a.equipment.id = e.id and a.status in ('PROCESSING','ACCEPTED') and not (a.endDate < :curBeginDate or a.beginDate>:curEndDate))
 
 		//cant use something like 'from e.availableTimeRanges' because of the lack of flexibility of jpa criteria query
 
@@ -45,44 +48,58 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>   {
 		CriteriaQuery<EquipmentEntity> query = criteriaBuilder.createQuery(EquipmentEntity.class);
 
 
-
 		Root<EquipmentEntity> e = query.from(EquipmentEntity.class);
 
 		Subquery<AvailableTimeRangeEntity> subQuery = query.subquery(AvailableTimeRangeEntity.class);
 		Root<AvailableTimeRangeEntity> t = subQuery.from(AvailableTimeRangeEntity.class);
 
+		Subquery<HiringTransactionEntity> subQueryActiveTransaction = query.subquery(HiringTransactionEntity.class);
+		Root<HiringTransactionEntity> a = subQueryActiveTransaction.from(HiringTransactionEntity.class);
 
 		ParameterExpression<LocalDate> beginDateParam = criteriaBuilder.parameter(LocalDate.class);
 		ParameterExpression<LocalDate> endDateParam = criteriaBuilder.parameter(LocalDate.class);
 		ParameterExpression<Long> equipmentTypeIdParam = criteriaBuilder.parameter(Long.class);
+
+
+
+//		select equipment available in current timerange
 		List<Predicate> whereClauses = new ArrayList<>();
-
 		whereClauses.add(criteriaBuilder.equal(t.get("equipment").get("id"), e.get("id")));
-//		Predicate finalPredicate = criteriaBuilder.conjunction();
-
 
 		// this shit by no means be done in another way, fucking retarded jpa
 		if (beginDate != null) {
-//			finalPredicate = criteriaBuilder.and(finalPredicate,criteriaBuilder.lessThanOrEqualTo(t.get("beginDate"), beginDateParam));
 			whereClauses.add(criteriaBuilder.lessThanOrEqualTo(t.get("beginDate"), beginDateParam));
+
 		}
 		if (endDate != null) {
-//			finalPredicate = criteriaBuilder.and(finalPredicate, criteriaBuilder.lessThanOrEqualTo(endDateParam, t.get("endDate")));
 			whereClauses.add(criteriaBuilder.lessThanOrEqualTo(endDateParam, t.get("endDate")));
 		}
-
-		if (equipmentTypeId != 0) {
-			whereClauses.add(criteriaBuilder.equal(equipmentTypeIdParam, e.get("equipmentType").get("id")));
-		}
-
 		subQuery.select(t).where(whereClauses.toArray(new Predicate[0]));
 
-		query.select(e).where(criteriaBuilder.exists(subQuery));
+		/*Select not exist active transactions intersect current timerange*/
+		List<Predicate> subQueryActiveWhereClauses = new ArrayList<>();
+		subQueryActiveWhereClauses.add(criteriaBuilder.equal(a.get("equipment").get("id"), e.get("id")));
+		subQueryActiveWhereClauses.add(a.get("status").in(HiringTransactionEntity.Status.PROCESSING, HiringTransactionEntity.Status.ACCEPTED));
 
+
+		subQueryActiveWhereClauses.add(
+				criteriaBuilder.not(
+						criteriaBuilder.or(
+								beginDate != null ? criteriaBuilder.lessThan(a.get("endDate"), beginDateParam) : criteriaBuilder.conjunction()
+								, endDate != null ? criteriaBuilder.greaterThan(a.get("beginDate"), endDateParam) : criteriaBuilder.conjunction()
+						)));
+		subQueryActiveTransaction.select(a).where(subQueryActiveWhereClauses.toArray(new Predicate[0]));
+
+
+//		merge 3 main where clauses
+		query.select(e).where(
+				equipmentTypeId != 0 ? criteriaBuilder.equal(equipmentTypeIdParam, e.get("equipmentType").get("id")) : criteriaBuilder.conjunction()
+				,criteriaBuilder.exists(subQuery)
+				,criteriaBuilder.not(criteriaBuilder.exists(subQueryActiveTransaction))
+		);
 
 		if (!orderBy.isEmpty()) {
 			List<Order> orderList = new ArrayList<>();
-
 			// TODO: 2/14/19 string split to orderBy list
 			Pattern pattern = Pattern.compile(REGEX_ORDERBY_SINGLEITEM);
 
@@ -135,10 +152,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>   {
 	}
 
 
-
 	//validate if the equipment is available in this time range
 	public boolean validateEquipmentAvailable(long equipmentId, LocalDate beginDate, LocalDate endDate) {
-
 
 
 		// TODO: 2/11/19 validate user's available time
@@ -172,8 +187,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>   {
 	}
 
 
-
-
 	//validate that there must be no time range that intersect to another
 	public boolean validateNoIntersect(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {
 		int count = availableTimeRangeEntities.size();
@@ -195,15 +208,14 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long>   {
 	}
 
 
-	public  boolean checkIsIntersect(LocalDate beginDate1, LocalDate endDate1, LocalDate beginDate2, LocalDate endDate2) {
+	public boolean checkIsIntersect(LocalDate beginDate1, LocalDate endDate1, LocalDate beginDate2, LocalDate endDate2) {
 		//validate begindate < enddate
 
 		return !(endDate2.isBefore(beginDate1) || beginDate2.isAfter(endDate1));
 	}
 
 
-
-	List<DataChangeSubscriber<EquipmentEntity>> subscriberList = new ArrayList<>() ;
+	List<DataChangeSubscriber<EquipmentEntity>> subscriberList = new ArrayList<>();
 
 	private void notifyEquipmentChanged(EquipmentEntity equipmentEntity) {
 
