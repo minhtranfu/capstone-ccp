@@ -35,14 +35,15 @@ class AddEquipmentStep1 extends Step {
   }
 
   _loadConstructions = async () => {
-    const { constractor } = this.props;
+    const { contractor } = this.props;
 
     try {
-      const constructions = await ccpApiService.getConstructionsByContractorId(constractor.id);
+      const constructions = await ccpApiService.getConstructionsByContractorId(contractor.id);
       this.setState({
         constructions
       });
     } catch (error) {
+      console.log(error);
       alert('Error while loading constructions');
     }
   };
@@ -277,12 +278,13 @@ AddEquipmentStep1.propTypes = {
 };
 
 const mapStateToProps = state => {
-  const { authentication } = state;
+  const { authentication, entities } = state;
   const { user } = authentication;
-  const { constractor } = user;
+  const { contractor } = user;
 
   return {
-    constractor
+    contractor,
+    entities
   };
 };
 
