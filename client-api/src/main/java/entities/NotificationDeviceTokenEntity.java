@@ -8,7 +8,10 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "notification_device_token", schema = "capstone_ccp")
-@NamedQuery(name = "NotificationDeviceTokenEntity.removeByToken",query = "delete from NotificationDeviceTokenEntity t where t.registrationToken = :token and t.contractor.id = :contractorId")
+@NamedQueries({
+		@NamedQuery(name = "NotificationDeviceTokenEntity.removeByToken", query = "delete from NotificationDeviceTokenEntity t where t.registrationToken = :token and t.contractor.id = :contractorId")
+		,@NamedQuery(name = "NotificationDeviceTokenEntity.findByTokenContractor", query = "select t from NotificationDeviceTokenEntity t where t.registrationToken = :token and t.contractor.id = :contractorId")
+})
 public class NotificationDeviceTokenEntity {
 	private long id;
 	private String registrationToken;
@@ -16,6 +19,7 @@ public class NotificationDeviceTokenEntity {
 	private DeviceType deviceType;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;

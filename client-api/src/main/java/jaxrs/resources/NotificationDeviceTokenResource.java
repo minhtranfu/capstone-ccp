@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 //@Path("notifications")
 @Produces(MediaType.APPLICATION_JSON)
@@ -47,15 +48,23 @@ public class NotificationDeviceTokenResource {
 	}
 
 	@POST
-	public Response addNotiToken(NotificationDeviceTokenEntity request) {
+	public Response addNotiToken(@Valid NotificationDeviceTokenEntity request) {
 
-		// TODO: 3/11/19 validate token not dupplicated
 		NotificationDeviceTokenEntity notificationDeviceTokenEntity = new NotificationDeviceTokenEntity();
 		notificationDeviceTokenEntity.setContractor(contractorEntity);
 		notificationDeviceTokenEntity.setRegistrationToken(request.getRegistrationToken());
 		notificationDeviceTokenEntity.setDeviceType(request.getDeviceType());
-		notificationDeviceTokenDAO.persist(notificationDeviceTokenEntity);
-		return Response.ok(notificationDeviceTokenDAO.findByIdWithValidation(notificationDeviceTokenEntity.getId())).build();
+
+		NotificationDeviceTokenEntity foundToken;
+		List<NotificationDeviceTokenEntity> foundTokens = notificationDeviceTokenDAO.findByToken(notificationDeviceTokenEntity.getRegistrationToken(),
+				notificationDeviceTokenEntity.getContractor().getId());
+		if (foundTokens.isEmpty()) {
+			notificationDeviceTokenDAO.persist(notificationDeviceTokenEntity);
+			foundToken = notificationDeviceTokenDAO.findByID(notificationDeviceTokenEntity.getId());
+		} else {
+			foundToken = foundTokens.get(0);
+		}
+		return Response.ok(foundToken).build();
 	}
 
 	@DELETE
