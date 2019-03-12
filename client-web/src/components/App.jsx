@@ -10,7 +10,7 @@ import Routes from './modules/Routes';
 import LoginModal from './modules/login/LoginModal';
 import NotificationRoot from './common/NotificationRoot';
 
-import { userActions } from '../redux/actions';
+import { authActions } from '../redux/actions';
 
 import PageLoader from './common/PageLoader';
 
@@ -63,7 +63,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  loadUserFromToken: userActions.loadUserFromToken
+  loadUserFromToken: authActions.loadUserFromToken
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

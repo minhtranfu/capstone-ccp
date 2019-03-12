@@ -1,6 +1,6 @@
 import { increment, decrement, reset } from '../redux/actions/action-creators';
 
-export const authConsts = {
+export const appConsts = {
   JWT_KEY: 'JWT_TOKEN'
 };
 
@@ -12,7 +12,7 @@ export const ENTITY_KEY = {
   EQUIPMENT_TYPE_INFOS: 'equipment_type_infos'
 };
 
-const jwt = localStorage.getItem(authConsts.JWT_KEY);
+const jwt = localStorage.getItem(appConsts.JWT_KEY);
 
 export const INITIAL_STATE = {
   entities: {
@@ -24,7 +24,8 @@ export const INITIAL_STATE = {
   },
   counter: 0,
   authentication: {
-    authenticating: !!jwt
+    authenticating: !!jwt,
+    isShowLoginModal: false
   },
 };
 

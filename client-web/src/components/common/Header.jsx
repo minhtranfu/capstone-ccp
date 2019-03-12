@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { userActions } from '../../redux/actions';
+import { authActions } from '../../redux/actions';
 
 import LoginModal from '../modules/login/LoginModal';
+import { authConstants } from '../../redux/_constants';
 
 class Header extends Component {
   constructor(props) {
@@ -30,8 +31,7 @@ class Header extends Component {
     ];
 
     this.state = {
-      showOffCanvas: false,
-      isShowLoginModal: false
+      showOffCanvas: false
     };
   }
 
@@ -66,7 +66,7 @@ class Header extends Component {
   };
 
   _toggleLoginModal = () => {
-    const { location } = this.props;
+    const { location, toggleLoginModal } = this.props;
 
     // Don't show login modal when user on login page
     if (location.pathname === '/login') {
@@ -75,12 +75,13 @@ class Header extends Component {
 
     this.setState({
       showOffCanvas: false, // Close offcanvas too
-      isShowLoginModal: !this.state.isShowLoginModal
     });
+
+    toggleLoginModal();
   };
 
   render() {
-    const { showOffCanvas, isShowLoginModal } = this.state;
+    const { showOffCanvas } = this.state;
     const { authentication } = this.props;
 
     return (
@@ -131,7 +132,7 @@ class Header extends Component {
           </div>
         </div>
         {!authentication.isAuthenticated &&
-          <LoginModal isOpen={isShowLoginModal} onClose={this._toggleLoginModal} />
+          <LoginModal isOpen={authentication.isShowLoginModal} onClose={this._toggleLoginModal} />
         }
       </nav>
     );
@@ -147,7 +148,10 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  logout: userActions.logout
+  logout: authActions.logout,
+  showLoginModal: authActions.showLoginModal,
+  hideLoginModal: authActions.hideLoginModal,
+  toggleLoginModal: authActions.toggleLoginModal
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));

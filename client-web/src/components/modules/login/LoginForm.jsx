@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect, withRouter } from 'react-router-dom';
 
-import { userActions } from '../../../redux/actions/';
+import { authActions } from '../../../redux/actions/';
 
 class LoginForm extends Component {
 
@@ -87,7 +87,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  login: userActions.login
+  login: authActions.login
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginForm));

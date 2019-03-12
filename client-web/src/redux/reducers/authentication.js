@@ -1,37 +1,55 @@
 import { INITIAL_STATE } from '../../common/app-const';
-import { userConstants } from '../_constants';
+import { authConstants } from '../_constants';
 
 const authentication = (state = INITIAL_STATE.authentication, action) => {
   switch (action.type) {
-    case userConstants.LOGIN_SUCCESS:
+    case authConstants.LOGIN_SUCCESS:
       return {
         isAuthenticated: true,
         user: action.user
       };
 
-    case userConstants.LOGIN_REQUEST:
+    case authConstants.LOGIN_REQUEST:
       console.log('Fetching.....');
       return {
         loggingIn: true,
         user: {}
       };
 
-    case userConstants.LOGIN_FAILURE:
+    case authConstants.LOGIN_FAILURE:
       return {
         user: {}
       };
 
-    case userConstants.LOGOUT:
+    case authConstants.LOGOUT:
       return {};
 
-    case userConstants.LOAD_USER_SUCCESS:
+    case authConstants.LOAD_USER_SUCCESS:
       return {
         isAuthenticated: true,
         user: action.user
       };
-    
-    case userConstants.LOAD_USER_FAILURE:
+
+    case authConstants.LOAD_USER_FAILURE:
       return {};
+
+    case authConstants.LOGIN_MODAL_SHOW:
+      return {
+        ...state,
+        isShowLoginModal: true
+      }
+
+    case authConstants.LOGIN_MODAL_HIDE:
+      return {
+        ...state,
+        isShowLoginModal: false
+      };
+
+    case authConstants.LOGIN_MODAL_TOGGLE:
+      return {
+        ...state,
+        isShowLoginModal: !state.isShowLoginModal
+      };
 
     default:
       return state;
