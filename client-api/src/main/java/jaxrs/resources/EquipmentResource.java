@@ -65,6 +65,10 @@ public class EquipmentResource {
 	@Claim("contractorId")
 	ClaimValue<JsonNumber> claimId;
 
+	private long getClaimId() {
+		return claimId.getValue().longValue();
+	}
+
 
 	/*========Constants============*/
 //	Nghia's house address
@@ -351,6 +355,8 @@ public class EquipmentResource {
 
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(id);
 
+
+
 		EquipmentEntity.Status status = entity.getStatus();
 		switch (status) {
 			case AVAILABLE:
@@ -364,6 +370,16 @@ public class EquipmentResource {
 						(new MessageResponse("Not allowed to change to " + status))
 						.build();
 			case RENTING:
+				// TODO: 3/12/19 validate only supplier can change this
+				// TODO: 3/12/19 validate status must be Processing
+				if (foundEquipment.getProcessingHiringTransactions().isEmpty() ||
+						foundEquipment.getProcessingHiringTransactions().get(0).getStatus() != HiringTransactionEntity.Status.PROCESSING) {
+				throw new BadRequestException("Transaction status must be PROCESSING");
+			}
+
+				if (getClaimId() != foundEquipment.getContractor().getId()) {
+					throw new BadRequestException("Only supplier can change this status!");
+				}
 				if (foundEquipment.getStatus() != EquipmentEntity.Status.DELIVERING) {
 					return Response.status(Response.Status.BAD_REQUEST).entity
 							(new MessageResponse(String.format("Invalid! Cannot change status from %s to %s ", foundEquipment.getStatus(), status)))
@@ -371,7 +387,17 @@ public class EquipmentResource {
 				}
 				break;
 			case WAITING_FOR_RETURNING:
-				// TODO: 2/1/19 change this status by system not user
+				// TODO: 3/12/19 validate status must be Processing
+				if (foundEquipment.getProcessingHiringTransactions().isEmpty() ||
+						foundEquipment.getProcessingHiringTransactions().get(0).getStatus() != HiringTransactionEntity.Status.PROCESSING) {
+					throw new BadRequestException("Transaction status must be PROCESSING");
+				}
+				//  3/12/19 validate only requestser can change this
+				long requesterId = foundEquipment.getProcessingHiringTransactions().get(0).getRequester().getId();
+				if (requesterId != getClaimId()) {
+					throw new BadRequestException("Only requester can change this status manually");
+				}
+
 				if (foundEquipment.getStatus() != EquipmentEntity.Status.RENTING) {
 					return Response.status(Response.Status.BAD_REQUEST).entity
 							(new MessageResponse(String.format("Invalid! Cannot change status from %s to %s ", foundEquipment.getStatus(), status)))

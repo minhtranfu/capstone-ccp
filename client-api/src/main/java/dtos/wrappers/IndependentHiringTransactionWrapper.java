@@ -26,6 +26,7 @@ public class IndependentHiringTransactionWrapper {
 	private double requesterLongitude;
 	private long equipmentId;
 
+
 	public IndependentHiringTransactionWrapper(HiringTransactionEntity hiringTransactionEntity) {
 		this.id = hiringTransactionEntity.getId();
 		this.status = hiringTransactionEntity.getStatus();
