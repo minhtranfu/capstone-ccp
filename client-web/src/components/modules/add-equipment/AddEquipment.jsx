@@ -5,6 +5,7 @@ import {
   CSSTransition
 } from 'react-transition-group';
 import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import Step1 from './Step1';
 import Step2 from './Step2';
@@ -22,9 +23,6 @@ class AddEquipment extends Component {
     };
 
     this.data = {
-      contractor: {
-        id: 12
-      } // Todo: Get constructorId from user data
     };
 
     this.steps = [
@@ -81,11 +79,19 @@ class AddEquipment extends Component {
     this.data.longitude = '10.12313';
     this.data.equipmentTypeId = undefined;
     this.data.constructionId = undefined;
+    this.data.equipmentImages = [];
+    this.data.thumbnailImage = {
+      id: 21
+    };
 
+    this.setState({
+      isPosting: true
+    });
     const data = await ccpApiService.postEquipment(this.data);
     if (data && data.id) {
       this.setState({
-        equipmentId: data.id
+        equipmentId: data.id,
+        isPosting: false
       });
     }
   };
