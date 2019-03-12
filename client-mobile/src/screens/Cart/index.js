@@ -9,7 +9,11 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
-import { getCartList, removeItemCart } from "../../redux/actions/cart";
+import {
+  getCartList,
+  removeItemCart,
+  cartCheckout
+} from "../../redux/actions/cart";
 
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
@@ -18,7 +22,8 @@ import fontSize from "../../config/fontSize";
 @connect(
   state => ({
     cart: state.cart.list,
-    loading: state.cart.loading
+    loading: state.cart.loading,
+    user: state.auth.data
   }),
   dispatch => ({
     fetchGetCartList: contractorId => {
@@ -26,6 +31,9 @@ import fontSize from "../../config/fontSize";
     },
     fetchRemoveItemCart: (contractorId, cartId) => {
       dispatch(removeItemCart(contractorId, cartId));
+    },
+    fetchCheckOut: contractorId => {
+      dispatch(cartCheckout(contractorId));
     }
   })
 )
@@ -44,15 +52,30 @@ class Cart extends Component {
   };
 
   _renderItem = ({ item }) => {
+    const { user } = this.props;
     return (
-      <View key={item.id}>
-        <Text>{item.equipment.name}</Text>
-        <Text>{item.equipment.address}</Text>
-        <TouchableOpacity onPress={() => this._handleRemoveItem(12, item.id)}>
+      <View
+        key={item.id}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between"
+        }}
+      >
+        <Text style={styles.text}>{item.equipment.name}</Text>
+        <Text style={styles.text}>{item.equipment.address}</Text>
+        <TouchableOpacity
+          onPress={() => this._handleRemoveItem(user.contractor.id, item.id)}
+        >
           <Feather name={"x"} size={24} />
         </TouchableOpacity>
       </View>
     );
+  };
+
+  _handleCheckOut = () => {
+    const { user } = this.props;
+    this.props.fetchCheckOut(user.contractor.id);
   };
 
   _renderFlatList = () => {
@@ -60,12 +83,16 @@ class Cart extends Component {
     return (
       <View>
         <FlatList
+          style={{ paddingHorizontal: 15 }}
           data={cart}
           renderItem={this._renderItem}
           keyExtractor={(item, index) => index.toString()}
         />
-        <TouchableOpacity>
-          <Text>Check out</Text>
+        <TouchableOpacity
+          style={{ paddingHorizontal: 15 }}
+          onPress={this._handleCheckOut}
+        >
+          <Text style={styles.text}>Check out</Text>
         </TouchableOpacity>
       </View>
     );
@@ -89,7 +116,7 @@ class Cart extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text>Cart</Text>
+          <Text style={styles.header}>Cart</Text>
         </Header>
         {!loading ? this._renderFlatList() : <Loading />}
       </SafeAreaView>
@@ -100,6 +127,14 @@ class Cart extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  header: {
+    fontSize: fontSize.h4,
+    fontWeight: "500"
+  },
+  text: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500"
   }
 });
 

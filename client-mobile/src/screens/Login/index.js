@@ -91,7 +91,7 @@ class Login extends Component {
               labelStyle={{ color: "white" }}
               placeholder={"Input your username"}
               customWrapperStyle={{ marginBottom: 10 }}
-              placeholderStyle={{ borderBottomColor: "white" }}
+              placeholderStyle={{ borderBottomColor: "white", color: "white" }}
               autoCapitalize={"none"}
               inputType="text"
               placeholderTextColor={"white"}

@@ -17,6 +17,7 @@ import Calendar from "react-native-calendar-select";
 import Swiper from "react-native-swiper";
 import { getEquipmentDetail } from "../../redux/actions/equipment";
 
+//import Calendar from "../../components/Calendar";
 import CustomFlatList from "../../components/CustomFlatList";
 import ParallaxList from "../../components/ParallaxList";
 import Button from "../../components/Button";
@@ -55,7 +56,10 @@ class SearchDetail extends Component {
       endDate: "",
       minDate: "",
       maxDate: "",
-      loadQueue: [0, 0, 0, 0]
+      loadQueue: [0, 0, 0, 0],
+      fromDate: "",
+      toDate: "",
+      calendarVisible: false
     };
   }
 
@@ -100,6 +104,10 @@ class SearchDetail extends Component {
 
   _openCalendar = () => {
     this.calendar && this.calendar.open();
+  };
+
+  _openCalendarCart = () => {
+    this.calendarCart && this.calendarCart.open();
   };
 
   _handleRangeDate = dates => {
@@ -151,6 +159,46 @@ class SearchDetail extends Component {
     </View>
   );
 
+  _setCalendarVisible = visible => {
+    this.setState({ calendarVisible: visible });
+  };
+
+  _onSelectDate = (fromDate, toDate, modalVisible) => {
+    const { id } = this.props.detail.equipmentEntity;
+    this.setState({ fromDate, toDate, calendarVisible: false });
+    const cart = {
+      equipment: {
+        id: id
+      },
+      beginDate: fromDate,
+      endDate: toDate
+    };
+    this.props.navigation("ConfirmCart", { cart });
+  };
+
+  _renderCalendar = (beginDate, endDate) => (
+    <Calendar
+      visible={this.state.calendarVisible}
+      onLeftButtonPress={() => this._setCalendarVisible(false)}
+      onSelectDate={this._onSelectDate}
+      fromDate={beginDate}
+      endDate={endDate}
+    />
+  );
+
+  _onAddToCart = ({ startDate, endDate }) => {
+    const { id } = this.props.detail.equipmentEntity;
+    // this.setState({ fromDate, toDate, calendarVisible: false });
+    const cart = {
+      equipment: {
+        id: id
+      },
+      beginDate: this._handleFormatDate(startDate),
+      endDate: this._handleFormatDate(endDate)
+    };
+    this.props.navigation.navigate("ConfirmCart", { cart });
+  };
+
   _renderRangeItem = (index, item) => (
     <View key={index} style={styles.rowWrapper}>
       <View style={styles.columnWrapper}>
@@ -161,7 +209,8 @@ class SearchDetail extends Component {
           To: {new Date(item.endDate).toDateString()}
         </Text>
       </View>
-      <TouchableOpacity>
+
+      <TouchableOpacity onPress={this._openCalendarCart}>
         <Text
           style={{
             color: colors.secondaryColorOpacity,
@@ -171,6 +220,19 @@ class SearchDetail extends Component {
           Add to cart
         </Text>
       </TouchableOpacity>
+      <Calendar
+        i18n="en"
+        ref={calendar => {
+          this.calendarCart = calendar;
+        }}
+        format="YYYY-MM-DD"
+        minDate={item.beginDate}
+        maxDate={item.endDate}
+        startDate={this.state.startDate}
+        endDate={this.state.endDate}
+        onConfirm={this._onAddToCart}
+      />
+      {/* {this._renderCalendar(item.beginDate, item.endDate)} */}
     </View>
   );
 
@@ -198,7 +260,7 @@ class SearchDetail extends Component {
               fontWeight: "500"
             }}
           >
-            Add to cart
+            {status}
           </Text>
         </View>
         <View style={styles.textWrapper}>

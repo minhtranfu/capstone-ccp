@@ -9,7 +9,7 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
-import Calendar from '../../../components/Calendar';
+import Calendar from "../../../components/Calendar";
 import Loading from "../../../components/Loading";
 import Header from "../../../components/Header";
 import InputField from "../../../components/InputField";
@@ -24,7 +24,10 @@ class AddDurationText extends Component {
     this.state = {
       // dateRanges: { 0: { id: 0, beginDate: "", endDate: "" } },
       dataRangeList: [{ id: 0, beginDate: "", endDate: "" }],
-      index: 0
+      index: 0,
+      calendarVisible: false,
+      fromDate: "",
+      toDate: ""
     };
   }
 
@@ -67,7 +70,7 @@ class AddDurationText extends Component {
   };
 
   _handleDateChanged = (id, value, field) => {
-    const { dataRangeList } = this.state;
+    const { dataRangeList, fromDate, toDate } = this.state;
     this.setState({
       // dateRanges: {
       //   ...dateRanges,
@@ -82,10 +85,71 @@ class AddDurationText extends Component {
     });
   };
 
+  _onSelectDate = (fromDate, toDate, modalVisible) => {
+    console.log(fromDate, toDate);
+    const { dataRangeList } = this.state;
+    this.setState({
+      dataRangeList: this.state.dataRangeList.map(item =>
+        item.id === dataRangeList.length - 1
+          ? { ...item, beginDate: fromDate, endDate: toDate }
+          : item
+      ),
+      fromDate: fromDate,
+      toDate: toDate,
+      calendarVisible: false
+    });
+  };
+
+  _setCalendarVisible = visible => {
+    this.setState({ calendarVisible: visible });
+  };
+
+  _renderCalendar = (id, beginDate, endDate) => {
+    return (
+      <Calendar
+        visible={this.state.calendarVisible}
+        onLeftButtonPress={() => this._setCalendarVisible(false)}
+        onSelectDate={this._onSelectDate}
+        fromDate={beginDate}
+        endDate={endDate}
+      />
+    );
+  };
+
+  _formatDate = date => {
+    let newDate = new Date(date);
+    let year = newDate.getFullYear();
+    let month = newDate.getMonth() + 1;
+    let day = newDate.getDate();
+    return year + "-" + month + "-" + day;
+  };
+
+  _handleDateRange = (date, month) => {
+    let today = new Date(date);
+    let result = today.setDate(today.getMonth() + month);
+    return this._formatDate(result);
+  };
+
   _renderDateRange = item => {
+    const { dataRangeList } = this.state;
     const itemId = item.id;
     return (
       <View key={item.id}>
+        <TouchableOpacity onPress={() => this._setCalendarVisible(true)}>
+          <Text>Select your date range</Text>
+        </TouchableOpacity>
+        {item.id === 0
+          ? this._renderCalendar(
+              item.id,
+              Date.now(),
+              this._handleDateRange(Date.now(), 6)
+            )
+          : this._renderCalendar(
+              item.id,
+              dataRangeList[item.id - 1].endDate,
+              this._handleDateRange(dataRangeList[item.id - 1].endDate, 6)
+            )}
+
         <InputField
           label={"From"}
           placeholder={"yyyy-mm-dd"}

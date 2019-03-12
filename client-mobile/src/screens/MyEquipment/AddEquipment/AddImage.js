@@ -21,6 +21,7 @@ import {
   getLatLongByAddress
 } from "../../../redux/actions/location";
 
+import Loading from "../../../components/Loading";
 import Header from "../../../components/Header";
 import Button from "../../../components/Button";
 
@@ -52,8 +53,6 @@ class AddImage extends Component {
       descriptionImages: []
     };
   }
-
-  componentDiDUpdate(prevProps) {}
 
   _handleAddImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);

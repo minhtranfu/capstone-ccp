@@ -38,6 +38,7 @@ import RequireLogin from "../screens/Login/RequireLogin";
 import Calendar from "../components/Calendar";
 import ConfirmAdjustDate from "../screens/Activity/ConfirmAdjustDate";
 import Cart from "../screens/Cart";
+import ConfirmCart from "../screens/Cart/ConfirmCart";
 import ContractorProfile from "../screens/Account/ContractorProfile";
 import Login from "../screens/Login";
 import AuthLoading from "../screens/Login/AuthLoading";
@@ -59,7 +60,8 @@ const DiscoverStack = createStackNavigator(
     Search: Search,
     Result: SearchResult,
     SearchDetail: SearchDetail,
-    Cart: Cart
+    Cart: Cart,
+    ConfirmCart: ConfirmCart
   },
   {
     headerMode: "none"

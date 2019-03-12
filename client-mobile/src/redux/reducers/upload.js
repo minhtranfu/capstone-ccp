@@ -1,7 +1,7 @@
 import * as Actions from "../types";
 
 const INITIAL_STATE = {
-  loading: false,
+  loading: null,
   imageURL: []
 };
 

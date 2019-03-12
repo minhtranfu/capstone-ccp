@@ -75,16 +75,16 @@ class SearchResult extends Component {
     );
   }
 
-  componentDidUpdate(prevProps) {
-    const { status, navigation } = this.props;
-    if (
-      status.type === "error" &&
-      status.time !== prevProps.status.time &&
-      navigation.state.routeName === "Result"
-    ) {
-      this._showAlert("Error", this.props.status.message);
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   const { status, navigation } = this.props;
+  //   if (
+  //     status.type === "error" &&
+  //     status.time !== prevProps.status.time &&
+  //     navigation.state.routeName === "Result"
+  //   ) {
+  //     this._showAlert("Error", this.props.status.message);
+  //   }
+  // }
 
   _showAlert = (title, msg) => {
     Alert.alert(title, msg, [{ text: "OK" }], {
