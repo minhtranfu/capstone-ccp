@@ -70,7 +70,7 @@ public class HiringTransactionResource {
 		HiringTransactionEntity hiringTransactionEntity = modelConverter.toEntity(hiringTransactionRequest);
 
 
-		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(hiringTransactionRequest.getEquipmentId());
+		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(hiringTransactionEntity.getEquipment().getId());
 
 		hiringTransactionEntity.setEquipmentAddress(foundEquipment.getFinalAddress());
 		hiringTransactionEntity.setEquipmentLongitude(foundEquipment.getFinalLongitude());

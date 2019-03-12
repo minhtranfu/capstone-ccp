@@ -54,7 +54,11 @@ public class NotificationDeviceTokenResource {
 		notificationDeviceTokenEntity.setRegistrationToken(request.getRegistrationToken());
 		notificationDeviceTokenDAO.persist(notificationDeviceTokenEntity);
 
+<<<<<<< HEAD
 		return Response.ok(contractorDAO.findByID(contractorEntity.getId())).build();
+=======
+		return Response.ok(contractorDAO.findByID(contractorEntity.getId()).getNotificationDeviceTokens()).build();
+>>>>>>> 8a1ad40ff45a36c4250d2c7fdda150974da3d61c
 	}
 
 	@DELETE

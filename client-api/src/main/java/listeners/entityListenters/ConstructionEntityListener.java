@@ -16,6 +16,7 @@ public class ConstructionEntityListener {
 	//must be after update that equipment get the infor from this construction
 	@PostUpdate
 	void postUpdate(ConstructionEntity constructionEntity) {
+
 		for (EquipmentEntity equipmentEntity : constructionEntity.getEquipmentEntities()) {
 			equipmentEntity.setLatitude(constructionEntity.getLatitude());
 			equipmentEntity.setLongitude(constructionEntity.getLongitude());
