@@ -51,12 +51,12 @@ class MyConstructions extends Component {
   };
 
   _postConstruction = async () => {
-    const { constractor } = this.props;
+    const { contractor } = this.props;
     const { construction, constructions } = this.state;
 
     try {
       this.setState({ isFetching: true });
-      const savedConstruction = await ccpApiService.postConstruction(constractor.id, construction);
+      const savedConstruction = await ccpApiService.postConstruction(contractor.id, construction);
 
       this.setState({
         constructions: [
@@ -73,12 +73,12 @@ class MyConstructions extends Component {
   };
 
   _updateConstruction = async () => {
-    const { constractor } = this.props;
+    const { contractor } = this.props;
     const { construction, constructions } = this.state;
 
     try {
       this.setState({ isFetching: true });
-      const res = await ccpApiService.updateConstruction(constractor.id, construction.id, construction);
+      const res = await ccpApiService.updateConstruction(contractor.id, construction.id, construction);
       const updatedConstructions = constructions.map(item => {
         if (item.id !== construction.id) {
           return item;
@@ -94,6 +94,7 @@ class MyConstructions extends Component {
         isFetching: false
       });
     } catch (error) {
+      console.log(error);
       window.alert('Save error! ' + error.response.data.message);
     }
   };
