@@ -320,7 +320,7 @@ class MyRequests extends Component {
 
           changeStatusButtons = (
             <div className="mt-2">
-              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.FINISHED)}>Finish</button>
+              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.FINISHED)}>Receive</button>
             </div>
           );
         }
@@ -332,7 +332,7 @@ class MyRequests extends Component {
         // TODO: Feedback function
         changeStatusButtons = (
           <div className="mt-2">
-            <button className="btn btn-success" onClick={() => window.alert('Feedback chưa xong')}>Feedback</button>
+            <button className="btn btn-sm btn-success" onClick={() => window.alert('Feedback chưa xong')}>Feedback</button>
           </div>
         );
         break;
