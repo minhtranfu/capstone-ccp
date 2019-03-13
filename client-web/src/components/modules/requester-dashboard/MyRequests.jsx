@@ -240,7 +240,6 @@ class MyRequests extends Component {
             <div>
               <span className="">Daily Price: ${equipment.dailyPrice}</span>
               <span className="ml-2 pl-2 border-left">Total fee: ${equipment.dailyPrice * days}</span>
-              <div className="">Equipment: {EQUIPMENT_SHOWABLE_STATUSES[equipment.status]}</div>
             </div>
             {changeStatusButtons}
           </div>
