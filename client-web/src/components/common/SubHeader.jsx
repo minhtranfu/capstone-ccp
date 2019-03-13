@@ -3,7 +3,7 @@ import { Link, withRouter } from 'react-router-dom';
 
 class SubHeader extends Component {
 
-  menus = [
+  menu = [
     {
       to: '/dashboard/supplier',
       name: 'Transactions',
@@ -16,6 +16,18 @@ class SubHeader extends Component {
     {
       to: '/dashboard/supplier/equipments',
       name: 'Equipments'
+    }
+  ];
+
+  requesterMenu = [
+    {
+      to: '/dashboard/requester',
+      name: 'Transactions',
+      exact: true
+    },
+    {
+      to: '/dashboard/requester/constructions',
+      name: 'Constructions'
     }
   ];
 
@@ -32,7 +44,16 @@ class SubHeader extends Component {
   render() {
     const { location } = this.props;
 
-    if (location.pathname.indexOf('/dashboard/supplier') != 0 && location.pathname.indexOf('/dashboard/requester') != 0) {
+    let menus = null;
+    if (location.pathname.indexOf('/dashboard/supplier') === 0) {
+      menus = this.menu;
+    }
+
+    if (location.pathname.indexOf('/dashboard/requester') === 0) {
+      menus = this.requesterMenu;
+    }
+
+    if (!menus) {
       return null;
     }
 
@@ -40,7 +61,7 @@ class SubHeader extends Component {
       <div className="nav-scroller bg-white shadow-sm">
         <nav className="nav nav-underline container">
           {/* <span className="badge badge-pill badge-success align-text-bottom ml-1">27</span> */}
-          {this.menus.map(menu => {
+          {menus.map(menu => {
             return (
               <li key={menu.name} className={`nav-item ${this._isMenuActive(menu) ? 'active' : ''}`}>
                 <Link className="nav-link" to={menu.to}>{menu.name}</Link>
