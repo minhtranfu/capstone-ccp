@@ -23,6 +23,7 @@ class AddEquipmentStep1 extends Step {
 
     this.state = {
       constructions: [],
+      categories: [],
       availableTimeRanges: [
         {}
       ]
@@ -32,6 +33,7 @@ class AddEquipmentStep1 extends Step {
   componentDidMount() {
     this._loadEquipmentTypes();
     this._loadConstructions();
+    this._loadEquipmentTypeCategories();
   }
 
   _loadConstructions = async () => {
@@ -44,6 +46,18 @@ class AddEquipmentStep1 extends Step {
       });
     } catch (error) {
       alert('Error while loading constructions');
+    }
+  };
+
+  _loadEquipmentTypeCategories = async () => {
+
+    try {
+      const categories = await ccpApiService.getEquipmentTypeCategories();
+      this.setState({
+        categories
+      });
+    } catch (error) {
+      alert('Error while loading categories');
     }
   };
 
@@ -211,7 +225,7 @@ class AddEquipmentStep1 extends Step {
   render() {
     const { entities } = this.props;
     const equipmentTypes = entities[ENTITY_KEY.EQUIPMENT_TYPES];
-    const { constructions } = this.state;
+    const { constructions, categories, categoryId } = this.state;
 
     return (
       <div className="container">
@@ -236,10 +250,24 @@ class AddEquipmentStep1 extends Step {
               <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" />
             </div>
             <div className="form-group">
+              <label htmlFor="">Equipment Category: <i className="text-danger">*</i></label>
+              <select name="categoryId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.categoryId || ''} id="equip_type_id" className="form-control selectpicker">
+                <option value="0">Choose...</option>
+                {categories && categories.map(cat => {
+                  return (<option value={cat.id} key={cat.id}>{cat.name}</option>);
+                })}
+              </select>
+            </div>
+            <div className="form-group">
               <label htmlFor="">Equipment type: <i className="text-danger">*</i></label>
               <select name="equipmentTypeId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.equipmentTypeId || ''} id="equip_type_id" className="form-control selectpicker">
                 <option value="">Choose...</option>
                 {equipmentTypes && equipmentTypes.data && equipmentTypes.data.map(type => {
+
+                  if (!!categoryId && type.generalEquipment.id !== categoryId) {
+                    return null;
+                  }
+
                   return (<option value={type.id} key={type.id}>{type.name}</option>);
                 })}
               </select>

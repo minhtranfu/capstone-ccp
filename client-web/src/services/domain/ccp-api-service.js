@@ -5,6 +5,9 @@ const CcpApiService = {
   getEquipmentTypes() {
     return DataAccessService.get('/equipmentTypes');
   },
+  getEquipmentTypeCategories() {
+    return DataAccessService.get('/generalEquipmentTypes');
+  },
   getEquipmentTypeSpecs(typeId) {
     return DataAccessService.get(`/equipments/types/${typeId}/specs`);
   },
