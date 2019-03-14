@@ -7,10 +7,9 @@ import entities.SubscriptionEntity;
 
 import java.util.List;
 
-public class EquipmentCheckerForSubscription implements DataChangeSubscriber<EquipmentEntity> {
+public class EquipmentCheckerForSubscription {
 
 
-	@Override
 	public void onDataChange(EquipmentEntity equipmentEntity) {
 
 		if (equipmentEntity.getStatus() != EquipmentEntity.Status.AVAILABLE) {
