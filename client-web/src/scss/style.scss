@@ -449,3 +449,11 @@ nav.navbar {
   -webkit-transition: all .4s;
   transition: all .4s
 }
+
+// For form
+.invalid-feedback {
+  text-transform: lowercase;
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}

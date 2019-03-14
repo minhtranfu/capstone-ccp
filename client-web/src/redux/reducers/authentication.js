@@ -12,13 +12,17 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
     case authConstants.LOGIN_REQUEST:
       console.log('Fetching.....');
       return {
+        ...state,
         loggingIn: true,
         user: {}
       };
 
     case authConstants.LOGIN_FAILURE:
       return {
-        user: {}
+        ...state,
+        loggingIn: false,
+        user: {},
+        error: action.error
       };
 
     case authConstants.LOGOUT:
