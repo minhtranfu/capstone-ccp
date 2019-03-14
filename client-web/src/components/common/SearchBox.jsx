@@ -1,19 +1,16 @@
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import moment from 'moment';
+import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
+import moment from "moment";
 
-import ccpApiService from '../../services/domain/ccp-api-service';
+import ccpApiService from "../../services/domain/ccp-api-service";
 
 class SearchBox extends PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      equipmentTypes: []
-    };
-
-    this.criteria = {};
-  }
+  state = {
+    equipmentTypes: [],
+    criteria: {
+      beginDate: moment().format("YYYY-MM-DD")
+    }
+  };
 
   _loadData = async () => {
     const equipmentTypes = await ccpApiService.getEquipmentTypes();
@@ -29,18 +26,37 @@ class SearchBox extends PureComponent {
   _search = () => {
     const { onSearch } = this.props;
 
-    onSearch && onSearch(this.criteria);
+    onSearch && onSearch(this.state.criteria);
   };
 
-  _handleChangeCriteria = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
+  _handleChangeCriteria = e => {
+    const { name, value } = e.target;
+    let { criteria } = this.state;
+    criteria = {
+      ...criteria,
+      [name]: value
+    }
 
-    this.criteria[name] = value;
+    if (name === 'beginDate') {
+      // TODO: Clear end date when begin is after end date
+      if (moment(value).isSameOrAfter(moment(criteria.endDate))) {
+        window.alert('asdasd');
+        return this.setState({
+          criteria: {
+            ...criteria,
+            endDate: undefined
+          }
+        });
+      }
+    }
+
+    this.setState({
+      criteria
+    });
   };
 
   render() {
-    const { equipmentTypes } = this.state;
+    const { equipmentTypes, criteria } = this.state;
     const { isFetching } = this.props;
 
     return (
@@ -51,11 +67,19 @@ class SearchBox extends PureComponent {
         <div className="col-md-6">
           <div className="form-group">
             <label htmlFor="equipment_type">Equipment type:</label>
-            <select name="equipmentTypeId" id="equipment_type" className="form-control" onChange={this._handleChangeCriteria}>
+            <select
+              name="equipmentTypeId"
+              id="equipment_type"
+              className="form-control"
+              onChange={this._handleChangeCriteria}
+            >
               <option value="">--Choose--</option>
-              {
-                equipmentTypes && equipmentTypes.map(equipmentType => <option key={equipmentType.id} value={equipmentType.id}>{equipmentType.name}</option>)
-              }
+              {equipmentTypes &&
+                equipmentTypes.map(equipmentType => (
+                  <option key={equipmentType.id} value={equipmentType.id}>
+                    {equipmentType.name}
+                  </option>
+                ))}
             </select>
           </div>
         </div>
@@ -64,19 +88,47 @@ class SearchBox extends PureComponent {
             <label htmlFor="time">Time</label>
             <div className="row">
               <div className="col-md-6">
-                <input type="date" className="form-control" name="beginDate" id="begin_date" onChange={this._handleChangeCriteria} defaultValue={moment().format('YYYY-MM-DD')} />
+                <input
+                  type="date"
+                  className="form-control"
+                  name="beginDate"
+                  id="begin_date"
+                  onChange={this._handleChangeCriteria}
+                  value={criteria.beginDate || ''}
+                  min={moment().format("YYYY-MM-DD")}
+                />
               </div>
               <div className="col-md-6 mt-md-0 mt-2">
-                <input type="date" className="form-control" name="endDate" id="end_date" onChange={this._handleChangeCriteria} />
+                <input
+                  type="date"
+                  className="form-control"
+                  name="endDate"
+                  id="end_date"
+                  value={criteria.endDate}
+                  onChange={this._handleChangeCriteria}
+                  min={
+                    criteria.beginDate
+                      ? moment(criteria.beginDate).add(1, 'day').format("YYYY-MM-DD")
+                      : moment().format("YYYY-MM-DD")
+                  }
+                />
               </div>
             </div>
           </div>
         </div>
         <div className="col-md-12">
-          <button className="btn btn-success" onClick={this._search} disabled={isFetching}>
-            {isFetching &&
-              <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
-            }
+          <button
+            className="btn btn-success"
+            onClick={this._search}
+            disabled={isFetching}
+          >
+            {isFetching && (
+              <span
+                className="spinner-border spinner-border-sm mr-1"
+                role="status"
+                aria-hidden="true"
+              />
+            )}
             Search
           </button>
         </div>
