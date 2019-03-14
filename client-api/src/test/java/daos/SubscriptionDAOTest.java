@@ -14,28 +14,19 @@ import javax.inject.Inject;
 
 import static org.junit.Assert.*;
 
-@RunWith(Arquillian.class)
+//@RunWith(Arquillian.class)
 public class SubscriptionDAOTest {
-	@Deployment
+//	@Deployment
 	public static JavaArchive createDeployment() {
 		return ShrinkWrap.create(JavaArchive.class)
 				.addClass(SubscriptionDAO.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
-	@Inject
-	SubscriptionDAO subscriptionDAO;
 
 
 	@Test
 	public void getMatchedSubscriptions() {
-		EquipmentEntity equipmentEntity = new EquipmentEntity();
-		equipmentEntity.setId(40);
-		equipmentEntity.setDailyPrice(12);
-		EquipmentTypeEntity equipmentTypeEntity = new EquipmentTypeEntity();
-		equipmentEntity.setId(4);
 
-		equipmentEntity.setEquipmentType(equipmentTypeEntity);
-		subscriptionDAO.getMatchedSubscriptions(equipmentEntity);
 	}
 }
