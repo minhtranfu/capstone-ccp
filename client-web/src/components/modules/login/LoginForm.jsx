@@ -42,7 +42,7 @@ class LoginForm extends Component {
           <form onSubmit={this._handleLogin}>
             <div className="form-group">
               <label htmlFor="username">Username:</label>
-              <input name="username" id="username" onChange={this._handleFieldChange} type="text" className="form-control" placeholder="Username" />
+              <input name="username" id="username" onChange={this._handleFieldChange} type="text" className="form-control" placeholder="Username" autoFocus/>
             </div>
             <div className="form-group">
               <label htmlFor="password">Password:</label>
