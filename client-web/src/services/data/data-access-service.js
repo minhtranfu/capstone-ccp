@@ -14,10 +14,14 @@ const _request = (method, url, data, options) => {
   };
 
   if (data) {
-    defaultOptions.data = JSON.stringify(data);
-    defaultOptions.headers = {
-      'Content-Type': 'application/json'
-    };
+    if (!options || !options.headers || !options.headers['Content-Type']) {
+      defaultOptions.data = JSON.stringify(data);
+      defaultOptions.headers = {
+        'Content-Type': 'application/json'
+      };
+    } else {
+      defaultOptions.data = data;
+    }
   }
   const token = localStorage.getItem('JWT_TOKEN');
   if (token) {

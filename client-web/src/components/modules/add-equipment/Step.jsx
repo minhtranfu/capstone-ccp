@@ -2,9 +2,9 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 
 class Step extends Component {
-    _handleStepDone = (data) => {
+    _handleStepDone = async (data) => {
       const { onStepDone } = this.props;
-      onStepDone && onStepDone(data);
+      onStepDone && await onStepDone(data);
     };
 
     _handleBackStep = () => {

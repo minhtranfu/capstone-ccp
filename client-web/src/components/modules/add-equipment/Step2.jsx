@@ -59,7 +59,6 @@ class AddEquipmentSpecs extends Step {
 
   render() {
     const fields = this._getSelectedEquipmentTypeFields();
-    console.log(fields);
 
     return (
       <div className="row">
