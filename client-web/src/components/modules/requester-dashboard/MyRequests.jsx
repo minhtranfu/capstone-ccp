@@ -33,7 +33,8 @@ class MyRequests extends Component {
   };
 
   changingEquipmentStatusMessage = {
-    [EQUIPMENT_STATUSES.RENTING]: 'Have you received the equipment?'
+    [EQUIPMENT_STATUSES.RENTING]: 'Have you received the equipment?',
+    [EQUIPMENT_STATUSES.WAITING_FOR_RETURNING]: 'You want to return this equipment early?'
   };
 
   // Statuses need to show in left panel
@@ -199,7 +200,13 @@ class MyRequests extends Component {
           this._countNeedActionForStatus(transaction.status);
           changeStatusButtons = (
             <div className="mt-2">
-              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction.equipment.id, EQUIPMENT_STATUSES.RENTING)}>Receive</button>
+              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction, EQUIPMENT_STATUSES.RENTING)}>Receive</button>
+            </div>
+          );
+        } else if (transaction.equipment.status === EQUIPMENT_STATUSES.RENTING) {
+          changeStatusButtons = (
+            <div className="mt-2">
+              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction, EQUIPMENT_STATUSES.WAITING_FOR_RETURNING)}>Return equipment</button>
             </div>
           );
         }
@@ -227,7 +234,7 @@ class MyRequests extends Component {
         classNames="fade"
         timeout={500}
       >
-        <div className="d-flex transaction my-3 rounded shadow-sm">
+        <div className="d-flex transaction my-3 rounded shadow-sm flex-column flex-sm-row">
           <div className="image flex-fill">
             <img src="/public/upload/product-images/unnamed-19-jpg.jpg" className="rounded-left" />
           </div>
@@ -242,6 +249,14 @@ class MyRequests extends Component {
               <span className="ml-2 pl-2 border-left">Total fee: ${equipment.dailyPrice * days}</span>
             </div>
             {changeStatusButtons}
+          </div>
+          <div className="contractor-detail flex-fill p-2 text-center">
+            <img
+              className="rounded-circle"
+              style={{width: '50px', height: '50px'}}
+              src={transaction.equipment.contractor.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
+            />
+            <p>{transaction.equipment.contractor.name}</p>
           </div>
         </div>
       </CSSTransition>
@@ -400,10 +415,10 @@ class MyRequests extends Component {
    * @param transactionId: ID of transaction need to be changed status
    * @param status: status that transaction need to be changed to
    */
-  _handleChangeEquipmentStatus = (equipmentId, status) => {
+  _handleChangeEquipmentStatus = (transaction, status) => {
     const confirm = {
       show: true,
-      onConfirm: () => this._handleChangeEquipmentStatusConfirm(equipmentId, status),
+      onConfirm: () => this._handleChangeEquipmentStatusConfirm(transaction, status),
       confirmText: 'Yes',
       confirmStyle: 'info',
       showCancel: true,
@@ -419,9 +434,9 @@ class MyRequests extends Component {
   /**
    * Handle changing status of equipment after user confirmed
    */
-  _handleChangeEquipmentStatusConfirm = async (equipmentId, status) => {
+  _handleChangeEquipmentStatusConfirm = async (transaction, status) => {
     try {
-      const res = await ccpApiService.updateEquipmentStatus(equipmentId, status);
+      const res = await ccpApiService.updateEquipmentStatus(transaction.equipment.id, status);
 
       // check if error
       if (!res.id) {
@@ -438,7 +453,10 @@ class MyRequests extends Component {
       }
 
       // show success
+      transaction.equipment.status = status;
+      const transactions = this._getUpdatedTransactionsList(transaction);
       this.setState({
+        transactions,
         alert: {
           success: true,
           title: 'Success!',
