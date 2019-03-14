@@ -1,8 +1,12 @@
 package entities;
 
+import listeners.entityListenters.SubscriptionEntityListener;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,10 +15,14 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "subscription", schema = "capstone_ccp")
+@EntityListeners(SubscriptionEntityListener.class)
 @NamedNativeQuery(name = "SubscriptionEntity.matchEquipment"
 		,resultClass = SubscriptionEntity.class
-		,query = "SELECT * from subscription s where s.equipment_type_id = :equipmentTypeId and "+
-		"(s.max_price > :dailyPrice  or s.max_price =-1)" +
+		,query = "SELECT * from subscription s where " +
+		"(s.equipment_type_id = :equipmentTypeId or s.equipment_type_id is null or s.equipment_type_id =0)and "+
+		"(s.max_price > :dailyPrice  or s.max_price =-1 or s.max_price is null)" +
+		//check max distance ( require long lat not null)
+		"and (getDistance(:equipmentId,s.id) <= max_distance or max_distance is null or max_distance = -1)"+
 		//check exists equipment availble time range contain the subscribed time range\n"
 		"and  exists (select * from available_time_range t where t.equipment_id = :equipmentId and t.begin_date <= s.begin_date  and  s.end_date <= t.end_date)"+
 		// check equipment renting time not contain the subscribed time range
@@ -29,6 +37,10 @@ public class SubscriptionEntity {
 	private LocalDate endDate;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
+
+	private Double maxDistance;
+	private Double latitude;
+	private Double longitude;
 
 	@Id
 	@GeneratedValue
@@ -55,6 +67,7 @@ public class SubscriptionEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "contractor_id")
+	@NotNull
 	public ContractorEntity getContractor() {
 		return contractor;
 	}
@@ -113,5 +126,41 @@ public class SubscriptionEntity {
 
 	public void setUpdatedTime(LocalDateTime updatedTime) {
 		this.updatedTime = updatedTime;
+	}
+
+	@Basic
+	@Column(name = "max_distance")
+	public Double getMaxDistance() {
+		return maxDistance;
+	}
+
+	public void setMaxDistance(Double maxDistance) {
+		this.maxDistance = maxDistance;
+	}
+
+	@Basic
+	@Column(name = "lat")
+	@NotNull
+	@Min(-90)
+	@Max(90)
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	@Basic
+	@Column(name = "`long`")
+	@NotNull
+	@Min(-180)
+	@Max(180)
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
 	}
 }

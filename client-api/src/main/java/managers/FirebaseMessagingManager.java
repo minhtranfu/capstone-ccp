@@ -5,17 +5,22 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.*;
 import daos.ContractorDAO;
+import dtos.notifications.ExpoMessageData;
+import dtos.notifications.ExpoMessageWrapper;
 import entities.ContractorEntity;
 import entities.NotificationDeviceTokenEntity;
 import listeners.StartupListener;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
+import javax.json.bind.JsonbBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -91,14 +96,36 @@ public class FirebaseMessagingManager {
 		ContractorEntity managedContractor = contractorDAO.findByIdWithValidation(receiverId);
 		List<String> responseList = new ArrayList<>();
 		for (NotificationDeviceTokenEntity notificationDeviceToken : managedContractor.getNotificationDeviceTokens()) {
-			String response = this.sendMessage(title, content, notificationDeviceToken.getRegistrationToken());
+			String response = null;
+			try {
+				response = this.sendMessage(title, content, notificationDeviceToken);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			responseList.add(response);
 		}
 		return responseList;
 	}
 
-	public String sendMessage(String title, String content, String regisToken) {
+	public String sendMessage(String title, String content, NotificationDeviceTokenEntity notificationDeviceTokenEntity) throws IOException {
 
+		String regisToken = notificationDeviceTokenEntity.getRegistrationToken();
+		String response = null;
+
+		switch (notificationDeviceTokenEntity.getDeviceType()) {
+			case EXPO:
+				response = sendExpo(title, content, regisToken);
+				break;
+			case WEB:
+			case MOBILE:
+				response = sendWebMobile(title, content, regisToken);
+				break;
+		}
+		return response;
+	}
+
+
+	public String sendWebMobile(String title, String content, String regisToken) {
 		Message message = getDefaultMessageBuilder().setNotification(
 				new Notification(title, content)
 		).setToken(regisToken).build();
@@ -115,6 +142,33 @@ public class FirebaseMessagingManager {
 	}
 
 
+	public String sendExpo(String title, String content, String token) throws IOException {
+
+		URL url = new URL("https://exp.host/--/api/v2/push/send");
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+		connection.setUseCaches(false);
+		connection.setDoInput(true);
+		connection.setDoOutput(true);
+
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/json");
+
+		ExpoMessageData data = new ExpoMessageData(title, content);
+		ExpoMessageWrapper expoMessageWrapper = new ExpoMessageWrapper(token, data);
+		String requestBody = JsonbBuilder.create().toJson(expoMessageWrapper);
+
+		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+		wr.write(requestBody);
+		wr.flush();
+
+
+		StringWriter stringWriter = new StringWriter();
+		IOUtils.copy(connection.getInputStream(), stringWriter);
+
+		return stringWriter.toString();
+	}
+
 	private WebpushConfig getDefaultWebpushConfig() {
 		return
 				WebpushConfig.builder()
@@ -126,7 +180,10 @@ public class FirebaseMessagingManager {
 
 	private Message.Builder getDefaultMessageBuilder() {
 		return Message.builder()
-				.setWebpushConfig(getDefaultWebpushConfig());
+				.setWebpushConfig(getDefaultWebpushConfig())
+				.setApnsConfig(ApnsConfig.builder().setAps(Aps.builder().build()).build())
+				.setAndroidConfig(AndroidConfig.builder().build());
+
 	}
 
 }

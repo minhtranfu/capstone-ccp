@@ -142,7 +142,7 @@ public class EquipmentResource {
 
 		for (EquipmentEntity equipmentEntity : equipmentEntities) {
 			EquipmentResponse equipmentResponse = new EquipmentResponse(equipmentEntity
-					, new LocationWrapper(locationQuery, longitude, latitude)
+					, new LocationWrapper(locationQuery, latitude, longitude)
 			);
 			result.add(equipmentResponse);
 		}
@@ -214,7 +214,7 @@ public class EquipmentResource {
 		equipmentEntity.getEquipmentImages().stream()
 				.filter(equipmentImageEntity -> equipmentImageEntity.getId() == foundThumbnail.getId())
 				.findAny().orElseThrow(() -> new BadRequestException(String.format(
-				"thumbnail id=%d not included in image list", foundContractor.getId())));
+				"thumbnail id=%d not included in image list", foundThumbnail.getId())));
 
 
 		//validate equipment tye
@@ -355,6 +355,7 @@ public class EquipmentResource {
 
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(id);
 
+		long requesterId = foundEquipment.getProcessingHiringTransactions().get(0).getRequester().getId();
 
 
 		EquipmentEntity.Status status = entity.getStatus();
@@ -377,8 +378,8 @@ public class EquipmentResource {
 				throw new BadRequestException("Transaction status must be PROCESSING");
 			}
 
-				if (getClaimId() != foundEquipment.getContractor().getId()) {
-					throw new BadRequestException("Only supplier can change this status!");
+				if (getClaimId() != requesterId) {
+					throw new BadRequestException("Only requester can change this status!");
 				}
 				if (foundEquipment.getStatus() != EquipmentEntity.Status.DELIVERING) {
 					return Response.status(Response.Status.BAD_REQUEST).entity
@@ -393,7 +394,6 @@ public class EquipmentResource {
 					throw new BadRequestException("Transaction status must be PROCESSING");
 				}
 				//  3/12/19 validate only requestser can change this
-				long requesterId = foundEquipment.getProcessingHiringTransactions().get(0).getRequester().getId();
 				if (requesterId != getClaimId()) {
 					throw new BadRequestException("Only requester can change this status manually");
 				}

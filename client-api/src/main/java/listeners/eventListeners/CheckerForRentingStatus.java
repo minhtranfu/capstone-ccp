@@ -1,15 +1,12 @@
-package listeners;
+package listeners.eventListeners;
 
 import daos.EquipmentDAO;
 import entities.EquipmentEntity;
 import listeners.events.EquipmentDataChangedEvent;
 
 import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import java.awt.*;
 import java.time.LocalDate;
 
 //should be  singleton for better stability and also this task is not that urgent for asynchronous

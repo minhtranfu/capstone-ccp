@@ -3,17 +3,12 @@ package daos;
 import entities.AvailableTimeRangeEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
-import listeners.DataChangeSubscriber;
-import listeners.events.EquipmentDataChangedEvent;
 
 import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import javax.ws.rs.BadRequestException;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
@@ -27,9 +22,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	@PersistenceContext
 	EntityManager entityManager;
 
-
-	@Inject
-	Event<EquipmentDataChangedEvent> equipmentStatusChangedEvent;
 
 	private static final String REGEX_ORDERBY_SINGLEITEM = "(\\w+)\\.(asc|desc)($|,)";
 
@@ -215,27 +207,10 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	}
 
 
-	List<DataChangeSubscriber<EquipmentEntity>> subscriberList = new ArrayList<>();
 
-	private void notifyEquipmentChanged(EquipmentEntity equipmentEntity) {
 
-		System.out.println("EQUIPMENTDAO notifyEquipmentChanged");
-		equipmentStatusChangedEvent.fire(new EquipmentDataChangedEvent(equipmentEntity));
-	}
 
-	@Override
-	public void persist(EquipmentEntity equipmentEntity) {
-		super.persist(equipmentEntity);
-		notifyEquipmentChanged(equipmentEntity);
-	}
 
-	@Override
-	public EquipmentEntity merge(EquipmentEntity equipmentEntity) {
-		EquipmentEntity mergedEntity = super.merge(equipmentEntity);
-		// TODO: 2/28/19 mereged or not merged entity ?
-		notifyEquipmentChanged(mergedEntity);
-		return mergedEntity;
-	}
 
 
 	public List<EquipmentEntity> getOverdateRentingEquipments() {

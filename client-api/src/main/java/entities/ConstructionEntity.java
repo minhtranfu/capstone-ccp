@@ -6,9 +6,7 @@ import org.hibernate.annotations.WhereJoinTable;
 
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
 
@@ -28,11 +26,9 @@ public class ConstructionEntity {
 	private String address;
 
 	@NotNull
-	@Positive
 	private double longitude;
 
 	@NotNull
-	@Positive
 	private double latitude;
 
 	private boolean isDeleted;
@@ -78,6 +74,9 @@ public class ConstructionEntity {
 
 	@Basic
 	@Column(name = "`long`")
+	@NotNull
+	@Min(-180)
+	@Max(180)
 	public double getLongitude() {
 		return longitude;
 	}
@@ -88,6 +87,9 @@ public class ConstructionEntity {
 
 	@Basic
 	@Column(name = "lat")
+	@NotNull
+	@Min(-90)
+	@Max(90)
 	public double getLatitude() {
 		return latitude;
 	}

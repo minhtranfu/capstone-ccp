@@ -22,7 +22,7 @@ import java.util.UUID;
 @Path("authen")
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthenticationResource {
-	private static final long DEFAULT_EXPIRATION_TIME = 300;
+	private static final long DEFAULT_EXPIRATION_TIME = 60*60*24*90; // 90 days
 
 
 	@Inject
