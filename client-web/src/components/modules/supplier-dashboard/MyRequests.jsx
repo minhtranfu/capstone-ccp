@@ -344,7 +344,7 @@ class MyRequests extends Component {
         classNames="fade"
         timeout={500}
       >
-        <div className="d-flex transaction my-3 rounded shadow-sm">
+        <div className="d-flex transaction my-3 rounded shadow-sm flex-column flex-sm-row">
           <div className="image flex-fill">
             <img src="/public/upload/product-images/unnamed-19-jpg.jpg" className="rounded-left" />
           </div>
