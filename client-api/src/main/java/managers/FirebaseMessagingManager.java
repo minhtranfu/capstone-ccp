@@ -1,6 +1,10 @@
 package managers;
 
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutureCallback;
+import com.google.api.core.ApiFutures;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.*;
@@ -24,6 +28,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Singleton
@@ -91,53 +96,62 @@ public class FirebaseMessagingManager {
 		return connection.getInputStream();
 	}
 
-	public List<String> sendMessage(String title, String content, long receiverId) {
+	public void sendMessage(String title, String content, long receiverId, HashMap<String, String> data) {
 
 		ContractorEntity managedContractor = contractorDAO.findByIdWithValidation(receiverId);
 		List<String> responseList = new ArrayList<>();
 		for (NotificationDeviceTokenEntity notificationDeviceToken : managedContractor.getNotificationDeviceTokens()) {
-			String response = null;
-			try {
-				response = this.sendMessage(title, content, notificationDeviceToken);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			responseList.add(response);
+			this.sendMessage(title, content, notificationDeviceToken,data);
 		}
-		return responseList;
 	}
 
-	public String sendMessage(String title, String content, NotificationDeviceTokenEntity notificationDeviceTokenEntity) throws IOException {
+	public void sendMessage(String title, String content, long receiverId) {
+		this.sendMessage(title, content, receiverId, null);
+	}
+
+	public void sendMessage(String title, String content, NotificationDeviceTokenEntity notificationDeviceTokenEntity
+			, HashMap<String, String> data) {
 
 		String regisToken = notificationDeviceTokenEntity.getRegistrationToken();
-		String response = null;
 
 		switch (notificationDeviceTokenEntity.getDeviceType()) {
 			case EXPO:
-				response = sendExpo(title, content, regisToken);
+				try {
+					sendExpo(title, content, regisToken);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				break;
 			case WEB:
 			case MOBILE:
-				response = sendWebMobile(title, content, regisToken);
+				sendWebMobile(title, content, regisToken, data);
 				break;
 		}
-		return response;
 	}
 
 
-	public String sendWebMobile(String title, String content, String regisToken) {
-		Message message = getDefaultMessageBuilder().setNotification(
-				new Notification(title, content)
-		).setToken(regisToken).build();
+	public void sendWebMobile(String title, String content, String regisToken, HashMap<String, String> data) {
+		Message message = Message.builder()
 
-		String response = null;
-		try {
-			response = FirebaseMessaging.getInstance().send(message);
-		} catch (FirebaseMessagingException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Successfully sent message: " + response);
-		return response;
+				.setNotification(
+						new Notification(title, content)
+				)
+				.setWebpushConfig(getDefaultWebpushConfig(data))
+				.setToken(regisToken).build();
+
+		ApiFuture<String> stringApiFuture = FirebaseMessaging.getInstance().sendAsync(message);
+		ApiFutures.addCallback(stringApiFuture, new ApiFutureCallback<String>() {
+			@Override
+			public void onFailure(Throwable throwable) {
+				System.out.println("Failed to send message to token " + regisToken);
+			}
+
+			@Override
+			public void onSuccess(String s) {
+				System.out.println("Successfully sent message: " + s);
+			}
+		}, MoreExecutors.directExecutor());
+
 
 	}
 
@@ -169,21 +183,15 @@ public class FirebaseMessagingManager {
 		return stringWriter.toString();
 	}
 
-	private WebpushConfig getDefaultWebpushConfig() {
+	private WebpushConfig getDefaultWebpushConfig(HashMap<String, String> data) {
 		return
 				WebpushConfig.builder()
 						.setNotification(WebpushNotification.builder()
 								.setIcon(DEFAULT_NOTI_ICON)
-								.build()).build();
+								.build())
+						.putAllData(data)
+						.build();
 	}
 
-
-	private Message.Builder getDefaultMessageBuilder() {
-		return Message.builder()
-				.setWebpushConfig(getDefaultWebpushConfig())
-				.setApnsConfig(ApnsConfig.builder().setAps(Aps.builder().build()).build())
-				.setAndroidConfig(AndroidConfig.builder().build());
-
-	}
 
 }

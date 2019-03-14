@@ -16,6 +16,8 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "subscription", schema = "capstone_ccp")
 @EntityListeners(SubscriptionEntityListener.class)
+@NamedNativeQueries({
+
 @NamedNativeQuery(name = "SubscriptionEntity.matchEquipment"
 		,resultClass = SubscriptionEntity.class
 		,query = "SELECT * from subscription s where " +
@@ -26,7 +28,9 @@ import java.time.LocalDate;
 		//check exists equipment availble time range contain the subscribed time range\n"
 		"and  exists (select * from available_time_range t where t.equipment_id = :equipmentId and t.begin_date <= s.begin_date  and  s.end_date <= t.end_date)"+
 		// check equipment renting time not contain the subscribed time range
+
 		"and not exists (select * from hiring_transaction h where h.equipment_id = :equipmentId and (h.status = 'ACCEPTED' or h.status = 'PROCESSING') and not (h.end_date > s.end_date or h.end_date< s.begin_date))")
+})
 public class SubscriptionEntity {
 	private long id;
 	private EquipmentTypeEntity equipmentType;

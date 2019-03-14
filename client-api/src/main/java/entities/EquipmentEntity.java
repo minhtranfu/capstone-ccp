@@ -1,5 +1,6 @@
 package entities;
 
+import dtos.queryResults.MatchedSubscriptionResult;
 import dtos.wrappers.IndependentHiringTransactionWrapper;
 import listeners.entityListenters.EquipmentEntityListener;
 import org.hibernate.annotations.Where;
@@ -27,6 +28,35 @@ import java.util.Objects;
 		, @NamedQuery(name = "EquipmentEntity.getAll", query = "select  e from EquipmentEntity e")
 		, @NamedQuery(name = "EquipmentEntity.getOverdateRenting", query = "select e from EquipmentEntity  e where e.status = 'RENTING' and exists (select t from e.processingHiringTransactions t where t.endDate < current_date )")
 })
+
+@NamedNativeQuery(name = "EquipmentEntity.getMatchedEquipmentForSubscriptions", query = "select e.id as equipment_id, s.id as subscription_id, s.contractor_id from equipment e , subscription s " +
+		"where e.status = 'AVAILABLE'" +
+		"and e.updated_time > now()-:timeOffset\n" +
+		"and \n" +
+		"(s.equipment_type_id = e.equipment_type_id or s.equipment_type_id is null or s.equipment_type_id = 0)\n" +
+		"and  (s.max_price > e.daily_price  or s.max_price =-1 or s.max_price is null)\n" +
+		"\n" +
+		"-- check distance ( require lat-long not null)\n" +
+		"and (getDistance(e.id,s.id) <= max_distance )-- or max_distance is  null or max_distance = -1)\n" +
+		"-- check exists equipment availble time range contain the subscribed time range\n" +
+		"and   exists (select * from available_time_range t where t.equipment_id = e.id and t.begin_date <= s.begin_date  and  s.end_date <= t.end_date)\n" +
+		"\n" +
+		"\n" +
+		"-- check equipment renting time not contain the subscribed time range \n" +
+		"and not exists (select * from hiring_transaction h where h.equipment_id = e.id and (h.status = 'ACCEPTED' or h.status = 'PROCESSING') and not (h.end_date > s.end_date or h.end_date< s.begin_date))\n"
+		,resultSetMapping = "MatchedSubscriptionResult"
+)
+@SqlResultSetMapping(
+		name = "MatchedSubscriptionResult",
+		classes = @ConstructorResult(
+				targetClass = MatchedSubscriptionResult.class,
+				columns = {
+						@ColumnResult(name = "equipment_id", type = long.class),
+						@ColumnResult(name = "subscription_id", type = long.class),
+						@ColumnResult(name = "contractor_id", type = long.class)
+				}
+		)
+)
 @EntityListeners(EquipmentEntityListener.class)
 //for serializing null values ( not hide it)
 @JsonbNillable
@@ -205,8 +235,6 @@ public class EquipmentEntity implements Serializable {
 	}
 
 
-
-
 	@OneToOne(cascade = {})
 	@JoinColumn(name = "thumbnail_image_id")
 	public EquipmentImageEntity getThumbnailImage() {
@@ -216,6 +244,7 @@ public class EquipmentEntity implements Serializable {
 	public void setThumbnailImage(EquipmentImageEntity thumbnailImage) {
 		this.thumbnailImage = thumbnailImage;
 	}
+
 	@Basic
 	@Column(name = "is_deleted", insertable = false, nullable = false)
 	public boolean isDeleted() {
@@ -329,10 +358,6 @@ public class EquipmentEntity implements Serializable {
 		this.equipmentImages.clear();
 
 	}
-
-
-
-
 
 
 	// TODO: 2/27/19 orphan removal here !

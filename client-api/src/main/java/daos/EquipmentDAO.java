@@ -1,5 +1,6 @@
 package daos;
 
+import dtos.queryResults.MatchedSubscriptionResult;
 import entities.AvailableTimeRangeEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
@@ -206,13 +207,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		return !(endDate2.isBefore(beginDate1) || beginDate2.isAfter(endDate1));
 	}
 
-
-
-
-
-
-
-
 	public List<EquipmentEntity> getOverdateRentingEquipments() {
 		List<EquipmentEntity> resultList = entityManager.createNamedQuery("EquipmentEntity.getOverdateRenting", EquipmentEntity.class)
 				.getResultList();
@@ -227,6 +221,12 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		}
 	}
 
+	public List<MatchedSubscriptionResult> getMatchedEquipmentForSubscription(int timeOffset) {
+		return entityManager.createNamedQuery("EquipmentEntity.getMatchedEquipmentForSubscriptions",MatchedSubscriptionResult.class)
+				.setParameter("timeOffset", timeOffset)
+				.getResultList();
+
+	}
 
 }
 

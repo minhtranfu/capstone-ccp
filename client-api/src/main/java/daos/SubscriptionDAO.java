@@ -29,6 +29,8 @@ public class SubscriptionDAO extends BaseDAO<SubscriptionEntity, Long> {
 						.getResultList();
 		return matchedSubscriptions;
 
-
 	}
+
+
+
 }
