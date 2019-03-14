@@ -2,6 +2,7 @@ package listeners.entityListenters;
 
 import entities.SubscriptionEntity;
 
+import javax.inject.Inject;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;

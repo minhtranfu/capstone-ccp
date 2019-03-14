@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
@@ -62,8 +63,13 @@ import java.util.Objects;
 @JsonbNillable
 public class EquipmentEntity implements Serializable {
 	private long id;
+	@NotNull
+	@NotEmpty
 	private String name;
+
+	@NotNull
 	private Integer dailyPrice;
+	@NotNull
 	private Integer deliveryPrice;
 	private String description;
 	private Status status;
@@ -75,7 +81,14 @@ public class EquipmentEntity implements Serializable {
 
 
 	private String address;
+	@NotNull
+	@Min(-90)
+	@Max(90)
 	private Double latitude;
+
+	@NotNull
+	@Min(-180)
+	@Max(180)
 	private Double longitude;
 
 	private EquipmentTypeEntity equipmentType;
@@ -307,9 +320,7 @@ public class EquipmentEntity implements Serializable {
 
 	@Basic
 	@Column(name = "lat")
-	@NotNull
-	@Min(-90)
-	@Max(90)
+
 	public Double getLatitude() {
 		return this.latitude;
 	}
@@ -320,9 +331,6 @@ public class EquipmentEntity implements Serializable {
 
 	@Basic
 	@Column(name = "`long`")
-	@NotNull
-	@Min(-180)
-	@Max(180)
 	public Double getLongitude() {
 		return this.longitude;
 	}

@@ -8,8 +8,6 @@ import org.modelmapper.PropertyMap;
 import org.modelmapper.convention.MatchingStrategies;
 
 import javax.ejb.Singleton;
-import java.util.Collection;
-import java.util.List;
 
 
 @Singleton
@@ -103,4 +101,13 @@ public class ModelConverter {
 		return modelMapper.map(transactionDateChangeRequestRequest, TransactionDateChangeRequestEntity.class);
 	}
 
+	public SubscriptionEntity toEntity(SubscriptionRequest subscriptionRequest) {
+		return modelMapper.map(subscriptionRequest, SubscriptionEntity.class);
+	}
+
+	public void toEntity(SubscriptionRequest subscriptionRequest, SubscriptionEntity managedSubscription) {
+		modelMapper.map(subscriptionRequest, managedSubscription);
+	}
+
 }
+

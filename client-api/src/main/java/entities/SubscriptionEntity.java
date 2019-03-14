@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,17 +34,35 @@ import java.time.LocalDate;
 })
 public class SubscriptionEntity {
 	private long id;
-	private EquipmentTypeEntity equipmentType;
-	private ContractorEntity contractor;
-	private double maxPrice;
 
+	//can be null
+	private EquipmentTypeEntity equipmentType;
+//	@NotNull
+	private ContractorEntity contractor;
+	//can be null
+	@Positive
+	private Double maxPrice;
+
+	@NotNull
 	private LocalDate beginDate;
+	@NotNull
 	private LocalDate endDate;
+
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 
+	//can be null
+	@Positive
+
 	private Double maxDistance;
+
+	//can be null if maxDistance is null
+	@Min(-90)
+	@Max(90)
 	private Double latitude;
+
+	@Min(-180)
+	@Max(180)
 	private Double longitude;
 
 	@Id
@@ -83,11 +102,11 @@ public class SubscriptionEntity {
 
 	@Basic
 	@Column(name = "max_price")
-	public double getMaxPrice() {
+	public Double getMaxPrice() {
 		return maxPrice;
 	}
 
-	public void setMaxPrice(double maxPrice) {
+	public void setMaxPrice(Double maxPrice) {
 		this.maxPrice = maxPrice;
 	}
 

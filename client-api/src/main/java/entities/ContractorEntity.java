@@ -32,12 +32,14 @@ public class ContractorEntity {
 	private LocalDateTime updatedTime;
 
 
+
 	private List<EquipmentEntity> equipments;
 	private List<ConstructionEntity> constructions;
 
 	private List<FeedbackEntity> sentFeedback;
 	private List<FeedbackEntity> receivedFeedback;
 	private List<NotificationDeviceTokenEntity> notificationDeviceTokens;
+	private List<SubscriptionEntity> subscriptionEntities;
 
 	@JsonbTransient
 	@XmlTransient
@@ -202,6 +204,16 @@ public class ContractorEntity {
 	@Transient
 	public boolean isActivated() {
 		return status == Status.ACTIVATED;
+	}
+
+	@JsonbTransient
+	@OneToMany(mappedBy = "contractor")
+	public List<SubscriptionEntity> getSubscriptionEntities() {
+		return subscriptionEntities;
+	}
+
+	public void setSubscriptionEntities(List<SubscriptionEntity> subscriptionEntities) {
+		this.subscriptionEntities = subscriptionEntities;
 	}
 
 	public enum Status{

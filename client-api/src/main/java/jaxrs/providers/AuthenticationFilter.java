@@ -1,6 +1,5 @@
 package jaxrs.providers;
 
-import annotations.Secured;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;

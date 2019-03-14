@@ -49,6 +49,7 @@ public class EquipmentEntityListener {
 	}
 
 	@PreUpdate
+
 	void preUpdate(EquipmentEntity equipmentEntity) {
 		// TODO: 3/10/19 set locaiton data based on construction
 		updateLoactionDataBasedOnConstruction(equipmentEntity);

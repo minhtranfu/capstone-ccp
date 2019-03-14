@@ -158,6 +158,7 @@ public class FirebaseMessagingManager {
 
 	public String sendExpo(String title, String content, String token) throws IOException {
 
+		// TODO: 3/14/19 use async for this
 		URL url = new URL("https://exp.host/--/api/v2/push/send");
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
