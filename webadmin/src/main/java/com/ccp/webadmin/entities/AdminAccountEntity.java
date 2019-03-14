@@ -5,7 +5,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,12 +30,12 @@ public class AdminAccountEntity implements UserDetails {
              optional = false)
     @JoinColumn(name = "admin_user_id")
     @Valid
-    private AdminUserEntity account;
+    private AdminUserEntity adminUserEntity;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority(this.getAccount().getRole().getRoleName());
+        GrantedAuthority authority = new SimpleGrantedAuthority(this.getAdminUserEntity().getRole().getRoleName());
         authorities.add(authority);
         return authorities;
     }
@@ -44,10 +43,10 @@ public class AdminAccountEntity implements UserDetails {
     public AdminAccountEntity() {
     }
 
-    public AdminAccountEntity(String username, String password, AdminUserEntity account) {
+    public AdminAccountEntity(String username, String password, AdminUserEntity adminUserEntity) {
         this.username = username;
         this.password = password;
-        this.account = account;
+        this.adminUserEntity = adminUserEntity;
     }
 
     public Integer getId() {
@@ -94,22 +93,25 @@ public class AdminAccountEntity implements UserDetails {
         this.password = password;
     }
 
-    public AdminUserEntity getAccount() {
-        return account;
+    public AdminUserEntity getAdminUserEntity() {
+        return adminUserEntity;
     }
 
-    public void setAccount(AdminUserEntity account) {
-        if (account == null) {
-            if (this.account != null) {
-                this.account.setAdminAccountEntity(null);
+    public void setAdminUserEntity(AdminUserEntity adminUserEntity) {
+        if (adminUserEntity == null) {
+            if (this.adminUserEntity != null) {
+                this.adminUserEntity.setAdminAccountEntity(null);
             }
         } else {
             RoleEntity role = new RoleEntity();
             role.setId(2);
-            account.setRole(role);
-            account.setAdminAccountEntity(this);
+            if(adminUserEntity.getRole() == null){
+                adminUserEntity.setRole(role);
+            }
+
+            adminUserEntity.setAdminAccountEntity(this);
         }
-        this.account = account;
+        this.adminUserEntity = adminUserEntity;
     }
 
 

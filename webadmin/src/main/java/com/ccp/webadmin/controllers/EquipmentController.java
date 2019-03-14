@@ -35,7 +35,9 @@ public class EquipmentController {
 
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
-        model.addAttribute("equipment", equipmentService.findById(id));
+        EquipmentEntity equipmentEntity = equipmentService.findById(id);
+        model.addAttribute("equipment", equipmentEntity);
+        model.addAttribute("equipmentImage", equipmentImageService.findByEquipmentEntity(equipmentEntity));
         model.addAttribute("equipmentStatus", Arrays.asList(EquipmentEntity.Status.values()));
         return "equipment/detail";
     }
@@ -58,6 +60,7 @@ public class EquipmentController {
             equipmentEntity.setStatus(foundEquipment.getStatus());
             equipmentEntity.setCreatedTime(foundEquipment.getCreatedTime());
             equipmentEntity.setUpdatedTime(foundEquipment.getUpdatedTime());
+            model.addAttribute("equipmentImage", equipmentImageService.findByEquipmentEntity(foundEquipment));
             return "equipment/detail";
         }
         model.addAttribute("equipmentStatus", Arrays.asList(HiringTransactionEntity.Status.values()));

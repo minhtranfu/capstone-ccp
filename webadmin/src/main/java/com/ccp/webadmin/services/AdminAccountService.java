@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public interface AdminAccountService  extends UserDetailsService {
+public interface AdminAccountService extends UserDetailsService {
     List<AdminAccountEntity> findAll();
 
     AdminAccountEntity findById(Integer id);
@@ -22,6 +22,8 @@ public interface AdminAccountService  extends UserDetailsService {
 
     void deleteById(Integer id);
 
-    boolean existsAdminAccountEntity(AdminAccountEntity adminAccountEntity);
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
 
 }

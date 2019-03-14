@@ -37,11 +37,14 @@
                                 <form th:action="@{/staff/saveProcess}" method="post" th:object="${staff}"
                                       enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{id}"><br>
-                                    <input type="hidden" th:field="*{account.id}"><br>
+                                    <input type="hidden" th:field="*{adminUserEntity.id}"><br>
                                     <!--<span th:errors="*{name}" style="color: red"></span><br>-->
                                     <div class="form-group">
                                         <label>User Name</label>
                                         <input th:field="*{username}" class="form-control" placeholder="User Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${errorMessage}" th:text="${errorMessage}" style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
@@ -60,33 +63,48 @@
                                     <!--</div>-->
                                     <div class="form-group">
                                         <label>Full Name</label>
-                                        <input th:field="*{account.name}" class="form-control" placeholder="Full Name">
+                                        <input th:field="*{adminUserEntity.name}" class="form-control" placeholder="Full Name">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${#fields.hasErrors('account.name')}" th:errors="*{account.name}"
+                                        <span th:if="${#fields.hasErrors('adminUserEntity.name')}" th:errors="*{adminUserEntity.name}"
                                               style="color: red"></span>
                                     </div>
                                     <div class="form-group">
+                                        <label>Address</label>
+                                        <input th:field="*{adminUserEntity.address}" class="form-control" placeholder="Address">
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('adminUserEntity.address')}" th:errors="*{adminUserEntity.address}"
+                                              style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Avarta:</label>
+                                        <input type="file" name="file">
+                                    </div>
+                                    <div class="form-group">
                                         <label>Phone Number</label>
-                                        <input th:field="*{account.phone}" class="form-control"
+                                        <input th:field="*{adminUserEntity.phone}" class="form-control"
                                                placeholder="Phone Number">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${#fields.hasErrors('account.phone')}" th:errors="*{account.phone}"
+                                        <span th:if="${#fields.hasErrors('adminUserEntity.phone')}" th:errors="*{adminUserEntity.phone}"
                                               style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Email Address (required)</label>
-                                        <input th:field="*{account.email}" class="form-control"
+                                        <input th:field="*{adminUserEntity.email}" class="form-control"
                                                placeholder="Email Address">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${#fields.hasErrors('account.email')}" th:errors="*{account.email}"
+                                        <span th:if="${errorMessageEmail}" th:text="${errorMessageEmail}" style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('adminUserEntity.email')}" th:errors="*{adminUserEntity.email}"
                                               style="color:red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Gender</label>
-                                        <select th:field="${staff.account.male}" class="form-control">
+                                        <select th:field="${staff.adminUserEntity.male}" class="form-control">
                                             <option th:value="'false'" th:text="Female"></option>
                                             <option th:value="'true'" th:text="Male"></option>
                                         </select>

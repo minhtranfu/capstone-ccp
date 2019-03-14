@@ -3,9 +3,12 @@ package com.ccp.webadmin.controllers;
 import com.ccp.webadmin.entities.EquipmentEntity;
 import com.ccp.webadmin.entities.FeedbackTypeEntity;
 import com.ccp.webadmin.entities.HiringTransactionEntity;
+import com.ccp.webadmin.entities.NotificationDeviceTokenEntity;
 import com.ccp.webadmin.services.EquipmentService;
 import com.ccp.webadmin.services.FeedbackTypeService;
 import com.ccp.webadmin.services.HiringTransactionService;
+import com.ccp.webadmin.services.NotificationDeviceTokenService;
+import com.ccp.webadmin.utils.PushNotifictionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,11 +25,15 @@ public class HiringTransactionController {
 
     private final HiringTransactionService hiringTransactionService;
     private final EquipmentService equipmentService;
+    private final PushNotifictionHelper pushNotifictionHelper;
+    private final NotificationDeviceTokenService notificationDeviceTokenService;
 
     @Autowired
-    public HiringTransactionController(HiringTransactionService hiringTransactionService, EquipmentService equipmentService) {
+    public HiringTransactionController(HiringTransactionService hiringTransactionService, EquipmentService equipmentService, PushNotifictionHelper pushNotifictionHelper, NotificationDeviceTokenService notificationDeviceTokenService) {
         this.hiringTransactionService = hiringTransactionService;
         this.equipmentService = equipmentService;
+        this.pushNotifictionHelper = pushNotifictionHelper;
+        this.notificationDeviceTokenService = notificationDeviceTokenService;
     }
 
     @GetMapping({"", "/", "/index"})
@@ -89,10 +96,27 @@ public class HiringTransactionController {
         }
 
 
+
         EquipmentEntity foundEquipment = foundHiringTransaction.getEquipment();
         foundEquipment.setStatus(hiringTransactionEntity.getEquipment().getStatus());
         equipmentService.save(foundEquipment);
         hiringTransactionService.save(foundHiringTransaction);
+        String title = "Change Hiring Transaction Status";
+        String content = "Hiring Transaction Status: " + foundHiringTransaction.getStatus().getValue()
+                + " Equipment Status:" + foundEquipment.getStatus().getValue();
+
+        try {
+            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(hiringTransactionEntity.getRequester())
+            ) {
+                pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
+            }
+            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(hiringTransactionEntity.getEquipment().getContractorEntity())
+            ) {
+                pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Integer id = foundHiringTransaction.getId();
         return "redirect:detail/" + id;
     }

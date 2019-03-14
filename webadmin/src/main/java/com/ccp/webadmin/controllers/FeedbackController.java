@@ -38,11 +38,6 @@ public class FeedbackController {
         model.addAttribute("feedback", feedbackService.findById(id));
         model.addAttribute("feedbackTypes", feedbackTypeService.findAll());
         model.addAttribute("feedbackStatus", Arrays.asList(FeedbackEntity.Status.values()));
-//        try {
-//            PushNotifictionHelper.pushFCMNotification("d8-Ink9CAt8:APA91bHkISrpC9Pp7CX6VB6MSlx5qAzxIc8TCWFO7RgYpdZUfOvOdI1PP1syZcS9CpNDuIEUr3u1Wx1mT_5mFlxnops-Zk6fGtKwL_3POKRmkO4931e38xauhn6YBZA6yMv4IF68QZV1", "test title", "message");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
         return "feedback/detail";
     }
 

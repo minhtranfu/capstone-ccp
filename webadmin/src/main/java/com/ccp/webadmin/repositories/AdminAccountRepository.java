@@ -10,4 +10,8 @@ public interface AdminAccountRepository extends JpaRepository<AdminAccountEntity
     Optional<AdminAccountEntity> findByUsername(String username);
 
     boolean existsByUsername(String username);
+
+    boolean existsByAdminUserEntity_Email(String email);
+
+
 }

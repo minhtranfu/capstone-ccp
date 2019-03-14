@@ -29,10 +29,13 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.1.2.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity5', version: '3.0.4.RELEASE'
-
+    compile group: 'com.google.cloud', name: 'google-cloud-storage', version: '1.17.0'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
+    // https://mvnrepository.com/artifact/org.apache.cxf/cxf-bundle-jaxrs
+    compile group: 'org.apache.cxf', name: 'cxf-bundle-jaxrs', version: '2.7.5'
+
     compile group: 'org.json', name: 'json', version: '20180813'
 
 //    runtimeOnly 'com.h2database:h2'

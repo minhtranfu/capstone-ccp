@@ -34,9 +34,6 @@ public class EquipmentEntity {
     @Column(name = "status")
     private Status status;
 
-    @Column(name = "thumbnail_image_id")
-    private String thumbnailImage;
-
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
@@ -135,14 +132,6 @@ public class EquipmentEntity {
         this.status = status;
     }
 
-    public String getThumbnailImage() {
-        return thumbnailImage;
-    }
-
-    public void setThumbnailImage(String thumbnailImage) {
-        this.thumbnailImage = thumbnailImage;
-    }
-
     public Boolean getDeleted() {
         return isDeleted;
     }
@@ -234,7 +223,6 @@ public class EquipmentEntity {
                 ", deliveryPrice=" + deliveryPrice +
                 ", description='" + description + '\'' +
                 ", status=" + status +
-                ", thumbnailImage='" + thumbnailImage + '\'' +
                 ", isDeleted=" + isDeleted +
                 ", createdTime=" + createdTime +
                 ", updatedTime=" + updatedTime +

@@ -111,9 +111,9 @@ public class ContractorEntity implements Serializable {
     }
 
     public Integer countReceivedFeedbackEntity() {
-
         return receivedFeedbackEntities != null ? receivedFeedbackEntities.size() : 0;
     }
+
     public void setReceivedFeedbackEntities(List<FeedbackEntity> receivedFeedbackEntities) {
         this.receivedFeedbackEntities = receivedFeedbackEntities;
     }

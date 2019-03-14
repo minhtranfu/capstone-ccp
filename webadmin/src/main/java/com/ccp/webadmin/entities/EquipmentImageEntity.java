@@ -13,7 +13,7 @@ public class EquipmentImageEntity implements Serializable {
     private Integer id;
 
     @Column(name = "url")
-    private String name;
+    private String url;
 
     @ManyToOne
     @JoinColumn(name = "equipment_id")
@@ -31,12 +31,12 @@ public class EquipmentImageEntity implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUrl() {
+        return url;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public EquipmentEntity getEquipmentEntity() {

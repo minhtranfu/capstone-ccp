@@ -32,17 +32,22 @@ public class AdminUserEntity implements Serializable {
     @Column(name = "email")
     private String email;
 
+    @Size(min = 3, message = "Address required more than 3 letters")
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "thumbnail_image")
+    private String thumbnail;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
     private RoleEntity role;
 
-    @OneToOne(mappedBy = "account")
+    @OneToOne(mappedBy = "adminUserEntity")
     private AdminAccountEntity adminAccountEntity;
 
     public AdminUserEntity() {
     }
-
 
     public Integer getId() {
         return id;
@@ -100,4 +105,19 @@ public class AdminUserEntity implements Serializable {
         this.adminAccountEntity = adminAccountEntity;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
 }

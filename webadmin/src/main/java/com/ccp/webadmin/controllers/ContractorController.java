@@ -51,6 +51,10 @@ public class ContractorController {
 
             //todo updatedTime null !
             ContractorEntity foundContractor = contractorService.findById(contractorEntity.getId());
+            contractorEntity.setCreatedTime(foundContractor.getCreatedTime());
+            contractorEntity.setUpdatedTime(foundContractor.getUpdatedTime());
+            contractorEntity.setReceivedFeedbackEntities(foundContractor.getReceivedFeedbackEntities());
+            model.addAttribute("verifyImages",contractorVerifyingImageService.findByContractor(contractorEntity));
             return "contractor/detail";
         }
 

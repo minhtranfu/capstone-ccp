@@ -1,7 +1,6 @@
 package com.ccp.webadmin.services.impl;
 
 import com.ccp.webadmin.entities.AdminAccountEntity;
-import com.ccp.webadmin.entities.AdminUserEntity;
 import com.ccp.webadmin.repositories.AdminAccountRepository;
 import com.ccp.webadmin.repositories.AdminUserRepository;
 import com.ccp.webadmin.services.AdminAccountService;
@@ -24,15 +23,12 @@ import java.util.List;
 public class AdminAccountServiceImpl implements AdminAccountService {
 
     private final AdminAccountRepository adminAccountRepository;
-    private final PasswordAutoGenerator passwordAutoGenerator;
-    private final SendEmailService sendEmailService;
+
     private final AdminUserRepository adminUserRepository;
 
     @Autowired
-    public AdminAccountServiceImpl(AdminAccountRepository adminAccountRepository, PasswordAutoGenerator passwordAutoGenerator, SendEmailService sendEmailService, AdminUserRepository adminUserRepository) {
+    public AdminAccountServiceImpl(AdminAccountRepository adminAccountRepository, AdminUserRepository adminUserRepository) {
         this.adminAccountRepository = adminAccountRepository;
-        this.passwordAutoGenerator = passwordAutoGenerator;
-        this.sendEmailService = sendEmailService;
         this.adminUserRepository = adminUserRepository;
     }
 
@@ -48,17 +44,6 @@ public class AdminAccountServiceImpl implements AdminAccountService {
 
     @Override
     public void save(AdminAccountEntity adminAccountEntity) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(11);
-        String password = passwordAutoGenerator.generatePassayPassword();
-        try {
-            sendEmailService.sendmail(adminAccountEntity.getUsername(), password, adminAccountEntity.getAccount().getEmail());
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String encodedPassword = passwordEncoder.encode(password);
-        adminAccountEntity.setPassword(encodedPassword);
         adminAccountRepository.save(adminAccountEntity);
     }
 
@@ -68,8 +53,13 @@ public class AdminAccountServiceImpl implements AdminAccountService {
     }
 
     @Override
-    public boolean existsAdminAccountEntity(AdminAccountEntity adminAccountEntity) {
-        return adminAccountRepository.existsById(adminAccountEntity.getId());
+    public boolean existsByUsername(String username) {
+        return adminAccountRepository.existsByUsername(username);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return adminAccountRepository.existsByAdminUserEntity_Email(email);
     }
 
     @Override

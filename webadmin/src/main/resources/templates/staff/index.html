@@ -50,6 +50,7 @@
                                 <th>Username</th>
                                 <th>Fullname</th>
                                 <th>Gender</th>
+                                <th>Address</th>
                                 <th>Phone Number</th>
                                 <th>Email</th>
                                 <th>Role</th>
@@ -61,14 +62,15 @@
                                 <td><a th:href="@{/staff/detail/{id}(id = ${item.id})}">
                                     <span th:text="${item.username}" class="link"></span></a>
                                 </td>
-                                <td th:text="${item.account.name}"></td>
-                                <td th:switch="${item.account.male}">
+                                <td th:text="${item.adminUserEntity.name}"></td>
+                                <td th:switch="${item.adminUserEntity.male}">
                                     <span th:case="true">Male</span>
                                     <span th:case="false">Female</span>
                                 </td>
-                                <td th:text="${item.account.phone}"></td>
-                                <td th:text="${item.account.email}"></td>
-                                <td th:text="${item.account.role.getRoleName()}"></td>
+                                <td th:text="${item.adminUserEntity.address}"></td>
+                                <td th:text="${item.adminUserEntity.phone}"></td>
+                                <td th:text="${item.adminUserEntity.email}"></td>
+                                <td th:text="${item.adminUserEntity.role.getRoleName()}"></td>
                             </tr>
                             </tbody>
                         </table>
