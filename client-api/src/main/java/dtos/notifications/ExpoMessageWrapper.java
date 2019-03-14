@@ -1,6 +1,6 @@
 package dtos.notifications;
 
-public class ExpoMessageWrapper extends ExpoMessageData{
+public class ExpoMessageWrapper extends ExpoMessageData {
 	private String to;
 	private ExpoMessageData data;
 
@@ -27,3 +27,4 @@ public class ExpoMessageWrapper extends ExpoMessageData{
 		this.to = to;
 		this.data = data;
 	}
+}
