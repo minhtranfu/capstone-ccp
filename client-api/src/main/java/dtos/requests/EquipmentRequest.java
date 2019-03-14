@@ -3,6 +3,8 @@ package dtos.requests;
 import dtos.IdOnly;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +30,13 @@ public abstract class EquipmentRequest {
 	public IdOnly thumbnailImage;
 
 	public String address;
+	@NotNull
+	@Min(-90)
+	@Max(90)
 	public Double latitude;
+	@NotNull
+	@Min(-180)
+	@Max(180)
 	public Double longitude;
 
 	@NotNull
@@ -41,7 +49,8 @@ public abstract class EquipmentRequest {
 //	public IdOnly contractor;
 
 
-	public IdOnly construction;
+	//not crud construction anymore
+//	public IdOnly construction;
 
 
 	@Valid

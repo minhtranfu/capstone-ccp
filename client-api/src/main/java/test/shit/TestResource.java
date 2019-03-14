@@ -3,11 +3,13 @@ package test.shit;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import daos.EquipmentDAO;
+import daos.SubscriptionDAO;
 import dtos.requests.EquipmentPutRequest;
 import dtos.validationObjects.LocationValidator;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentRequest;
 import entities.EquipmentEntity;
+import entities.EquipmentTypeEntity;
 import managers.FirebaseMessagingManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -212,7 +214,29 @@ public class TestResource  {
 		return Response.ok(response).build();
 	}
 
+	@GET
+	@Path("expo")
+	public Response testPushNotiExpo() throws IOException {
+		return Response.ok(messagingManager.sendExpo("test","testBody","ExponentPushToken[4SfrLEChNrtCnwgRHZcAFV]")).build();
+	}
 
+
+	@Inject
+	SubscriptionDAO subscriptionDAO;
+
+	@GET
+	@Path("subscriptionMatched")
+	public Response testmatchedSubscription() {
+		EquipmentEntity equipmentEntity = new EquipmentEntity();
+		equipmentEntity.setId(40);
+		equipmentEntity.setDailyPrice(12);
+		EquipmentTypeEntity equipmentTypeEntity = new EquipmentTypeEntity();
+		equipmentEntity.setId(4);
+
+		equipmentEntity.setEquipmentType(equipmentTypeEntity);
+		;
+		return Response.ok(subscriptionDAO.getMatchedSubscriptions(equipmentEntity)).build();
+	}
 
 
 }

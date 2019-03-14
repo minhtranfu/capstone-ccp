@@ -4,7 +4,6 @@ import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
 
 @Entity
 @Table(name = "notification_device_token", schema = "capstone_ccp")
@@ -32,7 +31,7 @@ public class NotificationDeviceTokenEntity {
 	@Basic
 	@NotNull
 	@NotEmpty
-	@Column(name = "registrationToken", nullable = true, length = 256)
+	@Column(name = "registration_token", nullable = true, length = 256)
 	public String getRegistrationToken() {
 		return registrationToken;
 	}

@@ -55,11 +55,6 @@ public class ModelConverter {
 	public EquipmentEntity toEntity(EquipmentPutRequest equipmentPutRequest, EquipmentEntity foundEntity) {
 
 		modelMapper.map(equipmentPutRequest, foundEntity);
-		if (equipmentPutRequest.construction == null) {
-			foundEntity.setConstruction(null);
-		}
-
-
 
 //		foundEntity.setEquipmentImages((Collection<DescriptionImageEntity>) modelMapper.map(equipmentPutRequest.equipmentImages, foundEntity.getDescriptionImages().getClass()));
 //		foundEntity.setAvailableTimeRanges((List<AvailableTimeRangeEntity>) modelMapper.map(equipmentPutRequest.availableTimeRanges, foundEntity.getAvailableTimeRanges().getClass()));

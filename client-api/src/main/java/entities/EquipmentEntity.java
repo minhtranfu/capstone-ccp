@@ -7,6 +7,9 @@ import org.hibernate.annotations.Where;
 import javax.json.bind.annotation.JsonbNillable;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 
@@ -275,6 +278,9 @@ public class EquipmentEntity implements Serializable {
 
 	@Basic
 	@Column(name = "lat")
+	@NotNull
+	@Min(-90)
+	@Max(90)
 	public Double getLatitude() {
 		return this.latitude;
 	}
@@ -285,6 +291,9 @@ public class EquipmentEntity implements Serializable {
 
 	@Basic
 	@Column(name = "`long`")
+	@NotNull
+	@Min(-180)
+	@Max(180)
 	public Double getLongitude() {
 		return this.longitude;
 	}

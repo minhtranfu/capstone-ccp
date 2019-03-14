@@ -7,6 +7,9 @@ import org.hibernate.annotations.Where;
 
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 
@@ -176,6 +179,9 @@ public class HiringTransactionEntity {
 
 	@Basic
 	@Column(name = "equipment_lat")
+	@NotNull
+	@Min(-90)
+	@Max(90)
 	public double getEquipmentLatitude() {
 		return equipmentLatitude;
 	}
@@ -186,6 +192,9 @@ public class HiringTransactionEntity {
 
 	@Basic
 	@Column(name = "equipment_long")
+	@NotNull
+	@Min(-180)
+	@Max(180)
 	public double getEquipmentLongitude() {
 		return equipmentLongitude;
 	}
@@ -207,6 +216,9 @@ public class HiringTransactionEntity {
 
 	@Basic
 	@Column(name = "requester_lat")
+	@NotNull
+	@Min(-90)
+	@Max(90)
 	public double getRequesterLatitude() {
 		return requesterLatitude;
 	}
@@ -217,6 +229,9 @@ public class HiringTransactionEntity {
 
 	@Basic
 	@Column(name = "requester_long")
+	@NotNull
+	@Min(-180)
+	@Max(180)
 	public double getRequesterLongitude() {
 		return requesterLongitude;
 	}
