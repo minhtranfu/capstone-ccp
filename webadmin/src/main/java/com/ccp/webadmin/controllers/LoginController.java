@@ -49,15 +49,11 @@ public class LoginController {
             Model model) {
         if (!adminAccountService.existsByEmail(email)) {
             model.addAttribute("errorMessage", "Email doesnot exist");
-            System.out.println("aaaaa" + adminAccountService.existsByEmail(email));
-            System.out.println("ccccc" + email);
             AdminAccountEntity adminAccountEntity = adminAccountService.findByEmail(email);
-            System.out.println("abcd" + adminAccountEntity);
             return "forgetPassword";
         }
         AdminAccountEntity adminAccountEntity = adminAccountService.findByEmail(email);
 
-        System.out.println("Bbbbbb" + adminAccountEntity.getId() + adminAccountEntity.getAdminUserEntity().getEmail());
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(11);
         String password = passwordAutoGenerator.generatePassayPassword();
         String encodedPassword = passwordEncoder.encode(password);

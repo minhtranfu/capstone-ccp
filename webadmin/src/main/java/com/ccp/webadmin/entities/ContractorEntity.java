@@ -2,6 +2,7 @@ package com.ccp.webadmin.entities;
 
 import lombok.Builder;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.function.Predicate;
 
 @Entity
 @Table(name = "contractor")
@@ -111,7 +113,15 @@ public class ContractorEntity implements Serializable {
     }
 
     public Integer countReceivedFeedbackEntity() {
-        return receivedFeedbackEntities != null ? receivedFeedbackEntities.size() : 0;
+
+        return (receivedFeedbackEntities != null) ? receivedFeedbackEntities.stream().filter(
+                new Predicate<FeedbackEntity>() {
+                    @Override
+                    public boolean test(FeedbackEntity feedbackEntity) {
+                        return feedbackEntity.getStatus() == FeedbackEntity.Status.VERIFIED;
+                    }
+                }
+        ).toArray().length : 0;
     }
 
     public void setReceivedFeedbackEntities(List<FeedbackEntity> receivedFeedbackEntities) {

@@ -17,7 +17,6 @@ public class FeedbackEntity implements Serializable {
     private Integer id;
 
     @NotNull(message = "Content is required not empty")
-    @Size(max = 100, message = "Content is required less than 100 word")
     @Column(name = "content")
     private String content;
 

@@ -59,7 +59,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public Integer countFeedbackByContractor(ContractorEntity contractor) {
-        return feedbackRepository.countFeedbackEntityByContractorIsFeedbacked(contractor);
+        return feedbackRepository.countFeedbackEntity(contractor);
     }
 
 
