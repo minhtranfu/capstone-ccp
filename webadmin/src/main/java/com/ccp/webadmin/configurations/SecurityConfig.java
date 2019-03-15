@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 authorizeRequests()
                 .antMatchers("/static/**","/vendor/**","/dist/**","/data/**","/images/**").permitAll()
                 .antMatchers("/login").permitAll()
-//                .antMatchers("/staff/**").permitAll()
+                .antMatchers("/forgetPassword").permitAll()
                 .antMatchers("/staff/**").hasAuthority("ROLE_ADMIN").anyRequest()
                 .authenticated().and().csrf().disable().formLogin()
                 .loginPage("/login").failureUrl("/login?error=true")

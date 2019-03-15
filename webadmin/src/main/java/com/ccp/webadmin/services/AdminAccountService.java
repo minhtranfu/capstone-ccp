@@ -26,4 +26,5 @@ public interface AdminAccountService extends UserDetailsService {
 
     boolean existsByEmail(String email);
 
+    AdminAccountEntity findByEmail(String email);
 }

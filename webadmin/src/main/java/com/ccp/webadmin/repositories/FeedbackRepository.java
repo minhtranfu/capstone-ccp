@@ -11,4 +11,6 @@ public interface FeedbackRepository extends JpaRepository<FeedbackEntity, Intege
     List<FeedbackEntity> findAllByFeedbackTypeEntity(FeedbackTypeEntity feedbackTypeEntity);
 
     Integer countFeedbackEntityByContractorIsFeedbacked(ContractorEntity contractorEntity);
+
+//    Integer countFeedbackEntityByStatusEqualsAndContractorIsFeedbacked(ContractorEntity contractorEntity);
 }

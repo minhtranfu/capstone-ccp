@@ -68,4 +68,9 @@ public class AdminAccountServiceImpl implements AdminAccountService {
                 () -> new RuntimeException("Username not found!")
         );
     }
+
+    @Override
+    public AdminAccountEntity findByEmail(String email) {
+        return adminAccountRepository.findByAdminUserEntity_Email(email);
+    }
 }
