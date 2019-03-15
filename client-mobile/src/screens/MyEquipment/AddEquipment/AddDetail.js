@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Alert
 } from "react-native";
 import { SafeAreaView, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
@@ -102,7 +103,7 @@ class AddDetail extends Component {
       }
       return null;
     }
-    return undefined;
+    return null;
   }
 
   //All data must be fill before move to next screen
@@ -203,6 +204,19 @@ class AddDetail extends Component {
     return [...DROPDOWN_CONSTRUCTION_OPTIONS, ...newConstructionDropdown];
   };
 
+  _formatNumber = num => {
+    if (num) {
+      return num.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    return num;
+  };
+
+  _showAlert = msg => {
+    Alert.alert("Error", msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
+
   //Create new data before move to next screen
   _handleSubmit = () => {
     const {
@@ -221,18 +235,24 @@ class AddDetail extends Component {
     const getConstructionByAddress = this.props.construction.find(
       item => item.address === address
     );
-    const equipment = {
-      name: name,
-      dailyPrice: parseInt(dailyPrice),
-      deliveryPrice: parseInt(deliveryPrice),
-      description: description,
-      equipmentType: type,
-      address: address,
-      longitude: getConstructionByAddress.longitude,
-      latitude: getConstructionByAddress.latitude,
-      additionalSpecsValues: additionalSpecsFields
-    };
-    return equipment;
+    if (!address) {
+      this._showAlert("Address must be not null");
+    } else {
+      const equipment = {
+        name: name,
+        dailyPrice: parseInt(dailyPrice),
+        deliveryPrice: parseInt(deliveryPrice),
+        description: description,
+        equipmentType: type,
+        address: address,
+        longitude: getConstructionByAddress.longitude,
+        latitude: getConstructionByAddress.latitude,
+        additionalSpecsValues: additionalSpecsFields
+      };
+      this.props.navigation.navigate("AddDurationText", {
+        data: equipment
+      });
+    }
   };
 
   _handleInputChange = (field, value) => {
@@ -271,7 +291,7 @@ class AddDetail extends Component {
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this.setState({ dailyPrice: value })}
-          value={dailyPrice}
+          value={this._formatNumber(dailyPrice)}
           keyboardType={"numeric"}
           returnKeyType={"next"}
         />
@@ -282,7 +302,7 @@ class AddDetail extends Component {
           inputType="text"
           onChangeText={value => this.setState({ deliveryPrice: value })}
           keyboardType={"numeric"}
-          value={deliveryPrice}
+          value={this._formatNumber(deliveryPrice)}
         />
         <Dropdown
           label={"General Equipment Type"}
@@ -336,13 +356,7 @@ class AddDetail extends Component {
         result ? styles.buttonDisable : styles.buttonEnable
       ]}
       disabled={result}
-      onPress={() =>
-        result
-          ? null
-          : this.props.navigation.navigate("AddDurationText", {
-              data: this._handleSubmit()
-            })
-      }
+      onPress={() => (result ? null : this._handleSubmit())}
     >
       <Text style={result ? styles.textDisable : styles.textEnable}>Next</Text>
       <Ionicons

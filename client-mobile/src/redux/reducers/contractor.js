@@ -4,7 +4,8 @@ const initialState = {
   loading: false,
   info: {},
   constructionList: [],
-  feedbackList: []
+  feedbackList: [],
+  feedbackTypes: []
 };
 
 export default function contractorReducer(state = initialState, action) {
@@ -67,6 +68,12 @@ export default function contractorReducer(state = initialState, action) {
       return {
         ...state,
         feedbackList: payload.data
+      };
+    }
+    case Actions.LIST_FEEDBACK_TYPES.SUCCESS: {
+      return {
+        ...state,
+        feedbackType: payload.data
       };
     }
     case Actions.CREATE_NEW_FEEDBACK.SUCCESS: {

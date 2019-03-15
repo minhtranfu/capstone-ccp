@@ -124,30 +124,7 @@ class Search extends Component {
             </TouchableOpacity>
           )}
         />
-        {/* <View
-          style={{
-            marginVertical: 5,
-            height: 30,
-            paddingHorizontal: 15,
-            flexDirection: "row"
-          }}
-        >
-          <TouchableOpacity
-            style={[
-              styles.dateButton,
-              fromDate && toDate ? { backgroundColor: "green" } : null
-            ]}
-            onPress={() => {
-              this._setModalVisible(true);
-            }}
-          >
-            <Text style={{ fontSize: fontSize.caption, fontWeight: "500" }}>
-              {fromDate && toDate
-                ? `${this._formatDate(fromDate)} - ${this._formatDate(toDate)}`
-                : "Dates"}
-            </Text>
-          </TouchableOpacity> */}
-        {/* </View> */}
+
         <ScrollView>
           {location.length > 0 ? (
             <View style={styles.columnWrapper}>

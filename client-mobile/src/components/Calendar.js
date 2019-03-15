@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import { SafeAreaView } from "react-navigation";
@@ -10,7 +10,7 @@ import Button from "../components/Button";
 import fontSize from "../config/fontSize";
 import colors from "../config/colors";
 
-class Calendar extends Component {
+class Calendar extends PureComponent {
   static propTypes = {
     minDate: PropTypes.string,
     maxDate: PropTypes.string,

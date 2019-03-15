@@ -5,10 +5,12 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  ListView
 } from "react-native";
 import { connect } from "react-redux";
 import { addItemToCart } from "../../redux/actions/cart";
+import { autoCompleteSearch } from "../../redux/actions/location";
 import { Feather } from "@expo/vector-icons";
 
 import Header from "../../components/Header";
@@ -31,7 +33,8 @@ class ConfirmCart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      address: ""
+      address: "",
+      location: {}
     };
   }
 
@@ -48,9 +51,16 @@ class ConfirmCart extends Component {
     this.props.navigation.goBack();
   };
 
+  _handleOnChangeText = async (field, address) => {
+    this.setState({
+      [field]: address,
+      location: await autoCompleteSearch(address)
+    });
+    console.log(location);
+  };
+
   render() {
     const { cart } = this.props.navigation.state.params;
-    console.log(cart);
     const { address } = this.state;
     return (
       <SafeAreaView
@@ -74,7 +84,7 @@ class ConfirmCart extends Component {
             placeholder={"Input your address"}
             customWrapperStyle={{ marginBottom: 20 }}
             inputType="text"
-            onChangeText={value => this.setState({ address: value })}
+            onChangeText={value => this._handleOnChangeText("address", value)}
             value={address}
           />
           <TouchableOpacity onPress={this._handleAddNewItemCart}>

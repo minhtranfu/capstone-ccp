@@ -70,8 +70,8 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     };
   },
   dispatch => ({
-    fetchUpdateEquipmentStatus: (equipmentId, status) => {
-      dispatch(updateEquipmentStatus(equipmentId, status));
+    fetchUpdateEquipmentStatus: (transactionId, equipmentId, status) => {
+      dispatch(updateEquipmentStatus(transactionId, equipmentId, status));
     },
     fetchCancelRequest: transactionId => {
       dispatch(cancelTransaction(transactionId));
@@ -103,10 +103,13 @@ class ActivityDetail extends Component {
   };
 
   //Update equipment status to renting
-  _handleUpdateEquipmentStatus = (id, status) => {
+  _handleUpdateEquipmentStatus = (transactionId, id, status) => {
     const { user } = this.props;
-    this.props.fetchUpdateEquipmentStatus(id, { status: status });
-    this.props.fetchRequesterTransaction(user.contractor.id);
+    console.log(transactionId, id);
+    this.props.fetchUpdateEquipmentStatus(transactionId, id, {
+      status: status
+    });
+    // this.props.fetchRequesterTransaction(user.contractor.id);
     this.props.navigation.goBack();
   };
 
@@ -181,7 +184,12 @@ class ActivityDetail extends Component {
     );
   };
 
-  _renderBottomButton = (equipmentId, status, equipmentStatus) => {
+  _renderBottomButton = (
+    equipmentId,
+    status,
+    equipmentStatus,
+    transactionId
+  ) => {
     switch (status) {
       case "PENDING":
         return (
@@ -196,15 +204,31 @@ class ActivityDetail extends Component {
         return equipmentStatus === "WAITING_FOR_RETURNING" ? null : (
           <View style={styles.columnWrapper}>
             {equipmentStatus === "RENTING" ? (
-              <Button
-                text={"Extend Time Range"}
-                onPress={() => this._setCalendarVisible(true)}
-              />
+              <View>
+                <Button
+                  text={"Extend Time Range"}
+                  onPress={() => this._setCalendarVisible(true)}
+                />
+                <Button
+                  text={"Early return"}
+                  onPress={() =>
+                    this._handleUpdateEquipmentStatus(
+                      transactionId,
+                      equipmentId,
+                      "WAITING_FOR_RETURNING"
+                    )
+                  }
+                />
+              </View>
             ) : (
               <Button
                 text={"Receive"}
                 onPress={() =>
-                  this._handleUpdateEquipmentStatus(equipmentId, "RENTING")
+                  this._handleUpdateEquipmentStatus(
+                    transactionId,
+                    equipmentId,
+                    "RENTING"
+                  )
                 }
               />
             )}
@@ -220,6 +244,7 @@ class ActivityDetail extends Component {
   _renderScrollViewItem = detail => {
     const totalDay = this._countTotalDay(detail.beginDate, detail.endDate);
     const totalPrice = totalDay * detail.dailyPrice;
+    console.log(detail);
     return (
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.imageWrapper}>
@@ -299,7 +324,8 @@ class ActivityDetail extends Component {
         {this._renderBottomButton(
           detail.equipment.id,
           detail.status,
-          detail.equipment.status
+          detail.equipment.status,
+          detail.id
         )}
       </View>
     );

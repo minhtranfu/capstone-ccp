@@ -81,7 +81,7 @@ const COLORS = {
     fetchGetAdjustTransaction: id => {
       dispatch(getAdjustTransaction(id));
     },
-    fetchRequestTransaction: (id, status) => {
+    fetchRequestAdjustTransaction: (id, status) => {
       dispatch(requestAdjustTransaction(id, status));
     }
   })
@@ -156,7 +156,7 @@ class MyTransactionDetail extends Component {
         }}
       />
       <Button
-        text={"Cancel"}
+        text={"Refuse"}
         onPress={() => {
           this.props.fetchCancelTransaction(id);
           this.props.navigation.goBack();
@@ -193,7 +193,7 @@ class MyTransactionDetail extends Component {
   };
 
   _handleRequestAdjustTransaction = (transactionId, status) => {
-    this.props.requestAdjustTransaction(transactionId, { status: status });
+    this.props.fetchRequestAdjustTransaction(transactionId, { status: status });
   };
 
   _renderAdjustDateTransaction = (id, equipmentStatus) => {

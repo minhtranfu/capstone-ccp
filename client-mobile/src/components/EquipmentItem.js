@@ -30,7 +30,9 @@ class EquipmentItem extends Component {
       address,
       price,
       onPress,
-      requesterThumbnail
+      requesterThumbnail,
+      contractor,
+      timeRange
     } = this.props;
     return (
       <View style={styles.container}>
@@ -46,6 +48,14 @@ class EquipmentItem extends Component {
           <View style={styles.titleWrapper}>
             <View style={{ flexDirection: "column", flex: 1 }}>
               <Text style={styles.equipmentName}>{name}</Text>
+              {contractor ? <Text>Contractor: {contractor}</Text> : null}
+
+              {timeRange ? (
+                <Text>
+                  {timeRange.beginDate} To {timeRange.endDate}
+                </Text>
+              ) : null}
+
               <Text style={styles.equipmentStatus}>{address}</Text>
             </View>
             <View style={styles.priceWrapper}>

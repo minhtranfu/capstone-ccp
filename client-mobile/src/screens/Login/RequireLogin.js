@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: fontSize.bodyText,
-    fontWeight: "400",
+    fontWeight: "500",
     marginVertical: 10
   },
   dividerWrapper: {
@@ -89,7 +89,8 @@ const styles = StyleSheet.create({
     width: width / 2 + 100
   },
   textStyle: {
-    fontSize: fontSize.secondaryText,
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
     color: colors.dark
   }
 });

@@ -50,6 +50,23 @@ export default function transactionReducer(state = initialState, action) {
           payload.data
         ]
       };
+    case Actions.UPDATE_TRANSACTION_EQUIPMENT_STATUS.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+    case Actions.UPDATE_TRANSACTION_EQUIPMENT_STATUS.SUCCESS: {
+      return {
+        ...state,
+        loading: false,
+        listRequesterTransaction: state.listRequesterTransaction.map(item =>
+          item.id === payload.transactionId
+            ? (item.equipment.status = payload.data.data.status)
+            : item
+        )
+      };
+    }
     case Actions.REQUEST_TRANSACTION.REQUEST: {
       return {
         ...state,

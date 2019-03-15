@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import {
   View,
   Text,
@@ -18,7 +18,7 @@ import colors from "../../../config/colors";
 import fontSize from "../../../config/fontSize";
 import { ScrollView } from "react-native-gesture-handler";
 
-class AddDurationText extends Component {
+class AddDurationText extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -85,31 +85,37 @@ class AddDurationText extends Component {
     });
   };
 
-  _onSelectDate = (fromDate, toDate, modalVisible) => {
-    console.log(fromDate, toDate);
+  //Confirm date select. If toDate = null, set toDate = fromDate add more 3 months
+  _onSelectDate = (id, fromDate, toDate, modalVisible) => {
     const { dataRangeList } = this.state;
+    console.log("id item", id);
+    let newToDate = toDate ? toDate : this._handleAddMoreMonth(fromDate, 3);
     this.setState({
       dataRangeList: this.state.dataRangeList.map(item =>
-        item.id === dataRangeList.length - 1
-          ? { ...item, beginDate: fromDate, endDate: toDate }
+        item.id === id
+          ? { ...item, beginDate: fromDate, endDate: newToDate }
           : item
       ),
-      fromDate: fromDate,
-      toDate: toDate,
       calendarVisible: false
     });
+    console.log(dataRangeList);
   };
 
-  _setCalendarVisible = visible => {
+  //Open calendar
+  _setCalendarVisible = (visible, id) => {
+    console.log("select calendar", id);
     this.setState({ calendarVisible: visible });
   };
 
   _renderCalendar = (id, beginDate, endDate) => {
+    console.log("select range", id);
     return (
       <Calendar
         visible={this.state.calendarVisible}
         onLeftButtonPress={() => this._setCalendarVisible(false)}
-        onSelectDate={this._onSelectDate}
+        onSelectDate={(fromDate, endDate, visible) =>
+          this._onSelectDate(id, fromDate, endDate, visible)
+        }
         fromDate={beginDate}
         endDate={endDate}
       />
@@ -120,36 +126,44 @@ class AddDurationText extends Component {
     let newDate = new Date(date);
     let year = newDate.getFullYear();
     let month = newDate.getMonth() + 1;
+    let newMonth = month < 10 ? "0" + month : month;
     let day = newDate.getDate();
-    return year + "-" + month + "-" + day;
+    return year + "-" + newMonth + "-" + day;
   };
 
-  _handleDateRange = (date, month) => {
+  _handleAddMoreDay = (date, day) => {
     let today = new Date(date);
-    let result = today.setDate(today.getMonth() + month);
+    let result = today.setDate(today.getDate() + day);
+    return this._formatDate(result);
+  };
+
+  _handleAddMoreMonth = (date, month) => {
+    let today = new Date(date);
+    let result = today.setMonth(today.getMonth() + month);
     return this._formatDate(result);
   };
 
   _renderDateRange = item => {
     const { dataRangeList } = this.state;
     const itemId = item.id;
+    console.log("id", item.id);
+    console.log("length", dataRangeList.length);
+    const date =
+      dataRangeList.length > 1
+        ? dataRangeList[dataRangeList.length - 1].endDate
+        : Date.now();
     return (
       <View key={item.id}>
-        <TouchableOpacity onPress={() => this._setCalendarVisible(true)}>
+        <TouchableOpacity
+          onPress={() => this._setCalendarVisible(true, item.id)}
+        >
           <Text>Select your date range</Text>
         </TouchableOpacity>
-        {item.id === 0
-          ? this._renderCalendar(
-              item.id,
-              Date.now(),
-              this._handleDateRange(Date.now(), 6)
-            )
-          : this._renderCalendar(
-              item.id,
-              dataRangeList[item.id - 1].endDate,
-              this._handleDateRange(dataRangeList[item.id - 1].endDate, 6)
-            )}
-
+        {this._renderCalendar(
+          item.id,
+          Date.now(),
+          this._handleAddMoreMonth(Date.now(), 3)
+        )}
         <InputField
           label={"From"}
           placeholder={"yyyy-mm-dd"}
@@ -174,7 +188,7 @@ class AddDurationText extends Component {
         />
         {item.id !== 0 ? (
           <TouchableOpacity onPress={() => this._handleRemove(itemId)}>
-            <Text>Remove</Text>
+            <Text style={styles.textRemove}>Remove</Text>
           </TouchableOpacity>
         ) : null}
       </View>
@@ -286,6 +300,11 @@ const styles = StyleSheet.create({
     fontSize: fontSize.h4,
     fontWeight: "500",
     color: colors.text
+  },
+  textRemove: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: "red"
   }
 });
 

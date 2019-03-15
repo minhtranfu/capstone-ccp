@@ -13,10 +13,7 @@ import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { ImagePicker, Permissions } from "expo";
-import {
-  updateEquipment,
-  updateEquipmentStatus
-} from "../../redux/actions/equipment";
+import { updateEquipment } from "../../redux/actions/equipment";
 import { getGeneralEquipmentType } from "../../redux/actions/type";
 
 import InputField from "../../components/InputField";
@@ -386,7 +383,8 @@ class MyEquipmentDetail extends Component {
 
   render() {
     const { equipmentDetail } = this.props;
-    console.log(equipmentDetail);
+    const { id } = this.props.navigation.state.params;
+    console.log(equipmentDetail, id);
     return (
       <SafeAreaView
         style={styles.container}

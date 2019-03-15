@@ -14,10 +14,12 @@ import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
 import {
   getContractorDetail,
-  createNewFeedback
+  createNewFeedback,
+  listFeedbackTypes
 } from "../../redux/actions/contractor";
 import { Feather } from "@expo/vector-icons";
 
+import Dropdown from "../../components/Dropdown";
 import Button from "../../components/Button";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -38,10 +40,19 @@ const RADIO_BUTON_DATA = [
   }
 ];
 
+const DROPDOWN_FEEDBACK_OPTIONS = [
+  {
+    id: 0,
+    name: "Select your reason",
+    value: "Select your reason"
+  }
+];
+
 @connect(
   state => ({
     contractor: state.contractor.info,
     loading: state.contractor.loading,
+    types: state.contractor.feedbackTypes,
     user: state.auth.data
   }),
   dispatch => ({
@@ -50,6 +61,9 @@ const RADIO_BUTON_DATA = [
     },
     fetchSendFeedback: feedback => {
       dispatch(createNewFeedback(feedback));
+    },
+    fetchListFeedbackTypes: () => {
+      dispatch(listFeedbackTypes());
     }
   })
 )
@@ -60,13 +74,16 @@ class ContractorProfile extends Component {
       modalVisible: false,
       text: "",
       textLength: maxLength,
-      checked: 0
+      checked: 0,
+      feedback: "",
+      feedbackIndex: 0
     };
   }
 
   componentDidMount() {
     const { id } = this.props.navigation.state.params;
     this.props.fetchGetContractorDetail(id);
+    this.props.fetchListFeedbackTypes();
   }
 
   _setModalVisible = visible => {
@@ -75,26 +92,42 @@ class ContractorProfile extends Component {
 
   _handleOnSubmit = () => {
     const { id } = this.props.navigation.state.params;
-    const { text, checked } = this.state;
+    const { text, checked, feedbackIndex } = this.state;
     const { user } = this.props;
-    const feedback = {
-      content: text,
-      toContractor: {
-        id: id
-      },
-      fromContractor: {
-        id: user.contractor.id
-      },
-      feedbackType: {
-        id: RADIO_BUTON_DATA[checked].id
-      }
-    };
-    this.props.fetchSendFeedback(feedback);
-    this._setModalVisible(false);
+    const feedBackList = this._handleFeedbackDropdown();
+    if (!feedback) {
+      console.log("error");
+    } else {
+      const feedback = {
+        content: text,
+        toContractor: {
+          id: id
+        },
+        fromContractor: {
+          id: user.contractor.id
+        },
+        feedbackType: {
+          id: feedBackList[feedbackIndex].id
+        }
+      };
+      this.props.fetchSendFeedback(feedback);
+      this._setModalVisible(false);
+    }
+  };
+
+  _handleFeedbackDropdown = () => {
+    const { types } = this.props;
+    const newFeedbackDropdown = types.map(item => ({
+      id: item.id,
+      name: item.name,
+      value: item.name
+    }));
+    return [...DROPDOWN_FEEDBACK_OPTIONS, ...newFeedbackDropdown];
   };
 
   _renderFeedbackModal = () => {
     const { text, textLength, checked, modalVisible } = this.state;
+    const { types } = this.props;
     return (
       <Modal animationType="slide" transparent={false} visible={modalVisible}>
         <SafeAreaView
@@ -130,6 +163,14 @@ class ContractorProfile extends Component {
               {maxLength} / {textLength}
             </Text>
             <Text style={styles.text}>Reason to feedback</Text>
+            <Dropdown
+              label={"Feedback Type"}
+              defaultText={"Select your reason"}
+              onSelectValue={(value, index) =>
+                this.setState({ feedbackIndex: index, feedback: value })
+              }
+              options={this._handleFeedbackDropdown()}
+            />
             <View
               style={{
                 flexDirection: "row",

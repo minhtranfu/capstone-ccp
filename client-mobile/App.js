@@ -11,6 +11,7 @@ import * as firebase from "firebase";
 import { firebaseConfig } from "./src/config/apiKey";
 import ShowAlert from "./src/Utils/Alert";
 import ShowToast from "./src/components/Toast";
+import NavigationService from "./src/Utils/NavigationServices";
 
 const config = configureStorage();
 configAPI(config);
@@ -87,7 +88,11 @@ export default class App extends React.Component {
     return (
       <Provider store={config.store}>
         <PersistGate loading={<Loading />} persistor={config.persistor}>
-          <AppNavigator />
+          <AppNavigator
+            ref={navigatorRef => {
+              NavigationService.setTopLevelNavigator(navigatorRef);
+            }}
+          />
           {this.state.notification.data ? (
             <ShowToast message={this.state.notification.data.content} />
           ) : null}

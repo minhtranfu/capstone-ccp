@@ -63,22 +63,31 @@ class AddImage extends Component {
         this.setState({
           images: [...this.state.images, result.uri]
         });
+        const form = new FormData();
+
+        form.append("image", {
+          uri: result.uri,
+          type: "image/jpg",
+          name: "image.jpg"
+        });
+
+        this.props.fetchUploadImage(form);
       }
     }
   };
 
-  _handleUploadImage = () => {
-    const form = new FormData();
-    this.state.images.map((item, i) => {
-      form.append("image", {
-        uri: item.uri,
-        type: "image/jpg",
-        name: "image.jpg"
-      });
-    });
+  // _handleUploadImage = () => {
+  //   const form = new FormData();
+  //   this.state.images.map((item, i) => {
+  //     form.append("image", {
+  //       uri: item.uri,
+  //       type: "image/jpg",
+  //       name: "image.jpg"
+  //     });
+  //   });
 
-    this.props.fetchUploadImage(form);
-  };
+  //   this.props.fetchUploadImage(form);
+  // };
 
   _handleAddEquipment = () => {
     const { descriptionImages, thumbnailImage, lat, long } = this.state;
@@ -174,11 +183,6 @@ class AddImage extends Component {
               buttonStyle={styles.buttonStyle}
               text={"Add Image"}
               onPress={this._handleAddImage}
-            />
-            <Button
-              buttonStyle={styles.buttonStyle}
-              text={"Upload Image"}
-              onPress={this._handleUploadImage}
             />
           </View>
           <TouchableOpacity

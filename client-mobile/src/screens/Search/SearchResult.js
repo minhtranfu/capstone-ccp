@@ -73,18 +73,8 @@ class SearchResult extends Component {
       beginDate,
       endDate
     );
+    this.setState({ fromDate: beginDate, toDate: endDate });
   }
-
-  // componentDidUpdate(prevProps) {
-  //   const { status, navigation } = this.props;
-  //   if (
-  //     status.type === "error" &&
-  //     status.time !== prevProps.status.time &&
-  //     navigation.state.routeName === "Result"
-  //   ) {
-  //     this._showAlert("Error", this.props.status.message);
-  //   }
-  // }
 
   _showAlert = (title, msg) => {
     Alert.alert(title, msg, [{ text: "OK" }], {
@@ -149,8 +139,20 @@ class SearchResult extends Component {
     this._setModalVisible(!this.state.modalVisible);
   };
 
-  _onSelectDate = (fromDate, toDate, modalVisible) => {
-    this.setState({ fromDate, toDate, calendarVisible: false });
+  _handleAddMoreMonth = (date, month) => {
+    let today = new Date(date);
+    let result = today.setMonth(today.getMonth() + month);
+    return result;
+  };
+
+  _onSelectDate = (fromDate, toDate, visible) => {
+    const newToDate = toDate ? toDate : this._handleAddMoreMonth(fromDate, 6);
+    this.setState({
+      fromDate,
+      toDate: newToDate,
+      calendarVisible: visible,
+      modalVisible: !visible
+    });
   };
 
   _renderCalendar = (beginDate, endDate) => (
@@ -164,7 +166,8 @@ class SearchResult extends Component {
   );
 
   _renderSearchModal = () => {
-    const { query, beginDate, endDate } = this.props.navigation.state.params;
+    const { query } = this.props.navigation.state.params;
+    const { fromDate, toDate } = this.state;
     return (
       <Modal transparent={true} visible={this.state.modalVisible}>
         <TouchableOpacity
@@ -192,14 +195,14 @@ class SearchResult extends Component {
                 onPress={() => this._setCalendarVisible(true)}
               >
                 <Text style={styles.text}>From</Text>
-                <Text style={styles.text}>{this._formatDate(beginDate)}</Text>
+                <Text style={styles.text}>{this._formatDate(fromDate)}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.rowWrapper, { borderBottomWidth: 0 }]}
                 onPress={() => this._setCalendarVisible(true)}
               >
                 <Text style={styles.text}>To</Text>
-                <Text style={styles.text}>{this._formatDate(endDate)}</Text>
+                <Text style={styles.text}>{this._formatDate(toDate)}</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity
@@ -266,6 +269,8 @@ class SearchResult extends Component {
         key={`eq_${item.equipmentEntity.id}`}
         id={item.equipmentEntity.id}
         name={item.equipmentEntity.name}
+        contractor={item.equipmentEntity.contractor.name}
+        timeRange={item.equipmentEntity.availableTimeRanges[0]}
         imageURL={
           "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
         }
@@ -321,10 +326,16 @@ class SearchResult extends Component {
           )}
         >
           <TouchableOpacity
-            style={{ alignItems: "center", justifyContent: "center" }}
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              width: 200
+            }}
             onPress={() => this._setModalVisible(true)}
           >
-            <Text style={styles.title}>{query.main_text}</Text>
+            <Text style={styles.text} numberOfLines={1}>
+              {query.main_text}
+            </Text>
             <Text style={styles.caption}>
               {this._formatDate(beginDate) + " - " + this._formatDate(endDate)}
             </Text>

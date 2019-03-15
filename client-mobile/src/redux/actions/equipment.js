@@ -52,15 +52,22 @@ export function updateEquipment(equipmentId, equipment) {
   };
 }
 
-export function updateEquipmentStatus(equipmentId, status) {
+export function updateEquipmentStatus(transactionId, equipmentId, status) {
   return async dispatch => {
     dispatch({
       type: Actions.UPDATE_EQUIPMENT_STATUS.REQUEST
+    });
+    dispatch({
+      type: Actions.UPDATE_TRANSACTION_EQUIPMENT_STATUS.REQUEST
     });
     const res = await axios.put(`equipments/${equipmentId}/status`, status);
     dispatch({
       type: Actions.UPDATE_EQUIPMENT_STATUS.SUCCESS,
       payload: { data: res, id: equipmentId }
+    });
+    dispatch({
+      type: Actions.UPDATE_TRANSACTION_EQUIPMENT_STATUS.SUCCESS,
+      payload: { data: res, transactionId: transactionId }
     });
   };
 }
@@ -87,7 +94,11 @@ export function searchEquipment(
       dispatch({
         type: Actions.SEARCH_EQUIPMENT.REQUEST
       });
-      const res = await axios.get(url);
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: undefined
+        }
+      });
       dispatch({
         type: Actions.SEARCH_EQUIPMENT.SUCCESS,
         payload: res

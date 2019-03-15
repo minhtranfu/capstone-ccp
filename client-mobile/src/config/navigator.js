@@ -14,7 +14,6 @@ import Account from "../screens/Account";
 import Profile from "../screens/Account/Profile";
 import Construction from "../screens/Account/Construction";
 import ConstructionDetail from "../screens/Account/Detail";
-import Feedback from "../screens/Account/Feedback";
 import CallOrTextUs from "../screens/Account/CallOrTextUs";
 import AboutUs from "../screens/Account/AboutUs";
 import Search from "../screens/Search";
@@ -35,7 +34,6 @@ import AddDuration from "../screens/MyEquipment/AddEquipment/AddDuration";
 import AddDurationText from "../screens/MyEquipment/AddEquipment/AddDurationText";
 import AddImage from "../screens/MyEquipment/AddEquipment/AddImage";
 import RequireLogin from "../screens/Login/RequireLogin";
-import Calendar from "../components/Calendar";
 import ConfirmAdjustDate from "../screens/Activity/ConfirmAdjustDate";
 import Cart from "../screens/Cart";
 import ConfirmCart from "../screens/Cart/ConfirmCart";
@@ -95,7 +93,6 @@ const AccountStack = createStackNavigator(
   {
     Account: Account,
     Profile: Profile,
-    Feedback: Feedback,
     CallOrTextUs: CallOrTextUs,
     AboutUs: AboutUs,
     Construction: Construction,

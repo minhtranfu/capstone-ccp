@@ -2,6 +2,7 @@ import axios from "axios";
 import StatusAction from "../redux/actions/status";
 import { logOut } from "../redux/actions/auth";
 import { AsyncStorage } from "react-native";
+import { goToLogin } from "../Utils/Helpers";
 
 export default async function configAPI(config) {
   axios.defaults.baseURL = "https://ccp.hoctot.net/api";
@@ -40,6 +41,7 @@ export default async function configAPI(config) {
               StatusAction.error(401, "Your session has expired", Date.now())
             );
             config.store.dispatch(logOut());
+            //goToLogin();
             break;
           case 400:
             console.log(error.response);

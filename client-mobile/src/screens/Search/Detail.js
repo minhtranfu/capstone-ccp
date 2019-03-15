@@ -92,8 +92,8 @@ class SearchDetail extends Component {
       requesterAddress: "Phu Nhuan",
       requesterLatitude: 123123,
       requesterLongitude: 123123,
-      equipmentId: id,
-      requesterId: 12
+      equipmentId: id
+      //requesterId: 12
     };
     this.props.navigation.navigate("Transaction", {
       equipment: newEquipment,
@@ -275,7 +275,7 @@ class SearchDetail extends Component {
               alignItems: "flex-end"
             }}
           >
-            <Text style={styles.price}>${dailyPrice}</Text>
+            <Text style={styles.price}>{dailyPrice}K</Text>
             <Text style={styles.text}>per day</Text>
           </View>
         </View>

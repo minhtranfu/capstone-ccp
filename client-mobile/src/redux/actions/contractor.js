@@ -98,6 +98,19 @@ export function getListFeedback(id) {
   };
 }
 
+export function listFeedbackTypes() {
+  return async dispatch => {
+    dispatch({
+      type: Actions.LIST_FEEDBACK_TYPES.REQUEST
+    });
+    const res = await axios.get(`feedbackTypes`);
+    dispatch({
+      type: Actions.LIST_FEEDBACK_TYPES.SUCCESS,
+      payload: res
+    });
+  };
+}
+
 export function createNewFeedback(feedback) {
   return async dispatch => {
     const res = await axios.post(`feedbacks`, feedback);

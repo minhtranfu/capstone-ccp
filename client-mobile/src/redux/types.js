@@ -45,6 +45,9 @@ export const LIST_SUPPLIER_TRANSACTION = renderActions(
 export const LIST_REQUESTER_TRANSACTION = renderActions(
   "@@transaction/LIST_REQUESTER_TRANSACTION"
 );
+export const UPDATE_TRANSACTION_EQUIPMENT_STATUS = renderActions(
+  "@@transaction/UPDATE_TRANSACTION_EQUIPMENT_STATUS"
+);
 export const SEND_TRANSACTION_REQUEST = renderActions(
   "@@transaction/SEND_REQUEST"
 );
@@ -113,4 +116,18 @@ export const GET_LIST_FEEDBACK = renderActions(
 );
 export const CREATE_NEW_FEEDBACK = renderActions(
   "@@contractor/CREATE_NEW_FEEDBACK"
+);
+export const LIST_FEEDBACK_TYPES = renderActions(
+  "@@contractor/LIST_FEEDBACK_TYPES"
+);
+
+//NOTIFICATION
+export const INSERT_NOTIFICATION_TOKEN = renderActions(
+  "@@contractor/INSERT_NOTIFICATION_TOKEN"
+);
+export const GET_NOTIFICATION_TOKEN = renderActions(
+  "@@contractor/GET_NOTIFICATION_TOKEN"
+);
+export const DELETE_NOTIFICATION_TOKEN = renderActions(
+  "@@contractor/DELETE_NOTIFICATION_TOKEN"
 );
