@@ -6,23 +6,18 @@ public class ExpoMessageData {
 	private String body;
 	private String title;
 	private String subtitle;
+	private String clickAction;
+
 
 	public ExpoMessageData() {
 	}
 
-	public ExpoMessageData(String sound, int badge, String body, String title, String subtitle) {
-		this.sound = sound;
-		this.badge = badge;
-		this.body = body;
-		this.title = title;
-		this.subtitle = subtitle;
-	}
-
-	public ExpoMessageData(String body, String title) {
+	public ExpoMessageData(String body, String title, String clickAction) {
 		this.body = body;
 		this.title = title;
 		this.sound = "default";
 		//this to clear the badge
+		this.clickAction = clickAction;
 		this.badge = 0;
 		this.subtitle = null;
 	}
@@ -64,7 +59,17 @@ public class ExpoMessageData {
 	}
 
 	public void setSubtitle(String subtitle) {
+
+
 		this.subtitle = subtitle;
+	}
+
+	public String getClickAction() {
+		return clickAction;
+	}
+
+	public void setClickAction(String clickAction) {
+		this.clickAction = clickAction;
 	}
 }
 

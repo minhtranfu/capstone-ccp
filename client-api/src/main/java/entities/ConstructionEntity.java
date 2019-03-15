@@ -25,11 +25,17 @@ public class ConstructionEntity {
 	@NotEmpty
 	private String address;
 
-	@NotNull
-	private double longitude;
 
 	@NotNull
+	@Min(-90)
+	@Max(90)
 	private double latitude;
+
+	@NotNull
+	@Min(-180)
+	@Max(180)
+	private double longitude;
+
 
 	private boolean isDeleted;
 	private ContractorEntity contractor;
@@ -74,9 +80,6 @@ public class ConstructionEntity {
 
 	@Basic
 	@Column(name = "`long`")
-	@NotNull
-	@Min(-180)
-	@Max(180)
 	public double getLongitude() {
 		return longitude;
 	}
@@ -88,8 +91,7 @@ public class ConstructionEntity {
 	@Basic
 	@Column(name = "lat")
 	@NotNull
-	@Min(-90)
-	@Max(90)
+
 	public double getLatitude() {
 		return latitude;
 	}
@@ -99,7 +101,7 @@ public class ConstructionEntity {
 	}
 
 	@Basic
-	@Column(name = "is_deleted", insertable=false)
+	@Column(name = "is_deleted", insertable = false)
 	public boolean isDeleted() {
 		return isDeleted;
 	}

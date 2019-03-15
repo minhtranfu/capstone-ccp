@@ -4,9 +4,13 @@ import daos.ContractorDAO;
 import daos.NotificationDeviceTokenDAO;
 import entities.ContractorEntity;
 import entities.NotificationDeviceTokenEntity;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.json.JsonNumber;
 import javax.json.bind.JsonbBuilder;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -17,6 +21,8 @@ import java.util.List;
 //@Path("notifications")
 @Produces(MediaType.APPLICATION_JSON)
 @Stateless
+@Path("notificationTokens")
+@RolesAllowed("contractor")
 public class NotificationDeviceTokenResource {
 
 	@Inject
@@ -25,19 +31,20 @@ public class NotificationDeviceTokenResource {
 	@Inject
 	private ContractorDAO contractorDAO;
 
-	private ContractorEntity contractorEntity;
+	@Inject
+	@Claim("contractorId")
+	ClaimValue<JsonNumber> claimContractorId;
 
-	public ContractorEntity getContractorEntity() {
-		return contractorEntity;
+	private long getClaimContractorId() {
+		return claimContractorId.getValue().longValue();
 	}
 
-	public void setContractorEntity(ContractorEntity contractorEntity) {
 
-		this.contractorEntity = contractorEntity;
-	}
+
 
 	@GET
 	public Response getAllRegisteredToken() {
+		ContractorEntity contractorEntity = contractorDAO.findByIdWithValidation(getClaimContractorId());
 		return Response.ok(contractorEntity.getNotificationDeviceTokens()).build();
 	}
 
@@ -50,12 +57,13 @@ public class NotificationDeviceTokenResource {
 	@POST
 	public Response addNotiToken(@Valid NotificationDeviceTokenEntity request) {
 
+		ContractorEntity contractorEntity = contractorDAO.findByIdWithValidation(getClaimContractorId());
 		NotificationDeviceTokenEntity notificationDeviceTokenEntity = new NotificationDeviceTokenEntity();
 		notificationDeviceTokenEntity.setContractor(contractorEntity);
 		notificationDeviceTokenEntity.setRegistrationToken(request.getRegistrationToken());
 		notificationDeviceTokenEntity.setDeviceType(request.getDeviceType());
 
-		NotificationDeviceTokenEntity foundToken;
+		NotificationDeviceTokenEntity foundToken = null;
 		List<NotificationDeviceTokenEntity> foundTokens = notificationDeviceTokenDAO.findByToken(notificationDeviceTokenEntity.getRegistrationToken(),
 				notificationDeviceTokenEntity.getContractor().getId());
 		if (foundTokens.isEmpty()) {
@@ -77,10 +85,10 @@ public class NotificationDeviceTokenResource {
 
 	@DELETE
 	public Response removeTokenByTokenItself(@Valid NotificationDeviceTokenEntity notificationDeviceTokenEntity) {
-
+		ContractorEntity contractorEntity = contractorDAO.findByIdWithValidation(getClaimContractorId());
 		int deletedTokens = notificationDeviceTokenDAO.deleteToken(notificationDeviceTokenEntity.getRegistrationToken()
 				, contractorEntity.getId());
-		return Response.ok(String.format("{token_deleted:%d}", deletedTokens)).build();
+		return Response.ok(String.format("{\"token_deleted\":%d}", deletedTokens)).build();
 	}
 
 }

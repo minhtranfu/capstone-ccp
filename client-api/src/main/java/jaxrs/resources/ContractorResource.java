@@ -119,13 +119,13 @@ public class ContractorResource {
 
 	}
 
-	@Path("{id:\\d+}/notifications")
-	public NotificationDeviceTokenResource toNotificationDeviceTokenResource(@PathParam("id") long contractorId) {
-		ContractorEntity foundContractor = validateContractorId(contractorId);
-		notificationDeviceTokenResource.setContractorEntity(foundContractor);
-		return notificationDeviceTokenResource;
-
-	}
+//	@Path("{id:\\d+}/notifications")
+//	public NotificationDeviceTokenResource toNotificationDeviceTokenResource(@PathParam("id") long contractorId) {
+//		ContractorEntity foundContractor = validateContractorId(contractorId);
+//		notificationDeviceTokenResource.setContractorEntity(foundContractor);
+//		return notificationDeviceTokenResource;
+//
+//	}
 
 
 }

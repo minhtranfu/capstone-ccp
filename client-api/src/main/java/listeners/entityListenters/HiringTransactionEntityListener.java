@@ -2,6 +2,7 @@ package listeners.entityListenters;
 
 import daos.ContractorDAO;
 import daos.HiringTransactionDAO;
+import dtos.notifications.NotificationDTO;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
@@ -37,28 +38,34 @@ public class HiringTransactionEntityListener {
 			case PROCESSING:
 				break;
 			case ACCEPTED:
-				firebaseMessagingManager.sendMessage("Request accepted",
+				firebaseMessagingManager.sendMessage(new NotificationDTO("Request accepted",
 						String.format("Your request for equipment %s have been accepted", entity.getEquipment().getName())
-						, requester.getId());
+						, requester.getId()
+				,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
 				break;
 			case FINISHED:
-				firebaseMessagingManager.sendMessage("Request finished",
+				firebaseMessagingManager.sendMessage(new NotificationDTO("Request finished",
 						String.format("You have returned equipment %s to %s", equipment.getName(), supplier.getName())
+						, requester.getId()
+						,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
 
-						, requester.getId());
 				break;
 			case PENDING:
 				// do nothing, what do you expect ?
 				break;
 			case CANCELED:
-				firebaseMessagingManager.sendMessage("Request canceled",
+				firebaseMessagingManager.sendMessage(new NotificationDTO("Request canceled",
 						String.format("Request from %s for equipment %s have been cancel", requester.getName(), equipment.getName())
-						, supplier.getId());
+						, supplier.getId()
+						,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
+
 				break;
 			case DENIED:
-				firebaseMessagingManager.sendMessage("Request denied",
+				firebaseMessagingManager.sendMessage(new NotificationDTO("Request denied",
 						String.format("Your request for equipment %s have been denied", entity.getEquipment().getName())
-						, requester.getId());
+						, requester.getId()
+						,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
+
 				break;
 		}
 	}
@@ -71,8 +78,10 @@ public class HiringTransactionEntityListener {
 		System.out.println(String.format("PostPersist, entity=%s", entity	));
 
 		// TODO: 3/11/19 do this with post from cart
-		firebaseMessagingManager.sendMessage("New request"
-				, String.format("You have new request for equipment %s", entity.getEquipment().getName())
-				, entity.getEquipment().getContractor().getId());
+		firebaseMessagingManager.sendMessage(new NotificationDTO("New request",
+				String.format("You have new request for equipment %s", entity.getEquipment().getName())
+				, entity.getEquipment().getContractor().getId()
+				,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
+
 	}
 }

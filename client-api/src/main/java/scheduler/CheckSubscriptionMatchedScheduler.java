@@ -3,6 +3,7 @@ package scheduler;
 import daos.ContractorDAO;
 import daos.EquipmentDAO;
 import daos.SubscriptionDAO;
+import dtos.notifications.NotificationDTO;
 import dtos.queryResults.MatchedSubscriptionResult;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
@@ -30,12 +31,12 @@ public class CheckSubscriptionMatchedScheduler {
 	SubscriptionDAO subscriptionDAO;
 
 
-	@Schedule(hour = "*", minute = "30", second = "0")
+		@Schedule(hour = "*", minute = "30", second = "0")
 //	@Schedule(hour = "*", minute = "*", second = "10")
 	public void checkMatchedEquipments() {
-		// TODO: 3/14/19 change this
+
 		int timeOffset = 30 * 60; // 30 mins
-//		int timeOffset = 30 * 60*60*60; // 30 mins
+//		int timeOffset = 30 * 60 * 60 * 60; // 30 mins
 		System.out.println("CheckSubscriptionMatchedScheduler checking subscriptions");
 		List<MatchedSubscriptionResult> matchedSubscriptionResults = equipmentDAO.getMatchedEquipmentForSubscription(timeOffset);
 		for (MatchedSubscriptionResult matchedSubscriptionResult : matchedSubscriptionResults) {
@@ -51,20 +52,16 @@ public class CheckSubscriptionMatchedScheduler {
 		System.out.println(String.format("Subscription id=%s matched for contractor id=%s with equipment id=%s"
 				, subscriptionId
 				, contractorId
-				,equipmentId));
+				, equipmentId));
 
-		HashMap<String, String> data = new HashMap<>();
-		data.put("contractorId", ""+contractorId);
-		data.put("equipmentId", ""+equipmentId);
-		data.put("subscriptionid", ""+subscriptionId);
+		String clickAction = NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.EQUIPMENTS, equipmentId);
+
+		NotificationDTO notificationDTO = new NotificationDTO("Subscribed equipment found!", "We have found the equipment that you're looking for! \n" +
+				"id=" + equipmentId
+				, contractorId, clickAction);
 
 
-
-
-		messagingManager.sendMessage("Subscribed equipment found!"
-				, "We have found the equipment that you're looking for! \n" +
-						"id=" + equipmentId
-				, contractorId, data);
+		messagingManager.sendMessage(notificationDTO);
 	}
 
 

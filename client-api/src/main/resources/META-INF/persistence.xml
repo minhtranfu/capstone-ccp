@@ -27,6 +27,10 @@
         <class>entities.CartRequestEntity</class>
         <class>entities.TransactionDateChangeRequestEntity</class>
         <class>entities.NotificationDeviceTokenEntity</class>
+        <class>entities.GeneralMaterialTypeEntity</class>
+        <class>entities.MaterialEntity</class>
+        <class>entities.MaterialTransactionEntity</class>
+        <class>entities.MaterialTypeEntity</class>
         <properties>
 
             <!--<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>-->

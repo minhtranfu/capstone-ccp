@@ -11,8 +11,10 @@ import com.google.firebase.messaging.*;
 import daos.ContractorDAO;
 import dtos.notifications.ExpoMessageData;
 import dtos.notifications.ExpoMessageWrapper;
+import dtos.notifications.NotificationDTO;
 import entities.ContractorEntity;
 import entities.NotificationDeviceTokenEntity;
+import daos.NotificationDAO;
 import listeners.StartupListener;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
@@ -27,9 +29,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 @Singleton
 @Startup
@@ -40,6 +40,9 @@ public class FirebaseMessagingManager {
 
 	@Inject
 	ContractorDAO contractorDAO;
+
+	@Inject
+	NotificationDAO notificationDAO;
 
 
 	public void init() throws IOException {
@@ -96,45 +99,50 @@ public class FirebaseMessagingManager {
 		return connection.getInputStream();
 	}
 
-	public void sendMessage(String title, String content, long receiverId, HashMap<String, String> data) {
+	public void sendMessage(NotificationDTO notificationDTO) {
 
+		long receiverId = notificationDTO.getContractorId();
 		ContractorEntity managedContractor = contractorDAO.findByIdWithValidation(receiverId);
-		List<String> responseList = new ArrayList<>();
+
 		for (NotificationDeviceTokenEntity notificationDeviceToken : managedContractor.getNotificationDeviceTokens()) {
-			this.sendMessage(title, content, notificationDeviceToken,data);
+			this.sendMessage(notificationDTO, notificationDeviceToken);
 		}
+
+		// TODO: 3/15/19 insert notification to database
+		notificationDAO.insertNotification(notificationDTO);
 	}
 
-	public void sendMessage(String title, String content, long receiverId) {
-		this.sendMessage(title, content, receiverId, null);
-	}
 
-	public void sendMessage(String title, String content, NotificationDeviceTokenEntity notificationDeviceTokenEntity
-			, HashMap<String, String> data) {
+	private void sendMessage(NotificationDTO notificationDTO, NotificationDeviceTokenEntity notificationDeviceTokenEntity) {
 
 		String regisToken = notificationDeviceTokenEntity.getRegistrationToken();
 
 		switch (notificationDeviceTokenEntity.getDeviceType()) {
 			case EXPO:
 				try {
-					sendExpo(title, content, regisToken);
+					sendExpo(notificationDTO, regisToken);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				break;
 			case WEB:
 			case MOBILE:
-				sendWebMobile(title, content, regisToken, data);
+				sendWebMobile(notificationDTO,regisToken);
 				break;
 		}
 	}
 
 
-	public void sendWebMobile(String title, String content, String regisToken, HashMap<String, String> data) {
+	private void sendWebMobile(NotificationDTO notificationDTO, String regisToken) {
+
+		HashMap<String, String> data = new HashMap<>();
+		data.put("clickAction", notificationDTO.getClickAction());
+
+
 		Message message = Message.builder()
 
 				.setNotification(
-						new Notification(title, content)
+						new Notification(notificationDTO.getTitle(), notificationDTO.getContent())
 				)
 				.setWebpushConfig(getDefaultWebpushConfig(data))
 				.setToken(regisToken).build();
@@ -156,7 +164,7 @@ public class FirebaseMessagingManager {
 	}
 
 
-	public String sendExpo(String title, String content, String token) throws IOException {
+	public String sendExpo(NotificationDTO notificationDTO, String token) throws IOException {
 
 		// TODO: 3/14/19 use async for this
 		URL url = new URL("https://exp.host/--/api/v2/push/send");
@@ -169,7 +177,9 @@ public class FirebaseMessagingManager {
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Content-Type", "application/json");
 
-		ExpoMessageData data = new ExpoMessageData(title, content);
+		ExpoMessageData data = new ExpoMessageData(notificationDTO.getTitle()
+				, notificationDTO.getContent()
+				, notificationDTO.getClickAction());
 		ExpoMessageWrapper expoMessageWrapper = new ExpoMessageWrapper(token, data);
 		String requestBody = JsonbBuilder.create().toJson(expoMessageWrapper);
 

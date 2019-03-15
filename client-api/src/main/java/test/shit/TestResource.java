@@ -4,6 +4,7 @@ package test.shit;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import daos.EquipmentDAO;
 import daos.SubscriptionDAO;
+import dtos.notifications.NotificationDTO;
 import dtos.requests.EquipmentPutRequest;
 import dtos.validationObjects.LocationValidator;
 import dtos.requests.EquipmentPostRequest;
@@ -217,7 +218,10 @@ public class TestResource  {
 	@GET
 	@Path("expo")
 	public Response testPushNotiExpo() throws IOException {
-		return Response.ok(messagingManager.sendExpo("test","testBody","ExponentPushToken[4SfrLEChNrtCnwgRHZcAFV]")).build();
+		NotificationDTO notificationDTO = new NotificationDTO();
+		notificationDTO.setTitle("test");
+		notificationDTO.setContent("testBody");
+		return Response.ok(messagingManager.sendExpo(notificationDTO,"ExponentPushToken[4SfrLEChNrtCnwgRHZcAFV]")).build();
 	}
 
 

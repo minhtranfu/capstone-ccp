@@ -41,6 +41,8 @@ public class ContractorEntity {
 	private List<NotificationDeviceTokenEntity> notificationDeviceTokens;
 	private List<SubscriptionEntity> subscriptionEntities;
 
+	private List<NotificationEntity> notifications;
+
 	@JsonbTransient
 	@XmlTransient
 	@OneToMany(cascade =
@@ -214,6 +216,16 @@ public class ContractorEntity {
 
 	public void setSubscriptionEntities(List<SubscriptionEntity> subscriptionEntities) {
 		this.subscriptionEntities = subscriptionEntities;
+	}
+
+	@JsonbTransient
+	@OneToMany(mappedBy = "contractor")
+	public List<NotificationEntity> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(List<NotificationEntity> notifications) {
+		this.notifications = notifications;
 	}
 
 	public enum Status{

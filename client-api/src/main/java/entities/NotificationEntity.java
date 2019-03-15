@@ -2,19 +2,33 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
+import javax.ws.rs.GET;
 import java.time.LocalDateTime;
 
 @Entity
-@Where(clause = "is_deleted=0")
 @Table(name = "notification", schema = "capstone_ccp")
+@NamedQuery(name = "NotificationEntity.getByContractorId", query = "select e from NotificationEntity e where e.contractor.id =:contractorId order by e.createdTime desc ")
 public class NotificationEntity {
 	private long id;
 	private String title;
 	private String content;
 	private LocalDateTime createdTime;
-	private Boolean isRead;
+	private boolean isRead;
 	private ContractorEntity contractor;
+	private String clickAction;
+
+
+	public NotificationEntity() {
+	}
+
+	public NotificationEntity(String title, String content, ContractorEntity contractor, String clickAction) {
+		this.title = title;
+		this.content = content;
+		this.contractor = contractor;
+		this.clickAction = clickAction;
+	}
 
 	@Id
 	@GeneratedValue
@@ -48,7 +62,7 @@ public class NotificationEntity {
 	}
 
 	@Basic
-	@Column(name = "created_time", insertable=false, updatable = false)
+	@Column(name = "created_time", insertable = false, updatable = false)
 	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
@@ -57,24 +71,36 @@ public class NotificationEntity {
 		this.createdTime = createdTime;
 	}
 
+
 	@Basic
 	@Column(name = "is_read", nullable = true)
-	public Boolean getRead() {
+	public boolean isRead() {
 		return isRead;
 	}
 
-	public void setRead(Boolean read) {
+	public void setRead(boolean read) {
 		isRead = read;
 	}
 
 	@ManyToOne
+	@JsonbTransient
 	@JoinColumn(name = "contractor_id")
-
 	public ContractorEntity getContractor() {
 		return contractor;
 	}
 
 	public void setContractor(ContractorEntity contractor) {
+
 		this.contractor = contractor;
+	}
+
+	@Basic
+	@Column(name = "click_action")
+	public String getClickAction() {
+		return clickAction;
+	}
+
+	public void setClickAction(String clickAction) {
+		this.clickAction = clickAction;
 	}
 }
