@@ -338,6 +338,8 @@ class MyRequests extends Component {
         break;
     }
 
+    const thumbnail = transaction.equipment.thumbnailImage ? transaction.equipment.thumbnailImage.url : '/public/upload/product-images/unnamed-19-jpg.jpg';
+
     return (
       <CSSTransition
         key={transaction.id}
@@ -346,7 +348,7 @@ class MyRequests extends Component {
       >
         <div className="d-flex transaction my-3 rounded shadow-sm flex-column flex-sm-row">
           <div className="image flex-fill">
-            <img src="/public/upload/product-images/unnamed-19-jpg.jpg" className="rounded-left" />
+            <img src={thumbnail} className="rounded-left" />
           </div>
           <div className="detail flex-fill p-2">
             <h6><span className={statusClasses}>{transaction.status}</span> {equipment.name}</h6>
