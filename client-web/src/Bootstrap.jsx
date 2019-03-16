@@ -15,7 +15,7 @@ import 'lodash';
 import $ from 'jquery';
 import Popper from 'popper.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import { initializeFirebase, askForPermissioToReceiveNotifications } from './push-notification';
+import { initializeFirebase } from './push-notification';
 import runtime from 'serviceworker-webpack-plugin/lib/runtime';
 
 const store = configureStore(INITIAL_STATE);
@@ -24,7 +24,6 @@ const store = configureStore(INITIAL_STATE);
 if ('serviceWorker' in navigator) {
   const registration = runtime.register();
   initializeFirebase();
-  askForPermissioToReceiveNotifications();
 }
 
 const ROOT_ELEMENT_ID_AS_DEFINED_IN_INDEX_HTML = 'app-root';

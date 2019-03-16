@@ -1,5 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/messaging';
+import ccpServices from './services/domain/ccp-api-service';
+import { appConsts } from "./common/app-const";
 
 export const initializeFirebase = () => {
   firebase.initializeApp({
@@ -17,11 +19,13 @@ export const askForPermissioToReceiveNotifications = async () => {
   try {
     const messaging = firebase.messaging();
     await messaging.requestPermission();
-    const token = await messaging.getToken();
-    console.log('token do usuário:', token);
+    const registrationToken = await messaging.getToken();
+    console.log('registrationToken:', registrationToken);
+    ccpServices.userServices.sendNotificationToken(registrationToken);
+    localStorage.setItem(appConsts.NOTI_TOKEN, registrationToken);
     
-    return token;
+    return registrationToken;
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }

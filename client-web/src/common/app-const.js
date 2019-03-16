@@ -1,7 +1,8 @@
 import { increment, decrement, reset } from '../redux/actions/action-creators';
 
 export const appConsts = {
-  JWT_KEY: 'JWT_TOKEN'
+  JWT_KEY: 'JWT_TOKEN',
+  NOTI_TOKEN: 'NOTI_TOKEN'
 };
 
 export const ENTITY_KEY = {

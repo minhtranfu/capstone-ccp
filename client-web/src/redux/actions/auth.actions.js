@@ -3,6 +3,7 @@ import { appConsts } from '../../common/app-const';
 
 import ccpServices from '../../services/domain/ccp-api-service';
 import { makeActionCreator } from './action-creators';
+import { askForPermissioToReceiveNotifications } from "../../push-notification";
 
 /**
  * Decide what to export here
@@ -38,6 +39,7 @@ function login(username, password) {
         type: authConstants.LOGIN_SUCCESS,
         user
       });
+      askForPermissioToReceiveNotifications();
 
     } catch (error) {
       dispatch({
@@ -49,7 +51,13 @@ function login(username, password) {
 };
 
 function logout() {
-  return dispatch => {
+  return async dispatch => {
+    // unsubcribe notification
+    const token = localStorage.getItem(appConsts.NOTI_TOKEN);
+    if (token) {
+      await ccpServices.userServices.unsubcribeNotification(token);
+    }
+
     localStorage.removeItem(appConsts.JWT_KEY);
     dispatch({ type: authConstants.LOGOUT });
   };
@@ -72,6 +80,8 @@ function loadUserFromToken() {
           contractor
         }
       });
+
+      askForPermissioToReceiveNotifications();
     } catch (error) {
       console.log('Error!', error);
       localStorage.removeItem(appConsts.JWT_KEY);

@@ -63,6 +63,9 @@ const DataAccessService = {
   },
   put (url, data, options) {
     return _request('PUT', url, data, options);
+  },
+  delete (url, data, options) {
+    return _request('DELETE', url, data, options);
   }
 };
 
