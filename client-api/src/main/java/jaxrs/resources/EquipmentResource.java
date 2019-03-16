@@ -152,7 +152,7 @@ public class EquipmentResource {
 	@GET
 	@Path("{id:\\d+}")
 	public Response getEquipment(@PathParam("id") long id) {
-		return Response.ok(equipmentDAO.findByID(id)).build();
+		return Response.ok(equipmentDAO.findByIdWithValidation(id)).build();
 	}
 
 

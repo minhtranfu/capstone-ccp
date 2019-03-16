@@ -3,14 +3,21 @@ package entities;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
 @Entity
 @Where(clause = "is_deleted=0")
-@Table(name = "material", schema = "capstone_ccp", catalog = "")
+@Table(name = "material", schema = "capstone_ccp")
 public class MaterialEntity {
 	private long id;
+
+	@NotNull
+	private String name;
+	@Positive
 	private double price;
+
 	private String thumbnailImageUrl;
 	private String unit;
 	private String manufacturer;
@@ -19,9 +26,16 @@ public class MaterialEntity {
 	private LocalDateTime updatedTime;
 	private boolean isDeleted;
 
+	@NotNull
 	private MaterialTypeEntity materialType;
 
+	@NotNull
+	private ContractorEntity contractor;
+	@NotNull
+	private ConstructionEntity construction;
+
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;
@@ -29,6 +43,16 @@ public class MaterialEntity {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	@Basic
+	@Column(name = "name", nullable = false)
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Basic
@@ -98,8 +122,12 @@ public class MaterialEntity {
 	}
 
 	public void setDeleted(boolean deleted) {
+
 		isDeleted = deleted;
 	}
+
+	@Basic
+	@Column(name = "thumbnail_image_url")
 	public String getThumbnailImageUrl() {
 		return thumbnailImageUrl;
 	}
@@ -116,6 +144,28 @@ public class MaterialEntity {
 	}
 
 	public void setMaterialType(MaterialTypeEntity materialType) {
+
 		this.materialType = materialType;
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "contractor_id")
+	public ContractorEntity getContractor() {
+		return contractor;
+	}
+
+	public void setContractor(ContractorEntity contractor) {
+		this.contractor = contractor;
+	}
+
+
+	@ManyToOne
+	@JoinColumn(name = "construction_id")
+	public ConstructionEntity getConstruction() {
+		return construction;
+	}
+
+	public void setConstruction(ConstructionEntity constructionEntity) {
+		this.construction = constructionEntity;
 	}
 }

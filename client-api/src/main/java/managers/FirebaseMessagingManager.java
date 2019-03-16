@@ -120,14 +120,14 @@ public class FirebaseMessagingManager {
 		switch (notificationDeviceTokenEntity.getDeviceType()) {
 			case EXPO:
 				try {
-					sendExpo(notificationDTO, regisToken);
+					System.out.println("Sent expo:" + sendExpo(notificationDTO, regisToken));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				break;
 			case WEB:
 			case MOBILE:
-				sendWebMobile(notificationDTO,regisToken);
+				sendWebMobile(notificationDTO, regisToken);
 				break;
 		}
 	}

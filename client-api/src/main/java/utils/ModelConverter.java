@@ -109,5 +109,12 @@ public class ModelConverter {
 		modelMapper.map(subscriptionRequest, managedSubscription);
 	}
 
+	public MaterialEntity toEntity(MaterialRequest materialRequest) {
+		return modelMapper.map(materialRequest, MaterialEntity.class);
+	}
+	public void toEntity(MaterialRequest materialRequest, MaterialEntity managedMaterialEntity) {
+		 modelMapper.map(materialRequest, managedMaterialEntity);
+	}
+
 }
 

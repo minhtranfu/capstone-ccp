@@ -23,6 +23,7 @@ public class GeneralMaterialTypeEntity {
 	private List<MaterialTypeEntity> materialTypes;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;
