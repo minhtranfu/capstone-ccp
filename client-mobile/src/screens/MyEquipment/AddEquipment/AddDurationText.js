@@ -4,7 +4,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Animated
+  Animated,
+  Alert
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { Feather, Ionicons } from "@expo/vector-icons";
@@ -23,11 +24,14 @@ class AddDurationText extends PureComponent {
     super(props);
     this.state = {
       // dateRanges: { 0: { id: 0, beginDate: "", endDate: "" } },
-      dataRangeList: [{ id: 0, beginDate: "", endDate: "" }],
+      // dataRangeList: [{ id: 0, beginDate: "", endDate: "" }],
+      timeRanges: [{}],
       index: 0,
       calendarVisible: false,
+      calendarIndex: 0,
       fromDate: "",
-      toDate: ""
+      toDate: "",
+      endDateRange: ""
     };
   }
 
@@ -35,7 +39,7 @@ class AddDurationText extends PureComponent {
     const { beginDate, endDate, index } = this.state;
     // Add new empty data range
     const newRow = {
-      id: index + 1,
+      //id: index + 1,
       beginDate: "",
       endDate: ""
     };
@@ -46,8 +50,8 @@ class AddDurationText extends PureComponent {
       //   ...this.state.dateRanges,
       //   [newRow.id]: newRow
       // },
-      dataRangeList: [...this.state.dataRangeList, newRow],
-      index: index + 1
+      timeRanges: [...this.state.timeRanges, newRow]
+      //index: index + 1
     });
   };
 
@@ -63,14 +67,14 @@ class AddDurationText extends PureComponent {
     // const { [id]: deletedItem, ...otherItems } = dateRanges;
     // this.setState({ dateRanges: otherItems });
     this.setState({
-      dataRangeList: this.state.dataRangeList.filter(item => item.id !== id)
+      timeRanges: this.state.timeRanges.filter((item, index) => index !== id)
     });
 
     // this.setState({ dateRanges: newRange });
   };
 
   _handleDateChanged = (id, value, field) => {
-    const { dataRangeList, fromDate, toDate } = this.state;
+    const { timeRanges, fromDate, toDate } = this.state;
     this.setState({
       // dateRanges: {
       //   ...dateRanges,
@@ -79,7 +83,7 @@ class AddDurationText extends PureComponent {
       //     [field]: value
       //   }
       // },
-      dataRangeList: this.state.dataRangeList.map(item =>
+      timeRanges: this.state.timeRanges.map(item =>
         item.id === id ? { ...item, [field]: value } : item
       )
     });
@@ -87,28 +91,54 @@ class AddDurationText extends PureComponent {
 
   //Confirm date select. If toDate = null, set toDate = fromDate add more 3 months
   _onSelectDate = (id, fromDate, toDate, modalVisible) => {
-    const { dataRangeList } = this.state;
+    const { timeRanges } = this.state;
+    if (!timeRanges) {
+      timeRanges = [];
+    }
     console.log("id item", id);
     let newToDate = toDate ? toDate : this._handleAddMoreMonth(fromDate, 3);
+    timeRanges[id] = {
+      beginDate: fromDate,
+      endDate: newToDate
+    };
     this.setState({
-      dataRangeList: this.state.dataRangeList.map(item =>
-        item.id === id
-          ? { ...item, beginDate: fromDate, endDate: newToDate }
-          : item
-      ),
+      // dataRangeList: this.state.dataRangeList.map(item =>
+      //   item.id === id
+      //     ? { ...item, beginDate: fromDate, endDate: newToDate }
+      //     : item
+      // ),
+      // endDateRange: timeRanges[id].endDate,
+      timeRanges,
       calendarVisible: false
     });
-    console.log(dataRangeList);
+  };
+  _showAlert = msg => {
+    Alert.alert("Error", msg, [{ text: "OK" }], {
+      cancelable: true
+    });
   };
 
   //Open calendar
-  _setCalendarVisible = (visible, id) => {
-    console.log("select calendar", id);
-    this.setState({ calendarVisible: visible });
+  _setCalendarVisible = (visible, index) => {
+    console.log("Item is selected", index);
+    const { timeRanges, endDateRange } = this.state;
+    if (
+      index > 0 &&
+      !timeRanges[index - 1].endDate &&
+      !timeRanges[index - 1].beginDate
+    ) {
+      this._showAlert("Please select your first time range!!!");
+    } else {
+      this.setState({
+        calendarVisible: visible,
+        calendarIndex: index
+      });
+    }
   };
 
   _renderCalendar = (id, beginDate, endDate) => {
-    console.log("select range", id);
+    console.log("Date is select is: ", id);
+    const { timeRanges } = this.state;
     return (
       <Calendar
         visible={this.state.calendarVisible}
@@ -116,8 +146,19 @@ class AddDurationText extends PureComponent {
         onSelectDate={(fromDate, endDate, visible) =>
           this._onSelectDate(id, fromDate, endDate, visible)
         }
-        fromDate={beginDate}
-        endDate={endDate}
+        minDate={
+          id > 0
+            ? this._handleAddMoreDay(timeRanges[id - 1].endDate, 2)
+            : beginDate
+        }
+        maxDate={
+          id > 0
+            ? this._handleAddMoreMonth(timeRanges[id - 1].endDate, 3)
+            : endDate
+        }
+
+        // fromDate={id > 0 ? endDateRange : beginDate}
+        // endDate={endDate}
       />
     );
   };
@@ -143,27 +184,18 @@ class AddDurationText extends PureComponent {
     return this._formatDate(result);
   };
 
-  _renderDateRange = item => {
-    const { dataRangeList } = this.state;
-    const itemId = item.id;
-    console.log("id", item.id);
-    console.log("length", dataRangeList.length);
-    const date =
-      dataRangeList.length > 1
-        ? dataRangeList[dataRangeList.length - 1].endDate
-        : Date.now();
+  _renderDateRange = (item, index) => {
+    const { timeRanges } = this.state;
+    // const itemId = item.id;
+    // console.log("id", item.id);
+    console.log("index", index);
+
     return (
-      <View key={item.id}>
-        <TouchableOpacity
-          onPress={() => this._setCalendarVisible(true, item.id)}
-        >
+      <View key={index}>
+        <TouchableOpacity onPress={() => this._setCalendarVisible(true, index)}>
           <Text>Select your date range</Text>
         </TouchableOpacity>
-        {this._renderCalendar(
-          item.id,
-          Date.now(),
-          this._handleAddMoreMonth(Date.now(), 3)
-        )}
+
         <InputField
           label={"From"}
           placeholder={"yyyy-mm-dd"}
@@ -186,8 +218,8 @@ class AddDurationText extends PureComponent {
           value={item.endDate}
           returnKeyType={"next"}
         />
-        {item.id !== 0 ? (
-          <TouchableOpacity onPress={() => this._handleRemove(itemId)}>
+        {index > 0 ? (
+          <TouchableOpacity onPress={() => this._handleRemove(index)}>
             <Text style={styles.textRemove}>Remove</Text>
           </TouchableOpacity>
         ) : null}
@@ -220,10 +252,10 @@ class AddDurationText extends PureComponent {
   );
 
   render() {
-    const { beginDate, endDate, dataRangeList } = this.state;
+    const { beginDate, endDate, timeRanges, calendarIndex } = this.state;
     const { data } = this.props.navigation.state.params;
     // const timeRange = { beginDate, endDate };
-
+    console.log(timeRanges[calendarIndex]);
     return (
       <SafeAreaView
         style={styles.container}
@@ -239,7 +271,14 @@ class AddDurationText extends PureComponent {
           <Text style={styles.header}>Available time range</Text>
         </Header>
         <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-          {this.state.dataRangeList.map(item => this._renderDateRange(item))}
+          {this.state.timeRanges.map((item, index) =>
+            this._renderDateRange(item, index)
+          )}
+          {this._renderCalendar(
+            calendarIndex,
+            Date.now(),
+            this._handleAddMoreMonth(Date.now(), 3)
+          )}
 
           <TouchableOpacity
             activeOpacity={0.8}
@@ -250,7 +289,7 @@ class AddDurationText extends PureComponent {
           </TouchableOpacity>
         </ScrollView>
         <View style={styles.bottomWrapper}>
-          {this._renderBottomButton(data, dataRangeList)}
+          {this._renderBottomButton(data, timeRanges)}
         </View>
       </SafeAreaView>
     );

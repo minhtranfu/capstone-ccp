@@ -137,8 +137,10 @@ class MyEquipment extends PureComponent {
   }
 
   componentDidMount() {
-    const { user } = this.props;
-    this.props.fetchContractorEquipment(user.contractor.id);
+    const { user, isLoggedIn } = this.props;
+    if (isLoggedIn) {
+      this.props.fetchContractorEquipment(user.contractor.id);
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {

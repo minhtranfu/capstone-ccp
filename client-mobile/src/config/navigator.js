@@ -22,7 +22,7 @@ import SearchDetail from "../screens/Search/Detail";
 import MyTransaction from "../screens/MyTransaction";
 import MyTransactionDetail from "../screens/MyTransaction/Detail";
 import EquipmentDetail from "../screens/EquipmentDetail";
-import Transaction from "../screens/EquipmentDetail/Transaction";
+import ConfirmTransaction from "../screens/EquipmentDetail/Transaction";
 import Activity from "../screens/Activity";
 import ActivityDetail from "../screens/Activity/Detail";
 import Notification from "../screens/Activity/Notification";
@@ -54,7 +54,7 @@ const DiscoverStack = createStackNavigator(
   {
     Discover: Discover,
     Detail: EquipmentDetail,
-    Transaction: Transaction,
+    ConfirmTransaction: ConfirmTransaction,
     Search: Search,
     Result: SearchResult,
     SearchDetail: SearchDetail,

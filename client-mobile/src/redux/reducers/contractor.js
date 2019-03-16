@@ -73,7 +73,7 @@ export default function contractorReducer(state = initialState, action) {
     case Actions.LIST_FEEDBACK_TYPES.SUCCESS: {
       return {
         ...state,
-        feedbackType: payload.data
+        feedbackTypes: payload.data
       };
     }
     case Actions.CREATE_NEW_FEEDBACK.SUCCESS: {

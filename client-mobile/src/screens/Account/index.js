@@ -70,7 +70,7 @@ const ROW_ITEM_VALUE = [
 @connect(
   state => {
     return {
-      auth: state.auth.userIsLoggin,
+      isLoggedIn: state.auth.userIsLoggin,
       contractor: state.contractor.info,
       user: state.auth.data,
       status: state.status
@@ -95,8 +95,10 @@ class Account extends Component {
   }
 
   componentDidMount() {
-    const { user } = this.props;
-    this.props.fetchGetConstructionList(user.contractor.id);
+    const { user, isLoggedIn } = this.props;
+    if (isLoggedIn) {
+      this.props.fetchGetConstructionList(user.contractor.id);
+    }
   }
 
   _renderImageProfile = thumbnailImage => (
@@ -142,9 +144,9 @@ class Account extends Component {
   };
 
   render() {
-    const { auth, contractor, status, user } = this.props;
+    const { isLoggedIn, contractor, status, user } = this.props;
     const { name, thumbnailImage, createdTime } = this.props.contractor;
-    if (auth) {
+    if (isLoggedIn) {
       return (
         <SafeAreaView
           style={styles.container}

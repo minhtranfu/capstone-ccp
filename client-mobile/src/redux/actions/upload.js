@@ -10,7 +10,15 @@ export function uploadImage(image) {
         type: Actions.UPLOAD_IMAGE.REQUEST
       });
       const res = await axios.post(`equipmentImages`, image, {
-        headers: { "Content-Type": "multipart/form-data" }
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: progressEvent => {
+          console.log(progressEvent.loaded, progressEvent.total);
+          console.log(
+            "Upload progress: " +
+              Math.round((progressEvent.loaded / progressEvent.total) * 100) +
+              "%"
+          );
+        }
       });
       dispatch({
         type: Actions.UPLOAD_IMAGE.SUCCESS,

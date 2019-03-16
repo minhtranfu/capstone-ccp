@@ -95,7 +95,7 @@ class SearchDetail extends Component {
       equipmentId: id
       //requesterId: 12
     };
-    this.props.navigation.navigate("Transaction", {
+    this.props.navigation.navigate("ConfirmTransaction", {
       equipment: newEquipment,
       name: name,
       query: query

@@ -20,6 +20,7 @@ import {
   getAddressByLatLong,
   getLatLongByAddress
 } from "../../../redux/actions/location";
+import axios from "axios";
 
 import Loading from "../../../components/Loading";
 import Header from "../../../components/Header";
@@ -64,29 +65,58 @@ class AddImage extends Component {
           images: [...this.state.images, result.uri]
         });
         const form = new FormData();
-
         form.append("image", {
           uri: result.uri,
           type: "image/jpg",
           name: "image.jpg"
         });
 
-        this.props.fetchUploadImage(form);
+        // await this.props.fetchUploadImage(form);
+        const res = await axios.post(`equipmentImages`, form, {
+          headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: progressEvent => {
+            console.log(
+              "Upload progress: " +
+                Math.round((progressEvent.loaded / progressEvent.total) * 100) +
+                "%"
+            );
+          }
+        });
+        console.log(res);
       }
     }
   };
 
   // _handleUploadImage = () => {
+  //   //   const form = new FormData();
+  //   //   this.state.images.map((item, i) => {
+  //   //     form.append("image", {
+  //   //       uri: item.uri,
+  //   //       type: "image/jpg",
+  //   //       name: "image.jpg"
+  //   //     });
+  //   //   });
+
+  //   //   this.props.fetchUploadImage(form);
   //   const form = new FormData();
-  //   this.state.images.map((item, i) => {
-  //     form.append("image", {
-  //       uri: item.uri,
-  //       type: "image/jpg",
-  //       name: "image.jpg"
-  //     });
+  //   form.append("image", {
+  //     uri: result.uri,
+  //     type: "image/jpg",
+  //     name: "image.jpg"
   //   });
 
-  //   this.props.fetchUploadImage(form);
+  //   axios
+  //     .post(`equipmentImages`, form, {
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //       onUploadProgress: progressEvent => {
+  //         console.log(
+  //           "Upload progress: " +
+  //             Math.round((progressEvent.loaded / progressEvent.total) * 100) +
+  //             "%"
+  //         );
+  //       }
+  //     })
+  //     .then(res => console.log(res));
   // };
 
   _handleAddEquipment = () => {
@@ -172,6 +202,7 @@ class AddImage extends Component {
               </View>
             </View>
           ) : null}
+          {}
           <View
             style={{
               flexDirection: "row",
@@ -182,7 +213,7 @@ class AddImage extends Component {
             <Button
               buttonStyle={styles.buttonStyle}
               text={"Add Image"}
-              onPress={this._handleAddImage}
+              onPress={() => this._handleAddImage()}
             />
           </View>
           <TouchableOpacity

@@ -156,8 +156,10 @@ class MyTransaction extends Component {
   }
 
   componentDidMount() {
-    const { user } = this.props;
-    this.props.fetchListMyTransaction(user.contractor.id);
+    const { user, isLoggedIn } = this.props;
+    if (isLoggedIn) {
+      this.props.fetchListMyTransaction(user.contractor.id);
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {

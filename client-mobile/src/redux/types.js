@@ -125,8 +125,14 @@ export const LIST_FEEDBACK_TYPES = renderActions(
 export const INSERT_NOTIFICATION_TOKEN = renderActions(
   "@@contractor/INSERT_NOTIFICATION_TOKEN"
 );
-export const GET_NOTIFICATION_TOKEN = renderActions(
-  "@@contractor/GET_NOTIFICATION_TOKEN"
+export const GET_ALL_NOTIFICATION = renderActions(
+  "@@contractor/GET_ALL_NOTIFICATION"
+);
+export const READ_NOTIFICATION = renderActions(
+  "@@contractor/READ_NOTIFICATION"
+);
+export const DELETE_NOTIFICATION_MESSAGE = renderActions(
+  "@@contractor/DELETE_NOTIFICATION_MESSAGE"
 );
 export const DELETE_NOTIFICATION_TOKEN = renderActions(
   "@@contractor/DELETE_NOTIFICATION_TOKEN"

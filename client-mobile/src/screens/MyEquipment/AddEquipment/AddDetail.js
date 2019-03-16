@@ -33,7 +33,7 @@ const DROPDOWN_GENERAL_TYPES_OPTIONS = [
   {
     id: 0,
     name: "Select general equipment types",
-    value: "aSelect general equipment typesll"
+    value: "Select general equipment types"
   }
 ];
 
@@ -96,14 +96,14 @@ class AddDetail extends Component {
       const getConstructionByAddress = props.construction.find(
         item => item.name === state.construction
       );
-      if (!state.address) {
+      if (!state.address && getConstructionByAddress) {
         return {
           address: getConstructionByAddress.address
         };
       }
       return null;
     }
-    return null;
+    return undefined;
   }
 
   //All data must be fill before move to next screen
@@ -235,6 +235,7 @@ class AddDetail extends Component {
     const getConstructionByAddress = this.props.construction.find(
       item => item.address === address
     );
+
     if (!address) {
       this._showAlert("Address must be not null");
     } else {

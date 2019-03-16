@@ -24,6 +24,7 @@ class Calendar extends PureComponent {
       isFromDatePicked: false,
       isToDatePicked: false,
       markedDates: {},
+      //Add from date range to make user only click from date to date
       fromDate: props.fromDate ? props.fromDate : "",
       endDate: props.endDate ? props.endDate : ""
     };
@@ -237,7 +238,10 @@ class Calendar extends PureComponent {
               left: 0,
               right: 0
             }}
-            onPress={() => onSelectDate(fromDate, endDate, false)}
+            onPress={() => {
+              onSelectDate(fromDate, endDate, false);
+              this.setState({ markedDates: {} });
+            }}
           />
         </SafeAreaView>
       </Modal>

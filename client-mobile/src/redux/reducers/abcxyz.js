@@ -38,3 +38,42 @@ export default function cartReducer(state = INITIAL_STATE, action) {
       return state;
   }
 }
+
+<View
+  style={{
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 10
+  }}
+>
+  {RADIO_BUTON_DATA.map((item, key) =>
+    checked === key ? (
+      <TouchableOpacity
+        key={key}
+        style={{
+          marginRight: 10,
+          flexDirection: "row",
+          alignItems: "center"
+        }}
+      >
+        <View
+          style={[styles.cirleIcon, { backgroundColor: colors.secondaryColor }]}
+        />
+        <Text style={styles.text}>{item.value}</Text>
+      </TouchableOpacity>
+    ) : (
+      <TouchableOpacity
+        key={key}
+        style={{
+          marginRight: 10,
+          flexDirection: "row",
+          alignItems: "center"
+        }}
+        onPress={() => this.setState({ checked: key })}
+      >
+        <View style={styles.cirleIcon} />
+        <Text style={styles.text}>{item.value}</Text>
+      </TouchableOpacity>
+    )
+  )}
+</View>;

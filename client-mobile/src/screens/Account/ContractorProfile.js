@@ -29,17 +29,6 @@ import fontSize from "../../config/fontSize";
 
 const maxLength = 100;
 
-const RADIO_BUTON_DATA = [
-  {
-    id: 1,
-    value: "Good Crime"
-  },
-  {
-    id: 2,
-    value: "Bad Crime"
-  }
-];
-
 const DROPDOWN_FEEDBACK_OPTIONS = [
   {
     id: 0,
@@ -74,7 +63,6 @@ class ContractorProfile extends Component {
       modalVisible: false,
       text: "",
       textLength: maxLength,
-      checked: 0,
       feedback: "",
       feedbackIndex: 0
     };
@@ -115,12 +103,16 @@ class ContractorProfile extends Component {
     }
   };
 
+  _capitalizeFirstLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   _handleFeedbackDropdown = () => {
     const { types } = this.props;
     const newFeedbackDropdown = types.map(item => ({
       id: item.id,
-      name: item.name,
-      value: item.name
+      name: this._capitalizeFirstLetter(item.name),
+      value: this._capitalizeFirstLetter(item.name)
     }));
     return [...DROPDOWN_FEEDBACK_OPTIONS, ...newFeedbackDropdown];
   };
@@ -162,56 +154,15 @@ class ContractorProfile extends Component {
             <Text style={styles.text}>
               {maxLength} / {textLength}
             </Text>
-            <Text style={styles.text}>Reason to feedback</Text>
             <Dropdown
-              label={"Feedback Type"}
+              label={"Reason to feedback"}
               defaultText={"Select your reason"}
               onSelectValue={(value, index) =>
                 this.setState({ feedbackIndex: index, feedback: value })
               }
               options={this._handleFeedbackDropdown()}
             />
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginVertical: 10
-              }}
-            >
-              {RADIO_BUTON_DATA.map((item, key) =>
-                checked === key ? (
-                  <TouchableOpacity
-                    key={key}
-                    style={{
-                      marginRight: 10,
-                      flexDirection: "row",
-                      alignItems: "center"
-                    }}
-                  >
-                    <View
-                      style={[
-                        styles.cirleIcon,
-                        { backgroundColor: colors.secondaryColor }
-                      ]}
-                    />
-                    <Text style={styles.text}>{item.value}</Text>
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    key={key}
-                    style={{
-                      marginRight: 10,
-                      flexDirection: "row",
-                      alignItems: "center"
-                    }}
-                    onPress={() => this.setState({ checked: key })}
-                  >
-                    <View style={styles.cirleIcon} />
-                    <Text style={styles.text}>{item.value}</Text>
-                  </TouchableOpacity>
-                )
-              )}
-            </View>
+
             <TouchableOpacity
               onPress={() => this._handleOnSubmit()}
               style={{

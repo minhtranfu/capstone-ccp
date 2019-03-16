@@ -139,8 +139,10 @@ class Activity extends Component {
   }
 
   componentDidMount() {
-    const { user } = this.props;
-    this.props.fetchRequesterTransaction(user.contractor.id);
+    const { user, isLoggedIn } = this.props;
+    if (isLoggedIn) {
+      this.props.fetchRequesterTransaction(user.contractor.id);
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
