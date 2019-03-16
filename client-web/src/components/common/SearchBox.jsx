@@ -40,7 +40,6 @@ class SearchBox extends PureComponent {
     if (name === 'beginDate') {
       // TODO: Clear end date when begin is after end date
       if (moment(value).isSameOrAfter(moment(criteria.endDate))) {
-        window.alert('asdasd');
         return this.setState({
           criteria: {
             ...criteria,
