@@ -116,5 +116,10 @@ public class ModelConverter {
 		 modelMapper.map(materialRequest, managedMaterialEntity);
 	}
 
+
+	public MaterialTransactionEntity toEntity(MaterialTransactionRequest materialTransactionRequest) {
+		return modelMapper.map(materialTransactionRequest, MaterialTransactionEntity.class);
+		
+	}
 }
 

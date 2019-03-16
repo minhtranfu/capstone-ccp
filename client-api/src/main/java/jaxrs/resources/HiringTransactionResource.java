@@ -102,8 +102,12 @@ public class HiringTransactionResource {
 		// TODO: 3/10/19 validate authority for requester
 
 		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByIdWithValidation(id);
-		if (getClaimContractorId() == foundTransaction.getRequester().getId()) {
+		if (getClaimContractorId() != foundTransaction.getRequester().getId()) {
 			throw new BadRequestException("Only requester can cancel request");
+		}
+
+		if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING) {
+			throw new BadRequestException("You can only cancel PENDING transaction");
 		}
 
 		foundTransaction.setDeleted(true);

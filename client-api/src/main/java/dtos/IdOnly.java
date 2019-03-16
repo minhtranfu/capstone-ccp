@@ -16,4 +16,11 @@ public class IdOnly {
 	public void setId(long id) {
 		this.id = id;
 	}
+
+	public IdOnly(@NotNull @Positive long id) {
+		this.id = id;
+	}
+
+	public IdOnly() {
+	}
 }

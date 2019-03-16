@@ -7,9 +7,7 @@ import org.hibernate.annotations.Where;
 
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 
@@ -167,6 +165,8 @@ public class HiringTransactionEntity {
 		this.endDate = endDate;
 	}
 
+	@NotNull
+	@NotBlank
 	@Basic
 	@Column(name = "equipment_address")
 	public String getEquipmentAddress() {
@@ -204,6 +204,8 @@ public class HiringTransactionEntity {
 	}
 
 	@Basic
+	@NotNull
+	@NotBlank
 	@Column(name = "requester_address")
 	public String getRequesterAddress() {
 		return requesterAddress;

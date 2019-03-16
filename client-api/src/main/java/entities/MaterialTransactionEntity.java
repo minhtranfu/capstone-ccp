@@ -3,15 +3,17 @@ package entities;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Where(clause = "is_deleted=0")
 @Table(name = "material_transaction", schema = "capstone_ccp")
+@NamedQueries({
+		@NamedQuery(name = "MaterialTransactionEntity.BySupplierId", query = "select e from MaterialTransactionEntity  e where e.material.contractor.id = :supplierId")
+		, @NamedQuery(name = "MaterialTransactionEntity.ByRequesterId", query = "select e from MaterialTransactionEntity  e where e.requester.id = :requesterId")
+
+})
 public class MaterialTransactionEntity {
 	private long id;
 	@Positive
@@ -20,6 +22,10 @@ public class MaterialTransactionEntity {
 	@Positive
 	private Integer quantity;
 
+	private String unit;
+
+	@NotNull
+	@NotBlank
 	private String requesterAddress;
 
 	@NotNull
@@ -32,6 +38,8 @@ public class MaterialTransactionEntity {
 	@Max(180)
 	private Double requesterLong;
 
+	@NotNull
+	@NotBlank
 	private String materialAddress;
 
 	@NotNull
@@ -49,7 +57,11 @@ public class MaterialTransactionEntity {
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 	private boolean isDeleted;
+
+	@NotNull
 	private MaterialEntity material;
+	@NotNull
+	private ContractorEntity requester;
 
 	@Id
 	@GeneratedValue()
@@ -79,7 +91,19 @@ public class MaterialTransactionEntity {
 	}
 
 	public void setQuantity(Integer quantity) {
+
+
 		this.quantity = quantity;
+	}
+
+	@Basic
+	@Column(name = "unit")
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
 	}
 
 	@Basic
@@ -194,6 +218,15 @@ public class MaterialTransactionEntity {
 	}
 
 
+	@ManyToOne()
+	@JoinColumn(name = "requester_id", referencedColumnName = "id")
+	public ContractorEntity getRequester() {
+		return requester;
+	}
+
+	public void setRequester(ContractorEntity requester) {
+		this.requester = requester;
+	}
 
 	public enum Status{
 		PENDING,

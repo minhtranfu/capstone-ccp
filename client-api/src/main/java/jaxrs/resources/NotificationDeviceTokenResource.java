@@ -63,7 +63,9 @@ public class NotificationDeviceTokenResource {
 		notificationDeviceTokenEntity.setRegistrationToken(request.getRegistrationToken());
 		notificationDeviceTokenEntity.setDeviceType(request.getDeviceType());
 
-		NotificationDeviceTokenEntity foundToken = null;
+		NotificationDeviceTokenEntity foundToken;
+
+		//check dupplicate tokens
 		List<NotificationDeviceTokenEntity> foundTokens = notificationDeviceTokenDAO.findByToken(notificationDeviceTokenEntity.getRegistrationToken(),
 				notificationDeviceTokenEntity.getContractor().getId());
 		if (foundTokens.isEmpty()) {

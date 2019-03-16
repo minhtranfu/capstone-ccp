@@ -64,7 +64,6 @@ public class MaterialResource {
 
 
 	@POST
-//	@RolesAllowed({"USER"})
 	@RolesAllowed("contractor")
 	public Response postMaterial(@NotNull @Valid MaterialRequest materialRequest) {
 

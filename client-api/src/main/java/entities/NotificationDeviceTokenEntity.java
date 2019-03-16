@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "notification_device_token", schema = "capstone_ccp")
 @NamedQueries({
 		@NamedQuery(name = "NotificationDeviceTokenEntity.removeByToken", query = "delete from NotificationDeviceTokenEntity t where t.registrationToken = :token and t.contractor.id = :contractorId")
-		,@NamedQuery(name = "NotificationDeviceTokenEntity.findByTokenContractor", query = "select t from NotificationDeviceTokenEntity t where t.registrationToken = :token and t.contractor.id = :contractorId")
+		,@NamedQuery(name = "NotificationDeviceTokenEntity.findByTokenContractor", query = "select t from NotificationDeviceTokenEntity t where t.registrationToken = :token and t.contractor.id = :contractorId ")
 })
 public class NotificationDeviceTokenEntity {
 	private long id;
