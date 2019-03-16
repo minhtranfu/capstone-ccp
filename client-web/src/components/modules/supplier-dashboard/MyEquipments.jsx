@@ -41,10 +41,11 @@ class MyEquipments extends PureComponent {
               </Link>
             </h4>
             {equipments && equipments.map(equipment => {
+              const thumbnail = equipment.thumbnailImage ? equipment.thumbnailImage.url : '/public/upload/product-images/unnamed-19-jpg.jpg';
               return (
                 <div key={equipment.id} className="d-flex transaction my-3 rounded shadow-sm">
                   <div className="image flex-fill">
-                    <img src={equipment.thumbnailImage.url || '/public/upload/product-images/unnamed-19-jpg.jpg'} className="rounded-left" />
+                    <img src={thumbnail} className="rounded-left" />
                   </div>
                   <div className="detail flex-fill p-2">
                     <h6>
