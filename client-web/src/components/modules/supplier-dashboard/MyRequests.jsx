@@ -361,6 +361,14 @@ class MyRequests extends Component {
             </div>
             {changeStatusButtons}
           </div>
+          <div className="contractor-detail flex-fill p-2 text-center">
+            <img
+              className="rounded-circle"
+              style={{width: '50px', height: '50px'}}
+              src={transaction.equipment.contractor.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
+            />
+            <p>{transaction.equipment.contractor.name}</p>
+          </div>
         </div>
       </CSSTransition>
     );
