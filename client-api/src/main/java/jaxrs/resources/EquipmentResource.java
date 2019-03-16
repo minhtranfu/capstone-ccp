@@ -6,6 +6,7 @@ import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentPutRequest;
 import dtos.responses.EquipmentResponse;
 import dtos.validationObjects.LocationValidator;
+import dtos.wrappers.LocalDateWrapper;
 import dtos.wrappers.LocationWrapper;
 import dtos.responses.MessageResponse;
 import entities.*;
@@ -18,6 +19,7 @@ import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
+import javax.json.bind.annotation.JsonbDateFormat;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
@@ -27,6 +29,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -78,8 +81,6 @@ public class EquipmentResource {
 	private static final String DEFAULT_RESULT_LIMIT = "100";
 
 
-
-
 	private void validateBeginEndDate(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {
 		for (AvailableTimeRangeEntity availableTimeRangeEntity : availableTimeRangeEntities) {
 			if (availableTimeRangeEntity.getBeginDate().isAfter(availableTimeRangeEntity.getEndDate())) {
@@ -93,8 +94,8 @@ public class EquipmentResource {
 	public Response searchEquipment(
 			@QueryParam("lat") @DefaultValue(DEFAULT_LAT) double latitude,
 			@QueryParam("long") @DefaultValue(DEFAULT_LONG) double longitude,
-			@QueryParam("beginDate") @DefaultValue("") String beginDateStr,
-			@QueryParam("endDate") @DefaultValue("") String endDateStr,
+			@QueryParam("beginDate") @DefaultValue("") LocalDateWrapper beginDateWrapper,
+			@QueryParam("endDate") @DefaultValue("") LocalDateWrapper endDateWrapper,
 			@QueryParam("equipmentTypeId") @DefaultValue("0") long equipmentTypeId,
 			@QueryParam("lquery") @DefaultValue("") String locationQuery,
 			@QueryParam("orderBy") @DefaultValue("id.asc") String orderBy,
@@ -105,31 +106,19 @@ public class EquipmentResource {
 		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
 			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
 		}
+		LocalDate beginDate = beginDateWrapper.getLocalDate();
+		LocalDate endDate = endDateWrapper.getLocalDate();
 
-		LocalDate beginDate = null;
-		LocalDate endDate = null;
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-		if (!beginDateStr.isEmpty() && !endDateStr.isEmpty()) {
-
-
-//			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
-			try {
-				beginDate = LocalDate.parse(beginDateStr, dateTimeFormatter);
-				endDate = LocalDate.parse(endDateStr, dateTimeFormatter);
-
-			} catch (DateTimeParseException e) {
-				e.printStackTrace();
-
-				// TODO: 2/12/19 always return somethings even when format is shit for risk preventing
-				throw new BadRequestException("Date format must be yyyy-MM-dd");
-			}
-			if (beginDate.isAfter(endDate)) {
-				throw new BadRequestException("Error: beginDate > endDate");
-
-			}
+		if (endDate == null) {
+			endDate = beginDate;
 		}
 
+		System.out.println(String.format("search: beginDate=%s, endDate=%s", beginDate, endDate));
+
+		if (beginDate != null && endDate != null && beginDate.isAfter(endDate)) {
+			throw new BadRequestException("Error: beginDate > endDate");
+
+		}
 
 		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(
 				beginDate, endDate,
@@ -376,8 +365,8 @@ public class EquipmentResource {
 				// TODO: 3/12/19 validate status must be Processing
 				if (foundEquipment.getProcessingHiringTransactions().isEmpty() ||
 						foundEquipment.getProcessingHiringTransactions().get(0).getStatus() != HiringTransactionEntity.Status.PROCESSING) {
-				throw new BadRequestException("Transaction status must be PROCESSING");
-			}
+					throw new BadRequestException("Transaction status must be PROCESSING");
+				}
 
 				if (getClaimId() != requesterId) {
 					throw new BadRequestException("Only requester can change this status!");
