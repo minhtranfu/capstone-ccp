@@ -4,6 +4,7 @@ import dtos.queryResults.MatchedSubscriptionResult;
 import entities.AvailableTimeRangeEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
+import utils.Constants;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -23,8 +24,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	@PersistenceContext
 	EntityManager entityManager;
 
-
-	private static final String REGEX_ORDERBY_SINGLEITEM = "(\\w+)\\.(asc|desc)($|,)";
 
 	public List<EquipmentEntity> searchEquipment(LocalDate beginDate, LocalDate endDate,
 												 long equipmentTypeId,
@@ -94,7 +93,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		if (!orderBy.isEmpty()) {
 			List<Order> orderList = new ArrayList<>();
 			// TODO: 2/14/19 string split to orderBy list
-			Pattern pattern = Pattern.compile(REGEX_ORDERBY_SINGLEITEM);
+			Pattern pattern = Pattern.compile(Constants.RESOURCE_REGEX_ORDERBY_SINGLEITEM);
 
 			Matcher matcher = pattern.matcher(orderBy);
 			while (matcher.find()) {

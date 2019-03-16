@@ -11,6 +11,7 @@ import dtos.responses.MessageResponse;
 import entities.*;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.Resource;
@@ -74,9 +75,9 @@ public class EquipmentResource {
 //	Nghia's house address
 	private static final String DEFAULT_LAT = "10.806488";
 	private static final String DEFAULT_LONG = "106.676364";
-	private static final String DEFAULT_RESULT_LIMIT = "1000";
+	private static final String DEFAULT_RESULT_LIMIT = "100";
 
-	private static final String REGEX_ORDERBY = "(\\w+\\.(asc|desc)($|,))+";
+
 
 
 	private void validateBeginEndDate(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {
@@ -101,8 +102,8 @@ public class EquipmentResource {
 			@QueryParam("offset") @DefaultValue("0") int offset) {
 
 		// TODO: 2/14/19 validate orderBy pattern
-		if (!orderBy.matches(REGEX_ORDERBY)) {
-			throw new BadRequestException("orderBy param format must be " + REGEX_ORDERBY);
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
 		}
 
 		LocalDate beginDate = null;
@@ -423,4 +424,6 @@ public class EquipmentResource {
 
 		return equipmentImageSubResource;
 	}
+
+
 }

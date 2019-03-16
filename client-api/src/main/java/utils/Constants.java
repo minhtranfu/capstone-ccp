@@ -2,8 +2,11 @@ package utils;
 
 public class Constants {
 
-	// TODO: 2/17/19 take this from cookie or requests header
-	public static final long CURRENT_USER_PROFILE = 12;
+
+	/*======================RESOURCE======================*/
+	public static final String RESOURCE_REGEX_ORDERBY = "(\\w+\\.(asc|desc)($|,))+";
+	public static final String RESOURCE_REGEX_ORDERBY_SINGLEITEM = "(\\w+)\\.(asc|desc)($|,)";
+
 
 	public static final String PERSISTANCE_UNIT = "CAPSTONE_CCP";
 
