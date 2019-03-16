@@ -137,3 +137,20 @@ export const DELETE_NOTIFICATION_MESSAGE = renderActions(
 export const DELETE_NOTIFICATION_TOKEN = renderActions(
   "@@contractor/DELETE_NOTIFICATION_TOKEN"
 );
+export const ALLOW_PUSH_NOTIFICATION = renderActions(
+  "@@contractor/ALLOW_PUSH_NOTIFICATION"
+);
+
+//MATERIAL
+export const GET_GENERAL_MATERIAL_TYPE = renderActions(
+  "@@material/GET_GENERAL_MATERIAL_TYPE"
+);
+export const GET_MATERIAL_TYPE = renderActions("@@material/GET_MATERIAL_TYPE");
+export const GET_MATERIAL_DETAIL = renderActions(
+  "@@material/GET_MATERIAL_DETAIL"
+);
+export const SEARCH_MATERIAL = renderActions("@@material/SEARCH_MATERIAL");
+export const ADD_NEW_MATERIAL = renderActions("@@material/ADD_NEW_MATERIAL");
+export const UPDATE_MATERIAL_DETAIl = renderActions(
+  "@@material/UPDATE_MATERIAL_DETAIl"
+);

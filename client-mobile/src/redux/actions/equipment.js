@@ -85,10 +85,12 @@ export function searchEquipment(
   lat,
   beginDate,
   endDate,
+  equipmentTypeId,
   pageNo
 ) {
+  console.log("date action", beginDate, endDate);
   const page = pageNo > 0 ? pageNo : 0;
-  let url = `equipments?begin_date=${beginDate}&end_date=${endDate}&long=${long}&lad=${lat}&lquery=${address}&offset=${page}&limit=100`;
+  let url = `equipments?begin_date=${beginDate}&end_date=${endDate}&long=${long}&lad=${lat}&lquery=${address}&equipmentTypeId=${equipmentTypeId}&offset=${page}&limit=100`;
   return async dispatch => {
     try {
       dispatch({

@@ -24,6 +24,7 @@ import Button from "../../components/Button";
 import Loading from "../../components/Loading";
 import { itemDetail, discoverData, detail } from "../../config/mockData";
 import Item from "../Discover/components/Item";
+import { imageURL } from "../../Utils/MockData";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
@@ -247,7 +248,9 @@ class SearchDetail extends Component {
       address,
       dailyPrice,
       deliveryPrice,
-      description
+      description,
+      thumbnailImage,
+      equipmentImages
     } = this.props.detail.equipmentEntity;
     return (
       <View style={{ paddingHorizontal: 15 }}>
@@ -297,16 +300,21 @@ class SearchDetail extends Component {
         <Text style={styles.description}>{description}</Text>
 
         <Title title={"Images"} />
-        <Swiper
-          style={styles.slideWrapper}
-          loop={false}
-          loadMinimal
-          loadMinimalSize={1}
-          activeDotColor={"white"}
-          activeDotStyle={{ width: 30 }}
-        >
-          {IMAGE_LIST.map((uri, index) => this._renderSlideItem(uri, index))}
-        </Swiper>
+        {equipmentImages.length > 0 ? (
+          <Swiper
+            style={styles.slideWrapper}
+            loop={false}
+            loadMinimal
+            loadMinimalSize={1}
+            activeDotColor={colors.secondaryColor}
+            activeDotStyle={{ width: 30 }}
+          >
+            {equipmentImages
+              .slice(0, 4)
+              .map((item, index) => this._renderSlideItem(item.url, index))}
+          </Swiper>
+        ) : null}
+
         <Title title={"Location"} />
         <Text style={[styles.text, { paddingVertical: 5 }]}>{address}</Text>
         <MapView
@@ -339,6 +347,7 @@ class SearchDetail extends Component {
   render() {
     const { id } = this.props.navigation.state.params;
     const { detail } = this.props;
+
     let customI18n = {
       w: ["", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"],
       weekday: [
@@ -373,6 +382,11 @@ class SearchDetail extends Component {
           title={detail.equipmentEntity.name}
           removeTitle={true}
           hasThumbnail={true}
+          imageURL={
+            detail.equipmentEntity.thumbnailImage
+              ? detail.equipmentEntity.thumbnailImage.url
+              : imageURL
+          }
           hasLeft={true}
           hasCart={true}
           scrollElement={<Animated.ScrollView />}

@@ -37,8 +37,17 @@ const width = Dimensions.get("window").width;
     listSearch: state.equipment.listSearch
   }),
   dispatch => ({
-    fetchSearchEquipment: (address, long, lat, beginDate, endDate) => {
-      dispatch(searchEquipment(address, long, lat, beginDate, endDate));
+    fetchSearchEquipment: (
+      address,
+      long,
+      lat,
+      beginDate,
+      endDate,
+      equipmentTypeId
+    ) => {
+      dispatch(
+        searchEquipment(address, long, lat, beginDate, endDate, equipmentTypeId)
+      );
     },
     fetchClearSearchEquipment: () => {
       dispatch(clearSearchResult());
@@ -63,7 +72,8 @@ class SearchResult extends Component {
       lat,
       long,
       beginDate,
-      endDate
+      endDate,
+      equipmentTypeId
     } = this.props.navigation.state.params;
     const fullAddress = query.main_text.concat(", ", query.secondary_text);
     this.props.fetchSearchEquipment(
@@ -71,7 +81,8 @@ class SearchResult extends Component {
       lat,
       long,
       beginDate,
-      endDate
+      endDate,
+      equipmentTypeId
     );
     this.setState({ fromDate: beginDate, toDate: endDate });
   }
@@ -92,6 +103,20 @@ class SearchResult extends Component {
 
   _setCalendarVisible = visible => {
     this.setState({ calendarVisible: visible, modalVisible: !visible });
+  };
+
+  _handleDateFormat = date => {
+    let dateFormat = new Date(date);
+    year = dateFormat.getFullYear();
+    month = dateFormat.getMonth() + 1;
+    dt = dateFormat.getDate();
+    if (dt < 10) {
+      dt = "0" + dt;
+    }
+    if (month < 10) {
+      month = "0" + month;
+    }
+    return year + "-" + month + "-" + dt;
   };
 
   _formatDate = date => {
@@ -124,7 +149,8 @@ class SearchResult extends Component {
       lat,
       long,
       beginDate,
-      endDate
+      endDate,
+      equipmentTypeId
     } = this.props.navigation.state.params;
     const { fromDate, toDate } = this.state;
     if (fromDate && toDate) {
@@ -132,8 +158,9 @@ class SearchResult extends Component {
         query.main_text,
         lat,
         long,
-        newBeginDate,
-        newEndDate
+        fromDate ? fromDate : beginDate,
+        toDate ? toDate : endDate,
+        equipmentTypeId
       );
     }
     this._setModalVisible(!this.state.modalVisible);
@@ -149,7 +176,7 @@ class SearchResult extends Component {
     const newToDate = toDate ? toDate : this._handleAddMoreMonth(fromDate, 6);
     this.setState({
       fromDate,
-      toDate: newToDate,
+      toDate: this._handleDateFormat(newToDate),
       calendarVisible: visible,
       modalVisible: !visible
     });
@@ -272,7 +299,9 @@ class SearchResult extends Component {
         contractor={item.equipmentEntity.contractor.name}
         timeRange={item.equipmentEntity.availableTimeRanges[0]}
         imageURL={
-          "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+          item.equipmentEntity.thumbnailImage
+            ? item.equipmentEntity.thumbnailImage.url
+            : "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
         }
         address={item.equipmentEntity.address}
         price={item.equipmentEntity.dailyPrice}
@@ -351,7 +380,9 @@ class SearchResult extends Component {
               style={{ paddingTop: 15, paddingHorizontal: 15 }}
               data={listSearch}
               removeClippedSubviews={false}
-              renderItem={this._renderItem}
+              renderItem={
+                listSearch.length > 0 ? this._renderItem : <Text>No data</Text>
+              }
               getItemLayout={(data, index) => ({
                 length: ITEM_HEIGHT,
                 offset: ITEM_HEIGHT * index,

@@ -1,16 +1,19 @@
 import React from "react";
-import AppNavigator from "./src/config/navigator";
 import { Provider } from "react-redux";
-import configureStorage from "./src/config/store";
+import { AsyncStorage } from "react-native";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
-import Loading from "./src/components/Loading";
-import configAPI from "./src/config/api";
 import { Permissions, Notifications } from "expo";
 import * as firebase from "firebase";
+import axios from "axios";
+
 import { firebaseConfig } from "./src/config/apiKey";
+import AppNavigator from "./src/config/navigator";
+import configureStorage from "./src/config/store";
+import Loading from "./src/components/Loading";
+import configAPI from "./src/config/api";
 import ShowAlert from "./src/Utils/Alert";
-import ShowToast from "./src/components/Toast";
+import Toast from "./src/components/Toast";
 import NavigationService from "./src/Utils/NavigationServices";
 
 const config = configureStorage();
@@ -26,13 +29,25 @@ export default class App extends React.Component {
     this.onLogin();
   }
   componentDidMount() {
-    this.registerForPushNotificationsAsync();
+    // this.registerForPushNotificationsAsync();
     this._notificationSubscription = Notifications.addListener(
       this._handleNotification
     );
   }
 
+  // componentDidUpdate(prevState) {
+  //   if (
+  //     prevState.notification &&
+  //     this.state.notification &&
+  //     prevState.notification.data !== this.state.notification.data
+  //   ) {
+  //     console.log("new");
+  //     return <Toast message={this.state.notification.data.content} />;
+  //   }
+  // }
+
   _handleNotification = notification => {
+    console.log("render");
     this.setState({ notification: notification });
   };
 
@@ -94,7 +109,7 @@ export default class App extends React.Component {
             }}
           />
           {this.state.notification.data ? (
-            <ShowToast message={this.state.notification.data.content} />
+            <Toast message={this.state.notification.data} />
           ) : null}
           <ShowAlert />
         </PersistGate>

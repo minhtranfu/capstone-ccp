@@ -4,15 +4,22 @@ import {
   Text,
   View,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  AsyncStorage,
+  Switch
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
+import axios from "axios";
+import { Notifications, Permissions } from "expo";
 
 import { getConstructionList } from "../../redux/actions/contractor";
 import { logOut } from "../../redux/actions/auth";
-import { isSignedIn, onSignOut } from "../../config/auth";
+import {
+  deleteNoticationToken,
+  allowPushNotification
+} from "../../redux/actions/notification";
 
 import RequireLogin from "../Login/RequireLogin";
 import Login from "../Login";
@@ -73,7 +80,8 @@ const ROW_ITEM_VALUE = [
       isLoggedIn: state.auth.userIsLoggin,
       contractor: state.contractor.info,
       user: state.auth.data,
-      status: state.status
+      status: state.status,
+      allowPushNotification: state.notification.allowPushNotification
     };
   },
   dispatch => ({
@@ -82,6 +90,12 @@ const ROW_ITEM_VALUE = [
     },
     fetchGetConstructionList: userId => {
       dispatch(getConstructionList(userId));
+    },
+    fetchRemoveNotiToken: token => {
+      dispatch(deleteNoticationToken(token));
+    },
+    fetchAllowPushNotification: () => {
+      dispatch(allowPushNotification());
     }
   })
 )
@@ -90,16 +104,83 @@ class Account extends Component {
     super(props);
     this.state = {
       signedIn: false,
-      checkedSignIn: false
+      checkedSignIn: false,
+      switchValue: null
     };
   }
 
   componentDidMount() {
     const { user, isLoggedIn } = this.props;
     if (isLoggedIn) {
+      this._handlePermissionNotification();
+      //this._registerForPushNotificationsAsync();
       this.props.fetchGetConstructionList(user.contractor.id);
     }
   }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.allowPushNotification && state.switchValue === null) {
+      return {
+        switchValue: props.allowPushNotification
+      };
+    }
+    return null;
+  }
+
+  _handlePermissionNotification = async () => {
+    const { existingStatus } = await Permissions.getAsync(
+      Permissions.NOTIFICATIONS
+    );
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== "granted") {
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+    }
+
+    // Stop here if the user did not grant permissions
+    if (finalStatus !== "granted") {
+      return;
+    }
+    this.props.fetchAllowPushNotification();
+  };
+
+  _registerForPushNotificationsAsync = async () => {
+    // Get the token that uniquely identifies this device
+    let token = await Notifications.getExpoPushTokenAsync();
+    if (token) {
+      const notiToken = {
+        registrationToken: token,
+        deviceType: "EXPO"
+      };
+      axios.post(`notificationTokens`, notiToken).then(
+        res => {
+          console.log(res.data);
+          AsyncStorage.setItem("NotiToken", res.data.id.toString());
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    }
+  };
+
+  _handleRemoveToken = async () => {
+    const tokenId = await AsyncStorage.getItem("NotiToken");
+    if (tokenId) {
+      await this.props.fetchRemoveNotiToken(tokenId);
+      AsyncStorage.removeItem("NotiToken");
+    }
+  };
+
+  _handleLogout = async () => {
+    this._handleRemoveToken();
+    this.props.fetchLogout();
+  };
+
+  _handleOnSwitchChange = value => {
+    this.setState({ switchValue: value });
+  };
 
   _renderImageProfile = thumbnailImage => (
     <View style={{ flex: 1 }}>
@@ -146,6 +227,11 @@ class Account extends Component {
   render() {
     const { isLoggedIn, contractor, status, user } = this.props;
     const { name, thumbnailImage, createdTime } = this.props.contractor;
+    if (this.state.switchValue === true) {
+      this._registerForPushNotificationsAsync();
+    } else {
+      this._handleRemoveToken();
+    }
     if (isLoggedIn) {
       return (
         <SafeAreaView
@@ -170,6 +256,8 @@ class Account extends Component {
                     <RowItem
                       key={item.id}
                       value={item.value}
+                      onSwitchValue={this.state.switchValue}
+                      onSwitchChange={this._handleOnSwitchChange}
                       onPress={() =>
                         this.props.navigation.navigate(item.code, {
                           contractorId: user.contractor.id
@@ -182,7 +270,7 @@ class Account extends Component {
                     buttonStyle={{ backgroundColor: "#FF5C5C" }}
                     text={"Logout"}
                     onPress={() => {
-                      this.props.fetchLogout();
+                      this._handleLogout();
                     }}
                   />
                 </View>

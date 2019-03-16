@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Switch } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import colors from "../../../config/colors";
@@ -13,7 +13,17 @@ class RowItem extends PureComponent {
   };
 
   render() {
-    const { value, onPress } = this.props;
+    const { value, onPress, onSwitchValue, onSwitchChange } = this.props;
+    if (value === "Push Notifications")
+      return (
+        <View style={styles.container}>
+          <Text style={styles.text}>{value}</Text>
+          <Switch
+            value={onSwitchValue}
+            onValueChange={value => onSwitchChange(value)}
+          />
+        </View>
+      );
     return (
       <TouchableOpacity style={styles.container} onPress={onPress}>
         <Text style={styles.text}>{value}</Text>

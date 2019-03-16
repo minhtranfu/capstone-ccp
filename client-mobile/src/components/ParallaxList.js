@@ -88,7 +88,7 @@ class ParallaxList extends Component {
           }
         ]
       }}
-      source={require("../../assets/images/forklift1.png")}
+      source={{ uri: this.props.imageURL }}
       resizeMode={"cover"}
     />
   );

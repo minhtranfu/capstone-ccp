@@ -45,16 +45,12 @@ class Login extends Component {
     };
   }
 
-  _signIn = user => {
+  _signIn = () => {
     const { username, password } = this.state;
     const { navigation } = this.props;
     this.props.fetchLogin({ username, password });
-    if (navigation.state.params) {
-      const { screen } = navigation.state.params;
-      navigation.navigate(screen);
-    } else {
-      navigation.navigate("Account");
-    }
+
+    navigation.navigate("Account");
   };
 
   render() {

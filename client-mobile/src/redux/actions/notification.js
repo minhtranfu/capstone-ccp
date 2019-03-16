@@ -1,6 +1,15 @@
 import * as Actions from "../types";
 import axios from "axios";
 
+export function allowPushNotification() {
+  return dispatch => {
+    dispatch({
+      type: Actions.ALLOW_PUSH_NOTIFICATION.SUCCESS,
+      payload: true
+    });
+  };
+}
+
 export function getAllNotification(pageNo) {
   return async dispatch => {
     const res = await axios.get(`notifications?limit=10&offset=0`);
@@ -33,9 +42,9 @@ export function deleteNotication(notificationId) {
   };
 }
 
-export function deleteNoticationToken(notificationId) {
+export function deleteNoticationToken(tokenId) {
   return async dispatch => {
-    const res = await axios.delete(`notifications/${notificationId}`);
+    const res = await axios.delete(`notificationTokens/${tokenId}`);
     dispatch({
       type: Actions.DELETE_NOTIFICATION_TOKEN.SUCCESS,
       payload: res

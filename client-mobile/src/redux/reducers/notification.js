@@ -3,12 +3,19 @@ import * as Actions from "../types";
 const INITIAL_STATE = {
   loading: false,
   listNotification: [],
-  token: {}
+  token: {},
+  allowPushNotification: false
 };
 
 export default function notificationReducer(state = INITIAL_STATE, action) {
   const { type, payload } = action;
   switch (type) {
+    case Actions.ALLOW_PUSH_NOTIFICATION.SUCCESS: {
+      return {
+        ...state,
+        allowPushNotification: payload
+      };
+    }
     case Actions.INSERT_NOTIFICATION_TOKEN.SUCCESS: {
       return {
         ...state

@@ -24,6 +24,7 @@ import {
   clearSupplierTransactionList
 } from "../../redux/actions/transaction";
 
+import AddModal from "./components/AddModal";
 import RequireLogin from "../Login/RequireLogin";
 import ParallaxList from "../../components/ParallaxList";
 import Dropdown from "../../components/Dropdown";
@@ -132,7 +133,8 @@ class MyEquipment extends PureComponent {
       status: "All Statuses",
       id: null,
       refreshing: false,
-      hasError: false
+      hasError: false,
+      addModalVisible: false
     };
   }
 
@@ -170,6 +172,10 @@ class MyEquipment extends PureComponent {
     });
   };
 
+  _setModalVisible = visible => {
+    this.setState({ addModalVisible: visible });
+  };
+
   _handleOnPressItem = id => {
     this.setState({ id });
   };
@@ -179,7 +185,8 @@ class MyEquipment extends PureComponent {
   };
 
   _handleAddButton = () => {
-    this.props.navigation.navigate("AddDetail");
+    this.setState({ addModalVisible: true });
+    // this.props.navigation.navigate("AddDetail");
   };
 
   _getEquipementByStatus = status => {
@@ -224,10 +231,12 @@ class MyEquipment extends PureComponent {
                 id={item.id}
                 name={item.name}
                 imageURL={
-                  "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+                  item.thumbnailImage
+                    ? item.thumbnailImage.url
+                    : "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
                 }
                 address={item.address}
-                requesterThumbnail={item.thumbnailImage}
+                // requesterThumbnail={item.thumbnailImage}
                 price={item.dailyPrice}
               />
             ))}
@@ -278,13 +287,29 @@ class MyEquipment extends PureComponent {
         >
           <Header
             renderRightButton={() => (
-              <TouchableOpacity onPress={this._handleAddButton}>
+              <TouchableOpacity onPress={() => this._handleAddButton()}>
                 <Feather name="plus" size={22} />
               </TouchableOpacity>
             )}
           >
             <Text style={styles.header}>My Equipment</Text>
           </Header>
+          <AddModal
+            visible={this.state.addModalVisible}
+            setModalVisible={this._setModalVisible}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                this.props.navigation.navigate("AddDetail");
+                this._setModalVisible(false);
+              }}
+            >
+              <Text>Add Equipment</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text>Add Material</Text>
+            </TouchableOpacity>
+          </AddModal>
           <View style={{ flex: 1 }}>
             {!loading && listEquipment ? (
               <ScrollView
