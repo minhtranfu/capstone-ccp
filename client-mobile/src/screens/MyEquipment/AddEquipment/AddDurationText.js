@@ -127,7 +127,7 @@ class AddDurationText extends PureComponent {
       !timeRanges[index - 1].endDate &&
       !timeRanges[index - 1].beginDate
     ) {
-      this._showAlert("Please select your first time range!!!");
+      this._showAlert("Please select your before time range!!!");
     } else {
       this.setState({
         calendarVisible: visible,
@@ -139,6 +139,7 @@ class AddDurationText extends PureComponent {
   _renderCalendar = (id, beginDate, endDate) => {
     console.log("Date is select is: ", id);
     const { timeRanges } = this.state;
+    console.log(timeRanges);
     return (
       <Calendar
         visible={this.state.calendarVisible}
@@ -149,12 +150,12 @@ class AddDurationText extends PureComponent {
         minDate={
           id > 0
             ? this._handleAddMoreDay(timeRanges[id - 1].endDate, 2)
-            : beginDate
+            : this._formatDate(beginDate)
         }
         maxDate={
           id > 0
             ? this._handleAddMoreMonth(timeRanges[id - 1].endDate, 3)
-            : endDate
+            : this._formatDate(endDate)
         }
 
         // fromDate={id > 0 ? endDateRange : beginDate}
@@ -201,10 +202,7 @@ class AddDurationText extends PureComponent {
           placeholder={"yyyy-mm-dd"}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          onChangeText={value =>
-            this._handleDateChanged(itemId, value, "beginDate")
-          }
-          value={item.beginDate}
+          value={timeRanges[index].beginDate}
           returnKeyType={"next"}
         />
         <InputField
@@ -212,10 +210,7 @@ class AddDurationText extends PureComponent {
           placeholder={"yyyy-mm-dd"}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          onChangeText={value =>
-            this._handleDateChanged(itemId, value, "endDate")
-          }
-          value={item.endDate}
+          value={timeRanges[index].endDate}
           returnKeyType={"next"}
         />
         {index > 0 ? (

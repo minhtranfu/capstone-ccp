@@ -304,7 +304,7 @@ class MyEquipment extends PureComponent {
                 this._setModalVisible(false);
               }}
             >
-              <Text>Add Equipment</Text>
+              <Text style={styles.text}>Add Equipment</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -312,7 +312,7 @@ class MyEquipment extends PureComponent {
                 this._setModalVisible(false);
               }}
             >
-              <Text>Add Material</Text>
+              <Text style={styles.text}>Add Material</Text>
             </TouchableOpacity>
           </AddModal>
           <View style={{ flex: 1 }}>
@@ -360,6 +360,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: fontSize.h4,
     fontWeight: "600"
+  },
+  text: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500"
   }
 });
 

@@ -121,7 +121,6 @@ class MyEquipmentDetail extends Component {
     let result = generalType.find(
       item => item.id === generalTypeArray[generalTypeIndex].id
     );
-
     if (result) {
       let newEquipmentTypeArray = result.equipmentTypes.map(item => ({
         id: item.id,
@@ -256,7 +255,6 @@ class MyEquipmentDetail extends Component {
     const NEW_DROPDOWN_TYPES_OPTIONS = this._handleEquipmentType(
       generalTypeIndex
     );
-
     return (
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.landscapeImgWrapper}>
@@ -343,13 +341,14 @@ class MyEquipmentDetail extends Component {
             {data.additionalSpecsValues.map((item, index) => (
               <InputField
                 key={item.id}
-                label={this._capitalizeLetter(item.name)}
-                placeholder={item.name}
+                label={this._capitalizeLetter(item.additionalSpecsField.name)}
+                placeholder={item.additionalSpecsField.name}
                 customWrapperStyle={{ marginBottom: 20 }}
                 inputType="text"
                 onChangeText={value =>
                   this._handleInputSpecsField(item.id, value)
                 }
+                value={item.value}
               />
             ))}
           </View>

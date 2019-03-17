@@ -34,7 +34,6 @@ class AddModal extends Component {
 
   render() {
     const { title, routeName, onPress, visible, setModalVisible } = this.props;
-    console.log(visible);
     return (
       <View style={{ marginBottom: 20 }}>
         <Modal transparent={true} visible={visible}>

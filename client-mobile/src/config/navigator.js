@@ -42,6 +42,7 @@ import Login from "../screens/Login";
 import AuthLoading from "../screens/Login/AuthLoading";
 import MaterialSearch from "../screens/Search/MaterialSearch";
 import AddMaterialDetail from "../screens/MyEquipment/AddMaterial/AddMaterialDetail";
+import MaterialResult from "../screens/Search/MaterialResult";
 
 const EquipmentDetailStack = createStackNavigator(
   {
@@ -62,7 +63,8 @@ const DiscoverStack = createStackNavigator(
     SearchDetail: SearchDetail,
     Cart: Cart,
     ConfirmCart: ConfirmCart,
-    MaterialSearch: MaterialSearch
+    MaterialSearch: MaterialSearch,
+    MaterialResult: MaterialResult
   },
   {
     headerMode: "none"

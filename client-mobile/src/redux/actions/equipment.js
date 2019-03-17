@@ -21,7 +21,6 @@ export function getContractorEquipmentList(contractorId) {
 }
 
 export function addEquipment(equipment) {
-  console.log(equipment);
   return async dispatch => {
     try {
       dispatch({

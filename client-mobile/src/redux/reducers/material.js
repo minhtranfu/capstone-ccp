@@ -4,28 +4,49 @@ const INITIAL_STATE = {
   loading: false,
   generalMaterialType: [],
   materialType: [],
-  listMaterial: []
+  listSearch: []
 };
 
 export default function materialReducer(state = INITIAL_STATE, action) {
   const { type, payload } = action;
   switch (type) {
+    case Actions.GET_GENERAL_MATERIAL_TYPE.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
     case Actions.GET_GENERAL_MATERIAL_TYPE.SUCCESS: {
       return {
         ...state,
+        loading: false,
         generalMaterialType: payload.data
       };
     }
-    case Actions.GET_MATERIAL_TYPE: {
+    case Actions.GET_MATERIAL_TYPE.REQUEST: {
       return {
         ...state,
+        loading: true
+      };
+    }
+    case Actions.GET_MATERIAL_TYPE.SUCCESS: {
+      return {
+        ...state,
+        loading: false,
         materialType: payload.data
+      };
+    }
+    case Actions.SEARCH_MATERIAL.REQUEST: {
+      return {
+        ...state,
+        loading: true
       };
     }
     case Actions.SEARCH_MATERIAL.SUCCESS: {
       return {
         ...state,
-        listMaterial: payload.data
+        loading: false,
+        listSearch: payload.data
       };
     }
     case Actions.ADD_NEW_MATERIAL.SUCCESS: {

@@ -3,6 +3,9 @@ import axios from "axios";
 
 export function searchMaterial(text) {
   return async dispatch => {
+    dispatch({
+      type: Actions.SEARCH_MATERIAL.REQUEST
+    });
     const res = await axios.get(`materials?q=${text}&limit=10`);
     dispatch({
       type: Actions.SEARCH_MATERIAL.SUCCESS,
@@ -33,6 +36,9 @@ export function editMaterial(materialId, material) {
 
 export function getGeneralMaterialType() {
   return async dispatch => {
+    dispatch({
+      type: Actions.GET_GENERAL_MATERIAL_TYPE.REQUEST
+    });
     const res = await axios.get("generalMaterialTypes");
     dispatch({
       type: Actions.GET_GENERAL_MATERIAL_TYPE.SUCCESS,
@@ -43,6 +49,9 @@ export function getGeneralMaterialType() {
 
 export function getMaterialType() {
   return async dispatch => {
+    dispatch({
+      type: Actions.GET_MATERIAL_TYPE.REQUEST
+    });
     const res = await axios.get("materialTypes");
     dispatch({
       type: Actions.GET_MATERIAL_TYPE.SUCCESS,
