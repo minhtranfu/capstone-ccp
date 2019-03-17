@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "paths": {
+      "Src/*": ["*"],
+      "Common/*": ["common/*"],
+      "Redux/*": ["redux/*"],
+      "Services/*": ["services/*"],
+      "Components/*": ["components/*"]
+    }
+  }
+}
