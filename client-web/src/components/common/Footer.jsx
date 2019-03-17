@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const Footer = () => {
   return (
-    <footer className="page-footer font-small bg-dark text-light pt-4">
+    <footer className="page-footer font-small bg-dark text-light pt-4 mt-auto">
       <div className="container text-center text-md-left">
         <div className="row">
           <div className="col-md-6 mt-md-0 mt-3">

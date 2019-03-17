@@ -148,7 +148,7 @@ class FeedbackModal extends Component {
     }
 
     return (
-      <div class="invalid-feedback">
+      <div className="invalid-feedback">
         {validateResult[fieldName]}
       </div>
     );

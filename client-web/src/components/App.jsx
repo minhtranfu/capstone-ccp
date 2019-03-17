@@ -36,7 +36,7 @@ class App extends Component {
     }
 
     return (
-      <div>
+      <div className="d-flex flex-column min-vh-100">
         <Header />
         <SubHeader />
         {Routes}
