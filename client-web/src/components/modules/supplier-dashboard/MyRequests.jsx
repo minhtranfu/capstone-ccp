@@ -7,6 +7,7 @@ import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
+import { FeedbackModal } from "../../common";
 import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES } from '../../../common/consts';
 
 class MyRequests extends Component {
@@ -268,6 +269,17 @@ class MyRequests extends Component {
     this.needActionCounters[status]++;
   };
 
+  /**
+   * Show feedback modal
+   */
+  _toggleFeedbackModal = (feedbackTransaction) => {
+    const { isShowFeedbackModal } = this.state;
+    this.setState({
+      isShowFeedbackModal: !isShowFeedbackModal,
+      feedbackTransaction
+    });
+  };
+
   _renderTransaction = transaction => {
     const { filterStatus } = this.state;
     const { equipment } = transaction;
@@ -329,10 +341,9 @@ class MyRequests extends Component {
 
       case TRANSACTION_STATUSES.FINISHED:
         statusClasses += 'badge-success';
-        // TODO: Feedback function
         changeStatusButtons = (
           <div className="mt-2">
-            <button className="btn btn-sm btn-success" onClick={() => window.alert('Feedback chưa xong')}>Feedback</button>
+            <button className="btn btn-sm btn-success" onClick={() => this._toggleFeedbackModal(transaction)}>Feedback</button>
           </div>
         );
         break;
@@ -367,9 +378,9 @@ class MyRequests extends Component {
             <img
               className="rounded-circle"
               style={{width: '50px', height: '50px'}}
-              src={transaction.equipment.contractor.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
+              src={transaction.requester.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
             />
-            <p>{transaction.equipment.contractor.name}</p>
+            <p>{transaction.requester.name}</p>
           </div>
         </div>
       </CSSTransition>
@@ -377,12 +388,17 @@ class MyRequests extends Component {
   };
 
   render() {
-
+    const { isShowFeedbackModal, feedbackTransaction } = this.state;
     this._renderTabContents();
 
     return (
       <div className="container py-5 user-dashboard">
         {this._renderAlert()}
+        <FeedbackModal
+          isOpen={isShowFeedbackModal}
+          onClose={() => this._toggleFeedbackModal()}
+          transaction={feedbackTransaction}
+        />
         <div className="row">
           <div className="col-md-3">
             <div className="border-right border-primary h-100">

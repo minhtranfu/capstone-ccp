@@ -11,6 +11,7 @@ import {
   EQUIPMENT_STATUSES,
   EQUIPMENT_SHOWABLE_STATUSES
 } from '../../../common/consts';
+import { FeedbackModal } from "../../common";
 import ccpApiService from '../../../services/domain/ccp-api-service';
 
 class MyRequests extends Component {
@@ -158,6 +159,17 @@ class MyRequests extends Component {
   };
 
   /**
+   * Show feedback modal
+   */
+  _toggleFeedbackModal = (feedbackTransaction) => {
+    const { isShowFeedbackModal } = this.state;
+    this.setState({
+      isShowFeedbackModal: !isShowFeedbackModal,
+      feedbackTransaction
+    });
+  };
+
+  /**
    * Render a transaction element
    */
   _renderTransaction = transaction => {
@@ -222,7 +234,7 @@ class MyRequests extends Component {
         // TODO: Feedback function
         changeStatusButtons = (
           <div className="mt-2">
-            <button className="btn btn-sm btn-success" onClick={() => window.alert('Feedback chưa xong')}>Feedback</button>
+            <button className="btn btn-sm btn-success" onClick={() => this._toggleFeedbackModal(transaction)}>Feedback</button>
           </div>
         );
         break;
@@ -513,11 +525,17 @@ class MyRequests extends Component {
   };
 
   render() {
+    const { isShowFeedbackModal, feedbackTransaction } = this.state;
     this._renderTabContents();
 
     return (
       <div className="container py-5 user-dashboard">
         {this._renderAlert()}
+        <FeedbackModal
+          isOpen={isShowFeedbackModal}
+          onClose={() => this._toggleFeedbackModal()}
+          transaction={feedbackTransaction}
+        />
         <div className="row">
           <div className="col-md-3">
             <div className="border-right border-primary h-100">

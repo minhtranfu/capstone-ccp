@@ -26,7 +26,15 @@ const config = {
     publicPath: '/',
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.json']
+    extensions: ['.js', '.jsx', '.json'],
+    alias: {
+      Src: path.resolve(__dirname, 'src'),
+      Common: path.resolve(__dirname, 'src', 'common'),
+      Redux: path.resolve(__dirname, 'src', 'redux'),
+      Services: path.resolve(__dirname, 'src', 'services'),
+      Components: path.resolve(__dirname, 'src', 'components')
+    },
+    modules: [path.resolve(__dirname, 'src'), 'node_modules']
   },
   plugins: [
     new webpack.ProvidePlugin({

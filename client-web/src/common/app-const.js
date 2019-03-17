@@ -10,7 +10,8 @@ export const ENTITY_KEY = {
   BAR: 'bar',
   BAZ: 'baz',
   EQUIPMENT_TYPES: 'equipment_types',
-  EQUIPMENT_TYPE_INFOS: 'equipment_type_infos'
+  EQUIPMENT_TYPE_INFOS: 'equipment_type_infos',
+  FEEDBACK_TYPES: 'feedbackTypes'
 };
 
 const jwt = localStorage.getItem(appConsts.JWT_KEY);
@@ -21,7 +22,8 @@ export const INITIAL_STATE = {
     [ENTITY_KEY.BAR]: {},
     [ENTITY_KEY.BAZ]: {},
     [ENTITY_KEY.EQUIPMENT_TYPES]: {},
-    [ENTITY_KEY.EQUIPMENT_TYPE_INFOS]: {}
+    [ENTITY_KEY.EQUIPMENT_TYPE_INFOS]: {},
+    [ENTITY_KEY.FEEDBACK_TYPES]: {}
   },
   counter: 0,
   authentication: {

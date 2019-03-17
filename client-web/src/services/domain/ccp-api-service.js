@@ -1,5 +1,6 @@
 import DataAccessService from '../data/data-access-service';
 import * as userServices from './ccp/user.services';
+import * as feedbackServices from './ccp/feedback.services';
 
 const CcpApiService = {
   getEquipmentTypes() {
@@ -59,7 +60,8 @@ const CcpApiService = {
       }
     });
   },
-  userServices
+  userServices,
+  feedbackServices
 };
 
 export default CcpApiService;
