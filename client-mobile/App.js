@@ -1,6 +1,6 @@
 import React from "react";
 import { Provider } from "react-redux";
-import { AsyncStorage } from "react-native";
+import { AsyncStorage, TouchableOpacity } from "react-native";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import { Permissions, Notifications } from "expo";

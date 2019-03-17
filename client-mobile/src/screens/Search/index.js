@@ -14,7 +14,8 @@ import { Location } from "expo";
 import { grantPermission } from "../../redux/reducers/permission";
 import { autoCompleteSearch } from "../../redux/actions/location";
 import { searchEquipment } from "../../redux/actions/equipment";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { getGeneralEquipmentType } from "../../redux/actions/type";
 
 import Dropdown from "../../components/Dropdown";
@@ -219,38 +220,6 @@ class Search extends Component {
           )}
         />
         <View style={{ paddingHorizontal: 15 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginVertical: 5
-            }}
-          >
-            {RADIO_BUTON_DATA.map((item, key) =>
-              checked === key ? (
-                <TouchableOpacity
-                  key={key}
-                  style={[
-                    styles.typeButtonWrapper,
-                    {
-                      backgroundColor: colors.secondaryColor,
-                      borderColor: colors.secondaryColor
-                    }
-                  ]}
-                >
-                  <Text style={styles.text}>{item.value}</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  key={key}
-                  style={styles.typeButtonWrapper}
-                  onPress={() => this.setState({ checked: key })}
-                >
-                  <Text style={styles.text}>{item.value}</Text>
-                </TouchableOpacity>
-              )
-            )}
-          </View>
           <Dropdown
             isHorizontal={true}
             label={"General Equipment Type"}

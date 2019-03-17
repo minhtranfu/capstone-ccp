@@ -6,6 +6,7 @@ import {
   Animated,
   Alert,
   TouchableOpacity,
+  TouchableHighlight,
   ScrollView
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
@@ -26,7 +27,7 @@ import fontSize from "../../config/fontSize";
 
 const RADIO_BUTON_DATA = [
   { id: 1, value: "Equipment", routeName: "Search" },
-  { id: 2, value: "Material", routeName: "SearchMaterial" },
+  { id: 2, value: "Material", routeName: "MaterialSearch" },
   { id: 3, value: "Xà bần", routeName: "Xà bần" }
 ];
 
@@ -62,40 +63,25 @@ class Discover extends Component {
     const { checked } = this.state;
     return (
       <View>
-        <Text style={styles.title}>Search By</Text>
+        <Title title={"Search By"} style={{ paddingLeft: 15 }} />
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
-            marginVertical: 5,
+            marginVertical: 10,
             paddingHorizontal: 15
           }}
         >
-          {RADIO_BUTON_DATA.map((item, key) =>
-            checked === key ? (
-              <TouchableOpacity
-                key={key}
-                style={[
-                  styles.typeButtonWrapper,
-                  {
-                    backgroundColor: colors.secondaryColor,
-                    borderColor: colors.secondaryColor
-                  }
-                ]}
-                onPress={() => this.props.navigation.navigate("")}
-              >
-                <Text style={styles.text}>{item.value}</Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                key={key}
-                style={styles.typeButtonWrapper}
-                onPress={() => this.setState({ checked: key })}
-              >
-                <Text style={styles.text}>{item.value}</Text>
-              </TouchableOpacity>
-            )
-          )}
+          {RADIO_BUTON_DATA.map((item, key) => (
+            <TouchableHighlight
+              key={key}
+              style={styles.typeButtonWrapper}
+              onPress={() => this.props.navigation.navigate(item.routeName)}
+              underlayColor={colors.secondaryColor}
+            >
+              <Text style={styles.text}>{item.value}</Text>
+            </TouchableHighlight>
+          ))}
         </View>
         <Title
           title={"What can we help you to find"}
@@ -137,7 +123,7 @@ class Discover extends Component {
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "never", top: "always" }}
+        forceInset={{ bottom: "always", top: "always" }}
       >
         <Header
           renderRightButton={() => (
@@ -145,17 +131,12 @@ class Discover extends Component {
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("Cart")}
               >
-                <Text>Cart</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("Search")}
-              >
-                <Text>Search</Text>
+                <Feather name={"shopping-cart"} size={24} />
               </TouchableOpacity>
             </View>
           )}
         >
-          <Text>Search</Text>
+          <Text style={styles.title}>Search</Text>
         </Header>
         <ScrollView>{this._renderItem()}</ScrollView>
         {/* <ParallaxList
@@ -189,16 +170,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     height: 30,
     borderRadius: 3,
-    borderWidth: 1,
-    borderColor: colors.primaryColor,
     marginRight: 10,
+    backgroundColor: "#DDDDDD",
     alignItems: "center",
     justifyContent: "center"
   },
   title: {
     fontSize: fontSize.h4,
-    fontWeight: "500",
-    marginLeft: 15
+    fontWeight: "500"
   },
   text: {
     fontSize: fontSize.bodyText,

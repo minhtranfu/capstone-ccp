@@ -40,6 +40,7 @@ import ConfirmCart from "../screens/Cart/ConfirmCart";
 import ContractorProfile from "../screens/Account/ContractorProfile";
 import Login from "../screens/Login";
 import AuthLoading from "../screens/Login/AuthLoading";
+import MaterialSearch from "../screens/Search/MaterialSearch";
 
 const EquipmentDetailStack = createStackNavigator(
   {
@@ -59,7 +60,8 @@ const DiscoverStack = createStackNavigator(
     Result: SearchResult,
     SearchDetail: SearchDetail,
     Cart: Cart,
-    ConfirmCart: ConfirmCart
+    ConfirmCart: ConfirmCart,
+    MaterialSearch: MaterialSearch
   },
   {
     headerMode: "none"

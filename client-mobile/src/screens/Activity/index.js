@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 import { listTransactionByRequesterId } from "../../redux/actions/transaction";
 import { isSignedIn } from "../../config/auth";
 import RequireLogin from "../Login/RequireLogin";
+import Feather from "@expo/vector-icons/Feather";
 
 import Button from "../../components/Button";
 import Loading from "../../components/Loading";
@@ -26,7 +27,6 @@ import StepProgress from "./components/StepProgress";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
-import Ionicons from "@expo/vector-icons/Ionicons";
 
 const DROPDOWN_OPTIONS = [
   {
@@ -339,11 +339,20 @@ class Activity extends Component {
           forceInset={{ bottom: "always", top: "always" }}
         >
           <Header
+            renderLeftButton={() =>
+              isLoggedIn ? (
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate("Notification")}
+                >
+                  <Feather name="user" size={24} />
+                </TouchableOpacity>
+              ) : null
+            }
             renderRightButton={() => (
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("Notification")}
               >
-                <Ionicons name="ios-notifications-outline" size={24} />
+                <Feather name="bell" size={24} />
               </TouchableOpacity>
             )}
           >

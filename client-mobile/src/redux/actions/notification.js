@@ -10,11 +10,14 @@ export function allowPushNotification() {
   };
 }
 
-export function getAllNotification(pageNo) {
+export function getAllNotification() {
   return async dispatch => {
+    dispatch({
+      type: Actions.GET_ALL_NOTIFICATION.REQUEST
+    });
     const res = await axios.get(`notifications?limit=10&offset=0`);
     dispatch({
-      type: Actions.GET_ALl_NOTIFICATION.SUCCESS,
+      type: Actions.GET_ALL_NOTIFICATION.SUCCESS,
       payload: res
     });
   };
@@ -24,10 +27,13 @@ export function postNoticationToken() {}
 
 export function readNotification(notificationId, content) {
   return async dispatch => {
+    dispatch({
+      type: Actions.READ_NOTIFICATION.REQUEST
+    });
     const res = await axios.put(`notifications/${notificationId}`, content);
     dispatch({
       type: Actions.READ_NOTIFICATION.SUCCESS,
-      payload: res
+      payload: { data: res, id: notificationId }
     });
   };
 }

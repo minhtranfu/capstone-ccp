@@ -1,10 +1,24 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { View, Text, Modal, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Modal,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { goToNotification } from "../Utils/Helpers";
+
+import fontSize from "../config/fontSize";
+import colors from "../config/colors";
+
+const { width } = Dimensions.get("window");
 
 class ShowToast extends Component {
   static propTypes = {
-    message: PropTypes.string
+    message: PropTypes.object
   };
   constructor(props) {
     super(props);
@@ -19,7 +33,7 @@ class ShowToast extends Component {
         this.setState({
           visible: true
         }),
-      1000
+      2000
     ); // show toast after 1s
 
     setTimeout(
@@ -38,7 +52,7 @@ class ShowToast extends Component {
           this.setState({
             visible: true
           }),
-        1000
+        2000
       ); // show toast after 1s
 
       setTimeout(
@@ -46,7 +60,7 @@ class ShowToast extends Component {
           this.setState({
             visible: false
           }),
-        3000
+        5000
       ); // hide toast after 3s
     }
   }
@@ -56,16 +70,23 @@ class ShowToast extends Component {
     console.log("notiMess", message);
     return (
       <Modal transparent={true} visible={this.state.visible}>
-        <View style={{ marginTop: 22 }}>
-          <View>
+        <View style={styles.wrapper}>
+          <TouchableOpacity
+            style={{ flexDirection: "row", alignItems: "center" }}
+            onPress={() => goToNotification()}
+          >
+            <View>
+              <Text style={styles.title}>{message.title}</Text>
+              <Text style={styles.text}>{message.body}</Text>
+            </View>
             <TouchableOpacity
               onPress={() => {
                 this.setModalVisible(!this.state.modalVisible);
               }}
             >
-              <Text>Hide Modal</Text>
+              <Feather name={"x"} size={24} />
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         </View>
       </Modal>
     );
@@ -73,9 +94,23 @@ class ShowToast extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
+    marginTop: 15,
+    marginHorizontal: 15,
     width: 300,
-    height: 200
+    height: 100,
+    backgroundColor: "#DDDDDD",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 5
+  },
+  title: {
+    fontSize: fontSize.h4,
+    fontWeight: "500"
+  },
+  text: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500"
   }
 });
 

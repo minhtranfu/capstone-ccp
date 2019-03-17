@@ -2,6 +2,7 @@ import * as Actions from "../types";
 
 const INITIAL_STATE = {
   loading: false,
+  readNoti: false,
   listNotification: [],
   token: {},
   allowPushNotification: false
@@ -34,9 +35,20 @@ export default function notificationReducer(state = INITIAL_STATE, action) {
         listNotification: payload.data
       };
     }
+    case Actions.READ_NOTIFICATION.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
     case Actions.READ_NOTIFICATION.SUCCESS: {
       return {
-        ...state
+        ...state,
+        readNoti: true,
+        loading: false,
+        listNotification: state.listNotification.map(item =>
+          item.id === payload.id ? (item = payload.data.data) : item
+        )
       };
     }
     case Actions.DELETE_NOTIFICATION_MESSAGE.SUCCESS: {
