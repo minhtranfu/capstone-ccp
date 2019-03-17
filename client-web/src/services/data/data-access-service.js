@@ -54,7 +54,7 @@ const _request = (method, url, data, options) => {
   });
 };
 
-const DataAccessService = {
+export const DataAccessService = {
   get (url, options) {
     return _request('GET', url, null, options);
   },
