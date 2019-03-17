@@ -306,7 +306,12 @@ class MyEquipment extends PureComponent {
             >
               <Text>Add Equipment</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                this.props.navigation.navigate("AddMaterialDetail");
+                this._setModalVisible(false);
+              }}
+            >
               <Text>Add Material</Text>
             </TouchableOpacity>
           </AddModal>
