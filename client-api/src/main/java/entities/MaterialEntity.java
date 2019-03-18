@@ -22,7 +22,7 @@ public class MaterialEntity {
 	@NotNull
 	@NotEmpty
 	private String thumbnailImageUrl;
-	
+
 	@NotNull
 	@NotEmpty
 	private String unit;

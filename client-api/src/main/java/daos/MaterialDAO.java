@@ -39,7 +39,7 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 		criteriaQuery.select(e).where(
 				materialTypeId != 0 ? criteriaBuilder.equal(materialTypeIdParam, e.get("materialType").get("id")) : criteriaBuilder.conjunction()
 				, criteriaBuilder.like(e.get("name"), queryParam)
-				, criteriaBuilder.equal(e.get("is_hidden"), false)
+				, criteriaBuilder.equal(e.get("hidden"), false)
 		);
 
 		if (!orderBy.isEmpty()) {
