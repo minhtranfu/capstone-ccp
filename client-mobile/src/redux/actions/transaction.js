@@ -140,12 +140,6 @@ export function cancelTransaction(id) {
   };
 }
 
-// export function clearTransactionDetail() {
-//   return {
-//     type: Actions.CLEAR_TRANSACTION_DETAIL
-//   };
-// }
-
 export function clearSupplierTransactionList() {
   return {
     type: Actions.CLEAR_SUPPLIER_TRANSACTION_SUCCESS

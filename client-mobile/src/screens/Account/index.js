@@ -109,10 +109,10 @@ class Account extends Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { user, isLoggedIn } = this.props;
     if (isLoggedIn) {
-      this._handlePermissionNotification();
+      //await this._handlePermissionNotification();
       //this._registerForPushNotificationsAsync();
       this.props.fetchGetConstructionList(user.contractor.id);
     }
@@ -148,6 +148,7 @@ class Account extends Component {
   _registerForPushNotificationsAsync = async () => {
     // Get the token that uniquely identifies this device
     let token = await Notifications.getExpoPushTokenAsync();
+    console.log(token);
     if (token) {
       const notiToken = {
         registrationToken: token,
@@ -228,6 +229,7 @@ class Account extends Component {
     const { isLoggedIn, contractor, status, user } = this.props;
     const { name, thumbnailImage, createdTime } = this.props.contractor;
     if (this.state.switchValue === true) {
+      this._handlePermissionNotification();
       this._registerForPushNotificationsAsync();
     } else {
       this._handleRemoveToken();

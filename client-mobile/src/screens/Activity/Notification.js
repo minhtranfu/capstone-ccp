@@ -13,6 +13,7 @@ import {
   getAllNotification,
   readNotification
 } from "../../redux/actions/notification";
+import axios from "axios";
 
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
@@ -44,7 +45,20 @@ class Notification extends Component {
     this.props.fetchGetNotification();
   }
 
-  _handleClickAction = string => {};
+  _handleClickAction = async string => {
+    if (string.includes("equipments")) {
+      this.props.navigation.navigate("MyEquipmentDetail", { id: 37 });
+    } else if (string.includes("transactions")) {
+      const res = await axios.get("transactions/14");
+
+      //If contractor.id === requester.id => user is requester else user is supplier
+      if (res.data.equipment.contractor.id === res.data.requester.id) {
+        this.props.navigation.navigate("Detail", { id: 14 });
+      } else {
+        this.props.navigation.navigate("MyTransactionDetail", { id: 14 });
+      }
+    }
+  };
 
   _handleReadNotification = (id, isRead) => {
     this.props.fetchReadNotifiction(id, { read: isRead });
@@ -74,6 +88,7 @@ class Notification extends Component {
           ? { backgroundColor: "white" }
           : { backgroundColor: "#DDDDDD" }
       ]}
+      onPress={() => this._handleClickAction(item.clickAction)}
     >
       <View>
         <Text style={styles.title}>{item.title}</Text>

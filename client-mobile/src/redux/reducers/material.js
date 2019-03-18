@@ -4,7 +4,8 @@ const INITIAL_STATE = {
   loading: false,
   generalMaterialType: [],
   materialType: [],
-  listSearch: []
+  listSearch: [],
+  materialList: []
 };
 
 export default function materialReducer(state = INITIAL_STATE, action) {
@@ -51,7 +52,8 @@ export default function materialReducer(state = INITIAL_STATE, action) {
     }
     case Actions.ADD_NEW_MATERIAL.SUCCESS: {
       return {
-        ...state
+        ...state,
+        materialList: [...state.materialList, payload.data]
       };
     }
     case Actions.UPDATE_MATERIAL_DETAIl.SUCCESS: {

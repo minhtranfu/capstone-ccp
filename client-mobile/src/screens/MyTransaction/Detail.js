@@ -231,7 +231,6 @@ class MyTransactionDetail extends Component {
   };
 
   _renderProcessingBottom = (id, equipmentStatus) => {
-    console.log(equipmentStatus);
     return (
       <View style={styles.bottomWrapper}>
         {equipmentStatus !== "AVAILABLE" ? (
