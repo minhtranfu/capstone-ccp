@@ -12,6 +12,26 @@ public class ExpoMessageData {
 	public ExpoMessageData() {
 	}
 
+	public ExpoMessageData(ExpoMessageData expoMessageData) {
+		this(expoMessageData.getSound(),
+				expoMessageData.getBadge(),
+				expoMessageData.getBody(),
+				expoMessageData.getTitle(),
+				expoMessageData.getSubtitle(),
+				expoMessageData.getClickAction());
+	}
+
+	public ExpoMessageData(String sound, int badge, String body, String title, String subtitle, String clickAction) {
+		this.sound = sound;
+		this.badge = badge;
+		this.body = body;
+		this.title = title;
+		this.subtitle = subtitle;
+		this.clickAction = clickAction;
+	}
+
+
+
 	public ExpoMessageData(String body, String title, String clickAction) {
 		this.body = body;
 		this.title = title;

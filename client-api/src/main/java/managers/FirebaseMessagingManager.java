@@ -125,8 +125,8 @@ public class FirebaseMessagingManager {
 			case EXPO:
 				try {
 
-
-					LOGGER.finest("Sent expo:" + sendExpo(notificationDTO, regisToken));
+					
+					LOGGER.info("Sent expo:" + sendExpo(notificationDTO, regisToken));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -189,7 +189,7 @@ public class FirebaseMessagingManager {
 		ExpoMessageWrapper expoMessageWrapper = new ExpoMessageWrapper(token, data);
 		String requestBody = JsonbBuilder.create().toJson(expoMessageWrapper);
 
-		LOGGER.finest(String.format("sending requestBody=%s", requestBody));
+		LOGGER.info(String.format("sending requestBody=%s", requestBody));
 
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 		wr.write(requestBody);

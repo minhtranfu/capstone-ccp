@@ -23,7 +23,9 @@ public class ExpoMessageWrapper extends ExpoMessageData {
 	public ExpoMessageWrapper() {
 	}
 
+
 	public ExpoMessageWrapper(String to, ExpoMessageData data) {
+		super(data);
 		this.to = to;
 		this.data = data;
 	}

@@ -19,6 +19,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.omg.CORBA.PUBLIC_MEMBER;
 import utils.ModelConverter;
 import utils.NotificationHelper;
 
@@ -43,11 +44,14 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @Path("cdiTest")
 @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
 @RequestScoped
 public class TestResource  {
+	public static final Logger LOGGER = Logger.getLogger(TestResource.class.toString());
+
 
 
 	@Inject
@@ -241,6 +245,20 @@ public class TestResource  {
 		;
 		return Response.ok(subscriptionDAO.getMatchedSubscriptions(equipmentEntity)).build();
 	}
+
+
+	@GET
+	@Path("testLog")
+	public Response testLog() {
+		LOGGER.finest("FINEST");
+		LOGGER.finer("finner");
+		LOGGER.fine("fine");
+		LOGGER.info("info");
+		LOGGER.warning("warning");
+		LOGGER.severe("severe");
+		return Response.ok().build();
+	}
+
 
 
 }
