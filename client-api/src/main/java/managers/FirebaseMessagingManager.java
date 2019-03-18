@@ -30,10 +30,13 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 @Singleton
 @Startup
 public class FirebaseMessagingManager {
+	private final static Logger LOGGER = Logger.getLogger(FirebaseMessagingManager.class.getName());
+
 	private static final String SERVER_TOKEN_KEY = "AAAAb5A36MQ:APA91bHH4d0d2Qxf9wJjrIL7bUBJblSTB3aNnToPSQPnEtBBnzhuqnK7f9MudQZn9RuEouKVPndX-GCCEgh5rbxMTSof9Con2GCk-CLl8sskMXn1QKo3Wtr9YN9CvShvzqg0X_pA6MHG";
 	private static final String DEFAULT_NOTI_ICON = "https://ccp.hoctot.net/public/assets/images/logo.png";
 
@@ -56,6 +59,7 @@ public class FirebaseMessagingManager {
 	}
 
 	public String sendNotification() throws FirebaseMessagingException {
+
 
 		String regisToken = "epYM3BuEDJw:APA91bEiCCAOLF2cRapo4u6IE1a59knrPmMvqqOP-T49RQxVZ3EbyiguD0HJG05YJADfSNhS15NHtUA29ctVkl_yX0VIzAh0jS4xGYGrAOIo36i_1vzlMF2gV55bsaO9VJ717aEH5ac8";
 
@@ -120,7 +124,9 @@ public class FirebaseMessagingManager {
 		switch (notificationDeviceTokenEntity.getDeviceType()) {
 			case EXPO:
 				try {
-					System.out.println("Sent expo:" + sendExpo(notificationDTO, regisToken));
+
+
+					LOGGER.finest("Sent expo:" + sendExpo(notificationDTO, regisToken));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -182,6 +188,8 @@ public class FirebaseMessagingManager {
 				, notificationDTO.getClickAction());
 		ExpoMessageWrapper expoMessageWrapper = new ExpoMessageWrapper(token, data);
 		String requestBody = JsonbBuilder.create().toJson(expoMessageWrapper);
+
+		LOGGER.finest(String.format("sending requestBody=%s", requestBody));
 
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 		wr.write(requestBody);

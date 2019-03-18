@@ -16,7 +16,12 @@ public class MaterialRequest {
 	@Positive
 	private double price;
 
+
+	@NotNull
+	@NotEmpty
 	private String thumbnailImageUrl;
+	@NotNull
+	@NotEmpty
 	private String unit;
 	private String manufacturer;
 	private String description;
@@ -24,6 +29,8 @@ public class MaterialRequest {
 	@NotNull
 	@Valid
 	private IdOnly materialType;
+
+	private Boolean isHidden;
 
 	//this get from token
 //	@Valid
@@ -104,5 +111,13 @@ public class MaterialRequest {
 
 	public void setConstruction(IdOnly construction) {
 		this.construction = construction;
+	}
+
+	public Boolean isHidden() {
+		return isHidden;
+	}
+
+	public void setHidden(Boolean hidden) {
+		isHidden = hidden;
 	}
 }

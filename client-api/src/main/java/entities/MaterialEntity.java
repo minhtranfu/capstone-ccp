@@ -3,6 +3,7 @@ package entities;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
@@ -18,10 +19,17 @@ public class MaterialEntity {
 	@Positive
 	private double price;
 
+	@NotNull
+	@NotEmpty
 	private String thumbnailImageUrl;
+	
+	@NotNull
+	@NotEmpty
 	private String unit;
 	private String manufacturer;
 	private String description;
+
+	private boolean isHidden;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 	private boolean isDeleted;
@@ -93,6 +101,16 @@ public class MaterialEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	@Basic
+	@Column(name = "is_hidden", nullable = false)
+	public boolean isHidden() {
+		return isHidden;
+	}
+
+	public void setHidden(boolean hidden) {
+		isHidden = hidden;
 	}
 
 	@Basic
