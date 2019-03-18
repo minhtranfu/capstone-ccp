@@ -34,6 +34,7 @@ public class ContractorEntity {
 
 
 	private List<EquipmentEntity> equipments;
+	private List<MaterialEntity> materials;
 	private List<ConstructionEntity> constructions;
 
 	private List<FeedbackEntity> sentFeedback;
@@ -57,6 +58,17 @@ public class ContractorEntity {
 
 	public void setEquipments(List<EquipmentEntity> equipments) {
 		this.equipments = equipments;
+	}
+
+	@JsonbTransient
+	@OneToMany(mappedBy = "contractor")
+	@Where(clause = "is_deleted=0")
+	public List<MaterialEntity> getMaterials() {
+		return materials;
+	}
+
+	public void setMaterials(List<MaterialEntity> materials) {
+		this.materials = materials;
 	}
 
 	@Id

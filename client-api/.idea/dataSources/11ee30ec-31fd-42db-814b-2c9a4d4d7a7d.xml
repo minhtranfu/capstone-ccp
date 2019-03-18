@@ -2282,6 +2282,7 @@
     <column id="506" parent="295" name="construction_id">
       <Position>10</Position>
       <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="507" parent="295" name="contractor_id">
@@ -2369,11 +2370,13 @@
     <column id="523" parent="296" name="requester_lat">
       <Position>6</Position>
       <DataType>double|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="524" parent="296" name="requester_long">
       <Position>7</Position>
       <DataType>double|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="525" parent="296" name="material_address">

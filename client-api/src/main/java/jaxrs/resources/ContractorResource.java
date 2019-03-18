@@ -9,6 +9,7 @@ import org.eclipse.microprofile.jwt.ClaimValue;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import utils.ModelConverter;
 
+import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -108,6 +109,14 @@ public class ContractorResource {
 
 		ContractorEntity foundContractor = validateContractorId(id);
 		return Response.ok(foundContractor.getEquipments()).build();
+	}
+
+	@GET
+	@RolesAllowed("contractor")
+	@Path("{id:\\d+}/materials")
+	public Response getMaterialsBySupplierId(@PathParam("id") long id) {
+		ContractorEntity foundContractor = validateContractorId(id);
+		return Response.ok(foundContractor.getMaterials()).build();
 	}
 
 
