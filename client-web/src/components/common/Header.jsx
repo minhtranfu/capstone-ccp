@@ -8,32 +8,35 @@ import LoginModal from '../modules/login/LoginModal';
 import { authConstants } from '../../redux/_constants';
 
 class Header extends Component {
-  constructor(props) {
-    super(props);
 
-    this.menus = [
-      {
-        to: '/',
-        name: 'Home',
-        exact: true,
-        requiredAuth: true
-      },
-      {
-        to: '/dashboard/supplier',
-        name: 'Supplier',
-        requiredAuth: true
-      },
-      {
-        to: '/dashboard/requester',
-        name: 'Requester',
-        requiredAuth: true
-      }
-    ];
+  leftMenus = [
+    {
+      to: '/',
+      name: 'Equipments',
+      exact: true
+    },
+    {
+      to: '/materials',
+      name: 'Materials'
+    }
+  ];
 
-    this.state = {
-      showOffCanvas: false
-    };
-  }
+  state = {
+    showOffCanvas: false
+  };
+
+  rightMenus = [
+    {
+      to: '/dashboard/supplier',
+      name: 'Supplier',
+      requiredAuth: true
+    },
+    {
+      to: '/dashboard/requester',
+      name: 'Requester',
+      requiredAuth: true
+    }
+  ];
 
   _toggleOffCanvas = () => {
     const { showOffCanvas } = this.state;
@@ -80,6 +83,23 @@ class Header extends Component {
     toggleLoginModal();
   };
 
+  _renderMenus = menus => {
+    const { authentication } = this.props;
+
+    return menus.map(menu => {
+                
+      if (menu.requiredAuth && !authentication.isAuthenticated) {
+        return null;
+      }
+
+      return (
+        <li key={menu.name} className={`nav-item ${this._isMenuActive(menu) ? 'active' : ''}`}>
+          <Link className="nav-link" to={menu.to} onClick={this._closeOffCanvas}>{menu.name}</Link>
+        </li>
+      );
+    });
+  };
+
   render() {
     const { showOffCanvas } = this.state;
     const { authentication } = this.props;
@@ -96,32 +116,62 @@ class Header extends Component {
           </button>
           <div className={`navbar-collapse offcanvas-collapse ${showOffCanvas ? 'open' : ''}`} id="navbarTogglerDemo03">
             <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-              {this.menus.map(menu => {
-                
-                if (menu.requiredAuth && !authentication.isAuthenticated) {
-                  return null;
-                }
-
-                return (
-                  <li key={menu.name} className={`nav-item ${this._isMenuActive(menu) ? 'active' : ''}`}>
-                    <Link className="nav-link" to={menu.to} onClick={this._closeOffCanvas}>{menu.name}</Link>
-                  </li>
-                );
-              })}
+              {this._renderMenus(this.leftMenus)}
+            </ul>
+            <ul className="navbar-nav ml-auto mt-2 mt-lg-0">
+              {this._renderMenus(this.rightMenus)}
             </ul>
             {authentication.isAuthenticated &&
-              <span className="dropdown">
-                <a className="dropdown-toggle text-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                  <img src={authentication.user.contractor.thumbnailImage} className="rounded-circle mr-2" width={40} height={40} />
-                  {authentication.user.contractor.name}
-                </a>
-                <div className="dropdown-menu shadow mt-2 rounded-top-0">
-                  <a className="dropdown-item" href="#"><i className="fa fa-user-circle"></i> Profile</a>
-                  <a className="dropdown-item" href="#"><i className="fa fa-cogs"></i> Settings</a>
-                  <div className="dropdown-divider"></div>
-                  <a className="dropdown-item" href="#" onClick={this._logout}><i className="fa fa-sign-out"></i> Logout</a>
-                </div>
-              </span>
+              <ul className="navbar-nav">
+                <li className="nav-item dropdown notifications mr-2">
+                  <a className="text-light d-flex h-100 align-items-center px-3" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    <i className="fa fa-bell"></i>
+                    <span className="badge badge-pill badge-danger">10</span>
+                  </a>
+                  <div className="dropdown-menu shadow mt-2 rounded-top-0">
+                    <div class="list-notifications custom-scrollbar">
+                      <a className="dropdown-item" href="#">
+                        <div>Profile</div>
+                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
+                      </a>
+                      <a className="dropdown-item" href="#">
+                        <div>Profile</div>
+                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
+                      </a>
+                      <a className="dropdown-item" href="#">
+                        <div>Profile</div>
+                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
+                      </a>
+                      <a className="dropdown-item" href="#">
+                        <div>Profile</div>
+                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
+                      </a>
+                      <a className="dropdown-item" href="#">
+                        <div>Profile</div>
+                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
+                      </a>
+                      <a className="dropdown-item" href="#">
+                        <div>Profile</div>
+                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
+                      </a>
+                    </div>
+                    <div className="dropdown-divider"></div>
+                    <a className="dropdown-item text-center" href="#">View all <i className="fa fa-chevron-right"></i></a>
+                  </div>
+                </li>
+                <li className="nav-item dropdown">
+                  <a className="dropdown-toggle text-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    <img src={authentication.user.contractor.thumbnailImage} className="rounded-circle mr-2" width={40} height={40} />
+                    {authentication.user.contractor.name}
+                  </a>
+                  <div className="dropdown-menu shadow mt-2 rounded-top-0">
+                    <a className="dropdown-item" href="#"><i className="fa fa-user-circle"></i> Profile</a>
+                    <a className="dropdown-item" href="#"><i className="fa fa-cogs"></i> Settings</a>
+                    <div className="dropdown-divider"></div>
+                    <a className="dropdown-item" href="#" onClick={this._logout}><i className="fa fa-sign-out"></i> Logout</a>
+                  </div>
+                </li>
+              </ul>
             }
             {!authentication.isAuthenticated &&
               <span>

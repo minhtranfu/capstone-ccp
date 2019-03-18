@@ -63,7 +63,29 @@ const modules = [
     path: '/dashboard/transaction/:id',
     modulePath: './transaction-detail',
     isPrivate: true
-  }
+  },
+  {
+    name: 'AddEquipment',
+    path: '/dashboard/supplier/materials/add',
+    modulePath: './add-material',
+    isPrivate: true
+  },
+  {
+    name: 'SupplierMaterials',
+    path: '/dashboard/supplier/materials',
+    modulePath: './supplier-dashboard/MyMaterials',
+    isPrivate: true
+  },
+  {
+    name: 'SearchMaterials',
+    path: '/materials',
+    modulePath: './material-search'
+  },
+  {
+    name: 'MaterialDetail',
+    path: '/material-detail/:id',
+    modulePath: './material-detail'
+  },
 ];
 
 const routes = modules.map(module => {

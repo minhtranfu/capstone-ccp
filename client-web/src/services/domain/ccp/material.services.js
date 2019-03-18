@@ -20,6 +20,10 @@ export const getMaterialById = id => {
   return DataAccessService.get(`/materials/${id}`);
 };
 
+export const getMaterialsBySupplierId = id => {
+  return DataAccessService.get(`/contractors/${id}/materials`);
+};
+
 export const searchMaterials = criteria => {
   const queryString = Object.keys(criteria)
   .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(criteria[k]))

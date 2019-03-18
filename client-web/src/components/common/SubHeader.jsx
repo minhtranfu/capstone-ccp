@@ -16,6 +16,10 @@ class SubHeader extends Component {
     {
       to: '/dashboard/supplier/equipments',
       name: 'Equipments'
+    },
+    {
+      to: '/dashboard/supplier/materials',
+      name: 'Materials'
     }
   ];
 

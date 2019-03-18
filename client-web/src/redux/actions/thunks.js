@@ -22,3 +22,10 @@ export const fetchFeedbackTypes = () => {
     CcpApiService.feedbackServices.getFeebackTypes()
   );
 }
+
+export const fetchMaterialTypes = () => {
+  return loadEntity(
+    ENTITY_KEY.MATERIAL_TYPES,
+    CcpApiService.materialServices.getMaterialTypes()
+  );
+}
