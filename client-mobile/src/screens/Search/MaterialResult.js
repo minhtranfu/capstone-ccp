@@ -43,7 +43,12 @@ class MaterialResult extends Component {
 
   _renderItem = ({ item }) => (
     <View style={{ flex: 1, marginHorizontal: 15 }}>
-      <TouchableOpacity style={styles.itemWrapper}>
+      <TouchableOpacity
+        style={styles.itemWrapper}
+        onPress={() =>
+          this.props.navigation.navigate("MaterialDetail", { id: item.id })
+        }
+      >
         <Image
           uri={item.ImageURL}
           resizeMode={"cover"}

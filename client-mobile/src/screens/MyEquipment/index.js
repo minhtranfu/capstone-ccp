@@ -14,7 +14,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
+import { Image } from "react-native-expo-image-cache";
 import {
   getContractorEquipmentList,
   removeEquipment
@@ -23,6 +24,7 @@ import {
   listTransactionBySupplierId,
   clearSupplierTransactionList
 } from "../../redux/actions/transaction";
+import { getMaterialListFromContractor } from "../../redux/actions/material";
 
 import AddModal from "./components/AddModal";
 import RequireLogin from "../Login/RequireLogin";
@@ -111,7 +113,8 @@ const DROPDOWN_OPTIONS = [
       listEquipment: state.equipment.contractorEquipment,
       user: state.auth.data,
       isLoggedIn: state.auth.userIsLoggin,
-      token: state.auth.token
+      token: state.auth.token,
+      materialList: state.material.materialList
     };
   },
   dispatch => ({
@@ -123,6 +126,9 @@ const DROPDOWN_OPTIONS = [
     },
     fetchClearMyTransaction: () => {
       dispatch(clearSupplierTransactionList());
+    },
+    fetchGetMaterialList: id => {
+      dispatch(getMaterialListFromContractor(id));
     }
   })
 )
@@ -142,6 +148,7 @@ class MyEquipment extends PureComponent {
     const { user, isLoggedIn } = this.props;
     if (isLoggedIn) {
       this.props.fetchContractorEquipment(user.contractor.id);
+      this.props.fetchGetMaterialList(user.contractor.id);
     }
   }
 
@@ -219,6 +226,21 @@ class MyEquipment extends PureComponent {
               title={status.title}
               code={status.code}
             />
+            {this.props.materialList.map(item => (
+              <TouchableOpacity style={styles.itemWrapper}>
+                <Image
+                  uri={"http://lamnha.com/images/G01-02-1.png"}
+                  resizeMode={"cover"}
+                  style={{ width: 70, height: 70 }}
+                />
+                <View style={{ paddingLeft: 5, flex: 2 }}>
+                  <Text style={styles.text}>{item.manufacturer}</Text>
+                  <Text style={styles.text}>{item.name}</Text>
+                  <Text style={styles.caption}> Price: {item.price}</Text>
+                </View>
+                <Feather name="chevron-right" size={24} />
+              </TouchableOpacity>
+            ))}
             {equipmentList.map((item, index) => (
               <EquipmentItem
                 onPress={() => {
@@ -343,6 +365,16 @@ class MyEquipment extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  itemWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 15,
+    borderWidth: 1,
+    borderColor: colors.primaryColor,
+    borderRadius: 5,
+    marginBottom: 15
   },
   scrollContent: {
     flex: 0,

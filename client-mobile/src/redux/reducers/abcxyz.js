@@ -77,3 +77,49 @@ export default function cartReducer(state = INITIAL_STATE, action) {
     )
   )}
 </View>;
+
+// _renderStatusHeader = listMaterial => {
+//   const { status } = this.state;
+//   if (status === "All Statuses") {
+//     return (
+//       <View>
+//         {MATERIAL_TRANSACTION_STATUSES.map(materialStatus => {
+//           const materialList = listMaterial.filter(
+//             item => item.status === materialStatus.code
+//           );
+//           if (materialList.length === 0) return null;
+//           return (
+//             <EquipmentStatus
+//               count={materialList.length}
+//               title={materialStatus.title}
+//               code={materialStatus.code}
+//             />
+//           );
+//         })}
+//       </View>
+//     );
+//   } else {
+//     return (
+//       <EquipmentStatus
+//         count={this._filterResult(listMaterial).length}
+//         title={status}
+//         code={status.toUpperCase()}
+//       />
+//     );
+//   }
+// };
+
+// _renderItem = ({ item }) => {
+//   return (
+//     <MaterialItem
+//       manufacturer={item.manufacturer}
+//       name={item.name}
+//       price={item.price}
+//       unit={item.unit}
+//       imageUrl={item.thumbnailImageUrl}
+//       contractor={item.material.contractor.name}
+//       contractorThumbnail={item.material.contractor.thumbnailImage}
+//       status={item.status}
+//     />
+//   );
+// };

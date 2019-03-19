@@ -2,11 +2,12 @@ import * as Actions from "../types";
 import axios from "axios";
 
 export function searchMaterial(text) {
+  console.log(text);
   return async dispatch => {
     dispatch({
       type: Actions.SEARCH_MATERIAL.REQUEST
     });
-    const res = await axios.get(`materials?q=${text}&limit=10`);
+    const res = await axios.get(`materials?q=gach&limit=10`);
     dispatch({
       type: Actions.SEARCH_MATERIAL.SUCCESS,
       payload: res
@@ -55,6 +56,19 @@ export function getMaterialType() {
     const res = await axios.get("materialTypes");
     dispatch({
       type: Actions.GET_MATERIAL_TYPE.SUCCESS,
+      payload: res
+    });
+  };
+}
+
+export function getMaterialListFromContractor(contractorId) {
+  return async dispatch => {
+    dispatch({
+      type: Actions.GET_MATERIAL_LIST_BY_CONTRACTOR.REQUEST
+    });
+    const res = await axios.get(`contractors/${contractorId}/materials`);
+    dispatch({
+      type: Actions.GET_MATERIAL_LIST_BY_CONTRACTOR.SUCCESS,
       payload: res
     });
   };

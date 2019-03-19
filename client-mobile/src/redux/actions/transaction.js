@@ -2,13 +2,13 @@ import axios from "axios";
 import StatusAction from "./status";
 import * as Actions from "../types";
 
-export function listTransactionBySupplierId(id) {
+export function listTransactionBySupplier(contractorId) {
   return async dispatch => {
     dispatch({
       type: Actions.LIST_SUPPLIER_TRANSACTION.REQUEST
     });
     try {
-      const res = await axios.get(`transactions/supplier/${id}`);
+      const res = await axios.get(`transactions/supplier/${contractorId}`);
       dispatch({
         type: Actions.LIST_SUPPLIER_TRANSACTION.SUCCESS,
         payload: res
@@ -22,13 +22,13 @@ export function listTransactionBySupplierId(id) {
   };
 }
 
-export function listTransactionByRequesterId(id) {
+export function listTransactionByRequester(contractorId) {
   return async dispatch => {
     dispatch({
       type: Actions.LIST_REQUESTER_TRANSACTION.REQUEST
     });
     try {
-      const res = await axios.get(`transactions/requester/${id}`);
+      const res = await axios.get(`transactions/requester/${contractorId}`);
       dispatch({
         type: Actions.LIST_REQUESTER_TRANSACTION.SUCCESS,
         payload: res
@@ -143,5 +143,75 @@ export function cancelTransaction(id) {
 export function clearSupplierTransactionList() {
   return {
     type: Actions.CLEAR_SUPPLIER_TRANSACTION_SUCCESS
+  };
+}
+
+export function listMaterialTransactionBySupplier(supplierId) {
+  return async dispatch => {
+    dispatch({
+      type: Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.REQUEST
+    });
+    try {
+      const res = await axios.get(
+        `materialTransactions/supplier/${supplierId}`
+      );
+      dispatch({
+        type: Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.ERROR
+      });
+    }
+  };
+}
+
+export function listMaterialTransactionByRequester(requesterId) {
+  return async dispatch => {
+    dispatch({
+      type: Actions.LIST_REQUESTER_MATERIAL_TRANSACTION.REQUEST
+    });
+    try {
+      const res = await axios.get(
+        `materialTransactions/requester/${requesterId}`
+      );
+      dispatch({
+        type: Actions.LIST_REQUESTER_MATERIAL_TRANSACTION.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: Actions.LIST_REQUESTER_MATERIAL_TRANSACTION.ERROR
+      });
+    }
+  };
+}
+
+export function requestMaterialTransaction(material) {
+  return async dispatch => {
+    dispatch({
+      type: Actions.SEND_MATERIAL_TRANSACTION_REQUEST.REQUEST
+    });
+    const res = await axios.post(`materialTransactions`, material);
+    dispatch({
+      type: Actions.SEND_MATERIAL_TRANSACTION_REQUEST.SUCCESS,
+      payload: res
+    });
+  };
+}
+
+export function changeMaterialTransactionRequest(requestId, request) {
+  return async dispatch => {
+    dispatch({
+      type: Actions.CHANGE_MATERIAL_TRANSACTION_REQUEST.REQUEST
+    });
+    const res = await axios.put(`materialTransactions/${requestId}`, request);
+    dispatch({
+      type: Actions.CHANGE_MATERIAL_TRANSACTION_REQUEST.SUCCESS,
+      payload: { data: res, id: requestId }
+    });
   };
 }

@@ -228,13 +228,13 @@ class Account extends Component {
   render() {
     const { isLoggedIn, contractor, status, user } = this.props;
     const { name, thumbnailImage, createdTime } = this.props.contractor;
-    if (this.state.switchValue === true) {
-      this._handlePermissionNotification();
-      this._registerForPushNotificationsAsync();
-    } else {
-      this._handleRemoveToken();
-    }
     if (isLoggedIn) {
+      if (this.state.switchValue === true) {
+        this._handlePermissionNotification();
+        this._registerForPushNotificationsAsync();
+      } else {
+        this._handleRemoveToken();
+      }
       return (
         <SafeAreaView
           style={styles.container}

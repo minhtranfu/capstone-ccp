@@ -19,8 +19,6 @@ import { isSignedIn } from "../../config/auth";
 import RequireLogin from "../Login/RequireLogin";
 import Feather from "@expo/vector-icons/Feather";
 
-import MaterialTab from "./MaterialTab";
-import TabView from "../../components/TabView";
 import Button from "../../components/Button";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
@@ -137,14 +135,13 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     }
   })
 )
-class Activity extends Component {
+class EquipmentTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
       selectedIndex: 0,
       status: "All Statuses",
-      refreshing: false,
-      activeTab: 0
+      refreshing: false
     };
   }
 
@@ -166,10 +163,6 @@ class Activity extends Component {
 
   _capitalizeCharacter = string => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-  };
-
-  _onChangeTab = tab => {
-    this.setState({ activeTab: tab });
   };
 
   _formatDate = date => {
@@ -273,7 +266,15 @@ class Activity extends Component {
 
   _renderRequesterItemList = () => {
     return (
-      <View style={{ flex: 1, paddingHorizontal: 15 }}>
+      <ScrollView
+        style={{ flex: 1, paddingHorizontal: 15 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh}
+          />
+        }
+      >
         <Dropdown
           label={"Filter"}
           defaultText={"All Statuses"}
@@ -329,7 +330,7 @@ class Activity extends Component {
             );
           })}
         </View>
-      </View>
+      </ScrollView>
     );
   };
 
@@ -338,11 +339,9 @@ class Activity extends Component {
       navigation,
       isLoggedIn,
       listTransaction,
-      listMaterial,
       loading,
       status
     } = this.props;
-    const { activeTab } = this.state;
     if (isLoggedIn) {
       return (
         <SafeAreaView
@@ -369,31 +368,7 @@ class Activity extends Component {
           >
             <Text style={styles.header}>My Request</Text>
           </Header>
-          <TabView
-            tabs={["Equipment", "Material"]}
-            onChangeTab={this._onChangeTab}
-            activeTab={activeTab}
-          />
-          {!loading ? (
-            <ScrollView
-              style={{ flex: 1 }}
-              contentContainerStyle={styles.scrollContentContainer}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh}
-                />
-              }
-            >
-              {activeTab == 0 ? (
-                this._renderContent(listTransaction)
-              ) : (
-                <MaterialTab listMaterial={listMaterial} />
-              )}
-            </ScrollView>
-          ) : (
-            <Loading />
-          )}
+          {!loading ? this._renderContent(listTransaction) : <Loading />}
         </SafeAreaView>
       );
     } else {
@@ -405,10 +380,6 @@ class Activity extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
-  },
-  scrollContentContainer: {
-    paddingHorizontal: 15,
-    paddingTop: 20
   },
   rowWrapper: {
     borderWidth: 1,
@@ -447,4 +418,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Activity;
+export default EquipmentTab;

@@ -10,7 +10,7 @@ import {
 import { SafeAreaView, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
-import { sendTransactionRequest } from "../../redux/actions/transaction";
+import { requestMaterialTransaction } from "../../redux/actions/transaction";
 import { getConstructionList } from "../../redux/actions/contractor";
 
 import Dropdown from "../../components/Dropdown";
@@ -33,18 +33,19 @@ const DROPDOWN_CONSTRUCTION_OPTIONS = [
 @connect(
   state => ({
     status: state.status,
-    construction: state.contractor.constructionList
+    construction: state.contractor.constructionList,
+    user: state.contractor.info
   }),
   dispatch => ({
-    fetchSendRequest: transactionDetail => {
-      dispatch(sendTransactionRequest(transactionDetail));
+    fetchRequestTransaction: material => {
+      dispatch(requestMaterialTransaction(material));
     },
     fetchGetConstruction: contractorId => {
       dispatch(getConstructionList(contractorId));
     }
   })
 )
-class ConfirmTransaction extends Component {
+class MaterialTransaction extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,11 +54,13 @@ class ConfirmTransaction extends Component {
       constructionIndex: 0,
       location: [],
       currentLat: "",
-      currentLong: ""
+      currentLong: "",
+      quantity: null
     };
   }
   componentDidMount = async () => {
-    this.props.fetchGetConstruction(12);
+    const { user } = this.props;
+    this.props.fetchGetConstruction(user.contractor.id);
     const locationStatus = await grantPermission("location");
     if (locationStatus === "granted") {
       const currentLocation = await Location.getCurrentPositionAsync({});
@@ -84,8 +87,19 @@ class ConfirmTransaction extends Component {
     return undefined;
   }
 
-  _handleConfirmBooking = async transactionDetail => {
-    await this.props.fetchSendRequest(transactionDetail);
+  _handleConfirmBooking = async material => {
+    const { quantity, address } = this.state;
+    const newMaterialDetail = {
+      material: {
+        id: material.id
+      },
+      quantity: quantity,
+      requesterAddress: address,
+      requesterLat: 10.34,
+      requesterLong: 106
+    };
+    await this.props.fetchRequestTransaction(newMaterialDetail);
+    this.props.navigation.goBack();
   };
 
   _handleInputChange = (field, value) => {
@@ -110,9 +124,8 @@ class ConfirmTransaction extends Component {
   };
 
   render() {
-    const { equipment, name } = this.props.navigation.state.params;
-    const { query } = this.props.navigation.state.params;
-    const { address, construction, constructionIndex } = this.state;
+    const { material } = this.props.navigation.state.params;
+    const { address, quantity } = this.state;
     return (
       <SafeAreaView
         style={styles.container}
@@ -127,11 +140,19 @@ class ConfirmTransaction extends Component {
         >
           <Text style={styles.header}>Review booking</Text>
         </Header>
-        {equipment ? (
+        {material ? (
           <ScrollView style={{ paddingHorizontal: 15 }}>
-            <Text style={styles.text}>Name: {name}</Text>
-            <Text style={styles.text}>Begin date: {equipment.beginDate}</Text>
-            <Text style={styles.text}>End date:{equipment.endDate}</Text>
+            <Text style={styles.text}>Name: {material.name}</Text>
+            <InputField
+              label={"Quantity"}
+              placeholder={"Input your quantity"}
+              customWrapperStyle={{ marginBottom: 20 }}
+              inputType="text"
+              onChangeText={value => this._handleInputChange("quantity", value)}
+              value={quantity}
+              keyboardType={"numeric"}
+              returnKeyType={"next"}
+            />
             <Dropdown
               label={"Construction"}
               defaultText={"Select your construction"}
@@ -154,8 +175,7 @@ class ConfirmTransaction extends Component {
             <Button
               text={"Confirm Booking"}
               onPress={() => {
-                this._handleConfirmBooking(equipment);
-                this.props.navigation.goBack();
+                this._handleConfirmBooking(material);
               }}
             />
           </ScrollView>
@@ -182,4 +202,4 @@ const styles = StyleSheet.create({
   buttonWrapper: {}
 });
 
-export default ConfirmTransaction;
+export default MaterialTransaction;

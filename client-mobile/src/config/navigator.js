@@ -21,8 +21,7 @@ import SearchResult from "../screens/Search/SearchResult";
 import SearchDetail from "../screens/Search/Detail";
 import MyTransaction from "../screens/MyTransaction";
 import MyTransactionDetail from "../screens/MyTransaction/Detail";
-import EquipmentDetail from "../screens/EquipmentDetail";
-import ConfirmTransaction from "../screens/EquipmentDetail/Transaction";
+import ConfirmTransaction from "../screens/Transaction/EquipmentTransaction";
 import Activity from "../screens/Activity";
 import ActivityDetail from "../screens/Activity/Detail";
 import Notification from "../screens/Activity/Notification";
@@ -43,20 +42,15 @@ import AuthLoading from "../screens/Login/AuthLoading";
 import MaterialSearch from "../screens/Search/MaterialSearch";
 import AddMaterialDetail from "../screens/MyEquipment/AddMaterial/AddMaterialDetail";
 import MaterialResult from "../screens/Search/MaterialResult";
-
-const EquipmentDetailStack = createStackNavigator(
-  {
-    EquipmentDetail: EquipmentDetail
-  },
-  {
-    headerMode: "none"
-  }
-);
+import MaterialDetail from "../screens/Search/MaterialDetail";
+import MaterialTransaction from "../screens/Transaction/MaterialTransaction";
+import MaterialTab from "../screens/MyTransaction/MaterialTab";
+import MaterialTransactionDetail from "../screens/MyTransaction/MaterialTransactionDetail";
+import MaterialRequesterDetail from "../screens/Activity/MaterialRequesterDetail";
 
 const DiscoverStack = createStackNavigator(
   {
     Discover: Discover,
-    Detail: EquipmentDetail,
     ConfirmTransaction: ConfirmTransaction,
     Search: Search,
     Result: SearchResult,
@@ -64,7 +58,9 @@ const DiscoverStack = createStackNavigator(
     Cart: Cart,
     ConfirmCart: ConfirmCart,
     MaterialSearch: MaterialSearch,
-    MaterialResult: MaterialResult
+    MaterialResult: MaterialResult,
+    MaterialDetail: MaterialDetail,
+    ConfirmMaterial: MaterialTransaction
   },
   {
     headerMode: "none"
@@ -130,6 +126,7 @@ const MyEquipmentStack = createStackNavigator(
     MyEquipmentDetail: MyEquipmentDetail,
     AddNewEquipment: AddNewEquipmentStack,
     AddMaterialDetail: AddMaterialDetail,
+
     Login: Login
   },
   {
@@ -157,6 +154,7 @@ const MyTransactionStack = createStackNavigator(
   {
     MyTransaction: MyTransaction,
     MyTransactionDetail: MyTransactionDetail,
+    MaterialTransactionDetail: MaterialTransactionDetail,
     ContractorProfile: ContractorProfile,
     Login: Login
   },
@@ -173,7 +171,8 @@ const ActivityStack = createStackNavigator(
     Notification: Notification,
     Detail: ActivityDetail,
     ConfirmAdjustDate: ConfirmAdjustDate,
-    ContractorProfile: ContractorProfile
+    ContractorProfile: ContractorProfile,
+    MaterialRequesterDetail: MaterialRequesterDetail
   },
   {
     mode: "modal",

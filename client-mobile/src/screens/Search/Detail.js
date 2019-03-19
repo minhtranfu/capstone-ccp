@@ -91,8 +91,8 @@ class SearchDetail extends Component {
       beginDate: this._handleFormatDate(startDate),
       endDate: this._handleFormatDate(endDate),
       requesterAddress: "Phu Nhuan",
-      requesterLatitude: 123123,
-      requesterLongitude: 123123,
+      requesterLatitude: 60,
+      requesterLongitude: 128,
       equipmentId: id
       //requesterId: 12
     };

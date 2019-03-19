@@ -5,6 +5,8 @@ const initialState = {
   adjustLoading: false,
   listSupplierTransaction: [],
   listRequesterTransaction: [],
+  listSupplierMaterial: [],
+  listRequesterMaterial: [],
   adjustTransaction: [],
   error: ""
 };
@@ -41,12 +43,17 @@ export default function transactionReducer(state = initialState, action) {
     case Actions.LIST_REQUESTER_TRANSACTION.ERROR: {
       return { ...state, loading: false };
     }
+    //Requester send transaction to supplier
     case Actions.SEND_TRANSACTION_REQUEST.SUCCESS:
       return {
         ...state,
         // transactionStatus: payload,
         listSupplierTransaction: [
           ...state.listSupplierTransaction,
+          payload.data
+        ],
+        listRequesterTransaction: [
+          ...state.listRequesterTransaction,
           payload.data
         ]
       };
@@ -56,6 +63,7 @@ export default function transactionReducer(state = initialState, action) {
         loading: true
       };
     }
+    //Requester receive equipment
     case Actions.UPDATE_TRANSACTION_EQUIPMENT_STATUS.SUCCESS: {
       return {
         ...state,
@@ -73,6 +81,8 @@ export default function transactionReducer(state = initialState, action) {
         loading: true
       };
     }
+
+    //Contractor send request to supplier
     case Actions.REQUEST_TRANSACTION.SUCCESS: {
       return {
         ...state,
@@ -141,11 +151,61 @@ export default function transactionReducer(state = initialState, action) {
           item => item.id !== payload.id
         )
       };
-
     case Actions.CLEAR_SUPPLIER_TRANSACTION_SUCCESS:
       return {
         ...state,
         listSupplierTransaction: []
+      };
+
+    case Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.REQUEST:
+      return {
+        ...state
+      };
+    case Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.SUCCESS:
+      return {
+        ...state,
+        listSupplierMaterial: payload.data
+      };
+    case Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.ERROR:
+      return {
+        ...state
+      };
+
+    case Actions.LIST_REQUESTER_MATERIAL_TRANSACTION.REQUEST:
+      return {
+        ...state
+      };
+    case Actions.LIST_REQUESTER_MATERIAL_TRANSACTION.SUCCESS:
+      return {
+        ...state,
+        listRequesterMaterial: payload.data
+      };
+    case Actions.LIST_REQUESTER_MATERIAL_TRANSACTION.ERROR:
+      return {
+        ...state
+      };
+
+    case Actions.SEND_MATERIAL_TRANSACTION_REQUEST.REQUEST:
+      return {
+        ...state
+      };
+    //Contractor send request to supplier
+    case Actions.SEND_MATERIAL_TRANSACTION_REQUEST.SUCCESS:
+      return {
+        ...state,
+        listSupplierMaterial: [...state.listSupplierMaterial, payload.data]
+      };
+    //Supplier response to request
+    case Actions.CHANGE_MATERIAL_TRANSACTION_REQUEST.REQUEST:
+      return {
+        ...state
+      };
+    case Actions.CHANGE_MATERIAL_TRANSACTION_REQUEST.SUCCESS:
+      return {
+        ...state,
+        listSupplierMaterial: state.listSupplierMaterial.map(item =>
+          item.id === payload.id ? (item = payload.data.data) : item
+        )
       };
     default:
       return state;

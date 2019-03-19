@@ -45,12 +45,13 @@ class Notification extends Component {
     this.props.fetchGetNotification();
   }
 
-  _handleClickAction = async string => {
+  _handleClickAction = async (notificaitonId, string, read) => {
     if (string.includes("equipments")) {
       this.props.navigation.navigate("MyEquipmentDetail", { id: 37 });
+      this.props.fetchReadNotifiction(notificaitonId, { read: isRead });
     } else if (string.includes("transactions")) {
       const res = await axios.get("transactions/14");
-
+      this.props.fetchReadNotifiction(notificaitonId, { read: isRead });
       //If contractor.id === requester.id => user is requester else user is supplier
       if (res.data.equipment.contractor.id === res.data.requester.id) {
         this.props.navigation.navigate("Detail", { id: 14 });
@@ -88,7 +89,7 @@ class Notification extends Component {
           ? { backgroundColor: "white" }
           : { backgroundColor: "#DDDDDD" }
       ]}
-      onPress={() => this._handleClickAction(item.clickAction)}
+      onPress={() => this._handleClickAction(item.id, item.clickAction, true)}
     >
       <View>
         <Text style={styles.title}>{item.title}</Text>

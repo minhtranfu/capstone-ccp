@@ -61,6 +61,19 @@ export default function materialReducer(state = INITIAL_STATE, action) {
         ...state
       };
     }
+    case Actions.GET_MATERIAL_LIST_BY_CONTRACTOR.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+    case Actions.GET_MATERIAL_LIST_BY_CONTRACTOR.SUCCESS: {
+      return {
+        ...state,
+        loading: false,
+        materialList: payload.data
+      };
+    }
     default:
       return state;
   }

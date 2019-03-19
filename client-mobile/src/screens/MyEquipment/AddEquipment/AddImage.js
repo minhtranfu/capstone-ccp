@@ -51,7 +51,8 @@ class AddImage extends Component {
     super(props);
     this.state = {
       images: [],
-      descriptionImages: []
+      descriptionImages: [],
+      imageUrl: []
     };
   }
 
@@ -83,6 +84,8 @@ class AddImage extends Component {
           }
         });
         console.log(res);
+        this.setState({ imageUrl: [...this.state.imageUrl, res.data[0]] });
+        console.log(this.state.imageUrl);
       }
     }
   };
@@ -120,12 +123,18 @@ class AddImage extends Component {
   // };
 
   _handleAddEquipment = () => {
-    const { descriptionImages, thumbnailImage, lat, long } = this.state;
-    const { imageUrl } = this.props;
+    const { descriptionImages, imageUrl, lat, long } = this.state;
+    // const { imageUrl } = this.props;
     const { data } = this.props.navigation.state.params;
     const image = {
-      equipmentImages: imageUrl,
-      thumbnailImage: imageUrl[0]
+      equipmentImages: imageUrl.map(item => {
+        return {
+          id: item.id
+        };
+      }),
+      thumbnailImage: {
+        id: imageUrl[0].id
+      }
     };
     const newEquipment = Object.assign({}, data, image);
     this.props.fetchAddEquipment(newEquipment);
@@ -138,8 +147,8 @@ class AddImage extends Component {
   };
 
   _handleSubmit = () => {
-    const { loading, imageUrl } = this.props;
-    if (!loading && imageUrl.length > 0) {
+    const { loading } = this.props;
+    if (!loading && this.state.imageUrl.length > 0) {
       this._handleAddEquipment();
       this.props.navigation.dismiss();
     } else {

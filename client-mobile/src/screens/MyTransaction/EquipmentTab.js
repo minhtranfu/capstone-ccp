@@ -18,9 +18,7 @@ import {
   listMaterialTransactionBySupplier,
   clearSupplierTransactionList
 } from "../../redux/actions/transaction";
-import { listMaterial } from "../../Utils/MockData";
 
-import MaterialTab from "./MaterialTab";
 import RequireLogin from "../Login/RequireLogin";
 import TabView from "../../components/TabView";
 import ParallaxList from "../../components/ParallaxList";
@@ -29,10 +27,10 @@ import Button from "../../components/Button";
 import TransactionItem from "../../components/TransactionItem";
 import EquipmentStatus from "../../components/EquipmentStatus";
 import Header from "../../components/Header";
+import Loading from "../../components/Loading";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
-import Loading from "../../components/Loading";
 
 const { width, height } = Dimensions.get("window");
 
@@ -153,7 +151,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     }
   })
 )
-class MyTransaction extends Component {
+class EquipmentTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -164,27 +162,6 @@ class MyTransaction extends Component {
       refreshing: false,
       activeTab: 0
     };
-  }
-
-  componentDidMount() {
-    const { user, isLoggedIn } = this.props;
-    if (isLoggedIn) {
-      this.props.fetchListMyTransaction(user.contractor.id);
-      this.props.fetchListMaterial(user.contractor.id);
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { user, token } = this.props;
-    if (prevProps.token !== token) {
-      this.props.fetchListMyTransaction(user.contractor.id);
-      this.props.fetchListMaterial(user.contractor.id);
-    }
-
-    console.log("Transaction renderrr");
-    // if (status.type === "success" && status.time !== prevProps.status.time) {
-    //   this._showAlert("Success", status.message);
-    // }
   }
 
   _showAlert = (title, msg) => {
@@ -350,53 +327,22 @@ class MyTransaction extends Component {
   };
 
   render() {
-    const {
-      listTransaction,
-
-      loading,
-      navigation,
-      isLoggedIn
-    } = this.props;
+    const { listTransaction, loading, navigation, isLoggedIn } = this.props;
     const { activeTab } = this.state;
-    if (isLoggedIn) {
-      return (
-        <SafeAreaView
-          style={styles.container}
-          forceInset={{ bottom: "never", top: "always" }}
-        >
-          <Header>
-            <Text style={styles.header}>My Transaction</Text>
-          </Header>
-          <TabView
-            tabs={["Equipment", "Material"]}
-            onChangeTab={this._onChangeTab}
-            activeTab={activeTab}
+    return (
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh}
           />
-          {!loading ? (
-            <ScrollView
-              style={{ flex: 1 }}
-              contentContainerStyle={styles.scrollContent}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh}
-                />
-              }
-            >
-              {activeTab == 0 ? (
-                this._renderEquipment(listTransaction)
-              ) : (
-                <MaterialTab listMaterial={listMaterial} />
-              )}
-            </ScrollView>
-          ) : (
-            <Loading />
-          )}
-        </SafeAreaView>
-      );
-    } else {
-      return <RequireLogin navigation={navigation} />;
-    }
+        }
+      >
+        {this._renderEquipment(listTransaction)}
+      </ScrollView>
+    );
   }
 }
 
@@ -433,4 +379,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MyTransaction;
+export default EquipmentTab;

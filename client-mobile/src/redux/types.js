@@ -71,6 +71,18 @@ export const REQUEST_ADJUST_TRANSACTION = renderActions(
 export const DELETE_ADJUST_TRANSACTION = renderActions(
   "@@transaction/DELETE_ADJUST_TRANSACTION"
 );
+export const LIST_SUPPLIER_MATERIAL_TRANSACTION = renderActions(
+  "@@transaction/LIST_SUPPLIER_MATERIAL_TRANSACTION"
+);
+export const LIST_REQUESTER_MATERIAL_TRANSACTION = renderActions(
+  "@@transaction/LIST_REQUESTER_MATERIAL_TRANSACTION"
+);
+export const SEND_MATERIAL_TRANSACTION_REQUEST = renderActions(
+  "@@transaction/SEND_MATERIAL_TRANSACTION_REQUEST"
+);
+export const CHANGE_MATERIAL_TRANSACTION_REQUEST = renderActions(
+  "@@transaction/CHANGE_MATERIAL_TRANSACTION_REQUEST"
+);
 
 //SEARCH EQUIPMENT
 export const SEARCH_EQUIPMENT = renderActions("@@equip/SEARCH_EQUIPMENT");
@@ -153,4 +165,7 @@ export const SEARCH_MATERIAL = renderActions("@@material/SEARCH_MATERIAL");
 export const ADD_NEW_MATERIAL = renderActions("@@material/ADD_NEW_MATERIAL");
 export const UPDATE_MATERIAL_DETAIl = renderActions(
   "@@material/UPDATE_MATERIAL_DETAIl"
+);
+export const GET_MATERIAL_LIST_BY_CONTRACTOR = renderActions(
+  "@@material/GET_MATERIAL_LIST_BY_CONTRACTOR"
 );

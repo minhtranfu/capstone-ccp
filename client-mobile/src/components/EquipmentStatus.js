@@ -12,6 +12,7 @@ const COLORS = {
   CANCEL: "#FF5C5C",
   PENDING: "#F9AA33",
   PROCESSING: "#7199FE",
+  DELIVERING: "#7199FE",
   FINISHED: "#FFDF49",
   default: "#3E3E3E"
   // blue: 7199FE, yellow: FFDF49
