@@ -129,7 +129,7 @@ class Header extends Component {
                     <span className="badge badge-pill badge-danger">10</span>
                   </a>
                   <div className="dropdown-menu shadow mt-2 rounded-top-0">
-                    <div class="list-notifications custom-scrollbar">
+                    <div className="list-notifications custom-scrollbar">
                       <a className="dropdown-item" href="#">
                         <div>Profile</div>
                         <p className="text-muted mb-0">Ahihi đồ ngốc</p>
