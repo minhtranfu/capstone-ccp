@@ -86,17 +86,17 @@ class MyMaterials extends PureComponent {
               <img src={thumbnail} className="rounded-left" />
             </div>
             <div className="detail flex-fill p-2">
-              <Link to={`/dashboard/supplier/materials/${equipment.id}`}>
-                <h6>
-                  {equipment.name}
-                  <span className="float-right">
-                    <button className="btn btn-outline-success btn-sm"><i className="fal fa-pencil"></i></button>
-                    <button className="btn btn-outline-danger btn-sm ml-2"><i className="fal fa-trash"></i></button>
-                  </span>
-                  <span className="clearfix"></span>
-                </h6>
-              </Link>
-              <p><i className="fal fa-user-circle"></i> {equipment.manufacturer}</p>
+              <h6>
+                <Link to={`/dashboard/supplier/materials/${equipment.id}`}>{equipment.name}</Link>
+                <span className="float-right">
+                  <button className="btn btn-outline-success btn-sm"><i className="fal fa-pencil"></i></button>
+                  <button className="btn btn-outline-danger btn-sm ml-2"><i className="fal fa-trash"></i></button>
+                </span>
+                <span className="clearfix"></span>
+              </h6>
+              <div><i className="fal fa-user-circle"></i> {equipment.manufacturer}</div>
+              <div><i className="fal fa-money-bill"></i> {equipment.price}/{equipment.unit}</div>
+              <div><i className="fal fa-bullseye"></i> {equipment.construction.name}</div>
             </div>
           </div>
         );
