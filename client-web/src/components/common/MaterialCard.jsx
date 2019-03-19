@@ -9,7 +9,7 @@ class MaterialCard extends PureComponent {
     const thumbnail = product.thumbnailImageUrl || '/public/upload/product-images/unnamed-19-jpg.jpg';
     return (
       <div className={`equip-card my-2 ${className}`}>
-        <Link to={`/material-detail/${product.id}`}>
+        <Link to={`/materials/${product.id}`}>
           <div className="card">
             <div className="image-169">
               <Image src={thumbnail} className="card-img-top" alt="" />

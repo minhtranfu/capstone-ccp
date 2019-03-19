@@ -20,6 +20,10 @@ class SubHeader extends Component {
     {
       to: '/dashboard/supplier/materials',
       name: 'Materials'
+    },
+    {
+      to: '/dashboard/supplier/material-transactions',
+      name: 'Material Transactions'
     }
   ];
 
@@ -32,6 +36,10 @@ class SubHeader extends Component {
     {
       to: '/dashboard/requester/constructions',
       name: 'Constructions'
+    },
+    {
+      to: '/dashboard/requester/material-transactions',
+      name: 'Material Transactions'
     }
   ];
 

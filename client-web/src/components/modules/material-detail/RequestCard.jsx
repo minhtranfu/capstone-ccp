@@ -4,24 +4,26 @@ import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from 'react-places-autocomplete';
-import moment from 'moment';
 import 'bootstrap-daterangepicker/daterangepicker.css';
-import DateRangePicker from 'react-bootstrap-daterangepicker';
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 import { authActions } from '../../../redux/actions';
-import ccpApiService from '../../../services/domain/ccp-api-service';
+import { formatPrice } from 'Src/utils/format.utils';
+import { materialTransactionServices } from 'Src/services/domain/ccp';
 
 class RequestCard extends Component {
 
   constructor(props) {
     super(props);
 
+    const { material } = props;
+
     this.state = {
-      equip: props.equip,
-      availableTimeRanges: [],
+      material,
       transaction: {
-        equipmentId: props.equip.id
+        material: {
+          id: material.id
+        }
       },
       error: {},
       redirectToTransaction: false,
@@ -34,6 +36,25 @@ class RequestCard extends Component {
    */
   _handleChangeAddress = address => {
     this.setState({ address });
+  };
+
+  /**
+   * Handle user field value change
+   */
+  _handleFieldChange = e => {
+    let { transaction } = this.state;
+    let { name, value } = e.target;
+
+    if (!isNaN(value)) {
+      value = +value;
+    }
+
+    transaction = {
+      ...transaction,
+      [name]: value
+    };
+
+    this.setState({ transaction });
   };
 
   /**
@@ -50,8 +71,8 @@ class RequestCard extends Component {
           transaction: {
             ...transaction,
             requesterAddress: address,
-            requesterLatitude: latLng.lat,
-            requesterLongitude: latLng.lng
+            requesterLat: latLng.lat,
+            requesterLong: latLng.lng
           }
         });
       })
@@ -84,35 +105,6 @@ class RequestCard extends Component {
   };
 
   /**
-   * Handle changing date range
-   */
-  _onChangeDateRanage = (e, picker) => {
-    const { transaction } = this.state;
-    this.setState({
-      transaction: {
-        ...transaction,
-        beginDate: picker.startDate,
-        endDate: picker.endDate
-      }
-    });
-  };
-
-  /**
-   * Get label for show value of date range picker
-   */
-  _getLabelOfRange = () => {
-    const { transaction } = this.state;
-
-    if (transaction == undefined || !transaction.beginDate) {
-      return 'Pick a time range';
-    }
-
-    const { beginDate, endDate } = transaction;
-
-    return `${beginDate.format('YYYY/MM/DD')} - ${endDate.format('YYYY/MM/DD')}`;
-  };
-
-  /**
    * Submit a request for hiring device
    */
   _postTransaction = async () => {
@@ -122,13 +114,8 @@ class RequestCard extends Component {
       isFetching: true
     });
     let data;
-    transaction = {
-      ...transaction,
-      beginDate: transaction.beginDate.format('YYYY-MM-DD'),
-      endDate: transaction.endDate.format('YYYY-MM-DD')
-    };
     try {
-      data = await ccpApiService.postTransaction(transaction);
+      data = await materialTransactionServices.postTransaction(transaction);
     } catch (error) {
       console.log(error);
       if (error.response && error.response.data) {
@@ -154,50 +141,6 @@ class RequestCard extends Component {
     }
 
     this.setState(newState);
-  };
-
-  /**
-   * Check date is invalid for disabling date of date range picker
-   */
-  _isInvalidDate = date => {
-    const { equip } = this.state;
-
-    // Check the date is not in any date range
-    let inAvailableTimeRange = false;
-    equip.availableTimeRanges.forEach(range => {
-      if (date.isAfter(range.beginDate) && date.isBefore(range.endDate)) {
-        inAvailableTimeRange = true;
-        return;
-      }
-    });
-
-    if (!inAvailableTimeRange) {
-      return true;
-    }
-
-    if (equip.activeHiringTransactions && equip.activeHiringTransactions.length > 0) {
-      let inHiringTimeRange = false;
-      equip.activeHiringTransactions.forEach(hiringTransaction => {
-        if ((date.isAfter(hiringTransaction.beginDate) || date.isSame(hiringTransaction.beginDate, 'day'))
-          && (date.isBefore(hiringTransaction.endDate) || date.isSame(hiringTransaction.endDate, 'day'))) {
-          inHiringTimeRange = true;
-          return;
-        }
-      });
-
-      if (inHiringTimeRange) {
-        return inHiringTimeRange;
-      }
-    }
-
-    if (equip.processingHiringTransaction) {
-      if ((date.isAfter(equip.processingHiringTransaction.beginDate) || date.isSame(equip.processingHiringTransaction.beginDate, 'day'))
-        && (date.isBefore(equip.processingHiringTransaction.endDate) || date.isSame(equip.processingHiringTransaction.endDate, 'day'))) {
-        return true;
-      }
-    }
-
-    return false;
   };
 
   _renderAlert = () => {
@@ -229,7 +172,7 @@ class RequestCard extends Component {
             onConfirm={() => this.setState({ redirectToTransaction: true })}
             onCancel={() => this.setState({ transactionId: undefined })}
           >
-            Request for hiring this device was sent!
+            Request for this material was sent!
                   </SweetAlert>
         }
         {/* Redirect if user click button view sent transaction */}
@@ -242,23 +185,17 @@ class RequestCard extends Component {
 
   render() {
     const { authentication, toggleLoginModal } = this.props;
-    const { isFetching, equip, transaction } = this.state;
-
-    let numOfDays = 0;
-    if (transaction && transaction.beginDate) {
-      numOfDays = transaction.endDate.diff(transaction.beginDate, 'days') + 1;
-    }
+    const { isFetching, material, transaction, address } = this.state;
 
     return (
       <div className="request-card bg-white shadow">
         {this._renderAlert()}
-        <div className="my-2">Daily price: <span className="float-right">{equip.dailyPrice}K</span></div>
-        <div className="my-2 pb-2 border-bottom">Delivery price: <span className="float-right">{equip.deliveryPrice}K</span></div>
+        <div className="my-2 pb-2 border-bottom"><i className="fal fa-money-bill"></i> Price: <span className="float-right text-x-large">{formatPrice(material.price)}</span></div>
 
         <div className="form-group">
-          <label htmlFor="requesterAddress"><strong>Receive address:</strong></label>
+          <label htmlFor="requesterAddress">Receive address:<i className="text-danger">*</i></label>
           <PlacesAutocomplete
-            value={this.state.address}
+            value={address}
             onChange={this._handleChangeAddress}
             onSelect={this._handleSelectAddress}
             searchOptions={{
@@ -276,6 +213,7 @@ class RequestCard extends Component {
                       placeholder: 'Search Places ...',
                       className: 'form-control location-search-input',
                     })}
+                    autoFocus
                   />
                   {(loading || suggestions.length > 0) &&
                     <div className="autocomplete-dropdown-container shadow-lg border bg-white">
@@ -306,35 +244,26 @@ class RequestCard extends Component {
             }}
           </PlacesAutocomplete>
         </div>
-
         <div className="form-group">
-          <label htmlFor="timeRange"><strong>Time:</strong></label>
-          <DateRangePicker isInvalidDate={this._isInvalidDate} minDate={moment()} onApply={this._onChangeDateRanage} containerClass="w-100" data-range-id="1" startDate="1/1/2014" endDate="3/1/2014">
-            <div className="input-group date-range-picker">
-              <input type="text" id="timeRange" className="form-control" readOnly value={this._getLabelOfRange() || ''} />
-              <div className="input-group-append">
-                <span className="input-group-text" id="basic-addon2"><i className="fal fa-calendar"></i></span>
-              </div>
-            </div>
-          </DateRangePicker>
+          <label htmlFor="transaction_quantity">Quantity:<i className="text-danger">*</i></label>
+          <input type="number" name="quantity" id="transaction_quantity" className="form-control" onChange={this._handleFieldChange}/>
         </div>
         <div className="text-center border-top border-bottom my-3 py-2">
-          {!transaction.beginDate &&
-            <span className="text-muted">Pick a time range to see fee</span>
+          {!transaction.quantity &&
+            <span className="text-muted">Input quantity to see fee</span>
           }
-          {transaction.beginDate &&
+          {transaction.quantity &&
             <div>
-              <div className="text-left">Days: <span className="float-right">{numOfDays}</span></div>
-              <div className="text-left">Fee: <span className="float-right">{numOfDays * equip.dailyPrice}K</span></div>
+              <div className="text-left">Total: <span className="float-right text-x-large">{formatPrice(transaction.quantity * material.price)}</span></div>
             </div>
           }
         </div>
         {authentication.isAuthenticated &&
-          <button className="btn btn-success btn-block mt-2" disabled={isFetching || !transaction.beginDate || !transaction.requesterAddress} onClick={this._postTransaction}>
+          <button className="btn btn-success btn-block mt-2" disabled={isFetching || !transaction.quantity || !transaction.requesterAddress} onClick={this._postTransaction}>
             {isFetching &&
               <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
             }
-            Request for hiring
+            Request
           </button>
         }
         {!authentication.isAuthenticated &&

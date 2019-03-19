@@ -9,7 +9,7 @@ export const getTransactionsByRequesterId = requesterId => {
 };
 
 export const getTransactionsBySupplierId = supplierId => {
-  return DataAccessService.get(`/materialTransactions/requester/${supplierId}`);
+  return DataAccessService.get(`/materialTransactions/supplier/${supplierId}`);
 };
 
 export const postTransaction = transaction => {

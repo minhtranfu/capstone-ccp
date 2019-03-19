@@ -89,8 +89,20 @@ const modules = [
   },
   {
     name: 'MaterialDetail',
-    path: '/material-detail/:id',
+    path: '/materials/:id',
     modulePath: './material-detail'
+  },
+  {
+    name: 'MaterialTransactions',
+    path: '/dashboard/supplier/material-transactions',
+    modulePath: './supplier-dashboard/MaterialTransactions',
+    isPrivate: true
+  },
+  {
+    name: 'RequesterMaterialTransactions',
+    path: '/dashboard/requester/material-transactions',
+    modulePath: './requester-dashboard/MaterialTransactions',
+    isPrivate: true
   },
 ];
 

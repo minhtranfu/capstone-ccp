@@ -115,11 +115,11 @@ class MaterialDetail extends Component {
                   )}
                 </p>
               </div>
-              {/* {material.id &&
+              {material.id &&
                 (!authentication.isAuthenticated ||
                   material.contractor.id !== user.contractor.id) && (
-                  <RequestCard equip={equip} />
-                )} */}
+                  <RequestCard material={material} />
+                )}
               {material.id &&
                 authentication.isAuthenticated &&
                 material.contractor.id == user.contractor.id && (
