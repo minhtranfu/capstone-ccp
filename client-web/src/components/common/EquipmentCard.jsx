@@ -13,15 +13,17 @@ class EquipmentCard extends PureComponent {
       <div className={`equip-card my-2 ${className}`}>
         <Link to={`/equip-detail/${product.id}`}>
           <div className="card">
-            <Image src={thumbnail} className="card-img-top" alt="" />
+            <div className="image-169 lh-1">
+              <Image src={thumbnail} className="card-img-top" alt="" />
+            </div>
             <div className="card-body">
               <h6 className="card-title">{product.name} <span className="float-right">{product.dailyPrice}K</span>
                 <span className="clearfix"></span>
               </h6>
-              {/* <div className="text-muted"><i className="fa fa-map-marker"></i> {product.address}</div> */}
+              {/* <div className="text-muted"><i className="fal fa-map-marker"></i> {product.address}</div> */}
               {product.availableTimeRanges[0] &&
                 <div className="text-muted">
-                  <i className="fa fa-calendar-o"></i> {moment(product.availableTimeRanges[0].beginDate).format('YYYY/MM/DD')} - {moment(product.availableTimeRanges[0].endDate).format('YYYY/MM/DD')}
+                  <i className="fal fa-calendar"></i> {moment(product.availableTimeRanges[0].beginDate).format('YYYY/MM/DD')} - {moment(product.availableTimeRanges[0].endDate).format('YYYY/MM/DD')}
                   {product.availableTimeRanges.length > 1 &&
                     <i> ({product.availableTimeRanges.length - 1} more)</i>
                   }

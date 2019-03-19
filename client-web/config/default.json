@@ -1,0 +1,12 @@
+{
+  "example": {
+    "port": 3060,
+    "baseUrl": "https://ccp.hoctot.net/api"
+  },
+  "app": {
+    "currency": {
+      "unit": "K",
+      "position": "postfix"
+    }
+  }
+}

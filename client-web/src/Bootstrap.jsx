@@ -9,7 +9,7 @@ import { INITIAL_STATE } from './common/app-const';
 // Require globals
 import '@babel/polyfill';
 import 'bootstrap/scss/bootstrap.scss';
-import 'font-awesome/scss/font-awesome.scss';
+import './assets/fontawesome-pro/css/all.css';
 import './scss/style.scss';
 import 'lodash';
 import $ from 'jquery';

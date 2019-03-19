@@ -58,7 +58,7 @@ class MyMaterials extends PureComponent {
         <h2>You have no material!</h2>
         <Link to="/dashboard/supplier/materials/add" className="float-right">
           <button className="btn btn-success btn-lg">
-            <i className="fa fa-plus"></i> Add new material now
+            <i className="fal fa-plus"></i> Add new material now
           </button>
         </Link>
       </div>
@@ -86,15 +86,17 @@ class MyMaterials extends PureComponent {
               <img src={thumbnail} className="rounded-left" />
             </div>
             <div className="detail flex-fill p-2">
-              <h6>
-                {equipment.name}
-                <span className="float-right">
-                  <button className="btn btn-outline-success btn-sm"><i className="fa fa-pencil"></i></button>
-                  <button className="btn btn-outline-danger btn-sm ml-2"><i className="fa fa-trash"></i></button>
-                </span>
-                <span className="clearfix"></span>
-              </h6>
-              <p><i className="fa fa-user-circle"></i> {equipment.manufacturer}</p>
+              <Link to={`/dashboard/supplier/materials/${equipment.id}`}>
+                <h6>
+                  {equipment.name}
+                  <span className="float-right">
+                    <button className="btn btn-outline-success btn-sm"><i className="fal fa-pencil"></i></button>
+                    <button className="btn btn-outline-danger btn-sm ml-2"><i className="fal fa-trash"></i></button>
+                  </span>
+                  <span className="clearfix"></span>
+                </h6>
+              </Link>
+              <p><i className="fal fa-user-circle"></i> {equipment.manufacturer}</p>
             </div>
           </div>
         );
@@ -112,7 +114,7 @@ class MyMaterials extends PureComponent {
               My materials
               <Link to="/dashboard/supplier/materials/add" className="float-right">
                 <button className="btn btn-success">
-                  <i className="fa fa-plus"></i> New material
+                  <i className="fal fa-plus"></i> New material
                 </button>
               </Link>
             </h4>

@@ -9,7 +9,8 @@
       "Common/*": ["common/*"],
       "Redux/*": ["redux/*"],
       "Services/*": ["services/*"],
-      "Components/*": ["components/*"]
+      "Components/*": ["components/*"],
+      "Utils/*": ["utils/*"]
     }
   }
 }

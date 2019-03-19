@@ -205,7 +205,7 @@ class AddEquipmentStep1 extends Step {
           </div>
           <div className="col-12 text-center">
             <div className="form-group">
-              <button className="btn btn-primary" onClick={this._handleSubmitForm}>NEXT STEP <i className="fa fa-chevron-right"></i></button>
+              <button className="btn btn-primary" onClick={this._handleSubmitForm}>NEXT STEP <i className="fal fa-chevron-right"></i></button>
             </div>
           </div>
         </div>

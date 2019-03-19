@@ -1,17 +1,14 @@
 import React, { Component } from "react";
-import { withRouter, Redirect } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
-import OwlCarousel from "react-owl-carousel";
-import "owl.carousel/dist/assets/owl.carousel.css";
-import "owl.carousel/dist/assets/owl.theme.default.css";
 import Helmet from "react-helmet-async";
-import moment from "moment";
 import Image from "../../common/Image";
 import { connect } from "react-redux";
 import { authActions } from "../../../redux/actions";
 
 import ccpApiService from "../../../services/domain/ccp-api-service";
 import RequestCard from "./RequestCard";
+import { formatPrice, formatDate } from "Utils/format.utils";
 
 class MaterialDetail extends Component {
   state = {
@@ -23,17 +20,6 @@ class MaterialDetail extends Component {
     address: ""
   };
 
-  // TODO: Change default images
-  defaultImages = [
-    "/public/upload/product-images/unnamed-19-jpg.jpg",
-    "/public/upload/product-images/unnamed-24-jpg.jpg",
-    "/public/upload/product-images/unnamed-20-jpg.jpg",
-    "/public/upload/product-images/unnamed-25-jpg.jpg",
-    "/public/upload/product-images/unnamed-21-jpg.jpg",
-    "/public/upload/product-images/unnamed-22-jpg.jpg",
-    "/public/upload/product-images/unnamed-23-jpg.jpg"
-  ];
-
   /**
    * Load equipment detail
    */
@@ -42,9 +28,6 @@ class MaterialDetail extends Component {
     const { id } = params;
 
     const data = await ccpApiService.materialServices.getMaterialById(id);
-    if (!data.equipmentImages || !data.equipmentImages.length) {
-      data.equipmentImages = this.defaultImages.map(url => ({ url }));
-    }
 
     this.setState({
       material: data
@@ -72,103 +55,30 @@ class MaterialDetail extends Component {
       <div className="container">
         {/* Change current title */}
         <Helmet>
-          <title>Material detail: {material.name || ""}</title>
-        </Helmet>
-        <div className="row">
-          <div className="col-md-9">
-            <img src={material.thumbnailImageUrl} alt="Material photo" className="w-100"/>
-            <h1>{material.name}</h1>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  renderOld() {
-    const { material } = this.state;
-    const { authentication } = this.props;
-    const { user } = authentication;
-
-    return (
-      <div className="container">
-        {/* Change current title */}
-        <Helmet>
-          <title>Material detail: {material.name || ""}</title>
+          <title>{material.name || ""} | Material detail</title>
         </Helmet>
 
         <div className="row py-4">
           {/* Main content */}
           <div className="col-md-9">
-            {(material.equipmentImages && (
-              <OwlCarousel
-                loop
-                autoPlay={true}
-                autoplayTimeout={2000}
-                items={1}
-                className="owl-theme product-images"
-                margin={10}
-                ref={mainOwl => (this.mainOwl = mainOwl)}
-              >
-                {material.equipmentImages.map((image, index) => (
-                  <div key={index} className="item">
-                    <img src={image.url} alt={material.name} />
-                  </div>
-                ))}
-              </OwlCarousel>
-            )) || <Skeleton height={410} />}
-            {(material.equipmentImages && (
-              <OwlCarousel
-                items={5}
-                className="owl-theme product-images-nav mt-2"
-                margin={10}
-                rewind={false}
-                dots={false}
-                nav={true}
-              >
-                {material.equipmentImages.map((image, index) => (
-                  <div
-                    key={index}
-                    onClick={() => this._showImage(index)}
-                    className="item"
-                  >
-                    <img src={image.url} alt={material.name} />
-                  </div>
-                ))}
-              </OwlCarousel>
-            )) || <Skeleton height={65} />}
+            <div className="image-169 mb-2 shadow-sm">
+              <Image src={material.thumbnailImageUrl} />
+            </div>
             <div className="py-2 px-3 shadow-sm bg-white">
               <h1 className="">{material.name || <Skeleton />}</h1>
+              <h5 className="my-3 text-muted"><u>Information:</u></h5>
               <div className="row">
-                <div className="col-md-4">
+                <div className="col-md-6">
                   <h6>
-                    Construction:{" "}
-                    {material.construction && material.construction.name}
+                    <span className="text-muted"><i className="fal fa-bullseye"></i> Construction:</span> {material.construction ? material.construction.name : <Skeleton width={100}/>}
                   </h6>
                 </div>
-                <div className="col-md-4">
-                  <h6>Daily price:{material.dailyPrice}K</h6>
-                </div>
-                <div className="col-md-4">
-                  <h6>Delivery price: {material.deliveryPrice}K</h6>
+                <div className="col-md-6">
+                  <h6><span className="text-muted"><i className="fal fa-money-bill"></i> Price:</span> {material.price ? formatPrice(material.price) : <Skeleton width={75}/>}</h6>
                 </div>
                 <div className="col-md-12">
-                  <h6>Address: {material.address}</h6>
+                  <h6><span className="text-muted"><i className="fal fa-map-marker"></i> Address:</span> {material.construction ? material.construction.address : <Skeleton width={250}/>}</h6>
                 </div>
-              </div>
-              <h5 className="mt-2">Available Time Ranges:</h5>
-              <div className="time-ranges">
-                {material.availableTimeRanges &&
-                  material.availableTimeRanges.map((range, index) => (
-                    <span
-                      className="badge badge-success badge-pill mr-2"
-                      key={index}
-                    >
-                      <h4 className="m-0 px-2 pb-1">
-                        {moment(range.beginDate).format("YYYY/MM/DD")} -{" "}
-                        {moment(range.endDate).format("YYYY/MM/DD")}
-                      </h4>
-                    </span>
-                  ))}
               </div>
               <h5 className="mt-3">Description:</h5>
               <div
@@ -197,7 +107,7 @@ class MaterialDetail extends Component {
                 <p className="mt-0">
                   Join at:{" "}
                   {material.contractor ? (
-                    new Date(material.contractor.createdTime).toDateString()
+                    formatDate(material.contractor.createdTime)
                   ) : (
                     <span className="d-inline">
                       <Skeleton width={100} />
@@ -205,11 +115,11 @@ class MaterialDetail extends Component {
                   )}
                 </p>
               </div>
-              {material.id &&
+              {/* {material.id &&
                 (!authentication.isAuthenticated ||
                   material.contractor.id !== user.contractor.id) && (
                   <RequestCard equip={equip} />
-                )}
+                )} */}
               {material.id &&
                 authentication.isAuthenticated &&
                 material.contractor.id == user.contractor.id && (

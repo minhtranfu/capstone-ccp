@@ -58,7 +58,7 @@ class MyEquipments extends PureComponent {
         <h2>You have no equipment!</h2>
         <Link to="/dashboard/supplier/equipments/add" className="float-right">
           <button className="btn btn-success btn-lg">
-            <i className="fa fa-plus"></i> Add new equipment now
+            <i className="fal fa-plus"></i> Add new equipment now
           </button>
         </Link>
       </div>
@@ -89,8 +89,8 @@ class MyEquipments extends PureComponent {
               <h6>
                 {equipment.name}
                 <span className="float-right">
-                  <button className="btn btn-outline-success btn-sm"><i className="fa fa-pencil"></i></button>
-                  <button className="btn btn-outline-danger btn-sm ml-2"><i className="fa fa-trash"></i></button>
+                  <button className="btn btn-outline-success btn-sm"><i className="fal fa-pencil"></i></button>
+                  <button className="btn btn-outline-danger btn-sm ml-2"><i className="fal fa-trash"></i></button>
                 </span>
                 <span className="clearfix"></span>
               </h6>
@@ -113,7 +113,7 @@ class MyEquipments extends PureComponent {
               My equipments
               <Link to="/dashboard/supplier/equipments/add" className="float-right">
                 <button className="btn btn-success">
-                  <i className="fa fa-plus"></i> New equipment
+                  <i className="fal fa-plus"></i> New equipment
                 </button>
               </Link>
             </h4>

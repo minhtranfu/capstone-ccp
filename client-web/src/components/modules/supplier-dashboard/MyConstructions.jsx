@@ -112,8 +112,8 @@ class MyConstructions extends Component {
         </div>
         <div className="form-group">
           <span className="float-right">
-            <button className="btn btn-success btn-sm" onClick={this._handleSaveConstruction}><i className="fa fa-save"></i> Save</button>
-            <button className="btn btn-outline-success btn-sm ml-2" onClick={() => this._setEdittingConstructionId(null)}><i className="fa fa-times"></i> Cancel</button>
+            <button className="btn btn-success btn-sm" onClick={this._handleSaveConstruction}><i className="fal fa-save"></i> Save</button>
+            <button className="btn btn-outline-success btn-sm ml-2" onClick={() => this._setEdittingConstructionId(null)}><i className="fal fa-times"></i> Cancel</button>
           </span>
           <span className="clearfix"></span>
         </div>
@@ -127,8 +127,8 @@ class MyConstructions extends Component {
         <h4 className="m-0">
           {construction.name}
           <span className="float-right">
-            <button className="btn btn-outline-success btn-sm" onClick={() => this._setEdittingConstructionId(construction.id, construction)}><i className="fa fa-pencil"></i></button>
-            <button className="btn btn-outline-danger btn-sm ml-2"><i className="fa fa-trash"></i></button>
+            <button className="btn btn-outline-success btn-sm" onClick={() => this._setEdittingConstructionId(construction.id, construction)}><i className="fal fa-pencil"></i></button>
+            <button className="btn btn-outline-danger btn-sm ml-2"><i className="fal fa-trash"></i></button>
           </span>
           <span className="clearfix"></span>
         </h4>

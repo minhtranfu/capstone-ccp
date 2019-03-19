@@ -504,3 +504,21 @@ nav.navbar {
     background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.5, transparent), to(transparent));
   }
 }
+
+.lh-1 {
+  line-height: 1;
+}
+
+.image-169 {
+  height: 0;
+  padding-bottom: 56.25%;
+  position: relative;
+  overflow: hidden;
+  img {
+    position: absolute;
+    width: 100%;
+  }
+}
+.date-range-picker .custom-file-label::after {
+  font-family: Font Awesome\ 5 Pro;
+}

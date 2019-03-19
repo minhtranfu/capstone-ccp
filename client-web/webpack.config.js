@@ -32,7 +32,8 @@ const config = {
       Common: path.resolve(__dirname, 'src', 'common'),
       Redux: path.resolve(__dirname, 'src', 'redux'),
       Services: path.resolve(__dirname, 'src', 'services'),
-      Components: path.resolve(__dirname, 'src', 'components')
+      Components: path.resolve(__dirname, 'src', 'components'),
+      Utils: path.resolve(__dirname, 'src', 'utils')
     },
     modules: [path.resolve(__dirname, 'src'), 'node_modules']
   },

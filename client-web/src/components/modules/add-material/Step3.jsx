@@ -198,13 +198,13 @@ class AddEquipmentStep3 extends Step {
                 className="btn btn-outline-primary mr-2"
                 onClick={this._handleBackStep}
               >
-                <i className="fa fa-chevron-left" /> PREVIOUS STEP
+                <i className="fal fa-chevron-left" /> PREVIOUS STEP
               </button>
               <button
                 className="btn btn-success ml-2"
                 onClick={this._handleSubmitForm}
               >
-                NEXT STEP <i className="fa fa-chevron-right" />
+                NEXT STEP <i className="fal fa-chevron-right" />
               </button>
             </div>
           </div>

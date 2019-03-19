@@ -313,7 +313,7 @@ class RequestCard extends Component {
             <div className="input-group date-range-picker">
               <input type="text" id="timeRange" className="form-control" readOnly value={this._getLabelOfRange() || ''} />
               <div className="input-group-append">
-                <span className="input-group-text" id="basic-addon2"><i className="fa fa-calendar"></i></span>
+                <span className="input-group-text" id="basic-addon2"><i className="fal fa-calendar"></i></span>
               </div>
             </div>
           </DateRangePicker>

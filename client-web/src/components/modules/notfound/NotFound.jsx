@@ -6,7 +6,7 @@ class NotFound extends PureComponent {
     return (
       <div className="container my-auto text-center">
         <h1 className="text-center mb-5">Whoops, page not found!</h1>
-        <Link to='/' className="btn btn-primary btn-lg"><i className="fa fa-home"></i> Back to home</Link>
+        <Link to='/' className="btn btn-primary btn-lg"><i className="fal fa-home"></i> Back to home</Link>
       </div>
     );
   }

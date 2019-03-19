@@ -158,7 +158,7 @@ class AddEquipmentStep1 extends Step {
                   e.stopPropagation();
                   this._removeTimeRangePicker(i);
                   return false;
-                }}><i className="fa fa-trash"></i></button>
+                }}><i className="fal fa-trash"></i></button>
               </div>
             }
           </div>
@@ -284,12 +284,12 @@ class AddEquipmentStep1 extends Step {
             </div>
             {this._renderDateRangePickers()}
             <div className="form-group text-center">
-              <button className="btn btn-outline-primary mt-4" onClick={this._addTimeRangePicker}><i className="fa fa-plus"></i> Add more time range</button>
+              <button className="btn btn-outline-primary mt-4" onClick={this._addTimeRangePicker}><i className="fal fa-plus"></i> Add more time range</button>
             </div>
           </div>
           <div className="col-12 text-center">
             <div className="form-group">
-              <button className="btn btn-success" onClick={this._handleSubmitForm}>NEXT STEP <i className="fa fa-chevron-right"></i></button>
+              <button className="btn btn-success" onClick={this._handleSubmitForm}>NEXT STEP <i className="fal fa-chevron-right"></i></button>
             </div>
           </div>
         </div>

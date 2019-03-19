@@ -153,7 +153,7 @@ class AddMaterial extends Component {
       <div className="container pb-5">
         <div className="row">
           <div className="col-12">
-            <h2 className="my-4 text-center"><Link to="/dashboard/supplier/materials" className="btn btn-outline-primary float-left"><i className="fa fa-chevron-left"></i> Back to list</Link> Post material</h2>
+            <h2 className="my-4 text-center"><Link to="/dashboard/supplier/materials" className="btn btn-outline-primary float-left"><i className="fal fa-chevron-left"></i> Back to list</Link> Post material</h2>
             <hr />
           </div>
         </div>

@@ -125,7 +125,7 @@ class Header extends Component {
               <ul className="navbar-nav">
                 <li className="nav-item dropdown notifications mr-2">
                   <a className="text-light d-flex h-100 align-items-center px-3" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i className="fa fa-bell"></i>
+                    <i className="fal fa-bell"></i>
                     <span className="badge badge-pill badge-danger">10</span>
                   </a>
                   <div className="dropdown-menu shadow mt-2 rounded-top-0">
@@ -156,7 +156,7 @@ class Header extends Component {
                       </a>
                     </div>
                     <div className="dropdown-divider"></div>
-                    <a className="dropdown-item text-center" href="#">View all <i className="fa fa-chevron-right"></i></a>
+                    <a className="dropdown-item text-center" href="#">View all <i className="fal fa-chevron-right"></i></a>
                   </div>
                 </li>
                 <li className="nav-item dropdown">
@@ -165,10 +165,10 @@ class Header extends Component {
                     {authentication.user.contractor.name}
                   </a>
                   <div className="dropdown-menu shadow mt-2 rounded-top-0">
-                    <a className="dropdown-item" href="#"><i className="fa fa-user-circle"></i> Profile</a>
-                    <a className="dropdown-item" href="#"><i className="fa fa-cogs"></i> Settings</a>
+                    <a className="dropdown-item" href="#"><i className="fal fa-user-circle"></i> Profile</a>
+                    <a className="dropdown-item" href="#"><i className="fal fa-cogs"></i> Settings</a>
                     <div className="dropdown-divider"></div>
-                    <a className="dropdown-item" href="#" onClick={this._logout}><i className="fa fa-sign-out"></i> Logout</a>
+                    <a className="dropdown-item" href="#" onClick={this._logout}><i className="fal fa-sign-out"></i> Logout</a>
                   </div>
                 </li>
               </ul>
