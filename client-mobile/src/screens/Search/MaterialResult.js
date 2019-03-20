@@ -13,6 +13,7 @@ import { mockMaterialData } from "../../Utils/MockData";
 import Feather from "@expo/vector-icons/Feather";
 import { Image } from "react-native-expo-image-cache";
 
+import MaterialSearchItem from "../../components/MaterialSearchItem";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
 
@@ -43,24 +44,17 @@ class MaterialResult extends Component {
 
   _renderItem = ({ item }) => (
     <View style={{ flex: 1, marginHorizontal: 15 }}>
-      <TouchableOpacity
-        style={styles.itemWrapper}
-        onPress={() =>
-          this.props.navigation.navigate("MaterialDetail", { id: item.id })
+      <MaterialSearchItem
+        imageUrl={
+          item.thumbnailImageUrl
+            ? item.thumbnailImageUrl
+            : "http://lamnha.com/images/G01-02-1.png"
         }
-      >
-        <Image
-          uri={item.ImageURL}
-          resizeMode={"cover"}
-          style={{ width: 50, height: 50 }}
-        />
-        <View style={{ paddingLeft: 15, flex: 2 }}>
-          <Text style={styles.text}>{item.title}</Text>
-          <Text style={styles.text}>{item.name}</Text>
-          <Text style={styles.text}>{item.price}</Text>
-        </View>
-        <Feather name="chevron-right" size={24} />
-      </TouchableOpacity>
+        name={item.name}
+        manufacturer={item.manufacturer}
+        price={item.price}
+        description={item.description}
+      />
     </View>
   );
 

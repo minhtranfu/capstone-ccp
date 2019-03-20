@@ -26,6 +26,8 @@ import {
 } from "../../redux/actions/transaction";
 import { getMaterialListFromContractor } from "../../redux/actions/material";
 
+import MaterialSearchItem from "../../components/MaterialSearchItem";
+import TabView from "../../components/TabView";
 import AddModal from "./components/AddModal";
 import RequireLogin from "../Login/RequireLogin";
 import ParallaxList from "../../components/ParallaxList";
@@ -140,7 +142,8 @@ class MyEquipment extends PureComponent {
       id: null,
       refreshing: false,
       hasError: false,
-      addModalVisible: false
+      addModalVisible: false,
+      activeTab: 0
     };
   }
 
@@ -159,6 +162,10 @@ class MyEquipment extends PureComponent {
       this.props.fetchContractorEquipment(user.contractor.id);
     }
   }
+
+  _onChangeTab = tab => {
+    this.setState({ activeTab: tab });
+  };
 
   _onRefresh = async () => {
     this.setState({ refreshing: true });
@@ -227,19 +234,17 @@ class MyEquipment extends PureComponent {
               code={status.code}
             />
             {this.props.materialList.map(item => (
-              <TouchableOpacity style={styles.itemWrapper}>
-                <Image
-                  uri={"http://lamnha.com/images/G01-02-1.png"}
-                  resizeMode={"cover"}
-                  style={{ width: 70, height: 70 }}
-                />
-                <View style={{ paddingLeft: 5, flex: 2 }}>
-                  <Text style={styles.text}>{item.manufacturer}</Text>
-                  <Text style={styles.text}>{item.name}</Text>
-                  <Text style={styles.caption}> Price: {item.price}</Text>
-                </View>
-                <Feather name="chevron-right" size={24} />
-              </TouchableOpacity>
+              <MaterialSearchItem
+                imageUrl={
+                  item.thumbnailImageUrl
+                    ? item.thumbnailImageUrl
+                    : "http://lamnha.com/images/G01-02-1.png"
+                }
+                name={item.name}
+                manufacturer={item.manufacturer}
+                price={item.price}
+                description={item.description}
+              />
             ))}
             {equipmentList.map((item, index) => (
               <EquipmentItem
@@ -301,6 +306,7 @@ class MyEquipment extends PureComponent {
       isLoggedIn,
       navigation
     } = this.props;
+    const { activeTab } = this.state;
     if (isLoggedIn) {
       return (
         <SafeAreaView
@@ -316,6 +322,11 @@ class MyEquipment extends PureComponent {
           >
             <Text style={styles.header}>My Equipment</Text>
           </Header>
+          <TabView
+            tabs={["Equipment", "Material", "Debris"]}
+            onChangeTab={this._onChangeTab}
+            activeTab={activeTab}
+          />
           <AddModal
             visible={this.state.addModalVisible}
             setModalVisible={this._setModalVisible}

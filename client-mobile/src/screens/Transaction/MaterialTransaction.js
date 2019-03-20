@@ -34,7 +34,7 @@ const DROPDOWN_CONSTRUCTION_OPTIONS = [
   state => ({
     status: state.status,
     construction: state.contractor.constructionList,
-    user: state.contractor.info
+    user: state.auth.data
   }),
   dispatch => ({
     fetchRequestTransaction: material => {

@@ -1,5 +1,11 @@
 import React from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ScrollView
+} from "react-native";
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
 
@@ -18,24 +24,25 @@ class TabView extends React.PureComponent {
   render() {
     const { children, tabs, onChangeTab, activeTab } = this.props;
     return (
-      <View>
-        <View style={{ flexDirection: "row" }}>
-          {tabs.map((item, index) => (
-            <TouchableOpacity
-              onPress={() => onChangeTab(index)}
-              style={[
-                styles.buttonWrapper,
-                activeTab === index ? styles.activeButton : null
-              ]}
-            >
-              <Text
-                style={activeTab === index ? styles.activeText : styles.text}
-              >
-                {item}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+      <View
+        style={{
+          flexDirection: "row",
+          paddingHorizontal: 15
+        }}
+      >
+        {tabs.map((item, index) => (
+          <TouchableOpacity
+            onPress={() => onChangeTab(index)}
+            style={[
+              styles.buttonWrapper,
+              activeTab === index ? styles.activeButton : null
+            ]}
+          >
+            <Text style={activeTab === index ? styles.activeText : styles.text}>
+              {item}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
     );
   }
@@ -43,7 +50,7 @@ class TabView extends React.PureComponent {
 
 const styles = StyleSheet.create({
   buttonWrapper: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 10,
     marginBottom: 10
   },
   activeButton: {

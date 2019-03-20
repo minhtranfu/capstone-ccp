@@ -193,7 +193,8 @@ export default function transactionReducer(state = initialState, action) {
     case Actions.SEND_MATERIAL_TRANSACTION_REQUEST.SUCCESS:
       return {
         ...state,
-        listSupplierMaterial: [...state.listSupplierMaterial, payload.data]
+        listSupplierMaterial: [...state.listSupplierMaterial, payload.data],
+        listRequesterMaterial: [...state.listRequesterMaterial, payload.data]
       };
     //Supplier response to request
     case Actions.CHANGE_MATERIAL_TRANSACTION_REQUEST.REQUEST:

@@ -43,14 +43,9 @@ const ROW_ITEM_VALUE = [
     code: "Construction"
   },
   {
-    id: 3,
-    value: "History renting",
-    code: "Renting"
-  },
-  {
     id: 4,
-    value: "History lease",
-    code: "Lease"
+    value: "Manage your subcription",
+    code: "Subcription"
   },
   {
     id: 5,

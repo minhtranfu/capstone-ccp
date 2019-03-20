@@ -111,6 +111,7 @@ class MaterialTab extends PureComponent {
                     : "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
                 }
                 status={item.status}
+                quantity={item.quantity}
                 onPress={() =>
                   this.props.navigation.navigate("MaterialRequesterDetail", {
                     id: item.id

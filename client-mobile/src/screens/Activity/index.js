@@ -196,7 +196,10 @@ class Activity extends Component {
     const { user } = this.props;
     this.setState({ refreshing: true });
     const res = await this.props.fetchRequesterTransaction(user.contractor.id);
-    if (res) {
+    const materialRes = await this.props.fetchRequesterMaterial(
+      user.contractor.id
+    );
+    if (res || materialRes) {
       this.setState({ refreshing: false });
     } else {
       setTimeout(() => {
@@ -273,7 +276,7 @@ class Activity extends Component {
 
   _renderRequesterItemList = () => {
     return (
-      <View style={{ flex: 1, paddingHorizontal: 15 }}>
+      <View style={{ flex: 1 }}>
         <Dropdown
           label={"Filter"}
           defaultText={"All Statuses"}
@@ -370,7 +373,7 @@ class Activity extends Component {
             <Text style={styles.header}>My Request</Text>
           </Header>
           <TabView
-            tabs={["Equipment", "Material"]}
+            tabs={["Equipment", "Material", "Debris", "My Posts"]}
             onChangeTab={this._onChangeTab}
             activeTab={activeTab}
           />
@@ -407,8 +410,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   scrollContentContainer: {
-    paddingHorizontal: 15,
-    paddingTop: 20
+    paddingHorizontal: 15
   },
   rowWrapper: {
     borderWidth: 1,

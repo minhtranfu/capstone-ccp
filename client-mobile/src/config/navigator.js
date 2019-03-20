@@ -45,8 +45,9 @@ import MaterialResult from "../screens/Search/MaterialResult";
 import MaterialDetail from "../screens/Search/MaterialDetail";
 import MaterialTransaction from "../screens/Transaction/MaterialTransaction";
 import MaterialTab from "../screens/MyTransaction/MaterialTab";
-import MaterialTransactionDetail from "../screens/MyTransaction/MaterialTransactionDetail";
+import MaterialSupplierDetail from "../screens/MyTransaction/MaterialSupplierDetail";
 import MaterialRequesterDetail from "../screens/Activity/MaterialRequesterDetail";
+// import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
   {
@@ -154,7 +155,7 @@ const MyTransactionStack = createStackNavigator(
   {
     MyTransaction: MyTransaction,
     MyTransactionDetail: MyTransactionDetail,
-    MaterialTransactionDetail: MaterialTransactionDetail,
+    MaterialSupplierDetail: MaterialSupplierDetail,
     ContractorProfile: ContractorProfile,
     Login: Login
   },

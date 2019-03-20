@@ -12,6 +12,7 @@ import { changeMaterialTransactionRequest } from "../../redux/actions/transactio
 import { Image } from "react-native-expo-image-cache";
 import Feather from "@expo/vector-icons/Feather";
 
+import MaterialTransactionDetail from "../../components/MaterialTransactionDetail";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
 import Button from "../../components/Button";
@@ -26,7 +27,8 @@ import fontSize from "../../config/fontSize";
       materialDetail: state.transaction.listRequesterMaterial.find(
         item => item.id === id
       ),
-      loading: state.material.loading
+      loading: state.material.loading,
+      user: state.auth.data
     };
   },
   dispatch => ({
@@ -68,82 +70,64 @@ class MaterialRequesterDetail extends Component {
     ]);
   };
 
-  _renderAcceptedBottom = id => (
-    <View style={styles.bottomWrapper}>
-      <Button
-        text={"Delivery"}
-        onPress={() => {
-          this._handleChangeTransaction(
-            id,
-            "DELIVERING",
-            "Are you sure you want delivery now?"
-          );
-        }}
-      />
-      <Button
-        text={"Refuse"}
-        onPress={() => {
-          this.props.navigation.goBack();
-        }}
-      />
-    </View>
-  );
+  _handleFinished = (transactionId, transactionStatus, transactionTitle) => {
+    Alert.alert(transactionTitle, undefined, [
+      {
+        text: "OK",
+        onPress: () =>
+          this.fetchChangeTransactionStatus(transactionId, {
+            status: transactionStatus
+          })
+      }
+    ]);
+  };
 
-  _renderPendingBottom = id => {
+  _renderDelivering = id => {
     return (
       <View style={styles.bottomWrapper}>
         <Button
-          text={"Accept"}
+          text={"Receive"}
           onPress={() => {
-            this._handleChangeTransaction(
-              id,
-              "ACCEPTED",
-              "Are you sure to accept?"
-            );
-          }}
-        />
-        <Button
-          text={"Deny"}
-          onPress={() => {
-            this._handleChangeTransaction(
-              id,
-              "DENIED",
-              "Are you sure to deny transaction?"
-            );
+            this._handleFinished(id, "FINISHED", "Transaction finish!");
           }}
         />
       </View>
     );
   };
 
-  _renderBottomButton = (id, status) => {
+  _renderRequesterBottomButton = (id, status) => {
     switch (status) {
-      case "ACCEPTED":
-        return this._renderAcceptedBottom(id);
-      case "PENDING":
-        return this._renderPendingBottom(id);
+      case "DELIVERING":
+        return this._renderDelivering(id);
       default:
         return null;
     }
   };
 
   _renderDetail = detail => {
+    //check if contractorId = requesterId => item is belong to requester else item is belong to supplier
+    const contractorId = detail.material.contractor.id;
+    const requesterId = detail.requester.id;
+    const { user } = this.props;
     return (
-      <ScrollView>
-        <View style={styles.imageWrapper}>
-          <Image
-            uri={
-              "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-            }
-            resizeMode={"cover"}
-            style={styles.image}
-          />
-          <View style={{ flexDirection: "column", paddingLeft: 10 }}>
-            <Text style={styles.title}>{detail.material.name}</Text>
-            <Text style={styles.text}>{detail.material.manufacturer}</Text>
-          </View>
-        </View>
-        {this._renderBottomButton(detail.id, detail.status)}
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
+        <MaterialTransactionDetail
+          imageUrl={detail.material.thumbnailImageUrl}
+          name={detail.material.name}
+          manufacturer={detail.material.manufacturer}
+          contractor={detail.material.contractor.name}
+          contractorAvatarUrl={
+            "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
+          }
+          price={detail.price}
+          unit={detail.unit}
+          description={detail.material.description}
+          email={detail.material.contractor.email}
+          phone={detail.material.contractor.phoneNumber}
+          address={detail.materialAddress}
+        />
+
+        {this._renderRequesterBottomButton(detail.id, detail.status)}
       </ScrollView>
     );
   };
@@ -162,7 +146,7 @@ class MaterialRequesterDetail extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text>Material Detail</Text>
+          <Text style={styles.text}>Material Detail</Text>
         </Header>
         {Object.keys(materialDetail).length > 0 ? (
           this._renderDetail(materialDetail)
@@ -181,17 +165,6 @@ const styles = StyleSheet.create({
   bottomWrapper: {
     marginBottom: 10
   },
-  imageWrapper: {
-    paddingVertical: 15,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    flexDirection: "row",
-    alignItems: "center"
-  },
-  image: {
-    width: 120,
-    height: 80,
-    borderRadius: 10
-  },
   header: {
     fontSize: fontSize.h4,
     fontWeight: "500"
@@ -206,11 +179,6 @@ const styles = StyleSheet.create({
     fontSize: fontSize.bodyText,
     fontWeight: "500",
     paddingBottom: 5
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25
   }
 });
 

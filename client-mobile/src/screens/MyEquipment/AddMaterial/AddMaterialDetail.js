@@ -281,7 +281,7 @@ class AddMaterialDetail extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text style={styles.text}>Add construction material</Text>
+          <Text style={styles.text}>Add material</Text>
         </Header>
         {!loading ? <ScrollView>{this._renderItem()}</ScrollView> : <Loading />}
       </SafeAreaView>

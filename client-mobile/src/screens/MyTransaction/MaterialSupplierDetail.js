@@ -5,13 +5,15 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  Alert
 } from "react-native";
 import { connect } from "react-redux";
 import { changeMaterialTransactionRequest } from "../../redux/actions/transaction";
 import { Image } from "react-native-expo-image-cache";
 import Feather from "@expo/vector-icons/Feather";
 
+import MaterialTransactionDetail from "../../components/MaterialTransactionDetail";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
 import Button from "../../components/Button";
@@ -35,7 +37,7 @@ import fontSize from "../../config/fontSize";
     }
   })
 )
-class MaterialTransactionDetail extends Component {
+class MaterialSupplierDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -60,10 +62,12 @@ class MaterialTransactionDetail extends Component {
       },
       {
         text: "OK",
-        onPress: () =>
-          this.fetchChangeTransactionStatus(transactionId, {
+        onPress: () => {
+          this.props.fetchChangeTransactionStatus(transactionId, {
             status: transactionStatus
-          })
+          });
+          this.props.navigation.goBack();
+        }
       }
     ]);
   };
@@ -129,20 +133,22 @@ class MaterialTransactionDetail extends Component {
 
   _renderDetail = detail => {
     return (
-      <ScrollView>
-        <View style={styles.imageWrapper}>
-          <Image
-            uri={
-              "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-            }
-            resizeMode={"cover"}
-            style={styles.image}
-          />
-          <View style={{ flexDirection: "column", paddingLeft: 10 }}>
-            <Text style={styles.title}>{detail.material.name}</Text>
-            <Text style={styles.text}>{detail.material.manufacturer}</Text>
-          </View>
-        </View>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
+        <MaterialTransactionDetail
+          imageUrl={detail.material.thumbnailImageUrl}
+          name={detail.material.name}
+          manufacturer={detail.material.manufacturer}
+          contractor={detail.requester.name}
+          contractorAvatarUrl={
+            "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
+          }
+          price={detail.price}
+          unit={detail.unit}
+          description={detail.material.description}
+          email={detail.requester.email}
+          phone={detail.requester.phoneNumber}
+          address={detail.requesterAddress}
+        />
         {this._renderBottomButton(detail.id, detail.status)}
       </ScrollView>
     );
@@ -214,4 +220,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MaterialTransactionDetail;
+export default MaterialSupplierDetail;

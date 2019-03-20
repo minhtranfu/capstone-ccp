@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
+import { Image } from "react-native-expo-image-cache";
 
 import Header from "../../components/Header";
 import Button from "../../components/Button";
@@ -26,9 +27,27 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
 const RADIO_BUTON_DATA = [
-  { id: 1, value: "Equipment", routeName: "Search" },
-  { id: 2, value: "Material", routeName: "MaterialSearch" },
-  { id: 3, value: "Xà bần", routeName: "Xà bần" }
+  {
+    id: 1,
+    value: "Equipment",
+    routeName: "Search",
+    image:
+      "http://s7d2.scene7.com/is/image/Caterpillar/CM20130904-45250-23505?$cc-s$"
+  },
+  {
+    id: 2,
+    value: "Material",
+    routeName: "MaterialSearch",
+    image:
+      "http://hybridconstructioncy.com/wp-content/uploads/2017/01/material.png"
+  },
+  {
+    id: 3,
+    value: "Debris",
+    routeName: "Debris",
+    image:
+      "https://1-800-junk-relief.com/wp-content/uploads/2018/07/Construction-Debris-Removal-3.jpg"
+  }
 ];
 
 @connect(state => ({
@@ -41,7 +60,6 @@ class Discover extends Component {
       checked: 0
     };
   }
-  _handleGetCurrentLocation = () => {};
 
   _renderDiscoverItem = ({ item }) => {
     return (
@@ -63,38 +81,41 @@ class Discover extends Component {
     const { checked } = this.state;
     return (
       <View>
-        <Title title={"Search By"} style={{ paddingLeft: 15 }} />
-        <View
-          style={{
-            flexDirection: "row",
+        <Title
+          title={"What can we help you to find"}
+          style={{ paddingLeft: 15 }}
+        />
+        <ScrollView
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
             alignItems: "center",
             marginVertical: 10,
             paddingHorizontal: 15
           }}
         >
           {RADIO_BUTON_DATA.map((item, key) => (
-            <TouchableHighlight
+            <TouchableOpacity
               key={key}
-              style={styles.typeButtonWrapper}
+              style={[
+                styles.typeButtonWrapper,
+                item.id === 3 ? { marginRight: 0 } : null
+              ]}
               onPress={() => this.props.navigation.navigate(item.routeName)}
-              underlayColor={colors.secondaryColor}
             >
-              <Text style={styles.text}>{item.value}</Text>
-            </TouchableHighlight>
+              <Image
+                uri={item.image}
+                resizeMode={"cover"}
+                style={styles.image}
+              />
+              <View style={styles.overlay}>
+                <Text style={[styles.title, { color: "white" }]}>
+                  {item.value}
+                </Text>
+              </View>
+            </TouchableOpacity>
           ))}
-        </View>
-        <Title
-          title={"What can we help you to find"}
-          style={{ paddingLeft: 15 }}
-        />
-        <CustomFlatList
-          data={discoverData}
-          renderItem={this._renderDiscoverItem}
-          isHorizontal={true}
-          style={{
-            marginTop: 10
-          }}
-        />
+        </ScrollView>
         <Title title={"Near you"} style={{ paddingLeft: 15 }} />
         <CustomFlatList
           data={discoverData}
@@ -125,7 +146,7 @@ class Discover extends Component {
         style={styles.container}
         forceInset={{ bottom: "always", top: "always" }}
       >
-        <Header
+        {/* <Header
           renderRightButton={() => (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <TouchableOpacity
@@ -137,18 +158,16 @@ class Discover extends Component {
           )}
         >
           <Text style={styles.title}>Search</Text>
-        </Header>
-        <ScrollView>{this._renderItem()}</ScrollView>
-        {/* <ParallaxList
+        </Header> */}
+        {/* <ScrollView>{this._renderItem()}</ScrollView> */}
+        <ParallaxList
           title={"Discover"}
           hasLeft={false}
-          hasSearch={true}
           hasCart={true}
           onCartPress={() => this.props.navigation.navigate("Cart")}
-          onRightPress={() => this.props.navigation.navigate("Search")}
           scrollElement={<Animated.ScrollView />}
           renderScrollItem={this._renderItem}
-        /> */}
+        />
       </SafeAreaView>
     );
   }
@@ -157,6 +176,15 @@ class Discover extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    paddingBottom: 5,
+    paddingLeft: 5
   },
   topRateContainer: {
     flex: 1,
@@ -167,13 +195,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15
   },
   typeButtonWrapper: {
-    paddingHorizontal: 15,
-    height: 30,
-    borderRadius: 3,
-    marginRight: 10,
-    backgroundColor: "#DDDDDD",
-    alignItems: "center",
-    justifyContent: "center"
+    // paddingHorizontal: 15,
+    // height: 30,
+    // borderRadius: 5,
+    // marginRight: 10,
+    // backgroundColor: "#DDDDDD",
+    // alignItems: "center",
+    // justifyContent: "center"
+    flex: 1,
+    marginRight: 15
   },
   title: {
     fontSize: fontSize.h4,
@@ -182,6 +212,11 @@ const styles = StyleSheet.create({
   text: {
     fontSize: fontSize.bodyText,
     fontWeight: "500"
+  },
+  image: {
+    width: 275,
+    height: 155,
+    borderRadius: 10
   }
 });
 

@@ -31,8 +31,8 @@ const MATERIAL_TRANSACTION_STATUSES = [
     title: "Denied"
   },
   {
-    code: "CANCEL",
-    title: "Cancel"
+    code: "CANCELED",
+    title: "Canceled"
   }
 ];
 
@@ -69,8 +69,8 @@ const MATERIAL_TRANSACTION_OPTIONS = [
   },
   {
     id: 6,
-    name: "Cancel",
-    value: "Cancel"
+    name: "Canceled",
+    value: "Canceled"
   }
 ];
 
@@ -112,7 +112,7 @@ class MaterialTab extends PureComponent {
                 }
                 status={item.status}
                 onPress={() =>
-                  this.props.navigation.navigate("MaterialTransactionDetail", {
+                  this.props.navigation.navigate("MaterialSupplierDetail", {
                     id: item.id
                   })
                 }

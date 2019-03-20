@@ -9,6 +9,7 @@ export default {
   lightYellow: "#ECE8AC",
   dark: "#000000",
   text: "#3E3E3E",
+  description: "#939393",
   text68: "#3E3E3EAD",
   text50: "#3E3E3E7F",
   text25: "#3E3E3E3F"

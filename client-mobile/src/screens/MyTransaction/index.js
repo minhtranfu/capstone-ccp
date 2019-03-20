@@ -18,7 +18,6 @@ import {
   listMaterialTransactionBySupplier,
   clearSupplierTransactionList
 } from "../../redux/actions/transaction";
-import { listMaterial } from "../../Utils/MockData";
 
 import MaterialTab from "./MaterialTab";
 import RequireLogin from "../Login/RequireLogin";
@@ -230,7 +229,8 @@ class MyTransaction extends Component {
     this.setState({ refreshing: true });
     const { user } = this.props;
     const res = await this.props.fetchListMyTransaction(user.contractor.id);
-    if (res) {
+    const materialRes = await this.props.fetchListMaterial(user.contractor.id);
+    if (res || materialRes) {
       this.setState({ refreshing: false });
     } else {
       setTimeout(() => {
@@ -352,7 +352,7 @@ class MyTransaction extends Component {
   render() {
     const {
       listTransaction,
-
+      listMaterial,
       loading,
       navigation,
       isLoggedIn
@@ -368,7 +368,7 @@ class MyTransaction extends Component {
             <Text style={styles.header}>My Transaction</Text>
           </Header>
           <TabView
-            tabs={["Equipment", "Material"]}
+            tabs={["Equipment", "Material", "Debris"]}
             onChangeTab={this._onChangeTab}
             activeTab={activeTab}
           />
