@@ -320,7 +320,6 @@ public class EquipmentEntity implements Serializable {
 
 	@Basic
 	@Column(name = "lat")
-
 	public Double getLatitude() {
 		return this.latitude;
 	}

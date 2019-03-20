@@ -31,7 +31,7 @@ public class CheckSubscriptionMatchedScheduler {
 	SubscriptionDAO subscriptionDAO;
 
 
-		@Schedule(hour = "*", minute = "30", second = "0")
+	@Schedule(hour = "*", minute = "30", second = "0")
 //	@Schedule(hour = "*", minute = "*", second = "10")
 	public void checkMatchedEquipments() {
 
