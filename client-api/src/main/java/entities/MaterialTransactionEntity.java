@@ -167,7 +167,7 @@ public class MaterialTransactionEntity {
 	}
 
 	@Basic
-	@Column(name = "status", nullable = true, length = 256)
+	@Column(name = "status", nullable = true, length = 256, insertable = false)
 	@Enumerated(EnumType.STRING)
 	public Status getStatus() {
 		return status;

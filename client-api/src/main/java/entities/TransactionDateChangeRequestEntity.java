@@ -77,7 +77,7 @@ public class TransactionDateChangeRequestEntity {
 
 	@Basic
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = false, length = 255)
+	@Column(name = "status", nullable = false, length = 255, insertable = false)
 	public Status getStatus() {
 		return status;
 	}

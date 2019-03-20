@@ -1,5 +1,6 @@
 package entities;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ public class DebrisTransactionEntity {
 	private ContractorEntity supplier;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
-	private List<DebrisFeedbackEntity> debrisFeedbacks;
+	private DebrisFeedbackEntity debrisFeedback;
 	private DebrisPostEntity debrisPost;
 	private DebrisBidEntity debrisBid;
 
@@ -48,7 +49,7 @@ public class DebrisTransactionEntity {
 
 	@Basic
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = true)
+	@Column(name = "status", nullable = true, insertable = false)
 	public Status getStatus() {
 		return status;
 	}
@@ -116,13 +117,14 @@ public class DebrisTransactionEntity {
 		return id == that.id;
 	}
 
-	@OneToMany(mappedBy = "debrisTransaction")
-	public List<DebrisFeedbackEntity> getDebrisFeedbacks() {
-		return debrisFeedbacks;
+	@JsonbTransient
+	@OneToOne(mappedBy = "debrisTransaction")
+	public DebrisFeedbackEntity getDebrisFeedback() {
+		return debrisFeedback;
 	}
 
-	public void setDebrisFeedbacks(List<DebrisFeedbackEntity> debrisFeedbacksById) {
-		this.debrisFeedbacks = debrisFeedbacksById;
+	public void setDebrisFeedback(DebrisFeedbackEntity debrisFeedbacksById) {
+		this.debrisFeedback = debrisFeedbacksById;
 	}
 
 	@ManyToOne

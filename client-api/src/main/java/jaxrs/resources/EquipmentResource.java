@@ -126,7 +126,7 @@ public class EquipmentResource {
 				orderBy,
 				offset,
 				limit);
-//		List<EquipmentEntity> equipmentEntities = equipmentDAO.getAll("EquipmentEntity.getAll");
+//		List<EquipmentEntity> equipmentEntities = equipmentDAO.getByNamedQuery("EquipmentEntity.getByNamedQuery");
 
 		List<EquipmentResponse> result = new ArrayList<EquipmentResponse>();
 

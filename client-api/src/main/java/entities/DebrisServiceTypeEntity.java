@@ -2,6 +2,7 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,7 +23,7 @@ public class DebrisServiceTypeEntity {
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 	private boolean isDeleted;
-	private List<DebrisServiceTypeDebrisPostEntity> debrisServiceTypeDebrisPostsById;
+	private List<DebrisPostEntity> debrisPosts;
 
 	@Id
 	@GeneratedValue
@@ -88,12 +89,15 @@ public class DebrisServiceTypeEntity {
 		return Objects.hash(id, name, createdTime, updatedTime, isDeleted);
 	}
 
-	@OneToMany(mappedBy = "debrisServiceType")
-	public List<DebrisServiceTypeDebrisPostEntity> getDebrisServiceTypeDebrisPostsById() {
-		return debrisServiceTypeDebrisPostsById;
+	@JsonbTransient
+	@ManyToMany(mappedBy = "debrisServiceTypes")
+	public List<DebrisPostEntity> getDebrisPosts() {
+		return debrisPosts;
 	}
 
-	public void setDebrisServiceTypeDebrisPostsById(List<DebrisServiceTypeDebrisPostEntity> debrisServiceTypeDebrisPostsById) {
-		this.debrisServiceTypeDebrisPostsById = debrisServiceTypeDebrisPostsById;
+	public void setDebrisPosts(List<DebrisPostEntity> debrisPosts) {
+		this.debrisPosts = debrisPosts;
 	}
+
+
 }

@@ -8,6 +8,8 @@ import org.modelmapper.PropertyMap;
 import org.modelmapper.convention.MatchingStrategies;
 
 import javax.ejb.Singleton;
+import javax.validation.Valid;
+import java.util.List;
 
 
 @Singleton
@@ -120,6 +122,16 @@ public class ModelConverter {
 	public MaterialTransactionEntity toEntity(MaterialTransactionRequest materialTransactionRequest) {
 		return modelMapper.map(materialTransactionRequest, MaterialTransactionEntity.class);
 		
+	}
+
+	public DebrisPostEntity toEntity(DebrisPostRequest debrisPostRequest) {
+		return modelMapper.map(debrisPostRequest, DebrisPostEntity.class);
+	}
+
+	public void toEntity( DebrisPostRequest debrisPostRequest, DebrisPostEntity debrisPostEntity) {
+		debrisPostEntity.getDebrisServiceTypes().clear();
+		modelMapper.map(debrisPostRequest, debrisPostEntity);
+
 	}
 }
 

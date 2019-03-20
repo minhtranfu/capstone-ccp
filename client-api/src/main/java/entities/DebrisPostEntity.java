@@ -2,6 +2,7 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -12,10 +13,13 @@ import java.util.List;
 
 @Entity
 @Where(clause = "is_deleted = 0")
-@Table(name = "debris_post", schema = "capstone_ccp", catalog = "")
+@Table(name = "debris_post", schema = "capstone_ccp")
+@NamedQuery(name = "DebrisPostEntity.byRequester", query = "select e from DebrisPostEntity e where e.requester.id = :requesterId")
 public class DebrisPostEntity {
 	private long id;
-	private String name;
+	@NotNull
+	@NotBlank
+	private String title;
 
 	@NotNull
 	@NotBlank
@@ -30,12 +34,15 @@ public class DebrisPostEntity {
 	private double latitude;
 	private String description;
 	private Status status;
+
+	@NotNull
+	private ContractorEntity requester;
 	private boolean isHidden;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 	private boolean isDeleted;
 	private List<DebrisBidEntity> debrisBids;
-	private List<DebrisServiceTypeDebrisPostEntity> debrisServiceTypes;
+	private List<DebrisServiceTypeEntity> debrisServiceTypes;
 	private List<DebrisTransactionEntity> debrisTransactions;
 
 	@Id
@@ -51,12 +58,12 @@ public class DebrisPostEntity {
 
 	@Basic
 	@Column(name = "title", nullable = false, length = 256)
-	public String getName() {
-		return name;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTitle(String name) {
+		this.title = name;
 	}
 
 	@Basic
@@ -101,7 +108,7 @@ public class DebrisPostEntity {
 
 	@Basic
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = true)
+	@Column(name = "status", nullable = true, insertable = false)
 	public Status getStatus() {
 		return status;
 	}
@@ -152,6 +159,16 @@ public class DebrisPostEntity {
 	}
 
 
+	@ManyToOne
+	@JoinColumn(name = "requester_id", referencedColumnName = "id")
+	public ContractorEntity getRequester() {
+		return requester;
+	}
+
+	public void setRequester(ContractorEntity requester) {
+		this.requester = requester;
+	}
+
 	@OneToMany(mappedBy = "debrisPost")
 	public List<DebrisBidEntity> getDebrisBids() {
 		return debrisBids;
@@ -161,20 +178,21 @@ public class DebrisPostEntity {
 		this.debrisBids = debrisBidsById;
 	}
 
-	@ManyToMany
+	@ManyToMany(cascade = {})
 	@JoinTable(
 			name = "debris_service_type_debris_post",
 			joinColumns = @JoinColumn(name = "debris_post_id"),
 			inverseJoinColumns = @JoinColumn(name = "debris_service_type_id")
 	)
-	public List<DebrisServiceTypeDebrisPostEntity> getDebrisServiceTypes() {
+	public List<DebrisServiceTypeEntity> getDebrisServiceTypes() {
 		return debrisServiceTypes;
 	}
 
-	public void setDebrisServiceTypes(List<DebrisServiceTypeDebrisPostEntity> debrisServiceTypeDebrisPostsById) {
+	public void setDebrisServiceTypes(List<DebrisServiceTypeEntity> debrisServiceTypeDebrisPostsById) {
 		this.debrisServiceTypes = debrisServiceTypeDebrisPostsById;
 	}
 
+	@JsonbTransient
 	@OneToMany(mappedBy = "debrisPost")
 	public List<DebrisTransactionEntity> getDebrisTransactions() {
 		return debrisTransactions;
@@ -191,6 +209,14 @@ public class DebrisPostEntity {
 		if (!(o instanceof DebrisPostEntity)) return false;
 		DebrisPostEntity that = (DebrisPostEntity) o;
 		return id == that.id;
+	}
+
+	@Override
+	public String toString() {
+		return "DebrisPostEntity{" +
+				"id=" + id +
+				", debrisServiceTypes=" + debrisServiceTypes +
+				'}';
 	}
 
 	public enum Status {

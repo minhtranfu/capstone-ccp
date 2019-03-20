@@ -2,10 +2,12 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Where(clause = "is_deleted = 0")
@@ -26,7 +28,7 @@ public class DebrisBidEntity {
 	private ContractorEntity supplier;
 	@NotNull
 	private DebrisPostEntity debrisPost;
-	private Collection<DebrisTransactionEntity> debrisTransactions;
+	private List<DebrisTransactionEntity> debrisTransactions;
 
 	@Id
 	@GeneratedValue
@@ -51,7 +53,7 @@ public class DebrisBidEntity {
 
 	@Basic
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = true)
+	@Column(name = "status", nullable = true, insertable = false)
 	public Status getStatus() {
 		return status;
 	}
@@ -109,6 +111,7 @@ public class DebrisBidEntity {
 		this.supplier = supplier;
 	}
 
+	@JsonbTransient
 	@ManyToOne
 	@JoinColumn(name = "debris_post_id", referencedColumnName = "id", nullable = false)
 	public DebrisPostEntity getDebrisPost() {
@@ -119,12 +122,13 @@ public class DebrisBidEntity {
 		this.debrisPost = debrisPostByDebrisPostId;
 	}
 
+	@JsonbTransient
 	@OneToMany(mappedBy = "debrisBid")
-	public Collection<DebrisTransactionEntity> getDebrisTransactions() {
+	public List<DebrisTransactionEntity> getDebrisTransactions() {
 		return debrisTransactions;
 	}
 
-	public void setDebrisTransactions(Collection<DebrisTransactionEntity> debrisTransactionsById) {
+	public void setDebrisTransactions(List<DebrisTransactionEntity> debrisTransactionsById) {
 		this.debrisTransactions = debrisTransactionsById;
 	}
 	public enum Status{

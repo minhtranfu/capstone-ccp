@@ -1930,6 +1930,7 @@
     <column id="446" parent="289" name="requester_id">
       <Position>11</Position>
       <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="447" parent="289" name="is_deleted">

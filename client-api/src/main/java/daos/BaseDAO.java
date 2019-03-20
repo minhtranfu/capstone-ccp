@@ -5,6 +5,10 @@ package daos;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import java.lang.reflect.ParameterizedType;
@@ -26,7 +30,6 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 	}
 
 
-//	@Transactional
 	public void persist(T t) {
 		entityManager.persist(t);
 	}
@@ -48,7 +51,7 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 	}
 
 
-	public List<T> getAll(String queryName) {
+	public List<T> getByNamedQuery(String queryName) {
 		Query namedQuery = entityManager.createNamedQuery(queryName);
 		return namedQuery.getResultList();
 	}
@@ -59,5 +62,14 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 			throw new BadRequestException(String.format("%s id=%s not found!", entityClass.getSimpleName(), id));
 		}
 		return entity;
+	}
+
+	public List<T> findAll() {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<T> cq = cb.createQuery(entityClass);
+		Root<T> rootEntry = cq.from(entityClass);
+		CriteriaQuery<T> all = cq.select(rootEntry);
+		TypedQuery<T> allQuery = entityManager.createQuery(all);
+		return allQuery.getResultList();
 	}
 }

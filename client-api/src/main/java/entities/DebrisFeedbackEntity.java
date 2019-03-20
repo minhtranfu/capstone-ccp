@@ -105,7 +105,7 @@ public class DebrisFeedbackEntity {
 	}
 
 
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name = "debris_transaction_id", referencedColumnName = "id", nullable = false)
 	public DebrisTransactionEntity getDebrisTransaction() {
 		return debrisTransaction;

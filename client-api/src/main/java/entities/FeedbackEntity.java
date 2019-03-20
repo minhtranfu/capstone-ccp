@@ -51,7 +51,7 @@ public class FeedbackEntity {
 
 	@Basic
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
+	@Column(name = "status", insertable = false)
 	public Status getStatus() {
 		return status;
 	}
