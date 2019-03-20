@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
 import { FeedbackModal } from "../../common";
-import { MATERIAL_TRANSACTION_STATUSES, EQUIPMENT_STATUSES } from '../../../common/consts';
+import { MATERIAL_TRANSACTION_STATUSES } from '../../../common/consts';
 import { materialTransactionServices } from 'Src/services/domain/ccp';
 import { formatPrice } from 'Src/utils/format.utils';
 
@@ -298,7 +296,7 @@ class MaterialTransactions extends Component {
         break;
 
       case MATERIAL_TRANSACTION_STATUSES.ACCEPTED:
-      this._countNeedActionForStatus(MATERIAL_TRANSACTION_STATUSES.ACCEPTED);
+        this._countNeedActionForStatus(MATERIAL_TRANSACTION_STATUSES.ACCEPTED);
         statusClasses += ' badge-success';
         changeStatusButtons = (
           <div className="mt-2">
@@ -316,6 +314,7 @@ class MaterialTransactions extends Component {
         break;
 
       case MATERIAL_TRANSACTION_STATUSES.DELIVERING:
+        this._countNeedActionForStatus(MATERIAL_TRANSACTION_STATUSES.DELIVERING);
         statusClasses += 'badge-warning';
 
         changeStatusButtons = (
