@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @Where(clause = "is_deleted = 0")
 @Table(name = "debris_bid", schema = "capstone_ccp", catalog = "")
+@NamedQuery(name = "DebrisBidEntity.bySupplier", query = "select e from DebrisBidEntity e where e.supplier.id = :supplierId")
 public class DebrisBidEntity {
 
 	private long id;
@@ -19,6 +20,7 @@ public class DebrisBidEntity {
 	private double price;
 	private Status status;
 
+	private String description;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 
@@ -131,10 +133,20 @@ public class DebrisBidEntity {
 	public void setDebrisTransactions(List<DebrisTransactionEntity> debrisTransactionsById) {
 		this.debrisTransactions = debrisTransactionsById;
 	}
+
+	@Basic
+	@Column(name = "description")
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public enum Status{
 		PENDING,
 		ACCEPTED,
-		FINISHED,
-		CANCELED
+		FINISHED
 	}
 }

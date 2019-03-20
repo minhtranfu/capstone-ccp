@@ -19,6 +19,7 @@ import javax.json.JsonNumber;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Path("materials")
+@Produces(MediaType.APPLICATION_JSON)
+
 public class MaterialResource {
 
 	private static final String DEFAULT_LAT = "10.806488";

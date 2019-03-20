@@ -2,13 +2,16 @@ package utils;
 
 import dtos.Credentials;
 import dtos.requests.*;
+import dtos.responses.DebrisBidResponse;
 import entities.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
+import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
 
 import javax.ejb.Singleton;
-import javax.validation.Valid;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -132,6 +135,22 @@ public class ModelConverter {
 		debrisPostEntity.getDebrisServiceTypes().clear();
 		modelMapper.map(debrisPostRequest, debrisPostEntity);
 
+	}
+
+	public DebrisBidEntity toEntity(DebrisBidRequest debrisBidRequest) {
+		return modelMapper.map(debrisBidRequest, DebrisBidEntity.class);
+	}
+
+	public void toEntity(DebrisBidRequest putRequest, DebrisBidEntity managedDebrisBidEntity) {
+		modelMapper.map(putRequest,managedDebrisBidEntity);
+	}
+
+	public DebrisBidResponse toResponse(DebrisBidEntity entity) {
+		return modelMapper.map(entity, DebrisBidResponse.class);
+	}
+	public List<DebrisBidResponse> toResponse(List<DebrisBidEntity> entityList) {
+		Type listType = new TypeToken<List<DebrisBidResponse>>(){}.getType();
+		return modelMapper.map(entityList, listType);
 	}
 }
 

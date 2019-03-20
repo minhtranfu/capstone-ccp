@@ -21,10 +21,12 @@ import javax.json.JsonNumber;
 import javax.json.bind.JsonbBuilder;
 import javax.validation.Valid;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.logging.Logger;
 
-@Path("debrisPost")
+@Path("debrisPosts")
+@Produces(MediaType.APPLICATION_JSON)
 public class DebrisPostResource {
 	public static final Logger LOGGER = Logger.getLogger(DebrisPostResource.class.toString());
 
@@ -75,7 +77,6 @@ public class DebrisPostResource {
 	}
 
 
-
 	@PUT
 	@Path("{id:\\d+}")
 	@RolesAllowed("contractor")
@@ -92,6 +93,47 @@ public class DebrisPostResource {
 	}
 
 
+	@PUT
+	@Path("{id:\\d+}/status")
+	@RolesAllowed("contractor")
+	public Response changePostStatus(@PathParam("id") long debrisPostId, DebrisPostEntity request) {
+		if (request.getStatus() == null) {
+			throw new BadRequestException("Status cannot be null");
+		}
+		DebrisPostEntity managedPostEntity = debrisPostDAO.findByIdWithValidation(debrisPostId);
+		switch (request.getStatus()) {
+			case PENDING:
+				//  only closed can changed to pending
+				if (managedPostEntity.getStatus() != DebrisPostEntity.Status.CLOSED) {
+					throw new BadRequestException(String.format("Cannot change from %s to %s",
+							managedPostEntity.getStatus(), request.getStatus()));
+				}
+				break;
+			case ACCEPTED:
+				//  3/20/19 already implemented in bid resource
+				throw new BadRequestException("Not allowed to change to " + request.getStatus());
+			case FINISHED:
+				//  3/20/19 already implemented in tranasction resource
+				throw new BadRequestException("Not allowed to change to " + request.getStatus());
+			case CLOSED:
+				//  3/20/19 only pending can change this
+				if (managedPostEntity.getStatus() != DebrisPostEntity.Status.PENDING) {
+					throw new BadRequestException(String.format("Cannot change from %s to %s",
+							managedPostEntity.getStatus(), request.getStatus()));
+
+				}
+				if (getClaimContractorId() != managedPostEntity.getRequester().getId()) {
+					throw new BadRequestException("You cannot change post status of other people");
+				}
+
+				// TODO: 3/20/19 stop receiving any more bid
+				break;
+		}
+
+
+		managedPostEntity.setStatus(request.getStatus());
+		return Response.ok(debrisPostDAO.merge(managedPostEntity)).build();
+	}
 
 	@DELETE
 	@Path("{id:\\d+}")
