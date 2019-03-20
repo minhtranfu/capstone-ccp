@@ -83,6 +83,12 @@ const modules = [
     isPrivate: true
   },
   {
+    name: 'SupplierMaterialEdit',
+    path: '/dashboard/supplier/materials/:id/edit',
+    modulePath: './supplier-dashboard/material/edit',
+    isPrivate: true
+  },
+  {
     name: 'SearchMaterials',
     path: '/materials',
     modulePath: './material-search'
