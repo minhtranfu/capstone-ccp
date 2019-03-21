@@ -2,6 +2,7 @@ package utils;
 
 import dtos.Credentials;
 import dtos.requests.*;
+import dtos.responses.ContractorResponse;
 import dtos.responses.DebrisBidResponse;
 import entities.*;
 import org.modelmapper.ModelMapper;
@@ -11,7 +12,6 @@ import org.modelmapper.convention.MatchingStrategies;
 
 import javax.ejb.Singleton;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -160,6 +160,10 @@ public class ModelConverter {
 	public DebrisFeedbackEntity toEntity(DebrisFeedbackRequest debrisFeedbackRequest) {
 		return modelMapper.map(debrisFeedbackRequest, DebrisFeedbackEntity.class);
 
+	}
+
+	public ContractorResponse toResponse(ContractorEntity foundContractor) {
+		return modelMapper.map(foundContractor, ContractorResponse.class);
 	}
 }
 

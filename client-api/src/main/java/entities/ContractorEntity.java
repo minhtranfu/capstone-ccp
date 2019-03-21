@@ -44,6 +44,9 @@ public class ContractorEntity {
 
 	private List<NotificationEntity> notifications;
 
+	private List<DebrisFeedbackEntity> debrisFeedbacks;
+
+
 	@JsonbTransient
 	@XmlTransient
 	@OneToMany(cascade =
@@ -157,6 +160,7 @@ public class ContractorEntity {
 	}
 
 	// TODO: 2/27/19 orphan removal here
+	@JsonbTransient
 	@OneToMany(mappedBy = "contractor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")
 	public List<ConstructionEntity> getConstructions() {
@@ -237,8 +241,29 @@ public class ContractorEntity {
 	}
 
 	public void setNotifications(List<NotificationEntity> notifications) {
+
+
 		this.notifications = notifications;
 	}
+
+
+	@JsonbTransient
+	@OneToMany(mappedBy = "supplier")
+	public List<DebrisFeedbackEntity> getDebrisFeedbacks() {
+		return debrisFeedbacks;
+	}
+
+	public void setDebrisFeedbacks(List<DebrisFeedbackEntity> debrisFeedbacks) {
+		this.debrisFeedbacks = debrisFeedbacks;
+	}
+
+	@Transient
+//	@JsonbTransient
+	public int getDebrisFeedbacksCount() {
+		return getDebrisFeedbacks().size();
+	}
+
+
 
 	public enum Status{
 		NOT_VERIFIED,

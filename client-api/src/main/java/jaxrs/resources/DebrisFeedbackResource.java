@@ -72,5 +72,12 @@ public class DebrisFeedbackResource {
 		return Response.ok(foundFeedback).build();
 	}
 
+	@GET
+	@Path("supplier")
+	@RolesAllowed("contractor")
+	public Response getFeedbacksBySupplier() {
+		//no need to validate contractor because it will return empty list
+		return Response.ok(debrisFeedbackDAO.getFeedbacksBySupplier(getClaimContractorId())).build();
+	}
 
 }

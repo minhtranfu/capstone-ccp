@@ -51,7 +51,7 @@ public class ContractorResource {
 
 
 		ContractorEntity foundContractor = validateContractorId(id);
-		return Response.ok(foundContractor).build();
+		return Response.ok(modelConverter.toResponse(foundContractor)).build();
 	}
 
 

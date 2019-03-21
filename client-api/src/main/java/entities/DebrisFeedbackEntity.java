@@ -13,6 +13,7 @@ import java.util.Objects;
 @Entity
 //@Where(clause = "is_deleted = 0")
 @Table(name = "debris_feedback", schema = "capstone_ccp", catalog = "")
+@NamedQuery(name = "DebrisFeedbackEntity.bySupplier", query = "select e from DebrisFeedbackEntity e where e.supplier.id = :supplierId")
 @EntityListeners(DebrisFeedbackEntityListener.class)
 public class DebrisFeedbackEntity {
 	private long id;
