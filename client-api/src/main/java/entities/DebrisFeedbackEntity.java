@@ -1,8 +1,11 @@
 package entities;
 
+import listeners.entityListenters.DebrisFeedbackEntityListener;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -10,10 +13,13 @@ import java.util.Objects;
 @Entity
 //@Where(clause = "is_deleted = 0")
 @Table(name = "debris_feedback", schema = "capstone_ccp", catalog = "")
+@EntityListeners(DebrisFeedbackEntityListener.class)
 public class DebrisFeedbackEntity {
 	private long id;
 
 	@NotNull
+	@Min(0)
+	@Max(5)
 	private double rating;
 	private String content;
 	private ContractorEntity requester;

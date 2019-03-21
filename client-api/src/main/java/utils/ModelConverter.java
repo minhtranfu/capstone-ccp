@@ -157,5 +157,9 @@ public class ModelConverter {
 		return modelMapper.map(debrisTransactionRequest, DebrisTransactionEntity.class);
 	}
 
+	public DebrisFeedbackEntity toEntity(DebrisFeedbackRequest debrisFeedbackRequest) {
+		return modelMapper.map(debrisFeedbackRequest, DebrisFeedbackEntity.class);
+
+	}
 }
 
