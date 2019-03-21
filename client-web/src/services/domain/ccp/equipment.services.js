@@ -12,6 +12,10 @@ export const postEquipment = data => {
   return DataAccessService.post('/equipments', data);
 };
 
+export const updateEquipment = (id, data) => {
+  return DataAccessService.put(`/equipments/${id}`, data);
+};
+
 export const getEquipmentById = id => {
   return DataAccessService.get(`/equipments/${id}`);
 };

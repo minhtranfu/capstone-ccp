@@ -89,7 +89,7 @@ class MyEquipments extends PureComponent {
               <h6>
                 {equipment.name}
                 <span className="float-right">
-                  <button className="btn btn-outline-success btn-sm"><i className="fal fa-pencil"></i></button>
+                  <Link to={`/dashboard/supplier/equipments/${equipment.id}/edit`} className="btn btn-outline-success btn-sm"><i className="fal fa-pencil"></i></Link>
                   <button className="btn btn-outline-danger btn-sm ml-2"><i className="fal fa-trash"></i></button>
                 </span>
                 <span className="clearfix"></span>

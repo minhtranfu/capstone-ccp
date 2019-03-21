@@ -66,6 +66,9 @@ const CcpApiService = {
     });
   },
   userServices,
+  constructionServices,
+  equipmentServices,
+  equipmentTransactionServices,
   feedbackServices,
   materialServices,
   materialTransactionServices

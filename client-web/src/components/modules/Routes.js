@@ -3,11 +3,10 @@ import Loadable from 'react-loadable';
 import { Switch, Route } from 'react-router-dom';
 
 import NotFound from './notfound/NotFound';
-import Loading from 'react-loading-skeleton';
 import PageLoader from '../common/PageLoader';
 import PrivateRoute from '../common/PrivateRoute';
 
-const modules = [
+export const modules = [
   {
     name: 'Home',
     path: '/',
@@ -50,6 +49,12 @@ const modules = [
     name: 'SupplierEquipments',
     path: '/dashboard/supplier/equipments',
     modulePath: './supplier-dashboard/MyEquipments',
+    isPrivate: true
+  },
+  {
+    name: 'SupplierEquipmentEdit',
+    path: '/dashboard/supplier/equipments/:id/edit',
+    modulePath: './supplier-dashboard/equipment/edit',
     isPrivate: true
   },
   {
