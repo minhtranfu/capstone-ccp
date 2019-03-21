@@ -151,4 +151,5 @@ public class DebrisPostResource {
 		contractorDAO.findByIdWithValidation(getClaimContractorId());
 		return Response.ok(debrisPostDAO.getByRequester(getClaimContractorId())).build();
 	}
+
 }

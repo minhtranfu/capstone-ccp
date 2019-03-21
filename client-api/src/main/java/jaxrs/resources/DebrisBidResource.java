@@ -2,11 +2,13 @@ package jaxrs.resources;
 
 import daos.ContractorDAO;
 import daos.DebrisBidDAO;
+import daos.DebrisPostDAO;
 import daos.DebrisServiceTypeDAO;
 import dtos.requests.DebrisBidRequest;
 import dtos.responses.DebrisBidResponse;
 import entities.ContractorEntity;
 import entities.DebrisBidEntity;
+import entities.DebrisPostEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 import utils.ModelConverter;
@@ -40,6 +42,9 @@ public class DebrisBidResource {
 	DebrisBidDAO debrisBidDAO;
 
 	@Inject
+	DebrisPostDAO debrisPostDAO;
+
+	@Inject
 	@Claim("contractorId")
 	ClaimValue<JsonNumber> claimContractorId;
 
@@ -63,6 +68,13 @@ public class DebrisBidResource {
 
 
 		long supplierId = getClaimContractorId();
+
+		// TODO: 3/21/19 validate cannot post his own post
+		DebrisPostEntity managedPost = debrisPostDAO.findByIdWithValidation(debrisBidEntity.getDebrisPost().getId());
+		if (managedPost.getRequester().getId() == supplierId) {
+			throw new BadRequestException("You cannot bid on your own post");
+		}
+
 		ContractorEntity supplier = new ContractorEntity();
 		supplier.setId(supplierId);
 		debrisBidEntity.setSupplier(supplier);
@@ -118,17 +130,20 @@ public class DebrisBidResource {
 				throw new BadRequestException("Not allowed to change to " + request.getStatus());
 			case ACCEPTED:
 				//  3/20/19 check pending
-				if (managedDebrisBidEntity.getStatus() != DebrisBidEntity.Status.PENDING) {
-					throw new BadRequestException(String.format("Cannot change from %s to %s",
-							managedDebrisBidEntity.getStatus(), request.getStatus()));
-				}
+				// TODO: 3/21/19 let debrisTransaction handle this
 
-				// TODO: 3/20/19 only requester can change this
-				if (getClaimContractorId() != managedDebrisBidEntity.getDebrisPost().getRequester().getId()) {
-					throw new BadRequestException("Only requester can change this status");
-				}
-				// TODO: 3/20/19 create new transaction
-				break;
+				throw new BadRequestException("Not allowed to change to " + request.getStatus());
+//				if (managedDebrisBidEntity.getStatus() != DebrisBidEntity.Status.PENDING) {
+//					throw new BadRequestException(String.format("Cannot change from %s to %s",
+//							managedDebrisBidEntity.getStatus(), request.getStatus()));
+//				}
+//
+//				// TODO: 3/20/19 only requester can change this
+//				if (getClaimContractorId() != managedDebrisBidEntity.getDebrisPost().getRequester().getId()) {
+//					throw new BadRequestException("Only requester can change this status");
+//				}
+//				// TODO: 3/20/19 create new transaction
+//				break;
 			case FINISHED:
 				// 3/20/19 not allowed here
 				throw new BadRequestException("Not allowed to change to " + request.getStatus());

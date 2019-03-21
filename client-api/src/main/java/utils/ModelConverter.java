@@ -152,5 +152,10 @@ public class ModelConverter {
 		Type listType = new TypeToken<List<DebrisBidResponse>>(){}.getType();
 		return modelMapper.map(entityList, listType);
 	}
+
+	public DebrisTransactionEntity toEntity(DebrisTransactionRequest debrisTransactionRequest) {
+		return modelMapper.map(debrisTransactionRequest, DebrisTransactionEntity.class);
+	}
+
 }
 

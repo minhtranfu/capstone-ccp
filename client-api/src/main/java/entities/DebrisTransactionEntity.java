@@ -1,5 +1,7 @@
 package entities;
 
+import listeners.entityListenters.DebrisTransactionEntityListener;
+
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -8,7 +10,12 @@ import java.util.List;
 
 @Entity
 //@Where(clause = "is_deleted=0")
-@Table(name = "debris_transaction", schema = "capstone_ccp", catalog = "")
+@Table(name = "debris_transaction", schema = "capstone_ccp")
+@EntityListeners(DebrisTransactionEntityListener.class)
+@NamedQueries({
+		@NamedQuery(name = "DebrisTransactionEntity.bySupplier",query = "select t from DebrisTransactionEntity t where t.supplier.id = :supplierId")
+		,@NamedQuery(name = "DebrisTransactionEntity.byRequester",query = "select t from DebrisTransactionEntity t where t.requester.id = :requesterId")
+})
 public class DebrisTransactionEntity {
 	private long id;
 	private double price;
