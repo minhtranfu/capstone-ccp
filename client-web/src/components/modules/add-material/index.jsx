@@ -136,7 +136,7 @@ class AddMaterial extends Component {
     return (
       <div>
         {this.state.materialId &&
-          <Redirect to={`/material-detail/${this.state.materialId}`} />
+          <Redirect to={`/materials/${this.state.materialId}`} />
         }
         <Nav tabs>
           {tabs}
