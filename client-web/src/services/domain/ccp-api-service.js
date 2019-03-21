@@ -1,5 +1,8 @@
 import DataAccessService from '../data/data-access-service';
 import * as userServices from './ccp/user.services';
+import * as constructionServices from './ccp/construction.services';
+import * as equipmentServices from './ccp/equipment.services';
+import * as equipmentTransactionServices from './ccp/equipment-transaction.services';
 import * as feedbackServices from './ccp/feedback.services';
 import * as materialServices from './ccp/material.services';
 import * as materialTransactionServices from './ccp/material-transaction.services';
