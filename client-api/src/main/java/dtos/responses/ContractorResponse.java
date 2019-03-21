@@ -37,6 +37,8 @@ public class ContractorResponse {
 	private List<DebrisFeedbackEntity> debrisFeedbacks;
 
 	private int debrisFeedbacksCount;
+	private double averageDebrisRating;
+
 
 	public ContractorResponse() {
 	}
@@ -127,5 +129,13 @@ public class ContractorResponse {
 
 	public void setConstructions(List<ConstructionEntity> constructions) {
 		this.constructions = constructions;
+	}
+
+	public double getAverageDebrisRating() {
+		return averageDebrisRating;
+	}
+
+	public void setAverageDebrisRating(double averageDebrisRating) {
+		this.averageDebrisRating = averageDebrisRating;
 	}
 }

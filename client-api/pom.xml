@@ -12,6 +12,7 @@
     <properties>
         <!--<jersey.version>1.9</jersey.version>-->
         <tomee.version>8.0.0-M1</tomee.version>
+        <hibernateVersion>5.4.1.Final</hibernateVersion>
         <!--<tomee.version>7.0.2</tomee.version>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <failOnMissingWebXml>false</failOnMissingWebXml>
@@ -59,7 +60,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.4.1.Final</version>
+            <version>${hibernateVersion}</version>
         </dependency>
 
         <!--<dependency>-->
@@ -231,6 +232,7 @@
         <plugins>
 
 
+
             <!--<plugin>-->
             <!--<groupId>org.apache.tomee.maven</groupId>-->
             <!--<artifactId>tomee-maven-plugin</artifactId>-->
@@ -332,6 +334,28 @@
             <!--</configuration>-->
             <!--</plugin>-->
 
+
+            <!--For Lazy loading initialization enhancement for hibernate @Formula-->
+            <!--<plugin>-->
+                <!--<groupId>org.hibernate.orm.tooling</groupId>-->
+                <!--<artifactId>hibernate-enhance-maven-plugin</artifactId>-->
+                <!--<version>${hibernateVersion}</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>process-classes</phase>-->
+                        <!--<configuration>-->
+                            <!--<failOnError>true</failOnError>-->
+                            <!--<enableLazyInitialization>true</enableLazyInitialization>-->
+                            <!--<enableDirtyTracking>true</enableDirtyTracking>-->
+                            <!--<enableAssociationManagement>true</enableAssociationManagement>-->
+                            <!--<enableExtendedEnhancement>false</enableExtendedEnhancement>-->
+                        <!--</configuration>-->
+                        <!--<goals>-->
+                            <!--<goal>enhance</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 

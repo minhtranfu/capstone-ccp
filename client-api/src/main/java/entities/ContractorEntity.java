@@ -1,5 +1,6 @@
 package entities;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -45,6 +46,11 @@ public class ContractorEntity {
 	private List<NotificationEntity> notifications;
 
 	private List<DebrisFeedbackEntity> debrisFeedbacks;
+
+	private double averageDebrisRating;
+
+	public ContractorEntity() {
+	}
 
 
 	@JsonbTransient
@@ -258,12 +264,24 @@ public class ContractorEntity {
 	}
 
 	@Transient
-//	@JsonbTransient
 	public int getDebrisFeedbacksCount() {
 		return getDebrisFeedbacks().size();
 	}
 
+	@Transient
+	public double getAverageDebrisRating() {
+		return averageDebrisRating;
+	}
 
+	public void setAverageDebrisRating(double averageDebrisRating) {
+		this.averageDebrisRating = averageDebrisRating;
+	}
+
+	@PostLoad
+	void postLoad() {
+		this.averageDebrisRating = getDebrisFeedbacks().stream()
+				.mapToDouble(DebrisFeedbackEntity::getRating).average().orElse(0);
+	}
 
 	public enum Status{
 		NOT_VERIFIED,
