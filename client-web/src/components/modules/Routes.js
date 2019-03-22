@@ -126,6 +126,11 @@ export const modules = [
     path: '/debrises',
     modulePath: './debris-search'
   },
+  {
+    name: 'debris-detail',
+    path: '/debrises/:id',
+    modulePath: './debris-detail'
+  },
 ];
 
 const routes = modules.map(module => {

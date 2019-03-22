@@ -8,7 +8,7 @@ export const getRoutePath = (name, data) => {
     }
 
     let routePath = route.path;
-    if (data && Object.isObject(data)) {
+    if (data && typeof data === 'object') {
         Object.keys(data).forEach(key => {
             const regex = new RegExp(`:${key}`, 'g');
             routePath = routePath.replace(regex, data[key]);

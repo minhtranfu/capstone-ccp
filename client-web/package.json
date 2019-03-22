@@ -55,6 +55,7 @@
     "react-redux": "^5.1.1",
     "react-router-dom": "^4.3.1",
     "react-select": "^2.4.2",
+    "react-star-ratings": "^2.3.0",
     "react-tabify": "0.1.24",
     "react-transition-group": "^2.5.3",
     "reactstrap": "^7.1.0",

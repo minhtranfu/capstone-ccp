@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 import Helmet from 'react-helmet-async';
 import Skeleton from 'react-loading-skeleton';
 
 import { debrisServices } from 'Services/domain/ccp';
 import DebrisSearchBox from './DebrisSearchBox';
+import { getRoutePath } from 'Utils/common.utils';
+import { Image } from 'Components/common';
 
 class DebrisSearch extends Component {
   constructor(props) {
@@ -75,11 +78,24 @@ class DebrisSearch extends Component {
               </div>
             }
             {!isFetching && products && products.map((product, index) => {
+              const { requester, debrisServiceTypes, debrisBids } = product;
+              const avatarSrc = requester.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg';
+              const services = debrisServiceTypes.map(type => type.name).join(', ');
+
               return (
-                <div key={index} className="col-md-4">
-                  <div className="bg-white shadow my-2 p-3">
-                    <h6>{product.title}</h6>
-                    <div><i className="fas fa-map-marker"></i> {product.address}</div>
+                <div key={index} className="col-md-8">
+                  <div className="bg-white shadow my-2 p-3 d-flex debris-request">
+                    <div className="flex-fill">
+                      <Link to={getRoutePath('debris-detail', {id: product.id})}><h6>{product.title}</h6></Link>
+                      <div className="text-muted"><small><i className="fal fa-tags"></i></small> {services}</div>
+                      <div className="text-muted"><i className="fal fa-map-marker"></i> {product.address}</div>
+                      <div className="description">{product.description}</div>
+                      <div><i className="fas fa-gavel"></i> Bided: {debrisBids.length}</div>
+                    </div>
+                    <div className="d-flex align-items-center flex-column justify-content-center">
+                      <Image src={avatarSrc} className="rounded-circle avatar" circle={true}/>
+                      <h6>{requester.name}</h6>
+                    </div>
                   </div>
                 </div>
               );

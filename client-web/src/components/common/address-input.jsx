@@ -103,7 +103,7 @@ export class AddressInput extends Component {
               {(isFocus && !address && !loading && suggestions.length === 0) &&
                 <div className="autocomplete-dropdown-container shadow-lg border bg-white">
                   <div className="suggestion-item" onMouseDown={this._handleSelectCurrentLocation} onTouchStart={this._handleSelectCurrentLocation} role="option">
-                    <i className="fal fa-map-marker"></i> Use your current location
+                    <i className="fas fa-map-marker text-primary"></i> Use your current location
                   </div>
                 </div>
               }
