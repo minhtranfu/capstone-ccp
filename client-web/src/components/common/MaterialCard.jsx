@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Image from './Image';
+import { formatPrice } from 'Utils/format.utils';
 
 class MaterialCard extends PureComponent {
   render() {
@@ -15,7 +16,7 @@ class MaterialCard extends PureComponent {
               <Image src={thumbnail} className="card-img-top" alt="" />
             </div>
             <div className="card-body">
-              <h6 className="card-title">{product.name} <span className="float-right">{product.price}K</span>
+              <h6 className="card-title">{product.name} <span className="float-right">{formatPrice(product.price)}<small className="text-muted">/{product.unit}</small></span>
                 <span className="clearfix"></span>
               </h6>
               {/* <div className="text-muted"><i className="fal fa-map-marker"></i> {product.address}</div> */}

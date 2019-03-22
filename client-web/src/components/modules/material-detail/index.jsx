@@ -74,7 +74,7 @@ class MaterialDetail extends Component {
                   </h6>
                 </div>
                 <div className="col-md-6">
-                  <h6><span className="text-muted"><i className="fal fa-money-bill"></i> Price:</span> {material.price ? formatPrice(material.price) : <Skeleton width={75}/>}</h6>
+                  <h6><span className="text-muted"><i className="fal fa-money-bill"></i> Price:</span> {material.price ? <span>{formatPrice(material.price)}<i className="text-muted">/{material.unit}</i></span> : <Skeleton width={75}/>}</h6>
                 </div>
                 <div className="col-md-12">
                   <h6><span className="text-muted"><i className="fal fa-map-marker"></i> Address:</span> {material.construction ? material.construction.address : <Skeleton width={250}/>}</h6>
