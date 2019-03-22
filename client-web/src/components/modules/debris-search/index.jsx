@@ -77,8 +77,9 @@ class DebrisSearch extends Component {
             {!isFetching && products && products.map((product, index) => {
               return (
                 <div key={index} className="col-md-4">
-                  <div className="bg-white shadow">
-                    {product.name}
+                  <div className="bg-white shadow my-2 p-3">
+                    <h6>{product.title}</h6>
+                    <div><i className="fas fa-map-marker"></i> {product.address}</div>
                   </div>
                 </div>
               );

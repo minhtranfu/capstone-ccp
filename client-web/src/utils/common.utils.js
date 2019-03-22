@@ -17,3 +17,25 @@ export const getRoutePath = (name, data) => {
 
     return routePath;
 };
+
+export const getErrorMessage = error => {
+  if (!error) {
+    return '';
+  }
+
+  if (error.response && error.response.data) {
+    if (error.response.data.message) {
+      return error.response.data.message;
+    }
+
+    if (Array.isArray(error.response.data) && error.response.data.length > 0 && error.response.data[0].message) {
+      return error.response.data[0].message;
+    }
+  }
+
+  if (error.message) {
+    return error.message;
+  }
+
+  return 'Unknown error occurr!';
+};

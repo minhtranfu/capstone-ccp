@@ -18,6 +18,10 @@ class Header extends Component {
     {
       to: '/materials',
       name: 'Materials'
+    },
+    {
+      to: '/debrises',
+      name: 'Debrises'
     }
   ];
 

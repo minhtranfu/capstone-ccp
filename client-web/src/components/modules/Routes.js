@@ -117,7 +117,7 @@ export const modules = [
   },
   {
     name: 'AddDebrisRequest',
-    path: '/debris-request',
+    path: '/debrises-request',
     modulePath: './add-debris',
     isPrivate: true,
   },

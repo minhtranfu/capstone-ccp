@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Select from 'react-select';
 
 import Step from './Step';
 import { ENTITY_KEY } from '../../../common/app-const';
@@ -92,39 +93,27 @@ class AddEquipmentStep1 extends Step {
 
     const selectedContruction = constructions.find(construction => +construction.id === +constructionId);
     this.setState({
-      address: selectedContruction.address
+      address: selectedContruction.address,
+      latitude: selectedContruction.latitude,
+      longitude: selectedContruction.longitude,
     });
   };
 
-  _getShowablePrice = (amount, decimalCount = 2, decimal = ".", thousands = ",") => {
+  /**
+   * Handle multi select service types
+   */
+  _handleSelectServiceTypes = options => {
+    const debrisServiceTypes = options.map(option => ({id: option.value}));
 
-    if (!amount) {
-      return '';
-    }
-
-    try {
-      decimalCount = Math.abs(decimalCount);
-      decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
-
-      const negativeSign = amount < 0 ? "-" : "";
-
-      let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
-      let j = (i.length > 3) ? i.length % 3 : 0;
-
-      return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
-    } catch (e) {
-      return '';
-    }
+    this.setState({
+      debrisServiceTypes
+    });
   };
 
   render() {
     const { entities } = this.props;
     const debrisServiceTypes = entities[ENTITY_KEY.DEBRIS_SERVICE_TYPES];
-    const { constructions, categories, categoryId } = this.state;
-    let selectedCategory = {};
-    if (categoryId) {
-      selectedCategory = categories.find(category => category.id === +categoryId);
-    }
+    const { constructions } = this.state;
 
     return (
       <div className="container">
@@ -135,7 +124,7 @@ class AddEquipmentStep1 extends Step {
           <div className="col-md-6">
             <div className="form-group">
               <label htmlFor="">Title: <i className="text-danger">*</i></label>
-              <input ref={nameField => this.formFields.name = nameField} type="text" name="name" onChange={this._handleFieldChange} value={this.state.name || ''} className="form-control" maxLength="80" required autoFocus/>
+              <input ref={nameField => this.formFields.name = nameField} type="text" name="title" onChange={this._handleFieldChange} className="form-control" maxLength="80" required autoFocus/>
             </div>
             <div className="form-group">
               <label htmlFor="">Construction: <i className="text-danger">*</i></label>
@@ -151,13 +140,15 @@ class AddEquipmentStep1 extends Step {
           </div>
           <div className="col-md-6">
             <div className="form-group">
-              <label htmlFor="">Debris service types: <i className="text-danger">*</i></label>
-              <select multiple name="debrisServiceTypes" onChange={this._handleFieldChange} data-live-search="true" id="equip_type_id" className="form-control selectpicker">
-                <option value="0">Choose...</option>
-                {debrisServiceTypes.data && debrisServiceTypes.data.map(type => {
-                  return (<option value={type.id} key={type.id}>{type.name}</option>);
-                })}
-              </select>
+              <label htmlFor="service_types">Debris service types: <i className="text-danger">*</i></label>              
+              <Select
+                isMulti
+                closeMenuOnSelect={false}
+                inputId="service_types"
+                placeholder="Select some services you need..."
+                options={!debrisServiceTypes.data ? [] : debrisServiceTypes.data.map(type => ({label: type.name, value: type.id}))}
+                onChange={this._handleSelectServiceTypes}
+              />
             </div>
           </div>
           <div className="col-12 text-center">

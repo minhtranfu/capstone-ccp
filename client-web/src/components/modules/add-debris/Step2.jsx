@@ -1,82 +1,213 @@
-import React from 'react';
-import Step from './Step';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import React from "react";
+import Step from "./Step";
+import PropTypes from "prop-types";
+import DropZone from "react-dropzone";
 
-import { ENTITY_KEY } from '../../../common/app-const';
+import "bootstrap-daterangepicker/daterangepicker.css";
 
-class AddEquipmentSpecs extends Step {
-  constructor(props) {
-    super(props);
+import {
+  fetchEquipmentTypes,
+  fetchEquipmentTypeSpecs
+} from "../../../redux/actions/thunks";
+import { connect } from "react-redux";
+import ccpApiService from "../../../services/domain/ccp-api-service";
 
+const thumbsContainer = {
+  display: "flex",
+  flexDirection: "row",
+  flexWrap: "wrap",
+  marginTop: 16
+};
+
+const thumb = {
+  display: "inline-flex",
+  borderRadius: 2,
+  border: "1px solid #eaeaea",
+  marginBottom: 8,
+  marginRight: 8,
+  width: 100,
+  height: 100,
+  padding: 4,
+  boxSizing: "border-box"
+};
+
+const thumbInner = {
+  display: "flex",
+  minWidth: 0,
+  overflow: "hidden"
+};
+
+const img = {
+  display: "block",
+  width: "auto",
+  height: "100%"
+};
+
+class DropzoneWithPreview extends React.Component {
+  constructor() {
+    super();
     this.state = {
+      files: []
     };
   }
 
-  _handleSubmitForm = () => {
-    // Todo: Validate form
+  onDrop(files) {
+    const { onChange } = this.props;
+    if (onChange) {
+      onChange(files);
+    }
 
-    this._handleStepDone({
-      data: this.state
+    this.setState({
+      files: files.map(file =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file)
+        })
+      )
     });
+  }
+
+  componentWillUnmount() {
+    // Make sure to revoke the data uris to avoid memory leaks
+    this.state.files.forEach(file => URL.revokeObjectURL(file.preview));
+  }
+
+  render() {
+    const { files } = this.state;
+
+    const thumbs = files.map(file => (
+      <div style={thumb} key={file.name}>
+        <div style={thumbInner}>
+          <img src={file.preview} style={img} />
+        </div>
+      </div>
+    ));
+
+    return (
+      <section>
+        <DropZone accept="image/*" onDrop={this.onDrop.bind(this)} multiple={false}>
+          {({ getRootProps, getInputProps }) => (
+            <div
+              {...getRootProps()}
+              className="image-dropzone d-flex align-items-center justify-content-center rounded"
+            >
+              <input {...getInputProps()} />
+              <p>Click to select or drop photos here</p>
+            </div>
+          )}
+        </DropZone>
+        <aside style={thumbsContainer}>{thumbs}</aside>
+      </section>
+    );
+  }
+}
+
+class RequestDebrisStep2 extends Step {
+  constructor(props) {
+    super(props);
+
+    this.state = {};
+  }
+
+  _onChangeDescription = description => {
+    this.setState({ description });
   };
 
   _handleFieldChange = e => {
     const name = e.target.name;
     const value = e.target.value;
-
     this.setState({
-      [name]: {
-        additionalSpecsField: {
-          id: +name
-        },
-        value
-      }
+      [name]: value
     });
   };
 
-  _handleSubmitForm = () => {
-    // Todo: Validate form
-
-    const additionalSpecsValues = Object.keys(this.state).map(specKey => {
-      return this.state[specKey];
-    });
-    this._handleStepDone({
-      data: {
-        additionalSpecsValues
-      }
-    });
+  _handleSelectFiles = files => {
+    this.setState({ files });
   };
 
-  _getSelectedEquipmentTypeFields = () => {
-    const { entities, currentState } = this.props;
-    const equipmentTypes = entities[ENTITY_KEY.EQUIPMENT_TYPES].data || [];
-    const { equipmentTypeId } = currentState;
+  _handleSubmitForm = async () => {
+    const { files, description } = this.state;
+    
+    this.setState({
+      isFetching: true
+    });
 
-    const selectedEquipmentType = equipmentTypes.find(equipmentType => +equipmentType.id === +equipmentTypeId);
-    return selectedEquipmentType ? selectedEquipmentType.additionalSpecsFields : [];
+    let data = {
+      description
+    };
+
+    // Upload images
+    if (files && files.length > 0) {
+      const formData = new FormData();
+      files.forEach(file => {
+        formData.append("file", file);
+      });
+
+      const images = await ccpApiService.uploadEquipmentImage(formData);
+      data = {
+        ...data,
+        equipmentImages: images.map(image => ({id: image.id})),
+        thumbnailImageUrl: images[0].url
+      };
+    }
+    
+    // Hanlde step done
+    await this._handleStepDone({
+      data
+    });
+
+    // Remove page loader
+    this.setState({
+      isFetching: false
+    });
   };
 
   render() {
-    const fields = this._getSelectedEquipmentTypeFields();
-
     return (
-      <div className="row">
-        <div className="col-md-12"><h4 className="mb-3">Specs</h4></div>
-        {fields && fields.map(field => {
-          return (
-            <div key={field.id} className="col-md-6">
-              <div className="form-group">
-                <label htmlFor="">{field.name}</label>
-                <input type={field.dataType} name={field.id} onChange={this._handleFieldChange} className="form-control" />
-              </div>
+      <div className="container">
+        {this.state.isFetching &&
+          <div className="page-loader d-flex align-items-center justify-content-center flex-column">
+            <div className="spinner-border" style={{ width: '5rem', height: '5rem' }} role="status">
+              <span className="sr-only">Loading...</span>
             </div>
-          );
-        })}
-        <div className="col-12 text-center">
-          <div className="form-group">
-            <button className="btn btn-outline-primary mr-2" onClick={this._handleBackStep}><i className="fal fa-chevron-left"></i> PREVIOUS STEP</button>
-            <button className="btn btn-success ml-2" onClick={this._handleSubmitForm}>NEXT STEP <i className="fal fa-chevron-right"></i></button>
+            <div>Processing...</div>
+          </div>
+        }
+        <div className="row">
+          <div className="col-md-12">
+            <h4 className="my-3">More information</h4>
+          </div>
+          <div className="col-md-6">
+            <label htmlFor="">Upload a photo for material</label>
+            <DropzoneWithPreview onChange={this._handleSelectFiles} />
+          </div>
+          <div className="col-md-6">
+            <div className="form-group">
+              <label htmlFor="">Description</label>
+              <textarea
+                tag="textarea"
+                className="form-control"
+                rows="8"
+                name="description"
+                value={this.state.description || ""}
+                onChange={this._handleFieldChange}
+              />
+            </div>
+          </div>
+          <div className="col-md-12 text-center">
+            <div className="form-group">
+              <button
+                className="btn btn-outline-primary mr-2"
+                onClick={this._handleBackStep}
+              >
+                <i className="fal fa-chevron-left" /> PREVIOUS STEP
+              </button>
+              <button
+                className="btn btn-success ml-2"
+                onClick={this._handleSubmitForm}
+              >
+                POST <i className="fal fa-paper-plane" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -84,13 +215,13 @@ class AddEquipmentSpecs extends Step {
   }
 }
 
-AddEquipmentSpecs.propTypes = {
-  entities: PropTypes.object,
-  currentState: PropTypes.object.isRequired
+RequestDebrisStep2.propTypes = {
+  entities: PropTypes.object.isRequired
 };
 
-const mapStateToProps = state => {
-  return { entities: { ...state.entities } };
-};
-
-export default connect(mapStateToProps, null)(AddEquipmentSpecs);
+export default connect(
+  state => {
+    return { entities: { ...state.entities } };
+  },
+  { fetchEquipmentTypes, fetchEquipmentTypeSpecs }
+)(RequestDebrisStep2);

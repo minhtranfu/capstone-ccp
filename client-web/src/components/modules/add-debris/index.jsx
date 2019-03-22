@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col, Alert } from 'reactstrap';
 import classnames from 'classnames';
 import {
   CSSTransition
 } from 'react-transition-group';
 import { Redirect, Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 
 import Step1 from './Step1';
-import Step3 from './Step3';
+import Step2 from './Step2';
 
-import { materialServices } from "Services/domain/ccp";
+import { debrisServices } from 'Services/domain/ccp';
+import { getErrorMessage } from 'Utils/common.utils';
 
 class PostDebrisRequest extends Component {
   constructor(props) {
@@ -31,7 +31,7 @@ class PostDebrisRequest extends Component {
       },
       {
         name: 'More Information',
-        component: Step3
+        component: Step2
       }
     ];
   }
@@ -63,10 +63,7 @@ class PostDebrisRequest extends Component {
       return;
     }
 
-    const { materialTypeId, constructionId } = this.data;
-    this.data.materialType = {
-      id: +materialTypeId
-    };
+    const { constructionId } = this.data;
     this.data.construction = {
       id: +constructionId
     };
@@ -76,10 +73,21 @@ class PostDebrisRequest extends Component {
     this.setState({
       isPosting: true
     });
-    const data = await materialServices.postMaterial(this.data);
-    if (data && data.id) {
+    
+    try {
+      const data = await debrisServices.postDebris(this.data);
+      if (data && data.id) {
+        this.setState({
+          message: null,
+          materialId: data.id,
+          isPosting: false
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      const message = getErrorMessage(error);
       this.setState({
-        materialId: data.id,
+        message,
         isPosting: false
       });
     }
@@ -134,7 +142,7 @@ class PostDebrisRequest extends Component {
     return (
       <div>
         {this.state.materialId &&
-          <Redirect to={`/materials/${this.state.materialId}`} />
+          <Redirect to={`/debrises/${this.state.materialId}`} />
         }
         <Nav tabs>
           {tabs}
@@ -146,7 +154,16 @@ class PostDebrisRequest extends Component {
     );
   };
 
+  /**
+   * Clear error message to dimiss error alert
+   */
+  _clearMessage = () => {
+    this.setState({message: null});
+  };
+
   render() {
+    const { message } = this.state;
+
     return (
       <div className="container pb-5">
         <div className="row">
@@ -156,6 +173,9 @@ class PostDebrisRequest extends Component {
               Request debris service
             </h2>
             <hr />
+            <Alert color="danger" isOpen={!!message} toggle={this._clearMessage}>
+              <i className="fal fa-exclamation-circle"></i> {message}
+            </Alert>
           </div>
         </div>
         {this._renderSteps()}
