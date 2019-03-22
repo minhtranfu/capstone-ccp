@@ -12,6 +12,7 @@ import entities.DebrisServiceTypeEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 import org.omg.CORBA.PUBLIC_MEMBER;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -23,12 +24,17 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Path("debrisPosts")
 @Produces(MediaType.APPLICATION_JSON)
 public class DebrisPostResource {
 	public static final Logger LOGGER = Logger.getLogger(DebrisPostResource.class.toString());
+	private static final String DEFAULT_LAT = "10.806488";
+	private static final String DEFAULT_LONG = "106.676364";
+	private static final String DEFAULT_RESULT_LIMIT = "100";
 
 	@Inject
 	DebrisPostDAO debrisPostDAO;
@@ -49,6 +55,38 @@ public class DebrisPostResource {
 	private long getClaimContractorId() {
 		return claimContractorId.getValue().longValue();
 	}
+
+
+	@GET
+	public Response searchdebris(
+			@QueryParam("q")  @DefaultValue("") String query,
+			@QueryParam("lat") Double latitude,
+			@QueryParam("long") Double longitude,
+			@QueryParam("maxDistance") Double maxDistance,
+			@QueryParam("debrisTypeId") List<Long> debrisTypeIdList,
+			@QueryParam("orderBy") @DefaultValue("id.asc") String orderBy,
+			@QueryParam("limit") @DefaultValue(DEFAULT_RESULT_LIMIT) int limit,
+			@QueryParam("offset") @DefaultValue("0") int offset) {
+
+		//  2/14/19 validate orderBy pattern
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+
+
+		List<DebrisPostEntity> debrisEntities = debrisPostDAO.searchDebrisPost(
+				query,
+				latitude,
+				longitude,
+				maxDistance,
+				debrisTypeIdList,
+				orderBy,
+				offset,
+				limit);
+
+		return Response.ok(debrisEntities).build();
+	}
+
 
 	@GET
 	@Path("{id:\\d+}")
