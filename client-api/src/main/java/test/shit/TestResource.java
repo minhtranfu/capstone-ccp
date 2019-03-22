@@ -139,6 +139,9 @@ public class TestResource  {
 
 	@Resource
 	Validator validator;
+
+
+
 	@GET
 	@Path("validate")
 	public Response testValidation(LocationValidator validatioObject) throws NoSuchMethodException {

@@ -1,6 +1,5 @@
 package jaxrs.resources;
 
-import com.google.common.base.Function;
 import daos.*;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentPutRequest;
@@ -19,24 +18,20 @@ import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
-import javax.json.bind.annotation.JsonbDateFormat;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 @Path("/equipments")
 @Produces(MediaType.APPLICATION_JSON)
@@ -65,11 +60,14 @@ public class EquipmentResource {
 	@Resource
 	Validator validator;
 
+	@Context
+	HttpHeaders httpHeaders;
+
 	@Inject
 	@Claim("contractorId")
 	ClaimValue<JsonNumber> claimId;
 
-	private long getClaimId() {
+	private long getClaimContractorId() {
 		return claimId.getValue().longValue();
 	}
 
@@ -120,8 +118,17 @@ public class EquipmentResource {
 
 		}
 
+		Long contractorId;
+		String authorizationHeader = httpHeaders.getHeaderString(HttpHeaders.AUTHORIZATION);
+		if (authorizationHeader != null) {
+			contractorId = getClaimContractorId();
+		} else {
+			contractorId = null;
+		}
+
 		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(
 				beginDate, endDate,
+				contractorId,
 				equipmentTypeId,
 				orderBy,
 				offset,
@@ -368,7 +375,7 @@ public class EquipmentResource {
 					throw new BadRequestException("Transaction status must be PROCESSING");
 				}
 
-				if (getClaimId() != requesterId) {
+				if (getClaimContractorId() != requesterId) {
 					throw new BadRequestException("Only requester can change this status!");
 				}
 				if (foundEquipment.getStatus() != EquipmentEntity.Status.DELIVERING) {
@@ -384,7 +391,7 @@ public class EquipmentResource {
 					throw new BadRequestException("Transaction status must be PROCESSING");
 				}
 				//  3/12/19 validate only requestser can change this
-				if (requesterId != getClaimId()) {
+				if (requesterId != getClaimContractorId()) {
 					throw new BadRequestException("Only requester can change this status manually");
 				}
 

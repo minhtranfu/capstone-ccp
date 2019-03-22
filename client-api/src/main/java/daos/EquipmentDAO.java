@@ -26,7 +26,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 
 	public List<EquipmentEntity> searchEquipment(LocalDate beginDate, LocalDate endDate,
-												 long equipmentTypeId,
+												 Long contractorId, long equipmentTypeId,
 												 String orderBy, int offset, int limit) {
 
 
@@ -47,6 +47,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 		Subquery<HiringTransactionEntity> subQueryActiveTransaction = query.subquery(HiringTransactionEntity.class);
 		Root<HiringTransactionEntity> a = subQueryActiveTransaction.from(HiringTransactionEntity.class);
+
+		ParameterExpression<Long> contractorParam = criteriaBuilder.parameter(Long.class);
 
 		ParameterExpression<LocalDate> beginDateParam = criteriaBuilder.parameter(LocalDate.class);
 		ParameterExpression<LocalDate> endDateParam = criteriaBuilder.parameter(LocalDate.class);
@@ -86,8 +88,9 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 //		merge 3 main where clauses
 		query.select(e).where(
 				equipmentTypeId != 0 ? criteriaBuilder.equal(equipmentTypeIdParam, e.get("equipmentType").get("id")) : criteriaBuilder.conjunction()
-				,criteriaBuilder.exists(subQuery)
-				,criteriaBuilder.not(criteriaBuilder.exists(subQueryActiveTransaction))
+				, contractorId != null ? criteriaBuilder.notEqual(e.get("contractor").get("id"), contractorParam) : criteriaBuilder.conjunction()
+				, criteriaBuilder.exists(subQuery)
+				, criteriaBuilder.not(criteriaBuilder.exists(subQueryActiveTransaction))
 		);
 
 		if (!orderBy.isEmpty()) {
@@ -116,6 +119,11 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		}
 
 		TypedQuery<EquipmentEntity> typeQuery = entityManager.createQuery(query);
+
+
+		if (contractorId != null) {
+			typeQuery.setParameter(contractorParam, contractorId);
+		}
 
 		if (beginDate != null) {
 			typeQuery.setParameter(beginDateParam, beginDate);
