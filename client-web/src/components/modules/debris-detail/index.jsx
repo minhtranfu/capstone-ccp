@@ -59,7 +59,7 @@ class DebrisDetail extends Component {
       return (
         <div key={bid.id} className="my-2 bg-white shadow-sm p-3 d-flex bid">
           <div className="flex-fill d-flex">
-            <div className="d-flex bider text-nowrap">
+            <div className="d-flex bider text-nowrap flex-sm-row flex-column align-items-center">
               <div>
                 <Image src={bid.supplier && bid.supplier.thumbnailImage
                   ? bid.supplier.thumbnailImage
@@ -67,8 +67,8 @@ class DebrisDetail extends Component {
                   className="rounded-circle avatar"
                 />
               </div>
-              <div className="flex-fill">
-                <h5 className="mb-0">{bid.supplier.name}</h5>
+              <div className="flex-sm-fill">
+                <h5 className="mb-0 text-center text-sm-left">{bid.supplier.name}</h5>
                 <div>
                   <StarRatings
                     rating={bid.supplier.averageDebrisRating}
@@ -83,12 +83,13 @@ class DebrisDetail extends Component {
                   {bid.supplier.debrisFeedbacksCount} reviews
                 </div>
               </div>
+              <div className="d-sm-none"><div class="price text-x-large">12,500K</div></div>
             </div>
             <div className="flex-fill px-3">
               {bid.description}
             </div>
           </div>
-          <div className="bid-infos">
+          <div className="bid-infos d-none d-sm-block">
             <div className="price text-x-large">{formatPrice(bid.price)}</div>
           </div>
         </div>
@@ -160,7 +161,7 @@ class DebrisDetail extends Component {
                 </div>
               </div>
             </div>
-            {!debris.id && <Skeleton count={10} />}
+            {!debris.id && <Skeleton height={135} count={10} />}
             {user && !isShowBidForm &&
               <button onClick={this._toggleBidForm} className="btn btn-lg btn-primary btn-block my-2">
                 <i className="fal fa-gavel"></i> Bid this request
