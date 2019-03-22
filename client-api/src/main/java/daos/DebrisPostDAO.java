@@ -1,6 +1,5 @@
 package daos;
 
-import com.sun.tools.internal.xjc.model.CBuiltinLeafInfo;
 import entities.DebrisPostEntity;
 import entities.DebrisServiceTypeDebrisPostEntity;
 import utils.Constants;
