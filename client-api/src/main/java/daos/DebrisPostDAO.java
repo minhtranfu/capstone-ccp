@@ -23,7 +23,9 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 
 	}
 
-	public List<DebrisPostEntity> searchDebrisPost(String query
+	public List<DebrisPostEntity> searchDebrisPost(
+			Long contractorId
+			, String query
 			, Double latitude
 			, Double longitude
 			, Double maxDistance
@@ -41,18 +43,20 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 
 		Root<DebrisPostEntity> e = criteriaQuery.from(DebrisPostEntity.class);
 
+		ParameterExpression<Long> contractorIdParam = criteriaBuilder.parameter(Long.class);
+
 		ParameterExpression<Double> curLatParam = criteriaBuilder.parameter(Double.class);
 		ParameterExpression<Double> curLongParam = criteriaBuilder.parameter(Double.class);
 		ParameterExpression<Double> maxDistanceParam = criteriaBuilder.parameter(Double.class);
 
 
-		ParameterExpression<List> debrisServiceTypesParam = criteriaBuilder.parameter(List	.class);
+		ParameterExpression<List> debrisServiceTypesParam = criteriaBuilder.parameter(List.class);
 
 		ParameterExpression<String> queryParam = criteriaBuilder.parameter(String.class);
 
 
 		Predicate distanceWhereClause;
-		if (latitude!=null && longitude!=null && maxDistance!=null) {
+		if (latitude != null && longitude != null && maxDistance != null) {
 			distanceWhereClause = criteriaBuilder
 					.lessThan(
 							criteriaBuilder.function("calcDistance"
@@ -84,6 +88,7 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 				criteriaBuilder.like(e.get("title"), queryParam)
 				, distanceWhereClause
 				, debrisServiceTypeWhereClause
+				, contractorId != null ? criteriaBuilder.notEqual(e.get("requester").get("id"), contractorIdParam) : criteriaBuilder.conjunction()
 				, criteriaBuilder.equal(e.get("hidden"), false)
 				, criteriaBuilder.equal(e.get("status"), DebrisPostEntity.Status.PENDING)
 		);
@@ -113,12 +118,12 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 
 
 		//set parameters
+		if (contractorId != null) {
+			typeQuery.setParameter(contractorIdParam, contractorId);
+		}
 
 
-
-
-
-		if (latitude!=null && longitude!=null && maxDistance!=null) {
+		if (latitude != null && longitude != null && maxDistance != null) {
 			typeQuery.setParameter(curLatParam, latitude);
 			typeQuery.setParameter(curLongParam, longitude);
 			typeQuery.setParameter(maxDistanceParam, maxDistance);

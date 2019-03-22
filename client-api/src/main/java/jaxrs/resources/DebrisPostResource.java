@@ -22,6 +22,8 @@ import javax.json.JsonNumber;
 import javax.json.bind.JsonbBuilder;
 import javax.validation.Valid;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -56,6 +58,8 @@ public class DebrisPostResource {
 		return claimContractorId.getValue().longValue();
 	}
 
+	@Context
+	HttpHeaders httpHeaders;
 
 	@GET
 	public Response searchdebris(
@@ -73,8 +77,15 @@ public class DebrisPostResource {
 			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
 		}
 
+		Long contractorId;
+		if (httpHeaders.getHeaderString(HttpHeaders.AUTHORIZATION) != null) {
+			contractorId = getClaimContractorId();
+		} else {
+			contractorId = null;
+		}
 
 		List<DebrisPostEntity> debrisEntities = debrisPostDAO.searchDebrisPost(
+				contractorId,
 				query,
 				latitude,
 				longitude,

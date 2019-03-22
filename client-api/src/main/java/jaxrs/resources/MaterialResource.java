@@ -19,6 +19,8 @@ import javax.json.JsonNumber;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.LocalDate;
@@ -139,7 +141,8 @@ public class MaterialResource {
 	}
 
 
-
+	@Context
+	HttpHeaders httpHeaders;
 	@GET
 	public Response searchMaterial(
 			@QueryParam("q")  @DefaultValue("") String query,
@@ -157,7 +160,14 @@ public class MaterialResource {
 		}
 
 
+		Long contractorId;
+		if (httpHeaders.getHeaderString(HttpHeaders.AUTHORIZATION) != null) {
+			contractorId = getClaimContractorId();
+		} else {
+			contractorId = null;
+		}
 		List<MaterialEntity> materialEntities = materialDAO.searchMaterial(
+				contractorId,
 				query,
 				materialTypeId,
 				orderBy,

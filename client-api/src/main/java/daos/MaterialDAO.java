@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @Stateless
 public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 
-	public List<MaterialEntity> searchMaterial(String query, long materialTypeId, String orderBy, int offset, int limit) {
+	public List<MaterialEntity> searchMaterial(Long contractorId, String query, long materialTypeId, String orderBy, int offset, int limit) {
 
 		//"select e from MaterialEntity  e where e.materialType.id = :materialTypeId and e.name like '%query%'"
 
@@ -30,14 +30,14 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 		Root<MaterialEntity> e = criteriaQuery.from(MaterialEntity.class);
 
 
+		ParameterExpression<Long> contractorIdParam = criteriaBuilder.parameter(Long.class);
 		ParameterExpression<Long> materialTypeIdParam = criteriaBuilder.parameter(Long.class);
 		ParameterExpression<String> queryParam = criteriaBuilder.parameter(String.class);
-
-
 
 //		merge 3 main where clauses
 		criteriaQuery.select(e).where(
 				materialTypeId != 0 ? criteriaBuilder.equal(materialTypeIdParam, e.get("materialType").get("id")) : criteriaBuilder.conjunction()
+				, contractorId !=null ? criteriaBuilder.notEqual(e.get("contractor").get("id"),contractorIdParam) : criteriaBuilder.conjunction()
 				, criteriaBuilder.like(e.get("name"), queryParam)
 				, criteriaBuilder.equal(e.get("hidden"), false)
 		);
@@ -65,6 +65,9 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 
 		TypedQuery<MaterialEntity> typeQuery = entityManager.createQuery(criteriaQuery);
 
+		if (contractorId != null) {
+			typeQuery.setParameter(contractorIdParam, contractorId);
+		}
 		if (materialTypeId > 0) {
 			typeQuery.setParameter(materialTypeIdParam, materialTypeId);
 		}
