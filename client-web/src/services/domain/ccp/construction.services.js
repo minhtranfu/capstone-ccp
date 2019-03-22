@@ -7,3 +7,7 @@ export const postConstruction = (constractorId, data) => {
 export const updateConstruction = (constractorId, constructionId, data) => {
   return DataAccessService.put(`/contractors/${constractorId}/constructions/${constructionId}`, data);
 };
+
+export const getConstructionsByContractorId = constractorId => {
+  return DataAccessService.get(`contractors/${constractorId}/constructions`);
+};

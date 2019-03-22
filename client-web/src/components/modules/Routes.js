@@ -115,6 +115,17 @@ export const modules = [
     modulePath: './requester-dashboard/MaterialTransactions',
     isPrivate: true
   },
+  {
+    name: 'AddDebrisRequest',
+    path: '/debris-request',
+    modulePath: './add-debris',
+    isPrivate: true,
+  },
+  {
+    name: 'SearchDebrises',
+    path: '/debrises',
+    modulePath: './debris-search'
+  },
 ];
 
 const routes = modules.map(module => {

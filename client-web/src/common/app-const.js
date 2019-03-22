@@ -12,7 +12,8 @@ export const ENTITY_KEY = {
   EQUIPMENT_TYPES: 'equipment_types',
   EQUIPMENT_TYPE_INFOS: 'equipment_type_infos',
   FEEDBACK_TYPES: 'feedbackTypes',
-  MATERIAL_TYPES: 'materialTypes'
+  MATERIAL_TYPES: 'materialTypes',
+  DEBRIS_SERVICE_TYPES: 'debrisServiceTypes',
 };
 
 const jwt = localStorage.getItem(appConsts.JWT_KEY);
@@ -25,7 +26,8 @@ export const INITIAL_STATE = {
     [ENTITY_KEY.EQUIPMENT_TYPES]: {},
     [ENTITY_KEY.EQUIPMENT_TYPE_INFOS]: {},
     [ENTITY_KEY.FEEDBACK_TYPES]: {},
-    [ENTITY_KEY.MATERIAL_TYPES]: {}
+    [ENTITY_KEY.MATERIAL_TYPES]: {},
+    [ENTITY_KEY.DEBRIS_SERVICE_TYPES]: {},
   },
   counter: 0,
   authentication: {
