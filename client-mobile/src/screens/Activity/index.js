@@ -15,10 +15,12 @@ import {
   listTransactionByRequester,
   listMaterialTransactionByRequester
 } from "../../redux/actions/transaction";
+import { getDebrisArticleByRequester } from "../../redux/actions/debris";
 import { isSignedIn } from "../../config/auth";
 import RequireLogin from "../Login/RequireLogin";
 import Feather from "@expo/vector-icons/Feather";
 
+import DebrisArticleTab from "./DebrisArticleTab";
 import MaterialTab from "./MaterialTab";
 import TabView from "../../components/TabView";
 import Button from "../../components/Button";
@@ -32,6 +34,7 @@ import StepProgress from "./components/StepProgress";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+import DebrisItem from "../../components/DebrisItem";
 
 const DROPDOWN_OPTIONS = [
   {
@@ -124,6 +127,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       loading: state.transaction.loading,
       listTransaction: state.transaction.listRequesterTransaction,
       listMaterial: state.transaction.listRequesterMaterial,
+      listDebrisArticle: state.debris.debrisArticles,
       user: state.auth.data,
       token: state.auth.token
     };
@@ -134,6 +138,9 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     },
     fetchRequesterMaterial: contractorId => {
       dispatch(listMaterialTransactionByRequester(contractorId));
+    },
+    fetchGetDebrisArticleByRequester: () => {
+      dispatch(getDebrisArticleByRequester());
     }
   })
 )
@@ -153,6 +160,7 @@ class Activity extends Component {
     if (isLoggedIn) {
       this.props.fetchRequesterTransaction(user.contractor.id);
       this.props.fetchRequesterMaterial(user.contractor.id);
+      this.props.fetchGetDebrisArticleByRequester();
     }
   }
 
@@ -161,6 +169,7 @@ class Activity extends Component {
     if (prevProps.token !== token && token) {
       this.props.fetchRequesterTransaction(user.contractor.id);
       this.props.fetchRequesterMaterial(user.contractor.id);
+      this.props.fetchGetDebrisArticleByRequester();
     }
   }
 
@@ -301,6 +310,11 @@ class Activity extends Component {
                 {equipmentList.map((item, index) => (
                   <View key={`eq_${item.id}`} style={styles.rowWrapper}>
                     <TransactionItem
+                      containerStyle={{
+                        backgroundColor: "white",
+                        borderRadius: 10,
+                        padding: 10
+                      }}
                       onPress={() =>
                         this.props.navigation.navigate("Detail", {
                           id: item.id
@@ -336,15 +350,20 @@ class Activity extends Component {
     );
   };
 
+  _handleActiveTab = index => {
+    const { listTransaction, listMaterial, listDebrisArticle } = this.props;
+    switch (index) {
+      case 1:
+        return <MaterialTab listMaterial={listMaterial} />;
+      case 2:
+        return <DebrisArticleTab listDebrisArticle={listDebrisArticle} />;
+      default:
+        return this._renderContent(listTransaction);
+    }
+  };
+
   render() {
-    const {
-      navigation,
-      isLoggedIn,
-      listTransaction,
-      listMaterial,
-      loading,
-      status
-    } = this.props;
+    const { navigation, isLoggedIn, loading, status } = this.props;
     const { activeTab } = this.state;
     if (isLoggedIn) {
       return (
@@ -353,27 +372,27 @@ class Activity extends Component {
           forceInset={{ bottom: "always", top: "always" }}
         >
           <Header
-            renderLeftButton={() =>
-              isLoggedIn ? (
-                <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate("Notification")}
-                >
-                  <Feather name="user" size={24} />
-                </TouchableOpacity>
-              ) : null
-            }
-            renderRightButton={() => (
+            renderLeftButton={() => (
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("Notification")}
               >
                 <Feather name="bell" size={24} />
               </TouchableOpacity>
             )}
+            renderRightButton={() => (
+              <TouchableOpacity
+                onPress={() =>
+                  this.props.navigation.navigate("AddDebrisArticle")
+                }
+              >
+                <Feather name="plus" size={24} />
+              </TouchableOpacity>
+            )}
           >
             <Text style={styles.header}>My Request</Text>
           </Header>
           <TabView
-            tabs={["Equipment", "Material", "Debris", "My Posts"]}
+            tabs={["Equipment", "Material", "My Posts", "Debris"]}
             onChangeTab={this._onChangeTab}
             activeTab={activeTab}
           />
@@ -388,11 +407,7 @@ class Activity extends Component {
                 />
               }
             >
-              {activeTab == 0 ? (
-                this._renderContent(listTransaction)
-              ) : (
-                <MaterialTab listMaterial={listMaterial} />
-              )}
+              {this._handleActiveTab(activeTab)}
             </ScrollView>
           ) : (
             <Loading />
@@ -410,24 +425,16 @@ const styles = StyleSheet.create({
     flex: 1
   },
   scrollContentContainer: {
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+    paddingBottom: 15
   },
   rowWrapper: {
-    borderWidth: 1,
-    borderRadius: 10,
-    borderColor: colors.secondaryColorOpacity,
-    marginVertical: 15,
-    padding: 10
-  },
-  pendingRowItem: {
-    borderRadius: 15,
+    marginVertical: 8,
     shadowColor: "#3E3E3E",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
     shadowRadius: 3,
-    elevation: 2,
-    marginBottom: 15,
-    marginTop: 5
+    elevation: 2
   },
   actionWrapper: {
     justifyContent: "center",

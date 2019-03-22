@@ -26,6 +26,7 @@ import {
 } from "../../redux/actions/transaction";
 import { getMaterialListFromContractor } from "../../redux/actions/material";
 
+import MaterialTab from "./components/MaterialTab";
 import MaterialSearchItem from "../../components/MaterialSearchItem";
 import TabView from "../../components/TabView";
 import AddModal from "./components/AddModal";
@@ -233,19 +234,6 @@ class MyEquipment extends PureComponent {
               title={status.title}
               code={status.code}
             />
-            {this.props.materialList.map(item => (
-              <MaterialSearchItem
-                imageUrl={
-                  item.thumbnailImageUrl
-                    ? item.thumbnailImageUrl
-                    : "http://lamnha.com/images/G01-02-1.png"
-                }
-                name={item.name}
-                manufacturer={item.manufacturer}
-                price={item.price}
-                description={item.description}
-              />
-            ))}
             {equipmentList.map((item, index) => (
               <EquipmentItem
                 onPress={() => {
@@ -304,7 +292,8 @@ class MyEquipment extends PureComponent {
       loading,
       status,
       isLoggedIn,
-      navigation
+      navigation,
+      materialList
     } = this.props;
     const { activeTab } = this.state;
     if (isLoggedIn) {
@@ -323,7 +312,7 @@ class MyEquipment extends PureComponent {
             <Text style={styles.header}>My Equipment</Text>
           </Header>
           <TabView
-            tabs={["Equipment", "Material", "Debris"]}
+            tabs={["Equipment", "Material"]}
             onChangeTab={this._onChangeTab}
             activeTab={activeTab}
           />
@@ -345,11 +334,13 @@ class MyEquipment extends PureComponent {
                 this._setModalVisible(false);
               }}
             >
-              <Text style={styles.text}>Add Material</Text>
+              <Text style={[styles.text, { paddingTop: 15 }]}>
+                Add Material
+              </Text>
             </TouchableOpacity>
           </AddModal>
           <View style={{ flex: 1 }}>
-            {!loading && listEquipment ? (
+            {!loading && listEquipment && materialList ? (
               <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 refreshControl={
@@ -359,7 +350,11 @@ class MyEquipment extends PureComponent {
                   />
                 }
               >
-                {this._renderContent(listEquipment)}
+                {activeTab == 0 ? (
+                  this._renderContent(listEquipment)
+                ) : (
+                  <MaterialTab materialList={materialList} />
+                )}
               </ScrollView>
             ) : (
               <Loading />
@@ -388,9 +383,8 @@ const styles = StyleSheet.create({
     marginBottom: 15
   },
   scrollContent: {
-    flex: 0,
     paddingHorizontal: 15,
-    paddingTop: 20
+    marginTop: 5
   },
   equipmentItemContainer: {
     paddingVertical: 8

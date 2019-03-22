@@ -18,7 +18,9 @@ import {
   listMaterialTransactionBySupplier,
   clearSupplierTransactionList
 } from "../../redux/actions/transaction";
+import { getDebrisBidBySupplier } from "../../redux/actions/debris";
 
+import MyBidsTab from "./MyBidsTab";
 import MaterialTab from "./MaterialTab";
 import RequireLogin from "../Login/RequireLogin";
 import TabView from "../../components/TabView";
@@ -133,6 +135,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     return {
       listTransaction: state.transaction.listSupplierTransaction,
       listMaterial: state.transaction.listSupplierMaterial,
+      listDebrisBids: state.debris.debrisBids,
       loading: state.transaction.loading,
       error: state.transaction.error,
       user: state.auth.data,
@@ -149,6 +152,9 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     },
     fetchClearMyTransaction: supplierId => {
       dispatch(clearSupplierTransactionList(supplierId));
+    },
+    fetchAllBids: () => {
+      dispatch(getDebrisBidBySupplier());
     }
   })
 )
@@ -170,6 +176,7 @@ class MyTransaction extends Component {
     if (isLoggedIn) {
       this.props.fetchListMyTransaction(user.contractor.id);
       this.props.fetchListMaterial(user.contractor.id);
+      this.props.fetchAllBids();
     }
   }
 
@@ -178,6 +185,7 @@ class MyTransaction extends Component {
     if (prevProps.token !== token) {
       this.props.fetchListMyTransaction(user.contractor.id);
       this.props.fetchListMaterial(user.contractor.id);
+      this.props.fetchAllBids();
     }
 
     console.log("Transaction renderrr");
@@ -294,6 +302,11 @@ class MyTransaction extends Component {
             {equipmentList.map((item, index) => (
               <View key={`eq_${item.id}`} style={styles.rowWrapper}>
                 <TransactionItem
+                  containerStyle={{
+                    backgroundColor: "white",
+                    borderRadius: 10,
+                    padding: 10
+                  }}
                   onPress={() =>
                     this.props.navigation.navigate("MyTransactionDetail", {
                       id: item.id
@@ -349,14 +362,20 @@ class MyTransaction extends Component {
     );
   };
 
+  _handleActiveTab = index => {
+    const { listTransaction, listMaterial, listDebrisBids } = this.props;
+    switch (index) {
+      case 1:
+        return <MaterialTab listMaterial={listMaterial} />;
+      case 2:
+        return <MyBidsTab listDebrisBids={listDebrisBids} />;
+      default:
+        return this._renderEquipment(listTransaction);
+    }
+  };
+
   render() {
-    const {
-      listTransaction,
-      listMaterial,
-      loading,
-      navigation,
-      isLoggedIn
-    } = this.props;
+    const { loading, navigation, isLoggedIn } = this.props;
     const { activeTab } = this.state;
     if (isLoggedIn) {
       return (
@@ -368,7 +387,7 @@ class MyTransaction extends Component {
             <Text style={styles.header}>My Transaction</Text>
           </Header>
           <TabView
-            tabs={["Equipment", "Material", "Debris"]}
+            tabs={["Equipment", "Material", "My Bids", "Debris"]}
             onChangeTab={this._onChangeTab}
             activeTab={activeTab}
           />
@@ -383,11 +402,7 @@ class MyTransaction extends Component {
                 />
               }
             >
-              {activeTab == 0 ? (
-                this._renderEquipment(listTransaction)
-              ) : (
-                <MaterialTab listMaterial={listMaterial} />
-              )}
+              {this._handleActiveTab(activeTab)}
             </ScrollView>
           ) : (
             <Loading />
@@ -405,16 +420,16 @@ const styles = StyleSheet.create({
     flex: 1
   },
   rowWrapper: {
-    borderWidth: 1,
-    borderRadius: 10,
-    borderColor: colors.secondaryColorOpacity,
-    marginVertical: 15,
-    padding: 10
+    marginVertical: 8,
+    shadowColor: "#3E3E3E",
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
+    elevation: 2
   },
   scrollContent: {
-    flex: 0,
     paddingHorizontal: 15,
-    paddingTop: 20
+    paddingBottom: 15
   },
   equipmentItemContainer: {
     paddingVertical: 8

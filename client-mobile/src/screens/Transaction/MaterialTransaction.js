@@ -87,19 +87,29 @@ class MaterialTransaction extends Component {
     return undefined;
   }
 
+  _showAlert = msg => {
+    Alert.alert("Error", msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
+
   _handleConfirmBooking = async material => {
     const { quantity, address } = this.state;
-    const newMaterialDetail = {
-      material: {
-        id: material.id
-      },
-      quantity: quantity,
-      requesterAddress: address,
-      requesterLat: 10.34,
-      requesterLong: 106
-    };
-    await this.props.fetchRequestTransaction(newMaterialDetail);
-    this.props.navigation.goBack();
+    if (quantity == 0) {
+      this._showAlert("Quantity must >0");
+    } else {
+      const newMaterialDetail = {
+        material: {
+          id: material.id
+        },
+        quantity: quantity,
+        requesterAddress: address,
+        requesterLat: 10.34,
+        requesterLong: 106
+      };
+      await this.props.fetchRequestTransaction(newMaterialDetail);
+      this.props.navigation.goBack();
+    }
   };
 
   _handleInputChange = (field, value) => {

@@ -47,6 +47,12 @@ import MaterialTransaction from "../screens/Transaction/MaterialTransaction";
 import MaterialTab from "../screens/MyTransaction/MaterialTab";
 import MaterialSupplierDetail from "../screens/MyTransaction/MaterialSupplierDetail";
 import MaterialRequesterDetail from "../screens/Activity/MaterialRequesterDetail";
+import MyMaterialDetail from "../screens/MyEquipment/MaterialDetail";
+import AddDebrisArticle from "../screens/Activity/AddDebrisArticle";
+import DebrisArticleDetail from "../screens/Activity/DebrisArticleDetail";
+import AddServicesTypes from "../screens/Activity/AddServicesTypes";
+import BidSearch from "../screens/Search/BidSearch";
+import BidResult from "../screens/Search/BidResult";
 // import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
@@ -61,6 +67,8 @@ const DiscoverStack = createStackNavigator(
     MaterialSearch: MaterialSearch,
     MaterialResult: MaterialResult,
     MaterialDetail: MaterialDetail,
+    BidSearch: BidSearch,
+    BidResult: BidResult,
     ConfirmMaterial: MaterialTransaction
   },
   {
@@ -127,7 +135,7 @@ const MyEquipmentStack = createStackNavigator(
     MyEquipmentDetail: MyEquipmentDetail,
     AddNewEquipment: AddNewEquipmentStack,
     AddMaterialDetail: AddMaterialDetail,
-
+    MyMaterialDetail: MyMaterialDetail,
     Login: Login
   },
   {
@@ -173,7 +181,10 @@ const ActivityStack = createStackNavigator(
     Detail: ActivityDetail,
     ConfirmAdjustDate: ConfirmAdjustDate,
     ContractorProfile: ContractorProfile,
-    MaterialRequesterDetail: MaterialRequesterDetail
+    MaterialRequesterDetail: MaterialRequesterDetail,
+    AddDebrisArticle: AddDebrisArticle,
+    DebrisArticleDetail: DebrisArticleDetail,
+    AddServicesTypes: AddServicesTypes
   },
   {
     mode: "modal",

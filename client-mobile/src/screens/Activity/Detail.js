@@ -10,8 +10,7 @@ import {
 import { Image as ImageCache } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
-import PropTypes from "prop-types";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { updateEquipmentStatus } from "../../redux/actions/equipment";
 import { cancelTransaction } from "../../redux/actions/transaction";
 

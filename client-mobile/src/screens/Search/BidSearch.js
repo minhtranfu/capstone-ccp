@@ -8,11 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-import {
-  getGeneralMaterialType,
-  getMaterialType
-} from "../../redux/actions/material";
-import { autoCompleteSearch } from "../../redux/actions/location";
+import { getAllDebrisServiceTypes } from "../../redux/actions/debris";
 import Feather from "@expo/vector-icons/Feather";
 
 import SearchBar from "../../components/SearchBar";
@@ -24,45 +20,39 @@ import fontSize from "../../config/fontSize";
 
 @connect(
   state => ({
-    loading: state.material.loading,
-    generalMaterialType: state.material.generalMaterialType,
-    materialType: state.material.materialType
+    debrisTypes: state.debris.debrisTypes,
+    loading: state.debris.loading
   }),
   dispatch => ({
-    fetchGetGeneralMaterialType: () => {
-      dispatch(getGeneralMaterialType());
-    },
-    fetchGetMaterialType: () => {
-      dispatch(getMaterialType());
+    fetchGetTypeSerivces: () => {
+      dispatch(getAllDebrisServiceTypes());
     }
   })
 )
-class MaterialSearch extends Component {
+class BidSearch extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      materialName: ""
-    };
+    this.state = { keyword: "" };
   }
 
   componentDidMount() {
-    this.props.fetchGetMaterialType();
+    this.props.fetchGetTypeSerivces();
   }
 
   _handleOnChangeText = value => {
-    const { materialName } = this.state;
+    const { keyword } = this.state;
     this.setState({
-      materialName: value.toLowerCase()
+      keyword: value.toLowerCase()
     });
   };
 
-  _showMaterialItem = (id, name) => (
+  _showBidItem = (id, name) => (
     <TouchableOpacity
       key={id}
       style={styles.itemWrapper}
       onPress={() =>
-        this.props.navigation.navigate("MaterialResult", {
-          materialName: name
+        this.props.navigation.navigate("BidResult", {
+          typeId: id
         })
       }
     >
@@ -72,35 +62,29 @@ class MaterialSearch extends Component {
   );
 
   _renderItem = () => {
-    const { materialType } = this.props;
-    const { materialName } = this.state;
+    const { debrisTypes } = this.props;
+    const { keyword } = this.state;
     let values = [];
-    if (materialName && materialName.length > 0)
-      values = materialType.filter(item => item.name.includes(materialName));
+    if (keyword && keyword.length > 0)
+      values = debrisTypes.filter(item => item.name.includes(keyword));
     return (
       <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
-        {materialType
-          .filter(item => item.name.includes(materialName))
-          .map(item => this._showMaterialItem(item.id, item.name))}
+        {debrisTypes
+          .filter(item => item.name.includes(keyword))
+          .map(item => this._showBidItem(item.id, item.name))}
       </View>
     );
   };
 
   render() {
     const { loading } = this.props;
-    const { materialName } = this.state;
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "never", top: "always" }}
+        forceInset={{ bottom: "always", top: "always" }}
       >
         <SearchBar
           handleOnChangeText={this._handleOnChangeText}
-          onSubmitEditing={() =>
-            this.props.navigation.navigate("MaterialResult", {
-              materialName: materialName
-            })
-          }
           renderRightButton={() => (
             <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
               <Text style={styles.text}>Cancel</Text>
@@ -131,4 +115,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MaterialSearch;
+export default BidSearch;

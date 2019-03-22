@@ -45,6 +45,9 @@ class MaterialResult extends Component {
   _renderItem = ({ item }) => (
     <View style={{ flex: 1, marginHorizontal: 15 }}>
       <MaterialSearchItem
+        onPress={() =>
+          this.props.navigation.navigate("MaterialDetail", { id: item.id })
+        }
         imageUrl={
           item.thumbnailImageUrl
             ? item.thumbnailImageUrl
@@ -99,7 +102,7 @@ class MaterialResult extends Component {
         </Header>
         {!loading ? (
           <FlatList
-            data={listMaterial.length > 0 ? listMaterial : mockMaterialData}
+            data={listMaterial}
             renderItem={this._renderItem}
             keyExtractor={(item, index) => item.id.toString()}
           />

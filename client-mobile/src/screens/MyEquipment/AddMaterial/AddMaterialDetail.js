@@ -15,6 +15,7 @@ import {
   addNewMaterial
 } from "../../../redux/actions/material";
 
+import TextArea from "../../../components/TextArea";
 import Button from "../../../components/Button";
 import Dropdown from "../../../components/Dropdown";
 import InputField from "../../../components/InputField";
@@ -241,22 +242,9 @@ class AddMaterialDetail extends Component {
           options={this._handleConstructionDropdown()}
         />
         <Text style={styles.label}>Description</Text>
-        <TextInput
-          style={{
-            height: 200,
-            borderColor: "#000000",
-            borderWidth: StyleSheet.hairlineWidth
-          }}
-          multiline={true}
-          numberOfLines={4}
-          onChangeText={value =>
-            this.setState({
-              description: value
-            })
-          }
+        <TextArea
           value={description}
-          editable={true}
-          maxLength={maxLength}
+          onChangeText={value => this.setState({ description: value })}
         />
         <Button
           text={"Submit"}

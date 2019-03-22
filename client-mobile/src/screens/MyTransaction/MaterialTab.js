@@ -82,9 +82,19 @@ class MaterialTab extends PureComponent {
     };
   }
 
+  _handleFilter = () => {
+    if (this.state.status === "All Statuses") {
+      return MATERIAL_TRANSACTION_STATUSES;
+    } else {
+      return MATERIAL_TRANSACTION_STATUSES.filter(
+        status => status.code === this.state.status.toUpperCase()
+      );
+    }
+  };
+
   _renderMaterial = listMaterial => (
     <View>
-      {MATERIAL_TRANSACTION_STATUSES.map((materialStatus, idx) => {
+      {this._handleFilter().map((materialStatus, idx) => {
         const materialList = listMaterial.filter(
           item => item.status === materialStatus.code
         );
@@ -159,7 +169,7 @@ const styles = StyleSheet.create({
   actionWrapper: {
     justifyContent: "center",
     alignItems: "center",
-    height: "35%",
+    height: 300,
     borderRadius: 9,
     borderStyle: "dashed",
     borderWidth: 3,

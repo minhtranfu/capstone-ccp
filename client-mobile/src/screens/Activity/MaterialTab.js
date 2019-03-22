@@ -82,9 +82,19 @@ class MaterialTab extends PureComponent {
     };
   }
 
+  _handleFilter = () => {
+    if (this.state.status === "All Statuses") {
+      return MATERIAL_TRANSACTION_STATUSES;
+    } else {
+      return MATERIAL_TRANSACTION_STATUSES.filter(
+        status => status.code === this.state.status.toUpperCase()
+      );
+    }
+  };
+
   _renderMaterial = listMaterial => (
     <View>
-      {MATERIAL_TRANSACTION_STATUSES.map((materialStatus, idx) => {
+      {this._handleFilter().map((materialStatus, idx) => {
         const materialList = listMaterial.filter(
           item => item.status === materialStatus.code
         );
@@ -143,11 +153,11 @@ class MaterialTab extends PureComponent {
           options={MATERIAL_TRANSACTION_OPTIONS}
           isHorizontal={true}
         />
-        <ScrollView>
+        <View>
           {listMaterial.length > 0
             ? this._renderMaterial(listMaterial)
             : this._renderEmptyComponent()}
-        </ScrollView>
+        </View>
       </View>
     );
   }

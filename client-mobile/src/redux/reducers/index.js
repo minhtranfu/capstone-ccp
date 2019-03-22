@@ -9,6 +9,7 @@ import cartReducer from "./cart";
 import uploadReducer from "./upload";
 import notificationReducer from "./notification";
 import materialReducer from "./material";
+import debrisReducer from "./debris";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
   cart: cartReducer,
   upload: uploadReducer,
   notification: notificationReducer,
-  material: materialReducer
+  material: materialReducer,
+  debris: debrisReducer
 });
 
 export default rootReducer;

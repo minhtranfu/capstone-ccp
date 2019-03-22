@@ -10,7 +10,6 @@ function renderActions(name) {
 export const LOGIN_REQUEST = "@@auth/LOGIN_REQUEST";
 export const LOGIN_SUCCESS = "@@auth/LOGIN_SUCCESS";
 export const LOGIN_FAIL = "@@auth/LOGIN_FAIL";
-
 export const LOGOUT_SUCCESS = "@@auth/LOGOUT_SUCCESS";
 
 //TYPE
@@ -169,3 +168,40 @@ export const UPDATE_MATERIAL_DETAIl = renderActions(
 export const GET_MATERIAL_LIST_BY_CONTRACTOR = renderActions(
   "@@material/GET_MATERIAL_LIST_BY_CONTRACTOR"
 );
+
+//DEBRIS
+export const GET_DEBRIS_SERVICES_TYPES = renderActions(
+  "@@debris/GET_DEBRIS_SERVICES_TYPES"
+);
+export const GET_DEBRIS_ARTICLE_BY_REQUESTER = renderActions(
+  "@@debris/GET_DEBRIS_ARTICLE_BY_REQUESTER"
+);
+export const POST_DEBRIS_ARTICLE = renderActions(
+  "@@debris/POST_DEBRIS_ARTICLE"
+);
+export const EDIT_DEBRIS_ARTICLE = renderActions(
+  "@@debris/EDIT_DEBRIS_ARTICLE"
+);
+export const DELETE_DEBRIS_ARTICLE = renderActions(
+  "@@debris/DELETE_DEBRIS_ARTICLE"
+);
+export const GET_DEBRIS_BIDS_BY_SUPPLIER = renderActions(
+  "@@debris/GET_DEBRIS_BIDS_BY_SUPPLIER"
+);
+export const SEND_DEBRIS_BIDS = renderActions("@@debris/SEND_DEBRIS_BIDS");
+export const EDIT_DEBRIS_BIDS = renderActions("@@debris/EDIT_DEBRIS_BIDS");
+export const DELETE_DEBRIS_BID = renderActions("@@debris/DELETE_DEBRIS_BID");
+export const SEND_FEEDBACK_DEBRIS = renderActions(
+  "@@debris/SEND_FEEDBACK_DEBRIS"
+);
+export const GET_FEEDBACK_DETAIL_DEBRIS = renderActions(
+  "@@debris/GET_FEEDBACK_DETAIL_DEBRIS"
+);
+export const ADD_TYPE_SERVICES = renderActions("@@debris/ADD_TYPE_SERVICES");
+export const REMOVE_TYPE_SERVICES = renderActions(
+  "@@debris/REMOVE_TYPE_SERVICES"
+);
+export const CLEAR_TYPE_SERVICES = renderActions(
+  "@@debris/CLEAR_TYPE_SERVICES"
+);
+export const SEARCH_DEBRIS = renderActions("@@debris/SEARCH_DEBRIS");

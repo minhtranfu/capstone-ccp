@@ -24,10 +24,6 @@ class EquipmentStatus extends Component {
     title: PropTypes.string,
     code: PropTypes.string
   };
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
 
   render() {
     const { count, title, code } = this.props;

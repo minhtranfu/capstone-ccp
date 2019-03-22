@@ -55,11 +55,22 @@ class MaterialSearchItem extends PureComponent {
               </Text>
             </View>
           </View>
-          <View style={{ paddingHorizontal: 10 }}>
-            <Text style={styles.nameText}>{name}</Text>
+          <View
+            style={{
+              paddingHorizontal: 10,
+              borderTopWidth: 0.2,
+              borderColor: colors.secondaryColorOpacity
+            }}
+          >
+            <Text style={[styles.nameText, { paddingTop: 10 }]}>{name}</Text>
             <Text style={styles.text}>{manufacturer}</Text>
             <Text style={styles.text}>{price} K VND</Text>
-            <Text style={styles.text}>{description}</Text>
+            <Text
+              style={[styles.text, { paddingBottom: 10 }]}
+              numberOfLines={2}
+            >
+              {description}
+            </Text>
           </View>
         </TouchableOpacity>
       </View>

@@ -11,12 +11,12 @@ class MaterialItem extends Component {
     imageUrl: PropTypes.string,
     name: PropTypes.string,
     manufacturer: PropTypes.string,
-    price: PropTypes.string,
+    price: PropTypes.number,
     unit: PropTypes.string,
     contractor: PropTypes.string,
     contractorThumbnail: PropTypes.string,
     status: PropTypes.string,
-    quantity: PropTypes.string
+    quantity: PropTypes.number
   };
 
   _capitalizeFirstLetter = string => {

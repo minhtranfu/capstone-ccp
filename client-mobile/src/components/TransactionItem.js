@@ -32,16 +32,17 @@ class TransactionItem extends PureComponent {
       statusBackgroundColor,
       avatarURL,
       role,
-      hasEquipmentStatus
+      hasEquipmentStatus,
+      containerStyle
     } = this.props;
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, containerStyle]}>
         <TouchableOpacity style={{ flexDirection: "column" }} onPress={onPress}>
           <View style={styles.wrapper}>
             <Image
               source={{ uri: imageURL }}
               resizeMode={"cover"}
-              style={[styles.image, { width: 120 }]}
+              style={[styles.image, { width: 120, borderRadius: 10 }]}
             />
             <View style={styles.contentWrapper}>
               <View
@@ -95,23 +96,10 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     paddingLeft: 10
   },
-  rowWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginVertical: 5
-  },
   dateWrapper: {
     justifyContent: "center",
     alignItems: "center",
     marginTop: 10
-  },
-  dateBorder: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.secondaryColorOpacity,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 5
   },
   statusWrapper: {
     alignItems: "center",
@@ -122,21 +110,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 5,
     marginBottom: 10
-  },
-  buttonWrapper: {
-    height: 40,
-    backgroundColor: colors.primaryColor,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
-    paddingHorizontal: 5
-  },
-  buttonText: {
-    fontSize: fontSize.secondaryText,
-    fontWeight: "500",
-    paddingLeft: 5,
-    color: "white"
   },
   title: {
     fontSize: fontSize.h4,

@@ -44,7 +44,7 @@ const RADIO_BUTON_DATA = [
   {
     id: 3,
     value: "Debris",
-    routeName: "Debris",
+    routeName: "BidSearch",
     image:
       "https://1-800-junk-relief.com/wp-content/uploads/2018/07/Construction-Debris-Removal-3.jpg"
   }

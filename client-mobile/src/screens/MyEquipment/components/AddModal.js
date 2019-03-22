@@ -35,20 +35,21 @@ class AddModal extends Component {
   render() {
     const { title, routeName, onPress, visible, setModalVisible } = this.props;
     return (
-      <View style={{ marginBottom: 20 }}>
+      <View>
         <Modal transparent={true} visible={visible}>
           <View style={styles.container}>
             <View style={styles.titleContainer}>
               <TouchableOpacity
                 style={{
                   alignSelf: "flex-end",
-                  marginRight: 15
+                  marginRight: 15,
+                  marginTop: -15
                 }}
                 onPress={() => {
                   setModalVisible(!visible);
                 }}
               >
-                <Text style={styles.textDone}>Cancel</Text>
+                <Text style={styles.text}>Cancel</Text>
               </TouchableOpacity>
               {this.props.children}
             </View>
@@ -68,16 +69,15 @@ const styles = StyleSheet.create({
   titleContainer: {
     borderRadius: 5,
     width: width,
-    height: 260,
+    height: 150,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "white"
   },
-  textDone: {
+  text: {
     fontWeight: "500",
     fontSize: fontSize.bodyText,
     color: colors.secondaryColor,
-    paddingTop: 15,
     paddingBottom: 15
   },
   divider: {

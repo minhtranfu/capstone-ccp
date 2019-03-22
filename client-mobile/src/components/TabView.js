@@ -32,6 +32,7 @@ class TabView extends React.PureComponent {
       >
         {tabs.map((item, index) => (
           <TouchableOpacity
+            key={index}
             onPress={() => onChangeTab(index)}
             style={[
               styles.buttonWrapper,

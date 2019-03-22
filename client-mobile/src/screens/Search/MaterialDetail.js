@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
+import Feather from "@expo/vector-icons/Feather";
 
 import Button from "../../components/Button";
 import Header from "../../components/Header";
@@ -40,6 +41,15 @@ class MaterialDetail extends Component {
         style={styles.container}
         forceInset={{ bottom: "never", top: "always" }}
       >
+        <Header
+          renderLeftButton={() => (
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+              <Feather name="chevron-left" size={24} />
+            </TouchableOpacity>
+          )}
+        >
+          <Text>Result</Text>
+        </Header>
         {detail ? (
           <ScrollView>
             <Image
