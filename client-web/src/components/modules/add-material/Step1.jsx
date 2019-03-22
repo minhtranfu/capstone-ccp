@@ -1,19 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import moment from 'moment';
-// Require Editor JS files.
-import 'froala-editor/js/froala_editor.pkgd.min.js';
-// Require Editor CSS files.
-import 'froala-editor/css/froala_style.min.css';
-import 'froala-editor/css/froala_editor.pkgd.min.css';
-
-import 'bootstrap-daterangepicker/daterangepicker.css';
-import DateRangePicker from 'react-bootstrap-daterangepicker';
 
 import Step from './Step';
 import { fetchMaterialTypes } from '../../../redux/actions/thunks';
-import { ENTITY_KEY } from '../../../common/app-const';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
 
@@ -141,7 +131,6 @@ class AddEquipmentStep1 extends Step {
 
   render() {
     const { entities } = this.props;
-    const materialTypes = entities[ENTITY_KEY.MATERIAL_TYPES];
     const { constructions, categories, categoryId } = this.state;
     let selectedCategory = {};
     if (categoryId) {
@@ -156,7 +145,7 @@ class AddEquipmentStep1 extends Step {
           </div>
           <div className="col-md-6">
             <div className="form-group">
-              <label htmlFor="">Equipment name: <i className="text-danger">*</i></label>
+              <label htmlFor="">Material name: <i className="text-danger">*</i></label>
               <input ref={nameField => this.formFields.name = nameField} type="text" name="name" onChange={this._handleFieldChange} value={this.state.name || ''} className="form-control" maxLength="80" required autoFocus/>
             </div>
             <div className="form-group">
