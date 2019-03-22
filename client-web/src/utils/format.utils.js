@@ -1,6 +1,10 @@
 import moment from "moment";
 
 export const formatDate = time => {
+  if (!time) {
+    return '';
+  }
+
   return moment(time).format('DD-MM-YYYY');
 };
 

@@ -68,21 +68,31 @@ class MaterialDetail extends Component {
               <h1 className="">{material.name || <Skeleton />}</h1>
               <h5 className="my-3 text-muted"><u>Information:</u></h5>
               <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-6 py-2">
+                  <h6>
+                    <span className="text-muted"><i class="fal fa-calendar"></i> Posted:</span> {formatDate(material.createdTime)}
+                  </h6>
+                </div>
+                <div className="col-md-6 py-2">
+                  <h6>
+                    <span className="text-muted"><i className="fal fa-tags"></i> Type:</span> {material.materialType ? material.materialType.name : <Skeleton width={100}/>}
+                  </h6>
+                </div>
+                <div className="col-md-6 py-2">
                   <h6>
                     <span className="text-muted"><i className="fal fa-bullseye"></i> Construction:</span> {material.construction ? material.construction.name : <Skeleton width={100}/>}
                   </h6>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-6 py-2">
                   <h6><span className="text-muted"><i className="fal fa-money-bill"></i> Price:</span> {material.price ? <span>{formatPrice(material.price)}<i className="text-muted">/{material.unit}</i></span> : <Skeleton width={75}/>}</h6>
                 </div>
-                <div className="col-md-12">
+                <div className="col-md-12 py-2">
                   <h6><span className="text-muted"><i className="fal fa-map-marker"></i> Address:</span> {material.construction ? material.construction.address : <Skeleton width={250}/>}</h6>
                 </div>
               </div>
-              <h5 className="mt-3">Description:</h5>
+              <h5 className="my-3 text-muted"><u>Description:</u></h5>
               <div
-                className="description"
+                className="description mb-3"
                 dangerouslySetInnerHTML={{ __html: material.description }}
               />
             </div>

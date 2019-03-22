@@ -190,7 +190,15 @@ class RequestCard extends Component {
     return (
       <div className="request-card bg-white shadow">
         {this._renderAlert()}
-        <div className="my-2 pb-2 border-bottom"><i className="fal fa-money-bill"></i> Price: <span className="float-right text-x-large">{formatPrice(material.price)}</span></div>
+        <div className="my-2 pb-2 border-bottom">
+          <i className="fal fa-money-bill"></i> Price:
+          <span className="float-right text-x-large">
+            {formatPrice(material.price)}
+            <small>
+              <small className="text-muted">/{material.unit}</small>
+            </small>
+          </span>
+        </div>
 
         <div className="form-group">
           <label htmlFor="requesterAddress">Receive address:<i className="text-danger">*</i></label>
@@ -246,7 +254,7 @@ class RequestCard extends Component {
         </div>
         <div className="form-group">
           <label htmlFor="transaction_quantity">Quantity:<i className="text-danger">*</i></label>
-          <input type="number" name="quantity" id="transaction_quantity" className="form-control" onChange={this._handleFieldChange}/>
+          <input type="number" name="quantity" id="transaction_quantity" className="form-control" onChange={this._handleFieldChange} min="1"/>
         </div>
         <div className="text-center border-top border-bottom my-3 py-2">
           {!transaction.quantity &&
