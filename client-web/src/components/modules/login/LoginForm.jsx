@@ -128,10 +128,10 @@ class LoginForm extends Component {
         </div>
         <div className="col-md-6">
           <h6 className="text-muted">Login with</h6>
-          <button className="btn btn-block btn-danger"><i className="fal fa-google"></i> Google</button>
-          <button className="btn btn-block btn-primary"><i className="fal fa-facebook"></i> Facebook</button>
+          <button className="btn btn-block btn-danger"><i className="fab fa-google"></i> Google</button>
+          <button className="btn btn-block btn-primary"><i className="fab fa-facebook"></i> Facebook</button>
           <h6 className="mt-3 text-muted">Do not have an account?</h6>
-          <button className="btn btn-block btn-success"><i className="fal fa-user-circle-o"></i> Đăng ký</button>
+          <button className="btn btn-block btn-success"><i className="fal fa-user-circle"></i> Đăng ký</button>
         </div>
       </div>
     );
