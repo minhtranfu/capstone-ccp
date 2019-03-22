@@ -367,6 +367,7 @@ nav.navbar {
   .suggestion-item {
     padding: 5px 10px;
     border-top: 1px solid #eee;
+    cursor: pointer;
   }
   .suggestion-item.active {
     background-color: #007bff !important;

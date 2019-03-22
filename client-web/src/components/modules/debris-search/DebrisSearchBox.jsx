@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import moment from 'moment';
 import Select from 'react-select';
 
-import { debrisServices } from "Services/domain/ccp";
+import { debrisServices } from 'Services/domain/ccp';
+import { AddressInput } from 'Components/common';
 
 class DebrisSearchBox extends PureComponent {
   state = {
@@ -39,18 +40,6 @@ class DebrisSearchBox extends PureComponent {
       [name]: value
     }
 
-    if (name === 'beginDate') {
-      // TODO: Clear end date when begin is after end date
-      if (moment(value).isSameOrAfter(moment(criteria.endDate))) {
-        return this.setState({
-          criteria: {
-            ...criteria,
-            endDate: undefined
-          }
-        });
-      }
-    }
-
     this.setState({
       criteria
     });
@@ -58,12 +47,28 @@ class DebrisSearchBox extends PureComponent {
 
   _handleSelectServiceTypes = selectedOptions => {
     const debrisTypeId = selectedOptions.map(option => option.value);
-    let { criteria } = this.state;
+    const { criteria } = this.state;
 
     this.setState({
       criteria: {
         ...criteria,
         debrisTypeId
+      }
+    });
+  };
+
+  /**
+   * Handle user change location
+   */
+  _handleChangeLocation = location => {
+    const { latitude, longitude } = location;
+    const { criteria } = this.state;
+
+    this.setState({
+      criteria: {
+        ...criteria,
+        latitude,
+        longitude
       }
     });
   };
@@ -95,8 +100,8 @@ class DebrisSearchBox extends PureComponent {
           </div>
           <div className="col-md-6">
             <div className="form-group">
-              <label htmlFor="keyword" className="text-light">Location:</label>
-              <input type="text" name="address" onChange={this._handleChangeCriteria} id="keyword" className="form-control" />
+              <label htmlFor="location" className="text-light">Location:</label>
+              <AddressInput onSelect={this._handleChangeLocation} inputProps={{id: 'location'}} />
             </div>
           </div>
           <div className="col-md-6">
