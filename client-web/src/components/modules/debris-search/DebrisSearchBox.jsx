@@ -1,20 +1,22 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import moment from "moment";
+import moment from 'moment';
+import Select from 'react-select';
 
-import { materialServices, debrisServices } from "Services/domain/ccp";
+import { debrisServices } from "Services/domain/ccp";
 
 class DebrisSearchBox extends PureComponent {
   state = {
-    types: [],
+    typeOptions: [],
     criteria: {
     }
   };
 
   _loadData = async () => {
     const types = await debrisServices.getDebrisServiceTypes();
+    const typeOptions = types.map(type => ({ label: type.name, value: type.id, }));
     this.setState({
-      types
+      typeOptions
     });
   };
 
@@ -54,60 +56,72 @@ class DebrisSearchBox extends PureComponent {
     });
   };
 
+  _handleSelectServiceTypes = selectedOptions => {
+    const debrisTypeId = selectedOptions.map(option => option.value);
+    let { criteria } = this.state;
+
+    this.setState({
+      criteria: {
+        ...criteria,
+        debrisTypeId
+      }
+    });
+  };
+
   render() {
-    const { types } = this.state;
+    const { typeOptions } = this.state;
     const { isFetching } = this.props;
 
     return (
       <form onSubmit={this._search}>
         <div className="row">
-          <div className="col-md-12">
+          <div className="col-md-12 text-light">
             <h3>Search</h3>
           </div>
-          
-            <div className="col-md-6">
-              <div className="form-group">
-                <label htmlFor="debris_type">Material type:</label>
-                <select
-                  name="debrisTypeId"
-                  id="debris_type"
-                  className="form-control"
-                  onChange={this._handleChangeCriteria}
-                  multiple
-                >
-                  <option value="">--Choose--</option>
-                  {types &&
-                    types.map(equipmentType => (
-                      <option key={equipmentType.id} value={equipmentType.id}>
-                        {equipmentType.name}
-                      </option>
-                    ))}
-                </select>
-              </div>
+          <div className="col-md-12">
+            <div className="form-group">
+              <label htmlFor="service_types" className="text-light">Debris type:</label>
+              <Select
+                isMulti
+                openMenuOnFocus
+                closeMenuOnSelect={false}
+                tabSelectsValue={false}
+                inputId="service_types"
+                placeholder="Select some services you need..."
+                options={typeOptions}
+                onChange={this._handleSelectServiceTypes}
+              />
             </div>
-            <div className="col-md-6">
-              <div className="form-group">
-                <label htmlFor="keyword">Keyword</label>
-                <input type="text" name="q" onChange={this._handleChangeCriteria} id="keyword" className="form-control"/>
-              </div>
+          </div>
+          <div className="col-md-6">
+            <div className="form-group">
+              <label htmlFor="keyword" className="text-light">Location:</label>
+              <input type="text" name="address" onChange={this._handleChangeCriteria} id="keyword" className="form-control" />
             </div>
-            <div className="col-md-12">
-              <button
-                type="submit"
-                className="btn btn-success"
-                disabled={isFetching}
-              >
-                {isFetching && (
-                  <span
-                    className="spinner-border spinner-border-sm mr-1"
-                    role="status"
-                    aria-hidden="true"
-                  />
-                )}
-                Search
+          </div>
+          <div className="col-md-6">
+            <div className="form-group">
+              <label htmlFor="keyword" className="text-light">Keyword:</label>
+              <input type="text" name="q" onChange={this._handleChangeCriteria} id="keyword" className="form-control" />
+            </div>
+          </div>
+          <div className="col-md-12">
+            <button
+              type="submit"
+              className="btn btn-success"
+              disabled={isFetching}
+            >
+              {isFetching && (
+                <span
+                  className="spinner-border spinner-border-sm mr-1"
+                  role="status"
+                  aria-hidden="true"
+                />
+              )}
+              Search
               </button>
-            </div>
-          
+          </div>
+
         </div>
       </form>
     );

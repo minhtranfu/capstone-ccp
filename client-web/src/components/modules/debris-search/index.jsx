@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import DebrisSearchBox from './DebrisSearchBox';
 import Helmet from 'react-helmet-async';
 import Skeleton from 'react-loading-skeleton';
 
-import { debrisServices, materialServices } from "Services/domain/ccp";
+import { debrisServices } from 'Services/domain/ccp';
+import DebrisSearchBox from './DebrisSearchBox';
 
 class DebrisSearch extends Component {
   constructor(props) {
@@ -54,7 +54,7 @@ class DebrisSearch extends Component {
         <Helmet>
           <title>Home</title>
         </Helmet>
-        <div className="section-search text-light">
+        <div className="section-search">
           <div className="container">
             <DebrisSearchBox onSearch={this._handleSearch} isFetching={isFetching} />
           </div>
