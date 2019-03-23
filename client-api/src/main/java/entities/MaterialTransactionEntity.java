@@ -20,7 +20,8 @@ public class MaterialTransactionEntity {
 	private Double price;
 
 	@Positive
-	private Integer quantity;
+	@NotNull
+	private Double quantity;
 
 	private String unit;
 
@@ -86,11 +87,11 @@ public class MaterialTransactionEntity {
 
 	@Basic
 	@Column(name = "quantity", nullable = true)
-	public Integer getQuantity() {
+	public Double getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Integer quantity) {
+	public void setQuantity(Double quantity) {
 
 
 		this.quantity = quantity;

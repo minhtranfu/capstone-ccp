@@ -13,11 +13,13 @@ import java.time.LocalDateTime;
 public class MaterialTypeEntity {
 	private long id;
 	private String name;
+	private String unit;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 	private boolean isDeleted;
 
 	private GeneralMaterialTypeEntity generalMaterialType;
+
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -37,6 +39,16 @@ public class MaterialTypeEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Basic
+	@Column(name = "unit",length = 256)
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
 	}
 
 	@Basic
@@ -69,7 +81,6 @@ public class MaterialTypeEntity {
 	public void setDeleted(boolean deleted) {
 		isDeleted = deleted;
 	}
-
 
 
 	@ManyToOne

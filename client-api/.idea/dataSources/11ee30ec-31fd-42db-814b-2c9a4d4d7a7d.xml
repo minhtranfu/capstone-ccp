@@ -2850,16 +2850,19 @@
     <column id="613" parent="303" name="price">
       <Position>2</Position>
       <DataType>double|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="614" parent="303" name="quantity">
       <Position>3</Position>
-      <DataType>int(11)|0s</DataType>
+      <DataType>double|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="615" parent="303" name="unit">
       <Position>4</Position>
       <DataType>varchar(256)|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="616" parent="303" name="requester_address">

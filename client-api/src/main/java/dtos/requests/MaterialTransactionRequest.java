@@ -1,19 +1,18 @@
 package dtos.requests;
 
 import dtos.IdOnly;
-import entities.MaterialEntity;
-import entities.MaterialTransactionEntity;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.time.LocalDateTime;
 
 public class MaterialTransactionRequest {
 
 	@Positive
 	private Double price;
+
 	@Positive
-	private Integer quantity;
+	@NegativeOrZero
+	private Double quantity;
 
 	@NotNull
 	@NotBlank
@@ -45,11 +44,11 @@ public class MaterialTransactionRequest {
 		this.price = price;
 	}
 
-	public Integer getQuantity() {
+	public Double getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Integer quantity) {
+	public void setQuantity(Double quantity) {
 		this.quantity = quantity;
 	}
 

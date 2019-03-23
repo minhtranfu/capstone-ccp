@@ -86,7 +86,7 @@ public class MaterialTransactionResource {
 		materialTransactionEntity.setMaterialLat(foundMaterial.getConstruction().getLatitude());
 
 		materialTransactionEntity.setPrice(foundMaterial.getPrice());
-		materialTransactionEntity.setUnit(foundMaterial.getUnit());
+		materialTransactionEntity.setUnit(foundMaterial.getMaterialType().getUnit());
 
 
 		//  1/30/19 set status to pending

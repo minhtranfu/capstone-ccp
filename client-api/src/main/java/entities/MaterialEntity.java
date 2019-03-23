@@ -1,5 +1,6 @@
 package entities;
 
+import org.hibernate.annotations.CollectionId;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -18,6 +19,7 @@ public class MaterialEntity {
 	private String name;
 	@Positive
 	private double price;
+
 
 	@NotNull
 	@NotEmpty
@@ -70,6 +72,9 @@ public class MaterialEntity {
 	public void setPrice(double price) {
 		this.price = price;
 	}
+
+
+
 
 
 	@Basic
