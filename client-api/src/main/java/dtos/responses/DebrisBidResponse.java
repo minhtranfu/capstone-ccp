@@ -26,7 +26,7 @@ public class DebrisBidResponse {
 	@NotNull
 	private IdOnly supplier;
 	@NotNull
-	private IdOnly debrisPost;
+	private DebrisBidDebrisPostResponse debrisPost;
 
 	public DebrisBidResponse() {
 	}
@@ -92,14 +92,15 @@ public class DebrisBidResponse {
 	}
 
 	public void setSupplier(IdOnly supplier) {
+
 		this.supplier = supplier;
 	}
 
-	public IdOnly getDebrisPost() {
+	public DebrisBidDebrisPostResponse getDebrisPost() {
 		return debrisPost;
 	}
 
-	public void setDebrisPost(IdOnly debrisPost) {
+	public void setDebrisPost(DebrisBidDebrisPostResponse debrisPost) {
 		this.debrisPost = debrisPost;
 	}
 }
