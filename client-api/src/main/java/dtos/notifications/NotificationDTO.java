@@ -58,8 +58,12 @@ public class NotificationDTO {
 	}
 
 	public enum ClickActionDestination {
+
 		EQUIPMENTS("equipments"),
-		TRANSACTIONS("transactions");
+		TRANSACTIONS("transactions"),
+		DEBRIS_TRANSACTIONS("debrisTransactions"),
+		DEBRIS_FEEDBACK("debrisFeedbacks")
+		;
 
 		String destination;
 
@@ -76,5 +80,13 @@ public class NotificationDTO {
 		return clickActionDestination.getDestination() +"/"+ id;
 	}
 
-
+	@Override
+	public String toString() {
+		return "NotificationDTO{" +
+				"title='" + title + '\'' +
+				", content='" + content + '\'' +
+				", clickAction='" + clickAction + '\'' +
+				", contractorId=" + contractorId +
+				'}';
+	}
 }

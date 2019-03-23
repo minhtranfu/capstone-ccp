@@ -54,10 +54,14 @@ public class HiringTransactionEntityListener {
 				// do nothing, what do you expect ?
 				break;
 			case CANCELED:
-				firebaseMessagingManager.sendMessage(new NotificationDTO("Request canceled",
-						String.format("Request from %s for equipment %s have been cancel", requester.getName(), equipment.getName())
+				firebaseMessagingManager.sendMessage(new NotificationDTO("Transaction canceled",
+						String.format("Transaction from %s for equipment %s have been canceled", requester.getName(), equipment.getName())
 						, supplier.getId()
 						,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
+				firebaseMessagingManager.sendMessage(new NotificationDTO("Transaction canceled",
+						String.format("Transaction from %s for equipment %s have been canceled", requester.getName(), equipment.getName())
+						, requester.getId()
+						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
 
 				break;
 			case DENIED:

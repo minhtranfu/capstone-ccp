@@ -1,5 +1,6 @@
 package entities;
 
+import listeners.entityListenters.DebrisBidEntityListener;
 import org.hibernate.annotations.Where;
 
 import javax.json.bind.annotation.JsonbTransient;
@@ -13,6 +14,7 @@ import java.util.List;
 @Where(clause = "is_deleted = 0")
 @Table(name = "debris_bid", schema = "capstone_ccp", catalog = "")
 @NamedQuery(name = "DebrisBidEntity.bySupplier", query = "select e from DebrisBidEntity e where e.supplier.id = :supplierId")
+@EntityListeners(DebrisBidEntityListener.class)
 public class DebrisBidEntity {
 
 	private long id;

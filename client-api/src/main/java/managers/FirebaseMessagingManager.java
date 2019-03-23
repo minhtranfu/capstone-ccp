@@ -104,7 +104,7 @@ public class FirebaseMessagingManager {
 	}
 
 	public void sendMessage(NotificationDTO notificationDTO) {
-
+		LOGGER.info("Sending message: "+notificationDTO);
 		long receiverId = notificationDTO.getContractorId();
 		ContractorEntity managedContractor = contractorDAO.findByIdWithValidation(receiverId);
 
