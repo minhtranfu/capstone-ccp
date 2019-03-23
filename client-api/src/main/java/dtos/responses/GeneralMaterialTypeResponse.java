@@ -1,21 +1,15 @@
-package entities;
+package dtos.responses;
 
-import org.hibernate.annotations.Where;
+import entities.MaterialTypeEntity;
 
-import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Where(clause = "is_deleted=0")
-@Table(name = "general_material_type", schema = "capstone_ccp")
-@NamedQuery(name = "GeneralMaterialTypeEntity.findAll",query = "select e from GeneralMaterialTypeEntity e")
-public class GeneralMaterialTypeEntity {
+public class GeneralMaterialTypeResponse {
+
 	private long id;
 
-	@NotNull
 	private String name;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
@@ -23,9 +17,9 @@ public class GeneralMaterialTypeEntity {
 
 	private List<MaterialTypeEntity> materialTypes;
 
-	@Id
-	@GeneratedValue
-	@Column(name = "id", nullable = false)
+	public GeneralMaterialTypeResponse() {
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -34,8 +28,6 @@ public class GeneralMaterialTypeEntity {
 		this.id = id;
 	}
 
-	@Basic
-	@Column(name = "name", nullable = false, length = 256)
 	public String getName() {
 		return name;
 	}
@@ -44,8 +36,6 @@ public class GeneralMaterialTypeEntity {
 		this.name = name;
 	}
 
-	@Basic
-	@Column(name = "created_time", nullable = true, insertable = false, updatable = false)
 	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
@@ -54,8 +44,6 @@ public class GeneralMaterialTypeEntity {
 		this.createdTime = createdTime;
 	}
 
-	@Basic
-	@Column(name = "updated_time", nullable = true, insertable = false, updatable = false)
 	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
@@ -64,8 +52,6 @@ public class GeneralMaterialTypeEntity {
 		this.updatedTime = updatedTime;
 	}
 
-	@Basic
-	@Column(name = "is_deleted", nullable = true)
 	public boolean isDeleted() {
 		return isDeleted;
 	}
@@ -74,9 +60,6 @@ public class GeneralMaterialTypeEntity {
 		isDeleted = deleted;
 	}
 
-
-	@JsonbTransient
-	@OneToMany(mappedBy = "generalMaterialType")
 	public List<MaterialTypeEntity> getMaterialTypes() {
 		return materialTypes;
 	}

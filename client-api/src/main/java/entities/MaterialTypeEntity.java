@@ -85,7 +85,6 @@ public class MaterialTypeEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "general_material_type_id")
-	@JsonbTransient
 	public GeneralMaterialTypeEntity getGeneralMaterialType() {
 		return generalMaterialType;
 	}

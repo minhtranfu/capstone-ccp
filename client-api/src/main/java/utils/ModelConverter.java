@@ -4,6 +4,7 @@ import dtos.Credentials;
 import dtos.requests.*;
 import dtos.responses.ContractorResponse;
 import dtos.responses.DebrisBidResponse;
+import dtos.responses.GeneralMaterialTypeResponse;
 import entities.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -167,6 +168,10 @@ public class ModelConverter {
 
 	public ContractorResponse toResponse(ContractorEntity foundContractor) {
 		return modelMapper.map(foundContractor, ContractorResponse.class);
+	}
+
+	public GeneralMaterialTypeResponse toResponse(GeneralMaterialTypeEntity generalMaterialTypeEntity) {
+		return modelMapper.map(generalMaterialTypeEntity, GeneralMaterialTypeResponse.class);
 	}
 }
 
