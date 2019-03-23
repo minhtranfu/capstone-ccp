@@ -1,28 +1,27 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import Helmet from "react-helmet-async";
-import { Collapse } from "reactstrap";
+import StarRatings from 'react-star-ratings';
+import { Alert } from "reactstrap";
 
 import Image from "../../common/Image";
-import { connect } from "react-redux";
 import { authActions } from "../../../redux/actions";
 import { formatPrice, formatDate } from "Utils/format.utils";
-import { debrisServices } from "Services/domain/ccp";
-import StarRatings from 'react-star-ratings';
+import { debrisServices, debrisTransactionServices } from "Services/domain/ccp";
+import BidForm from './BidForm';
+import { getErrorMessage } from "Utils/common.utils";
+import SweetAlert from "react-bootstrap-sweetalert/lib/dist/SweetAlert";
+import { ComponentBlocking } from "Components/common";
 
 class DebrisDetail extends Component {
   state = {
     debris: {},
-    availableTimeRanges: [],
-    transaction: {},
-    error: {},
-    redirectToTransaction: false,
-    address: ""
   };
 
   /**
-   * Load equipment detail
+   * Load debris detail
    */
   _loadData = async () => {
     const { params } = this.props.match;
@@ -35,21 +34,57 @@ class DebrisDetail extends Component {
     });
   };
 
-  /**
-   * Navigate to clicked image in nav owl
-   */
-  _showImage = index => {
-    this.mainOwl.to(index, 250);
-  };
-
   componentDidMount() {
     this._loadData();
     // this._getCurrentLocation();
   }
 
+  /**
+   * Set choosedBidId to state to show a confirm
+   */
+  _handleChooseBid = choosedBidId => {
+    this.setState({
+      choosedBidId
+    });
+  };
+
+  /**
+   * Post debris transaction when user confirm choose a bid
+   */
+  _handleConfirmChooseBid = async () => {
+    const { debris, choosedBidId } = this.state;
+    const debrisTransaction = {
+      debrisPost: {
+        id: debris.id
+      },
+      debrisBid: {
+        id: choosedBidId
+      }
+    };
+
+    this.setState({
+      isFetching: true,
+      choosedBidId: null
+    });
+    try {
+      const transacstion = await debrisTransactionServices.postTransaction(debrisTransaction);
+      this.setState({
+        transacstion,
+        isFetching: false
+      });
+    } catch (error) {
+      const messsage = getErrorMessage(error);
+      this.setState({
+        messsage,
+        isFetching: false
+      });
+    }
+  };
+
   _renderBids = () => {
     const { debris } = this.state;
     const { debrisBids } = debris;
+    const isRequester = this._isRequester();
 
     if (!debrisBids || debrisBids.length === 0) {
       return null;
@@ -83,36 +118,115 @@ class DebrisDetail extends Component {
                   {bid.supplier.debrisFeedbacksCount} reviews
                 </div>
               </div>
-              <div className="d-lg-none mx-auto mt-1"><div class="price text-large">12,500K</div></div>
+              <div className="d-lg-none mx-auto mt-1">
+                <div className="price text-large">{formatPrice(bid.price)}</div>
+                {isRequester &&
+                  <button className="btn btn-outline-primary float-right mt-2" onClick={() => this._handleChooseBid(bid.id)}>Choose</button>
+                }
+              </div>
             </div>
             <div className="flex-fill px-md-3 mt-2 mt-md-0">
               {bid.description}
             </div>
           </div>
           <div className="bid-infos d-none d-lg-block">
-            <div className="price text-x-large">{formatPrice(bid.price)}</div>
+            <div className="price text-x-large">
+              {formatPrice(bid.price)}
+            </div>
+            {isRequester &&
+              <button className="btn btn-outline-primary float-right mt-2" onClick={() => this._handleChooseBid(bid.id)}>Choose</button>
+            }
           </div>
         </div>
       );
     });
   };
 
-  _toggleBidForm = () => {
-    const { isShowBidForm } = this.state;
+  /**
+   * Clear message to hide alert
+   */
+  _clearMessage = () => {
     this.setState({
-      isShowBidForm: !isShowBidForm
+      message: null
     });
   };
 
+  _handleBidSuccess = bid => {
+    const { debris } = this.state;
+    const { debrisBids } = debris;
+
+    debrisBids.push(bid);
+    this.setState({
+      debris: {
+        ...debris
+      }
+    });
+  };
+
+  /**
+   * Check current user is requester of current debris post
+   */
+  _isRequester = () => {
+    const { authentication } = this.props;
+    const { user } = authentication;
+    const { debris } = this.state;
+
+    if (!debris || !debris.id) {
+      return false;
+    }
+
+    if (!user || !user.contractor) {
+      return false;
+    }
+
+    return debris.requester.id === user.contractor.id;
+  }
+
+  _renderAlert = () => {
+    const { choosedBidId, transacstion } = this.state;
+
+    if (!!choosedBidId) {
+      return (
+        <SweetAlert
+          info
+          showCancel
+          title="Choose this bid?"
+          confirmBtnText="Yes"
+          onConfirm={this._handleConfirmChooseBid}
+          onCancel={() => this.setState({ choosedBidId: null })}
+        />
+      );
+    }
+
+    if (!!transacstion) {
+      return (
+        <SweetAlert
+          success
+          title="A transaction with choosed bid was created!"
+          onConfirm={() => this.setState({ transacstion: null })}
+          onCancel={() => this.setState({ transacstion: null })}
+        />
+      );
+    }
+
+    return null;
+  };
+
   render() {
-    const { debris, isShowBidForm } = this.state;
-    const { authentication, toggleLoginModal } = this.props;
+    const { debris, isFetching, message } = this.state;
+    const { debrisBids } = debris;
+    const { authentication } = this.props;
     const { user } = authentication;
     const { debrisServiceTypes } = debris;
     const services = !debrisServiceTypes ? '' : debrisServiceTypes.map(type => type.name).join(', ');
+    const isRequester = this._isRequester();
 
     return (
       <div className="container">
+        {this._renderAlert()}
+        {isFetching &&
+          <ComponentBlocking/>
+        }
         {/* Change current title */}
         <Helmet>
           <title>{debris.title || ""} | Debris request detail</title>
@@ -124,6 +238,9 @@ class DebrisDetail extends Component {
             {/* <div className="image-169 mb-2 shadow-sm">
               <Image src={debris.thumbnailImageUrl} />
             </div> */}
+            <Alert isOpen={!!message} toggle={this._clearMessage}>
+              {message}
+            </Alert>
             <div className="py-2 px-3 shadow-sm bg-white">
               <h1 className="">{debris.title || <Skeleton />}</h1>
               <div className="row">
@@ -162,40 +279,17 @@ class DebrisDetail extends Component {
               </div>
             </div>
             {!debris.id && <Skeleton height={135} count={10} />}
-            {user && !isShowBidForm &&
-              <button onClick={this._toggleBidForm} className="btn btn-lg btn-primary btn-block my-2">
-                <i className="fal fa-gavel"></i> Bid this request
-              </button>
+            {debris.id && !isRequester &&
+              <BidForm debrisId={debris.id} onSuccess={this._handleBidSuccess} />
             }
-            {user && isShowBidForm &&
-              <button onClick={this._toggleBidForm} className="btn btn-lg btn-outline-primary btn-block my-2">
-                <i className="fal fa-times"></i> Close bid form
-              </button>
+            {debrisBids &&
+              <h4 className="my-3">
+                Bids:
+              </h4>
             }
-            {user &&
-              <Collapse isOpen={isShowBidForm}>
-                <form className="bg-white p-3 shadow-sm">
-                  <h5 className="text-center">Bid this request</h5>
-                  <div className="form-group">
-                    <label htmlFor="bid_price">Price: <i className="text-danger">*</i></label>
-                    <input type="number" className="form-control" min="1" id="bid_price" autoFocus/>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="bid_description">Description: <i className="text-danger">*</i></label>
-                    <textarea name="description" className="form-control" id="bid_description" cols="30" rows="3"></textarea>
-                  </div>
-                  <div className="form-group text-center">
-                    <button className="btn btn-lg btn-primary"><i className="fal fa-gavel"></i> Bid</button>
-                  </div>
-                </form>
-              </Collapse>
+            {debrisBids && !debrisBids.length &&
+              <div className="alert alert-info text-center"><i className="fal fa-info-circle"></i> There is no bid now!</div>
             }
-            {!user &&
-              <button className="btn btn-lg btn-primary btn-block my-2" onClick={toggleLoginModal}><i className="fal fa-sign-in"></i> Login to bid</button>
-            }
-            <h4 className="my-3">
-              Bids:
-            </h4>
             {this._renderBids()}
           </div>
           {/* Right Sidebar */}
