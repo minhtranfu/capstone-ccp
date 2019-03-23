@@ -130,6 +130,9 @@ public class ModelConverter {
 	public DebrisPostEntity toEntity(DebrisPostRequest debrisPostRequest) {
 		return modelMapper.map(debrisPostRequest, DebrisPostEntity.class);
 	}
+	public DebrisPostEntity toEntity(DebrisPostPostRequest debrisPostPostRequest) {
+		return modelMapper.map(debrisPostPostRequest, DebrisPostEntity.class);
+	}
 
 	public void toEntity( DebrisPostRequest debrisPostRequest, DebrisPostEntity debrisPostEntity) {
 		debrisPostEntity.getDebrisServiceTypes().clear();

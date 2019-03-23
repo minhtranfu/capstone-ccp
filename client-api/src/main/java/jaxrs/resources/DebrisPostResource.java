@@ -1,25 +1,19 @@
 package jaxrs.resources;
 
-import daos.ConstructionDAO;
-import daos.ContractorDAO;
-import daos.DebrisPostDAO;
-import daos.DebrisServiceTypeDAO;
-import dtos.IdOnly;
+import daos.*;
+import dtos.requests.DebrisPostPostRequest;
 import dtos.requests.DebrisPostRequest;
 import entities.ContractorEntity;
+import entities.DebrisImageEntity;
 import entities.DebrisPostEntity;
-import entities.DebrisServiceTypeEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
-import org.omg.CORBA.PUBLIC_MEMBER;
 import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.json.JsonBuilderFactory;
 import javax.json.JsonNumber;
-import javax.json.bind.JsonbBuilder;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -27,7 +21,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 @Path("debrisPosts")
@@ -52,6 +45,9 @@ public class DebrisPostResource {
 
 	@Inject
 	DebrisImageSubResource debrisImageSubResource;
+
+	@Inject
+	DebrisImageDAO debrisImageDAO;
 
 	@Inject
 	@Claim("contractorId")
@@ -110,22 +106,39 @@ public class DebrisPostResource {
 
 	}
 
+	private void validatePutPost(DebrisPostEntity debrisPostEntity) {
+		debrisPostEntity.getDebrisImages().stream()
+				.filter(debrisImageEntity -> debrisImageEntity.getId() == debrisPostEntity.getThumbnailImage().getId())
+				.findAny().orElseThrow(() -> new BadRequestException(String.format(
+				"thumbnail id=%d not included in image list", debrisPostEntity.getThumbnailImage().getId())));
+
+	}
 	@POST
 	@RolesAllowed("contractor")
-	public Response insertDebrisPost(@Valid DebrisPostRequest debrisPostRequest) {
+	public Response insertDebrisPost(@Valid DebrisPostPostRequest debrisPostRequest) {
 		DebrisPostEntity debrisPostEntity = modelConverter.toEntity(debrisPostRequest);
 
-//		debrisPostEntity.getDebrisServiceTypes().clear();
-//		for (IdOnly debrisServiceType : debrisPostRequest.getDebrisServiceTypes()) {
-//			DebrisServiceTypeEntity byIdWithValidation = debrisServiceTypeDAO.findByIdWithValidation(debrisServiceType.getId());
-//			debrisPostEntity.getDebrisServiceTypes().add(byIdWithValidation);
-//		}
+
 
 		long requesterId = getClaimContractorId();
 		ContractorEntity requester = new ContractorEntity();
 		requester.setId(requesterId);
 		debrisPostEntity.setRequester(requester);
-		return Response.status(Response.Status.CREATED).entity(debrisPostDAO.merge(debrisPostEntity)).build();
+
+		validatePutPost(debrisPostEntity);
+
+		debrisPostDAO.persist(debrisPostEntity);
+
+
+		// TODO: 3/23/19 check if image already belongs to another post
+		//only add this in post, every edit in future related to image, we use image sub resource
+		for (DebrisImageEntity debrisImage : debrisPostEntity.getDebrisImages()) {
+			DebrisImageEntity managedImage = debrisImageDAO.findByIdWithValidation(debrisImage.getId());
+			managedImage.setDebrisPost(debrisPostEntity);
+			debrisImageDAO.merge(managedImage);
+		}
+
+		return Response.status(Response.Status.CREATED).entity(debrisPostDAO.findByID(debrisPostEntity.getId())).build();
 	}
 
 
@@ -139,7 +152,9 @@ public class DebrisPostResource {
 		if (managedPostEntity.getRequester().getId() != getClaimContractorId()) {
 			throw new BadRequestException("You cannot edit other people's debris post");
 		}
+
 		modelConverter.toEntity(putRequest, managedPostEntity);
+		validatePutPost(managedPostEntity);
 //		LOGGER.info("updating:" + JsonbBuilder.create().toJson(managedPostEntity));
 		return Response.ok(debrisPostDAO.merge(managedPostEntity)).build();
 	}

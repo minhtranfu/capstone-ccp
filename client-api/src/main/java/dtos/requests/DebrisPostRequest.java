@@ -18,6 +18,7 @@ public class DebrisPostRequest {
 	private String title;
 
 	@Valid
+	@NotNull
 	private IdOnly thumbnailImage;
 
 	@NotNull
@@ -38,6 +39,8 @@ public class DebrisPostRequest {
 
 	@NotNull
 	private List<@Valid IdOnly> debrisServiceTypes;
+
+
 
 
 
@@ -99,6 +102,7 @@ public class DebrisPostRequest {
 	}
 
 	public void setDebrisServiceTypes(List<IdOnly> debrisServiceTypes) {
+
 		this.debrisServiceTypes = debrisServiceTypes;
 	}
 }
