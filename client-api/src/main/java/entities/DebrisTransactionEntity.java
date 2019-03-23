@@ -134,7 +134,7 @@ public class DebrisTransactionEntity {
 		this.debrisFeedback = debrisFeedbacksById;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.MERGE})
 	@JoinColumn(name = "debris_post_id", referencedColumnName = "id")
 	public DebrisPostEntity getDebrisPost() {
 		return debrisPost;
@@ -144,7 +144,7 @@ public class DebrisTransactionEntity {
 		this.debrisPost = debrisPostByDebrisPostId;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.MERGE})
 	@JoinColumn(name = "debris_bid_id", referencedColumnName = "id")
 	public DebrisBidEntity getDebrisBid() {
 		return debrisBid;

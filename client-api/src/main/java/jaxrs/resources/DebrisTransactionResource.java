@@ -81,14 +81,15 @@ public class DebrisTransactionResource {
 			throw new BadRequestException("DebrisPost must be PENDING to be ACCEPTED!");
 		}
 
-		//3/21/19 validate must not any processing transaction
-		//3/21/19 no needed because only PENDING post can create transaction
+		managedBid.setStatus(DebrisBidEntity.Status.ACCEPTED);
+		managedPost.setStatus(DebrisPostEntity.Status.ACCEPTED);
 
 		//  3/21/19  set status to ACCEPTED
 		debrisTransactionEntity.setStatus(DebrisTransactionEntity.Status.ACCEPTED);
-		debrisTransactionDAO.persist(debrisTransactionEntity);
+
+//		debrisTransactionDAO.merge(debrisTransactionEntity);
 		return Response.status(Response.Status.CREATED).entity(
-				debrisTransactionDAO.findByID(debrisTransactionEntity.getId())
+				debrisTransactionDAO.findByID(debrisTransactionDAO.merge(debrisTransactionEntity).getId())
 		).build();
 	}
 
