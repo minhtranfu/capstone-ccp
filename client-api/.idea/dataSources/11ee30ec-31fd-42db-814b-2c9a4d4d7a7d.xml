@@ -2805,195 +2805,197 @@
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="605" parent="302" name="unit">
-      <Position>14</Position>
-      <DataType>varchar(256)|0s</DataType>
-      <ColumnKind>normal</ColumnKind>
-    </column>
-    <index id="606" parent="302" name="material_construction_id_fk">
+    <index id="605" parent="302" name="material_construction_id_fk">
       <ColNames>construction_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="607" parent="302" name="material_contractor_id_fk">
+    <index id="606" parent="302" name="material_contractor_id_fk">
       <ColNames>contractor_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="608" parent="302" name="material_material_type_id_fk">
+    <index id="607" parent="302" name="material_material_type_id_fk">
       <ColNames>material_type_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="609" parent="302" name="PRIMARY">
+    <key id="608" parent="302" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="610" parent="302" name="material_construction_id_fk">
+    <foreign-key id="609" parent="302" name="material_construction_id_fk">
       <ColNames>construction_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>construction</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <foreign-key id="611" parent="302" name="material_contractor_id_fk">
+    <foreign-key id="610" parent="302" name="material_contractor_id_fk">
       <ColNames>contractor_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>contractor</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <foreign-key id="612" parent="302" name="material_material_type_id_fk">
+    <foreign-key id="611" parent="302" name="material_material_type_id_fk">
       <ColNames>material_type_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>material_type</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="613" parent="303" name="id">
+    <column id="612" parent="303" name="id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="614" parent="303" name="price">
+    <column id="613" parent="303" name="price">
       <Position>2</Position>
       <DataType>double|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="615" parent="303" name="quantity">
+    <column id="614" parent="303" name="quantity">
       <Position>3</Position>
       <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="616" parent="303" name="unit">
+    <column id="615" parent="303" name="unit">
       <Position>4</Position>
       <DataType>varchar(256)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="617" parent="303" name="requester_address">
+    <column id="616" parent="303" name="requester_address">
       <Position>5</Position>
       <DataType>varchar(256)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="618" parent="303" name="requester_lat">
+    <column id="617" parent="303" name="requester_lat">
       <Position>6</Position>
       <DataType>double|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="619" parent="303" name="requester_long">
+    <column id="618" parent="303" name="requester_long">
       <Position>7</Position>
       <DataType>double|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="620" parent="303" name="material_address">
+    <column id="619" parent="303" name="material_address">
       <Position>8</Position>
       <DataType>varchar(256)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="621" parent="303" name="material_lat">
+    <column id="620" parent="303" name="material_lat">
       <Position>9</Position>
       <DataType>double|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="622" parent="303" name="material_long">
+    <column id="621" parent="303" name="material_long">
       <Position>10</Position>
       <DataType>double|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="623" parent="303" name="status">
+    <column id="622" parent="303" name="status">
       <Position>11</Position>
       <DataType>varchar(256)|0s</DataType>
       <DefaultExpression>&apos;PENDING&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="624" parent="303" name="created_time">
+    <column id="623" parent="303" name="created_time">
       <Position>12</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="625" parent="303" name="updated_time">
+    <column id="624" parent="303" name="updated_time">
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
-    <column id="626" parent="303" name="is_deleted">
+    <column id="625" parent="303" name="is_deleted">
       <Position>14</Position>
       <DataType>tinyint(1)|0s</DataType>
       <DefaultExpression>&apos;0&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="627" parent="303" name="material_id">
+    <column id="626" parent="303" name="material_id">
       <Position>15</Position>
       <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="628" parent="303" name="requester_id">
+    <column id="627" parent="303" name="requester_id">
       <Position>16</Position>
       <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="629" parent="303" name="material_transaction_material_id_fk">
+    <index id="628" parent="303" name="material_transaction_material_id_fk">
       <ColNames>material_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="630" parent="303" name="material_transaction_contractor_id_fk">
+    <index id="629" parent="303" name="material_transaction_contractor_id_fk">
       <ColNames>requester_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="631" parent="303" name="PRIMARY">
+    <key id="630" parent="303" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="632" parent="303" name="material_transaction_material_id_fk">
+    <foreign-key id="631" parent="303" name="material_transaction_material_id_fk">
       <ColNames>material_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>material</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <foreign-key id="633" parent="303" name="material_transaction_contractor_id_fk">
+    <foreign-key id="632" parent="303" name="material_transaction_contractor_id_fk">
       <ColNames>requester_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>contractor</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="634" parent="304" name="id">
+    <column id="633" parent="304" name="id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="635" parent="304" name="name">
+    <column id="634" parent="304" name="name">
       <Position>2</Position>
       <DataType>varchar(256)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="636" parent="304" name="created_time">
+    <column id="635" parent="304" name="created_time">
       <Position>3</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="637" parent="304" name="updated_time">
+    <column id="636" parent="304" name="updated_time">
       <Position>4</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
-    <column id="638" parent="304" name="is_deleted">
+    <column id="637" parent="304" name="is_deleted">
       <Position>5</Position>
       <DataType>tinyint(1)|0s</DataType>
       <DefaultExpression>&apos;0&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="639" parent="304" name="general_material_type_id">
+    <column id="638" parent="304" name="general_material_type_id">
       <Position>6</Position>
       <DataType>int(11)|0s</DataType>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <column id="639" parent="304" name="unit">
+      <Position>7</Position>
+      <DataType>varchar(256)|0s</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>&apos;&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
     <index id="640" parent="304" name="material_type_material_general_type_id_fk">

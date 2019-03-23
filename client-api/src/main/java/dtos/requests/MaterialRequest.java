@@ -20,9 +20,7 @@ public class MaterialRequest {
 	@NotNull
 	@NotEmpty
 	private String thumbnailImageUrl;
-	@NotNull
-	@NotEmpty
-	private String unit;
+
 	private String manufacturer;
 	private String description;
 
@@ -61,14 +59,6 @@ public class MaterialRequest {
 
 	public void setThumbnailImageUrl(String thumbnailImageUrl) {
 		this.thumbnailImageUrl = thumbnailImageUrl;
-	}
-
-	public String getUnit() {
-		return unit;
-	}
-
-	public void setUnit(String unit) {
-		this.unit = unit;
 	}
 
 	public String getManufacturer() {

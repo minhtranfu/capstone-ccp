@@ -24,8 +24,6 @@ public class MaterialEntity {
 	private String thumbnailImageUrl;
 
 	@NotNull
-	@NotEmpty
-	private String unit;
 	private String manufacturer;
 	private String description;
 
@@ -73,15 +71,6 @@ public class MaterialEntity {
 		this.price = price;
 	}
 
-	@Basic
-	@Column(name = "unit", nullable = true, length = 256)
-	public String getUnit() {
-		return unit;
-	}
-
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
 
 	@Basic
 	@Column(name = "manufacturer", nullable = true, length = 256)
