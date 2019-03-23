@@ -51,6 +51,9 @@ public class DebrisPostResource {
 	ModelConverter modelConverter;
 
 	@Inject
+	DebrisImageSubResource debrisImageSubResource;
+
+	@Inject
 	@Claim("contractorId")
 	ClaimValue<JsonNumber> claimContractorId;
 
@@ -199,6 +202,12 @@ public class DebrisPostResource {
 	public Response getAllByRequester() {
 		contractorDAO.findByIdWithValidation(getClaimContractorId());
 		return Response.ok(debrisPostDAO.getByRequester(getClaimContractorId())).build();
+	}
+
+	@Path("{id:\\d+}/images")
+	public DebrisImageSubResource toDebrisImageSubResource(@PathParam("id") long postId) {
+		debrisImageSubResource.setDebrisPostEntity(debrisPostDAO.findByIdWithValidation(postId));
+		return debrisImageSubResource;
 	}
 
 }

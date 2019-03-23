@@ -36,7 +36,6 @@ import java.util.function.Supplier;
 
 import static utils.Constants.BUCKET_NAME;
 
-@Path("images")
 @Stateless
 @Produces(MediaType.APPLICATION_JSON)
 public class EquipmentImageSubResource {
@@ -105,7 +104,7 @@ public class EquipmentImageSubResource {
 	}
 
 	@DELETE
-	@Path("{id:d\\+}")
+	@Path("{id:\\d+}")
 	public Response deleteImage(@PathParam("id") long imageId) {
 
 		EquipmentImageEntity foundImage = validateImage(imageId);
@@ -116,7 +115,7 @@ public class EquipmentImageSubResource {
 		}
 
 		//check if delete thumbnail image
-		if (equipmentEntity.getThumbnailImage().getId() == imageId) {
+		if (equipmentEntity.getThumbnailImage() != null && equipmentEntity.getThumbnailImage().getId() == imageId) {
 			//set thumbnail to another image
 			equipmentEntity.setThumbnailImage(equipmentEntity.getEquipmentImages().stream().filter(
 					equipmentImageEntity -> equipmentImageEntity.getId() != imageId

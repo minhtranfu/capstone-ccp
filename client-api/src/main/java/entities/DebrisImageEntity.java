@@ -1,5 +1,6 @@
 package entities;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -8,9 +9,11 @@ import java.util.Objects;
 public class DebrisImageEntity {
 	private long id;
 	private String url;
-	private Integer debrisPostId;
+
+	private DebrisPostEntity debrisPost;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;
@@ -30,14 +33,16 @@ public class DebrisImageEntity {
 		this.url = url;
 	}
 
-	@Basic
-	@Column(name = "debris_post_id", nullable = true)
-	public Integer getDebrisPostId() {
-		return debrisPostId;
+
+	@ManyToOne
+	@JsonbTransient
+	@JoinColumn(name = "debris_post_id", nullable = true)
+	public DebrisPostEntity getDebrisPost() {
+		return debrisPost;
 	}
 
-	public void setDebrisPostId(Integer debrisPostId) {
-		this.debrisPostId = debrisPostId;
+	public void setDebrisPost(DebrisPostEntity debrisPost) {
+		this.debrisPost = debrisPost;
 	}
 
 	@Override
@@ -45,13 +50,11 @@ public class DebrisImageEntity {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		DebrisImageEntity that = (DebrisImageEntity) o;
-		return id == that.id &&
-				Objects.equals(url, that.url) &&
-				Objects.equals(debrisPostId, that.debrisPostId);
+		return id == that.id;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, url, debrisPostId);
+		return Objects.hash(id);
 	}
 }

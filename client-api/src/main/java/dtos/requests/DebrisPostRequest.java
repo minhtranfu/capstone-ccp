@@ -17,6 +17,9 @@ public class DebrisPostRequest {
 	@NotBlank
 	private String title;
 
+	@Valid
+	private IdOnly thumbnailImage;
+
 	@NotNull
 	@NotBlank
 	private String address;
@@ -41,6 +44,14 @@ public class DebrisPostRequest {
 	public DebrisPostRequest() {
 	}
 
+
+	public IdOnly getThumbnailImage() {
+		return thumbnailImage;
+	}
+
+	public void setThumbnailImage(IdOnly thumbnailImage) {
+		this.thumbnailImage = thumbnailImage;
+	}
 
 	public String getTitle() {
 		return title;

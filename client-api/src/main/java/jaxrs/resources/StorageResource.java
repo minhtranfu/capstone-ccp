@@ -3,7 +3,10 @@ package jaxrs.resources;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
+import daos.DebrisImageDAO;
 import dtos.responses.MessageResponse;
+import entities.DebrisImageEntity;
+import entities.EquipmentImageEntity;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
@@ -17,6 +20,7 @@ import utils.ImageUtil;
 //import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 //import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.ws.rs.*;
@@ -40,6 +44,8 @@ public class StorageResource {
 	@Context
 	private ServletContext servletContext;
 
+	@Inject
+	DebrisImageDAO debrisImageDAO;
 
 	@GET
 	public Response getFiles() throws IOException {
@@ -91,6 +97,22 @@ public class StorageResource {
 		return Response.ok(urls).build();
 	}
 
+	@POST
+	@Path("debrisImages")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response uploadTempImages(List<Attachment> attachmentList) throws IOException {
+		String credentialPath = servletContext.getRealPath("/WEB-INF/" + Constants.CREDENTIAL_JSON_FILENAME);
+		List<String> urlList = ImageUtil.uploadImages(credentialPath, attachmentList);
+		List<DebrisImageEntity> resultList = new ArrayList<>();
+
+		for (String url : urlList) {
+			DebrisImageEntity debrisPostImageEntity = new DebrisImageEntity();
+			debrisPostImageEntity.setUrl(url);
+			debrisImageDAO.persist(debrisPostImageEntity);
+			resultList.add(debrisPostImageEntity);
+		}
+		return Response.status(Response.Status.CREATED).entity(resultList).build();
+	}
 
 
 }

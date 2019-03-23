@@ -25,6 +25,9 @@ public class DebrisPostEntity {
 	@NotBlank
 	private String address;
 
+
+	private DebrisImageEntity thumbnailImage;
+
 	@Max(180)
 	@Min(-180)
 	private double longitude;
@@ -44,6 +47,7 @@ public class DebrisPostEntity {
 	private List<DebrisBidEntity> debrisBids;
 	private List<DebrisServiceTypeEntity> debrisServiceTypes;
 	private List<DebrisTransactionEntity> debrisTransactions;
+	private List<DebrisImageEntity> debrisImages;
 
 	@Id
 	@GeneratedValue
@@ -64,6 +68,43 @@ public class DebrisPostEntity {
 
 	public void setTitle(String name) {
 		this.title = name;
+	}
+
+	@OneToOne
+	@JoinColumn(name = "thumbnail_image_id", referencedColumnName = "id")
+	public DebrisImageEntity getThumbnailImage() {
+		return thumbnailImage;
+	}
+
+	public void setThumbnailImage(DebrisImageEntity thumbnailImage) {
+		this.thumbnailImage = thumbnailImage;
+	}
+
+	@OneToMany(mappedBy = "debrisPost",cascade = {},orphanRemoval = false)
+	public List<DebrisImageEntity> getDebrisImages() {
+		return debrisImages;
+	}
+
+	public void setDebrisImages(List<DebrisImageEntity> debrisImages) {
+		this.debrisImages = debrisImages;
+	}
+
+	public void addDebrisImage(DebrisImageEntity debrisImageEntity) {
+		this.debrisImages.add(debrisImageEntity);
+		debrisImageEntity.setDebrisPost(this);
+	}
+
+	public void removeDebrisImage(DebrisImageEntity debrisImageEntity) {
+		this.debrisImages.remove(debrisImageEntity);
+		debrisImageEntity.setDebrisPost(null);
+	}
+
+	public void deleteAllDebrisImage() {
+
+		for (DebrisImageEntity debrisImage : debrisImages) {
+			debrisImage.setDebrisPost(null);
+		}
+		this.debrisImages.clear();
 	}
 
 	@Basic
