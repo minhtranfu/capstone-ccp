@@ -204,21 +204,12 @@ public class DebrisTransactionResource {
 	}
 
 	@GET
-	@Path("supplier/{id:\\d+}")
-	public Response getDebrisTransactionsBySupplierId(@PathParam("id") long supplierId) {
+	@Path("supplier")
+	@RolesAllowed("contractor")
+	public Response getDebrisTransactionsBySupplierId() {
 
 
-		//validate supplierId
-		ContractorEntity foundContractor = contractorDAO.findByID(supplierId);
-		if (foundContractor == null) {
-			//custom message for supplier not contractor
-			throw new BadRequestException(String.format("Supplier id=%d not found", supplierId));
-		}
-
-		//validate claim contractor
-		if (supplierId != claimContractorId.getValue().longValue()) {
-			throw new BadRequestException("You cannot view other people's transaction");
-		}
+		long supplierId = getClaimContractorId();
 
 		List<DebrisTransactionEntity> debrisTransactionsBySupplierId = debrisTransactionDAO.getDebrisTransactionsBySupplierId(supplierId);
 
@@ -227,21 +218,16 @@ public class DebrisTransactionResource {
 	}
 
 
+
 	@GET
-	@Path("requester/{id:\\d+}")
-	public Response getSentTransactionsAsRequester(@PathParam("id") long requesterId) {
-
-
-		ContractorEntity foundContractor = contractorDAO.findByID(requesterId);
-		if (foundContractor == null) {
-			//custom message for requester not contractor
-			throw new BadRequestException(String.format("requester id=%s not found!", requesterId));
-		}
-
-		//validate claim contractor
-		if (requesterId != claimContractorId.getValue().longValue()) {
-			throw new BadRequestException("You cannot view other people's transaction");
-		}
+	@Path("requester")
+	@RolesAllowed("contractor")
+	public Response getDebrisTransactionsAsRequester() {
+		long requesterId = getClaimContractorId();
+//		//validate claim contractor
+//		if (requesterId != claimContractorId.getValue().longValue()) {
+//			throw new BadRequestException("You cannot view other people's transaction");
+//		}
 
 		List<DebrisTransactionEntity> transactionsByRequesterId = debrisTransactionDAO.getDebrisTransactionsByRequesterId(requesterId);
 
