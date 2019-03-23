@@ -4,6 +4,7 @@ import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
 import daos.DebrisImageDAO;
+import daos.EquipmentImageDAO;
 import dtos.responses.MessageResponse;
 import entities.DebrisImageEntity;
 import entities.EquipmentImageEntity;
@@ -46,6 +47,9 @@ public class StorageResource {
 
 	@Inject
 	DebrisImageDAO debrisImageDAO;
+
+	@Inject
+	EquipmentImageDAO equipmentImageDAO;
 
 	@GET
 	public Response getFiles() throws IOException {
@@ -100,7 +104,7 @@ public class StorageResource {
 	@POST
 	@Path("debrisImages")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response uploadTempImages(List<Attachment> attachmentList) throws IOException {
+	public Response uploadTempDebrisImages(List<Attachment> attachmentList) throws IOException {
 		String credentialPath = servletContext.getRealPath("/WEB-INF/" + Constants.CREDENTIAL_JSON_FILENAME);
 		List<String> urlList = ImageUtil.uploadImages(credentialPath, attachmentList);
 		List<DebrisImageEntity> resultList = new ArrayList<>();
@@ -113,6 +117,24 @@ public class StorageResource {
 		}
 		return Response.status(Response.Status.CREATED).entity(resultList).build();
 	}
+
+	@POST
+	@Path("equipmentImages")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response uploadTempEquipmentImages(List<Attachment> attachmentList) throws IOException {
+		String credentialPath = servletContext.getRealPath("/WEB-INF/" + Constants.CREDENTIAL_JSON_FILENAME);
+		List<String> urlList = ImageUtil.uploadImages(credentialPath, attachmentList);
+		List<EquipmentImageEntity> resultList = new ArrayList<>();
+
+		for (String url : urlList) {
+			EquipmentImageEntity equipmentImageEntity = new EquipmentImageEntity();
+			equipmentImageEntity.setUrl(url);
+			equipmentImageDAO.persist(equipmentImageEntity);
+			resultList.add(equipmentImageEntity);
+		}
+		return Response.status(Response.Status.CREATED).entity(resultList).build();
+	}
+
 
 
 }
