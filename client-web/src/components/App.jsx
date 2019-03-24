@@ -38,7 +38,9 @@ class App extends Component {
     return (
       <div className="d-flex flex-column min-vh-100">
         <Header />
-        <SubHeader />
+        {authentication.user &&
+          <SubHeader />
+        }
         {Routes}
         <Footer />
         <LoginModal />
