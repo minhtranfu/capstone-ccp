@@ -34,6 +34,7 @@ nav.navbar {
     margin-top: -0.5em;
     margin-bottom: -0.5em;
     padding-top: 0.5em;
+    padding-bottom: 0.5em;
     background: #007bff;
   }
 }
@@ -101,11 +102,10 @@ nav.navbar {
   background: #fff;
 }
 
-.date-range-picker input {
-  background: #fff !important;
-}
-
 .date-range-picker {
+  input {
+    background: #fff !important;
+  }
   .custom-file-label {
     padding-left: 3rem;
   }
@@ -175,10 +175,13 @@ nav.navbar {
   word-wrap: keep-all;
   white-space: nowrap;
   background-color: #fff;
+
   .image {
     max-height: 200px;
     max-width: 300px;
     line-height: 1;
+    overflow: hidden;
+    
     img {
       max-width: 100%;
       max-height: 100%;
@@ -234,20 +237,20 @@ nav.navbar {
   z-index: 2;
   height: 2.75rem;
   overflow-y: hidden;
-}
 
-.nav-scroller .nav {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: nowrap;
-  flex-wrap: nowrap;
-  padding-bottom: 1rem;
-  margin-top: -1px;
-  overflow-x: auto;
-  color: rgba(255, 255, 255, .75);
-  text-align: center;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
+  .nav {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    padding-bottom: 1rem;
+    margin-top: -1px;
+    overflow-x: auto;
+    color: rgba(255, 255, 255, .75);
+    text-align: center;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .nav-underline {
@@ -272,11 +275,11 @@ nav.navbar {
   max-height: 106px;
   transition: max-height .3s ease-out;
   overflow: hidden;
-}
 
-.construction-card.editting {
-  max-height: 252px;
-  transition: max-height .3s ease-out;
+  &.editting {
+    max-height: 252px;
+    transition: max-height .3s ease-out;
+  }
 }
 
 .rounded-top-0 {
@@ -386,6 +389,7 @@ nav.navbar {
   max-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
+
   .toast {
     max-width: 370px;
     opacity: 1;
@@ -517,6 +521,8 @@ nav.navbar {
   overflow: hidden;
   img {
     position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     width: 100%;
   }
 }
