@@ -1,10 +1,12 @@
 import React, { PureComponent } from 'react';
+import { connect } from "react-redux";
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
 import { EQUIPMENT_SHOWABLE_STATUSES, routeConsts } from '../../../common/consts';
 import { getRoutePath } from 'Utils/common.utils';
+import { equipmentServices } from 'Services/domain/ccp';
 
 class MyEquipments extends PureComponent {
   state = {
@@ -12,8 +14,8 @@ class MyEquipments extends PureComponent {
   };
 
   _loadData = async () => {
-    const REQUESTER_ID = 12;
-    const equipments = await ccpApiService.getEquipmentsByContractorId(REQUESTER_ID);
+    const { contractor } = this.props;
+    const equipments = await equipmentServices.getEquipmentsByContractorId(contractor.id);
     this.setState({
       equipments
     });
@@ -104,7 +106,6 @@ class MyEquipments extends PureComponent {
   };
 
   render() {
-    const { equipments } = this.state;
 
     return (
       <div className="container py-4">
@@ -129,4 +130,18 @@ class MyEquipments extends PureComponent {
   }
 }
 
-export default MyEquipments;
+MyEquipments.props = {
+  contractor: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => {
+  const { authentication } = state;
+  const { user } = authentication;
+  const { contractor } = user;
+
+  return {
+    contractor
+  };
+};
+
+export default connect(mapStateToProps)(MyEquipments);

@@ -1,10 +1,12 @@
 import React, { PureComponent } from 'react';
+import { connect } from "react-redux";
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
-import { EQUIPMENT_SHOWABLE_STATUSES, routeConsts } from '../../../common/consts';
+import { routeConsts } from 'Common/consts';
 import { getRoutePath } from 'Utils/common.utils';
+import { materialServices } from 'Services/domain/ccp';
 
 class MyMaterials extends PureComponent {
   state = {
@@ -12,8 +14,9 @@ class MyMaterials extends PureComponent {
   };
 
   _loadData = async () => {
-    const REQUESTER_ID = 12;
-    const equipments = await ccpApiService.materialServices.getMaterialsBySupplierId(REQUESTER_ID);
+    const { user } = this.props;
+    const { contractor } = user;
+    const equipments = await materialServices.getMaterialsBySupplierId(contractor.id);
     this.setState({
       equipments
     });
@@ -130,4 +133,17 @@ class MyMaterials extends PureComponent {
   }
 }
 
-export default MyMaterials;
+MyMaterials.props = {
+  user: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => {
+  const { authentication } = state;
+  const { user } = authentication;
+
+  return {
+    user
+  };
+};
+
+export default connect(mapStateToProps)(MyMaterials);
