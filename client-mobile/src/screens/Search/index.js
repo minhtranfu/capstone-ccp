@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 import {
   StyleSheet,
   Text,
@@ -7,128 +7,128 @@ import {
   TouchableHighlight,
   ScrollView,
   Modal
-} from "react-native";
-import { SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
-import { Location } from "expo";
-import { grantPermission } from "../../redux/reducers/permission";
-import { autoCompleteSearch } from "../../redux/actions/location";
-import { searchEquipment } from "../../redux/actions/equipment";
-import { MaterialIcons } from "@expo/vector-icons";
-import Feather from "@expo/vector-icons/Feather";
-import { getGeneralEquipmentType } from "../../redux/actions/type";
+} from 'react-native'
+import { SafeAreaView } from 'react-navigation'
+import { connect } from 'react-redux'
+import { Location } from 'expo'
+import { grantPermission } from '../../redux/reducers/permission'
+import { autoCompleteSearch } from '../../redux/actions/location'
+import { searchEquipment } from '../../redux/actions/equipment'
+import { MaterialIcons } from '@expo/vector-icons'
+import Feather from '@expo/vector-icons/Feather'
+import { getGeneralEquipmentType } from '../../redux/actions/type'
 
-import Dropdown from "../../components/Dropdown";
-import SearchBar from "../../components/SearchBar";
-import Header from "../../components/Header";
-import { FlatList } from "react-native-gesture-handler";
+import Dropdown from '../../components/Dropdown'
+import SearchBar from '../../components/SearchBar'
+import Header from '../../components/Header'
+import { FlatList } from 'react-native-gesture-handler'
 
-import colors from "../../config/colors";
-import fontSize from "../../config/fontSize";
+import colors from '../../config/colors'
+import fontSize from '../../config/fontSize'
 
 const RADIO_BUTON_DATA = [
-  { id: 1, value: "Equipment" },
-  { id: 2, value: "Material" },
-  { id: 3, value: "Xà bần" }
-];
+  { id: 1, value: 'Equipment' },
+  { id: 2, value: 'Material' },
+  { id: 3, value: 'Xà bần' }
+]
 
 const DROPDOWN_GENERAL_TYPES_OPTIONS = [
   {
     id: 0,
-    name: "Select general equipment types",
-    value: "Select general equipment types"
+    name: 'Select general equipment types',
+    value: 'Select general equipment types'
   }
-];
+]
 
 const DROPDOWN_TYPES_OPTIONS = [
   {
     id: 0,
-    name: "Select equipment types",
-    value: "Select equipment types"
+    name: 'Select equipment types',
+    value: 'Select equipment types'
   }
-];
+]
 
 @connect(
   state => {
     return {
       loading: state.type.loading,
       generalType: state.type.listGeneralEquipmentType
-    };
+    }
   },
   dispatch => ({
     fetchGeneralType: () => {
-      dispatch(getGeneralEquipmentType());
+      dispatch(getGeneralEquipmentType())
     }
   })
 )
 class Search extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       location: [],
-      currentLat: "",
-      currentLong: "",
+      currentLat: '',
+      currentLong: '',
       modalVisible: false,
-      fromDate: "",
-      toDate: "",
+      fromDate: '',
+      toDate: '',
       generalTypeIndex: 0,
       generalType: null,
       typeIndex: 0,
       type: null,
       checked: 0
-    };
+    }
   }
 
   componentDidMount = async () => {
-    this.props.fetchGeneralType();
-    const locationStatus = await grantPermission("location");
-    if (locationStatus === "granted") {
-      const currentLocation = await Location.getCurrentPositionAsync({});
-      const coords = currentLocation.coords;
+    this.props.fetchGeneralType()
+    const locationStatus = await grantPermission('location')
+    if (locationStatus === 'granted') {
+      const currentLocation = await Location.getCurrentPositionAsync({})
+      const coords = currentLocation.coords
       this.setState({
         currentLat: coords.latitude,
         currentLong: coords.longitude
-      });
+      })
     }
-  };
+  }
 
   componentWillUnmount = () => {
-    this.setState({ location: [], currentLat: "", currentLong: "" });
-  };
+    this.setState({ location: [], currentLat: '', currentLong: '' })
+  }
 
   _setModalVisible(visible) {
-    this.setState({ modalVisible: visible });
+    this.setState({ modalVisible: visible })
   }
 
   _handleOnChangeText = async address => {
-    const { currentLat, currentLong } = this.state;
+    const { currentLat, currentLong } = this.state
     this.setState({
       location: await autoCompleteSearch(address, currentLat, currentLong)
-    });
-  };
+    })
+  }
 
   _capitalizeLetter = string => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  };
+    return string.charAt(0).toUpperCase() + string.slice(1)
+  }
 
   //Create new dropdown options for general type
   _handleGeneralEquipmentType = () => {
-    const { generalType } = this.props;
+    const { generalType } = this.props
     let newGeneralEquipmentTypeArray = generalType.map(item => ({
       id: item.id,
       name: this._capitalizeLetter(item.name),
       value: this._capitalizeLetter(item.name)
-    }));
-    return [...DROPDOWN_GENERAL_TYPES_OPTIONS, ...newGeneralEquipmentTypeArray];
-  };
+    }))
+    return [...DROPDOWN_GENERAL_TYPES_OPTIONS, ...newGeneralEquipmentTypeArray]
+  }
 
   //Create new dropdown options for type
   _handleEquipmentType = generalTypeIndex => {
-    const { generalType } = this.props;
-    let generalTypeArray = this._handleGeneralEquipmentType();
+    const { generalType } = this.props
+    let generalTypeArray = this._handleGeneralEquipmentType()
     let result = generalType.find(
       item => item.id === generalTypeArray[generalTypeIndex].id
-    );
+    )
 
     if (result) {
       let newEquipmentTypeArray = result.equipmentTypes.map(item => ({
@@ -136,33 +136,33 @@ class Search extends Component {
         name: this._capitalizeLetter(item.name),
         value: this._capitalizeLetter(item.name),
         additionalSpecsFields: item.additionalSpecsFields
-      }));
-      return [...DROPDOWN_TYPES_OPTIONS, ...newEquipmentTypeArray];
+      }))
+      return [...DROPDOWN_TYPES_OPTIONS, ...newEquipmentTypeArray]
     }
-    return DROPDOWN_TYPES_OPTIONS;
-  };
+    return DROPDOWN_TYPES_OPTIONS
+  }
 
   _renderButton = (text, onPress) => (
     <TouchableOpacity style={styles.buttonWrapper}>
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text style={styles.text}>{text}</Text>
       </View>
     </TouchableOpacity>
-  );
+  )
 
   _formatDate = date => {
-    let newDate = new Date(date);
-    let year = newDate.getFullYear();
-    let month = newDate.getMonth() + 1;
-    let day = newDate.getDate();
-    return year + "-" + month + "-" + day;
-  };
+    let newDate = new Date(date)
+    let year = newDate.getFullYear()
+    let month = newDate.getMonth() + 1
+    let day = newDate.getDate()
+    return year + '-' + month + '-' + day
+  }
 
   _handleDateRange = days => {
-    let today = new Date();
-    let result = today.setDate(today.getDate() + days);
-    return this._formatDate(result);
-  };
+    let today = new Date()
+    let result = today.setDate(today.getDate() + days)
+    return this._formatDate(result)
+  }
 
   _renderRowItem = (item, index) => {
     const {
@@ -172,44 +172,39 @@ class Search extends Component {
       toDate,
       generalTypeIndex,
       typeIndex
-    } = this.state;
-    const beginDate = this._formatDate(Date.now());
-    const endDate = this._handleDateRange(30);
-    const newTypeOptions = this._handleEquipmentType(generalTypeIndex);
-    let id = newTypeOptions[typeIndex].id;
+    } = this.state
+    const beginDate = this._formatDate(Date.now())
+    const endDate = this._handleDateRange(30)
+    const newTypeOptions = this._handleEquipmentType(generalTypeIndex)
+    let id = newTypeOptions[typeIndex].id
+
     return (
       <TouchableOpacity
         key={index}
         style={styles.buttonWrapper}
         onPress={() =>
-          this.props.navigation.navigate("Result", {
+          this.props.navigation.navigate('Result', {
             query: item,
             lat: currentLat,
             long: currentLong,
             beginDate: beginDate,
             endDate: endDate,
-            equipmentTypeId: id ? id : ""
+            equipmentTypeId: id ? id : ''
           })
         }
       >
         <Text style={styles.text}>{item.main_text}</Text>
         <Text style={styles.secondaryText}>{item.secondary_text}</Text>
       </TouchableOpacity>
-    );
-  };
+    )
+  }
 
   render() {
-    const {
-      location,
-      fromDate,
-      toDate,
-      generalTypeIndex,
-      checked
-    } = this.state;
+    const { location, fromDate, toDate, generalTypeIndex, checked } = this.state
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "always", top: "always" }}
+        forceInset={{ bottom: 'always', top: 'always' }}
       >
         <SearchBar
           handleOnChangeText={this._handleOnChangeText}
@@ -222,8 +217,8 @@ class Search extends Component {
         <View style={{ paddingHorizontal: 15 }}>
           <Dropdown
             isHorizontal={true}
-            label={"General Equipment Type"}
-            defaultText={"All"}
+            label={'General Equipment Type'}
+            defaultText={'All'}
             onSelectValue={(value, index) =>
               this.setState({ generalTypeIndex: index, generalType: value })
             }
@@ -231,8 +226,8 @@ class Search extends Component {
           />
           <Dropdown
             isHorizontal={true}
-            label={"Type"}
-            defaultText={"All"}
+            label={'Type'}
+            defaultText={'All'}
             onSelectValue={(value, index) =>
               this.setState({ type: value, typeIndex: index })
             }
@@ -247,7 +242,7 @@ class Search extends Component {
           ) : (
             <View style={styles.columnWrapper}>
               <TouchableOpacity style={styles.buttonWrapper}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <MaterialIcons name="my-location" size={22} />
                   <Text style={[styles.text, { paddingLeft: 10 }]}>
                     Current Location
@@ -255,27 +250,27 @@ class Search extends Component {
                 </View>
               </TouchableOpacity>
               <Text style={styles.title}>Recently Search</Text>
-              {this._renderButton("340 Nguyen Tat Thanh")}
+              {this._renderButton('340 Nguyen Tat Thanh')}
             </View>
           )}
         </ScrollView>
       </SafeAreaView>
-    );
+    )
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column"
+    flexDirection: 'column'
   },
   columnWrapper: {
-    flexDirection: "column",
+    flexDirection: 'column',
     paddingHorizontal: 15
   },
   buttonWrapper: {
-    justifyContent: "center",
-    flexDirection: "column",
+    justifyContent: 'center',
+    flexDirection: 'column',
     marginTop: 10,
     paddingBottom: 10,
     borderBottomWidth: 0.5,
@@ -288,17 +283,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.primaryColor,
     marginRight: 10,
-    alignItems: "center",
-    justifyContent: "center"
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   title: {
     paddingTop: 10,
     fontSize: fontSize.h4,
-    fontWeight: "500"
+    fontWeight: '500'
   },
   text: {
     fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontWeight: '500'
   },
   secondaryText: {
     fontSize: fontSize.secondaryText,
@@ -306,12 +301,12 @@ const styles = StyleSheet.create({
   },
   dateButton: {
     paddingHorizontal: 15,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 5,
     marginRight: 10
   }
-});
+})
 
-export default Search;
+export default Search
