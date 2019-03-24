@@ -16,10 +16,12 @@ import { Feather } from "@expo/vector-icons";
 import {
   listTransactionBySupplier,
   listMaterialTransactionBySupplier,
+  listDebrisTransactionBySupplier,
   clearSupplierTransactionList
 } from "../../redux/actions/transaction";
 import { getDebrisBidBySupplier } from "../../redux/actions/debris";
 
+import DebrisTab from "./DebrisTab";
 import MyBidsTab from "./MyBidsTab";
 import MaterialTab from "./MaterialTab";
 import RequireLogin from "../Login/RequireLogin";
@@ -135,6 +137,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     return {
       listTransaction: state.transaction.listSupplierTransaction,
       listMaterial: state.transaction.listSupplierMaterial,
+      listDebrisTransaction: state.transaction.listSupplierDebris,
       listDebrisBids: state.debris.debrisBids,
       loading: state.transaction.loading,
       error: state.transaction.error,
@@ -149,6 +152,9 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     },
     fetchListMaterial: contractorId => {
       dispatch(listMaterialTransactionBySupplier(contractorId));
+    },
+    fetchListDebris: () => {
+      dispatch(listDebrisTransactionBySupplier());
     },
     fetchClearMyTransaction: supplierId => {
       dispatch(clearSupplierTransactionList(supplierId));
@@ -176,6 +182,7 @@ class MyTransaction extends Component {
     if (isLoggedIn) {
       this.props.fetchListMyTransaction(user.contractor.id);
       this.props.fetchListMaterial(user.contractor.id);
+      this.props.fetchListDebris();
       this.props.fetchAllBids();
     }
   }
@@ -185,6 +192,7 @@ class MyTransaction extends Component {
     if (prevProps.token !== token) {
       this.props.fetchListMyTransaction(user.contractor.id);
       this.props.fetchListMaterial(user.contractor.id);
+      this.props.fetchListDebris();
       this.props.fetchAllBids();
     }
 
@@ -363,12 +371,19 @@ class MyTransaction extends Component {
   };
 
   _handleActiveTab = index => {
-    const { listTransaction, listMaterial, listDebrisBids } = this.props;
+    const {
+      listTransaction,
+      listMaterial,
+      listDebrisBids,
+      listDebrisTransaction
+    } = this.props;
     switch (index) {
       case 1:
         return <MaterialTab listMaterial={listMaterial} />;
       case 2:
         return <MyBidsTab listDebrisBids={listDebrisBids} />;
+      case 3:
+        return <DebrisTab listDebrisTransaction={listDebrisTransaction} />;
       default:
         return this._renderEquipment(listTransaction);
     }

@@ -82,6 +82,18 @@ export const SEND_MATERIAL_TRANSACTION_REQUEST = renderActions(
 export const CHANGE_MATERIAL_TRANSACTION_REQUEST = renderActions(
   "@@transaction/CHANGE_MATERIAL_TRANSACTION_REQUEST"
 );
+export const GET_DEBRIS_TRANSACTION_BY_SUPPLIER = renderActions(
+  "@@transaction/GET_DEBRIS_TRANSACTION_BY_SUPPLIER"
+);
+export const GET_DEBRIS_TRANSACTION_BY_REQUESTER = renderActions(
+  "@@transaction/GET_DEBRIS_TRANSACTION_BY_REQUESTER"
+);
+export const UPDATE_DEBRIS_TRANSACTION_STATUS = renderActions(
+  "@@transaction/UPDATE_DEBRIS_TRANSACTION_STATUS"
+);
+export const SEND_REQUEST_DEBRIS_TRANSACTION = renderActions(
+  "@@transaction/SEND_REQUEST_DEBRIS_TRANSACTION"
+);
 
 //SEARCH EQUIPMENT
 export const SEARCH_EQUIPMENT = renderActions("@@equip/SEARCH_EQUIPMENT");
@@ -187,6 +199,9 @@ export const DELETE_DEBRIS_ARTICLE = renderActions(
 );
 export const GET_DEBRIS_BIDS_BY_SUPPLIER = renderActions(
   "@@debris/GET_DEBRIS_BIDS_BY_SUPPLIER"
+);
+export const GET_DEBRIS_DETAIL_BY_SUPPLIER = renderActions(
+  "@@debris/GET_DEBRIS_DETAIL_BY_SUPPLIER"
 );
 export const SEND_DEBRIS_BIDS = renderActions("@@debris/SEND_DEBRIS_BIDS");
 export const EDIT_DEBRIS_BIDS = renderActions("@@debris/EDIT_DEBRIS_BIDS");

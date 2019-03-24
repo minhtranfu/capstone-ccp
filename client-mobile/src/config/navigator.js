@@ -53,6 +53,9 @@ import DebrisArticleDetail from "../screens/Activity/DebrisArticleDetail";
 import AddServicesTypes from "../screens/Activity/AddServicesTypes";
 import BidSearch from "../screens/Search/BidSearch";
 import BidResult from "../screens/Search/BidResult";
+import MyBidsDetail from "../screens/MyTransaction/MyBidsDetail";
+import BidDetail from "../screens/Search/BidDetail";
+import ConfirmBid from "../screens/Transaction/ConfirmBid";
 // import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
@@ -69,6 +72,8 @@ const DiscoverStack = createStackNavigator(
     MaterialDetail: MaterialDetail,
     BidSearch: BidSearch,
     BidResult: BidResult,
+    BidDetail: BidDetail,
+    ConfirmBid: ConfirmBid,
     ConfirmMaterial: MaterialTransaction
   },
   {
@@ -81,7 +86,11 @@ DiscoverStack.navigationOptions = ({ navigation }) => {
 
   let routeName = navigation.state.routes[navigation.state.index].routeName;
 
-  if (routeName == "SearchDetail") {
+  if (
+    routeName == "SearchDetail" ||
+    routeName == "BidDetail" ||
+    routeName == "ConfirmBid"
+  ) {
     tabBarVisible = false;
   }
 
@@ -165,6 +174,7 @@ const MyTransactionStack = createStackNavigator(
     MyTransactionDetail: MyTransactionDetail,
     MaterialSupplierDetail: MaterialSupplierDetail,
     ContractorProfile: ContractorProfile,
+    MyBidsDetail: MyBidsDetail,
     Login: Login
   },
   {

@@ -171,6 +171,7 @@ class Account extends Component {
 
   _handleLogout = async () => {
     this._handleRemoveToken();
+    await AsyncStorage.removeItem("userToken");
     this.props.fetchLogout();
   };
 

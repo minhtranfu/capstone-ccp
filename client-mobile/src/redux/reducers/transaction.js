@@ -3,10 +3,13 @@ import * as Actions from "../types";
 const initialState = {
   loading: false,
   adjustLoading: false,
+  debrisLoading: false,
   listSupplierTransaction: [],
   listRequesterTransaction: [],
   listSupplierMaterial: [],
   listRequesterMaterial: [],
+  listSupplierDebris: [],
+  listRequesterDebris: [],
   adjustTransaction: [],
   error: ""
 };
@@ -189,11 +192,10 @@ export default function transactionReducer(state = initialState, action) {
       return {
         ...state
       };
-    //Contractor send request to supplier
+    //New material request will be added to requester transaction list
     case Actions.SEND_MATERIAL_TRANSACTION_REQUEST.SUCCESS:
       return {
         ...state,
-        listSupplierMaterial: [...state.listSupplierMaterial, payload.data],
         listRequesterMaterial: [...state.listRequesterMaterial, payload.data]
       };
     //Supplier response to request
@@ -206,6 +208,32 @@ export default function transactionReducer(state = initialState, action) {
         ...state,
         listSupplierMaterial: state.listSupplierMaterial.map(item =>
           item.id === payload.id ? (item = payload.data.data) : item
+        )
+      };
+
+    //DEBRIS
+    case Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.SUCCESS:
+      return {
+        ...state,
+        listSupplierDebris: payload.data
+      };
+    case Actions.GET_DEBRIS_TRANSACTION_BY_REQUESTER.SUCCESS:
+      return {
+        ...state,
+        listRequesterDebris: payload.data
+      };
+    //New request will add to requester screen
+    case Actions.SEND_REQUEST_DEBRIS_TRANSACTION.SUCCESS:
+      return {
+        ...state,
+        listRequesterDebris: [...state.listRequesterDebris, payload.data]
+      };
+    //Requester change status of debris transaction
+    case Actions.UPDATE_DEBRIS_TRANSACTION_STATUS.SUCCESS:
+      return {
+        ...state,
+        listRequesterDebris: state.listRequesterDebris.map(item =>
+          item.id === payload.id ? (item = payload.data.data) : null
         )
       };
     default:

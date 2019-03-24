@@ -7,7 +7,8 @@ const INITIAL_STATE = {
   debrisArticles: [],
   debrisBids: [],
   listSearch: [],
-  typeServices: []
+  typeServices: [],
+  debrisDetail: {}
 };
 
 export default function debrisReducer(state = INITIAL_STATE, action) {
@@ -50,6 +51,19 @@ export default function debrisReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         debrisBids: payload.data
+      };
+    }
+    case Actions.GET_DEBRIS_DETAIL_BY_SUPPLIER.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+    case Actions.GET_DEBRIS_DETAIL_BY_SUPPLIER.SUCCESS: {
+      return {
+        ...state,
+        loading: false,
+        debrisDetail: payload.data
       };
     }
     case Actions.SEND_DEBRIS_BIDS.SUCCESS: {

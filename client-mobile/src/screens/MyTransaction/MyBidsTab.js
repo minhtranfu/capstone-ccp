@@ -6,7 +6,9 @@ import {
   FlatList,
   TouchableOpacity
 } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import { SafeAreaView, withNavigation } from "react-navigation";
+import Feather from "@expo/vector-icons/Feather";
+import Entypo from "@expo/vector-icons/Entypo";
 
 import DebrisItem from "../../components/DebrisItem";
 import Button from "../../components/Button";
@@ -27,11 +29,34 @@ class MyBidsTab extends PureComponent {
       {listBids.map(item => (
         <DebrisItem
           key={item.id}
-          title={item.title}
-          address={item.address}
-          debrisBids={item.debrisBids}
-          debrisServiceTypes={item.debrisServiceTypes}
+          title={item.debrisPost.title}
+          address={item.debrisPost.address}
+          price={item.price}
+          onPress={() =>
+            this.props.navigation.navigate("MyBidsDetail", {
+              id: item.id,
+              postId: item.debrisPost.id
+            })
+          }
         />
+        // <TouchableOpacity
+        //   style={{
+        //     flexDirection: "row",
+        //     alignItems: "center",
+        //     justifyContent: "space-between"
+        //   }}
+        //   onPress={() =>
+        //     this.props.navigation.navigate("BidDetail", { id: item.id })
+        //   }
+        // >
+        //   <View>
+        //     <Text>Title</Text>
+        //     <View style={{flexDirection}}>
+        //     <Text>{item.price} VND</Text>
+        //     </View>
+        //   </View>
+        //   <Feather name="arrow-right" size={24} />
+        // </TouchableOpacity>
       ))}
     </View>
   );
@@ -69,4 +94,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MyBidsTab;
+export default withNavigation(MyBidsTab);

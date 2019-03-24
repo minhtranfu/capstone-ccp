@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
-import { Feather } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 import { requestMaterialTransaction } from "../../redux/actions/transaction";
 import { getConstructionList } from "../../redux/actions/contractor";
 

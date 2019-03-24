@@ -13,13 +13,15 @@ import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import {
   listTransactionByRequester,
-  listMaterialTransactionByRequester
+  listMaterialTransactionByRequester,
+  listDebrisTransactionByRequester
 } from "../../redux/actions/transaction";
 import { getDebrisArticleByRequester } from "../../redux/actions/debris";
 import { isSignedIn } from "../../config/auth";
 import RequireLogin from "../Login/RequireLogin";
 import Feather from "@expo/vector-icons/Feather";
 
+import DebrisTab from "./DebrisTab";
 import DebrisArticleTab from "./DebrisArticleTab";
 import MaterialTab from "./MaterialTab";
 import TabView from "../../components/TabView";
@@ -35,6 +37,7 @@ import StepProgress from "./components/StepProgress";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import DebrisItem from "../../components/DebrisItem";
+import DebrisSearchItem from "../../components/DebrisSearchItem";
 
 const DROPDOWN_OPTIONS = [
   {
@@ -127,6 +130,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       loading: state.transaction.loading,
       listTransaction: state.transaction.listRequesterTransaction,
       listMaterial: state.transaction.listRequesterMaterial,
+      listDebrisTransaction: state.transaction.listRequesterDebris,
       listDebrisArticle: state.debris.debrisArticles,
       user: state.auth.data,
       token: state.auth.token
@@ -138,6 +142,9 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     },
     fetchRequesterMaterial: contractorId => {
       dispatch(listMaterialTransactionByRequester(contractorId));
+    },
+    fetchGetRequesterDebris: () => {
+      dispatch(listDebrisTransactionByRequester());
     },
     fetchGetDebrisArticleByRequester: () => {
       dispatch(getDebrisArticleByRequester());
@@ -161,6 +168,7 @@ class Activity extends Component {
       this.props.fetchRequesterTransaction(user.contractor.id);
       this.props.fetchRequesterMaterial(user.contractor.id);
       this.props.fetchGetDebrisArticleByRequester();
+      this.props.fetchGetRequesterDebris();
     }
   }
 
@@ -170,6 +178,7 @@ class Activity extends Component {
       this.props.fetchRequesterTransaction(user.contractor.id);
       this.props.fetchRequesterMaterial(user.contractor.id);
       this.props.fetchGetDebrisArticleByRequester();
+      this.props.fetchGetRequesterDebris();
     }
   }
 
@@ -208,7 +217,8 @@ class Activity extends Component {
     const materialRes = await this.props.fetchRequesterMaterial(
       user.contractor.id
     );
-    if (res || materialRes) {
+    const debrisRes = await this.props.fetchGetRequesterDebris();
+    if (res || materialRes || debrisRes) {
       this.setState({ refreshing: false });
     } else {
       setTimeout(() => {
@@ -351,12 +361,20 @@ class Activity extends Component {
   };
 
   _handleActiveTab = index => {
-    const { listTransaction, listMaterial, listDebrisArticle } = this.props;
+    const {
+      listTransaction,
+      listMaterial,
+      listDebrisArticle,
+      listDebrisTransaction
+    } = this.props;
     switch (index) {
       case 1:
         return <MaterialTab listMaterial={listMaterial} />;
       case 2:
         return <DebrisArticleTab listDebrisArticle={listDebrisArticle} />;
+      case 3:
+        return <DebrisTab listDebrisTransaction={listDebrisTransaction} />;
+
       default:
         return this._renderContent(listTransaction);
     }
