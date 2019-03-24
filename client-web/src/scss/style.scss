@@ -575,3 +575,17 @@ nav.navbar {
 .position-relative>.component-blocking {
   position: absolute;
 }
+
+// Home page
+.comming-soon {
+  background-image: url(https://woodruffsawyer.com/wp-content/uploads/2018/04/construction.jpg);
+  background-size: cover;
+  text-shadow: 2px 2px 5px #333;
+
+  h1 {
+    font-size: 5rem;
+  }
+  h2, h1 {
+    font-weight: 900;
+  }
+}

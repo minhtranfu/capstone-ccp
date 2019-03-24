@@ -7,6 +7,7 @@ import { debrisServices } from 'Services/domain/ccp';
 import DebrisSearchBox from './DebrisSearchBox';
 import { getRoutePath } from 'Utils/common.utils';
 import { Image } from 'Components/common';
+import { routeConsts } from 'Common/consts';
 
 class DebrisSearch extends Component {
   constructor(props) {
@@ -86,7 +87,7 @@ class DebrisSearch extends Component {
                 <div key={index} className="col-md-8">
                   <div className="bg-white shadow my-2 p-3 d-flex debris-request">
                     <div className="flex-fill">
-                      <Link to={getRoutePath('debris-detail', {id: product.id})}><h6>{product.title}</h6></Link>
+                      <Link to={getRoutePath(routeConsts.DEBRIS_DETAIL, {id: product.id})}><h6>{product.title}</h6></Link>
                       <div className="text-muted"><small><i className="fal fa-tags"></i></small> {services}</div>
                       <div className="text-muted"><i className="fal fa-map-marker"></i> {product.address}</div>
                       <div className="description">{product.description}</div>

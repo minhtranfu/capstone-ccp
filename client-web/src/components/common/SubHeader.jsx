@@ -1,50 +1,81 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 class SubHeader extends Component {
 
-  menu = [
+  equipmentMenu = [
     {
-      to: '/dashboard/supplier',
-      name: 'Transactions',
+      to: getRoutePath(routeConsts.EQUIPMENTS),
+      name: 'Find equipments',
       exact: true
     },
     {
-      to: '/dashboard/supplier/constructions',
-      name: 'Constructions'
+      to: getRoutePath(routeConsts.EQUIPMENT_MY),
+      name: 'My equipments'
     },
     {
-      to: '/dashboard/supplier/equipments',
-      name: 'Equipments'
+      to: getRoutePath(routeConsts.EQUIPMENT_SUPPLY),
+      name: 'Equipments supply'
     },
     {
-      to: '/dashboard/supplier/materials',
-      name: 'Materials'
+      to: getRoutePath(routeConsts.EQUIPMENT_REQUEST),
+      name: 'Equipment requests'
     },
-    {
-      to: '/dashboard/supplier/material-transactions',
-      name: 'Material Transactions'
-    }
   ];
 
-  requesterMenu = [
+  materialMenu = [
     {
-      to: '/dashboard/requester',
-      name: 'Transactions',
+      to: getRoutePath(routeConsts.MATERIALS),
+      name: 'Find materials',
       exact: true
     },
     {
-      to: '/dashboard/requester/constructions',
-      name: 'Constructions'
+      to: getRoutePath(routeConsts.MATERIAL_MY),
+      name: 'My materials'
     },
     {
-      to: '/dashboard/requester/material-transactions',
-      name: 'Material Transactions'
-    }
+      to: getRoutePath(routeConsts.MATERIAL_SUPPLY),
+      name: 'Material supply'
+    },
+    {
+      to: getRoutePath(routeConsts.MATERIAL_REQUEST),
+      name: 'Material requests'
+    },
+  ];
+
+  debrisMenu = [
+    {
+      to: getRoutePath(routeConsts.DEBRISES),
+      name: 'Find debrises',
+      exact: true
+    },
+    {
+      to: getRoutePath(routeConsts.DEBRIS_MY),
+      name: 'My debrises'
+    },
+    {
+      to: getRoutePath(routeConsts.DEBRIS_SUPPLY),
+      name: 'Debris supply'
+    },
+    {
+      to: getRoutePath(routeConsts.DEBRIS_REQUEST),
+      name: 'Debris transaction'
+    },
   ];
 
   _isMenuActive = (menu) => {
     const { location } = this.props;
+
+    if (!menu.to || menu.to.trim().length === 0) {
+      return false;
+    }
+
+    const lastPart = location.pathname.replace(`${menu.to}/`, '');
+    if (lastPart.length > 0 && !isNaN(lastPart)) {
+      return true;
+    }
 
     if (menu.exact) {
       return location.pathname === menu.to;
@@ -57,12 +88,16 @@ class SubHeader extends Component {
     const { location } = this.props;
 
     let menus = null;
-    if (location.pathname.indexOf('/dashboard/supplier') === 0) {
-      menus = this.menu;
+    if (location.pathname.indexOf('/equipments') === 0) {
+      menus = this.equipmentMenu;
     }
 
-    if (location.pathname.indexOf('/dashboard/requester') === 0) {
-      menus = this.requesterMenu;
+    if (location.pathname.indexOf('/materials') === 0) {
+      menus = this.materialMenu;
+    }
+
+    if (location.pathname.indexOf('/debrises') === 0) {
+      menus = this.debrisMenu;
     }
 
     if (!menus) {

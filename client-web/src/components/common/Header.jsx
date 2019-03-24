@@ -6,21 +6,27 @@ import { authActions } from '../../redux/actions';
 
 import LoginModal from '../modules/login/LoginModal';
 import { authConstants } from '../../redux/_constants';
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 class Header extends Component {
 
   leftMenus = [
     {
-      to: '/',
-      name: 'Equipments',
+      to: getRoutePath(routeConsts.HOME),
+      name: 'Home',
       exact: true
     },
     {
-      to: '/materials',
+      to: getRoutePath(routeConsts.EQUIPMENTS),
+      name: 'Equipments'
+    },
+    {
+      to: getRoutePath(routeConsts.MATERIALS),
       name: 'Materials'
     },
     {
-      to: '/debrises',
+      to: getRoutePath(routeConsts.DEBRISES),
       name: 'Debrises'
     }
   ];
@@ -31,15 +37,10 @@ class Header extends Component {
 
   rightMenus = [
     {
-      to: '/dashboard/supplier',
-      name: 'Supplier',
+      to: getRoutePath(routeConsts.CONSTRUCTIONS),
+      name: 'My Constructions',
       requiredAuth: true
     },
-    {
-      to: '/dashboard/requester',
-      name: 'Requester',
-      requiredAuth: true
-    }
   ];
 
   _toggleOffCanvas = () => {

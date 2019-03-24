@@ -5,6 +5,8 @@ import Skeleton from "react-loading-skeleton";
 
 import { materialServices } from "Services/domain/ccp";
 import { formatDate } from "Utils/format.utils";
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 class MaterialDetail extends Component {
 
@@ -52,7 +54,11 @@ class MaterialDetail extends Component {
 
     return (
       <div className="container py-3">
-        <h4 className="mb-3">Material detail <Link to="/dashboard/supplier/materials" className="btn btn-sm btn-outline-primary float-right"><i className="fal fa-chevron-left"></i> Back to list</Link></h4>
+        <h4 className="mb-3">Material detail
+          <Link to={getRoutePath(routeConsts.MATERIAL_MY)} className="btn btn-sm btn-outline-primary float-right">
+            <i className="fal fa-chevron-left"></i> Back to list
+          </Link>
+        </h4>
         <div className="d-flex flex-row bg-white shadow">
           <Image src="http://localhost:3060/public/upload/product-images/unnamed-19-jpg.jpg" style={{maxHeight: '250px'}} />
           <div className="flex-fill p-2">

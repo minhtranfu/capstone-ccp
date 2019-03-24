@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Image from './Image';
 import moment from 'moment';
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 class EquipmentCard extends PureComponent {
   render() {
@@ -11,7 +13,7 @@ class EquipmentCard extends PureComponent {
     const thumbnail = product.thumbnailImage ? product.thumbnailImage.url : '/public/upload/product-images/unnamed-19-jpg.jpg';
     return (
       <div className={`equip-card my-2 ${className}`}>
-        <Link to={`/equip-detail/${product.id}`}>
+        <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, {id: product.id})}>
           <div className="card">
             <div className="image-169 lh-1">
               <Image src={thumbnail} className="card-img-top" alt="" />

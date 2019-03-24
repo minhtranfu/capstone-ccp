@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
-import { EQUIPMENT_SHOWABLE_STATUSES } from '../../../common/consts';
+import { EQUIPMENT_SHOWABLE_STATUSES, routeConsts } from '../../../common/consts';
+import { getRoutePath } from 'Utils/common.utils';
 
 class MyMaterials extends PureComponent {
   state = {
@@ -56,7 +57,7 @@ class MyMaterials extends PureComponent {
     return (
       <div className="py-5 text-center">
         <h2>You have no material!</h2>
-        <Link to="/dashboard/supplier/materials/add" className="float-right">
+        <Link to={getRoutePath(routeConsts.MATERIAL_ADD)} className="float-right">
           <button className="btn btn-success btn-lg">
             <i className="fal fa-plus"></i> Add new material now
           </button>
@@ -87,9 +88,9 @@ class MyMaterials extends PureComponent {
             </div>
             <div className="detail flex-fill p-2">
               <h6>
-                <Link to={`/dashboard/supplier/materials/${equipment.id}`}>{equipment.name}</Link>
+                <Link to={getRoutePath(routeConsts.MATERIAL_MY_DETAIL, {id: equipment.id})}>{equipment.name}</Link>
                 <span className="float-right">
-                  <Link to={`/dashboard/supplier/materials/${equipment.id}/edit`} className="btn btn-outline-success btn-sm"><i className="fal fa-pencil"></i></Link>
+                  <Link to={getRoutePath(routeConsts.MATERIAL_EDIT, {id: equipment.id})} className="btn btn-outline-success btn-sm"><i className="fal fa-pencil"></i></Link>
                   <button className="btn btn-outline-danger btn-sm ml-2"><i className="fal fa-trash"></i></button>
                 </span>
                 <span className="clearfix"></span>
@@ -112,7 +113,7 @@ class MyMaterials extends PureComponent {
           <div className="col-md-9">
             <h4>
               My materials
-              <Link to="/dashboard/supplier/materials/add" className="float-right">
+              <Link to={getRoutePath(routeConsts.MATERIAL_ADD)} className="float-right">
                 <button className="btn btn-success">
                   <i className="fal fa-plus"></i> New material
                 </button>
