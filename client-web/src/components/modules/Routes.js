@@ -128,6 +128,21 @@ export const modules = [
     modulePath: './debris-search'
   },
   {
+    name: routeConsts.DEBRIS_MY,
+    path: '/debrises/my',
+    modulePath: './debrises/my'
+  },
+  {
+    name: routeConsts.DEBRIS_SUPPLY,
+    path: '/debrises/supply',
+    modulePath: './debrises/supply'
+  },
+  {
+    name: routeConsts.DEBRIS_REQUEST,
+    path: '/debrises/request',
+    modulePath: './debrises/request'
+  },
+  {
     name: routeConsts.DEBRIS_DETAIL,
     path: '/debrises/:id',
     modulePath: './debris-detail'

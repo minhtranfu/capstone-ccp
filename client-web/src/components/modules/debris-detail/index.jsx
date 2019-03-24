@@ -14,6 +14,7 @@ import BidForm from './BidForm';
 import { getErrorMessage } from "Utils/common.utils";
 import SweetAlert from "react-bootstrap-sweetalert/lib/dist/SweetAlert";
 import { ComponentBlocking } from "Components/common";
+import { DEBRIS_POST_STATUSES } from "Common/consts";
 
 class DebrisDetail extends Component {
   state = {
@@ -246,10 +247,10 @@ class DebrisDetail extends Component {
               <div className="row">
                 <div className="col-md-12 py-2">
                   <h5>
-                    {debris.status === 'PENDING' &&
+                    {debris.status === DEBRIS_POST_STATUSES.PENDING &&
                       <span className="text-success">Waiting for bids</span>
                     }
-                    {debris.status !== 'PENDING' &&
+                    {debris.status !== DEBRIS_POST_STATUSES.PENDING &&
                       <span className="text-secondary">DONE</span>
                     }
                   </h5>
@@ -279,7 +280,7 @@ class DebrisDetail extends Component {
               </div>
             </div>
             {!debris.id && <Skeleton height={135} count={10} />}
-            {debris.id && !isRequester &&
+            {debris.id && debris.status === DEBRIS_POST_STATUSES.PENDING && !isRequester &&
               <BidForm debrisId={debris.id} onSuccess={this._handleBidSuccess} />
             }
             {debrisBids &&

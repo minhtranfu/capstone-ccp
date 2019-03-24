@@ -161,7 +161,7 @@ class BidForm extends Component {
                 <input type="number" name="price" className={classnames('form-control', {'is-invalid': validateResult.price})} min="1" id="bid_price"
                   onChange={this._handleFieldChange}
                 />
-                <div class="invalid-feedback">
+                <div className="invalid-feedback">
                   {validateResult.price}
                 </div>
               </div>
@@ -170,7 +170,7 @@ class BidForm extends Component {
                 <textarea name="description" className={classnames('form-control', {'is-invalid': validateResult.description})} id="bid_description" cols="30" rows="3"
                   onChange={this._handleFieldChange}
                   ></textarea>
-                <div class="invalid-feedback">
+                <div className="invalid-feedback">
                   {validateResult.description}
                 </div>
               </div>

@@ -12,7 +12,7 @@ export const getDebrisById = id => {
   return DataAccessService.get(`/debrisPosts/${id}`);
 };
 
-export const getDebrisByRequesterId = id => {
+export const getMyDebrises = () => {
   return DataAccessService.get('/debrisPosts/requester');
 };
 

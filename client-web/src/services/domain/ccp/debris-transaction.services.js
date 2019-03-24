@@ -11,3 +11,11 @@ export const getTransactionById = id => {
 export const putTransaction = (id, data) => {
   return DataAccessService.put(`/debrisTransactions/${id}`, data);
 };
+
+export const getSupllyTransactions = () => {
+  return DataAccessService.get(`/debrisTransactions/supplier`);
+};
+
+export const getRequestTransactions = () => {
+  return DataAccessService.get(`/debrisTransactions/requester`);
+};
