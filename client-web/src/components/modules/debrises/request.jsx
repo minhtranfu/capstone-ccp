@@ -11,6 +11,7 @@ import { getErrorMessage, getRoutePath } from 'Utils/common.utils';
 import { routeConsts, DEBRIS_POST_STATUSES, DEBRIS_POST_STATUS_COLORS } from 'Common/consts';
 import { ComponentBlocking } from 'Components/common';
 import { RatingModal } from 'Components/common';
+import { formatPrice } from 'Utils/format.utils';
 
 class DebriseTransactionsRequest extends Component {
 
@@ -132,7 +133,7 @@ class DebriseTransactionsRequest extends Component {
         buttons.push(
           <button
             key={`finish-${transaction.id}`}
-            className="btn btn-primary"
+            className="btn btn-primary mt-2"
             onClick={() => this._handleChangeTransactionStatus(transaction.id, DEBRIS_POST_STATUSES.FINISHED)}
           >Finish</button>
         );
@@ -142,7 +143,7 @@ class DebriseTransactionsRequest extends Component {
         buttons.push(
           <button
             key={`finish-${transaction.id}`}
-            className="btn btn-primary"
+            className="btn btn-primary mt-2"
             onClick={() => this._showFeedbackModal(transaction)}
           >Feedback</button>
         );
@@ -188,9 +189,12 @@ class DebriseTransactionsRequest extends Component {
             <div className="text-muted"><small><i className="fal fa-tags"></i></small> {services}</div>
             <div className="text-muted"><i className="fal fa-map-marker"></i> {debris.address}</div>
             <div className="description">{debris.description}</div>
-            <div><i className="fas fa-gavel"></i> Bided: {debrisBids.length}</div>
+            <div><i className="fas fa-gavel"></i> Bid: {debrisBids.length}</div>
           </div>
-          <div className="d-flex px-3 align-items-center">
+          <div className="d-flex px-3 flex-md-column">
+            <div className="price text-large mb-auto ml-auto">
+              {formatPrice(transaction.price)}
+            </div>
             {this._renderActionButtons(transaction)}
           </div>
         </div>

@@ -86,7 +86,12 @@ class DebrisDetail extends Component {
     }
   };
 
+  /**
+   * Render bid cards and check current is current user had bid
+   */
   _renderBids = () => {
+    const { authentication } = this.props;
+    const { user } = authentication;
     const { debris } = this.state;
     const { debrisBids } = debris;
     const isRequester = this._isRequester();
@@ -97,6 +102,10 @@ class DebrisDetail extends Component {
     }
 
     return debrisBids.map(bid => {
+      if (authentication.isAuthenticated && user.contractor && bid.supplier.id === user.contractor.id) {
+        this.isHadBid = true;
+      }
+
       return (
         <div key={bid.id} className="my-2 bg-white shadow-sm p-3 d-flex bid">
           <div className="flex-fill d-flex flex-column flex-lg-row">
@@ -120,7 +129,7 @@ class DebrisDetail extends Component {
                   />
                 </div>
                 <div>
-                  <span className="badge badge-pill badge-warning mr-1">{bid.supplier.averageDebrisRating}</span>
+                  <span className="badge badge-pill badge-warning mr-1">{bid.supplier.averageDebrisRating.toFixed(1)}</span>
                   {bid.supplier.debrisFeedbacksCount} reviews
                 </div>
               </div>
@@ -227,6 +236,8 @@ class DebrisDetail extends Component {
     const services = !debrisServiceTypes ? '' : debrisServiceTypes.map(type => type.name).join(', ');
     const isRequester = this._isRequester();
 
+    const bidCards = this._renderBids();
+
     return (
       <div className="container">
         {this._renderAlert()}
@@ -266,7 +277,7 @@ class DebrisDetail extends Component {
                     {formatDate(debris.createdTime) || <Skeleton width={100} />}
                   </h6>
                   <h6 className="d-inline ml-3 pl-3 border-left">
-                    <span className="text-muted"><i className="fas fa-gavel"></i> Bided: </span>
+                    <span className="text-muted"><i className="fas fa-gavel"></i> Bid: </span>
                     {debris.debrisBids ? debris.debrisBids.length : <Skeleton width={60} />}
                   </h6>
                 </div>
@@ -285,7 +296,7 @@ class DebrisDetail extends Component {
               </div>
             </div>
             {!debris.id && <Skeleton height={135} count={10} />}
-            {debris.id && debris.status === DEBRIS_POST_STATUSES.PENDING && !isRequester &&
+            {debris.id && debris.status === DEBRIS_POST_STATUSES.PENDING && !isRequester && !this.isHadBid &&
               <BidForm debrisId={debris.id} onSuccess={this._handleBidSuccess} />
             }
             {debrisBids &&
@@ -296,7 +307,7 @@ class DebrisDetail extends Component {
             {debrisBids && !debrisBids.length &&
               <div className="alert alert-info text-center"><i className="fal fa-info-circle"></i> There is no bid now!</div>
             }
-            {this._renderBids()}
+            {bidCards}
           </div>
           {/* Right Sidebar */}
           <div className="col-md-3">
