@@ -18,8 +18,8 @@
         <class>entities.EquipmentImageEntity</class>
         <class>entities.EquipmentEntity</class>
         <class>entities.EquipmentTypeEntity</class>
-        <class>entities.FeedbackEntity</class>
-        <class>entities.FeedbackTypeEntity</class>
+        <class>entities.ReportEntity</class>
+        <class>entities.ReportTypeEntity</class>
         <class>entities.GeneralEquipmentTypeEntity</class>
         <class>entities.HiringTransactionEntity</class>
         <class>entities.NotificationEntity</class>

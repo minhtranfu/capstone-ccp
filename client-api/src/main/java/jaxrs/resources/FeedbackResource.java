@@ -6,8 +6,8 @@ import daos.FeedbackTypeDAO;
 import dtos.requests.FeedbackRequest;
 import dtos.responses.MessageResponse;
 import entities.ContractorEntity;
-import entities.FeedbackEntity;
-import entities.FeedbackTypeEntity;
+import entities.ReportEntity;
+import entities.ReportTypeEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 import utils.ModelConverter;
@@ -62,25 +62,25 @@ public class FeedbackResource {
 	public Response getFeedbacks(@QueryParam("from") @DefaultValue("0") long fromContractorId,
 								 @QueryParam("to") @DefaultValue("0") long toContractorId) {
 
-		List<FeedbackEntity> result = new ArrayList<>();
+		List<ReportEntity> result = new ArrayList<>();
 
 
 		if (fromContractorId != 0) {
 
 			if (toContractorId != 0) {
-				result = entityManager.createNamedQuery("FeedbackEntity.getBy", FeedbackEntity.class)
+				result = entityManager.createNamedQuery("FeedbackEntity.getBy", ReportEntity.class)
 						.setParameter("toContractorId", toContractorId)
 						.setParameter("fromContractorId", fromContractorId)
 						.getResultList();
 
 			} else {
-				result = entityManager.createNamedQuery("FeedbackEntity.getByFromContractorId", FeedbackEntity.class)
+				result = entityManager.createNamedQuery("FeedbackEntity.getByFromContractorId", ReportEntity.class)
 						.setParameter("fromContractorId", fromContractorId)
 						.getResultList();
 			}
 		} else {
 			if (toContractorId != 0) {
-				result = entityManager.createNamedQuery("FeedbackEntity.getByToContractorId", FeedbackEntity.class)
+				result = entityManager.createNamedQuery("FeedbackEntity.getByToContractorId", ReportEntity.class)
 						.setParameter("toContractorId", toContractorId)
 						.getResultList();
 			}
@@ -91,7 +91,7 @@ public class FeedbackResource {
 	@GET
 	@Path("{id:\\d+}")
 	public Response getFeedback(@PathParam("id") long id) {
-		FeedbackEntity foundFeedback = feedbackDao.findByID(id);
+		ReportEntity foundFeedback = feedbackDao.findByID(id);
 		if (foundFeedback == null) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(
 					new MessageResponse(String.format("feedback id=%d not found", id))
@@ -106,21 +106,21 @@ public class FeedbackResource {
 	public Response postFeedback(@Valid FeedbackRequest feedbackRequest) {
 
 
-		FeedbackEntity feedbackEntity = modelConverter.toEntity(feedbackRequest);
+		ReportEntity reportEntity = modelConverter.toEntity(feedbackRequest);
 
 		ContractorEntity fromContractor = contractorDao.findByIdWithValidation(claimContractorId.getValue().longValue());
-		feedbackEntity.setFromContractor(fromContractor);
+		reportEntity.setFromContractor(fromContractor);
 
 
-		ContractorEntity toContractor = contractorDao.findByIdWithValidation(feedbackEntity.getToContractor().getId());
-		feedbackEntity.setToContractor(toContractor);
+		ContractorEntity toContractor = contractorDao.findByIdWithValidation(reportEntity.getToContractor().getId());
+		reportEntity.setToContractor(toContractor);
 
 
-		FeedbackTypeEntity foundFeedbackType = feedbackTypeDAO.findByIdWithValidation(feedbackEntity.getFeedbackType().getId());
-		feedbackEntity.setFeedbackType(foundFeedbackType);
+		ReportTypeEntity foundFeedbackType = feedbackTypeDAO.findByIdWithValidation(reportEntity.getReportType().getId());
+		reportEntity.setReportType(foundFeedbackType);
 
-		feedbackDao.persist(feedbackEntity);
-		return Response.ok(feedbackDao.findByID(feedbackEntity.getId())).build();
+		feedbackDao.persist(reportEntity);
+		return Response.ok(feedbackDao.findByID(reportEntity.getId())).build();
 	}
 
 

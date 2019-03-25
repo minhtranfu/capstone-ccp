@@ -1,6 +1,6 @@
 package test.shit;
 
-import entities.FeedbackEntity;
+import entities.ReportEntity;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -13,8 +13,8 @@ public class TestDAO {
 	@PersistenceContext(type = PersistenceContextType.TRANSACTION)
 	EntityManager entityManager;
 
-	public FeedbackEntity testGetFeedbackEntityId(long id) {
-		return entityManager.find(FeedbackEntity.class, id);
+	public ReportEntity testGetFeedbackEntityId(long id) {
+		return entityManager.find(ReportEntity.class, id);
 	}
 
 

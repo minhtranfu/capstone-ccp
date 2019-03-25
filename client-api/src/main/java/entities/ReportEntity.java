@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 @Entity
 @Where(clause = "is_deleted=0")
 @NamedQueries({
-		@NamedQuery(name = "FeedbackEntity.getByToContractorId", query = "select  e from FeedbackEntity  e where e.toContractor.id = :toContractorId")
-		, @NamedQuery(name = "FeedbackEntity.getByFromContractorId", query = "select  e from FeedbackEntity  e where e.fromContractor.id =:fromContractorId")
-		, @NamedQuery(name = "FeedbackEntity.getBy", query = "select  e from FeedbackEntity  e where e.fromContractor.id =:fromContractorId and e.toContractor.id=:toContractorId")
+		@NamedQuery(name = "FeedbackEntity.getByToContractorId", query = "select  e from ReportEntity  e where e.toContractor.id = :toContractorId")
+		, @NamedQuery(name = "FeedbackEntity.getByFromContractorId", query = "select  e from ReportEntity  e where e.fromContractor.id =:fromContractorId")
+		, @NamedQuery(name = "FeedbackEntity.getBy", query = "select  e from ReportEntity  e where e.fromContractor.id =:fromContractorId and e.toContractor.id=:toContractorId")
 })
 
-@Table(name = "feedback", schema = "capstone_ccp", catalog = "")
-public class FeedbackEntity {
+@Table(name = "report", schema = "capstone_ccp", catalog = "")
+public class ReportEntity {
 	private long id;
 	private String content;
 	private Status status;
@@ -24,7 +24,7 @@ public class FeedbackEntity {
 	private LocalDateTime updatedTime;
 	private ContractorEntity toContractor;
 	private ContractorEntity fromContractor;
-	private FeedbackTypeEntity feedbackType;
+	private ReportTypeEntity reportType;
 
 
 	@Id
@@ -94,13 +94,13 @@ public class FeedbackEntity {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "feedback_type_id")
-	public FeedbackTypeEntity getFeedbackType() {
-		return feedbackType;
+	@JoinColumn(name = "report_type_id")
+	public ReportTypeEntity getReportType() {
+		return reportType;
 	}
 
-	public void setFeedbackType(FeedbackTypeEntity feedbackType) {
-		this.feedbackType = feedbackType;
+	public void setReportType(ReportTypeEntity feedbackType) {
+		this.reportType = feedbackType;
 	}
 
 	@Basic

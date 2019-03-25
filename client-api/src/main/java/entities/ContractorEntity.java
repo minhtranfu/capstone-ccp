@@ -1,13 +1,9 @@
 package entities;
 
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.DefaultValue;
 import javax.xml.bind.annotation.XmlTransient;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,8 +34,8 @@ public class ContractorEntity {
 	private List<MaterialEntity> materials;
 	private List<ConstructionEntity> constructions;
 
-	private List<FeedbackEntity> sentFeedback;
-	private List<FeedbackEntity> receivedFeedback;
+	private List<ReportEntity> sentReports;
+	private List<ReportEntity> receivedReports;
 	private List<NotificationDeviceTokenEntity> notificationDeviceTokens;
 	private List<SubscriptionEntity> subscriptionEntities;
 
@@ -188,24 +184,24 @@ public class ContractorEntity {
 	@XmlTransient
 	@OneToMany(mappedBy = "fromContractor", fetch = FetchType.LAZY, cascade = {})
 	@Where(clause = "is_deleted = 0")
-	public List<FeedbackEntity> getSentFeedback() {
-		return sentFeedback;
+	public List<ReportEntity> getSentReports() {
+		return sentReports;
 	}
 
-	public void setSentFeedback(List<FeedbackEntity> sentFeedback) {
-		this.sentFeedback = sentFeedback;
+	public void setSentReports(List<ReportEntity> sentFeedback) {
+		this.sentReports = sentFeedback;
 	}
 
 	@JsonbTransient
 	@XmlTransient
 	@OneToMany(mappedBy = "toContractor", fetch = FetchType.LAZY, cascade = {})
 	@Where(clause = "is_deleted = 0")
-	public List<FeedbackEntity> getReceivedFeedback() {
-		return receivedFeedback;
+	public List<ReportEntity> getReceivedReports() {
+		return receivedReports;
 	}
 
-	public void setReceivedFeedback(List<FeedbackEntity> receivedFeedback) {
-		this.receivedFeedback = receivedFeedback;
+	public void setReceivedReports(List<ReportEntity> receivedFeedback) {
+		this.receivedReports = receivedFeedback;
 	}
 
 

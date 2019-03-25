@@ -1,14 +1,14 @@
 package daos;
 
-import entities.FeedbackTypeEntity;
+import entities.ReportTypeEntity;
 
 import javax.ejb.Stateless;
 import java.util.List;
 
 @Stateless
-public class FeedbackTypeDAO extends BaseDAO<FeedbackTypeEntity,Long> {
+public class FeedbackTypeDAO extends BaseDAO<ReportTypeEntity,Long> {
 
-	public List<FeedbackTypeEntity> findAll() {
-		return entityManager.createNamedQuery("FeedbackTypeEntity.getAll", FeedbackTypeEntity.class).getResultList();
+	public List<ReportTypeEntity> findAll() {
+		return entityManager.createNamedQuery("FeedbackTypeEntity.getAll", ReportTypeEntity.class).getResultList();
 	}
 }

@@ -89,8 +89,8 @@ public class ModelConverter {
 	}
 
 
-	public FeedbackEntity toEntity(FeedbackRequest feedbackRequest) {
-		return modelMapper.map(feedbackRequest, FeedbackEntity.class);
+	public ReportEntity toEntity(FeedbackRequest feedbackRequest) {
+		return modelMapper.map(feedbackRequest, ReportEntity.class);
 	}
 
 	public HiringTransactionEntity toEntity(HiringTransactionRequest hiringTransactionRequest) {

@@ -1,6 +1,6 @@
 package daos;
 
-import entities.FeedbackEntity;
+import entities.ReportEntity;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -9,33 +9,33 @@ import javax.persistence.PersistenceContextType;
 
 
 @Stateless
-public class FeedbackDAO extends BaseDAO<FeedbackEntity, Long> {
+public class FeedbackDAO extends BaseDAO<ReportEntity, Long> {
 
 	@PersistenceContext(type = PersistenceContextType.TRANSACTION)
 	EntityManager entityManager;
 
 	@Override
-	public FeedbackEntity findByID(Long id) {
-		return entityManager.find(FeedbackEntity.class, id);
+	public ReportEntity findByID(Long id) {
+		return entityManager.find(ReportEntity.class, id);
 	}
 
 	@Override
-	public void persist(FeedbackEntity feedbackEntity) {
+	public void persist(ReportEntity reportEntity) {
 
-		entityManager.persist(feedbackEntity);
+		entityManager.persist(reportEntity);
 //		super.persist(feedbackEntity);
 	}
 
 	@Override
-	public FeedbackEntity merge(FeedbackEntity feedbackEntity) {
+	public ReportEntity merge(ReportEntity reportEntity) {
 
-		return entityManager.merge(feedbackEntity);
+		return entityManager.merge(reportEntity);
 //		return super.merge(feedbackEntity);
 	}
 
 	@Override
-	public void delete(FeedbackEntity feedbackEntity) {
-		entityManager.remove(entityManager.contains(feedbackEntity)
-				? feedbackEntity : entityManager.merge(feedbackEntity));
+	public void delete(ReportEntity reportEntity) {
+		entityManager.remove(entityManager.contains(reportEntity)
+				? reportEntity : entityManager.merge(reportEntity));
 	}
 }
