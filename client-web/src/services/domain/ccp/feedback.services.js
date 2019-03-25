@@ -19,3 +19,7 @@ export const postFeedback = ({toContractorId, feedbackTypeId, content}) => {
     content
   });
 };
+
+export const feedbackDebris = data => {
+  return DataAccessService.post('/debrisFeedbacks', data);
+};

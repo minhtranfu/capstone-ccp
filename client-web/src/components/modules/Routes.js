@@ -130,17 +130,32 @@ export const modules = [
   {
     name: routeConsts.DEBRIS_MY,
     path: '/debrises/my',
-    modulePath: './debrises/my'
+    modulePath: './debrises/my',
+    isPrivate: true,
   },
   {
     name: routeConsts.DEBRIS_SUPPLY,
     path: '/debrises/supply',
-    modulePath: './debrises/supply'
+    modulePath: './debrises/supply',
+    isPrivate: true,
+  },
+  {
+    name: routeConsts.DEBRIS_SUPPLY_STATUS,
+    path: '/debrises/supply/:status',
+    modulePath: './debrises/supply',
+    isPrivate: true,
   },
   {
     name: routeConsts.DEBRIS_REQUEST,
     path: '/debrises/request',
-    modulePath: './debrises/request'
+    modulePath: './debrises/request',
+    isPrivate: true,
+  },
+  {
+    name: routeConsts.DEBRIS_REQUEST_STATUS,
+    path: '/debrises/request/:status',
+    modulePath: './debrises/request',
+    isPrivate: true,
   },
   {
     name: routeConsts.DEBRIS_DETAIL,

@@ -3,3 +3,4 @@ export { default as FeedbackModal } from './FeedbackModal';
 export { default as Image } from './Image';
 export { default as AddressInput } from './address-input';
 export { default as ComponentBlocking } from './component-blocking';
+export { default as RatingModal } from './rating-modal';
