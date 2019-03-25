@@ -1,18 +1,15 @@
 package dtos.requests;
 
 import dtos.IdOnly;
+import entities.ContractorEntity;
+import entities.MaterialTransactionDetailEntity;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.util.List;
 
 public class MaterialTransactionRequest {
 
-	@Positive
-	private Double price;
-
-	@Positive
-	@NegativeOrZero
-	private Double quantity;
 
 	@NotNull
 	@NotBlank
@@ -28,29 +25,16 @@ public class MaterialTransactionRequest {
 	@Max(180)
 	private Double requesterLong;
 
-
-	@NotNull
-	@Valid
-	private IdOnly material;
-
 	@Valid
 	private IdOnly requester;
 
-	public Double getPrice() {
-		return price;
-	}
+	@NotNull
+	@Valid
+	private IdOnly supplier;
 
-	public void setPrice(Double price) {
-		this.price = price;
-	}
+	@NotNull
+	private List<@Valid MaterialTransactionDetailRequest> materialTransactionDetails;
 
-	public Double getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(Double quantity) {
-		this.quantity = quantity;
-	}
 
 	public String getRequesterAddress() {
 		return requesterAddress;
@@ -77,13 +61,6 @@ public class MaterialTransactionRequest {
 	}
 
 
-	public IdOnly getMaterial() {
-		return material;
-	}
-
-	public void setMaterial(IdOnly material) {
-		this.material = material;
-	}
 
 	public IdOnly getRequester() {
 		return requester;
@@ -91,5 +68,22 @@ public class MaterialTransactionRequest {
 
 	public void setRequester(IdOnly requester) {
 		this.requester = requester;
+	}
+
+	public IdOnly getSupplier() {
+		return supplier;
+	}
+
+	public void setSupplier(IdOnly supplier) {
+		this.supplier = supplier;
+	}
+
+
+	public List<MaterialTransactionDetailRequest> getMaterialTransactionDetails() {
+		return materialTransactionDetails;
+	}
+
+	public void setMaterialTransactionDetails(List<MaterialTransactionDetailRequest> materialTransactionDetails) {
+		this.materialTransactionDetails = materialTransactionDetails;
 	}
 }

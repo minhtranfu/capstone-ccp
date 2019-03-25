@@ -5,64 +5,45 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Where(clause = "is_deleted=0")
 @Table(name = "material_transaction", schema = "capstone_ccp")
 @NamedQueries({
-		@NamedQuery(name = "MaterialTransactionEntity.BySupplierId", query = "select e from MaterialTransactionEntity  e where e.material.contractor.id = :supplierId")
+		@NamedQuery(name = "MaterialTransactionEntity.BySupplierId", query = "select e from MaterialTransactionEntity  e where e.supplier.id = :supplierId")
 		, @NamedQuery(name = "MaterialTransactionEntity.ByRequesterId", query = "select e from MaterialTransactionEntity  e where e.requester.id = :requesterId")
 
 })
 public class MaterialTransactionEntity {
 	private long id;
-	@Positive
-	private Double price;
 
-	@Positive
 	@NotNull
-	private Double quantity;
-
-	private String unit;
-
+	private Double totalPrice;
 	@NotNull
 	@NotBlank
 	private String requesterAddress;
-
 	@NotNull
 	@Min(-90)
 	@Max(90)
 	private Double requesterLat;
-
 	@NotNull
 	@Min(-180)
 	@Max(180)
 	private Double requesterLong;
 
 	@NotNull
-	@NotBlank
-	private String materialAddress;
-
-	@NotNull
-	@Min(-90)
-	@Max(90)
-	private Double materialLat;
-
-	@NotNull
-	@Min(-180)
-	@Max(180)
-	private Double materialLong;
-
 	private Status status;
-
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 	private boolean isDeleted;
 
-	@NotNull
-	private MaterialEntity material;
+	private List<MaterialTransactionDetailEntity> materialTransactionDetails;
+
 	@NotNull
 	private ContractorEntity requester;
+	@NotNull
+	private ContractorEntity supplier;
 
 	@Id
 	@GeneratedValue()
@@ -76,36 +57,16 @@ public class MaterialTransactionEntity {
 	}
 
 	@Basic
-	@Column(name = "price", nullable = true, precision = 0)
-	public Double getPrice() {
-		return price;
+	@Column(name = "total_price", nullable = true, precision = 0)
+	public Double getTotalPrice() {
+		return totalPrice;
 	}
 
-	public void setPrice(Double price) {
-		this.price = price;
+	public void setTotalPrice(Double price) {
+		this.totalPrice = price;
 	}
 
-	@Basic
-	@Column(name = "quantity", nullable = true)
-	public Double getQuantity() {
-		return quantity;
-	}
 
-	public void setQuantity(Double quantity) {
-
-
-		this.quantity = quantity;
-	}
-
-	@Basic
-	@Column(name = "unit")
-	public String getUnit() {
-		return unit;
-	}
-
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
 
 	@Basic
 	@Column(name = "requester_address", nullable = true, length = 256)
@@ -137,35 +98,6 @@ public class MaterialTransactionEntity {
 		this.requesterLong = requesterLong;
 	}
 
-	@Basic
-	@Column(name = "material_address", nullable = true, length = 256)
-	public String getMaterialAddress() {
-		return materialAddress;
-	}
-
-	public void setMaterialAddress(String materialAddress) {
-		this.materialAddress = materialAddress;
-	}
-
-	@Basic
-	@Column(name = "material_lat", nullable = true, precision = 0)
-	public Double getMaterialLat() {
-		return materialLat;
-	}
-
-	public void setMaterialLat(Double materialLat) {
-		this.materialLat = materialLat;
-	}
-
-	@Basic
-	@Column(name = "material_long", nullable = true, precision = 0)
-	public Double getMaterialLong() {
-		return materialLong;
-	}
-
-	public void setMaterialLong(Double materialLong) {
-		this.materialLong = materialLong;
-	}
 
 	@Basic
 	@Column(name = "status", nullable = true, length = 256, insertable = false)
@@ -208,16 +140,14 @@ public class MaterialTransactionEntity {
 		isDeleted = deleted;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "material_id", referencedColumnName = "id")
-	public MaterialEntity getMaterial() {
-		return material;
+	@OneToMany(mappedBy = "materialTransaction", cascade = {CascadeType.ALL}, orphanRemoval = true)
+	public List<MaterialTransactionDetailEntity> getMaterialTransactionDetails() {
+		return materialTransactionDetails;
 	}
 
-	public void setMaterial(MaterialEntity materialByMaterialId) {
-		this.material = materialByMaterialId;
+	public void setMaterialTransactionDetails(List<MaterialTransactionDetailEntity> materialTransactionDetails) {
+		this.materialTransactionDetails = materialTransactionDetails;
 	}
-
 
 	@ManyToOne()
 	@JoinColumn(name = "requester_id", referencedColumnName = "id")
@@ -227,6 +157,17 @@ public class MaterialTransactionEntity {
 
 	public void setRequester(ContractorEntity requester) {
 		this.requester = requester;
+
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "supplier_id")
+	public ContractorEntity getSupplier() {
+		return supplier;
+	}
+
+	public void setSupplier(ContractorEntity supplier) {
+		this.supplier = supplier;
 	}
 
 	public enum Status{

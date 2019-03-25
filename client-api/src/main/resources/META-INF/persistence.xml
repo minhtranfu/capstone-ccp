@@ -38,6 +38,7 @@
         <class>entities.DebrisTransactionEntity</class>
         <class>entities.DebrisImageEntity</class>
         <class>entities.DebrisServiceTypeDebrisPostEntity</class>
+        <class>entities.MaterialTransactionDetailEntity</class>
         <properties>
 
             <!--<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>-->

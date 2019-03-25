@@ -3,7 +3,6 @@ package jaxrs.resources;
 import daos.ContractorDAO;
 import daos.MaterialDAO;
 import daos.MaterialTransactionDAO;
-import daos.MaterialTypeDAO;
 import dtos.IdOnly;
 import dtos.requests.MaterialTransactionRequest;
 import dtos.responses.MessageResponse;
@@ -16,6 +15,7 @@ import utils.ModelConverter;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
+import javax.security.auth.callback.TextOutputCallback;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -53,51 +53,84 @@ public class MaterialTransactionResource {
 	}
 
 	private void validateTransactionRequest(MaterialTransactionRequest materialTransactionRequest) {
-		MaterialEntity foundMaterial = materialDAO.findByIdWithValidation(materialTransactionRequest.getMaterial().getId());
+//		MaterialEntity foundMaterial = materialDAO.findByIdWithValidation(materialTransactionRequest.getMaterial().getId());
 		ContractorEntity foundRequester = contractorDAO.findByIdWithValidation(materialTransactionRequest.getRequester().getId());
+//		ContractorEntity foundRequester = contractorDAO.findByIdWithValidation(materialTransactionRequest.ge().getId());
 
 
-		//todo validate supplier cannot request his own material
-		if (foundMaterial.getContractor().getId() == foundRequester.getId()) {
-			throw new BadRequestException("You cannot request your own material!");
-		}
+		// TODO: 3/25/19 when checkout transaction validate this - now debugging TransactionDetail
+		//validate supplier cannot request his own material
+//		if (foundMaterial.getContractor().getId() == foundRequester.getId()) {
+//			throw new BadRequestException("You cannot request your own material!");
+//		}
 
 
 		//  1/30/19 check requester activation
 		contractorDAO.validateContractorActivated(foundRequester);
 
 	}
+
 	@POST
-	public Response requestTransaction(@Valid MaterialTransactionRequest materialTransactionRequest) {
+	public Response checkoutTransaction(@Valid MaterialTransactionRequest materialTransactionRequest) {
 
 
 		//3/10/19 get requester id from token
 		materialTransactionRequest.setRequester(new IdOnly(claimContractorId.getValue().longValue()));
 
 		validateTransactionRequest(materialTransactionRequest);
-
 		MaterialTransactionEntity materialTransactionEntity = modelConverter.toEntity(materialTransactionRequest);
 
+		double totalPrice = 0;
+		for (MaterialTransactionDetailEntity materialTransactionDetail : materialTransactionEntity.getMaterialTransactionDetails()) {
+			MaterialEntity foundMaterial = materialDAO.findByIdWithValidation(materialTransactionDetail.getMaterial().getId());
+			materialTransactionDetail.setMaterialTransaction(materialTransactionEntity);
+			materialTransactionDetail.setPrice(foundMaterial.getPrice());
 
-		MaterialEntity foundMaterial = materialDAO.findByIdWithValidation(materialTransactionEntity.getMaterial().getId());
+			totalPrice += materialTransactionDetail.getPrice()*materialTransactionDetail.getQuantity();
+		}
 
-		materialTransactionEntity.setMaterialAddress(foundMaterial.getConstruction().getAddress());
-		materialTransactionEntity.setMaterialLong(foundMaterial.getConstruction().getLongitude());
-		materialTransactionEntity.setMaterialLat(foundMaterial.getConstruction().getLatitude());
-
-		materialTransactionEntity.setPrice(foundMaterial.getPrice());
-		materialTransactionEntity.setUnit(foundMaterial.getMaterialType().getUnit());
-
-
+		// TODO: 3/25/19 do this after insert all the details
+		materialTransactionEntity.setTotalPrice(totalPrice);
 		//  1/30/19 set status to pending
 		materialTransactionEntity.setStatus(MaterialTransactionEntity.Status.PENDING);
-
 
 		materialTransactionDAO.persist(materialTransactionEntity);
 		return Response.status(Response.Status.CREATED).entity(
 				materialTransactionDAO.findByID(materialTransactionEntity.getId())
 		).build();
 	}
+
+//	@POST
+//	public Response requestTransaction(@Valid MaterialTransactionRequest materialTransactionRequest) {
+//
+//
+//		//3/10/19 get requester id from token
+//		materialTransactionRequest.setRequester(new IdOnly(claimContractorId.getValue().longValue()));
+//
+//		validateTransactionRequest(materialTransactionRequest);
+//
+//		MaterialTransactionEntity materialTransactionEntity = modelConverter.toEntity(materialTransactionRequest);
+//
+//
+//		MaterialEntity foundMaterial = materialDAO.findByIdWithValidation(materialTransactionEntity.getMaterial().getId());
+//
+//		materialTransactionEntity.setMaterialAddress(foundMaterial.getConstruction().getAddress());
+//		materialTransactionEntity.setMaterialLong(foundMaterial.getConstruction().getLongitude());
+//		materialTransactionEntity.setMaterialLat(foundMaterial.getConstruction().getLatitude());
+//
+//		materialTransactionEntity.setTotalPrice(foundMaterial.getPrice());
+//		materialTransactionEntity.setUnit(foundMaterial.getMaterialType().getUnit());
+//
+//
+//		//  1/30/19 set status to pending
+//		materialTransactionEntity.setStatus(MaterialTransactionEntity.Status.PENDING);
+//
+//
+//		materialTransactionDAO.persist(materialTransactionEntity);
+//		return Response.status(Response.Status.CREATED).entity(
+//				materialTransactionDAO.findByID(materialTransactionEntity.getId())
+//		).build();
+//	}
 
 	@GET
 	@Path("{id:\\d+}")
@@ -141,8 +174,7 @@ public class MaterialTransactionResource {
 			throw new BadRequestException("Status is null!");
 		}
 
-		MaterialEntity foundMaterial = foundTransaction.getMaterial();
-		long supplierId = foundMaterial.getContractor().getId();
+		long supplierId = foundTransaction.getSupplier().getId();
 		long requesterId = foundTransaction.getRequester().getId();
 
 		switch (transactionEntity.getStatus()) {
