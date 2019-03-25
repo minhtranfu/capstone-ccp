@@ -113,7 +113,6 @@ public class DebrisTransactionResource {
 		DebrisTransactionEntity foundTransaction = debrisTransactionDAO.findByIdWithValidation(id);
 
 
-
 		if (statusRequest.getStatus() == null) {
 			throw new BadRequestException("Status is null!");
 		}
@@ -159,7 +158,7 @@ public class DebrisTransactionResource {
 
 			case FINISHED:
 				//validate
-				// TODO: 3/21/19 validate only requester
+				// 3/21/19 validate only requester
 				if (foundTransaction.getRequester().getId() != getClaimContractorId()) {
 					throw new BadRequestException("Only requester can change this status");
 				}
@@ -170,7 +169,7 @@ public class DebrisTransactionResource {
 							foundTransaction.getStatus(), statusRequest.getStatus()));
 				}
 
-				// TODO: 3/21/19 change both staus to finished
+				// 3/21/19 change both staus to finished
 				foundTransaction.getDebrisBid().setStatus(DebrisBidEntity.Status.FINISHED);
 				foundTransaction.getDebrisPost().setStatus(DebrisPostEntity.Status.FINISHED);
 				debrisBidDAO.merge(foundTransaction.getDebrisBid());
@@ -178,12 +177,17 @@ public class DebrisTransactionResource {
 
 				break;
 			case CANCELED:
-				//validate
 
-				// TODO: 3/21/19 only requester or supplier can do this
+				String cancelReason = statusRequest.getCancelReason();
+				foundTransaction.setCancelReason(cancelReason);
+				if (cancelReason == null || cancelReason.isEmpty()) {
+					throw new BadRequestException("You must have cancel reason");
+				}
+
+				// 3/21/19 only requester or supplier can do this
 				if (foundTransaction.getRequester().getId() != getClaimContractorId()
 				&& foundTransaction.getSupplier().getId() != getClaimContractorId()) {
-					throw new BadRequestException("Only requester and supplier can change this status");
+					throw new BadRequestException("Only requester or supplier can change this status");
 				}
 
 				// cannot change from FINISHED to CANCELED
@@ -192,7 +196,7 @@ public class DebrisTransactionResource {
 							foundTransaction.getStatus(), statusRequest.getStatus()));
 				}
 
-				// TODO: 3/21/19 roll back to PENDING both bid and post
+				// 3/21/19 roll back to PENDING both bid and post
 				foundTransaction.getDebrisBid().setStatus(DebrisBidEntity.Status.PENDING);
 				foundTransaction.getDebrisPost().setStatus(DebrisPostEntity.Status.PENDING);
 				debrisBidDAO.merge(foundTransaction.getDebrisBid());

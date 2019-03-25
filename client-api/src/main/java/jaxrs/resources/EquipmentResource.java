@@ -229,12 +229,12 @@ public class EquipmentResource {
 						, foundContractor.getId()));
 			}
 
-			equipmentEntity.setConstruction(foundConstructionEntity);
-			// TODO: 3/5/19 take address from construction
-			//not so necessary but for future bug in construction delete
-			equipmentEntity.setAddress(foundConstructionEntity.getAddress());
-			equipmentEntity.setLatitude(foundConstructionEntity.getLatitude());
-			equipmentEntity.setLongitude(foundConstructionEntity.getLongitude());
+//			equipmentEntity.setConstruction(foundConstructionEntity);
+//			// TODO: 3/5/19 take address from construction
+//			//not so necessary but for future bug in construction delete
+//			equipmentEntity.setAddress(foundConstructionEntity.getAddress());
+//			equipmentEntity.setLatitude(foundConstructionEntity.getLatitude());
+//			equipmentEntity.setLongitude(foundConstructionEntity.getLongitude());
 
 		} else {
 			//validate long lat address
