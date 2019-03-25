@@ -181,7 +181,7 @@ class Header extends Component {
             {!authentication.isAuthenticated &&
               <span>
                 <button className="btn btn-outline-primary my-2 my-sm-0 mx-2" onClick={this._toggleLoginModal}>Login</button>
-                <Link to="/signup"><button className="btn btn-success my-2 my-sm-0 mx-2" onClick={this._closeOffCanvas}>Sign Up</button></Link>
+                <Link to="/signup"><button className="btn btn-primary my-2 my-sm-0 mx-2" onClick={this._closeOffCanvas}>Sign Up</button></Link>
               </span>
             }
           </div>
