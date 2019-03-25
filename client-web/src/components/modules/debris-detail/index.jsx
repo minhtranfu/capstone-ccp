@@ -71,7 +71,11 @@ class DebrisDetail extends Component {
       const transacstion = await debrisTransactionServices.postTransaction(debrisTransaction);
       this.setState({
         transacstion,
-        isFetching: false
+        isFetching: false,
+        debris: {
+          ...debris,
+          status: DEBRIS_POST_STATUSES.ACCEPTED
+        }
       });
     } catch (error) {
       const messsage = getErrorMessage(error);
@@ -86,6 +90,7 @@ class DebrisDetail extends Component {
     const { debris } = this.state;
     const { debrisBids } = debris;
     const isRequester = this._isRequester();
+    const isPending = debris.status === DEBRIS_POST_STATUSES.PENDING;
 
     if (!debrisBids || debrisBids.length === 0) {
       return null;
@@ -121,12 +126,12 @@ class DebrisDetail extends Component {
               </div>
               <div className="d-lg-none mx-auto mt-1">
                 <div className="price text-large">{formatPrice(bid.price)}</div>
-                {isRequester &&
+                {isRequester && isPending &&
                   <button className="btn btn-outline-primary float-right mt-2" onClick={() => this._handleChooseBid(bid.id)}>Choose</button>
                 }
               </div>
             </div>
-            <div className="flex-fill px-md-3 mt-2 mt-md-0">
+            <div className="flex-fill px-md-3 mt-2 mt-md-0 word-break">
               {bid.description}
             </div>
           </div>
@@ -134,7 +139,7 @@ class DebrisDetail extends Component {
             <div className="price text-x-large">
               {formatPrice(bid.price)}
             </div>
-            {isRequester &&
+            {isRequester && isPending &&
               <button className="btn btn-outline-primary float-right mt-2" onClick={() => this._handleChooseBid(bid.id)}>Choose</button>
             }
           </div>
