@@ -1,9 +1,9 @@
 package jaxrs.resources;
 
 import daos.ContractorDAO;
-import daos.FeedbackDAO;
-import daos.FeedbackTypeDAO;
-import dtos.requests.FeedbackRequest;
+import daos.ReportDAO;
+import daos.ReportTypeDAO;
+import dtos.requests.ReportRequest;
 import dtos.responses.MessageResponse;
 import entities.ContractorEntity;
 import entities.ReportEntity;
@@ -24,23 +24,21 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
-@Path("feedbacks")
+@Path("reports")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("contractor")
+public class ReportResource {
 
-public class FeedbackResource {
-
-	//	public static final FeedbackDAO feedbackDao = new FeedbackDAO();
+	//	public static final ReportDAO reportDao = new ReportDAO();
 
 	@Inject
 	public ContractorDAO contractorDao;
 
 
 	@Inject
-	public FeedbackTypeDAO feedbackTypeDAO;
+	public ReportTypeDAO reportTypeDAO;
 
 	@Inject
-	FeedbackDAO feedbackDao;
+	ReportDAO reportDao;
 
 	@PersistenceContext
 	EntityManager entityManager;
@@ -58,8 +56,9 @@ public class FeedbackResource {
 	public String getStatus() {
 		return "Good to go!";
 	}
+
 	@GET
-	public Response getFeedbacks(@QueryParam("from") @DefaultValue("0") long fromContractorId,
+	public Response getReports(@QueryParam("from") @DefaultValue("0") long fromContractorId,
 								 @QueryParam("to") @DefaultValue("0") long toContractorId) {
 
 		List<ReportEntity> result = new ArrayList<>();
@@ -68,19 +67,19 @@ public class FeedbackResource {
 		if (fromContractorId != 0) {
 
 			if (toContractorId != 0) {
-				result = entityManager.createNamedQuery("FeedbackEntity.getBy", ReportEntity.class)
+				result = entityManager.createNamedQuery("ReportEntity.getBy", ReportEntity.class)
 						.setParameter("toContractorId", toContractorId)
 						.setParameter("fromContractorId", fromContractorId)
 						.getResultList();
 
 			} else {
-				result = entityManager.createNamedQuery("FeedbackEntity.getByFromContractorId", ReportEntity.class)
+				result = entityManager.createNamedQuery("ReportEntity.getByFromContractorId", ReportEntity.class)
 						.setParameter("fromContractorId", fromContractorId)
 						.getResultList();
 			}
 		} else {
 			if (toContractorId != 0) {
-				result = entityManager.createNamedQuery("FeedbackEntity.getByToContractorId", ReportEntity.class)
+				result = entityManager.createNamedQuery("ReportEntity.getByToContractorId", ReportEntity.class)
 						.setParameter("toContractorId", toContractorId)
 						.getResultList();
 			}
@@ -90,23 +89,23 @@ public class FeedbackResource {
 
 	@GET
 	@Path("{id:\\d+}")
-	public Response getFeedback(@PathParam("id") long id) {
-		ReportEntity foundFeedback = feedbackDao.findByID(id);
-		if (foundFeedback == null) {
+	public Response getReport(@PathParam("id") long id) {
+		ReportEntity foundReport = reportDao.findByID(id);
+		if (foundReport == null) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(
-					new MessageResponse(String.format("feedback id=%d not found", id))
+					new MessageResponse(String.format("report id=%d not found", id))
 			).build();
 		}
-		return Response.ok(foundFeedback).build();
+		return Response.ok(foundReport).build();
 	}
 
 
 	@POST
 	@RolesAllowed("contractor")
-	public Response postFeedback(@Valid FeedbackRequest feedbackRequest) {
+	public Response postReport(@Valid ReportRequest reportRequest) {
 
 
-		ReportEntity reportEntity = modelConverter.toEntity(feedbackRequest);
+		ReportEntity reportEntity = modelConverter.toEntity(reportRequest);
 
 		ContractorEntity fromContractor = contractorDao.findByIdWithValidation(claimContractorId.getValue().longValue());
 		reportEntity.setFromContractor(fromContractor);
@@ -116,11 +115,11 @@ public class FeedbackResource {
 		reportEntity.setToContractor(toContractor);
 
 
-		ReportTypeEntity foundFeedbackType = feedbackTypeDAO.findByIdWithValidation(reportEntity.getReportType().getId());
-		reportEntity.setReportType(foundFeedbackType);
+		ReportTypeEntity foundReportType = reportTypeDAO.findByIdWithValidation(reportEntity.getReportType().getId());
+		reportEntity.setReportType(foundReportType);
 
-		feedbackDao.persist(reportEntity);
-		return Response.ok(feedbackDao.findByID(reportEntity.getId())).build();
+		reportDao.persist(reportEntity);
+		return Response.ok(reportDao.findByID(reportEntity.getId())).build();
 	}
 
 

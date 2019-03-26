@@ -46,9 +46,8 @@ public class MaterialFeedbackResource {
 
 		MaterialTransactionDetailEntity managedTransaction = materialTransactionDetailDAO.findByIdWithValidation
 				(materialFeedbackEntity.getMaterialTransactionDetail().getId());
-		if (managedTransaction.getMaterialTransaction().getStatus() != MaterialTransactionEntity.Status.FINISHED
-				&& managedTransaction.getMaterialTransaction().getStatus() != MaterialTransactionEntity.Status.CANCELED) {
-			throw new BadRequestException("You can only feedback on FINISHED or CANCELED status");
+		if (managedTransaction.getMaterialTransaction().getStatus() != MaterialTransactionEntity.Status.FINISHED) {
+			throw new BadRequestException("You can only feedback on FINISHED status");
 		}
 
 		if (managedTransaction.getMaterialTransaction().getRequester().getId() != getClaimContractorId()) {

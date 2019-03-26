@@ -89,8 +89,8 @@ public class ModelConverter {
 	}
 
 
-	public ReportEntity toEntity(FeedbackRequest feedbackRequest) {
-		return modelMapper.map(feedbackRequest, ReportEntity.class);
+	public ReportEntity toEntity(ReportRequest reportRequest) {
+		return modelMapper.map(reportRequest, ReportEntity.class);
 	}
 
 	public HiringTransactionEntity toEntity(HiringTransactionRequest hiringTransactionRequest) {
@@ -176,6 +176,10 @@ public class ModelConverter {
 
 	public MaterialFeedbackEntity toEntity(MaterialFeedbackRequest materialFeedbackRequest) {
 		return modelMapper.map(materialFeedbackRequest, MaterialFeedbackEntity.class);
+	}
+
+	public EquipmentFeedbackEntity toEntity(EquipmentFeedbackRequest equipmentFeedbackRequest) {
+		return modelMapper.map(equipmentFeedbackRequest, EquipmentFeedbackEntity.class);
 	}
 }
 

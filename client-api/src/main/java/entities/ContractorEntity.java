@@ -30,7 +30,6 @@ public class ContractorEntity {
 	private LocalDateTime updatedTime;
 
 
-
 	private List<EquipmentEntity> equipments;
 	private List<MaterialEntity> materials;
 	private List<ConstructionEntity> constructions;
@@ -42,11 +41,16 @@ public class ContractorEntity {
 
 	private List<NotificationEntity> notifications;
 
-	private List<DebrisFeedbackEntity> debrisFeedbacks;
-	private List<MaterialFeedbackEntity> materialFeedbacks;
 
+	private List<DebrisFeedbackEntity> debrisFeedbacks;
 	private double averageDebrisRating;
+
+	private List<MaterialFeedbackEntity> materialFeedbacks;
 	private double averageMaterialRating;
+
+	private List<EquipmentFeedbackEntity> equipmentFeedbacks;
+	private double averageEquipmentRating;
+
 
 	public ContractorEntity() {
 	}
@@ -287,7 +291,7 @@ public class ContractorEntity {
 	}
 
 	@Transient
-	public int getMaterialFeedbacksCount(){
+	public int getMaterialFeedbacksCount() {
 		return materialFeedbacks.size();
 	}
 
@@ -300,15 +304,43 @@ public class ContractorEntity {
 		this.averageMaterialRating = averageMaterialRating;
 	}
 
+
+	@JsonbTransient
+	@OneToMany(mappedBy = "supplier")
+	public List<EquipmentFeedbackEntity> getEquipmentFeedbacks() {
+		return equipmentFeedbacks;
+	}
+
+	public void setEquipmentFeedbacks(List<EquipmentFeedbackEntity> equipmentFeedbacks) {
+		this.equipmentFeedbacks = equipmentFeedbacks;
+	}
+
+	@Transient
+	public int getEquipmentFeedbacksCount() {
+		return getEquipmentFeedbacks().size();
+	}
+
+	@Transient
+	public double getAverageEquipmentRating() {
+		return averageEquipmentRating;
+	}
+
+
+	public void setAverageEquipmentRating(double averageEquipmentRating) {
+		this.averageEquipmentRating = averageEquipmentRating;
+	}
+
 	@PostLoad
 	void postLoad() {
 		this.averageDebrisRating = getDebrisFeedbacks().stream()
 				.mapToDouble(DebrisFeedbackEntity::getRating).average().orElse(0);
 		this.averageMaterialRating = getMaterialFeedbacks().stream()
 				.mapToDouble(MaterialFeedbackEntity::getRating).average().orElse(0);
+		this.averageEquipmentRating = getEquipmentFeedbacks().stream()
+				.mapToDouble(EquipmentFeedbackEntity::getRating).average().orElse(0);
 	}
 
-	public enum Status{
+	public enum Status {
 		NOT_VERIFIED,
 		ACTIVATED,
 		DEACTIVATED

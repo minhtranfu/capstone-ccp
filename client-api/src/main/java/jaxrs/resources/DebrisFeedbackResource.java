@@ -49,9 +49,8 @@ public class DebrisFeedbackResource {
 		// TODO: 3/21/19 validate transction status must be FINISHED or CANCELED
 
 		DebrisTransactionEntity managedTransaction = debrisTransactionDAO.findByIdWithValidation(debrisFeedbackEntity.getDebrisTransaction().getId());
-		if (managedTransaction.getStatus() != DebrisTransactionEntity.Status.FINISHED
-				&& managedTransaction.getStatus() != DebrisTransactionEntity.Status.CANCELED) {
-			throw new BadRequestException("You can only feedback on FINISHED or CANCELED status");
+		if (managedTransaction.getStatus() != DebrisTransactionEntity.Status.FINISHED) {
+			throw new BadRequestException("You can only feedback on FINISHED status");
 		}
 
 		if (managedTransaction.getRequester().getId() != getClaimContractorId()) {

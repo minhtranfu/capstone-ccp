@@ -40,6 +40,7 @@
         <class>entities.DebrisServiceTypeDebrisPostEntity</class>
         <class>entities.MaterialTransactionDetailEntity</class>
         <class>entities.MaterialFeedbackEntity</class>
+        <class>entities.EquipmentFeedbackEntity</class>
         <properties>
 
             <!--<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>-->

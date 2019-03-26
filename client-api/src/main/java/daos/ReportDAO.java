@@ -9,7 +9,7 @@ import javax.persistence.PersistenceContextType;
 
 
 @Stateless
-public class FeedbackDAO extends BaseDAO<ReportEntity, Long> {
+public class ReportDAO extends BaseDAO<ReportEntity, Long> {
 
 	@PersistenceContext(type = PersistenceContextType.TRANSACTION)
 	EntityManager entityManager;

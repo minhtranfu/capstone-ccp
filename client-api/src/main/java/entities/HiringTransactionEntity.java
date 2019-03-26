@@ -6,6 +6,7 @@ import listeners.entityListenters.HiringTransactionEntityListener;
 import org.hibernate.annotations.Where;
 
 import javax.json.bind.annotation.JsonbDateFormat;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -47,6 +48,7 @@ public class HiringTransactionEntity {
 
 	private EquipmentEntity equipment;
 	private ContractorEntity requester;
+	private EquipmentFeedbackEntity equipmentFeedback;
 
 
 	public HiringTransactionEntity() {
@@ -262,6 +264,18 @@ public class HiringTransactionEntity {
 	public void setEquipment(EquipmentEntity equipment) {
 		this.equipment = equipment;
 	}
+
+	@OneToOne(mappedBy = "hiringTransaction")
+	@JsonbTransient
+	public EquipmentFeedbackEntity getEquipmentFeedback() {
+		return equipmentFeedback;
+	}
+
+	public void setEquipmentFeedback(EquipmentFeedbackEntity equipmentFeedback) {
+		this.equipmentFeedback = equipmentFeedback;
+	}
+
+
 
 	@Override
 	public String toString() {
