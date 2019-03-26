@@ -1,239 +1,321 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import moment from 'moment';
 // Require Editor JS files.
 import 'froala-editor/js/froala_editor.pkgd.min.js';
 // Require Editor CSS files.
 import 'froala-editor/css/froala_style.min.css';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
-import FroalaEditor from 'react-froala-wysiwyg';
 
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
-import Skeleton from 'react-loading-skeleton';
 
-import { fetchEquipmentTypes, fetchEquipmentTypeInfos } from '../../../redux/actions/thunks';
+import Step from './Step';
+import { fetchEquipmentTypes, fetchEquipmentTypeSpecs } from '../../../redux/actions/thunks';
 import { ENTITY_KEY } from '../../../common/app-const';
-import { connect } from 'react-redux';
 
-class AddEquipmentStep1 extends PureComponent {
+import ccpApiService from '../../../services/domain/ccp-api-service';
 
-    constructor(props) {
-        super(props);
+class AddEquipmentStep1 extends Step {
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            description: "",
-            additionField: [],
-            additionField1: [
-                {
-                    key: 'model',
-                    name: 'Mã hiệu',
-                    type: 'text',
-                },
-                {
-                    key: 'manufactor',
-                    name: 'Nhà sản xuất',
-                    type: 'text',
-                },
-            ],
-        }
+    this.state = {
+      constructions: [],
+      categories: [],
+      availableTimeRanges: [
+        {}
+      ]
+    };
+  }
+
+  componentDidMount() {
+    this._loadEquipmentTypes();
+    this._loadConstructions();
+    this._loadEquipmentTypeCategories();
+  }
+
+  _loadConstructions = async () => {
+    const { contractor } = this.props;
+
+    try {
+      const constructions = await ccpApiService.getConstructionsByContractorId(contractor.id);
+      this.setState({
+        constructions
+      });
+    } catch (error) {
+      alert('Error while loading constructions');
+    }
+  };
+
+  _loadEquipmentTypeCategories = async () => {
+
+    try {
+      const categories = await ccpApiService.getEquipmentTypeCategories();
+      this.setState({
+        categories
+      });
+    } catch (error) {
+      alert('Error while loading categories');
+    }
+  };
+
+  _loadEquipmentTypes = () => {
+    const { fetchEquipmentTypes } = this.props;
+
+    fetchEquipmentTypes();
+  };
+
+  _onChangeDescription = (description) => {
+    this.setState({ description });
+  };
+
+  _onChangeDateRanage = (picker, rangeId) => {
+    let { availableTimeRanges } = this.state;
+    if (!availableTimeRanges) {
+      availableTimeRanges = [];
     }
 
-    componentDidMount() {
-        this.setState({
-            additionField: this.state.additionField1
-        });
+    availableTimeRanges[rangeId] = {
+      beginDate: picker.startDate.format('YYYY-MM-DD'),
+      endDate: picker.endDate.format('YYYY-MM-DD')
+    };
 
-        this._loadEquipmentTypes();
+    this.setState({
+      availableTimeRanges
+    });
+  };
+
+  _getLabelOfRange = (rangeId) => {
+    const { availableTimeRanges } = this.state;
+    if (availableTimeRanges == undefined || availableTimeRanges.length == 0) {
+      return '';
     }
 
-    _loadEquipmentTypes = () => {
-        const { fetchEquipmentTypes } = this.props;
-
-        fetchEquipmentTypes();
-    };
-
-    _onChangeEquipType = (e) => {
-        const equipTypeId = e.target.value;
-        const { fetchEquipmentTypeInfos} = this.props;
-
-        fetchEquipmentTypeInfos(equipTypeId);
-    };
-
-    _onChangeDescription = (description) => {
-        this.setState({description});
-    };
-
-    _onChangeDateRanage = (e, picker) => {
-        const { ranges } = this.state;
-        const rangeId = e.target.dataset.rangeId;
-        
-        if (ranges[rangeId] == undefined) {
-            ranges[rangeId] = {};
-        }
-
-        ranges[rangeId].startDate = picker.startDate;
-        ranges[rangeId].endDate = picker.endDate;
-        this.setState({
-            ranges: [...ranges],
-        })
-    };
-
-    _getLabelOfRange = (rangeId) => {
-        const { ranges } = this.state;
-        const range = ranges[rangeId];
-        if (range == undefined) {
-            return '';
-        }
-
-        return `${range.startDate} - ${range.endDate}`;
+    const range = availableTimeRanges[rangeId];
+    if (range == undefined || !range.beginDate) {
+      return '';
     }
 
-    render() {
-        const { entities } = this.props;
-        console.log(this.props.entities);
-        const equipmentTypes = entities[ENTITY_KEY.EQUIPMENT_TYPES];
-        const equipmentTypeInfos = entities[ENTITY_KEY.EQUIPMENT_TYPE_INFOS];
+    const { beginDate, endDate } = range;
 
-        return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-12">
-                        <h2 className="my-4">Đăng thiết bị mới</h2>
-                        <hr/>
-                    </div>
-                    <div className="col-md-6">
-                        <h4 className="mb-3">Thông tin chung</h4>
-                        <div className="form-group">
-                            <label htmlFor="">Tên thiết bị <i className="text-danger">*</i></label>
-                            <input type="text" className="form-control"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Loại thiết bị <i className="text-danger">*</i></label>
-                            <select onChange={this._onChangeEquipType} data-live-search="true" name="equip_type_id" id="equip_type_id" className="form-control selectpicker">
-                                {equipmentTypes && equipmentTypes.data && equipmentTypes.data.map(type => {
-                                    return (<option value={type.id} key={type.id}>{type.name}</option>);
-                                })}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Công trường <i className="text-danger">*</i></label>
-                            <select name="equip_type_id" id="equip_type_id" className="form-control">
-                                
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Số lượng <i className="text-danger">*</i></label>
-                            <input type="text" className="form-control"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Thời gian rảnh</label>
-                            <DateRangePicker startDate="1/1/2014" endDate="3/1/2014" autoUpdateInput timePicker timePicker24Hour>
-                            <input type="text" className="form-control" value=""/>
-                            </DateRangePicker>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Mã vật tư <i className="text-dangerr">*</i></label>
-                            <input type="text" className="form-control"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Đơn vị tính</label>
-                            <select name="" id="" className="form-control">
-                                <option value="">Cái</option>
-                                <option value="">Kg</option>
-                                <option value="">Lít</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Mô tả</label>
-                            {/* <textarea name="" id="" rows="8" className="form-control" placeholder="Mô tả ở đây..."></textarea> */}
-                            
-                            <p>Preview:</p>
-                            <div className="mb-2" dangerouslySetInnerHTML={{__html: this.state.description}} />
+    return `${beginDate} - ${endDate}`;
+  }
 
-                            <FroalaEditor tag="textarea" config={{
-                                placeholderText: "Mô tả thiết bị của bạn",
-                                maxLength: 10,
-                                height: 260,
-                                htmlExecuteScripts: false,
-                                }} rows="10"
-                                model={this.state.description}
-                                onModelChange={this._onChangeDescription}
-                                />
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <h4 className="mb-3">Thông tin đặc biệt</h4>
-                        {equipmentTypeInfos && equipmentTypeInfos.data && equipmentTypeInfos.data.map(field => {
-                            return (
-                                <div key={field.id} className="form-group">
-                                    <label htmlFor="">{field.name}</label>
-                                    <input type="text" name={field.id} className="form-control"/>
-                                </div>
-                            );
-                        })}
-                        {(!equipmentTypeInfos || !equipmentTypeInfos.data) &&
-                            <div>
-                                <Skeleton width={100}/>
-                                <Skeleton/>
-                                <Skeleton width={100}/>
-                                <Skeleton/>
-                                <Skeleton width={100}/>
-                                <Skeleton/>
-                                <Skeleton width={100}/>
-                                <Skeleton/>
-                            </div>
-                        }
-                        {/* <div className="form-group">
-                            <label htmlFor="">Mã hiệu</label>
-                            <input type="text" className="form-control"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Nhà sản xuất</label>
-                            <input type="text" className="form-control"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Màu sắc</label>
-                            <input type="text" className="form-control"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Kích thước</label>
-                            <input type="text" className="form-control"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Tiêu chuẩn</label>
-                            <input type="text" className="form-control"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Nguồn gốc</label>
-                            <input type="text" className="form-control"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Cường độ</label>
-                            <input type="text" className="form-control"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="">Tỉ trọng</label>
-                            <input type="text" className="form-control"/>
-                        </div>
-                        <div className="form-group">
-                            <button className="btn btn-success">Đăng</button>
-                        </div> */}
-                    </div>
-                </div>
+  _handleFieldChange = e => {
+    const name = e.target.name;
+    let value = e.target.value;
+
+    if (name === 'constructionId') {
+      this._handleSelectConstruction(value);
+    }
+
+    if (!isNaN(value)) {
+      value = +value;
+    }
+
+    const newState = {
+      [name]: value
+    };
+
+    if (name === 'address') {
+      newState.isAddressEditted = true;
+    }
+
+    this.setState(newState);
+  };
+
+  _handleSubmitForm = () => {
+    // Todo: Validate form
+
+    this._handleStepDone({
+      data: {
+        ...this.state,
+        constructions: undefined
+      }
+    });
+  };
+
+  _renderDateRangePickers = () => {
+    const { availableTimeRanges } = this.state;
+    const numOfRange = availableTimeRanges.length;
+
+    return availableTimeRanges.map((range, i) => {
+      return (
+        <div className="form-group" key={i}>
+          <label htmlFor="">Available time:</label>
+          <div className="input-group date-range-picker">
+            <DateRangePicker minDate={moment()} onApply={(e, picker) => this._onChangeDateRanage(picker, i)} containerClass="custom-file" autoApply alwaysShowCalendars>
+            {/* <input type="text" className="form-control" readOnly value={this._getLabelOfRange(i) || ''} /> */}
+              <input type="text" className="custom-file-input" id={`inputDate${i}`} />
+              <label className="custom-file-label" htmlFor={`inputDate${i}`} aria-describedby={`inputDate${i}`}>{this._getLabelOfRange(i) || 'Select time range'}</label>
+            </DateRangePicker>
+            {numOfRange > 1 &&
+              <div className="input-group-append">
+                <button className="btn btn-outline-danger" onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  this._removeTimeRangePicker(i);
+                  return false;
+                }}><i className="fal fa-trash"></i></button>
+              </div>
+            }
+          </div>
+        </div>
+      );
+    });
+  };
+
+  _addTimeRangePicker = () => {
+    const { availableTimeRanges } = this.state;
+
+    this.setState({
+      availableTimeRanges: [
+        ...availableTimeRanges,
+        {}
+      ]
+    });
+  };
+
+  _removeTimeRangePicker = rangeId => {
+    let { availableTimeRanges } = this.state;
+    availableTimeRanges = availableTimeRanges.filter((range, id) => id !== rangeId);
+
+    this.setState({
+      availableTimeRanges
+    });
+  };
+
+  // When select construction, change address of equipment too
+  _handleSelectConstruction = constructionId => {
+    const { isAddressEditted, constructions } = this.state;
+
+    if (isAddressEditted) {
+      return;
+    }
+
+    const selectedContruction = constructions.find(construction => +construction.id === +constructionId);
+    this.setState({
+      address: selectedContruction.address
+    });
+  };
+
+  _getShowablePrice = (amount, decimalCount = 2, decimal = ".", thousands = ",") => {
+
+    if (!amount) {
+      return '';
+    }
+
+    try {
+      decimalCount = Math.abs(decimalCount);
+      decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+      const negativeSign = amount < 0 ? "-" : "";
+
+      let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+      let j = (i.length > 3) ? i.length % 3 : 0;
+
+      return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+    } catch (e) {
+      return '';
+    }
+  };
+
+  render() {
+    const { entities } = this.props;
+    const equipmentTypes = entities[ENTITY_KEY.EQUIPMENT_TYPES];
+    const { constructions, categories, categoryId } = this.state;
+
+    return (
+      <div className="container">
+        <div className="row">
+          <div className="col-12">
+            <h4 className="my-3">General information</h4>
+          </div>
+          <div className="col-md-6">
+            <div className="form-group">
+              <label htmlFor="">Equipment name: <i className="text-danger">*</i></label>
+              <input type="text" name="name" onChange={this._handleFieldChange} value={this.state.name || ''} className="form-control" maxLength="80" required />
             </div>
-        );
-    }
+            <div className="form-group">
+              <label htmlFor="">Construction: <i className="text-danger">*</i></label>
+              <select name="constructionId" onChange={this._handleFieldChange} value={this.state.constructionId || ''} id="construction_id" className="form-control" required>
+                <option value="">Choose...</option>
+                {constructions.map(construction => <option key={construction.id} value={construction.id}>{construction.name}</option>)}
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="">Address: <i className="text-danger">*</i></label>
+              <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="">Equipment Category: <i className="text-danger">*</i></label>
+              <select name="categoryId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.categoryId || ''} id="equip_type_id" className="form-control selectpicker">
+                <option value="0">Choose...</option>
+                {categories && categories.map(cat => {
+                  return (<option value={cat.id} key={cat.id}>{cat.name}</option>);
+                })}
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="">Equipment type: <i className="text-danger">*</i></label>
+              <select name="equipmentTypeId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.equipmentTypeId || ''} id="equip_type_id" className="form-control selectpicker">
+                <option value="">Choose...</option>
+                {equipmentTypes && equipmentTypes.data && equipmentTypes.data.map(type => {
+
+                  if (!!categoryId && type.generalEquipment.id !== categoryId) {
+                    return null;
+                  }
+
+                  return (<option value={type.id} key={type.id}>{type.name}</option>);
+                })}
+              </select>
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="form-group">
+              <label htmlFor="daily_price">Price per day (K): <i className="text-danger">*</i></label>
+              <input type="number" name="dailyPrice" onChange={this._handleFieldChange} defaultValue={this._getShowablePrice(this.state.showableDailyPrice)} className="form-control" id="daily_price" required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="delivery_price">Delivery price per km (K): <i className="text-danger">*</i></label>
+              <input type="number" name="deliveryPrice" onChange={this._handleFieldChange} defaultValue={this._getShowablePrice(this.state.showableDeliveryPrice)} className="form-control" id="delivery_price" required />
+            </div>
+            {this._renderDateRangePickers()}
+            <div className="form-group text-center">
+              <button className="btn btn-outline-primary mt-4" onClick={this._addTimeRangePicker}><i className="fal fa-plus"></i> Add more time range</button>
+            </div>
+          </div>
+          <div className="col-12 text-center">
+            <div className="form-group">
+              <button className="btn btn-success" onClick={this._handleSubmitForm}>NEXT STEP <i className="fal fa-chevron-right"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 AddEquipmentStep1.propTypes = {
-    entities: PropTypes.object.isRequired,
-    fetchEquipmentTypes: PropTypes.func.isRequired,
-    fetchEquipmentTypeInfos: PropTypes.func.isRequired,
+  entities: PropTypes.object.isRequired,
+  fetchEquipmentTypes: PropTypes.func.isRequired,
+  fetchEquipmentTypeSpecs: PropTypes.func.isRequired
 };
 
-export default connect(
-(state) => {
-    return {entities: {...state.entities}}
-},
-    { fetchEquipmentTypes, fetchEquipmentTypeInfos }
-)(AddEquipmentStep1);
+const mapStateToProps = state => {
+  const { authentication, entities } = state;
+  const { user } = authentication;
+  const { contractor } = user;
+
+  return {
+    contractor,
+    entities
+  };
+};
+
+export default connect(mapStateToProps, {
+  fetchEquipmentTypes,
+  fetchEquipmentTypeSpecs
+})(AddEquipmentStep1);

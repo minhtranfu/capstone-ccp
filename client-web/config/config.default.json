@@ -1,6 +1,0 @@
-{
-  "example": {
-    "port": 3060,
-    "baseUrl": "http://localhost:8080/CcpApi"
-  }
-}

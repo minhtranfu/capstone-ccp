@@ -28,6 +28,7 @@ if (NodeService.isProduction()) {
         );
         res.sendFile(dist);
     });
+    app.use('/public', express.static('public'));
 
     // Open socket
     app.listen(PORT, () => {
@@ -41,7 +42,7 @@ if (NodeService.isProduction()) {
     new WebpackDevServer(webpack(config), {
         hot               : true,
         historyApiFallback: true,
-        contentBase       : path.join(__dirname, "/public"),
+        // contentBase       : path.join(__dirname, "/public"),
         open: true,
     }).listen(PORT, 'localhost', error => {
         console.log(error || `Started WebpackDevServer on port ${PORT}`);

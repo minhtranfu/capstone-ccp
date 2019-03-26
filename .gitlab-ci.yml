@@ -11,6 +11,7 @@ deploy_stage:
   environment: production
   only:
     - develop-web-api
+    - web-client
   script:
     # - ls
     - sshpass -V
@@ -18,6 +19,13 @@ deploy_stage:
     - export GITUSER=$GIT_USER
     - export GITPASS=$GIT_PASS
     - sshpass -e ssh -o StrictHostKeyChecking=no root@nccp.hoctot.net "
+        cd /home/capstone/capstone-ccp-run-web/ &&
+        git pull https://$GITUSER:$GITPASS@github.com/minhtranfu/capstone-ccp.git web-client &&
+        cd client-web &&
+        yarn install &&
+        yarn build:prod &&
+        ln -s \"\$PWD/public\" \"\$PWD/dist\"
+        "
         cd /home/capstone/capstone-ccp/ &&
         git pull  https://$GITUSER:$GITPASS@github.com/minhtranfu/capstone-ccp.git develop-web-api &&
         cd client-api &&
@@ -27,3 +35,4 @@ deploy_stage:
         docker run --detach --name client-api1 -p 8080:8080 --link mysqldb:mysql client-api
         "
 
+       
