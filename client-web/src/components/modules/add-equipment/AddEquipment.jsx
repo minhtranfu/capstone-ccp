@@ -5,13 +5,14 @@ import {
   CSSTransition
 } from 'react-transition-group';
 import { Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
 
 import Step1 from './Step1';
 import Step2 from './Step2';
 import Step3 from './Step3';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 class AddEquipment extends Component {
   constructor(props) {
@@ -141,7 +142,7 @@ class AddEquipment extends Component {
     return (
       <div>
         {this.state.equipmentId &&
-          <Redirect to={`/equip-detail/${this.state.equipmentId}`} />
+          <Redirect to={getRoutePath(routeConsts.EQUIPMENT_EDIT, {id: this.state.equipmentId})} />
         }
         <Nav tabs>
           {tabs}

@@ -5,6 +5,7 @@ import { equipmentServices } from 'Src/services/domain/ccp';
 import { Image } from 'Src/components/common';
 import Skeleton from 'react-loading-skeleton';
 import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 class EditEquipment extends Component {
 
@@ -49,7 +50,9 @@ class EditEquipment extends Component {
   /**
    * Reset edited data
    */
-  _handleResetForm = () => {
+  _handleResetForm = e => {
+    e.preventDefault();
+    
     this.setState({
       editedData: {}
     });
@@ -123,7 +126,7 @@ class EditEquipment extends Component {
           <div className="col-md-8">
             <div className="bg-white px-2 py-3">
               {/* TODO: Add back to list link */}
-              <h4>Information: <Link to={getRoutePath('SupplierEquipments')} className="btn btn-sm btn-outline-info float-right"><i className="fal fa-chevron-left"></i> Back to list</Link></h4>
+              <h4>Information: <Link to={getRoutePath(routeConsts.EQUIPMENT_MY)} className="btn btn-sm btn-outline-info float-right"><i className="fal fa-chevron-left"></i> Back to list</Link></h4>
               {isSuccess &&
                 <div className="alert alert-success">Save successfully!</div>
               }

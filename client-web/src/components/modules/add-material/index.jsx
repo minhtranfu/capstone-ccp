@@ -5,13 +5,10 @@ import {
   CSSTransition
 } from 'react-transition-group';
 import { Redirect, Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 
 import Step1 from './Step1';
-import Step2 from './Step2';
 import Step3 from './Step3';
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
 import { materialServices } from "Services/domain/ccp";
 
 class AddMaterial extends Component {

@@ -10,7 +10,7 @@ import {
   fetchEquipmentTypeSpecs
 } from "../../../redux/actions/thunks";
 import { connect } from "react-redux";
-import ccpApiService from "../../../services/domain/ccp-api-service";
+import { equipmentServices } from "Services/domain/ccp";
 
 const thumbsContainer = {
   display: "flex",
@@ -142,7 +142,7 @@ class RequestDebrisStep2 extends Step {
         formData.append("file", file);
       });
 
-      const images = await ccpApiService.uploadEquipmentImage(formData);
+      const images = await equipmentServices.uploadEquipmentImage(formData);
       data = {
         ...data,
         equipmentImages: images.map(image => ({id: image.id})),

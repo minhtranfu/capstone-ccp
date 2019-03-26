@@ -36,7 +36,7 @@ export const updateEquipmentStatus = (equipmentId, status) => {
 };
 
 export const uploadEquipmentImage = formData => {
-  return DataAccessService.post('/equipmentImages', formData, {
+  return DataAccessService.post('/storage/equipmentImages', formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
