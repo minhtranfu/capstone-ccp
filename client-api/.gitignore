@@ -96,3 +96,6 @@ buildNumber.properties
 
 src/main/tomee/conf/tomee.xml
 src/main/resources/sonic-arcadia-97210-firebase-adminsdk-1gurg-6c3d84021b.json
+
+.idea/inspectionProfiles/
+

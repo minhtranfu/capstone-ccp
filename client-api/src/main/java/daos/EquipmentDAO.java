@@ -25,7 +25,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	EntityManager entityManager;
 
 
-	public List<EquipmentEntity> searchEquipment(LocalDate beginDate, LocalDate endDate,
+	public List<EquipmentEntity> searchEquipment(String query, LocalDate beginDate, LocalDate endDate,
 												 Long contractorId, long equipmentTypeId,
 												 String orderBy, int offset, int limit) {
 
@@ -37,19 +37,20 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<EquipmentEntity> query = criteriaBuilder.createQuery(EquipmentEntity.class);
+		CriteriaQuery<EquipmentEntity> criteriaQuery = criteriaBuilder.createQuery(EquipmentEntity.class);
 
 
-		Root<EquipmentEntity> e = query.from(EquipmentEntity.class);
+		Root<EquipmentEntity> e = criteriaQuery.from(EquipmentEntity.class);
 
-		Subquery<AvailableTimeRangeEntity> subQuery = query.subquery(AvailableTimeRangeEntity.class);
+		Subquery<AvailableTimeRangeEntity> subQuery = criteriaQuery.subquery(AvailableTimeRangeEntity.class);
 		Root<AvailableTimeRangeEntity> t = subQuery.from(AvailableTimeRangeEntity.class);
 
-		Subquery<HiringTransactionEntity> subQueryActiveTransaction = query.subquery(HiringTransactionEntity.class);
+		Subquery<HiringTransactionEntity> subQueryActiveTransaction = criteriaQuery.subquery(HiringTransactionEntity.class);
 		Root<HiringTransactionEntity> a = subQueryActiveTransaction.from(HiringTransactionEntity.class);
 
-		ParameterExpression<Long> contractorParam = criteriaBuilder.parameter(Long.class);
 
+		ParameterExpression<String> queryParam = criteriaBuilder.parameter(String.class);
+		ParameterExpression<Long> contractorParam = criteriaBuilder.parameter(Long.class);
 		ParameterExpression<LocalDate> beginDateParam = criteriaBuilder.parameter(LocalDate.class);
 		ParameterExpression<LocalDate> endDateParam = criteriaBuilder.parameter(LocalDate.class);
 		ParameterExpression<Long> equipmentTypeIdParam = criteriaBuilder.parameter(Long.class);
@@ -86,7 +87,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 
 //		merge 3 main where clauses
-		query.select(e).where(
+		criteriaQuery.select(e).where(
+				criteriaBuilder.like(e.get("name"), queryParam),
 				equipmentTypeId != 0 ? criteriaBuilder.equal(equipmentTypeIdParam, e.get("equipmentType").get("id")) : criteriaBuilder.conjunction()
 				, contractorId != null ? criteriaBuilder.notEqual(e.get("contractor").get("id"), contractorParam) : criteriaBuilder.conjunction()
 				, criteriaBuilder.exists(subQuery)
@@ -115,12 +117,12 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 			}
 
 
-			query.orderBy(orderList);
+			criteriaQuery.orderBy(orderList);
 		}
 
-		TypedQuery<EquipmentEntity> typeQuery = entityManager.createQuery(query);
+		TypedQuery<EquipmentEntity> typeQuery = entityManager.createQuery(criteriaQuery);
 
-
+		typeQuery.setParameter(queryParam, "%"+query+"%");
 		if (contractorId != null) {
 			typeQuery.setParameter(contractorParam, contractorId);
 		}

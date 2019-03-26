@@ -90,6 +90,8 @@ public class EquipmentResource {
 
 	@GET
 	public Response searchEquipment(
+
+			@QueryParam("q") @DefaultValue("") String query,
 			@QueryParam("lat") @DefaultValue(DEFAULT_LAT) double latitude,
 			@QueryParam("long") @DefaultValue(DEFAULT_LONG) double longitude,
 			@QueryParam("beginDate") @DefaultValue("") LocalDateWrapper beginDateWrapper,
@@ -127,6 +129,7 @@ public class EquipmentResource {
 		}
 
 		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(
+				query,
 				beginDate, endDate,
 				contractorId,
 				equipmentTypeId,
