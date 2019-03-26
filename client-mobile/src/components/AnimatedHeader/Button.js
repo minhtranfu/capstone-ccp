@@ -104,7 +104,7 @@ const Search = ({ onPress }) => (
 
 const Cart = ({ onPress }) => (
   <TouchableOpacity onPress={onPress}>
-    <Feather name={"shopping-cart"} size={24} />
+    <Feather name={"shopping-cart"} size={20} style={{ marginRight: 8 }} color={colors.secondaryColor}/>
   </TouchableOpacity>
 );
 

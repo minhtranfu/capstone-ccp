@@ -35,7 +35,6 @@ class ParallaxList extends Component {
   renderHeader = () => (
     <Animated.View
       style={{
-        height: 52,
         opacity: this.titleOpacity
       }}
     >
@@ -47,7 +46,7 @@ class ParallaxList extends Component {
     <AnimatedHeader>
       <Left back={this.props.hasLeft} />
       <AnimatedBody
-        title={this.props.title.toUpperCase()}
+        title={this.props.title}
         style={{ opacity: this.props.opacity || this.navOpacity }}
       />
       <Right
@@ -66,7 +65,6 @@ class ParallaxList extends Component {
   renderBackground = () => (
     <AnimatedImage
       style={{
-        marginBottom: 20,
         height: 300,
         width: "100%",
         opacity: 1,
@@ -100,7 +98,7 @@ class ParallaxList extends Component {
         {React.cloneElement(
           this.props.scrollElement,
           {
-            style: { marginTop: 50, backgroundColor: "transparent" },
+            style: { marginTop: 44, backgroundColor: "transparent", flex: 1, },
             onScroll: Animated.event(
               [{ nativeEvent: { contentOffset: { y: this.nativeScroll } } }],
               { useNativeDriver: true }
@@ -112,13 +110,13 @@ class ParallaxList extends Component {
           },
           [
             this.props.removeTitle ? null : (
-              <View key={Math.random()}>{this.renderHeader()}</View>
+              <View key="title">{this.renderHeader()}</View>
             ),
             this.props.hasThumbnail ? (
-              <View key={Math.random()}>{this.renderBackground()}</View>
+              <View key="thumbnail">{this.renderBackground()}</View>
             ) : null,
             this.props.renderScrollItem ? (
-              <View key={Math.random()}>{this.props.renderScrollItem()}</View>
+              <View key="scroll">{this.props.renderScrollItem()}</View>
             ) : null
           ]
         )}
@@ -135,9 +133,9 @@ const styles = StyleSheet.create({
   title: {
     alignItems: "center",
     color: colors.primaryColor,
-    fontSize: fontSize.h1,
+    fontSize: fontSize.h2,
     marginLeft: 15,
-    fontWeight: "500"
+    fontWeight: "700"
   },
   titleFade: {
     color: colors.secondaryColor,

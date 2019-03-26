@@ -223,26 +223,16 @@ const TabNavigator = createBottomTabNavigator(
       tabBarIcon: ({ focused, horizontal, tintColor }) => {
         const { routeName } = navigation.state;
         let icon;
-        if (routeName === "Discover") {
-          icon = focused
-            ? require("../../assets/icons/icons8-compass-active.png")
-            : require("../../assets/icons/icons8-compass.png");
-        } else if (routeName === "Activity") {
-          icon = focused
-            ? require("../../assets/icons/icons8-activity-active.png")
-            : require("../../assets/icons/icons8-activity.png");
-        } else if (routeName === "Equipment") {
-          icon = focused
-            ? require("../../assets/icons/icons8-garage-active.png")
-            : require("../../assets/icons/icons8-garage.png");
-        } else if (routeName === "Transaction") {
-          icon = focused
-            ? require("../../assets/icons/icons8-transaction-active.png")
-            : require("../../assets/icons/icons8-transaction.png");
-        } else if (routeName === "Account") {
-          icon = focused
-            ? require("../../assets/icons/icons8-settings-active.png")
-            : require("../../assets/icons/icons8-settings.png");
+        if (routeName === 'Discover') {
+          icon = require('../../assets/icons/icons8-compass.png')
+        } else if (routeName === 'Activity') {
+          icon = require('../../assets/icons/icons8-activity.png')
+        } else if (routeName === 'Equipment') {
+          icon = require('../../assets/icons/icons8-garage.png')
+        } else if (routeName === 'Transaction') {
+          icon = require('../../assets/icons/icons8-transaction.png')
+        } else if (routeName === 'Account') {
+          icon = require('../../assets/icons/icons8-settings.png')
         }
 
         return (
@@ -251,9 +241,9 @@ const TabNavigator = createBottomTabNavigator(
             style={{
               height: 28,
               aspectRatio: 1,
-              marginTop: 2
+              marginTop: 2,
+              tintColor: focused ? colors.secondaryColor : '#a5acb8'
             }}
-            resizeMode={"contain"}
           />
         );
       }
@@ -263,7 +253,7 @@ const TabNavigator = createBottomTabNavigator(
       activeTintColor: colors.secondaryColor,
       inactiveTintColor: colors.white,
       style: {
-        backgroundColor: colors.primaryColor
+        backgroundColor: '#fcfcfc'
       }
     }
   }

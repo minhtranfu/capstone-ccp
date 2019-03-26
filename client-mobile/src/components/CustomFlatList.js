@@ -19,7 +19,8 @@ class CustomFlatList extends PureComponent {
       isHorizontal,
       numColumns,
       style,
-      contentContainerStyle
+      contentContainerStyle,
+      ItemSeparatorComponent
     } = this.props;
     return (
       <View style={[styles.container, style]}>
@@ -30,7 +31,8 @@ class CustomFlatList extends PureComponent {
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
           numColumns={numColumns}
-          contentContainerStyle={this.props.contentContainerStyle}
+          contentContainerStyle={contentContainerStyle}
+          ItemSeparatorComponent={ItemSeparatorComponent}
         />
       </View>
     );
