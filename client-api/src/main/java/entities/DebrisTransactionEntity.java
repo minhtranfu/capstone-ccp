@@ -154,6 +154,13 @@ public class DebrisTransactionEntity {
 		this.debrisBid = debrisBidByDebrisBidId;
 	}
 
+
+	@Transient
+	public boolean isFeedbacked() {
+		return this.getDebrisFeedback() != null;
+	}
+
+
 	public enum Status{
 		ACCEPTED,
 		DELIVERING,
