@@ -225,38 +225,11 @@ const TabNavigator = createBottomTabNavigator(
 
       if (routes && (routes[index].routeName === 'Profile')) {
         tabBarVisible = false;
-    initialRouteName: "Discover",
-    defaultNavigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused, horizontal, tintColor }) => {
-        const { routeName } = navigation.state;
-        let icon;
-        if (routeName === 'Discover') {
-          icon = require('../../assets/icons/icons8-compass.png')
-        } else if (routeName === 'Activity') {
-          icon = require('../../assets/icons/icons8-activity.png')
-        } else if (routeName === 'Equipment') {
-          icon = require('../../assets/icons/icons8-garage.png')
-        } else if (routeName === 'Transaction') {
-          icon = require('../../assets/icons/icons8-transaction.png')
-        } else if (routeName === 'Account') {
-          icon = require('../../assets/icons/icons8-settings.png')
-        }
-
-        return (
-          <Image
-            source={icon}
-            style={{
-              height: 28,
-              aspectRatio: 1,
-              marginTop: 2,
-              tintColor: focused ? colors.secondaryColor : '#a5acb8'
-            }}
-          />
-        );
       }
       return ({
         tabBarVisible,
-        tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        tabBarIcon: ({focused, horizontal, tintColor}) => {
+          const {routeName} = navigation.state;
           let icon;
           if (routeName === 'Discover') {
             icon = require('../../assets/icons/icons8-compass.png')
@@ -280,7 +253,7 @@ const TabNavigator = createBottomTabNavigator(
                 tintColor: focused ? colors.secondaryColor : '#a5acb8'
               }}
             />
-          )
+          );
         }
       })
     },
