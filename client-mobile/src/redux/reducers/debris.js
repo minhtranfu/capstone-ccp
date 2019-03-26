@@ -3,11 +3,13 @@ import axios from "axios";
 
 const INITIAL_STATE = {
   loading: false,
+  detailLoading: false,
   debrisTypes: [],
   debrisArticles: [],
   debrisBids: [],
   listSearch: [],
-  typeServices: []
+  typeServices: [],
+  debrisDetail: {}
 };
 
 export default function debrisReducer(state = INITIAL_STATE, action) {
@@ -52,15 +54,34 @@ export default function debrisReducer(state = INITIAL_STATE, action) {
         debrisBids: payload.data
       };
     }
+    case Actions.GET_DEBRIS_DETAIL_BY_SUPPLIER.REQUEST: {
+      return {
+        ...state,
+        detailLoading: true
+      };
+    }
+    case Actions.GET_DEBRIS_DETAIL_BY_SUPPLIER.SUCCESS: {
+      return {
+        ...state,
+        detailLoading: false,
+        debrisDetail: payload.data
+      };
+    }
+    case Actions.CLEAR_DEBRIS_DETAIL.SUCCESS: {
+      return {
+        ...state,
+        debrisDetail: {}
+      };
+    }
     case Actions.SEND_DEBRIS_BIDS.SUCCESS: {
       return {
         ...state,
-        debrisBids: [...state.debrisBids, payload.data]
-        // listDebris: state.listDebris.map(item =>
-        //   item.id === payload.data.data.debrisPost.id
-        //     ? item.debrisBids.push(payload.data.data.id)
-        //     : item
-        // )
+        debrisBids: [...state.debrisBids, payload.data],
+        listSearch: state.listSearch.map(item =>
+          item.id === payload.data.debrisPost.id
+            ? { ...item, debrisBid: item.debrisBids.push(payload.data) }
+            : item
+        )
       };
     }
     case Actions.EDIT_DEBRIS_BIDS.SUCCESS: {
@@ -68,12 +89,24 @@ export default function debrisReducer(state = INITIAL_STATE, action) {
         ...state,
         debrisBids: state.debrisBids.map(item =>
           item.id === payload.id ? (item = payload.data.data) : item
+        ),
+        listSearch: state.listSearch.map(item =>
+          item.id === payload.data.data.debrisPost.id
+            ? {
+                ...item,
+                debrisBids: item.debrisBids.map(bid =>
+                  bid.id === payload.data.data.id
+                    ? Object.assign(
+                        {},
+                        bid,
+                        { price: payload.data.data.price },
+                        { description: payload.data.data.description }
+                      )
+                    : bid
+                )
+              }
+            : item
         )
-        // listDebris: state.listDebris.map(item =>
-        //   item.id === payload.data.data.debrisPost.id
-        //     ? item.debrisBids.map(item=> item.id === payload.data.data.id?item=payload.data:item)
-        //     : item
-        // )
       };
     }
     case Actions.DELETE_DEBRIS_BID.SUCCESS: {

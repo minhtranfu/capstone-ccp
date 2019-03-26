@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,26 +11,26 @@ import {
   Alert,
   Dimensions,
   TextInput
-} from 'react-native'
-import { SafeAreaView } from 'react-navigation'
-import { connect } from 'react-redux'
-import { Feather } from '@expo/vector-icons'
+} from "react-native";
+import { SafeAreaView } from "react-navigation";
+import { connect } from "react-redux";
+import { Feather } from "@expo/vector-icons";
 import {
   searchEquipment,
   clearSearchResult
-} from '../../redux/actions/equipment'
-import { addSubscription } from '../../redux/actions/subscription'
+} from "../../redux/actions/equipment";
+import { addSubscription } from "../../redux/actions/subscription";
 
-import Calendar from '../../components/Calendar'
-import Header from '../../components/Header'
-import Loading from '../../components/Loading'
-import EquipmentItem from '../../components/EquipmentItem'
+import Calendar from "../../components/Calendar";
+import Header from "../../components/Header";
+import Loading from "../../components/Loading";
+import EquipmentItem from "../../components/EquipmentItem";
 
-import colors from '../../config/colors'
-import fontSize from '../../config/fontSize'
+import colors from "../../config/colors";
+import fontSize from "../../config/fontSize";
 
-const ITEM_HEIGHT = 217
-const width = Dimensions.get('window').width
+const ITEM_HEIGHT = 217;
+const width = Dimensions.get("window").width;
 
 @connect(
   state => ({
@@ -49,23 +49,23 @@ const width = Dimensions.get('window').width
     ) => {
       dispatch(
         searchEquipment(address, long, lat, beginDate, endDate, equipmentTypeId)
-      )
+      );
     },
     fetchClearSearchEquipment: () => {
-      dispatch(clearSearchResult())
+      dispatch(clearSearchResult());
     }
   })
 )
 class SearchResult extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       modalVisible: true,
       filterModalVisible: false,
       calendarVisible: false,
-      fromDate: '',
-      toDate: ''
-    }
+      fromDate: "",
+      toDate: ""
+    };
   }
 
   componentDidMount() {
@@ -76,8 +76,8 @@ class SearchResult extends Component {
       beginDate,
       endDate,
       equipmentTypeId
-    } = this.props.navigation.state.params
-    const fullAddress = query.main_text.concat(', ', query.secondary_text)
+    } = this.props.navigation.state.params;
+    const fullAddress = query.main_text.concat(", ", query.secondary_text);
     this.props.fetchSearchEquipment(
       query.main_text,
       lat,
@@ -85,65 +85,65 @@ class SearchResult extends Component {
       beginDate,
       endDate,
       equipmentTypeId
-    )
-    this.setState({ fromDate: beginDate, toDate: endDate })
+    );
+    this.setState({ fromDate: beginDate, toDate: endDate });
   }
 
   _showAlert = (title, msg) => {
-    Alert.alert(title, msg, [{ text: 'OK' }], {
+    Alert.alert(title, msg, [{ text: "OK" }], {
       cancelable: true
-    })
-  }
+    });
+  };
 
   _setModalVisible = visible => {
-    this.setState({ modalVisible: visible })
-  }
+    this.setState({ modalVisible: visible });
+  };
 
   _setFilterModalVisible = visible => {
-    this.setState({ filterModalVisible: visible })
-  }
+    this.setState({ filterModalVisible: visible });
+  };
 
   _setCalendarVisible = visible => {
-    this.setState({ calendarVisible: visible, modalVisible: !visible })
-  }
+    this.setState({ calendarVisible: visible, modalVisible: !visible });
+  };
 
   _handleDateFormat = date => {
-    let dateFormat = new Date(date)
-    year = dateFormat.getFullYear()
-    month = dateFormat.getMonth() + 1
-    dt = dateFormat.getDate()
+    let dateFormat = new Date(date);
+    year = dateFormat.getFullYear();
+    month = dateFormat.getMonth() + 1;
+    dt = dateFormat.getDate();
     if (dt < 10) {
-      dt = '0' + dt
+      dt = "0" + dt;
     }
     if (month < 10) {
-      month = '0' + month
+      month = "0" + month;
     }
-    return year + '-' + month + '-' + dt
-  }
+    return year + "-" + month + "-" + dt;
+  };
 
   _formatDate = date => {
     var monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ]
-    let newDate = new Date(date)
-    let year = newDate.getFullYear()
-    let monthIndex = newDate.getMonth()
-    let day = newDate.getDate()
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ];
+    let newDate = new Date(date);
+    let year = newDate.getFullYear();
+    let monthIndex = newDate.getMonth();
+    let day = newDate.getDate();
 
-    let newYear = year === 2019 ? '' : ',' + year
-    return monthNames[monthIndex] + ' ' + day + newYear
-  }
+    let newYear = year === 2019 ? "" : "," + year;
+    return monthNames[monthIndex] + " " + day + newYear;
+  };
 
   _handleSubmitSearch = () => {
     const {
@@ -153,11 +153,11 @@ class SearchResult extends Component {
       beginDate,
       endDate,
       equipmentTypeId
-    } = this.props.navigation.state.params
-    const { fromDate, toDate } = this.state
+    } = this.props.navigation.state.params;
+    const { fromDate, toDate } = this.state;
 
     console.log(
-      'ahihi search submit',
+      "ahihi search submit",
       query.main_text,
       lat,
       long,
@@ -166,7 +166,7 @@ class SearchResult extends Component {
       equipmentTypeId,
       beginDate,
       endDate
-    )
+    );
     if (fromDate && toDate) {
       this.props.fetchSearchEquipment(
         query.main_text,
@@ -175,26 +175,26 @@ class SearchResult extends Component {
         fromDate ? fromDate : beginDate,
         toDate ? toDate : endDate,
         equipmentTypeId
-      )
+      );
     }
-    this._setModalVisible(!this.state.modalVisible)
-  }
+    this._setModalVisible(!this.state.modalVisible);
+  };
 
   _handleAddMoreMonth = (date, month) => {
-    let today = new Date(date)
-    let result = today.setMonth(today.getMonth() + month)
-    return result
-  }
+    let today = new Date(date);
+    let result = today.setMonth(today.getMonth() + month);
+    return result;
+  };
 
   _onSelectDate = (fromDate, toDate, visible) => {
-    const newToDate = toDate ? toDate : this._handleAddMoreMonth(fromDate, 6)
+    const newToDate = toDate ? toDate : this._handleAddMoreMonth(fromDate, 6);
     this.setState({
       fromDate,
       toDate: this._handleDateFormat(newToDate),
       calendarVisible: visible,
       modalVisible: !visible
-    })
-  }
+    });
+  };
 
   _renderCalendar = (beginDate, endDate) => (
     <Calendar
@@ -204,11 +204,11 @@ class SearchResult extends Component {
       fromDate={beginDate}
       endDate={endDate}
     />
-  )
+  );
 
   _renderSearchModal = () => {
-    const { query } = this.props.navigation.state.params
-    const { fromDate, toDate } = this.state
+    const { query } = this.props.navigation.state.params;
+    const { fromDate, toDate } = this.state;
     return (
       <Modal transparent={true} visible={this.state.modalVisible}>
         <TouchableOpacity
@@ -217,15 +217,15 @@ class SearchResult extends Component {
           onPress={() => this._setModalVisible(false)}
         >
           <SafeAreaView
-            forceInset={{ bottom: 'always', top: 'always' }}
+            forceInset={{ bottom: "always", top: "always" }}
             style={styles.modalWrapper}
           >
             <View style={{ paddingHorizontal: 15 }}>
               <TouchableOpacity
                 style={styles.rowWrapper}
                 onPress={() => {
-                  this.props.navigation.navigate('Search')
-                  this._setModalVisible(false)
+                  this.props.navigation.navigate("Search");
+                  this._setModalVisible(false);
                 }}
               >
                 <Text style={styles.text}>Location</Text>
@@ -249,18 +249,18 @@ class SearchResult extends Component {
             <TouchableOpacity
               style={styles.buttonWrapper}
               onPress={() => {
-                this._handleSubmitSearch()
+                this._handleSubmitSearch();
               }}
             >
-              <Text style={[styles.text, { color: 'white' }]}>
+              <Text style={[styles.text, { color: "white" }]}>
                 Find equipment
               </Text>
             </TouchableOpacity>
           </SafeAreaView>
         </TouchableOpacity>
       </Modal>
-    )
-  }
+    );
+  };
 
   _renderFilterModal = () => {
     return (
@@ -269,7 +269,7 @@ class SearchResult extends Component {
           <View style={styles.filterWrapper}>
             <TouchableOpacity
               style={{
-                alignSelf: 'flex-end',
+                alignSelf: "flex-end",
                 marginRight: 15
               }}
               onPress={() => this._setFilterModalVisible(false)}
@@ -285,7 +285,7 @@ class SearchResult extends Component {
 
               <TouchableHighlight
                 onPress={() => {
-                  this._setFilterModalVisible(!this.state.filterModalVisible)
+                  this._setFilterModalVisible(!this.state.filterModalVisible);
                 }}
               >
                 <Text>Hide Modal</Text>
@@ -294,15 +294,15 @@ class SearchResult extends Component {
           </View>
         </View>
       </Modal>
-    )
-  }
+    );
+  };
 
   _renderItem = ({ item }) => {
-    const { query } = this.props.navigation.state.params
+    const { query } = this.props.navigation.state.params;
     return (
       <EquipmentItem
         onPress={() =>
-          this.props.navigation.navigate('SearchDetail', {
+          this.props.navigation.navigate("SearchDetail", {
             id: item.equipmentEntity.id,
             query: query
           })
@@ -315,23 +315,23 @@ class SearchResult extends Component {
         imageURL={
           item.equipmentEntity.thumbnailImage
             ? item.equipmentEntity.thumbnailImage.url
-            : 'https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg'
+            : "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
         }
         address={item.equipmentEntity.address}
         price={item.equipmentEntity.dailyPrice}
       />
-    )
-  }
+    );
+  };
 
   formatDateMonth = date => {
-    const dates = date.split('-')
-    const month = dates[1]
+    const dates = date.split("-");
+    const month = dates[1];
     if (month.length >= 2) {
-      return `${dates[0]}-${month}-${dates[2]}`
+      return `${dates[0]}-${month}-${dates[2]}`;
     } else {
-      return `${dates[0]}-0${month}-${dates[2]}`
+      return `${dates[0]}-0${month}-${dates[2]}`;
     }
-  }
+  };
 
   renderAddSubscription = () => {
     const {
@@ -339,8 +339,8 @@ class SearchResult extends Component {
       beginDate,
       endDate,
       equipmentTypeId
-    } = this.props.navigation.state.params
-    const { fromDate, toDate } = this.state
+    } = this.props.navigation.state.params;
+    const { fromDate, toDate } = this.state;
     const subscriptionInfo = {
       beginDate: this.formatDateMonth(fromDate ? fromDate : beginDate),
       endDate: this.formatDateMonth(toDate ? toDate : endDate),
@@ -349,31 +349,31 @@ class SearchResult extends Component {
       },
       latitude: query.lat,
       longitude: query.lng
-    }
+    };
 
     return (
       <View
         style={{
           flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center'
+          alignItems: "center",
+          justifyContent: "center"
         }}
       >
-        <Text style={{ textAlign: 'center', marginBottom: 5 }}>
+        <Text style={{ textAlign: "center", marginBottom: 5 }}>
           Not Available Equipment. Please subscribe and we will notify to you
           when it is available
         </Text>
 
-        <View style={{ alignItems: 'center', marginBottom: 10 }}>
+        <View style={{ alignItems: "center", marginBottom: 10 }}>
           <Text>Location: {query.main_text}</Text>
           <Text>
-            (lat: {subscriptionInfo.latitude} / lng:{' '}
+            (lat: {subscriptionInfo.latitude} / lng:{" "}
             {subscriptionInfo.longitude})
           </Text>
           <Text>beginDate: {subscriptionInfo.beginDate}</Text>
           <Text>endDate: {subscriptionInfo.endDate}</Text>
           <TextInput
-            placeholder={'max distance'}
+            placeholder={"max distance"}
             keyboardType="numeric"
             style={{
               width: 200,
@@ -384,7 +384,7 @@ class SearchResult extends Component {
             ref={node => (this.maxDistance = node)}
           />
           <TextInput
-            placeholder={'max price'}
+            placeholder={"max price"}
             keyboardType="numeric"
             style={{
               width: 200,
@@ -397,55 +397,55 @@ class SearchResult extends Component {
 
           <TouchableOpacity
             style={{
-              backgroundColor: 'green',
-              alignItems: 'center',
+              backgroundColor: "green",
+              alignItems: "center",
               width: 200,
               padding: 10
             }}
             onPress={() => {
               const info = {
                 ...subscriptionInfo,
-                maxDistance: this.maxDistance._lastNativeText,
-                maxPrice: this.maxPrice._lastNativeText
-              }
+                maxDistance: parseInt(this.maxDistance._lastNativeText),
+                maxPrice: parseInt(this.maxPrice._lastNativeText)
+              };
               addSubscription(info).then(() => {
-                this.props.navigation.navigate('Account')
-              })
+                this.props.navigation.navigate("Account");
+              });
             }}
           >
-            <Text style={{ color: '#ffffff' }}>Subscribed</Text>
+            <Text style={{ color: "#ffffff" }}>Subscribed</Text>
           </TouchableOpacity>
         </View>
       </View>
-    )
-  }
+    );
+  };
 
   render() {
-    const { listSearch, loading } = this.props
-    const { query, beginDate, endDate } = this.props.navigation.state.params
+    const { listSearch, loading } = this.props;
+    const { query, beginDate, endDate } = this.props.navigation.state.params;
     //const result = this._findResultByAddress(equipment);
-    console.log('ahihi', listSearch)
+    console.log("ahihi", listSearch);
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: 'always', top: 'always' }}
+        forceInset={{ bottom: "always", top: "always" }}
       >
         <Header
           renderLeftButton={() => (
             <TouchableOpacity
               onPress={() => {
-                this.props.navigation.goBack()
+                this.props.navigation.goBack();
               }}
             >
               <Feather name="arrow-left" size={24} />
             </TouchableOpacity>
           )}
           renderRightButton={() => (
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <TouchableOpacity
                 style={{ marginRight: 10 }}
                 onPress={() => {
-                  this.setState({ modalVisible: true })
+                  this.setState({ modalVisible: true });
                 }}
               >
                 <Feather name="search" size={24} />
@@ -453,13 +453,13 @@ class SearchResult extends Component {
               <TouchableOpacity
                 style={{ marginRight: 10 }}
                 onPress={() => {
-                  this.setState({ filterModalVisible: true })
+                  this.setState({ filterModalVisible: true });
                 }}
               >
                 <Feather name="sliders" size={24} />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => this.props.navigation.navigate('Cart')}
+                onPress={() => this.props.navigation.navigate("Cart")}
               >
                 <Feather name="shopping-cart" size={24} />
               </TouchableOpacity>
@@ -468,8 +468,8 @@ class SearchResult extends Component {
         >
           <TouchableOpacity
             style={{
-              alignItems: 'center',
-              justifyContent: 'center',
+              alignItems: "center",
+              justifyContent: "center",
               width: 200
             }}
             onPress={() => this._setModalVisible(true)}
@@ -478,7 +478,7 @@ class SearchResult extends Component {
               {query.main_text}
             </Text>
             <Text style={styles.caption}>
-              {this._formatDate(beginDate) + ' - ' + this._formatDate(endDate)}
+              {this._formatDate(beginDate) + " - " + this._formatDate(endDate)}
             </Text>
           </TouchableOpacity>
         </Header>
@@ -509,7 +509,7 @@ class SearchResult extends Component {
           <Loading />
         )}
       </SafeAreaView>
-    )
+    );
   }
 }
 
@@ -519,60 +519,60 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'flex-start',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)'
+    justifyContent: "flex-start",
+    backgroundColor: "rgba(0, 0, 0, 0.4)"
   },
   filterContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)'
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.4)"
   },
   modalWrapper: {
     borderRadius: 5,
     width: width,
     height: 160,
-    backgroundColor: 'white'
+    backgroundColor: "white"
   },
   filterWrapper: {
     borderRadius: 5,
     width: width,
     height: 200,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     paddingHorizontal: 15
   },
   rowWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     borderBottomWidth: 1,
     paddingVertical: 10
   },
   buttonWrapper: {
-    backgroundColor: 'green',
+    backgroundColor: "green",
     width: width,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center'
+    alignItems: "center",
+    justifyContent: "center"
   },
   title: {
     fontSize: fontSize.h4,
-    fontWeight: '600'
+    fontWeight: "600"
   },
   caption: {
     fontSize: fontSize.caption,
-    fontWeight: '400'
+    fontWeight: "400"
   },
   text: {
     fontSize: fontSize.bodyText,
-    fontWeight: '500'
+    fontWeight: "500"
   },
   textDone: {
-    fontWeight: '500',
+    fontWeight: "500",
     fontSize: fontSize.bodyText,
     color: colors.secondaryColor,
     paddingTop: 15,
     paddingBottom: 15
   }
-})
+});
 
-export default SearchResult
+export default SearchResult;

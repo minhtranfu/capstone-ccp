@@ -54,6 +54,26 @@ export function getDebrisBidBySupplier() {
   };
 }
 
+//Get debris post detail from bid
+export function getDebrisBidDetail(debrisPostId) {
+  return async dispatch => {
+    dispatch({
+      type: Actions.GET_DEBRIS_DETAIL_BY_SUPPLIER.REQUEST
+    });
+    const res = await axios.get(`debrisPosts/${debrisPostId}`);
+    dispatch({
+      type: Actions.GET_DEBRIS_DETAIL_BY_SUPPLIER.SUCCESS,
+      payload: res
+    });
+  };
+}
+
+export function clearDebrisDetail() {
+  return {
+    type: Actions.CLEAR_DEBRIS_DETAIL.SUCCESS
+  };
+}
+
 export function supplierPlaceBid(debrisBids) {
   return async dispatch => {
     const res = await axios.post("debrisBids", debrisBids);

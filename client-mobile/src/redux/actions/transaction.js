@@ -215,3 +215,44 @@ export function changeMaterialTransactionRequest(requestId, request) {
     });
   };
 }
+
+//DEBRIS
+export function listDebrisTransactionBySupplier() {
+  return async dispatch => {
+    const res = await axios.get("debrisTransactions/supplier");
+    dispatch({
+      type: Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.SUCCESS,
+      payload: res
+    });
+  };
+}
+
+export function listDebrisTransactionByRequester() {
+  return async dispatch => {
+    const res = await axios.get("debrisTransactions/requester");
+    dispatch({
+      type: Actions.GET_DEBRIS_TRANSACTION_BY_REQUESTER.SUCCESS,
+      payload: res
+    });
+  };
+}
+
+export function sendRequestDebrisTransaction(transaction) {
+  return async dispatch => {
+    const res = await axios.post("debrisTransactions", transaction);
+    dispatch({
+      type: Actions.SEND_REQUEST_DEBRIS_TRANSACTION.SUCCESS,
+      payload: res
+    });
+  };
+}
+
+export function updateDebrisTransactionStatus(transactionId, status) {
+  return async dispatch => {
+    const res = await axios.put(`debrisTransactions/${transactionId}`, status);
+    dispatch({
+      type: Actions.UPDATE_DEBRIS_TRANSACTION_STATUS.SUCCESS,
+      payload: { data: res, id: transactionId }
+    });
+  };
+}

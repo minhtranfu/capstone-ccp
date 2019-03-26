@@ -9,7 +9,7 @@ export function uploadImage(image) {
       dispatch({
         type: Actions.UPLOAD_IMAGE.REQUEST
       });
-      const res = await axios.post(`equipmentImages`, image, {
+      const res = await axios.post(`storage/equipmentImages`, image, {
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: progressEvent => {
           console.log(progressEvent.loaded, progressEvent.total);

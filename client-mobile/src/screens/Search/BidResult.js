@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import { searchDebris } from "../../redux/actions/debris";
 import Feather from "@expo/vector-icons/Feather";
 
+import DebrisSearchItem from "../../components/DebrisSearchItem";
 import SearchBar from "../../components/SearchBar";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
@@ -41,11 +42,20 @@ class BidResult extends Component {
   }
 
   _renderContent = () => {
-    const { results } = this.props;
+    const { results, navigation } = this.props;
     return (
       <View>
         {results.map(item => (
-          <Text>{item.title}</Text>
+          <DebrisSearchItem
+            key={item.id}
+            imageUrl={item.debrisImages[0]}
+            address={item.address}
+            debrisServiceTypes={item.debrisServiceTypes}
+            debrisBids={item.debrisBids}
+            title={item.title}
+            description={item.description}
+            onPress={() => navigation.navigate("BidDetail", { id: item.id })}
+          />
         ))}
       </View>
     );
@@ -65,10 +75,12 @@ class BidResult extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text>Results</Text>
+          <Text style={styles.text}>Results</Text>
         </Header>
         {!loading ? (
-          <ScrollView>{this._renderContent()}</ScrollView>
+          <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
+            {this._renderContent()}
+          </ScrollView>
         ) : (
           <Loading />
         )}
@@ -80,6 +92,10 @@ class BidResult extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  text: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500"
   }
 });
 
