@@ -8,10 +8,6 @@ export const getTransactionsById = id => {
   return DataAccessService.get(`/transactions/${id}`);
 };
 
-export const getEquipmentsByContractorId = constractorId => {
-  return DataAccessService.get(`contractors/${constractorId}/equipments`);
-};
-
 export const getConstructionsByContractorId = constractorId => {
   return DataAccessService.get(`contractors/${constractorId}/constructions`);
 };

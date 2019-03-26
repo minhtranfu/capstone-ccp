@@ -20,6 +20,10 @@ export const getEquipmentById = id => {
   return DataAccessService.get(`/equipments/${id}`);
 };
 
+export const getEquipmentsByContractorId = constractorId => {
+  return DataAccessService.get(`contractors/${constractorId}/equipments`);
+};
+
 export const searchEquipments = criteria => {
   const params = Object.keys(criteria).map(key => `${key}=${encodeURIComponent(criteria[key])}`);
   const queryString = params.join('&');
