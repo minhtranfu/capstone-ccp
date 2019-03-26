@@ -4,12 +4,9 @@ import { SafeAreaView } from "react-navigation";
 import { withNavigation } from "react-navigation";
 
 import Button from "../../components/Button";
-import Header from "../../components/Header";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
-
-const { width } = Dimensions.get("window");
 
 class RequireLogin extends Component {
   constructor(props) {
@@ -24,20 +21,25 @@ class RequireLogin extends Component {
         forceInset={{ bottom: "never", top: "always" }}
         style={styles.container}
       >
+        <View style={{flex: 1}} />
         <View style={styles.contentWrapper}>
-          <Image
-            source={require("../../../assets/images/intro.png")}
-            style={styles.image}
-          />
-          <Text style={styles.text}>Login to share your equipment</Text>
+          <View style={styles.circle}>
+            <Image
+              source={require("../../../assets/images/crane.png")}
+              style={styles.image}
+            />
+          </View>
+          <Text style={styles.title}>{title || "Your equipment live here"}</Text>
+          <Text style={styles.text}>Sign up or login to access your equipment</Text>
           <Button
-            wrapperStyle={styles.wrapperStyle}
+            wrapperStyle={styles.buttonWrapperStyle}
             buttonStyle={styles.buttonStyle}
             textStyle={styles.textStyle}
             text={"Login"}
             onPress={() => navigation.navigate("Account")}
           />
         </View>
+        <View style={{flex: 1}} />
       </SafeAreaView>
     );
   }
@@ -45,53 +47,55 @@ class RequireLogin extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    flexDirection: 'column'
+  },
+  circle: {
+    backgroundColor: `${colors.secondaryColor}2A`,
+    padding: 45,
+    borderRadius: 120,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    aspectRatio: 1,
+    marginBottom: 15,
   },
   title: {
     fontSize: fontSize.bodyText,
-    color: colors.primaryColor
+    color: colors.text,
+    fontWeight: "500",
+    marginTop: 15,
+    marginBottom: 5,
   },
   contentWrapper: {
-    marginTop: 100,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    marginTop: -20,
   },
   image: {
-    width: 260,
-    height: 260
+    width: 70,
+    aspectRatio: 1,
+    marginRight: -5,
   },
   text: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "500",
-    marginVertical: 10
-  },
-  dividerWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: 70,
-    marginVertical: 10
-  },
-  divider: {
-    backgroundColor: "#D8D8D8",
-    height: 1,
-    flex: 1
-  },
-  textOr: {
-    color: "#9B9B9B",
-    fontSize: fontSize.xsmall,
-    paddingHorizontal: 8
-  },
-  wrapperStyle: {
-    marginTop: 0
+    fontSize: fontSize.caption,
+    color: colors.text50,
+    fontWeight: "400",
+    marginBottom: 10,
+
   },
   buttonStyle: {
-    backgroundColor: colors.lightYellow,
-    width: width / 2 + 100
+    backgroundColor: colors.secondaryColor,
+    borderRadius: 26
+  },
+  buttonWrapperStyle: {
+    alignSelf: 'stretch',
+    paddingHorizontal: 15,
   },
   textStyle: {
     fontSize: fontSize.bodyText,
     fontWeight: "500",
-    color: colors.dark
+    color: 'white'
   }
 });
 
