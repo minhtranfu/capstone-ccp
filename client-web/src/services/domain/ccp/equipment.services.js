@@ -42,3 +42,11 @@ export const uploadEquipmentImage = formData => {
     }
   });
 };
+
+export const deleteEquipmentImage = (equipmentId, imageId) => {
+  return DataAccessService.delete(`/equipments/${equipmentId}/images/${imageId}`);
+};
+
+export const addImagesIntoEquipment = (images, equipmentId) => {
+  return DataAccessService.post(`/equipments/${equipmentId}/images`, images);
+};

@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import {
+  CSSTransition,
+  TransitionGroup,
+} from 'react-transition-group';
+import classnames from 'classnames';
+
 import { equipmentServices } from 'Src/services/domain/ccp';
 import { Image } from 'Src/components/common';
 import Skeleton from 'react-loading-skeleton';
-import { getRoutePath } from 'Utils/common.utils';
+import { getRoutePath, getErrorMessage } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
+import { ComponentBlocking, DropzoneUploadImage } from 'Components/common';
 
 class EditEquipment extends Component {
 
@@ -97,8 +104,197 @@ class EditEquipment extends Component {
     }
   };
 
+  /**
+   * Set state needDeletedImageId to show confirm on current image
+   */
+  _showConfirmDeleteImage = needDeletedImageId => {
+    this.setState({
+      needDeletedImageId
+    });
+  };
+
+  /**
+   * Set image as thumbnail of the equipment
+   */
+  _handleSetImageAsThumbnail = async id => {
+    const { equipment } = this.state;
+
+    const data = {
+      ...equipment,
+      thumbnailImage: {
+        id
+      }
+    };
+    
+    this.setState({
+      isChangingImage: true
+    });
+    try {
+      await equipmentServices.updateEquipment(equipment.id, data);
+
+      this.setState({
+        equipment: data,
+        isChangingImage: false
+      });
+    } catch (error) {
+      const message = getErrorMessage(error);
+
+      this.setState({
+        message,
+        isChangingImage: false
+      });
+    }
+  };
+
+  /**
+   * A component confirm delete image
+   */
+  _renderConfirmDeleteImage = id => {
+    return (
+      <div className="confirm-delete d-flex flex-column justify-content-center align-items-center">
+        <p className="text-light">This action can not reverse!</p>
+        <button className="btn btn-danger" onClick={() => this._confirmDeleteImage(id)}>Delete</button>
+        <button className="btn btn-outline-primary mt-2" onClick={this._cancelDeleteImage}>Cancel</button>
+      </div>
+    );
+  };
+
+  /**
+   * Delete image by id after confirmed
+   */
+  _confirmDeleteImage = async id => {
+    const { equipment } = this.state;
+    let { equipmentImages } = equipment;
+    
+    equipmentImages = equipmentImages.filter(image => image.id !== id);
+    
+    this.setState({
+      isChangingImage: true
+    });
+
+    try {
+      await equipmentServices.deleteEquipmentImage(equipment.id, id);
+
+      this.setState({
+        isChangingImage: false,
+        equipment: {
+          ...equipment,
+          equipmentImages
+        }
+      });
+    } catch (error) {
+      const message = getErrorMessage(error);
+      this.setState({
+        message,
+        isChangingImage: false
+      });
+    }
+  };
+
+  /**
+   * Clear need delete image
+   */
+  _cancelDeleteImage = () => {
+    this.setState({
+      needDeletedImageId: undefined
+    });
+  };
+
+  /**
+   * Render list image with action buttons
+   */
+  _renderImages = () => {
+    const { equipment, needDeletedImageId } = this.state;
+    const { equipmentImages, thumbnailImage } = equipment;
+
+    if (!Array.isArray(equipmentImages)) {
+      return null;
+    }
+    
+    return equipmentImages.map(image => {
+      return (
+        <CSSTransition
+              key={image.id}
+              timeout={500}
+              classNames="item"
+              className="col-md-6 my-2"
+            >
+          <div>
+            <div className={classnames("image-with-times", {thumbnail: image.id === thumbnailImage.id})}>
+              <Image
+                className="w-100"
+                src={image.url}
+                alt={`${equipment.name} thumbnail image`}
+                />
+              {image.id === thumbnailImage.id &&
+                <span className="badge badge-primary badge-pill">Thumbnail</span>
+              }
+              <span className="actions">
+                {image.id !== thumbnailImage.id &&
+                  <button onClick={() => this._handleSetImageAsThumbnail(image.id)} className="btn btn-sm btn-primary shadow mr-2">
+                    <i className="fas fa-thumbtack"></i>
+                  </button>
+                }
+                {image.id !== thumbnailImage.id &&
+                  <button onClick={() => this._showConfirmDeleteImage(image.id)} className="btn btn-sm btn-outline-danger shadow">
+                    <i className="fas fa-times"></i>
+                  </button>
+                }
+              </span>
+              {needDeletedImageId === image.id &&
+                this._renderConfirmDeleteImage(image.id)
+              }
+            </div>
+          </div>
+        </CSSTransition>
+      );
+    });
+  };
+
+  /**
+   * Upload and add image into equipment on user select images
+   */
+  _handleFilesSelected = async files => {
+
+    if (!Array.isArray(files) || files.length === 0) {
+      return;
+    }
+
+    const formData = new FormData();
+    files.forEach(file => {
+      formData.append("file", file);
+    });
+    
+    this.setState({
+      isChangingImage: true
+    });
+
+    // Upload images
+    try {
+      const images = await equipmentServices.uploadEquipmentImage(formData);
+      const imageIds = images.map(image => ({id: image.id}));
+      const { equipment } = this.state;
+      await equipmentServices.addImagesIntoEquipment(imageIds, equipment.id);
+      equipment.equipmentImages = [
+        ...equipment.equipmentImages,
+        ...images
+      ];
+
+      this.setState({
+        isChangingImage: false,
+        equipment
+      });
+    } catch (error) {
+      const message = getErrorMessage(error);
+      this.setState({
+        message,
+        isChangingImage: false
+      });
+    }
+  };
+
   render() {
-    const { equipment, editedData, isSuccess, isFetching, error } = this.state;
+    const { equipment, editedData, isSuccess, isFetching, error, isChangingImage, message } = this.state;
 
     const data = {
       ...equipment,
@@ -116,15 +312,12 @@ class EditEquipment extends Component {
     return (
       <div className="container">
         <h1 className="my-3">Edit equipment: {equipment.name}</h1>
+        {message &&
+          <div className="alert alert-warning">{message}</div>
+        }
         <div className="row">
           <div className="col-md-4">
-            <div className="bg-white px-2 py-3">
-              <h4>Thumbnail image:</h4>
-              <Image className="w-100" src={equipment.thumbnailImage ? equipment.thumbnailImage.url : 'http://localhost:3060/public/upload/product-images/unnamed-19-jpg.jpg'} alt={`${equipment.name} thumbnail image`}/>
-            </div>
-          </div>
-          <div className="col-md-8">
-            <div className="bg-white px-2 py-3">
+            <div className="bg-white px-2 py-3 sticky-top sticky-sidebar">
               {/* TODO: Add back to list link */}
               <h4>Information: <Link to={getRoutePath(routeConsts.EQUIPMENT_MY)} className="btn btn-sm btn-outline-info float-right"><i className="fal fa-chevron-left"></i> Back to list</Link></h4>
               {isSuccess &&
@@ -170,6 +363,18 @@ class EditEquipment extends Component {
                   <button className="btn btn-outline-primary ml-2" onClick={this._handleResetForm}><i className="fas fa-undo"></i> Reset</button>
                 </div>
               </form>
+            </div>
+          </div>
+          <div className="col-md-8">
+            <div className="bg-white px-2 py-3 position-relative">
+              {isChangingImage &&
+                <ComponentBlocking />
+              }
+              <h4>Thumbnail image:</h4>
+              <DropzoneUploadImage onChange={this._handleFilesSelected} />
+              <TransitionGroup className="row">
+                {this._renderImages()}
+              </TransitionGroup>
             </div>
           </div>
         </div>

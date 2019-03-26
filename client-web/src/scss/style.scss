@@ -69,6 +69,23 @@ nav.navbar {
   transition: opacity 500ms ease-in;
 }
 
+.item-enter {
+  opacity: 0;
+}
+.item-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+.item-exit {
+  opacity: 1;
+}
+.item-exit-active {
+  opacity: 0;
+  transition: opacity 500ms ease-in;
+}
+
+
+/* Image slider */
 .product-images .owl-dots {
   margin-top: -25px !important;
   position: relative;
@@ -593,5 +610,33 @@ nav.navbar {
   }
   h2, h1 {
     font-weight: 900;
+  }
+}
+
+.image-with-times {
+  position: relative;
+
+  &.thumbnail {
+    border: 5px solid #007bff;
+    box-sizing: content-box;
+  }
+  .badge.badge-primary {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+  .actions {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+  .confirm-delete {
+    background: rgba(0, 0, 0, .7);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
   }
 }
