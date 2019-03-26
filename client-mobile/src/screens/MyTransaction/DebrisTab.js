@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import {
   View,
   Text,
@@ -9,13 +9,89 @@ import {
 import { SafeAreaView, withNavigation } from "react-navigation";
 import Feather from "@expo/vector-icons/Feather";
 
+import EquipmentStatus from "../../components/EquipmentStatus";
+import Dropdown from "../../components/Dropdown";
 import DebrisSearchItem from "../../components/DebrisSearchItem";
 import Button from "../../components/Button";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
-class DebrisTab extends PureComponent {
+const DEBRIS_TRANSACTION_STATUSES = [
+  {
+    code: "ACCEPTED",
+    title: "Accepted"
+  },
+  {
+    code: "DELIVERING",
+    title: "Delivering"
+  },
+  {
+    code: "WORKING",
+    title: "Wokring"
+  },
+  {
+    code: "FINISHED",
+    title: "Finished"
+  },
+  {
+    code: "CANCELED",
+    title: "Canceled"
+  }
+];
+
+const DEBRIS_TRANSACTION_OPTIONS = [
+  {
+    id: 0,
+    name: "All Statuses",
+    value: "All Statuses"
+  },
+  {
+    id: 2,
+    name: "Accepted",
+    value: "Accepted"
+  },
+  {
+    id: 3,
+    name: "Delivering",
+    value: "Delivering"
+  },
+  {
+    id: 4,
+    name: "Working",
+    value: "Working"
+  },
+  {
+    id: 5,
+    name: "Finished",
+    value: "Finished"
+  },
+
+  {
+    id: 6,
+    name: "Canceled",
+    value: "Canceled"
+  }
+];
+
+class DebrisTab extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      status: "All Statuses"
+    };
+  }
+
+  _handleFilter = () => {
+    if (this.state.status === "All Statuses") {
+      return DEBRIS_TRANSACTION_STATUSES;
+    } else {
+      return DEBRIS_TRANSACTION_STATUSES.filter(
+        status => status.code === this.state.status.toUpperCase()
+      );
+    }
+  };
+
   _renderEmptyComponent = () => (
     <View style={styles.actionWrapper}>
       <Text style={styles.text}>No data</Text>
@@ -24,21 +100,37 @@ class DebrisTab extends PureComponent {
 
   _renderDebrisTransaction = listDebris => (
     <View style={{ flex: 1 }}>
-      {listDebris.map(item => (
-        <DebrisSearchItem
-          key={item.id}
-          address={item.address}
-          debrisBids={item.debrisBids}
-          description={item.description}
-          title={item.title}
-          debrisServiceTypes={item.debrisServiceTypes}
-          itemUrl={
-            item.debrisImages.length > 0
-              ? item.debrisImages[0]
-              : "https://cdn.japantimes.2xx.jp/wp-content/uploads/2013/01/nn20110630f1b.jpg"
-          }
-        />
-      ))}
+      {this._handleFilter().map((status, idx) => {
+        const debrisList = listDebris.filter(
+          item => item.status === status.code.toUpperCase()
+        );
+        if (debrisList.length === 0) return null;
+        return (
+          <View key={`sec_${idx}`}>
+            <EquipmentStatus
+              count={debrisList.length}
+              title={status.title}
+              code={status.code}
+            />
+            {debrisList.map(item => (
+              <DebrisSearchItem
+                key={item.id}
+                address={item.debrisPost.address}
+                debrisBids={item.debrisPost.debrisBids}
+                description={item.debrisPost.description}
+                title={item.debrisPost.title}
+                debrisServiceTypes={item.debrisPost.debrisServiceTypes}
+                itemUrl={item.debrisPost.debrisImages[0]}
+                onPress={() =>
+                  this.props.navigation.navigate("SupplierDebrisDetail", {
+                    id: item.id
+                  })
+                }
+              />
+            ))}
+          </View>
+        );
+      })}
     </View>
   );
 
@@ -46,6 +138,13 @@ class DebrisTab extends PureComponent {
     const { listDebrisTransaction } = this.props;
     return (
       <View style={styles.container}>
+        <Dropdown
+          label={"Filter"}
+          defaultText={"All Statuses"}
+          onSelectValue={value => this.setState({ status: value })}
+          options={DEBRIS_TRANSACTION_OPTIONS}
+          isHorizontal={true}
+        />
         {listDebrisTransaction.length > 0
           ? this._renderDebrisTransaction(listDebrisTransaction)
           : this._renderEmptyComponent()}

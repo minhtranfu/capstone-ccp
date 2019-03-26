@@ -141,7 +141,7 @@ class MyBidsDetail extends Component {
         <Text>Your current bid (VND)</Text>
         <Text>{bidDetail.price}</Text>
         <Text>Services Required</Text>
-        <View
+        {/* <View
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -154,7 +154,7 @@ class MyBidsDetail extends Component {
               {this._capitalizeFirstLetter(item.name)}
             </Text>
           ))}
-        </View>
+        </View> */}
         {bidDetail.description ? (
           <View>
             <Text>Description</Text>

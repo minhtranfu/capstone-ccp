@@ -10,13 +10,29 @@ import {
   ScrollView,
   TextInput
 } from "react-native";
+import { connect } from "react-redux";
+import {
+  supplierPlaceBid,
+  supplierEditBid
+} from "../../../redux/actions/debris";
+import Feather from "@expo/vector-icons/Feather";
 
 import Header from "../../../components/Header";
-import TextArea from "../../../components/TextArea";
 
 import colors from "../../../config/colors";
 import fontSize from "../../../config/fontSize";
 
+@connect(
+  state => ({}),
+  dispatch => ({
+    fetchPlaceBid: bid => {
+      dispatch(supplierPlaceBid(bid));
+    },
+    fetchEditBid: (bidId, bid) => {
+      dispatch(supplierEditBid(bidId, bid));
+    }
+  })
+)
 class PlaceBid extends Component {
   static propTypes = {
     visible: PropTypes.bool
@@ -25,28 +41,54 @@ class PlaceBid extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      price: 0,
-      description: ""
+      price: props.price ? props.price : 0,
+      description: props.description ? props.description : ""
     };
   }
 
+  _handlePlaceBid = () => {
+    const { price, description } = this.state;
+    const { postId } = this.props;
+    const bid = {
+      price: parseInt(price),
+      description,
+      debrisPost: {
+        id: postId
+      }
+    };
+    this.props.fetchPlaceBid(bid);
+    this.props.setModalVisible(false);
+  };
+
+  _handleEditBid = () => {
+    const { price, description } = this.state;
+    const { postId, bidId } = this.props;
+    const bid = {
+      price: parseInt(price),
+      description,
+      debrisPost: {
+        id: postId
+      }
+    };
+    this.props.fetchEditBid(bidId, bid);
+    this.props.setModalVisible(false);
+  };
+
   render() {
-    const { visible, onPress } = this.props;
+    const { visible, onPress, isEdited, title, setModalVisible } = this.props;
     const { price, description } = this.state;
     return (
-      <Modal
-        animationType={"slide"}
-        transparent={transparent}
-        visible={visible}
-      >
+      <Modal animationType={"slide"} visible={visible}>
         <SafeAreaView
           forceInset={{ bottom: "always", top: "always" }}
           style={styles.container}
         >
           <Header
             renderLeftButton={() => (
-              <TouchableOpacity>
-                <Feather name={"x"} size={26} onPress={onLeftButtonPress} />
+              <TouchableOpacity
+                onPress={() => this.props.setModalVisible(false)}
+              >
+                <Feather name={"x"} size={26} />
               </TouchableOpacity>
             )}
           />
@@ -58,15 +100,26 @@ class PlaceBid extends Component {
               <TextInput
                 style={styles.inputWrapper}
                 onChangeText={value => this.setState({ price: value })}
-                value={price}
+                value={price.toString()}
+                keyboardType={"numeric"}
               />
               <Text> VND </Text>
-              <Text>Describe your bid</Text>
-              <TextArea
-                value={description}
-                onChangeText={value => this.setState({ description: value })}
-              />
             </View>
+            <Text>Describe your bid</Text>
+            <TextInput
+              style={styles.wrapper}
+              onChangeText={value => this.setState({ description: value })}
+              value={description}
+            />
+            {isEdited ? (
+              <TouchableOpacity onPress={() => this._handleEditBid()}>
+                <Text>Edit bid</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => this._handlePlaceBid()}>
+                <Text>Place bid</Text>
+              </TouchableOpacity>
+            )}
           </ScrollView>
         </SafeAreaView>
       </Modal>
@@ -80,6 +133,17 @@ const styles = StyleSheet.create({
   },
   inputWrapper: {
     paddingLeft: 10,
+    borderColor: "#000000",
+    borderWidth: StyleSheet.hairlineWidth,
+    fontSize: fontSize.bodyText,
+    color: colors.text,
+    fontWeight: "400",
+    width: 200,
+    height: 30
+  },
+  wrapper: {
+    paddingLeft: 10,
+    height: 200,
     borderColor: "#000000",
     borderWidth: StyleSheet.hairlineWidth,
     fontSize: fontSize.bodyText,

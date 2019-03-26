@@ -233,7 +233,10 @@ export default function transactionReducer(state = initialState, action) {
       return {
         ...state,
         listRequesterDebris: state.listRequesterDebris.map(item =>
-          item.id === payload.id ? (item = payload.data.data) : null
+          item.id === payload.id ? (item = payload.data.data) : item
+        ),
+        listSupplierDebris: state.listSupplierDebris.map(item =>
+          item.id === payload.id ? (item = payload.data.data) : item
         )
       };
     default:

@@ -123,3 +123,48 @@ export default function cartReducer(state = INITIAL_STATE, action) {
 //     />
 //   );
 // };
+
+// _handleUploadImage = () => {
+//   //   const form = new FormData();
+//   //   this.state.images.map((item, i) => {
+//   //     form.append("image", {
+//   //       uri: item.uri,
+//   //       type: "image/jpg",
+//   //       name: "image.jpg"
+//   //     });
+//   //   });
+
+//   //   this.props.fetchUploadImage(form);
+//   const form = new FormData();
+//   form.append("image", {
+//     uri: result.uri,
+//     type: "image/jpg",
+//     name: "image.jpg"
+//   });
+
+//   axios
+//     .post(`equipmentImages`, form, {
+//       headers: { "Content-Type": "multipart/form-data" },
+//       onUploadProgress: progressEvent => {
+//         console.log(
+//           "Upload progress: " +
+//             Math.round((progressEvent.loaded / progressEvent.total) * 100) +
+//             "%"
+//         );
+//       }
+//     })
+//     .then(res => console.log(res));
+// };
+
+//TIME RANGE
+//delete
+// const { dateRanges } = this.state;
+// const newRange = Object.keys(dateRanges).reduce((result, key) => {
+//   if (key !== id.toString()) {
+//     result[key] = dateRanges[key];
+//   }
+//   return result;
+// }, {});
+// //const newRange = delete dateRanges.id;
+// const { [id]: deletedItem, ...otherItems } = dateRanges;
+// this.setState({ dateRanges: otherItems });

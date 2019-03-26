@@ -241,7 +241,7 @@ export function sendRequestDebrisTransaction(transaction) {
   return async dispatch => {
     const res = await axios.post("debrisTransactions", transaction);
     dispatch({
-      type: Actions.SEND_REQUEST_DEBRIS_TRANSACTION,
+      type: Actions.SEND_REQUEST_DEBRIS_TRANSACTION.SUCCESS,
       payload: res
     });
   };
@@ -249,9 +249,9 @@ export function sendRequestDebrisTransaction(transaction) {
 
 export function updateDebrisTransactionStatus(transactionId, status) {
   return async dispatch => {
-    const res = await axios.put(`debrisTransactions/${transactionId}`);
+    const res = await axios.put(`debrisTransactions/${transactionId}`, status);
     dispatch({
-      type: Actions.UPDATE_DEBRIS_TRANSACTION_STATUS,
+      type: Actions.UPDATE_DEBRIS_TRANSACTION_STATUS.SUCCESS,
       payload: { data: res, id: transactionId }
     });
   };

@@ -1,13 +1,13 @@
-import React, { Component } from 'react'
-import { Image } from 'react-native'
+import React, { Component } from "react";
+import { Image } from "react-native";
 import {
   createBottomTabNavigator,
   createStackNavigator,
   createSwitchNavigator,
   createAppContainer
-} from 'react-navigation'
-import DismissableStackNav from '../Utils/DismissableStackNav'
-import colors from './colors'
+} from "react-navigation";
+import DismissableStackNav from "../Utils/DismissableStackNav";
+import colors from "./colors";
 
 import Discover from "../screens/Discover";
 import Account from "../screens/Account";
@@ -56,6 +56,9 @@ import BidResult from "../screens/Search/BidResult";
 import MyBidsDetail from "../screens/MyTransaction/MyBidsDetail";
 import BidDetail from "../screens/Search/BidDetail";
 import ConfirmBid from "../screens/Transaction/ConfirmBid";
+import Subscription from "../screens/Account/Subscription";
+import DebrisDetail from "../screens/Activity/DebrisDetail";
+import SupplierDebrisDetail from "../screens/MyTransaction/SupplierDebrisDetail";
 // import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
@@ -77,14 +80,14 @@ const DiscoverStack = createStackNavigator(
     ConfirmMaterial: MaterialTransaction
   },
   {
-    headerMode: 'none'
+    headerMode: "none"
   }
-)
+);
 
 DiscoverStack.navigationOptions = ({ navigation }) => {
-  let tabBarVisible = true
+  let tabBarVisible = true;
 
-  let routeName = navigation.state.routes[navigation.state.index].routeName
+  let routeName = navigation.state.routes[navigation.state.index].routeName;
 
   if (
     routeName == "SearchDetail" ||
@@ -96,17 +99,17 @@ DiscoverStack.navigationOptions = ({ navigation }) => {
 
   return {
     tabBarVisible
-  }
-}
+  };
+};
 
 const AuthStack = createStackNavigator(
   {
     Login: Login
   },
   {
-    headerMode: 'none'
+    headerMode: "none"
   }
-)
+);
 
 const AccountStack = createStackNavigator(
   {
@@ -121,10 +124,10 @@ const AccountStack = createStackNavigator(
     // Auth: AuthStack
   },
   {
-    initialRouteName: 'Account',
-    headerMode: 'none'
+    initialRouteName: "Account",
+    headerMode: "none"
   }
-)
+);
 
 const AddNewEquipmentStack = DismissableStackNav(
   {
@@ -134,10 +137,10 @@ const AddNewEquipmentStack = DismissableStackNav(
     AddImage: AddImage
   },
   {
-    headerMode: 'none',
-    initialRouteName: 'AddDetail'
+    headerMode: "none",
+    initialRouteName: "AddDetail"
   }
-)
+);
 
 const MyEquipmentStack = createStackNavigator(
   {
@@ -149,25 +152,25 @@ const MyEquipmentStack = createStackNavigator(
     Login: Login
   },
   {
-    mode: 'modal',
-    headerMode: 'none',
-    initialRouteName: 'MyEquipment'
+    mode: "modal",
+    headerMode: "none",
+    initialRouteName: "MyEquipment"
   }
-)
+);
 
 MyEquipmentStack.navigationOptions = ({ navigation }) => {
-  let tabBarVisible = true
+  let tabBarVisible = true;
 
-  let routeName = navigation.state.routes[navigation.state.index].routeName
+  let routeName = navigation.state.routes[navigation.state.index].routeName;
 
-  if (routeName == 'AddNewEquipment') {
-    tabBarVisible = false
+  if (routeName == "AddNewEquipment") {
+    tabBarVisible = false;
   }
 
   return {
     tabBarVisible
-  }
-}
+  };
+};
 
 const MyTransactionStack = createStackNavigator(
   {
@@ -176,14 +179,15 @@ const MyTransactionStack = createStackNavigator(
     MaterialSupplierDetail: MaterialSupplierDetail,
     ContractorProfile: ContractorProfile,
     MyBidsDetail: MyBidsDetail,
+    SupplierDebrisDetail: SupplierDebrisDetail,
     Login: Login
   },
   {
-    mode: 'modal',
-    headerMode: 'none',
-    initialRouteName: 'MyTransaction'
+    mode: "modal",
+    headerMode: "none",
+    initialRouteName: "MyTransaction"
   }
-)
+);
 
 const ActivityStack = createStackNavigator(
   {
@@ -195,14 +199,15 @@ const ActivityStack = createStackNavigator(
     MaterialRequesterDetail: MaterialRequesterDetail,
     AddDebrisArticle: AddDebrisArticle,
     DebrisArticleDetail: DebrisArticleDetail,
-    AddServicesTypes: AddServicesTypes
+    AddServicesTypes: AddServicesTypes,
+    DebrisDetail: DebrisDetail
   },
   {
-    mode: 'modal',
-    headerMode: 'none',
-    initialRouteName: 'Activity'
+    mode: "modal",
+    headerMode: "none",
+    initialRouteName: "Activity"
   }
-)
+);
 
 const TabNavigator = createBottomTabNavigator(
   {
@@ -213,31 +218,31 @@ const TabNavigator = createBottomTabNavigator(
     Account: AccountStack
   },
   {
-    initialRouteName: 'Discover',
+    initialRouteName: "Discover",
     defaultNavigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, horizontal, tintColor }) => {
-        const { routeName } = navigation.state
-        let icon
-        if (routeName === 'Discover') {
+        const { routeName } = navigation.state;
+        let icon;
+        if (routeName === "Discover") {
           icon = focused
-            ? require('../../assets/icons/icons8-compass-active.png')
-            : require('../../assets/icons/icons8-compass.png')
-        } else if (routeName === 'Activity') {
+            ? require("../../assets/icons/icons8-compass-active.png")
+            : require("../../assets/icons/icons8-compass.png");
+        } else if (routeName === "Activity") {
           icon = focused
-            ? require('../../assets/icons/icons8-activity-active.png')
-            : require('../../assets/icons/icons8-activity.png')
-        } else if (routeName === 'Equipment') {
+            ? require("../../assets/icons/icons8-activity-active.png")
+            : require("../../assets/icons/icons8-activity.png");
+        } else if (routeName === "Equipment") {
           icon = focused
-            ? require('../../assets/icons/icons8-garage-active.png')
-            : require('../../assets/icons/icons8-garage.png')
-        } else if (routeName === 'Transaction') {
+            ? require("../../assets/icons/icons8-garage-active.png")
+            : require("../../assets/icons/icons8-garage.png");
+        } else if (routeName === "Transaction") {
           icon = focused
-            ? require('../../assets/icons/icons8-transaction-active.png')
-            : require('../../assets/icons/icons8-transaction.png')
-        } else if (routeName === 'Account') {
+            ? require("../../assets/icons/icons8-transaction-active.png")
+            : require("../../assets/icons/icons8-transaction.png");
+        } else if (routeName === "Account") {
           icon = focused
-            ? require('../../assets/icons/icons8-settings-active.png')
-            : require('../../assets/icons/icons8-settings.png')
+            ? require("../../assets/icons/icons8-settings-active.png")
+            : require("../../assets/icons/icons8-settings.png");
         }
 
         return (
@@ -248,9 +253,9 @@ const TabNavigator = createBottomTabNavigator(
               aspectRatio: 1,
               marginTop: 2
             }}
-            resizeMode={'contain'}
+            resizeMode={"contain"}
           />
-        )
+        );
       }
     }),
     tabBarOptions: {
@@ -262,7 +267,7 @@ const TabNavigator = createBottomTabNavigator(
       }
     }
   }
-)
+);
 
 const AppNavigator = createSwitchNavigator(
   {
@@ -270,7 +275,7 @@ const AppNavigator = createSwitchNavigator(
     // AuthLoading: AuthLoading,
     App: TabNavigator
   },
-  { initialRouteName: 'App' }
-)
+  { initialRouteName: "App" }
+);
 
-export default createAppContainer(AppNavigator)
+export default createAppContainer(AppNavigator);

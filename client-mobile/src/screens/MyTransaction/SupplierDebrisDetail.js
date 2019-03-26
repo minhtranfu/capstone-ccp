@@ -3,21 +3,20 @@ import {
   View,
   Text,
   StyleSheet,
+  FlatList,
   TouchableOpacity,
   ScrollView
 } from "react-native";
+import { SafeAreaView, withNavigation } from "react-navigation";
 import { connect } from "react-redux";
-import { SafeAreaView } from "react-navigation";
 import { updateDebrisTransactionStatus } from "../../redux/actions/transaction";
 import Feather from "@expo/vector-icons/Feather";
 
+import InputField from "../../components/InputField";
 import Bidder from "../../components/Bidder";
-import DebrisBid from "./components/DebrisBid";
 import Header from "../../components/Header";
-import Loading from "../../components/Loading";
 import DebrisSearchItem from "../../components/DebrisSearchItem";
 import Button from "../../components/Button";
-import InputField from "../../components/InputField";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
@@ -28,23 +27,23 @@ const STATUS = {
   DELIVERING: "DELIVERING",
   WORKING: "IN PROGRESS",
   FINISHED: "COMPLETED",
-  CANCELED: "DONE"
+  CANCELED: "CANCEL"
 };
 
 @connect(
   (state, ownProps) => {
     const { id } = ownProps.navigation.state.params;
     return {
-      detail: state.transaction.listRequesterDebris.find(item => item.id === id)
+      detail: state.transaction.listSupplierDebris.find(item => item.id === id)
     };
   },
   dispatch => ({
-    fetchUpdateStatus: transaction => {
-      dispatch(updateDebrisTransactionStatus(transaction));
+    fetchUpdateStatus: (transactionId, status) => {
+      dispatch(updateDebrisTransactionStatus(transactionId, status));
     }
   })
 )
-class DebrisDetail extends Component {
+class SupplierDebrisDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,20 +52,51 @@ class DebrisDetail extends Component {
     };
   }
 
-  _handleChangeStatus = status => {
-    this.props.fetchUpdateStatus({ status: status });
+  componentWillUnmount() {
+    this.setState({ isCancel: false });
+  }
+
+  _handleChangeStatus = (transactionId, status) => {
+    this.props.fetchUpdateStatus(transactionId, { status: status });
     this.props.navigation.goBack();
   };
 
-  _renderBottomButton = status => {
+  _renderAcceptedCase = id => {
+    return (
+      <View>
+        <Button
+          text={"Travel"}
+          onPress={() => this._handleChangeStatus(id, "DELIVERING")}
+        />
+        <Button
+          text={"Cancel"}
+          onPress={() => this.setState({ isCancel: true })}
+        />
+      </View>
+    );
+  };
+
+  _renderBottomButton = (id, status) => {
     switch (status) {
-      case "WORKING":
+      case "ACCEPTED":
+        return this._renderAcceptedCase(id);
+      case "DELIVERING":
         return (
-          <Button
-            text={"Finish"}
-            onPress={() => this._handleChangeStatus("FINISHED")}
-          />
+          <View>
+            <Button
+              text={"Work"}
+              onPress={() => this._handleChangeStatus(id, "WORKING")}
+            />
+            <Button
+              text={"Cancel"}
+              onPress={() => this.setState({ isCancel: true })}
+            />
+          </View>
         );
+      case "FINISHED":
+        return <Button text={"Feedback"} />;
+      case "CANCELED":
+        return <Button text={"Feedback"} />;
       default:
         return null;
     }
@@ -74,21 +104,24 @@ class DebrisDetail extends Component {
 
   _renderContent = () => {
     const { detail } = this.props;
-    const { isCancel } = this.state;
+    const { isCancel, reason } = this.state;
     return (
       <View>
         <Text>{detail.debrisPost.title}</Text>
         <Text>{STATUS[detail.status]}</Text>
+        {detail.cancelReason ? (
+          <Text>Cancel reason: {detail.cancelReason}</Text>
+        ) : null}
         <Text>{detail.debrisPost.address}</Text>
         <Bidder
-          description={detail.debrisBid.description}
-          price={detail.debrisBid.price}
-          rating={detail.debrisBid.supplier.averageDebrisRating}
-          imageUrl={detail.debrisBid.supplier.thumbnailImage}
-          name={detail.debrisBid.supplier.name}
+          description={detail.description}
+          price={detail.price}
+          rating={detail.debrisPost.requester.averageDebrisRating}
+          imageUrl={detail.debrisPost.requester.thumbnailImage}
+          name={detail.debrisPost.requester.name}
           hasDivider={true}
         />
-        {this._renderBottomButton(detail.status)}
+        {this._renderBottomButton(detail.id, detail.status)}
         {isCancel ? (
           <View>
             <InputField
@@ -103,7 +136,7 @@ class DebrisDetail extends Component {
             <Button
               text={"Submit"}
               onPress={() => {
-                this.props.fetchUpdateStatus({
+                this.props.fetchUpdateStatus(detail.id, {
                   status: "CANCELED",
                   cancelReason: this.state.reason
                 });
@@ -118,7 +151,6 @@ class DebrisDetail extends Component {
   };
 
   render() {
-    const { navigation } = this.props;
     return (
       <SafeAreaView
         style={styles.container}
@@ -126,16 +158,12 @@ class DebrisDetail extends Component {
       >
         <Header
           renderLeftButton={() => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Feather name={"chevron-left"} size={24} />
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+              <Feather name="x" size={24} />
             </TouchableOpacity>
           )}
-        >
-          <Text>Debris Detail</Text>
-        </Header>
-        <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-          {this._renderContent()}
-        </ScrollView>
+        />
+        <ScrollView>{this._renderContent()}</ScrollView>
       </SafeAreaView>
     );
   }
@@ -147,4 +175,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default DebrisDetail;
+export default SupplierDebrisDetail;

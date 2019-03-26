@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import Feather from "@expo/vector-icons/Feather";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 import fontSize from "../config/fontSize";
 import colors from "../config/colors";
@@ -13,7 +14,7 @@ class DebrisSearchItem extends Component {
     address: PropTypes.string,
     debrisServiceTypes: PropTypes.array,
     debrisBids: PropTypes.array,
-    title: PropTypes.array,
+    title: PropTypes.string,
     description: PropTypes.string
   };
 
@@ -35,12 +36,30 @@ class DebrisSearchItem extends Component {
     return (
       <TouchableOpacity style={styles.container} onPress={onPress}>
         <View style={styles.wrapper}>
-          <Image uri={imageUrl} resizeMode={"cover"} style={{ height: 200 }} />
+          <Image
+            uri={
+              imageUrl
+                ? imageUrl
+                : "https://cdn.japantimes.2xx.jp/wp-content/uploads/2013/01/nn20110630f1b.jpg"
+            }
+            resizeMode={"cover"}
+            style={{ height: 200 }}
+          />
           <View style={styles.titleWrapper}>
-            <Text>{title}</Text>
-            {description ? <Text numberOfLines={2}>{description}</Text> : null}
-            <Text>{address}</Text>
-            <Text>{debrisBids.length > 0 ? debrisBids.length : 0} bids</Text>
+            <Text style={styles.title}>{title}</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <FontAwesome name={"tags"} size={20} />
+              {debrisBids.map(item => (
+                <Text style={styles.text}>{item.name}</Text>
+              ))}
+            </View>
+            <Text style={styles.text}>
+              <Feather name="map-pin" size={20} />
+              {address}
+            </Text>
+            <Text style={styles.caption}>
+              {debrisBids.length > 0 ? debrisBids.length : 0} bids
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -70,10 +89,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: fontSize.bodyText,
-    fontWeight: "bold"
+    fontWeight: "bold",
+    paddingVertical: 5
   },
-  text: {},
-  caption: {}
+  text: {
+    fontSize: fontSize.bodyText,
+    paddingVertical: 5
+  },
+  caption: {
+    fontSize: fontSize.secondaryText,
+    paddingVertical: 5
+  }
 });
 
 export default DebrisSearchItem;

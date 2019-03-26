@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert
+  Alert,
+  Dimensions
 } from "react-native";
 import { ImagePicker, Permissions } from "expo";
 import { SafeAreaView, NavigationActions } from "react-navigation";
@@ -21,6 +22,7 @@ import {
   getLatLongByAddress
 } from "../../../redux/actions/location";
 import axios from "axios";
+import Progress from "react-native-progress";
 
 import Loading from "../../../components/Loading";
 import Header from "../../../components/Header";
@@ -52,80 +54,86 @@ class AddImage extends Component {
     this.state = {
       images: [],
       descriptionImages: [],
-      imageUrl: []
+      imageUrl: [],
+      progress: [],
+      index: 0
     };
   }
 
+  _showAlert = (title, msg) => {
+    Alert.alert(title, msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
+
   _handleAddImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-
     if (status === "granted") {
       let result = await ImagePicker.launchImageLibraryAsync();
       if (!result.cancelled) {
         this.setState({
           images: [...this.state.images, result.uri]
         });
-        const form = new FormData();
-        form.append("image", {
-          uri: result.uri,
-          type: "image/jpg",
-          name: "image.jpg"
-        });
+        // const form = new FormData();
+        // form.append("image", {
+        //   uri: result.uri,
+        //   type: "image/jpg",
+        //   name: "image.jpg"
+        // });
 
-        // await this.props.fetchUploadImage(form);
-        const res = await axios.post(`equipmentImages`, form, {
-          headers: { "Content-Type": "multipart/form-data" },
-          onUploadProgress: progressEvent => {
-            console.log(
-              "Upload progress: " +
-                Math.round((progressEvent.loaded / progressEvent.total) * 100) +
-                "%"
-            );
-          }
-        });
-        console.log(res);
-        this.setState({ imageUrl: [...this.state.imageUrl, res.data[0]] });
-        console.log(this.state.imageUrl);
+        // const res = await axios.post(`storage/equipmentImages`, form, {
+        //   headers: { "Content-Type": "multipart/form-data" },
+        //   onUploadProgress: progressEvent => {
+        //     console.log(
+        //       "Upload progress: " +
+        //         Math.round((progressEvent.loaded / progressEvent.total) * 100) +
+        //         "%"
+        //     );
+        //     const { progress, index, processing } = this.state;
+        //     progress[index] = Math.round(
+        //       (progressEvent.loaded / progressEvent.total) * 100
+        //     );
+        //     this.setState({
+        //       progress
+        //     });
+        //   }
+        // });
+        // this.setState({
+        //   imageUrl: [...this.state.imageUrl, res.data[0]],
+        //   index: index + 1
+        // });
       }
     }
   };
 
-  // _handleUploadImage = () => {
-  //   //   const form = new FormData();
-  //   //   this.state.images.map((item, i) => {
-  //   //     form.append("image", {
-  //   //       uri: item.uri,
-  //   //       type: "image/jpg",
-  //   //       name: "image.jpg"
-  //   //     });
-  //   //   });
-
-  //   //   this.props.fetchUploadImage(form);
-  //   const form = new FormData();
-  //   form.append("image", {
-  //     uri: result.uri,
-  //     type: "image/jpg",
-  //     name: "image.jpg"
-  //   });
-
-  //   axios
-  //     .post(`equipmentImages`, form, {
-  //       headers: { "Content-Type": "multipart/form-data" },
-  //       onUploadProgress: progressEvent => {
-  //         console.log(
-  //           "Upload progress: " +
-  //             Math.round((progressEvent.loaded / progressEvent.total) * 100) +
-  //             "%"
-  //         );
-  //       }
-  //     })
-  //     .then(res => console.log(res));
-  // };
-
-  _handleAddEquipment = () => {
-    const { descriptionImages, imageUrl, lat, long } = this.state;
-    // const { imageUrl } = this.props;
+  _handleAddEquipment = async () => {
+    const { descriptionImages, imageUrl, lat, long, images } = this.state;
     const { data } = this.props.navigation.state.params;
+    const form = new FormData();
+    images.map((item, i) => {
+      form.append("image", {
+        uri: item.uri,
+        type: "image/jpg",
+        name: "image.jpg"
+      });
+    });
+    const res = await axios.post(`storage/equipmentImages`, form, {
+      headers: { "Content-Type": "multipart/form-data" },
+      onUploadProgress: progressEvent => {
+        console.log(
+          "Upload progress: " +
+            Math.round((progressEvent.loaded / progressEvent.total) * 100) +
+            "%"
+        );
+        const { progress, index, processing } = this.state;
+        progress[index] = Math.round(
+          (progressEvent.loaded / progressEvent.total) * 100
+        );
+        this.setState({
+          progress
+        });
+      }
+    });
     const image = {
       equipmentImages: imageUrl.map(item => {
         return {
@@ -140,15 +148,9 @@ class AddImage extends Component {
     this.props.fetchAddEquipment(newEquipment);
   };
 
-  _showAlert = (title, msg) => {
-    Alert.alert(title, msg, [{ text: "OK" }], {
-      cancelable: true
-    });
-  };
-
-  _handleSubmit = () => {
+  _handleSubmit = async () => {
     const { loading } = this.props;
-    if (!loading && this.state.imageUrl.length > 0) {
+    if (!loading && this.state.images.length > 0) {
       this._handleAddEquipment();
       this.props.navigation.dismiss();
     } else {
@@ -156,10 +158,90 @@ class AddImage extends Component {
     }
   };
 
+  _handleRemove = rowIndex => {
+    this.setState({
+      progress: this.state.progress.filter((item, index) => index !== rowIndex),
+      imageUrl: this.state.imageUrl.filter((item, index) => index !== rowIndex),
+      images: this.state.images.filter((item, index) => index !== rowIndex)
+    });
+    console.log(this.state.imageUrl, this.state.progress);
+  };
+
+  _renderImageUpdate = (image, key) => {
+    return (
+      <View key={key}>
+        <Image
+          source={{ uri: image }}
+          style={styles.landscapeImg}
+          resizeMode={"cover"}
+        />
+        {this.state.progress[key] < 100 ? (
+          <View
+            style={{
+              ...StyleSheet.absoluteFillObject,
+              backgroundColor: "rgba(0,0,0,0.3)",
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <Loading />
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={{
+              ...StyleSheet.absoluteFillObject,
+              justifyContent: "flex-end",
+              alignItems: "flex-end"
+            }}
+            onPress={() => this._handleRemove(key)}
+          >
+            <Text>Delete</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
+
+  _renderRowImageUpdate = (image, key) => {
+    return (
+      <View key={key} style={{ marginTop: 10, marginRight: 10 }}>
+        <Image
+          source={{ uri: image }}
+          style={styles.smallImage}
+          resizeMode={"cover"}
+        />
+        {this.state.progress[key] < 100 ? (
+          <View
+            style={{
+              ...StyleSheet.absoluteFillObject,
+              backgroundColor: "rgba(0,0,0,0.3)",
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <Loading />
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={{
+              ...StyleSheet.absoluteFillObject,
+              justifyContent: "flex-end",
+              alignItems: "flex-end"
+            }}
+            onPress={() => this._handleRemove(key)}
+          >
+            <Text>Delete</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
+
   render() {
     const { data } = this.props.navigation.state.params;
     const { loading } = this.props;
     const { images } = this.state;
+    console.log(this.state.imageUrl, this.state.progress);
     return (
       <SafeAreaView
         style={styles.container}
@@ -188,11 +270,7 @@ class AddImage extends Component {
         >
           {images.length > 0 ? (
             <View>
-              <Image
-                source={{ uri: images[0] }}
-                style={styles.landscapeImg}
-                resizeMode={"cover"}
-              />
+              {this._renderImageUpdate(images[0], 0)}
               <View
                 style={{
                   flexDirection: "row",
@@ -200,14 +278,11 @@ class AddImage extends Component {
                   flexWrap: "wrap"
                 }}
               >
-                {images.slice(1).map((item, index) => (
-                  <Image
-                    key={index}
-                    source={{ uri: item }}
-                    style={styles.smallImage}
-                    resizeMode={"cover"}
-                  />
-                ))}
+                {images
+                  .slice(1)
+                  .map((item, index) =>
+                    this._renderRowImageUpdate(item, index + 1)
+                  )}
               </View>
             </View>
           ) : null}
@@ -245,8 +320,6 @@ const styles = StyleSheet.create({
     height: 200
   },
   smallImage: {
-    marginTop: 10,
-    marginRight: 10,
     height: 50,
     width: 80
   },

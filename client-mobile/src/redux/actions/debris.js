@@ -68,6 +68,12 @@ export function getDebrisBidDetail(debrisPostId) {
   };
 }
 
+export function clearDebrisDetail() {
+  return {
+    type: Actions.CLEAR_DEBRIS_DETAIL.SUCCESS
+  };
+}
+
 export function supplierPlaceBid(debrisBids) {
   return async dispatch => {
     const res = await axios.post("debrisBids", debrisBids);

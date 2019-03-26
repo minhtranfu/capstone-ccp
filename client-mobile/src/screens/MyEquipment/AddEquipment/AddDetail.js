@@ -13,7 +13,11 @@ import { SafeAreaView, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { getGeneralEquipmentType } from "../../../redux/actions/type";
-import { getCurrentLocation } from "../../../redux/actions/location";
+import {
+  getCurrentLocation,
+  autoCompleteSearch
+} from "../../../redux/actions/location";
+import Autocomplete from "react-native-autocomplete-input";
 
 import Loading from "../../../components/Loading";
 import Header from "../../../components/Header";
@@ -84,26 +88,32 @@ class AddDetail extends Component {
       constructionIndex: 0,
       deliveryPrice: null,
       description: "",
-      additionalSpecsFields: []
+      additionalSpecsFields: [],
+      location: [],
+      hideResults: false,
+      address: null
     };
   }
 
   componentDidMount() {
     this.props.fetchGeneralType();
   }
+
   static getDerivedStateFromProps(props, state) {
-    if (state.construction) {
+    if (state.construction !== "Select your construction") {
       const getConstructionByAddress = props.construction.find(
         item => item.name === state.construction
       );
-      if (!state.address && getConstructionByAddress) {
+      if (getConstructionByAddress) {
         return {
           address: getConstructionByAddress.address
         };
       }
-      return null;
+    } else {
+      return {
+        address: null
+      };
     }
-    return undefined;
   }
 
   //All data must be fill before move to next screen
@@ -256,8 +266,16 @@ class AddDetail extends Component {
     }
   };
 
-  _handleInputChange = (field, value) => {
-    this.setState({ [field]: value });
+  _handleAddressChange = async address => {
+    if (address) {
+      this.setState({
+        location: await autoCompleteSearch(address, null, null)
+      });
+    } else {
+      this.setState({
+        location: []
+      });
+    }
   };
 
   _renderScrollViewItem = () => {
@@ -269,12 +287,14 @@ class AddDetail extends Component {
       deliveryPrice,
       description,
       construction,
-      address
+      address,
+      location
     } = this.state;
     const NEW_DROPDOWN_GENERAL_TYPES_OPTIONS = this._handleGeneralEquipmentType();
     const NEW_DROPDOWN_TYPES_OPTIONS = this._handleEquipmentType(
       generalTypeIndex
     );
+    console.log(address);
     return (
       <View>
         <InputField
@@ -330,13 +350,31 @@ class AddDetail extends Component {
           }}
           options={this._handleConstructionDropdown()}
         />
-        <InputField
-          label={"Address"}
-          placeholder={"Input your address"}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          onChangeText={value => this._handleInputChange("address", value)}
+        <Autocomplete
+          onFocus={() => this.setState({ hideResults: false })}
+          hideResults={this.state.hideResults}
+          editable={
+            !construction || construction === "Select your construction"
+          }
+          data={location}
           value={address}
+          onChangeText={value => {
+            this.setState({ address: value });
+            this._handleAddressChange(value);
+          }}
+          renderItem={item => (
+            <TouchableOpacity
+              onPress={() => {
+                this.setState({
+                  address: item.main_text + ", " + item.secondary_text,
+                  hideResults: true
+                });
+              }}
+            >
+              <Text>{item.main_text}</Text>
+              <Text>{item.secondary_text}</Text>
+            </TouchableOpacity>
+          )}
         />
         <InputField
           label={"Description"}

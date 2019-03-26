@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Image } from "react-native-expo-image-cache";
+import { Rating } from "react-native-ratings";
 
 import colors from "../../../config/colors";
 import fontSize from "../../../config/fontSize";
@@ -37,7 +38,35 @@ class DebrisBid extends Component {
         />
         <View>
           <Text>{supplierName}</Text>
-          <Text>{rating}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View
+              style={{
+                borderRadius: 10,
+                paddingHorizontal: 10,
+                backgroundColor: colors.secondaryColor,
+                alignItems: "center",
+                justifyContent: "center",
+                marginRight: 10
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: fontSize.secondaryText
+                }}
+              >
+                {rating}
+              </Text>
+            </View>
+            <Rating
+              readonly={true}
+              ratingCount={5}
+              fractions={1}
+              startingValue={rating}
+              imageSize={20}
+              style={{ paddingVertical: 10 }}
+            />
+          </View>
           <Text>{price}</Text>
           {description ? <Text>{description}</Text> : null}
           <TouchableOpacity onPress={onPress}>
