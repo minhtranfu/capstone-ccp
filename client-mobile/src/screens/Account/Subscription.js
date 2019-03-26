@@ -6,7 +6,28 @@ import {
 } from "../../redux/actions/subscription";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
+import Feather from "@expo/vector-icons/Feather";
 
+import {
+  Header,
+  Left,
+  Right,
+  Button as HeaderButton,
+  Body
+} from "../../components/AnimatedHeader";
+
+import colors from "../../config/colors";
+import fontSize from "../../config/fontSize";
+
+@connect(
+  state => ({
+    subscription: state.subscription
+  }),
+  dispatch => ({
+    getSubscriptions: () => dispatch(getSubscriptions()),
+    deleteSubscription: id => dispatch(deleteSubscription(id))
+  })
+)
 class Subscription extends PureComponent {
   componentDidMount() {
     this.props.getSubscriptions();
@@ -16,12 +37,20 @@ class Subscription extends PureComponent {
     const { listSubscription } = this.props.subscription;
     if (!listSubscription.length) return null;
 
-    console.log("ahihihi listSubscription", listSubscription);
     return (
       <SafeAreaView
         style={{ flex: 1 }}
         forceInset={{ bottom: "always", top: "always" }}
       >
+        <Header style={{ position: "relative" }}>
+          <Left />
+          <Body title="Subscription" />
+          <Right>
+            <TouchableOpacity onPress={this._handleLogout}>
+              <Feather name="plus" size={24} />
+            </TouchableOpacity>
+          </Right>
+        </Header>
         <ScrollView style={{ flex: 1, paddingVertical: 30 }}>
           {listSubscription.map(item => {
             return (
@@ -63,12 +92,4 @@ class Subscription extends PureComponent {
   }
 }
 
-export default connect(
-  state => ({
-    subscription: state.subscription
-  }),
-  dispatch => ({
-    getSubscriptions: () => dispatch(getSubscriptions()),
-    deleteSubscription: id => dispatch(deleteSubscription(id))
-  })
-)(Subscription);
+export default Subscription;

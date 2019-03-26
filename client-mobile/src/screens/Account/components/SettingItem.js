@@ -6,7 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import colors from "../../../config/colors";
 import fontSize from "../../../config/fontSize";
 
-class RowItem extends PureComponent {
+class SettingItem extends PureComponent {
   static propTypes = {
     value: PropTypes.string,
     code: PropTypes.string
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.text25,
+    borderBottomColor: colors.text25
   },
   text: {
     fontSize: fontSize.secondaryText,
@@ -48,4 +48,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default RowItem;
+export default SettingItem;

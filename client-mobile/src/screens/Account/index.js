@@ -8,6 +8,7 @@ import {
   AsyncStorage,
   Switch,
   Image as RNImage,
+  RefreshControl
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
@@ -15,7 +16,10 @@ import { SafeAreaView } from "react-navigation";
 import axios from "axios";
 import { Notifications, Permissions } from "expo";
 
-import { getConstructionList } from "../../redux/actions/contractor";
+import {
+  getConstructionList,
+  getContractorDetail
+} from "../../redux/actions/contractor";
 import { logOut } from "../../redux/actions/auth";
 import {
   deleteNoticationToken,
@@ -23,15 +27,21 @@ import {
 } from "../../redux/actions/notification";
 
 import Login from "../Login";
-import RowItem from "./components/RowItem";
+import SettingItem from "./components/SettingItem";
 import Loading from "../../components/Loading";
-import { Header, Left, Right, Button as HeaderButton, Body } from "../../components/AnimatedHeader";
+import {
+  Header,
+  Left,
+  Right,
+  Button as HeaderButton,
+  Body
+} from "../../components/AnimatedHeader";
 import LogoutIcon from "../../../assets/icons/icons8-export.png";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
-const ROW_ITEM_VALUE = [
+const SETTING_ITEMS_VALUE = [
   {
     id: 1,
     value: "Edit profile",
@@ -58,9 +68,9 @@ const ROW_ITEM_VALUE = [
   state => {
     return {
       isLoggedIn: state.auth.userIsLoggin,
-      contractor: state.contractor.info,
+      contractor: state.contractor.detail,
+      loading: state.contractor.loading,
       user: state.auth.data,
-      status: state.status,
       allowPushNotification: state.notification.allowPushNotification
     };
   },
@@ -70,6 +80,9 @@ const ROW_ITEM_VALUE = [
     },
     fetchGetConstructionList: userId => {
       dispatch(getConstructionList(userId));
+    },
+    fetchGetContractorDetail: userId => {
+      dispatch(getContractorDetail(userId));
     },
     fetchRemoveNotiToken: token => {
       dispatch(deleteNoticationToken(token));
@@ -85,27 +98,51 @@ class Account extends Component {
     this.state = {
       signedIn: false,
       checkedSignIn: false,
-      switchValue: null
+      switchValue: null,
+      refreshing: false
     };
   }
 
   async componentDidMount() {
     const { user, isLoggedIn } = this.props;
     if (isLoggedIn) {
-      //await this._handlePermissionNotification();
-      //this._registerForPushNotificationsAsync();
       this.props.fetchGetConstructionList(user.contractor.id);
+      this.props.fetchGetContractorDetail(user.contractor.id);
     }
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (props.allowPushNotification && state.switchValue === null) {
+  static getDerivedStateFromProps(nextProps, state) {
+    if (nextProps.allowPushNotification && state.switchValue === null) {
       return {
-        switchValue: props.allowPushNotification
+        switchValue: nextProps.allowPushNotification
       };
     }
+
     return null;
   }
+
+  componentDidUpdate(prevProps) {
+    const { user } = this.props;
+    if (
+      prevProps.user.contractor &&
+      prevProps.user.contractor.id !== user.contractor.id
+    ) {
+      this.props.fetchGetContractorDetail(user.contractor.id);
+    }
+  }
+
+  _onRefresh = async () => {
+    this.setState({ refreshing: true });
+    const { user } = this.props;
+    const res = await this.props.fetchGetContractorDetail(user.contractor.id);
+    if (res) {
+      this.setState({ refreshing: false });
+    } else {
+      setTimeout(() => {
+        this.setState({ refreshing: false });
+      }, 1000);
+    }
+  };
 
   _handlePermissionNotification = async () => {
     const { existingStatus } = await Permissions.getAsync(
@@ -128,7 +165,6 @@ class Account extends Component {
   _registerForPushNotificationsAsync = async () => {
     // Get the token that uniquely identifies this device
     let token = await Notifications.getExpoPushTokenAsync();
-    console.log(token);
     if (token) {
       const notiToken = {
         registrationToken: token,
@@ -136,7 +172,6 @@ class Account extends Component {
       };
       axios.post(`notificationTokens`, notiToken).then(
         res => {
-          console.log(res.data);
           AsyncStorage.setItem("NotiToken", res.data.id.toString());
         },
         error => {
@@ -167,15 +202,15 @@ class Account extends Component {
   _renderImageProfile = thumbnailImage => (
     <View style={{ flex: 1 }}>
       <Image
-        uri={"https://www.bimcommunity.com/files/images/userlib/construction_trends_bimcommunity.jpg"}
+        uri={
+          "https://www.bimcommunity.com/files/images/userlib/construction_trends_bimcommunity.jpg"
+        }
         style={styles.thumbnail}
         resizeMode={"cover"}
       />
       <View style={styles.avatarWrapper}>
         <Image
-          uri={
-            "http://bootstraptema.ru/snippets/icons/2016/mia/2.png"
-          }
+          uri={"http://bootstraptema.ru/snippets/icons/2016/mia/2.png"}
           resizeMode={"cover"}
           style={styles.avatar}
         />
@@ -207,8 +242,7 @@ class Account extends Component {
   };
 
   render() {
-    const { isLoggedIn, contractor, status, user } = this.props;
-    const { name, thumbnailImage, createdTime } = this.props.contractor;
+    const { isLoggedIn, contractor, loading } = this.props;
     if (isLoggedIn) {
       if (this.state.switchValue === true) {
         this._handlePermissionNotification();
@@ -221,51 +255,56 @@ class Account extends Component {
           style={styles.container}
           forceInset={{ bottom: "never", top: "always" }}
         >
-          <Header style={{position: 'relative'}}>
-            <Left/>
+          <Header style={{ position: "relative" }}>
+            <Left />
             <Body title="Settings" />
             <Right>
               <TouchableOpacity onPress={this._handleLogout}>
                 <RNImage
                   source={LogoutIcon}
-                  style={{ width: 22, height: 22, marginRight: 5}}
+                  style={{ width: 22, height: 22, marginRight: 5 }}
                   resizeMode={"cover"}
                 />
               </TouchableOpacity>
             </Right>
           </Header>
-          <ScrollView>
-            {contractor ? (
+          {!loading ? (
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this._onRefresh}
+                />
+              }
+            >
               <View>
-                {this._renderImageProfile(thumbnailImage)}
+                {this._renderImageProfile(contractor.thumbnailImage)}
                 <View style={styles.nameWrapper}>
-                  <Text style={styles.name}>
-                    {user.contractor.name}
-                  </Text>
+                  <Text style={styles.name}>{contractor.name}</Text>
                   <Text style={styles.text}>
-                    Joined {this._dateConverter(user.contractor.createdTime)}
+                    Joined {this._dateConverter(contractor.createdTime)}
                   </Text>
                 </View>
                 <View style={styles.contentWrapper}>
-                  {ROW_ITEM_VALUE.map(item => (
-                    <RowItem
+                  {SETTING_ITEMS_VALUE.map(item => (
+                    <SettingItem
                       key={item.id}
                       value={item.value}
                       onSwitchValue={this.state.switchValue}
                       onSwitchChange={this._handleOnSwitchChange}
                       onPress={() =>
                         this.props.navigation.navigate(item.code, {
-                          contractorId: user.contractor.id
+                          contractorId: contractor.id
                         })
                       }
                     />
                   ))}
                 </View>
               </View>
-            ) : (
-              <Loading />
-            )}
-          </ScrollView>
+            </ScrollView>
+          ) : (
+            <Loading />
+          )}
         </SafeAreaView>
       );
     } else {
@@ -290,15 +329,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderBottomColor: colors.primaryColor,
-    paddingVertical: 8,
+    paddingVertical: 8
   },
   avatar: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    borderColor: 'white',
+    borderColor: "white",
     borderWidth: 2,
-    backgroundColor: colors.secondaryColor,
+    backgroundColor: colors.secondaryColor
   },
   thumbnail: {
     height: 145

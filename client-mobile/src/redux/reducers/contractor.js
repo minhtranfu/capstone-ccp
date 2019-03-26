@@ -2,7 +2,7 @@ import * as Actions from "../types";
 
 const initialState = {
   loading: false,
-  info: {},
+  detail: {},
   constructionList: [],
   feedbackList: [],
   feedbackTypes: []
@@ -21,7 +21,7 @@ export default function contractorReducer(state = initialState, action) {
       return {
         ...state,
         loading: false,
-        info: payload.data
+        detail: payload.data
       };
     }
     case Actions.GET_CONTRACTOR.ERROR: {
@@ -30,10 +30,23 @@ export default function contractorReducer(state = initialState, action) {
         loading: false
       };
     }
+    case Actions.UPDATE_CONTRACTOR_DETAIL.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
     case Actions.UPDATE_CONTRACTOR_DETAIL.SUCCESS: {
       return {
         ...state,
-        info: payload.data
+        loading: false,
+        detail: payload.data
+      };
+    }
+    case Actions.UPDATE_CONTRACTOR_DETAIL.ERROR: {
+      return {
+        ...state,
+        loading: false
       };
     }
     case Actions.GET_CONSTRUCTION_LIST.SUCCESS: {

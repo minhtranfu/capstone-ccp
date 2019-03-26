@@ -14,10 +14,10 @@ export function register(contractor) {
 
 export function getContractorDetail(contractorId) {
   return async dispatch => {
-    dispatch({
-      type: Actions.GET_CONTRACTOR.REQUEST
-    });
     try {
+      dispatch({
+        type: Actions.GET_CONTRACTOR.REQUEST
+      });
       const res = await axios.get(`contractors/${contractorId}`);
       dispatch({
         type: Actions.GET_CONTRACTOR.SUCCESS,
@@ -31,11 +31,20 @@ export function getContractorDetail(contractorId) {
 
 export function updateContractorDetail(contractorId, contractor) {
   return async dispatch => {
-    const res = await axios.put(`contractors/${contractorId}`, contractor);
-    dispatch({
-      type: Actions.UPDATE_CONTRACTOR_DETAIL.SUCCESS,
-      payload: res
-    });
+    try {
+      dispatch({
+        type: Actions.UPDATE_CONTRACTOR_DETAIL.REQUEST
+      });
+      const res = await axios.put(`contractors/${contractorId}`, contractor);
+      dispatch({
+        type: Actions.UPDATE_CONTRACTOR_DETAIL.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.UPDATE_CONTRACTOR_DETAIL.ERROR
+      });
+    }
   };
 }
 
