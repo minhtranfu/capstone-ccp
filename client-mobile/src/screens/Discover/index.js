@@ -6,15 +6,12 @@ import {
   Animated,
   Alert,
   TouchableOpacity,
-  TouchableHighlight,
   ScrollView
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-import { Feather } from "@expo/vector-icons";
 import { Image } from "react-native-expo-image-cache";
 
-import Header from "../../components/Header";
 import Button from "../../components/Button";
 import Title from "../../components/Title";
 import ParallaxList from "../../components/ParallaxList";
@@ -23,7 +20,6 @@ import Item from "./components/Item";
 import TopRateItem from "./components/TopRateItem";
 
 import { discoverData } from "../../config/mockData";
-import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
 const RADIO_BUTON_DATA = [
@@ -73,26 +69,28 @@ class Discover extends Component {
     );
   };
 
-  _renderTopRate = ({ item }) => {
-    return <TopRateItem uploaded={item.uploaded} price={item.price} />;
+  _renderTopRate = ({ item, index }) => {
+    return (
+      <TopRateItem
+        uploaded={item.uploaded}
+        price={item.price}
+        title={item.name}
+        style={{ marginRight: index % 2 === 0 ? 15 : 0 }}
+      />
+    );
   };
 
   _renderItem = () => {
     const { checked } = this.state;
     return (
-      <View>
+      <View style={{ paddingHorizontal: 15 }}>
         <Title
-          title={"What can we help you to find"}
-          style={{ paddingLeft: 15 }}
+          title={"Categories"}
         />
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            alignItems: "center",
-            marginVertical: 10,
-            paddingHorizontal: 15
-          }}
+          style={{ marginRight: -15 }}
         >
           {RADIO_BUTON_DATA.map((item, key) => (
             <TouchableOpacity
@@ -102,6 +100,7 @@ class Discover extends Component {
                 item.id === 3 ? { marginRight: 0 } : null
               ]}
               onPress={() => this.props.navigation.navigate(item.routeName)}
+              activeOpacity={0.9}
             >
               <Image
                 uri={item.image}
@@ -116,18 +115,18 @@ class Discover extends Component {
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <Title title={"Near you"} style={{ paddingLeft: 15 }} />
+        <Title title={"Near you"} />
         <CustomFlatList
+          style={{ marginHorizontal: -15, flex: 1 }}
+          contentContainerStyle={{ paddingHorizontal: 15, paddingVertical: 5, }}
           data={discoverData}
           renderItem={this._renderTopRate}
           numColumns={2}
-          style={{
-            paddingLeft: 15
-          }}
+          ItemSeparatorComponent={() => <View style={{height: 10}}/>}
         />
         <Button
           text={"Show more"}
-          wrapperStyle={{ marginHorizontal: 15, marginBottom: 15 }}
+          wrapperStyle={{ marginBottom: 10 }}
         />
       </View>
     );
@@ -144,7 +143,7 @@ class Discover extends Component {
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "always", top: "always" }}
+        forceInset={{ top: "always" }}
       >
         {/* <Header
           renderRightButton={() => (
@@ -179,7 +178,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
@@ -206,16 +205,16 @@ const styles = StyleSheet.create({
     marginRight: 15
   },
   title: {
-    fontSize: fontSize.h4,
-    fontWeight: "500"
+    fontSize: fontSize.bodyText,
+    fontWeight: "600"
   },
   text: {
     fontSize: fontSize.bodyText,
     fontWeight: "500"
   },
   image: {
-    width: 275,
-    height: 155,
+    width: 220,
+    height: 123,
     borderRadius: 10
   }
 });

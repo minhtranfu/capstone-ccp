@@ -14,7 +14,7 @@ class Title extends Component {
     const { title, hasMore, titleStyle, style } = this.props;
     return (
       <View style={[styles.container, style]}>
-        <Text style={[styles.text, titleStyle]}>{title.toUpperCase()}</Text>
+        <Text style={[styles.text, titleStyle]}>{title}</Text>
         <Text style={styles.hasMoreText}>
           {hasMore ? hasMore || "More" : null}
         </Text>
@@ -32,9 +32,11 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   text: {
-    color: colors.secondaryColor,
-    fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    color: colors.primaryColor,
+    fontSize: fontSize.secondaryText,
+    fontWeight: "600",
+    paddingTop: 15,
+    paddingBottom: 10,
   },
   hasMoreText: {
     color: colors.primaryColor,
