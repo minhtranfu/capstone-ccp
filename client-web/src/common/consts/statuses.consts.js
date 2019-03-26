@@ -33,4 +33,16 @@ export const MATERIAL_TRANSACTION_STATUSES = {
 export const DEBRIS_POST_STATUSES = {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',
+  DELIVERING: 'DELIVERING',
+  WORKING: 'WORKING',
+  FINISHED: 'FINISHED',
+  CANCELED: 'CANCELED'
+};
+
+export const DEBRIS_POST_STATUS_COLORS = {
+  ACCEPTED: 'primary',
+  DELIVERING: 'warning',
+  WORKING: 'warning',
+  FINISHED: 'success',
+  CANCELED: 'danger'
 };
