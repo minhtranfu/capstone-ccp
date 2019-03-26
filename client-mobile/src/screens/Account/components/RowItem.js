@@ -14,7 +14,7 @@ class RowItem extends PureComponent {
 
   render() {
     const { value, onPress, onSwitchValue, onSwitchChange } = this.props;
-    if (value === "Push Notifications")
+    if (value === "Push notifications")
       return (
         <View style={styles.container}>
           <Text style={styles.text}>{value}</Text>
@@ -35,14 +35,16 @@ class RowItem extends PureComponent {
 
 const styles = StyleSheet.create({
   container: {
-    height: 60,
+    height: 54,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.text25,
   },
   text: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontSize: fontSize.secondaryText,
+    fontWeight: "400"
   }
 });
 

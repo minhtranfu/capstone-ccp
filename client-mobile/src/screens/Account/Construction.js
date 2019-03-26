@@ -26,6 +26,7 @@ import ConstructionItem from "./components/ConstructionItem";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+import ParallaxList from '../../components/ParallaxList';
 
 @connect(
   state => ({
@@ -142,7 +143,7 @@ class Construction extends Component {
   _renderModalItem = () => {
     const { address, name } = this.state;
     return (
-      <View style={{ paddingHorizontal: 15 }}>
+      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
         <InputField
           label={"Name"}
           placeholder={"Input your construction name"}
@@ -163,7 +164,7 @@ class Construction extends Component {
           value={address}
           returnKeyType={"next"}
         />
-        <Button text={"Submit"} onPress={() => this._handleSubmitButton()} />
+        <Button text={"Submit"} onPress={this._handleSubmitButton} />
       </View>
     );
   };
@@ -172,7 +173,7 @@ class Construction extends Component {
     const { list } = this.props;
     const { contractorId } = this.props.navigation.state.params;
     return (
-      <View style={{ paddingHorizontal: 15 }}>
+      <View style={{ paddingHorizontal: 15, paddingTop: 15, }}>
         {list.length > 0 ? (
           <View>
             {list
@@ -215,19 +216,18 @@ class Construction extends Component {
         style={styles.container}
         forceInset={{ bottom: "never", top: "always" }}
       >
-        <Header
-          renderRightButton={() => (
-            <TouchableOpacity onPress={() => this._setModalVisible(true)}>
-              <Feather name="plus" size={22} />
-            </TouchableOpacity>
-          )}
-        >
-          <Text style={styles.header}>My Construction</Text>
-        </Header>
         {list ? (
-          <View style={{ flex: 1 }}>
+          <View style={{flex: 1, flexDirection: 'column'}}>
             {this._displayModalView()}
-            <ScrollView>{this._renderScrollViewItem()}</ScrollView>
+            <ParallaxList
+              title={"My Constructions"}
+              hasLeft={true}
+              hasCart={false}
+              hasAdd
+              onAddPress={() => this._setModalVisible(true)}
+              scrollElement={<Animated.ScrollView />}
+              renderScrollItem={this._renderScrollViewItem}
+            />
           </View>
         ) : (
           <View>{message ? this._showAlert(message) : <Loading />}</View>

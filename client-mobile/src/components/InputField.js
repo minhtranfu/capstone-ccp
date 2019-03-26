@@ -91,11 +91,10 @@ const styles = StyleSheet.create({
   placeholder: {
     fontSize: fontSize.bodyText,
     color: colors.text,
-    fontWeight: "400",
+    fontWeight: "500",
     marginBottom: 5,
-    marginTop: 15,
-    paddingBottom: 5,
-    borderBottomColor: colors.secondaryColorOpacity,
+    paddingVertical: 10,
+    borderBottomColor: colors.text25,
     borderBottomWidth: StyleSheet.hairlineWidth
   },
   showButton: {

@@ -6,7 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   AsyncStorage,
-  Switch
+  Switch,
+  Image as RNImage,
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
@@ -21,12 +22,11 @@ import {
   allowPushNotification
 } from "../../redux/actions/notification";
 
-import RequireLogin from "../Login/RequireLogin";
 import Login from "../Login";
 import RowItem from "./components/RowItem";
 import Loading from "../../components/Loading";
-import Header from "../../components/Header";
-import Button from "../../components/Button";
+import { Header, Left, Right, Button as HeaderButton, Body } from "../../components/AnimatedHeader";
+import LogoutIcon from "../../../assets/icons/icons8-export.png";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
@@ -34,38 +34,23 @@ import fontSize from "../../config/fontSize";
 const ROW_ITEM_VALUE = [
   {
     id: 1,
-    value: "Edit Profile",
+    value: "Edit profile",
     code: "Profile"
   },
   {
     id: 2,
-    value: "Manage your construction",
+    value: "My constructions",
     code: "Construction"
   },
   {
     id: 4,
-    value: "Manage your subcription",
+    value: "My subscription",
     code: "Subcription"
   },
   {
     id: 5,
-    value: "Push Notifications",
+    value: "Push notifications",
     code: "Notifications"
-  },
-  {
-    id: 6,
-    value: "Feedback",
-    code: "Feedback"
-  },
-  {
-    id: 7,
-    value: "About us",
-    code: "AboutUs"
-  },
-  {
-    id: 8,
-    value: "Call or text us",
-    code: "Call"
   }
 ];
 
@@ -181,14 +166,14 @@ class Account extends Component {
   _renderImageProfile = thumbnailImage => (
     <View style={{ flex: 1 }}>
       <Image
-        uri={"https://ak4.picdn.net/shutterstock/videos/6731134/thumb/1.jpg"}
+        uri={"https://www.bimcommunity.com/files/images/userlib/construction_trends_bimcommunity.jpg"}
         style={styles.thumbnail}
         resizeMode={"cover"}
       />
       <View style={styles.avatarWrapper}>
         <Image
           uri={
-            "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
+            "http://bootstraptema.ru/snippets/icons/2016/mia/2.png"
           }
           resizeMode={"cover"}
           style={styles.avatar}
@@ -235,17 +220,29 @@ class Account extends Component {
           style={styles.container}
           forceInset={{ bottom: "never", top: "always" }}
         >
-          <Header>
-            <Text style={styles.header}>Account</Text>
+          <Header style={{position: 'relative'}}>
+            <Left/>
+            <Body title="Settings" />
+            <Right>
+              <TouchableOpacity onPress={this._handleLogout}>
+                <RNImage
+                  source={LogoutIcon}
+                  style={{ width: 22, height: 22, marginRight: 5}}
+                  resizeMode={"cover"}
+                />
+              </TouchableOpacity>
+            </Right>
           </Header>
           <ScrollView>
             {contractor ? (
               <View>
                 {this._renderImageProfile(thumbnailImage)}
                 <View style={styles.nameWrapper}>
-                  <Text style={styles.text}>{user.contractor.name}</Text>
+                  <Text style={styles.name}>
+                    {user.contractor.name}
+                  </Text>
                   <Text style={styles.text}>
-                    Created: {this._dateConverter(user.contractor.createdTime)}
+                    Joined {this._dateConverter(user.contractor.createdTime)}
                   </Text>
                 </View>
                 <View style={styles.contentWrapper}>
@@ -262,14 +259,6 @@ class Account extends Component {
                       }
                     />
                   ))}
-                  <Button
-                    wrapperStyle={{ paddingBottom: 15 }}
-                    buttonStyle={{ backgroundColor: "#FF5C5C" }}
-                    text={"Logout"}
-                    onPress={() => {
-                      this._handleLogout();
-                    }}
-                  />
                 </View>
               </View>
             ) : (
@@ -292,36 +281,39 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15
   },
   avatarWrapper: {
-    position: "absolute",
-    top: 10,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    marginTop: -40,
     alignItems: "center",
     justifyContent: "flex-end"
   },
   nameWrapper: {
     alignItems: "center",
     justifyContent: "center",
-    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.primaryColor,
-    paddingVertical: 10,
-    marginBottom: 10
+    paddingVertical: 8,
   },
   avatar: {
-    width: 70,
-    height: 70,
-    borderRadius: 35
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderColor: 'white',
+    borderWidth: 2,
+    backgroundColor: colors.secondaryColor,
   },
   thumbnail: {
-    height: 120
+    height: 145
   },
   header: {
-    fontSize: fontSize.h4,
-    fontWeight: "500"
+    color: colors.primaryColor,
+    fontSize: fontSize.bodyText,
+    fontWeight: "600"
+  },
+  name: {
+    fontSize: fontSize.h3,
+    fontWeight: "700"
   },
   text: {
-    fontSize: fontSize.bodyText,
+    fontSize: fontSize.caption,
+    color: colors.text50,
     fontWeight: "400"
   }
 });

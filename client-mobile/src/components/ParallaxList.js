@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, Animated, Image } from "react-native";
-import { SafeAreaView } from "react-navigation";
 import PropTypes from "prop-types";
 import { Header, Left, Right, Button, Body } from "./AnimatedHeader";
 
@@ -10,7 +9,6 @@ import fontSize from "../config/fontSize";
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 const AnimatedBody = Animated.createAnimatedComponent(Body);
 const AnimatedHeader = Animated.createAnimatedComponent(Header);
-const HEADER_HEIGHT = 44;
 
 class ParallaxList extends Component {
   nativeScroll = new Animated.Value(0);
@@ -54,6 +52,7 @@ class ParallaxList extends Component {
         hasSearch={this.props.hasSearch}
         hasFavorite={this.props.hasFavorite}
         hasAdd={this.props.hasAdd}
+        onAddPress={this.props.onAddPress}
         hasClose={this.props.hasClose}
         onPress={this.props.onRightPress}
         onCartPress={this.props.onCartPress}
@@ -137,12 +136,6 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontWeight: "700"
   },
-  titleFade: {
-    color: colors.secondaryColor,
-    fontSize: fontSize.bodyText,
-    textAlign: "center",
-    width: 300
-  }
 });
 
 ParallaxList.propTypes = {

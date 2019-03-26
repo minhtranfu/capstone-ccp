@@ -25,10 +25,11 @@ class Right extends React.PureComponent {
           <Button.Cart onPress={this.props.onCartPress} />
         ) : null}
         {this.props.hasFavorite ? <Button.Favorite /> : null}
-        {this.props.hasAdd ? <Button.Add onPress={this.props.onPress} /> : null}
+        {this.props.hasAdd ? <Button.Add onPress={this.props.onAddPress} /> : null}
         {this.props.hasClose ? (
           <Button.Close navigation={this.props.navigation} />
         ) : null}
+        {this.props.children}
       </View>
     );
   }

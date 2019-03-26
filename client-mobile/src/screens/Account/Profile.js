@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert
-} from "react-native";
+  Alert, Animated
+} from 'react-native';
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import { Feather } from "@expo/vector-icons";
@@ -20,11 +20,11 @@ import {
 import Button from "../../components/Button";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
-import Title from "../../components/Title";
 import InputField from "../../components/InputField";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+import ParallaxList from '../../components/ParallaxList';
 
 @connect(
   state => ({
@@ -47,7 +47,8 @@ class Profile extends Component {
       email: "",
       phone: "",
       thumbnailImage: "",
-      data: {}
+      data: {},
+      dataChanged: false,
     };
   }
 
@@ -71,7 +72,7 @@ class Profile extends Component {
   _handleInputChange = (field, value) => {
     let newData = { ...this.state.data };
     newData[field] = value;
-    this.setState({ data: newData });
+    this.setState({ data: newData, dataChanged: true });
   };
 
   _handleSave = () => {
@@ -92,14 +93,13 @@ class Profile extends Component {
   };
 
   _renderScrollViewItem = () => {
-    const { contractor } = this.props;
     const { data } = this.state;
     return (
-      <View style={{ paddingHorizontal: 15 }}>
+      <View style={{ paddingHorizontal: 15, paddingTop: 15, }}>
         <InputField
           label={"Name"}
           placeholder={"Input your equipment name"}
-          placeholderTextColor={colors.text68}
+          placeholderTextColor={colors.text50}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this._handleInputChange("name", value)}
@@ -109,7 +109,7 @@ class Profile extends Component {
         <InputField
           label={"Email"}
           placeholder={"Input your equipment name"}
-          placeholderTextColor={colors.text68}
+          placeholderTextColor={colors.text50}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this._handleInputChange("email", value)}
@@ -119,14 +119,13 @@ class Profile extends Component {
         <InputField
           label={"Phone"}
           placeholder={"Input your phone number"}
-          placeholderTextColor={colors.text68}
+          placeholderTextColor={colors.text50}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this._handleInputChange("phoneNumber", value)}
           value={data.phoneNumber}
           returnKeyType={"next"}
         />
-        <Button text={"Save"} onPress={() => this._handleSave()} />
       </View>
     );
   };
@@ -139,22 +138,33 @@ class Profile extends Component {
 
   render() {
     const { contractor } = this.props;
+    const { dataChanged } = this.state;
     return (
       <SafeAreaView
         forceInset={{ bottom: "never", top: "always" }}
         style={styles.containter}
       >
-        <Header
-          renderLeftButton={() => (
-            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-              <Feather name="arrow-left" size={22} />
-            </TouchableOpacity>
-          )}
-        >
-          <Text style={styles.header}>Edit Profile</Text>
-        </Header>
         {contractor ? (
-          <ScrollView>{this._renderScrollViewItem()}</ScrollView>
+          <View style={{flex: 1, flexDirection: 'column'}}>
+            <ParallaxList
+              title={"Edit Profile"}
+              hasLeft={true}
+              hasCart={false}
+              scrollElement={<Animated.ScrollView />}
+              renderScrollItem={this._renderScrollViewItem}
+            />
+            <SafeAreaView
+              forceInset={{ bottom: "always" }}
+              style={{backgroundColor: dataChanged ? colors.secondaryColor : '#a5acb8'}}
+            >
+              <Button
+                text={"Save"}
+                onPress={this._handleSave}
+                disabled={!dataChanged}
+                buttonStyle={{backgroundColor:'transparent'}}
+              />
+            </SafeAreaView>
+          </View>
         ) : (
           <Loading />
         )}

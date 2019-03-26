@@ -145,20 +145,6 @@ class Discover extends Component {
         style={styles.container}
         forceInset={{ top: "always" }}
       >
-        {/* <Header
-          renderRightButton={() => (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("Cart")}
-              >
-                <Feather name={"shopping-cart"} size={24} />
-              </TouchableOpacity>
-            </View>
-          )}
-        >
-          <Text style={styles.title}>Search</Text>
-        </Header> */}
-        {/* <ScrollView>{this._renderItem()}</ScrollView> */}
         <ParallaxList
           title={"Discover"}
           hasLeft={false}
