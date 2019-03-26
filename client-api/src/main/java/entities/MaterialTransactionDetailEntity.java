@@ -50,6 +50,8 @@ public class MaterialTransactionDetailEntity {
 	@NotNull
 	private MaterialTransactionEntity materialTransaction;
 
+	private MaterialFeedbackEntity materialFeedbackEntity;
+
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -122,7 +124,7 @@ public class MaterialTransactionDetailEntity {
 	}
 
 	@Basic
-	@Column(name = "created_time", nullable = true)
+	@Column(name = "created_time", nullable = true, insertable = false, updatable = false)
 	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
@@ -132,7 +134,7 @@ public class MaterialTransactionDetailEntity {
 	}
 
 	@Basic
-	@Column(name = "updated_time", nullable = true)
+	@Column(name = "updated_time", nullable = true, insertable = false, updatable = false)
 	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
@@ -172,6 +174,21 @@ public class MaterialTransactionDetailEntity {
 
 	public void setMaterialTransaction(MaterialTransactionEntity materialTransaction) {
 		this.materialTransaction = materialTransaction;
+	}
+
+	@JsonbTransient
+	@OneToOne(mappedBy = "materialTransactionDetail")
+	public MaterialFeedbackEntity getMaterialFeedbackEntity() {
+		return materialFeedbackEntity;
+	}
+
+	public void setMaterialFeedbackEntity(MaterialFeedbackEntity materialFeedbackEntity) {
+		this.materialFeedbackEntity = materialFeedbackEntity;
+	}
+
+	@Transient
+	public boolean isFeedbacked() {
+		return getMaterialFeedbackEntity() != null;
 	}
 
 	@Override

@@ -55,7 +55,8 @@ public class DebrisFeedbackEntityListener {
 		firebaseMessagingManager.sendMessage(new NotificationDTO(String.format("New feedback from %s", requester.getName()),
 				String.format("%s have accepted to feedback you after completing \"%s\"",requester.getName(), debrisPost.getTitle())
 				, supplier.getId()
-				, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.DEBRIS_FEEDBACK, entity.getId())));
+				, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.DEBRIS_TRANSACTIONS
+				, entity.getDebrisTransaction().getId())));
 
 	}
 }

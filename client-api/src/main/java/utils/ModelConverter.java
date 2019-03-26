@@ -173,5 +173,9 @@ public class ModelConverter {
 	public GeneralMaterialTypeResponse toResponse(GeneralMaterialTypeEntity generalMaterialTypeEntity) {
 		return modelMapper.map(generalMaterialTypeEntity, GeneralMaterialTypeResponse.class);
 	}
+
+	public MaterialFeedbackEntity toEntity(MaterialFeedbackRequest materialFeedbackRequest) {
+		return modelMapper.map(materialFeedbackRequest, MaterialFeedbackEntity.class);
+	}
 }
 

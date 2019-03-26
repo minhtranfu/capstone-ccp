@@ -62,7 +62,8 @@ public class NotificationDTO {
 		EQUIPMENTS("equipments"),
 		TRANSACTIONS("transactions"),
 		DEBRIS_TRANSACTIONS("debrisTransactions"),
-		DEBRIS_FEEDBACK("debrisFeedbacks")
+		DEBRIS_FEEDBACK("debrisFeedbacks"),
+		MATERIAL_TRANSACTIONS("materialTransactions")
 		;
 
 		String destination;

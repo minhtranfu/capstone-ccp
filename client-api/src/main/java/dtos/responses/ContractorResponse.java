@@ -35,9 +35,15 @@ public class ContractorResponse {
 //	private List<NotificationEntity> notifications;
 
 	private List<DebrisFeedbackEntity> debrisFeedbacks;
+	private List<MaterialFeedbackEntity> materialFeedbacks;
 
 	private int debrisFeedbacksCount;
+	private int materialFeedbacksCount;
+
+
 	private double averageDebrisRating;
+	private double averageMaterialRating;
+
 
 
 	public ContractorResponse() {
@@ -137,5 +143,29 @@ public class ContractorResponse {
 
 	public void setAverageDebrisRating(double averageDebrisRating) {
 		this.averageDebrisRating = averageDebrisRating;
+	}
+
+	public List<MaterialFeedbackEntity> getMaterialFeedbacks() { 
+		return materialFeedbacks;
+	}
+
+	public void setMaterialFeedbacks(List<MaterialFeedbackEntity> materialFeedbacks) {
+		this.materialFeedbacks = materialFeedbacks;
+	}
+
+	public int getMaterialFeedbacksCount() {
+		return materialFeedbacksCount;
+	}
+
+	public void setMaterialFeedbacksCount(int materialFeedbacksCount) {
+		this.materialFeedbacksCount = materialFeedbacksCount;
+	}
+
+	public double getAverageMaterialRating() {
+		return averageMaterialRating;
+	}
+
+	public void setAverageMaterialRating(double averageMaterialRating) {
+		this.averageMaterialRating = averageMaterialRating;
 	}
 }
