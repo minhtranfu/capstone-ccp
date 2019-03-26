@@ -65,7 +65,7 @@ public class DebrisPostResource {
 			@QueryParam("q")  @DefaultValue("") String query,
 			@QueryParam("lat") Double latitude,
 			@QueryParam("long") Double longitude,
-			@QueryParam("S") Double maxDistance,
+			@QueryParam("maxDistance") Double maxDistance,
 			@QueryParam("debrisTypeId") List<Long> debrisTypeIdList,
 			@QueryParam("orderBy") @DefaultValue("id.asc") String orderBy,
 			@QueryParam("limit") @DefaultValue(DEFAULT_RESULT_LIMIT) int limit,

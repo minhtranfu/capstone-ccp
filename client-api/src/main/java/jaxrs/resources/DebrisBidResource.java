@@ -21,12 +21,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 @Path("debrisBids")
 @Produces(MediaType.APPLICATION_JSON)
 public class DebrisBidResource {
-	public static final Logger LOGGER = Logger.getLogger(DebrisBidResource.class.toString());
+	private static final Logger LOGGER = Logger.getLogger(DebrisBidResource.class.toString());
 
 
 	@Inject
@@ -69,11 +70,19 @@ public class DebrisBidResource {
 
 		long supplierId = getClaimContractorId();
 
-		// TODO: 3/21/19 validate cannot post his own post
+
+		//3/21/19 validate cannot post his own post
 		DebrisPostEntity managedPost = debrisPostDAO.findByIdWithValidation(debrisBidEntity.getDebrisPost().getId());
 		if (managedPost.getRequester().getId() == supplierId) {
 			throw new BadRequestException("You cannot bid on your own post");
 		}
+
+		//  3/26/19 valdiate only can bid once
+		managedPost.getDebrisBids().stream().filter(bid -> bid.getSupplier().getId() == supplierId).findAny().ifPresent(
+				bidEntity -> {
+					throw new BadRequestException("You already bid this post");
+				}
+		);
 
 		ContractorEntity supplier = new ContractorEntity();
 		supplier.setId(supplierId);
