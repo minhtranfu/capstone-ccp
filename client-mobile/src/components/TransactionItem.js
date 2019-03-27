@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Image as ImageCache } from "react-native-expo-image-cache";
 import { Entypo, Ionicons } from "@expo/vector-icons";
+import moment from 'moment';
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
@@ -35,103 +36,119 @@ class TransactionItem extends PureComponent {
       hasEquipmentStatus,
       containerStyle
     } = this.props;
-    return (
-      <View style={[styles.container, containerStyle]}>
-        <TouchableOpacity style={{ flexDirection: "column" }} onPress={onPress}>
-          <View style={styles.wrapper}>
-            <Image
-              source={{ uri: imageURL }}
-              resizeMode={"cover"}
-              style={[styles.image, { width: 120, borderRadius: 10 }]}
-            />
-            <View style={styles.contentWrapper}>
-              <View
-                style={[
-                  styles.statusWrapper,
-                  { backgroundColor: statusBackgroundColor }
-                ]}
-              >
-                <Text style={styles.statusText}>{status}</Text>
-              </View>
-              <Text style={styles.title}>{name}</Text>
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between"
-                }}
-              >
-                <Text style={styles.text}>{role}</Text>
-                <Text style={styles.text}>{contractor}</Text>
-              </View>
-            </View>
+    // Calculate date differences
+    const end = moment(endDate);
+    const begin = moment(beginDate);
+    const duration = moment.duration(end.diff(begin));
+    const days = duration.asDays() + 1;
+
+    return (
+      <TouchableOpacity style={[styles.container, containerStyle]}>
+        <View style={{flexDirection: 'column', flex: 1 }}>
+          <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
             <ImageCache
               uri={avatarURL}
               style={styles.avatar}
               resizeMode={"cover"}
             />
+            <View style={{flexDirection: 'column', marginHorizontal: 8, flex: 1 }}>
+              <Text style={styles.contractorName}>{contractor}</Text>
+              <Text style={styles.equipmentName}>▶ {name}</Text>
+            </View>
           </View>
-          <View style={styles.dateWrapper}>
-            <Text style={styles.text}>
-              {beginDate} - {endDate}
-            </Text>
+          <View style={{ marginTop: 10}}>
+            <View style={{flexDirection: 'row', alignItems: 'center' }}>
+              <Image
+                source={require('../../assets/icons/icons8-calendar.png')}
+                style={styles.calendarIcon}
+                resizeMode={"contain"}
+              />
+              <Text style={styles.duration}>{`${days} ${days > 1 ? 'days' : 'day'}`}</Text>
+            </View>
+            <Text style={styles.startEndDate}>{begin.format('DD/MM/YY')} - {end.format('DD/MM/YY')}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 8, marginBottom: 3 }}>
+              <Image
+                source={require('../../assets/icons/icons8-rounded_rectangle.png')}
+                style={[styles.statusIcon, {tintColor: statusBackgroundColor}]}
+                resizeMode={"contain"}
+              />
+              <Text style={styles.duration}>{status}</Text>
+            </View>
           </View>
-          {hasEquipmentStatus ? hasEquipmentStatus : null}
-        </TouchableOpacity>
-      </View>
+        </View>
+        <View style={styles.equipmentThumbnailWrapper}>
+          <ImageCache
+            uri={imageURL}
+            style={styles.equipmentThumbnail}
+            resizeMode={"cover"}
+          />
+        </View>
+      </TouchableOpacity>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
-  },
-  wrapper: {
-    flexDirection: "row"
-  },
-  contentWrapper: {
-    flex: 2,
-    flexDirection: "column",
-    paddingLeft: 10
-  },
-  dateWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10
-  },
-  statusWrapper: {
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 5,
-    height: 25,
-    width: 80,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
-    marginBottom: 10
-  },
-  title: {
-    fontSize: fontSize.h4,
-    fontWeight: "500",
-    marginBottom: 10
-  },
-  text: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "500"
-  },
-  statusText: {
-    fontSize: fontSize.caption,
-    fontWeight: "bold",
-    color: "white"
-  },
-  image: {
-    height: 90
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: "white",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    paddingRight: 0,
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25
+    height: 36,
+    aspectRatio: 1,
+    borderRadius: 15
+  },
+  contractorName: {
+    fontSize: fontSize.caption,
+    color: colors.text,
+    fontWeight: "600",
+  },
+  equipmentName: {
+    fontSize: fontSize.caption,
+    color: colors.text68,
+    fontWeight: "500",
+    // alignSelf: 'flex-end'
+  },
+  equipmentThumbnailWrapper: {
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    marginVertical: -10,
+    overflow: 'hidden'
+  },
+  equipmentThumbnail: {
+    width: 90,
+    flex: 1,
+  },
+  calendarIcon: {
+    width: 15,
+    aspectRatio: 1,
+    tintColor: colors.text50,
+    marginRight: 3
+  },
+  duration: {
+    fontSize: fontSize.caption,
+    color: colors.text50,
+    fontWeight: "500",
+  },
+  startEndDate: {
+    fontSize: fontSize.caption,
+    color: colors.text,
+    fontWeight: "600",
+    marginLeft: 15 + 3,
+    marginTop: 3,
+  },
+  statusIcon: {
+    width: 13,
+    height: 15,
+    tintColor: colors.text50,
+    marginRight: 4,
+    marginLeft: 1,
   }
 });
 

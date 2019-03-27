@@ -310,11 +310,6 @@ class MyTransaction extends Component {
             {equipmentList.map((item, index) => (
               <View key={`eq_${item.id}`} style={styles.rowWrapper}>
                 <TransactionItem
-                  containerStyle={{
-                    backgroundColor: "white",
-                    borderRadius: 10,
-                    padding: 10
-                  }}
                   onPress={() =>
                     this.props.navigation.navigate("MyTransactionDetail", {
                       id: item.id
@@ -333,8 +328,8 @@ class MyTransaction extends Component {
                   statusBackgroundColor={COLORS[item.status]}
                   contractor={item.requester.name}
                   phone={item.requester.phoneNumber}
-                  beginDate={this._formatDate(item.beginDate)}
-                  endDate={this._formatDate(item.endDate)}
+                  beginDate={item.beginDate}
+                  endDate={item.endDate}
                   hasEquipmentStatus={this._renderBottomStatus(
                     item.status,
                     item.equipment.status
@@ -402,10 +397,10 @@ class MyTransaction extends Component {
         forceInset={{ bottom: "never", top: "always" }}
       >
         <Header>
-          <Text style={styles.header}>Transactions</Text>
+          <Text style={styles.header}>Contracts</Text>
         </Header>
         <TabView
-          tabs={["Equipment", "Materials", "Bids", "Debris"]}
+          tabs={["Equipments", "Materials", "Bids", "Debris"]}
           onChangeTab={this._onChangeTab}
           activeTab={activeTab}
         />

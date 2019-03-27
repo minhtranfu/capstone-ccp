@@ -19,7 +19,7 @@ class Loading extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <BarIndicator size={30} color={colors.text} count={5}/>
+        <BarIndicator size={22} color={colors.text} count={5}/>
       </View>
     );
   }
