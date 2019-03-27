@@ -152,11 +152,11 @@ class MaterialTab extends PureComponent {
           options={MATERIAL_TRANSACTION_OPTIONS}
           isHorizontal={true}
         />
-        <ScrollView>
+        <View>
           {listMaterial.length > 0
             ? this._renderMaterial(listMaterial)
             : this._renderEmptyComponent()}
-        </ScrollView>
+        </View>
       </View>
     );
   }

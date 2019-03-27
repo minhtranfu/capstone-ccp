@@ -83,10 +83,10 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   showLabel: {
+    color: colors.secondaryColor,
     fontSize: fontSize.caption,
-    color: colors.primaryColor,
-    fontWeight: "300",
-    marginTop: 5
+    height: 15,
+    fontWeight: "500"
   },
   placeholder: {
     fontSize: fontSize.bodyText,
