@@ -89,7 +89,7 @@ class EquipDetail extends Component {
                 ref={mainOwl => (this.mainOwl = mainOwl)}
               >
                 {equip.equipmentImages.map((image, index) => (
-                  <div key={index} className="item">
+                  <div key={index} className="item image-169">
                     <img src={image.url} alt={equip.name} />
                   </div>
                 ))}
@@ -108,7 +108,7 @@ class EquipDetail extends Component {
                   <div
                     key={index}
                     onClick={() => this._showImage(index)}
-                    className="item"
+                    className="item image-169"
                   >
                     <img src={image.url} alt={equip.name} />
                   </div>
