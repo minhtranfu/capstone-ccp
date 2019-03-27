@@ -11,7 +11,7 @@ import {
   EQUIPMENT_STATUSES,
   EQUIPMENT_SHOWABLE_STATUSES
 } from '../../../common/consts';
-import { FeedbackModal } from "../../common";
+import { RatingEquipmentTransaction } from "../../common";
 import ccpApiService from '../../../services/domain/ccp-api-service';
 
 class MyRequests extends Component {
@@ -161,10 +161,10 @@ class MyRequests extends Component {
   /**
    * Show feedback modal
    */
-  _toggleFeedbackModal = (feedbackTransaction) => {
-    const { isShowFeedbackModal } = this.state;
+  _toggleRatingEquipmentTransaction = (feedbackTransaction) => {
+    const { isShowRatingEquipmentTransaction } = this.state;
     this.setState({
-      isShowFeedbackModal: !isShowFeedbackModal,
+      isShowRatingEquipmentTransaction: !isShowRatingEquipmentTransaction,
       feedbackTransaction
     });
   };
@@ -234,7 +234,7 @@ class MyRequests extends Component {
         // TODO: Feedback function
         changeStatusButtons = (
           <div className="mt-2">
-            <button className="btn btn-sm btn-success" onClick={() => this._toggleFeedbackModal(transaction)}>Feedback</button>
+            <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingEquipmentTransaction(transaction)}>Feedback</button>
           </div>
         );
         break;
@@ -525,15 +525,15 @@ class MyRequests extends Component {
   };
 
   render() {
-    const { isShowFeedbackModal, feedbackTransaction } = this.state;
+    const { isShowRatingEquipmentTransaction, feedbackTransaction } = this.state;
     this._renderTabContents();
 
     return (
       <div className="container py-5 user-dashboard">
         {this._renderAlert()}
-        <FeedbackModal
-          isOpen={isShowFeedbackModal}
-          onClose={() => this._toggleFeedbackModal()}
+        <RatingEquipmentTransaction
+          isOpen={isShowRatingEquipmentTransaction}
+          onClose={() => this._toggleRatingEquipmentTransaction()}
           transaction={feedbackTransaction}
         />
         <div className="row">

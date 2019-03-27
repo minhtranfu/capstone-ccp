@@ -9,17 +9,17 @@ export const getTransactionsById = id => {
 };
 
 export const getConstructionsByContractorId = constractorId => {
-  return DataAccessService.get(`contractors/${constractorId}/constructions`);
+  return DataAccessService.get(`/contractors/${constractorId}/constructions`);
 };
 
 export const getTransactionsBySupplierId = supplierId => {
-  return DataAccessService.get(`transactions/supplier/${supplierId}`);
+  return DataAccessService.get(`/transactions/supplier/${supplierId}`);
 };
 
 export const getTransactionsByRequesterId = requesterId => {
-  return DataAccessService.get(`transactions/requester/${requesterId}`);
+  return DataAccessService.get(`/transactions/requester/${requesterId}`);
 };
 
 export const updateTransactionById = (transactionId, data) => {
-  return DataAccessService.put(`transactions/${transactionId}`, data);
+  return DataAccessService.put(`/transactions/${transactionId}`, data);
 };
