@@ -5,7 +5,7 @@ import { View, Text, StyleSheet } from "react-native";
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
 
-const COLORS = {
+export const COLORS = {
   AVAILABLE: "#4DB781",
   ACCEPTED: "#4DB781", //green
   DENIED: "#FF5C5C", //red

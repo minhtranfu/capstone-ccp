@@ -71,10 +71,7 @@ class EquipmentItem extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    shadowColor: "#3E3E3E",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
+    ...colors.shadow,
     elevation: 2,
     marginBottom: 20
   },

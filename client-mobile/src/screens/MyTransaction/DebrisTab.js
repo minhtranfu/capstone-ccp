@@ -43,8 +43,8 @@ const DEBRIS_TRANSACTION_STATUSES = [
 const DEBRIS_TRANSACTION_OPTIONS = [
   {
     id: 0,
-    name: "All Statuses",
-    value: "All Statuses"
+    name: "All",
+    value: "All"
   },
   {
     id: 2,
@@ -78,12 +78,12 @@ class DebrisTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: "All Statuses"
+      status: "All"
     };
   }
 
   _handleFilter = () => {
-    if (this.state.status === "All Statuses") {
+    if (this.state.status === "All") {
       return DEBRIS_TRANSACTION_STATUSES;
     } else {
       return DEBRIS_TRANSACTION_STATUSES.filter(
@@ -114,7 +114,8 @@ class DebrisTab extends Component {
             />
             {debrisList.map(item => (
               <DebrisSearchItem
-                key={item.id}
+                key={`debris_${item.id}`}
+                status={item.status}
                 address={item.debrisPost.address}
                 debrisBids={item.debrisPost.debrisBids}
                 description={item.debrisPost.description}
@@ -139,8 +140,8 @@ class DebrisTab extends Component {
     return (
       <View style={styles.container}>
         <Dropdown
-          label={"Filter"}
-          defaultText={"All Statuses"}
+          label={"By Status"}
+          defaultText={"All"}
           onSelectValue={value => this.setState({ status: value })}
           options={DEBRIS_TRANSACTION_OPTIONS}
           isHorizontal={true}
@@ -160,7 +161,6 @@ const styles = StyleSheet.create({
   actionWrapper: {
     justifyContent: "center",
     alignItems: "center",
-    height: 300,
     borderRadius: 9,
     borderStyle: "dashed",
     borderWidth: 3,

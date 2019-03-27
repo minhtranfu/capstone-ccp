@@ -9,7 +9,7 @@ import {
 import { SafeAreaView, withNavigation } from "react-navigation";
 
 import DebrisItem from "../../components/DebrisItem";
-import AddModal from "../MyEquipment/components/AddModal";
+import AddModal from "../Manage/components/AddModal";
 import Dropdown from "../../components/Dropdown";
 import Button from "../../components/Button";
 
@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     borderWidth: 3,
     borderColor: "#DEE4E3",
-    height: 300
   },
   text: {
     fontSize: fontSize.bodyText,

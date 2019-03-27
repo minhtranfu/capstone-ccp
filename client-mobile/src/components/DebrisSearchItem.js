@@ -1,12 +1,17 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image as RNImage } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 import fontSize from "../config/fontSize";
 import colors from "../config/colors";
+
+function jsUcfirst(string)
+{
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 class DebrisSearchItem extends Component {
   static propTypes = {
@@ -20,8 +25,10 @@ class DebrisSearchItem extends Component {
 
   static defaultProps = {
     imageUrl:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png"
+      "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg"
   };
+
+
 
   render() {
     const {
@@ -31,6 +38,7 @@ class DebrisSearchItem extends Component {
       debrisBids,
       title,
       description,
+      status,
       onPress
     } = this.props;
     return (
@@ -40,27 +48,41 @@ class DebrisSearchItem extends Component {
             uri={
               imageUrl
                 ? imageUrl
-                : "https://cdn.japantimes.2xx.jp/wp-content/uploads/2013/01/nn20110630f1b.jpg"
+                : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg"
             }
-            resizeMode={"cover"}
-            style={{ height: 200 }}
+            resizeMode={"contain"}
+            style={{ height: 140, backgroundColor: '#e9e9e9', marginTop: -10, marginHorizontal: -10 }}
           />
-          <View style={styles.titleWrapper}>
-            <Text style={styles.title}>{title}</Text>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <FontAwesome name={"tags"} size={20} />
-              {debrisBids.map(item => (
-                <Text style={styles.text}>{item.name}</Text>
-              ))}
-            </View>
-            <Text style={styles.text}>
-              <Feather name="map-pin" size={20} />
-              {address}
-            </Text>
+          <View style={styles.bidWrapper}>
             <Text style={styles.caption}>
-              {debrisBids.length > 0 ? debrisBids.length : 0} bids
+              {debrisBids.length} bids
             </Text>
           </View>
+          <Text style={styles.title}>{title}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5, marginBottom: 3 }}>
+            <Feather name={"tag"} size={12} style={{marginRight: 3}} color={colors.text50}/>
+            {debrisBids && debrisBids.map(item => (
+              <Text key={`${item.name || Math.random()}`} style={styles.address}>
+                {item.name || '-'}
+              </Text>
+            ))}
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5, marginBottom: 3 }}>
+            <Feather name="map-pin" size={12} style={{marginRight: 3}} color={colors.text50}/>
+            <Text style={styles.address}>
+              {address}
+            </Text>
+          </View>
+          { status && (
+            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5, marginBottom: 3 }}>
+              <RNImage
+                source={require('../../assets/icons/icons8-rounded_rectangle.png')}
+                style={[styles.statusIcon, {tintColor: colors.status[status || "default"]}]}
+                resizeMode={"contain"}
+              />
+              <Text style={styles.address}>{jsUcfirst(status.toLowerCase())}</Text>
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -70,35 +92,51 @@ class DebrisSearchItem extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    shadowColor: "#3E3E3E",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
+    ...colors.shadow,
     elevation: 2,
-    marginBottom: 20
+    marginVertical: 8,
+
   },
   wrapper: {
     borderRadius: 10,
-    marginHorizontal: 1,
-    backgroundColor: "white"
-  },
-  titleWrapper: {
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 15
+    backgroundColor: "white",
+    overflow: 'hidden',
+    padding: 10,
   },
   title: {
     fontSize: fontSize.bodyText,
-    fontWeight: "bold",
-    paddingVertical: 5
+    fontWeight: "600",
+    color: colors.text,
+    marginTop: 15,
   },
   text: {
     fontSize: fontSize.bodyText,
-    paddingVertical: 5
+  },
+  address: {
+    fontSize: fontSize.caption,
+    color: colors.text50,
+    fontWeight: "500",
+  },
+  bidWrapper: {
+    marginTop: -32,
+    height: 25,
+    alignSelf: 'flex-end',
+    backgroundColor: '#0000003D',
+    paddingHorizontal: 12,
+    justifyContent: 'center',
+    marginRight: -10,
   },
   caption: {
     fontSize: fontSize.secondaryText,
-    paddingVertical: 5
+    color: colors.text,
+    fontWeight: "500",
+  },
+  statusIcon: {
+    width: 13,
+    height: 15,
+    tintColor: colors.text50,
+    marginRight: 4,
+    marginLeft: 1,
   }
 });
 

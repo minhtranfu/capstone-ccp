@@ -169,7 +169,6 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     borderWidth: 3,
     borderColor: "#DEE4E3",
-    height: 300
   },
   text: {
     fontSize: fontSize.bodyText,

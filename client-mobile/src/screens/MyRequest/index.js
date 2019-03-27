@@ -397,7 +397,7 @@ class Activity extends Component {
             <Text style={styles.header}>My Request</Text>
           </Header>
           <TabView
-            tabs={["Equipment", "Material", "My Posts", "Debris"]}
+            tabs={["Equipments", "Material", "My Posts", "Debris"]}
             onChangeTab={this._onChangeTab}
             activeTab={activeTab}
           />

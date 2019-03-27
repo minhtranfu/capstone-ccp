@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Feather from "@expo/vector-icons/Feather";
 import Entypo from "@expo/vector-icons/Entypo";
 
 import colors from "../config/colors";
@@ -26,13 +27,13 @@ class DebrisItem extends Component {
       onPress
     } = this.props;
     return (
-      <TouchableOpacity style={styles.conainter} onPress={onPress}>
+      <TouchableOpacity style={styles.container} onPress={onPress}>
         <View style={styles.wrapper}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.text}>{address}</Text>
           {debrisServiceTypes ? (
             <View style={styles.rowWrapper}>
-              <FontAwesome name={"tags"} size={18} style={{ marginRight: 3 }} />
+              <Feather name={"tag"} size={18} style={{ marginRight: 3 }} />
               {debrisServiceTypes.length > 0 ? (
                 debrisServiceTypes.map(item => (
                   <Text style={styles.text}>
@@ -62,14 +63,11 @@ class DebrisItem extends Component {
 }
 
 const styles = StyleSheet.create({
-  conainter: {
+  container: {
     flex: 1,
-    shadowColor: "#3E3E3E",
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 1, height: 2 },
-    shadowRadius: 2,
+    ...colors.shadow,
     elevation: 2,
-    marginBottom: 20
+    marginVertical: 8
   },
   rowWrapper: {
     flexDirection: "row",
@@ -78,14 +76,14 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     borderRadius: 10,
-    marginHorizontal: 1,
     padding: 10,
     justifyContent: "center",
     backgroundColor: "white"
   },
   title: {
     fontSize: fontSize.bodyText,
-    fontWeight: "bold"
+    fontWeight: "600",
+    color: colors.text,
   },
   text: {
     fontSize: fontSize.bodyText

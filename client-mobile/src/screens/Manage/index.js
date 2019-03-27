@@ -74,8 +74,8 @@ const EQUIPMENT_STATUSES = [
 const DROPDOWN_OPTIONS = [
   {
     id: 0,
-    name: "All Statuses",
-    value: "All Statuses"
+    name: "All",
+    value: "All"
   },
   {
     id: 1,
@@ -139,7 +139,7 @@ class MyEquipment extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      status: "All Statuses",
+      status: "All",
       id: null,
       refreshing: false,
       hasError: false,
@@ -210,7 +210,7 @@ class MyEquipment extends PureComponent {
   };
 
   _handleFilter = () => {
-    if (this.state.status === "All Statuses") {
+    if (this.state.status === "All") {
       return EQUIPMENT_STATUSES;
     } else {
       return EQUIPMENT_STATUSES.filter(
@@ -267,8 +267,8 @@ class MyEquipment extends PureComponent {
         {listEquipment !== 0 ? (
           <View>
             <Dropdown
-              label={"Filter"}
-              defaultText={"All Statuses"}
+              label={"By Status"}
+              defaultText={"All"}
               onSelectValue={value => this.setState({ status: value })}
               options={DROPDOWN_OPTIONS}
               isHorizontal={true}
@@ -309,10 +309,10 @@ class MyEquipment extends PureComponent {
               </TouchableOpacity>
             )}
           >
-            <Text style={styles.header}>My Equipment</Text>
+            <Text style={styles.header}>Manage</Text>
           </Header>
           <TabView
-            tabs={["Equipment", "Material"]}
+            tabs={["Equipments", "Material", "Posts", "Bids"]}
             onChangeTab={this._onChangeTab}
             activeTab={activeTab}
           />
@@ -390,9 +390,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8
   },
   header: {
-    fontSize: fontSize.h4,
-    fontWeight: "500",
-    color: colors.text
+    color: colors.primaryColor,
+    fontSize: fontSize.bodyText,
+    fontWeight: "600"
   },
   title: {
     fontSize: fontSize.h4,
