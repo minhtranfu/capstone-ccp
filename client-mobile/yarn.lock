@@ -5167,6 +5167,13 @@ react-native-image-progress@^1.1.1:
   dependencies:
     prop-types "^15.5.10"
 
+react-native-indicators@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/react-native-indicators/-/react-native-indicators-0.13.0.tgz#001824bba194b1ca6e654d903beaf0168d4e6ac8"
+  integrity sha1-ABgku6GUscpuZU2QO+rwFo1Oasg=
+  dependencies:
+    prop-types "^15.5.10"
+
 react-native-maps@^0.22.1, react-native-maps@expo/react-native-maps#v0.22.1-exp.0:
   version "0.22.1"
   resolved "https://codeload.github.com/expo/react-native-maps/tar.gz/e6f98ff7272e5d0a7fe974a41f28593af2d77bb2"

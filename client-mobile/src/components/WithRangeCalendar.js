@@ -237,7 +237,6 @@ class WithRangeCalendar extends PureComponent {
             style={styles.button}
             disabled={selectedDate.length === 0}
             onPress={() => {
-              console.log('ahihi', selectedDate)
               const date = {
                 beginDate: selectedDate[0],
                 endDate: selectedDate[selectedDate.length - 1]

@@ -7,12 +7,14 @@ import {
   Modal,
   Dimensions,
   Picker,
+  Image as RNImage,
   TouchableOpacity
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
+import Image from 'react-native-image-progress';
 
 const width = Dimensions.get("window").width;
 
@@ -43,7 +45,7 @@ class Dropdown extends Component {
   render() {
     const { options, isHorizontal, onPress } = this.props;
     return (
-      <View style={{ marginBottom: 20 }}>
+      <View style={{backgroundColor: '#f5f5f7', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5,}}>
         <Modal transparent={true} visible={this.state.modalVisible}>
           <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -88,14 +90,14 @@ class Dropdown extends Component {
             }}
           >
             <View
-              style={{ flex: 2, flexDirection: "row", alignItems: "center" }}
+              style={{ flex: 2, flexDirection: "column" }}
             >
-              <Text style={styles.textHorizontal}>{this.props.label}: </Text>
-              <Text style={styles.textHorizontal}>
+              <Text style={styles.dropdownLabel}>{this.props.label} </Text>
+              <Text style={styles.dropdownValue}>
                 {this.state.pickerValue}
               </Text>
             </View>
-            <Feather name="chevron-right" size={24} />
+            <RNImage source={ require('../../assets/icons/icons8-mail_filter.png') } style={{width: 22, height: 22}} />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -134,8 +136,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.grayWhite,
     paddingBottom: 10
   },
   textDone: {
@@ -159,9 +159,20 @@ const styles = StyleSheet.create({
     marginTop: 15
   },
   textHorizontal: {
-    fontSize: fontSize.bodyText,
+    fontSize: fontSize.secondaryText,
     color: colors.text,
     fontWeight: "500"
+  },
+  dropdownLabel: {
+    fontSize: fontSize.caption,
+    color: colors.text50,
+    fontWeight: "400",
+    marginBottom: 3,
+  },
+  dropdownValue: {
+    fontSize: fontSize.bodyText,
+    color: colors.text,
+    fontWeight: "600"
   },
   divider: {
     backgroundColor: "#D8D8D8",
@@ -172,9 +183,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.secondaryColorOpacity,
-    paddingVertical: 15
   }
 });
 

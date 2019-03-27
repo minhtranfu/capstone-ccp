@@ -36,7 +36,7 @@ class RequireLogin extends Component {
             buttonStyle={styles.buttonStyle}
             textStyle={styles.textStyle}
             text={"Login"}
-            onPress={() => navigation.navigate("Account")}
+            onPress={() => navigation.navigate("LoginModal", {isModal: true})}
           />
         </View>
         <View style={{flex: 1}} />
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
   buttonWrapperStyle: {
     alignSelf: 'stretch',
     paddingHorizontal: 15,
+    marginTop: 20,
   },
   textStyle: {
     fontSize: fontSize.bodyText,

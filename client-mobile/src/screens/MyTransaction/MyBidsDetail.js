@@ -105,7 +105,7 @@ class MyBidsDetail extends Component {
 
   _renderEditContent = () => {
     const { data } = this.state;
-    console.log(data);
+    // console.log(data);
     return (
       <View>
         <Text>{data.debrisPost.title}</Text>

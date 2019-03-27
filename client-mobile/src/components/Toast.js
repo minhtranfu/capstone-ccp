@@ -67,7 +67,6 @@ class ShowToast extends Component {
 
   render() {
     const { message } = this.props;
-    console.log("notiMess", message);
     return (
       <Modal transparent={true} visible={this.state.visible}>
         <View style={styles.wrapper}>

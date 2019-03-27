@@ -32,9 +32,11 @@ class EquipmentStatus extends Component {
         <Text style={styles.statusTitle}>{title}</Text>
         <View
           style={{
-            borderRadius: 10,
-            paddingHorizontal: 8,
-            backgroundColor: COLORS[code || "default"],
+            borderRadius: 20,
+            aspectRatio: 1,
+            width: 18,
+            marginLeft: 5,
+            backgroundColor: `${COLORS[code || "default"]}BD`,
             justifyContent: "center",
             alignItems: "center"
           }}
@@ -49,18 +51,17 @@ class EquipmentStatus extends Component {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 8,
-    marginBottom: 15,
     flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.text50
+    borderBottomColor: colors.text50,
+    paddingTop: 15,
+    paddingBottom: 10,
   },
   statusTitle: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "500",
-    color: colors.text
+    color: colors.primaryColor,
+    fontSize: fontSize.secondaryText,
+    fontWeight: "600",
   },
   statusCount: {
     fontSize: fontSize.caption,
