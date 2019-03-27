@@ -25,7 +25,6 @@ import ConfirmTransaction from "../screens/Transaction/EquipmentTransaction";
 import Activity from "../screens/Activity";
 import ActivityDetail from "../screens/Activity/Detail";
 import Notification from "../screens/Activity/Notification";
-import ButtonWithIcon from "../components/ButtonWithIcon";
 import MyEquipment from "../screens/MyEquipment";
 import MyEquipmentDetail from "../screens/MyEquipment/Detail";
 import AddDetail from "../screens/MyEquipment/AddEquipment/AddDetail";
@@ -149,7 +148,7 @@ const MyEquipmentStack = createStackNavigator(
     AddNewEquipment: AddNewEquipmentStack,
     AddMaterialDetail: AddMaterialDetail,
     MyMaterialDetail: MyMaterialDetail,
-    Login: Login
+    Login
   },
   {
     mode: "modal",
@@ -180,7 +179,7 @@ const MyTransactionStack = createStackNavigator(
     ContractorProfile: ContractorProfile,
     MyBidsDetail: MyBidsDetail,
     SupplierDebrisDetail: SupplierDebrisDetail,
-    Login: Login
+    Login
   },
   {
     mode: "modal",
@@ -200,7 +199,8 @@ const ActivityStack = createStackNavigator(
     AddDebrisArticle: AddDebrisArticle,
     DebrisArticleDetail: DebrisArticleDetail,
     AddServicesTypes: AddServicesTypes,
-    DebrisDetail: DebrisDetail
+    DebrisDetail: DebrisDetail,
+    LoginModal: Login
   },
   {
     mode: "modal",
@@ -223,7 +223,8 @@ const TabNavigator = createBottomTabNavigator(
       const { routeName, index, routes } = navigation.state;
       let tabBarVisible = true;
 
-      if (routes && (routes[index].routeName === 'Profile')) {
+      if (routes && (routes[index].routeName === 'Profile'
+        || routes[index].routeName === "LoginModal")) {
         tabBarVisible = false;
       }
       return ({

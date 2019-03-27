@@ -23,6 +23,7 @@ import CircleIcon from "./CircleIcon";
 import { logIn } from "../../redux/actions/auth";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+import { Feather } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("window");
 
@@ -55,13 +56,18 @@ class Login extends Component {
 
   render() {
     const { username, password } = this.state;
+    const { navigation } = this.props;
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "always", top: "never" }}
+        forceInset={{ bottom: "always", top: "always" }}
       >
         <StatusBar barStyle="dark-content" />
-
+        {navigation.state.params && navigation.state.params.isModal && (
+          <TouchableOpacity style={{marginRight: 30, alignSelf: 'flex-end', zIndex: 100 }} onPress={() => this.props.navigation.goBack()}>
+            <Feather name="x" size={22} color={colors.primaryColor}/>
+          </TouchableOpacity>
+        )}
         <ScrollView
           style={styles.overlay}
           contentContainerStyle={{
@@ -158,7 +164,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8
   },
   wrapperStyle: {
-    marginTop: 30,
+    marginTop: 15,
     marginBottom: 10,
   },
   buttonStyle: {

@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   placeholder: {
     fontSize: fontSize.bodyText,
     color: colors.text,
-    fontWeight: "500",
+    fontWeight: "400",
     marginBottom: 5,
     paddingVertical: 10,
     borderBottomColor: colors.text25,
