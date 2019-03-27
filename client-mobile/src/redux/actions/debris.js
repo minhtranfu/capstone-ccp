@@ -119,6 +119,25 @@ export function searchDebris(debrisTypeId) {
   };
 }
 
+export function sendDebrisFeedback(feedback) {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: Actions.SEND_DEBRIS_FEEDBACK.REQUEST
+      });
+      const res = await axios.post(`debrisFeedbacks`, feedback);
+      dispatch({
+        type: Actions.SEND_DEBRIS_FEEDBACK.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.SEND_DEBRIS_FEEDBACK.ERROR
+      });
+    }
+  };
+}
+
 export function addTypeServices(data) {
   return {
     type: Actions.ADD_TYPE_SERVICES.SUCCESS,

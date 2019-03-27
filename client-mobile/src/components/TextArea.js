@@ -7,9 +7,9 @@ import colors from "../config/colors";
 
 class TextArea extends Component {
   static propTypes = {
-    numberOfLines: PropTypes.int,
-    value: PropTypes.String,
-    maxLength: PropTypes.int
+    numberOfLines: PropTypes.number,
+    value: PropTypes.string,
+    maxLength: PropTypes.number
   };
 
   static defaultProps = {
@@ -22,12 +22,12 @@ class TextArea extends Component {
       numberOfLines,
       value,
       maxLength,
-      wrapperStyle,
+      placeholderStyle,
       onChangeText
     } = this.props;
     return (
       <TextInput
-        style={[styles.wrapper, wrapperStyle]}
+        style={[styles.placeholder, placeholderStyle]}
         multiline={true}
         numberOfLines={numberOfLines}
         onChangeText={onChangeText}
@@ -40,10 +40,11 @@ class TextArea extends Component {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    paddingLeft: 10,
+  placeholder: {
+    paddingHorizontal: 15,
+    paddingTop: 15,
     height: 200,
-    borderColor: "#000000",
+    borderColor: colors.text25,
     borderWidth: StyleSheet.hairlineWidth,
     fontSize: fontSize.bodyText,
     color: colors.text,

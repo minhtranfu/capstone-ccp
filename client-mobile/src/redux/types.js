@@ -231,3 +231,23 @@ export const SEARCH_DEBRIS = renderActions("@@debris/SEARCH_DEBRIS");
 export const CLEAR_DEBRIS_DETAIL = renderActions(
   "@@debris/CLEAR_DEBRIS_DETAIL"
 );
+
+//FEEDBACK
+export const SEND_DEBRIS_FEEDBACK = renderActions(
+  "@@feedback/SEND_DEBRIS_FEEDBACK"
+);
+export const SEND_MATERIAL_FEEDBACK = renderActions(
+  "@@feedback/SEND_MATERIAL_FEEDBACK"
+);
+export const SEND_EQUIPMENT_FEEDBACK = renderActions(
+  "@@feedback/SEND_EQUIPMENT_FEEDBACK"
+);
+export const GET_DEBRIS_FEEDBACK = renderActions(
+  "@@feedback/GET_DEBRIS_FEEDBACK"
+);
+export const GET_MATERIAL_FEEDBACK = renderActions(
+  "@@feedback/GET_MATERIAL_FEEDBACK"
+);
+export const GET_EQUIPMENT_FEEDBACK = renderActions(
+  "@@feedback/GET_EQUIPMENT_FEEDBACK"
+);

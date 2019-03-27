@@ -15,6 +15,7 @@ import {
 import { autoCompleteSearch } from "../../redux/actions/location";
 import Feather from "@expo/vector-icons/Feather";
 
+import Dropdown from "../../components/Dropdown";
 import SearchBar from "../../components/SearchBar";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";

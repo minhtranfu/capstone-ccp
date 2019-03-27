@@ -251,21 +251,21 @@ class Activity extends Component {
 
   _renderBottomStatus = (status, equipmentStatus) => {
     switch (status) {
-      case "FINISHED":
-        return (
-          <Button
-            text={"Feedback"}
-            wrapperStyle={{
-              paddingHorizontal: 15,
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-            buttonStyle={{
-              height: 35,
-              width: 120
-            }}
-          />
-        );
+      // case "FINISHED":
+      //   return (
+      //     <Button
+      //       text={"Feedback"}
+      //       wrapperStyle={{
+      //         paddingHorizontal: 15,
+      //         alignItems: "center",
+      //         justifyContent: "center"
+      //       }}
+      //       buttonStyle={{
+      //         height: 35,
+      //         width: 120
+      //       }}
+      //     />
+      //   );
       case "PROCESSING":
         return (
           <View
@@ -280,6 +280,7 @@ class Activity extends Component {
                 width: 15,
                 height: 15,
                 marginRight: 5,
+                borderRadius: 5,
                 backgroundColor: COLORS[equipmentStatus || "default"]
               }}
             />

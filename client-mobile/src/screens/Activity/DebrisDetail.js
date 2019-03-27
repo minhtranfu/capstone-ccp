@@ -39,8 +39,8 @@ const STATUS = {
     };
   },
   dispatch => ({
-    fetchUpdateStatus: transaction => {
-      dispatch(updateDebrisTransactionStatus(transaction));
+    fetchUpdateStatus: (transactionId, status) => {
+      dispatch(updateDebrisTransactionStatus(transactionId, status));
     }
   })
 )
@@ -53,18 +53,30 @@ class DebrisDetail extends Component {
     };
   }
 
-  _handleChangeStatus = status => {
-    this.props.fetchUpdateStatus({ status: status });
+  _handleChangeStatus = (transactionId, status) => {
+    this.props.fetchUpdateStatus(transactionId, { status: status });
     this.props.navigation.goBack();
   };
 
-  _renderBottomButton = status => {
+  _renderBottomButton = (transactionId, status, isFeedback) => {
     switch (status) {
       case "WORKING":
         return (
           <Button
             text={"Finish"}
-            onPress={() => this._handleChangeStatus("FINISHED")}
+            onPress={() => this._handleChangeStatus(transactionId, "FINISHED")}
+          />
+        );
+      case "FINISHED":
+        return isFeedback ? null : (
+          <Button
+            text={"Feedback"}
+            onPress={() =>
+              this.props.navigation.navigate("Feedback", {
+                transactionId: transactionId,
+                type: "Debris"
+              })
+            }
           />
         );
       default:
@@ -88,7 +100,7 @@ class DebrisDetail extends Component {
           name={detail.debrisBid.supplier.name}
           hasDivider={true}
         />
-        {this._renderBottomButton(detail.status)}
+        {this._renderBottomButton(detail.id, detail.status, detail.feedbacked)}
         {isCancel ? (
           <View>
             <InputField

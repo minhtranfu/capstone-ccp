@@ -58,6 +58,7 @@ import ConfirmBid from "../screens/Transaction/ConfirmBid";
 import Subscription from "../screens/Account/Subscription";
 import DebrisDetail from "../screens/Activity/DebrisDetail";
 import SupplierDebrisDetail from "../screens/MyTransaction/SupplierDebrisDetail";
+import Feedback from "../screens/Activity/Feedback";
 // import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
@@ -179,7 +180,8 @@ const MyTransactionStack = createStackNavigator(
     ContractorProfile: ContractorProfile,
     MyBidsDetail: MyBidsDetail,
     SupplierDebrisDetail: SupplierDebrisDetail,
-    Login
+    Login,
+    Feedback: Feedback
   },
   {
     mode: "modal",
@@ -200,7 +202,8 @@ const ActivityStack = createStackNavigator(
     DebrisArticleDetail: DebrisArticleDetail,
     AddServicesTypes: AddServicesTypes,
     DebrisDetail: DebrisDetail,
-    LoginModal: Login
+    LoginModal: Login,
+    Feedback: Feedback
   },
   {
     mode: "modal",
@@ -218,30 +221,34 @@ const TabNavigator = createBottomTabNavigator(
     Account: AccountStack
   },
   {
-    initialRouteName: 'Discover',
+    initialRouteName: "Discover",
     defaultNavigationOptions: ({ navigation }) => {
       const { routeName, index, routes } = navigation.state;
       let tabBarVisible = true;
 
-      if (routes && (routes[index].routeName === 'Profile'
-        || routes[index].routeName === "LoginModal")) {
+      if (
+        routes &&
+        (routes[index].routeName === "Profile" ||
+          routes[index].routeName === "LoginModal" ||
+          routes[index].routeName === "Feedback")
+      ) {
         tabBarVisible = false;
       }
-      return ({
+      return {
         tabBarVisible,
-        tabBarIcon: ({focused, horizontal, tintColor}) => {
-          const {routeName} = navigation.state;
+        tabBarIcon: ({ focused, horizontal, tintColor }) => {
+          const { routeName } = navigation.state;
           let icon;
-          if (routeName === 'Discover') {
-            icon = require('../../assets/icons/icons8-compass.png')
-          } else if (routeName === 'Activity') {
-            icon = require('../../assets/icons/icons8-activity.png')
-          } else if (routeName === 'Equipment') {
-            icon = require('../../assets/icons/icons8-garage.png')
-          } else if (routeName === 'Transaction') {
-            icon = require('../../assets/icons/icons8-transaction.png')
-          } else if (routeName === 'Account') {
-            icon = require('../../assets/icons/icons8-settings.png')
+          if (routeName === "Discover") {
+            icon = require("../../assets/icons/icons8-compass.png");
+          } else if (routeName === "Activity") {
+            icon = require("../../assets/icons/icons8-activity.png");
+          } else if (routeName === "Equipment") {
+            icon = require("../../assets/icons/icons8-garage.png");
+          } else if (routeName === "Transaction") {
+            icon = require("../../assets/icons/icons8-transaction.png");
+          } else if (routeName === "Account") {
+            icon = require("../../assets/icons/icons8-settings.png");
           }
 
           return (
@@ -251,19 +258,19 @@ const TabNavigator = createBottomTabNavigator(
                 height: 28,
                 aspectRatio: 1,
                 marginTop: 2,
-                tintColor: focused ? colors.secondaryColor : '#a5acb8'
+                tintColor: focused ? colors.secondaryColor : "#a5acb8"
               }}
             />
           );
         }
-      })
+      };
     },
     tabBarOptions: {
       showLabel: false,
       activeTintColor: colors.secondaryColor,
       inactiveTintColor: colors.white,
       style: {
-        backgroundColor: '#fcfcfc'
+        backgroundColor: "#fcfcfc"
       }
     }
   }

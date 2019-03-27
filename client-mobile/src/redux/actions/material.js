@@ -7,11 +7,14 @@ export function searchMaterial(text) {
     dispatch({
       type: Actions.SEARCH_MATERIAL.REQUEST
     });
-    const res = await axios.get(`materials?q=gach&limit=10`, {
-      headers: {
-        Authorization: undefined
+    const res = await axios.get(
+      `materials?q=${text}&limit=10&&orderBy=createdTime.desc`,
+      {
+        headers: {
+          Authorization: undefined
+        }
       }
-    });
+    );
     dispatch({
       type: Actions.SEARCH_MATERIAL.SUCCESS,
       payload: res

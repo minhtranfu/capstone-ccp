@@ -185,6 +185,18 @@ class ActivityDetail extends Component {
     transactionId
   ) => {
     switch (status) {
+      case "FINISHED":
+        return (
+          <Button
+            text={"Feedback"}
+            onPress={() =>
+              this.props.navigation.navigate("Feedback", {
+                transactionId: transactionId,
+                type: "Equipment"
+              })
+            }
+          />
+        );
       case "PENDING":
         return (
           <View style={styles.columnWrapper}>

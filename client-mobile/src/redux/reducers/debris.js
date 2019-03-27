@@ -4,6 +4,7 @@ import axios from "axios";
 const INITIAL_STATE = {
   loading: false,
   detailLoading: false,
+  feedbackLoading: false,
   debrisTypes: [],
   debrisArticles: [],
   debrisBids: [],
@@ -131,6 +132,24 @@ export default function debrisReducer(state = INITIAL_STATE, action) {
         ...state,
         loading: false,
         listSearch: payload.data
+      };
+    }
+    case Actions.SEND_DEBRIS_FEEDBACK.REQUEST: {
+      return {
+        ...state,
+        feedbackLoading: true
+      };
+    }
+    case Actions.SEND_DEBRIS_FEEDBACK.SUCCESS: {
+      return {
+        ...state,
+        feedbackLoading: false
+      };
+    }
+    case Actions.SEND_DEBRIS_FEEDBACK.ERROR: {
+      return {
+        ...state,
+        feedbackLoading: false
       };
     }
     case Actions.ADD_TYPE_SERVICES.SUCCESS: {
