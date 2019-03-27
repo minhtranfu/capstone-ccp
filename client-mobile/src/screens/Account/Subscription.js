@@ -33,6 +33,10 @@ class Subscription extends PureComponent {
     this.props.getSubscriptions();
   }
 
+  _handleGoBack = () => {
+    this.props.navigation.goBack();
+  };
+
   render() {
     const { listSubscription } = this.props.subscription;
     if (!listSubscription.length) return null;
@@ -43,10 +47,14 @@ class Subscription extends PureComponent {
         forceInset={{ bottom: "always", top: "always" }}
       >
         <Header style={{ position: "relative" }}>
-          <Left />
+          <Left>
+            <TouchableOpacity onPress={this._handleGoBack}>
+              <Feather name="chevron-left" size={24} />
+            </TouchableOpacity>
+          </Left>
           <Body title="Subscription" />
           <Right>
-            <TouchableOpacity onPress={this._handleLogout}>
+            <TouchableOpacity>
               <Feather name="plus" size={24} />
             </TouchableOpacity>
           </Right>

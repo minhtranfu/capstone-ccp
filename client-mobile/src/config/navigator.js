@@ -184,7 +184,6 @@ const MyTransactionStack = createStackNavigator(
     Feedback: Feedback
   },
   {
-    mode: "modal",
     headerMode: "none",
     initialRouteName: "MyTransaction"
   }
@@ -206,7 +205,6 @@ const ActivityStack = createStackNavigator(
     Feedback: Feedback
   },
   {
-    mode: "modal",
     headerMode: "none",
     initialRouteName: "Activity"
   }

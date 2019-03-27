@@ -2,6 +2,8 @@ import React, { PureComponent } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import MaterialItem from "../../components/MaterialItem";
 import { withNavigation } from "react-navigation";
+
+import MaterialOrder from "../../components/MaterialOrder";
 import Dropdown from "../../components/Dropdown";
 import EquipmentStatus from "../../components/EquipmentStatus";
 import { COLORS } from "../../Utils/Constants";
@@ -99,6 +101,7 @@ class MaterialTab extends PureComponent {
           item => item.status === materialStatus.code
         );
         if (materialList.length === 0) return null;
+        console.log(materialList);
         return (
           <View key={`sec_${idx}`}>
             <EquipmentStatus
@@ -107,26 +110,17 @@ class MaterialTab extends PureComponent {
               code={materialStatus.code}
             />
             {materialList.map(item => (
-              <MaterialItem
+              <MaterialOrder
                 key={item.id}
-                manufacturer={item.material.manufacturer}
-                name={item.material.name}
-                price={item.price}
-                unit={item.unit}
-                imageUrl={item.material.thumbnailImageUrl}
-                contractor={item.material.contractor.name}
-                contractorThumbnail={
-                  item.material.contractor.thumbnailImage
-                    ? item.material.contractor.thumbnailImage
-                    : "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
-                }
+                contractor={item.requester.name}
+                phone={item.requester.phoneNumber}
+                avatarURL={item.requester.thumbnailImage}
+                address={item.requesterAddress}
+                totalPrice={item.totalPrice}
+                createdTime={item.createdTime}
+                totalOrder={item.materialTransactionDetails}
                 status={item.status}
-                quantity={item.quantity}
-                onPress={() =>
-                  this.props.navigation.navigate("MaterialRequesterDetail", {
-                    id: item.id
-                  })
-                }
+                statusBackgroundColor={COLORS[item.status]}
               />
             ))}
           </View>

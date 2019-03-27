@@ -194,9 +194,6 @@ class MyTransaction extends Component {
     }
 
     console.log("Transaction renderrr");
-    // if (status.type === "success" && status.time !== prevProps.status.time) {
-    //   this._showAlert("Success", status.message);
-    // }
   }
 
   _showAlert = (title, msg) => {
@@ -361,7 +358,7 @@ class MyTransaction extends Component {
         />
         {!loading ? (
           <ScrollView
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             contentContainerStyle={styles.scrollContent}
             refreshControl={
               <RefreshControl
@@ -373,7 +370,7 @@ class MyTransaction extends Component {
             {this._handleActiveTab(activeTab)}
           </ScrollView>
         ) : (
-          <Loading/>
+          <Loading />
         )}
       </SafeAreaView>
     );
@@ -383,7 +380,7 @@ class MyTransaction extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: "column"
   },
   rowWrapper: {
     marginVertical: 8,
