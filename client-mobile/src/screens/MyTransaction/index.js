@@ -399,7 +399,7 @@ class MyTransaction extends Component {
           forceInset={{ bottom: "never", top: "always" }}
         >
           <Header>
-            <Text style={styles.header}>My Transaction</Text>
+            <Text style={styles.header}>Transactions</Text>
           </Header>
           <TabView
             tabs={["Equipment", "Material", "My Bids", "Debris"]}
@@ -454,9 +454,9 @@ const styles = StyleSheet.create({
     fontWeight: "600"
   },
   header: {
-    fontSize: fontSize.h4,
-    fontWeight: "500",
-    color: colors.text
+    color: colors.primaryColor,
+    fontSize: fontSize.bodyText,
+    fontWeight: "600"
   },
   text: {
     fontSize: fontSize.bodyText

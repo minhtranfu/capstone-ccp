@@ -61,84 +61,57 @@ class Login extends Component {
         forceInset={{ bottom: "always", top: "never" }}
       >
         <StatusBar barStyle="dark-content" />
-        <Image
-          source={require("../../../assets/images/excavator3.png")}
-          resizeMode={"cover"}
-          style={{ width: width, height: height }}
-        />
 
         <ScrollView
           style={styles.overlay}
           contentContainerStyle={{
             justifyContent: "center",
-            marginTop: 60,
-            paddingHorizontal: 15
+            paddingTop: 120,
+            paddingHorizontal: 15,
+            flexDirection: 'column',
           }}
         >
-          <Header>
-            <Image
-              source={require("../../../assets/images/logo.png")}
-              style={styles.logo}
-            />
-          </Header>
+          <View style={{ padding: 0, alignItems: 'centers', justifyContent: 'center', flexDirection: 'row'}}>
+            <View style={{ borderRadius: 3, borderWidth: 3, borderColor: colors.text68, width: 88, height: 52, justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={{ color: colors.text68, fontWeight: '700', fontSize: 30}}>
+                C
+                <Text style={{color: colors.secondaryColor}}>C</Text>
+                P
+              </Text>
+            </View>
+          </View>
           <KeyboardAvoidingView style={styles.formWrapper} behavior="position">
             <InputField
-              label={"EMAIL ADDRESS"}
-              labelStyle={{ color: "white" }}
+              label={"Username"}
               placeholder={"Input your username"}
-              customWrapperStyle={{ marginBottom: 10 }}
-              placeholderStyle={{ borderBottomColor: "white", color: "white" }}
+              customWrapperStyle={{ marginBottom: 20 }}
               autoCapitalize={"none"}
               inputType="text"
-              placeholderTextColor={"white"}
               onChangeText={value => this.setState({ username: value })}
               value={username}
               returnKeyType={"next"}
             />
             <InputField
-              label={"PASSWORD"}
-              labelStyle={{ color: "white" }}
+              label={"Password"}
               placeholder={"Password"}
               autoCapitalize={"none"}
-              customWrapperStyle={{ marginBottom: 10 }}
-              placeholderStyle={{ borderBottomColor: "white" }}
-              placeholderTextColor={"white"}
+              customWrapperStyle={{ marginBottom: 20 }}
               inputType="password"
               onChangeText={value => this.setState({ password: value })}
               value={password}
             />
           </KeyboardAvoidingView>
           <Button
-            text={"Login"}
+            text={"Log in"}
             wrapperStyle={styles.wrapperStyle}
             buttonStyle={styles.buttonStyle}
             textStyle={styles.textStyle}
             onPress={() => this._signIn()}
           />
-          <Text style={[styles.text, { alignSelf: "center" }]}>
+          <Text style={[styles.forgotPassword, { alignSelf: "center", marginTop: 10, }]}>
             Forgot your password?
+            <Text style={{color: colors.text68, fontWeight: '600'}}> | Sign Up</Text>
           </Text>
-          <View style={styles.dividerWrapper}>
-            <View style={styles.divider} />
-            <Text style={styles.textOr}>Or Sign in with</Text>
-            <View style={styles.divider} />
-          </View>
-          <View style={styles.circleWrapper}>
-            <CircleIcon name="facebook" />
-            <CircleIcon name="twitter" />
-            <CircleIcon name="google-plus" />
-          </View>
-          <Text
-            style={[styles.text, { marginVertical: 10, alignSelf: "center" }]}
-          >
-            Don't Have an Account?
-          </Text>
-          <Button
-            text={"Register Now"}
-            wrapperStyle={styles.wrapperStyle}
-            buttonStyle={styles.buttonStyle}
-            textStyle={styles.textStyle}
-          />
         </ScrollView>
       </SafeAreaView>
     );
@@ -156,17 +129,15 @@ const styles = StyleSheet.create({
   },
   formWrapper: {
     flex: 1,
-    marginTop: 10
+    marginTop: 60
+  },
+  forgotPassword: {
+    fontSize: fontSize.caption,
+    color: colors.secondaryColor,
   },
   text: {
-    color: colors.white,
-    fontSize: fontSize.bodyText,
-    fontWeight: "500"
-  },
-  logo: {
-    width: 85,
-    height: 52,
-    alignSelf: "center"
+    fontSize: fontSize.caption,
+    color: colors.text68
   },
   title: {
     fontSize: fontSize.bodyText,
@@ -175,8 +146,7 @@ const styles = StyleSheet.create({
   dividerWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    marginHorizontal: 30,
-    marginVertical: 10
+    marginHorizontal: 20,
   },
   divider: {
     backgroundColor: "#D8D8D8",
@@ -184,19 +154,15 @@ const styles = StyleSheet.create({
     flex: 1
   },
   textOr: {
-    color: colors.white,
     fontSize: fontSize.secondaryText,
     paddingHorizontal: 8
   },
   wrapperStyle: {
-    marginTop: 10,
-    marginBottom: 10
+    marginTop: 30,
+    marginBottom: 10,
   },
   buttonStyle: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: colors.white,
-    width: width - 30
+    borderRadius: 30,
   },
   circleWrapper: {
     flexDirection: "row",

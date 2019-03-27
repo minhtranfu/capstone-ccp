@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
   buttonWrapperStyle: {
     alignSelf: 'stretch',
     paddingHorizontal: 15,
+    marginTop: 20,
   },
   textStyle: {
     fontSize: fontSize.bodyText,
