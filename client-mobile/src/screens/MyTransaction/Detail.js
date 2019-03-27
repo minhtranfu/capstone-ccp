@@ -198,7 +198,7 @@ class MyTransactionDetail extends Component {
 
   _renderAdjustDateTransaction = (id, equipmentStatus) => {
     const { adjustTransactionList } = this.props;
-    console.log(adjustTransactionList);
+    // console.log(adjustTransactionList);
     if (equipmentStatus === "RENTING" && adjustTransactionList.length > 0) {
       return (
         <View>
@@ -318,7 +318,7 @@ class MyTransactionDetail extends Component {
   };
 
   _renderScrollViewItem = detail => {
-    console.log(detail);
+    // console.log(detail);
     const totalDay = this._countTotalDay(detail.beginDate, detail.endDate);
     const totalPrice = totalDay * detail.dailyPrice;
     const { id } = this.props.navigation.state.params;

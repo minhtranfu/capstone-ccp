@@ -69,8 +69,8 @@ const TRANSACTION_STATUSES = [
 const DROPDOWN_OPTIONS = [
   {
     id: 0,
-    name: "All Statuses",
-    value: "All Statuses"
+    name: "All",
+    value: "All"
   },
   {
     id: 1,
@@ -168,7 +168,7 @@ class MyTransaction extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: "All Statuses",
+      status: "All",
       loading: true,
       id: null,
       transactionStatus: "",
@@ -256,7 +256,7 @@ class MyTransaction extends Component {
   };
 
   _handleFilter = () => {
-    if (this.state.status === "All Statuses") {
+    if (this.state.status === "All") {
       return TRANSACTION_STATUSES;
     } else {
       return TRANSACTION_STATUSES.filter(
@@ -355,8 +355,8 @@ class MyTransaction extends Component {
         {listTransaction.length > 0 ? (
           <View>
             <Dropdown
-              label={"Filter"}
-              defaultText={"All Statuses"}
+              label={"By Status"}
+              defaultText={"All"}
               onSelectValue={value => this.setState({ status: value })}
               options={DROPDOWN_OPTIONS}
               isHorizontal={true}
@@ -392,54 +392,52 @@ class MyTransaction extends Component {
   render() {
     const { loading, navigation, isLoggedIn } = this.props;
     const { activeTab } = this.state;
-    if (isLoggedIn) {
-      return (
-        <SafeAreaView
-          style={styles.container}
-          forceInset={{ bottom: "never", top: "always" }}
-        >
-          <Header>
-            <Text style={styles.header}>Transactions</Text>
-          </Header>
-          <TabView
-            tabs={["Equipment", "Material", "My Bids", "Debris"]}
-            onChangeTab={this._onChangeTab}
-            activeTab={activeTab}
-          />
-          {!loading ? (
-            <ScrollView
-              style={{ flex: 1 }}
-              contentContainerStyle={styles.scrollContent}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh}
-                />
-              }
-            >
-              {this._handleActiveTab(activeTab)}
-            </ScrollView>
-          ) : (
-            <Loading />
-          )}
-        </SafeAreaView>
-      );
-    } else {
+    if (!isLoggedIn) {
       return <RequireLogin navigation={navigation} />;
     }
+
+    return (
+      <SafeAreaView
+        style={styles.container}
+        forceInset={{ bottom: "never", top: "always" }}
+      >
+        <Header>
+          <Text style={styles.header}>Transactions</Text>
+        </Header>
+        <TabView
+          tabs={["Equipment", "Materials", "Bids", "Debris"]}
+          onChangeTab={this._onChangeTab}
+          activeTab={activeTab}
+        />
+        {!loading ? (
+          <ScrollView
+            style={{flex: 1}}
+            contentContainerStyle={styles.scrollContent}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }
+          >
+            {this._handleActiveTab(activeTab)}
+          </ScrollView>
+        ) : (
+          <Loading/>
+        )}
+      </SafeAreaView>
+    );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    flexDirection: 'column'
   },
   rowWrapper: {
     marginVertical: 8,
-    shadowColor: "#3E3E3E",
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 3,
+    ...colors.shadow,
     elevation: 2
   },
   scrollContent: {

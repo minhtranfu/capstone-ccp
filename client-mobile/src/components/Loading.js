@@ -1,5 +1,17 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import {
+  BallIndicator,
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator,
+  WaveIndicator,
+} from 'react-native-indicators';
+
 
 import colors from "../config/colors";
 
@@ -7,7 +19,7 @@ class Loading extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <BarIndicator size={30} color={colors.text} count={5}/>
       </View>
     );
   }

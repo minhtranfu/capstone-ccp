@@ -64,8 +64,8 @@ const TRANSACTION_STATUSES = [
 const DROPDOWN_OPTIONS = [
   {
     id: 0,
-    name: "All Statuses",
-    value: "All Statuses"
+    name: "All",
+    value: "All"
   },
   {
     id: 1,
@@ -155,7 +155,7 @@ class EquipmentTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: "All Statuses",
+      status: "All",
       loading: true,
       id: null,
       transactionStatus: "",
@@ -217,7 +217,7 @@ class EquipmentTab extends Component {
   };
 
   _handleFilter = () => {
-    if (this.state.status === "All Statuses") {
+    if (this.state.status === "All") {
       return TRANSACTION_STATUSES;
     } else {
       return TRANSACTION_STATUSES.filter(
@@ -311,8 +311,8 @@ class EquipmentTab extends Component {
         {listTransaction.length > 0 ? (
           <View>
             <Dropdown
-              label={"Filter"}
-              defaultText={"All Statuses"}
+              label={"Status"}
+              defaultText={"All"}
               onSelectValue={value => this.setState({ status: value })}
               options={DROPDOWN_OPTIONS}
               isHorizontal={true}
@@ -327,21 +327,9 @@ class EquipmentTab extends Component {
   };
 
   render() {
-    const { listTransaction, loading, navigation, isLoggedIn } = this.props;
-    const { activeTab } = this.state;
+    const { listTransaction } = this.props;
     return (
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={styles.scrollContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh}
-          />
-        }
-      >
-        {this._renderEquipment(listTransaction)}
-      </ScrollView>
+        this._renderEquipment(listTransaction)
     );
   }
 }
