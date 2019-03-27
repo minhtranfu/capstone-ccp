@@ -8,6 +8,32 @@ import moment from 'moment';
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
 
+const EQUIPMENT_STATUS = {
+  AVAILABLE: "Available",
+  PENDING: "Pending",
+  ACCEPTED: "Accepted",
+  CANCEL: "Cancel",
+  DELIVERING: "Equipment is on delivering",
+  RENTING: "Renting",
+  WAITING_FOR_RETURNING: "Equipment is waiting for return",
+  FINISHED: "Equipment has been returned"
+};
+
+const COLORS = {
+  AVAILABLE: "#4DB781",
+  ACCEPTED: "#4DB781", //green
+  DENIED: "#FF5C5C", //red
+  CANCEL: "#FF5C5C",
+  PENDING: "#F9AA33",
+  RENTING: "#7199FE",
+  DELIVERING: "#7199FE",
+  WAITING_FOR_RETURNING: "#7199FE",
+  FINISHED: "#FFDF49",
+  PROCESSING: "#7199FE",
+  default: "#3E3E3E"
+  // blue: 7199FE, yellow: FFDF49
+};
+
 class TransactionItem extends PureComponent {
   static propTypes = {
     name: PropTypes.string,
@@ -17,6 +43,19 @@ class TransactionItem extends PureComponent {
     phone: PropTypes.string,
     beginDate: PropTypes.string,
     endDate: PropTypes.string
+  };
+
+  _renderEquipmentStatus = () => {
+    const { status, equipmentStatus } = this.props;
+
+    if (status !== "DENIED") {
+      return (
+        <Text style={{color: COLORS[equipmentStatus || "default"]}}>
+          {EQUIPMENT_STATUS[equipmentStatus]}
+        </Text>
+      );
+    }
+    return null;
   };
 
   render() {
@@ -44,7 +83,7 @@ class TransactionItem extends PureComponent {
     const days = duration.asDays() + 1;
 
     return (
-      <TouchableOpacity style={[styles.container, containerStyle]}>
+      <TouchableOpacity style={[styles.container, containerStyle]} onPress={onPress}>
         <View style={{flexDirection: 'column', flex: 1 }}>
           <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
             <ImageCache
@@ -67,13 +106,21 @@ class TransactionItem extends PureComponent {
               <Text style={styles.duration}>{`${days} ${days > 1 ? 'days' : 'day'}`}</Text>
             </View>
             <Text style={styles.startEndDate}>{begin.format('DD/MM/YY')} - {end.format('DD/MM/YY')}</Text>
-            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 8, marginBottom: 3 }}>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5, marginBottom: 3 }}>
               <Image
                 source={require('../../assets/icons/icons8-rounded_rectangle.png')}
                 style={[styles.statusIcon, {tintColor: statusBackgroundColor}]}
                 resizeMode={"contain"}
               />
               <Text style={styles.duration}>{status}</Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5, marginBottom: 3 }}>
+              <Image
+                source={require('../../assets/icons/icons8-digger.png')}
+                style={[styles.calendarIcon]}
+                resizeMode={"contain"}
+              />
+              {this._renderEquipmentStatus()}
             </View>
           </View>
         </View>

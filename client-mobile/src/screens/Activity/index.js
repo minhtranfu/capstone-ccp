@@ -333,6 +333,7 @@ class Activity extends Component {
                       }
                       id={item.id}
                       name={item.equipment.name}
+                      equipmentStatus={item.equipment.status}
                       imageURL={
                         "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
                       }
@@ -343,8 +344,8 @@ class Activity extends Component {
                       statusBackgroundColor={COLORS[item.status]}
                       contractor={item.equipment.contractor.name}
                       phone={item.equipment.contractor.phoneNumber}
-                      beginDate={this._formatDate(item.beginDate)}
-                      endDate={this._formatDate(item.endDate)}
+                      beginDate={item.beginDate}
+                      endDate={item.endDate}
                       role={"Supplier"}
                     />
                     {this._renderBottomStatus(
@@ -388,14 +389,14 @@ class Activity extends Component {
       return (
         <SafeAreaView
           style={styles.container}
-          forceInset={{ bottom: "always", top: "always" }}
+          forceInset={{ top: "always" }}
         >
           <Header
             renderLeftButton={() => (
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("Notification")}
               >
-                <Feather name="bell" size={24} />
+                <Feather name="bell" size={20} />
               </TouchableOpacity>
             )}
             renderRightButton={() => (
@@ -404,7 +405,7 @@ class Activity extends Component {
                   this.props.navigation.navigate("AddDebrisArticle")
                 }
               >
-                <Feather name="plus" size={24} />
+                <Feather name="plus" size={22} />
               </TouchableOpacity>
             )}
           >
@@ -417,7 +418,6 @@ class Activity extends Component {
           />
           {!loading ? (
             <ScrollView
-              style={{ flex: 1 }}
               contentContainerStyle={styles.scrollContentContainer}
               refreshControl={
                 <RefreshControl
@@ -449,10 +449,7 @@ const styles = StyleSheet.create({
   },
   rowWrapper: {
     marginVertical: 8,
-    shadowColor: "#3E3E3E",
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 3,
+    ...colors.shadow,
     elevation: 2
   },
   actionWrapper: {
@@ -466,8 +463,9 @@ const styles = StyleSheet.create({
     padding: 30
   },
   header: {
-    fontSize: fontSize.h4,
-    fontWeight: "500"
+    color: colors.primaryColor,
+    fontSize: fontSize.bodyText,
+    fontWeight: "600"
   },
   text: {
     fontSize: fontSize.bodyText,

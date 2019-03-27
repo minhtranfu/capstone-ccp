@@ -2,14 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="08833f7d-c7ef-4de4-9a16-c145c38c73e2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/assets/icons/icons8-calendar.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/icons/icons8-rounded_rectangle.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/icons/icons8-digger.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Loading.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Loading.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/TransactionItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TransactionItem.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Activity/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Activity/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/screens/MyTransaction/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/MyTransaction/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -25,8 +22,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/screens/MyTransaction/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="331" column="39" selection-start-line="331" selection-start-column="39" selection-end-line="331" selection-end-column="39" />
+            <state relative-caret-position="226">
+              <caret line="399" column="22" lean-forward="true" selection-start-line="399" selection-start-column="22" selection-end-line="399" selection-end-column="22" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
               </folding>
@@ -34,11 +31,20 @@
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/screens/Activity/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="205">
+              <caret line="390" column="24" selection-start-line="390" selection-start-column="24" selection-end-line="390" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/TransactionItem.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="404">
-              <caret line="139" column="30" selection-start-line="139" selection-start-column="30" selection-end-line="139" selection-end-column="30" />
+            <state relative-caret-position="182">
+              <caret line="55" column="8" lean-forward="true" selection-start-line="55" selection-start-column="8" selection-end-line="55" selection-end-column="8" />
               <folding>
                 <element signature="e#0#45#0" expanded="true" />
               </folding>
@@ -46,7 +52,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/Loading.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="148">
@@ -146,12 +152,13 @@
       <find>My Tr</find>
       <find>logo</find>
       <find>Filter</find>
-      <find>All S</find>
       <find>All</find>
       <find>shado</find>
       <find>Transac</find>
       <find>Transactions</find>
       <find>shadow</find>
+      <find>All S</find>
+      <find>My Req</find>
       <find>rowWrapper</find>
       <find>Bottom</find>
     </findStrings>
@@ -191,9 +198,10 @@
         <option value="$PROJECT_DIR$/src/components/TabView.js" />
         <option value="$PROJECT_DIR$/src/components/Dropdown.js" />
         <option value="$PROJECT_DIR$/src/screens/MyTransaction/EquipmentTab.js" />
-        <option value="$PROJECT_DIR$/src/screens/MyTransaction/index.js" />
-        <option value="$PROJECT_DIR$/src/components/TransactionItem.js" />
         <option value="$PROJECT_DIR$/src/components/Loading.js" />
+        <option value="$PROJECT_DIR$/src/components/TransactionItem.js" />
+        <option value="$PROJECT_DIR$/src/screens/MyTransaction/index.js" />
+        <option value="$PROJECT_DIR$/src/screens/Activity/index.js" />
       </list>
     </option>
   </component>
@@ -221,12 +229,6 @@
               <item name="client-mobile" type="b2602c69:ProjectViewProjectNode" />
               <item name="client-mobile" type="462c0819:PsiDirectoryNode" />
               <item name="assets" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="client-mobile" type="b2602c69:ProjectViewProjectNode" />
-              <item name="client-mobile" type="462c0819:PsiDirectoryNode" />
-              <item name="assets" type="462c0819:PsiDirectoryNode" />
-              <item name="icons" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="client-mobile" type="b2602c69:ProjectViewProjectNode" />
@@ -263,44 +265,7 @@
               <item name="client-mobile" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="screens" type="462c0819:PsiDirectoryNode" />
-              <item name="Account" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="client-mobile" type="b2602c69:ProjectViewProjectNode" />
-              <item name="client-mobile" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="screens" type="462c0819:PsiDirectoryNode" />
-              <item name="Account" type="462c0819:PsiDirectoryNode" />
-              <item name="components" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="client-mobile" type="b2602c69:ProjectViewProjectNode" />
-              <item name="client-mobile" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="screens" type="462c0819:PsiDirectoryNode" />
-              <item name="Discover" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="client-mobile" type="b2602c69:ProjectViewProjectNode" />
-              <item name="client-mobile" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="screens" type="462c0819:PsiDirectoryNode" />
-              <item name="Login" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="client-mobile" type="b2602c69:ProjectViewProjectNode" />
-              <item name="client-mobile" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="screens" type="462c0819:PsiDirectoryNode" />
-              <item name="MyTransaction" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="client-mobile" type="b2602c69:ProjectViewProjectNode" />
-              <item name="client-mobile" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="screens" type="462c0819:PsiDirectoryNode" />
-              <item name="MyTransaction" type="462c0819:PsiDirectoryNode" />
-              <item name="components" type="462c0819:PsiDirectoryNode" />
+              <item name="MyEquipment" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -346,18 +311,18 @@
       <option name="presentableId" value="Default" />
       <updated>1553595628723</updated>
       <workItem from="1553595632040" duration="24886000" />
-      <workItem from="1553659114492" duration="12516000" />
+      <workItem from="1553659114492" duration="15326000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37402000" />
+    <option name="totallyTimeSpent" value="40212000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="2" y="23" width="1152" height="1027" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24933687" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24933687" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -372,7 +337,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="RNConsole" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.3295964" />
+      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.3295964" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -649,16 +614,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/screens/MyTransaction/EquipmentTab.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="255" column="12" selection-start-line="255" selection-start-column="12" selection-end-line="255" selection-end-column="12" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/react-native/Libraries/Components/ActivityIndicator/ActivityIndicator.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
@@ -693,10 +648,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Loading.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="148">
+          <caret line="21" column="30" selection-start-line="21" selection-start-column="30" selection-end-line="21" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/screens/MyTransaction/EquipmentTab.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="255" column="12" selection-start-line="255" selection-start-column="12" selection-end-line="255" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/screens/MyTransaction/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="331" column="39" selection-start-line="331" selection-start-column="39" selection-end-line="331" selection-end-column="39" />
+        <state relative-caret-position="226">
+          <caret line="399" column="22" lean-forward="true" selection-start-line="399" selection-start-column="22" selection-end-line="399" selection-end-column="22" />
           <folding>
             <element signature="e#0#41#0" expanded="true" />
           </folding>
@@ -705,21 +680,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/TransactionItem.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="404">
-          <caret line="139" column="30" selection-start-line="139" selection-start-column="30" selection-end-line="139" selection-end-column="30" />
+        <state relative-caret-position="182">
+          <caret line="55" column="8" lean-forward="true" selection-start-line="55" selection-start-column="8" selection-end-line="55" selection-end-column="8" />
           <folding>
             <element signature="e#0#45#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/Loading.js">
+    <entry file="file://$PROJECT_DIR$/src/screens/Activity/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="21" column="30" selection-start-line="21" selection-start-column="30" selection-end-line="21" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="205">
+          <caret line="390" column="24" selection-start-line="390" selection-start-column="24" selection-end-line="390" selection-end-column="24" />
         </state>
       </provider>
     </entry>

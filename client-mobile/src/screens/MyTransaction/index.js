@@ -37,7 +37,6 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import Loading from "../../components/Loading";
 
-const { width, height } = Dimensions.get("window");
 
 const TRANSACTION_STATUSES = [
   {
@@ -216,18 +215,6 @@ class MyTransaction extends Component {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };
 
-  _formatDate = date => {
-    let newDate = new Date(date);
-    let year = newDate.getFullYear();
-    let month = newDate.getMonth() + 1;
-    let newMonth = month < 10 ? "0" + month : month;
-    let day = newDate.getDate();
-    let newDay = day < 10 ? "0" + day : day;
-    let dayOfWeek = weekDays[newDate.getDay()];
-
-    return dayOfWeek + ", " + newDay + "/" + newMonth + "/" + year;
-  };
-
   _handleOnPressItem = id => {
     this.setState({ id });
   };
@@ -263,33 +250,6 @@ class MyTransaction extends Component {
         status => status.code === this.state.status.toUpperCase()
       );
     }
-  };
-
-  _renderBottomStatus = (transactionStatus, equipmentStatus) => {
-    if (transactionStatus !== "DENIED") {
-      return (
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginTop: 10
-          }}
-        >
-          <View
-            style={{
-              width: 15,
-              height: 15,
-              marginRight: 5,
-              backgroundColor: COLORS[equipmentStatus || "default"]
-            }}
-          />
-          <Text style={styles.text}>
-            Equipment status: {EQUIPMENT_STATUS[equipmentStatus]}
-          </Text>
-        </View>
-      );
-    }
-    return null;
   };
 
   _renderAllTransaction = () => (
@@ -330,10 +290,7 @@ class MyTransaction extends Component {
                   phone={item.requester.phoneNumber}
                   beginDate={item.beginDate}
                   endDate={item.endDate}
-                  hasEquipmentStatus={this._renderBottomStatus(
-                    item.status,
-                    item.equipment.status
-                  )}
+                  equipmentStatus={item.equipment.status}
                 />
               </View>
             ))}
