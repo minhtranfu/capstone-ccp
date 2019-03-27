@@ -32,7 +32,9 @@ public class NotificationController {
 
     @GetMapping("/create/{id}")
     public String create(@PathVariable Integer id, Model model) {
-        model.addAttribute("notification", new NotificationDTO(contractorService.findById(id)));
+        model.addAttribute("notification", new NotificationDTO(id));
+        model.addAttribute("contractor", contractorService.findById(id));
+
         return "notification/create";
     }
 
@@ -41,15 +43,17 @@ public class NotificationController {
             @Valid @ModelAttribute("notification") NotificationDTO notificationDTO,
             BindingResult bindingResult, Model model) {
         try {
-            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(notificationDTO.getContractorEntity())
+            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(contractorService.findById(notificationDTO.getContractorId()))
             ) {
                 pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), notificationDTO.getTitle(), notificationDTO.getContent());
+                System.out.println("sendNotification, key="+notificationDeviceTokenEntity.getRegistrationToken());
+
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         model.addAttribute("contractors", contractorService.findAll());
-        return "contractor/index";
+        return "redirect:./contractor/index";
     }
 }

@@ -73,4 +73,11 @@ public class AdminAccountServiceImpl implements AdminAccountService {
     public AdminAccountEntity findByEmail(String email) {
         return adminAccountRepository.findByAdminUserEntity_Email(email);
     }
+
+    @Override
+    public AdminAccountEntity findByUsername(String username) {
+        return  adminAccountRepository.findByUsername(username).orElseThrow(
+                () -> new RuntimeException("Username not found!")
+        );
+    }
 }

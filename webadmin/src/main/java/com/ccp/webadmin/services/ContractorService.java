@@ -16,4 +16,6 @@ public interface ContractorService {
 
     void deleteById(Integer id);
 
+    Integer countNewContractor();
+
 }

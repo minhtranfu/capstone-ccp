@@ -23,8 +23,8 @@ public class AdminUserEntity implements Serializable {
     @Column(name = "is_male")
     private boolean isMale;
 
-    @Pattern(regexp = "^0(\\d{9})$", message = "Invalid Phone Number")
-    @Column(name = "phone", length = 10)
+    @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$", message = "Invalid Phone Number")
+    @Column(name = "phone")
     private String phone;
 
     @NotNull(message = "Email required not null")

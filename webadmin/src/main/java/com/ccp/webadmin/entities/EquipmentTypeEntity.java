@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "equipment_type")
-//@Where(clause = "is_deleted='false'")
+@Where(clause = "is_deleted = 0")
 public class EquipmentTypeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

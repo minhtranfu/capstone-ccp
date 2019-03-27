@@ -9,6 +9,7 @@ import com.ccp.webadmin.services.AdminAccountService;
 import com.ccp.webadmin.utils.PasswordAutoGenerator;
 import com.ccp.webadmin.utils.SendEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -40,17 +41,26 @@ public class AdminAccountController {
     }
 
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping({"", "/", "/index"})
     public String getStaff(Model model) {
         model.addAttribute("staffs", adminAccountService.findAll());
         return "staff/index";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("staff", adminAccountService.findById(id));
         return "staff/detail";
     }
+
+//    @GetMapping("/detail/{username}")
+//    public String detailByUserName(@PathVariable("username") String username, Model model) {
+//        model.addAttribute("staff", adminAccountService.findByUsername(username));
+//        return "staff/detail";
+//    }
+
 
     @GetMapping("/changePassword/{id}")
     public String changePassword(@PathVariable("id") Integer id, Model model) {
@@ -58,12 +68,14 @@ public class AdminAccountController {
         return "staff/changePassword";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("staff", new AdminAccountEntity());
         return "staff/create";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/saveProcess")
     public String saveProcess(
             @Valid @ModelAttribute("staff") AdminAccountEntity adminAccountEntity,

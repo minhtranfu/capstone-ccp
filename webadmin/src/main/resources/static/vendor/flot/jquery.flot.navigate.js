@@ -34,7 +34,7 @@ around; the same for zoom.
 "amount" specifies the default amount to zoom in (so 1.5 = 150%) relative to
 the current viewport.
 
-"cursor" is a standard CSS mouse cursor string used for visual feedback to the
+"cursor" is a standard CSS mouse cursor string used for visual report to the
 user when dragging.
 
 "frameRate" specifies the maximum number of times per second the plot will

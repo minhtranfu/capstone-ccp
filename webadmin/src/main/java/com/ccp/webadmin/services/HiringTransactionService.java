@@ -1,11 +1,10 @@
 package com.ccp.webadmin.services;
 
-import com.ccp.webadmin.entities.EquipmentEntity;
-import com.ccp.webadmin.entities.FeedbackEntity;
-import com.ccp.webadmin.entities.FeedbackTypeEntity;
+import com.ccp.webadmin.dtos.StatisticHiringTransactionDTO;
 import com.ccp.webadmin.entities.HiringTransactionEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,5 +17,8 @@ public interface HiringTransactionService {
     void save(HiringTransactionEntity hiringTransactionEntity);
 
     void deleteById(Integer id);
+
+    List<StatisticHiringTransactionDTO> statisticHiringTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate);
+
 
 }

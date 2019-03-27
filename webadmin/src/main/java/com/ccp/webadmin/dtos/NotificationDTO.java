@@ -15,7 +15,7 @@ public class NotificationDTO implements Serializable {
 
     private String content;
 
-    private ContractorEntity contractorEntity;
+    private Integer contractorId;
 
     public String getTitle() {
         return title;
@@ -33,18 +33,18 @@ public class NotificationDTO implements Serializable {
         this.content = content;
     }
 
-    public ContractorEntity getContractorEntity() {
-        return contractorEntity;
+    public Integer getContractorId() {
+        return contractorId;
     }
 
-    public void setContractorEntity(ContractorEntity contractorEntity) {
-        this.contractorEntity = contractorEntity;
-    }
-
-    public NotificationDTO(ContractorEntity contractorEntity) {
-        this.contractorEntity = contractorEntity;
+    public void setContractorId(Integer contractorId) {
+        this.contractorId = contractorId;
     }
 
     public NotificationDTO() {
+    }
+
+    public NotificationDTO(Integer contractorId) {
+        this.contractorId = contractorId;
     }
 }

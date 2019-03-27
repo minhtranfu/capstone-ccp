@@ -1,11 +1,9 @@
 package com.ccp.webadmin.controllers;
 
 import com.ccp.webadmin.entities.EquipmentEntity;
-import com.ccp.webadmin.entities.FeedbackTypeEntity;
 import com.ccp.webadmin.entities.HiringTransactionEntity;
 import com.ccp.webadmin.entities.NotificationDeviceTokenEntity;
 import com.ccp.webadmin.services.EquipmentService;
-import com.ccp.webadmin.services.FeedbackTypeService;
 import com.ccp.webadmin.services.HiringTransactionService;
 import com.ccp.webadmin.services.NotificationDeviceTokenService;
 import com.ccp.webadmin.utils.PushNotifictionHelper;

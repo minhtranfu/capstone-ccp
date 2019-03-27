@@ -35,4 +35,9 @@ public class ContractorTypeServiceImpl implements ContractorService {
     public void deleteById(Integer id) {
 
     }
+
+    @Override
+    public Integer countNewContractor() {
+        return contractorRepository.countNewContractor();
+    }
 }

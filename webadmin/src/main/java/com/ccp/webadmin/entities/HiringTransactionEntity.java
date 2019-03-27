@@ -4,10 +4,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "hiring_transaction")
@@ -32,11 +31,11 @@ public class HiringTransactionEntity implements Serializable {
 
     @Column(name = "created_time", insertable = false, updatable = false)
     @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
-    private Timestamp createdTime;
+    private LocalDateTime createdTime;
 
     @Column(name = "updated_time", insertable = false, updatable = false)
     @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
-    private Timestamp updatedTime;
+    private LocalDateTime updatedTime;
 
     @Column(name = "begin_date")
     private LocalDate beginDate;
@@ -109,19 +108,19 @@ public class HiringTransactionEntity implements Serializable {
         this.deliveryPrice = deliveryPrice;
     }
 
-    public Timestamp getCreatedTime() {
+    public LocalDateTime getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Timestamp createdTime) {
+    public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
     }
 
-    public Timestamp getUpdatedTime() {
+    public LocalDateTime getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(Timestamp updatedTime) {
+    public void setUpdatedTime(LocalDateTime updatedTime) {
         this.updatedTime = updatedTime;
     }
 

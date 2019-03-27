@@ -1,14 +1,14 @@
 package com.ccp.webadmin.services.impl;
 
-import com.ccp.webadmin.entities.FeedbackTypeEntity;
+import com.ccp.webadmin.dtos.StatisticHiringTransactionDTO;
 import com.ccp.webadmin.entities.HiringTransactionEntity;
-import com.ccp.webadmin.repositories.FeedbackTypeRepository;
 import com.ccp.webadmin.repositories.HiringTransactionRepository;
-import com.ccp.webadmin.services.FeedbackTypeService;
 import com.ccp.webadmin.services.HiringTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,5 +39,20 @@ public class HiringTransactionServiceImpl implements HiringTransactionService {
     @Override
     public void deleteById(Integer id) {
         hiringTransactionRepository.deleteById(id);
+    }
+
+    @Override
+    public List<StatisticHiringTransactionDTO> statisticHiringTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate) {
+        List<StatisticHiringTransactionDTO> statisticHiringTransactionDTOS = new ArrayList<>();
+        if(byType.equals("year")){
+            statisticHiringTransactionDTOS = hiringTransactionRepository.countStatisticByYear(beginDate,endDate);
+        }
+        if(byType.equals("month")){
+            statisticHiringTransactionDTOS = hiringTransactionRepository.countStatisticByYear(beginDate,endDate);
+        }
+        if(byType.equals("week")){
+            statisticHiringTransactionDTOS = hiringTransactionRepository.countStatisticByYear(beginDate,endDate);
+        }
+        return statisticHiringTransactionDTOS;
     }
 }

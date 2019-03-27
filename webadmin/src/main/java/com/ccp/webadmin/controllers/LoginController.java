@@ -44,13 +44,13 @@ public class LoginController {
     }
 
     @GetMapping("/resetPassword")
-    public String resetPassword(
-            @RequestParam(value = "email") String email,
+    public String resetPassword(@RequestParam(value = "email") String email,
             Model model) {
         if (!adminAccountService.existsByEmail(email)) {
             model.addAttribute("errorMessage", "Email doesnot exist");
             AdminAccountEntity adminAccountEntity = adminAccountService.findByEmail(email);
             return "forgetPassword";
+
         }
         AdminAccountEntity adminAccountEntity = adminAccountService.findByEmail(email);
 

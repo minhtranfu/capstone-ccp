@@ -56,8 +56,8 @@
                                     <div class="form-group">
                                         <div class="col-lg-10">
                                             <input type="submit" class="btn btn-success"
-                                                   onclick="succcessAlert()" value="Save">
-                                            <a href="#" class="btn btn-danger" data-toggle="modal"
+                                                    value="Save">
+                                            <a href="#" class="btn btn-default" data-toggle="modal"
                                                data-target="#smallModalCancel">Cancel</a>
 
                                             <div class="modal fade" id="smallModalCancel" tabindex="-1" role="dialog"
@@ -129,7 +129,6 @@
                                         <th>No</th>
                                         <th>Name</th>
                                         <th>Data Type</th>
-                                        <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -139,10 +138,6 @@
                                             <span th:text="${item.name}" class="link"></span></a>
                                         </td>
                                         <td th:text="${item.dataType}"></td>
-                                        <td>
-                                            <a th:href="@{/additional_special_field/delete(id = ${item.id})}"
-                                               class="link btn btn-default">Delete</a>
-                                        </td>
                                     </tr>
 
                                     </tbody>

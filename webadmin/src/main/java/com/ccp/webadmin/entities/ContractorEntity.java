@@ -1,8 +1,5 @@
 package com.ccp.webadmin.entities;
 
-import lombok.Builder;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -53,8 +50,8 @@ public class ContractorEntity implements Serializable {
     private Timestamp updatedTime;
 
 
-    @OneToMany(mappedBy = "contractorIsFeedbacked")
-    private List<FeedbackEntity> receivedFeedbackEntities;
+    @OneToMany(mappedBy = "contractorIsReported")
+    private List<ReportEntity> receivedFeedbackEntities;
 
     public ContractorEntity() {
     }
@@ -108,23 +105,23 @@ public class ContractorEntity implements Serializable {
     }
 
 
-    public List<FeedbackEntity> getReceivedFeedbackEntities() {
+    public List<ReportEntity> getReceivedFeedbackEntities() {
         return receivedFeedbackEntities;
     }
 
     public Integer countReceivedFeedbackEntity() {
 
         return (receivedFeedbackEntities != null) ? receivedFeedbackEntities.stream().filter(
-                new Predicate<FeedbackEntity>() {
+                new Predicate<ReportEntity>() {
                     @Override
-                    public boolean test(FeedbackEntity feedbackEntity) {
-                        return feedbackEntity.getStatus() == FeedbackEntity.Status.VERIFIED;
+                    public boolean test(ReportEntity reportEntity) {
+                        return reportEntity.getStatus() == ReportEntity.Status.VERIFIED;
                     }
                 }
         ).toArray().length : 0;
     }
 
-    public void setReceivedFeedbackEntities(List<FeedbackEntity> receivedFeedbackEntities) {
+    public void setReceivedFeedbackEntities(List<ReportEntity> receivedFeedbackEntities) {
         this.receivedFeedbackEntities = receivedFeedbackEntities;
     }
 

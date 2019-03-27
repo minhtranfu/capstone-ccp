@@ -1,16 +1,12 @@
 package com.ccp.webadmin.services.impl;
 
-import com.ccp.webadmin.entities.ContractorEntity;
-import com.ccp.webadmin.entities.EquipmentEntity;
-import com.ccp.webadmin.entities.FeedbackEntity;
-import com.ccp.webadmin.entities.FeedbackTypeEntity;
+import com.ccp.webadmin.entities.*;
 import com.ccp.webadmin.repositories.EquipmentRepository;
-import com.ccp.webadmin.repositories.FeedbackRepository;
 import com.ccp.webadmin.services.EquipmentService;
-import com.ccp.webadmin.services.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,6 +25,11 @@ public class EquipmentServiceImpl implements EquipmentService {
         return equipmentRepository.findAll();
     }
 
+    @Override
+    public List<EquipmentEntity> findByEquipmentType(EquipmentTypeEntity equipmentTypeEntity) {
+        return equipmentRepository.findByEquipmentTypeEntity(equipmentTypeEntity);
+    }
+
 
     public EquipmentEntity findById(Integer id) {
         return equipmentRepository.findById(id).get();
@@ -45,6 +46,10 @@ public class EquipmentServiceImpl implements EquipmentService {
         equipmentRepository.deleteById(id);
     }
 
+    @Override
+    public Integer countEquipment(LocalDateTime beginDate, LocalDateTime endDate) {
+        return equipmentRepository.countEquipment(beginDate, endDate);
+    }
 
 
 }

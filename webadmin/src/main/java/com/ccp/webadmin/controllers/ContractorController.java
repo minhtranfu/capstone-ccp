@@ -3,8 +3,7 @@ package com.ccp.webadmin.controllers;
 import com.ccp.webadmin.entities.ContractorEntity;
 import com.ccp.webadmin.services.ContractorService;
 import com.ccp.webadmin.services.ContractorVerifyingImageService;
-import com.ccp.webadmin.services.FeedbackService;
-import com.ccp.webadmin.utils.PasswordAutoGenerator;
+import com.ccp.webadmin.services.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,13 +17,13 @@ import javax.validation.Valid;
 public class ContractorController {
 
     private final ContractorService contractorService;
-    private final FeedbackService feedbackService;
+    private final ReportService reportService;
     private final ContractorVerifyingImageService contractorVerifyingImageService;
 
     @Autowired
-    public ContractorController(ContractorService contractorService, FeedbackService feedbackService, ContractorVerifyingImageService contractorVerifyingImageService) {
+    public ContractorController(ContractorService contractorService, ReportService reportService, ContractorVerifyingImageService contractorVerifyingImageService) {
         this.contractorService = contractorService;
-        this.feedbackService = feedbackService;
+        this.reportService = reportService;
         this.contractorVerifyingImageService = contractorVerifyingImageService;
     }
 

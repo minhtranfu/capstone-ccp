@@ -1,9 +1,13 @@
 package com.ccp.webadmin.controllers;
 
+import com.ccp.webadmin.dtos.MigrateDTO;
+import com.ccp.webadmin.entities.AdditionalSpecialFieldEntity;
+import com.ccp.webadmin.entities.EquipmentEntity;
 import com.ccp.webadmin.entities.EquipmentTypeEntity;
 import com.ccp.webadmin.entities.GeneralEquipmentTypeEntity;
 import com.ccp.webadmin.repositories.EquipmentTypeRepository;
 import com.ccp.webadmin.services.AdditionalSpecialFieldService;
+import com.ccp.webadmin.services.EquipmentService;
 import com.ccp.webadmin.services.EquipmentTypeService;
 import com.ccp.webadmin.services.GeneralEquipmentTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("equipment_type")
@@ -20,13 +25,14 @@ public class EquipmentTypeController {
 
     private final GeneralEquipmentTypeService generalEquipmentTypeService;
     private final EquipmentTypeService equipmentTypeService;
+    private final EquipmentService equipmentService;
     private final AdditionalSpecialFieldService additionalSpecialFieldService;
 
-
     @Autowired
-    public EquipmentTypeController(GeneralEquipmentTypeService generalEquipmentTypeService, EquipmentTypeService equipmentTypeService, AdditionalSpecialFieldService additionalSpecialFieldService) {
+    public EquipmentTypeController(GeneralEquipmentTypeService generalEquipmentTypeService, EquipmentTypeService equipmentTypeService, EquipmentService equipmentService, AdditionalSpecialFieldService additionalSpecialFieldService) {
         this.generalEquipmentTypeService = generalEquipmentTypeService;
         this.equipmentTypeService = equipmentTypeService;
+        this.equipmentService = equipmentService;
         this.additionalSpecialFieldService = additionalSpecialFieldService;
     }
 
@@ -76,11 +82,50 @@ public class EquipmentTypeController {
     @GetMapping("/delete")
     public String delete(@RequestParam("id") Integer id) {
         EquipmentTypeEntity equipmentTypeEntity = equipmentTypeService.findEquipmentTypeById(id);
-
-//        if (equipmentTypeService.existsEquipmentTypeByGeneralEquipmentType(generalEquipmentTypeEntity) == false) {
-//            equipmentTypeService.deleteById(id);
-//        }
         equipmentTypeService.deleteById(id);
         return "redirect:index";
     }
+
+    @GetMapping("/migrate")
+    public String migrate(Model model) {
+        model.addAttribute("equipmentTypes", equipmentTypeService.findAll());
+        model.addAttribute("migrateDTO", new MigrateDTO());
+        return "equipment_type/migrate";
+    }
+
+    @PostMapping("/migrateCate")
+    public String migrateCate(
+            @ModelAttribute("migrateDTO") MigrateDTO migrateDTO,
+            Model model) {
+        if(migrateDTO.getFromCate() == migrateDTO.getToCate()){
+            model.addAttribute("errorMessage","Two Type Must Be Different");
+            model.addAttribute("equipmentTypes", equipmentTypeService.findAll());
+            model.addAttribute("migrateDTO", new MigrateDTO());
+            return  "equipment_type/migrate";
+        }
+        EquipmentTypeEntity fromCategory = equipmentTypeService.findEquipmentTypeById(migrateDTO.getFromCate());
+        EquipmentTypeEntity toCategory = equipmentTypeService.findEquipmentTypeById(migrateDTO.getToCate());
+        migrateEquipment(fromCategory,toCategory);
+        equipmentTypeService.deleteById(fromCategory.getId());
+        return "redirect:index";
+    }
+
+    public void migrateEquipment(EquipmentTypeEntity fromCategory, EquipmentTypeEntity toCategory){
+        List<EquipmentEntity> equipmentEntities = equipmentService.findByEquipmentType(fromCategory);
+        for (EquipmentEntity  equipmentEntity: equipmentEntities) {
+            equipmentEntity.setEquipmentTypeEntity(toCategory);
+            equipmentService.save(equipmentEntity);
+        }
+    }
+
+    public void migrateAdditionalField(EquipmentTypeEntity fromCategory, EquipmentTypeEntity toCategory){
+        List<AdditionalSpecialFieldEntity> additionalSpecialFieldEntities = additionalSpecialFieldService.findByEquipmentType(fromCategory);
+        for (AdditionalSpecialFieldEntity additionalSpecialFieldEntity: additionalSpecialFieldEntities) {
+//            if(additionalSpecialFieldEntity.)
+            additionalSpecialFieldEntity.setEquipmentTypeEntity(toCategory);
+            additionalSpecialFieldService.save(additionalSpecialFieldEntity);
+        }
+    }
+
+
 }

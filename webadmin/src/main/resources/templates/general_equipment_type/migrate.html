@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <div th:replace="fragments/header :: header"></div>
+    <title>CCP Admin</title>
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- Navigation -->
+    <div th:replace="fragments/navigation :: navigation"></div>
+
+
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Migrate Equipment Category</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <form th:action="@{/general_equipment_type/migrateCate}" method="post" th:object="${migrateDTO}" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                        <span th:if="${errorMessage}" th:text="${errorMessage}" style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>From Equipment Type Category</label>
+                                        <select th:field="*{fromCate}" class="form-control" id="mySelect">
+                                            <option th:each="item : ${generalEquipmentTypes}"
+                                                    th:value="${item.id}"
+                                                    th:text="${item.name}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>To Equipment Type Category</label>
+                                        <select th:field="*{toCate}" class="form-control" id="myChange">
+                                            <option th:each="item : ${generalEquipmentTypes}"
+                                                    th:value="${item.id}"
+                                                    th:text="${item.name}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <input type="Submit" value="Save" class="btn btn-success">
+                                </form>
+
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
+                            <div class="col-lg-6">
+
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<div th:replace="fragments/footer_javascript :: footer_javascript"></div>
+
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script>
+    $(document).ready(function () {
+        $('#dataTables-example').DataTable({
+            responsive: true
+        });
+    });
+</script>
+</body>
+
+</html>

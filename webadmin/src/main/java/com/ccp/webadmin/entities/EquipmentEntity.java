@@ -1,14 +1,16 @@
 package com.ccp.webadmin.entities;
 
+import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "equipment")
+@Where(clause = "is_deleted = 0")
 public class EquipmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,11 +41,11 @@ public class EquipmentEntity {
 
     @Column(name = "created_time", insertable = false, updatable = false)
     @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
-    private Timestamp createdTime;
+    private LocalDateTime createdTime;
 
     @Column(name = "updated_time", insertable = false, updatable = false)
     @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
-    private Timestamp updatedTime;
+    private LocalDateTime updatedTime;
 
     @Column(name = "address")
     private String address;
@@ -140,19 +142,19 @@ public class EquipmentEntity {
         isDeleted = deleted;
     }
 
-    public Timestamp getCreatedTime() {
+    public LocalDateTime getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Timestamp createdTime) {
+    public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
     }
 
-    public Timestamp getUpdatedTime() {
+    public LocalDateTime getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(Timestamp updatedTime) {
+    public void setUpdatedTime(LocalDateTime updatedTime) {
         this.updatedTime = updatedTime;
     }
 
