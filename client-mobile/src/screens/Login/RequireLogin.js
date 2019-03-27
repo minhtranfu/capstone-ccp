@@ -86,11 +86,10 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     backgroundColor: colors.secondaryColor,
-    borderRadius: 26
   },
   buttonWrapperStyle: {
     alignSelf: 'stretch',
-    paddingHorizontal: 15,
+    paddingHorizontal: 25,
     marginTop: 20,
   },
   textStyle: {

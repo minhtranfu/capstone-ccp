@@ -24,7 +24,6 @@ class LoginForm extends Component {
     } = this.props;
     return (
       <View>
-        <Text style={styles.title}>Welcome</Text>
         <InputField
           label={"Username"}
           labelStyle={{ color: colors.text50 }}
@@ -51,7 +50,7 @@ class LoginForm extends Component {
           value={password}
         />
         <Button
-          text={"Login"}
+          text={"Sign in"}
           wrapperStyle={styles.wrapperStyle}
           buttonStyle={styles.buttonStyle}
           textStyle={styles.textStyle}
@@ -80,7 +79,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   wrapperStyle: {
-    marginTop: 15,
+    marginTop: 35,
     marginBottom: 10
   },
   text: {

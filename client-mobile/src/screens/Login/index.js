@@ -118,7 +118,6 @@ class Login extends Component {
               </Text>
             </View>
           </View>
-          <View style={styles.wrapper}>
             <KeyboardAvoidingView
               style={styles.formWrapper}
               behavior="position"
@@ -139,7 +138,6 @@ class Login extends Component {
                 <RegisterForm username={username} password={password} />
               )}
             </KeyboardAvoidingView>
-          </View>
         </ScrollView>
       </SafeAreaView>
     );
@@ -165,8 +163,7 @@ const styles = StyleSheet.create({
     marginTop: 60,
     backgroundColor: "white",
     width: 350,
-    padding: 15,
-    borderRadius: 15,
+    padding: 10,
     marginVertical: 30
   }
 });

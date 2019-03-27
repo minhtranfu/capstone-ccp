@@ -129,8 +129,6 @@ const EQUIPMENT_STATUS = {
   FINISHED: "Equipment has been returned"
 };
 
-const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 @connect(
   state => {
     return {
@@ -187,8 +185,8 @@ class MyTransaction extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { user, token } = this.props;
-    if (prevProps.token !== token) {
+    const { user, isLoggedIn, token } = this.props;
+    if (isLoggedIn && prevProps.token !== token) {
       this.props.fetchListMyTransaction(user.contractor.id);
       this.props.fetchListMaterial(user.contractor.id);
       this.props.fetchListDebris();
