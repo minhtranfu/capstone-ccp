@@ -22,6 +22,7 @@ export default function authReducer(state = Initial_State, action) {
       return {
         ...state,
         userIsLoggin: payload.signIn,
+        data: {},
         token: null
       };
     }

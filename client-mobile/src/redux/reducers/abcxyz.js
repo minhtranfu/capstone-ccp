@@ -168,3 +168,87 @@ export default function cartReducer(state = INITIAL_STATE, action) {
 // //const newRange = delete dateRanges.id;
 // const { [id]: deletedItem, ...otherItems } = dateRanges;
 // this.setState({ dateRanges: otherItems });
+
+
+<KeyboardAvoidingView style={styles.formWrapper} behavior="position">
+            <InputField
+              label={"Username"}
+              placeholder={"Input your username"}
+              customWrapperStyle={{ marginBottom: 20 }}
+              autoCapitalize={"none"}
+              inputType="text"
+              onChangeText={value => this.setState({ username: value })}
+              value={username}
+              returnKeyType={"next"}
+            />
+            <InputField
+              label={"Password"}
+              placeholder={"Password"}
+              autoCapitalize={"none"}
+              customWrapperStyle={{ marginBottom: 20 }}
+              inputType="password"
+              onChangeText={value => this.setState({ password: value })}
+              value={password}
+            />
+          </KeyboardAvoidingView>
+          <Button
+            text={"Log in"}
+            wrapperStyle={styles.wrapperStyle}
+            buttonStyle={styles.buttonStyle}
+            textStyle={styles.textStyle}
+            onPress={() => this._signIn()}
+          />
+//Tab
+          <View style={styles.tabViewWrapper}>
+          <View style={styles.itemTabWrapper}>
+            {tabs.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => this._onChangeTab(index)}
+                style={[
+                  styles.tabButton,
+                  activeTab === index ? styles.activeButton : null
+                ]}
+              >
+                <Text
+                  style={
+                    activeTab === index ? styles.activeText : styles.disableText
+                  }
+                >
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+tabViewWrapper: {
+  height: 50,
+  shadowColor: "#3E3E3E",
+  shadowOpacity: 0.2,
+  shadowOffset: { width: 0, height: 2 },
+  shadowRadius: 2,
+  elevation: 2
+},
+itemTabWrapper: {
+  paddingTop: 10,
+  backgroundColor: "white",
+  flexDirection: "row",
+  alignItems: "center"
+},
+tabButton: {
+  flex: 1,
+  alignItems: "center",
+  justifyContent: "center",
+  paddingBottom: 15
+},
+activeText: {
+  color: colors.text,
+  fontSize: fontSize.bodyText,
+  fontWeight: "bold"
+},
+disableText: {
+  color: colors.text50,
+  fontSize: fontSize.bodyText,
+  fontWeight: "bold"
+},

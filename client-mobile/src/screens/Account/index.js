@@ -40,6 +40,7 @@ import LogoutIcon from "../../../assets/icons/icons8-export.png";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+import { ACTION_NIGHT_DISPLAY_SETTINGS } from "expo/build/IntentLauncherAndroid";
 
 const SETTING_ITEMS_VALUE = [
   {
@@ -103,7 +104,7 @@ class Account extends Component {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const { user, isLoggedIn } = this.props;
     if (isLoggedIn) {
       this.props.fetchGetConstructionList(user.contractor.id);
@@ -117,17 +118,15 @@ class Account extends Component {
         switchValue: nextProps.allowPushNotification
       };
     }
-
     return null;
   }
 
   componentDidUpdate(prevProps) {
-    const { user } = this.props;
-    if (
-      prevProps.user.contractor &&
-      prevProps.user.contractor.id !== user.contractor.id
-    ) {
-      this.props.fetchGetContractorDetail(user.contractor.id);
+    if (this.props.isLoggedIn && Object.entries(prevProps.user).length === 0) {
+      console.log(this.props.user);
+      this.props.fetchGetContractorDetail(this.props.user.contractor.id);
+    } else {
+      console.log(prevProps.user);
     }
   }
 
@@ -190,7 +189,7 @@ class Account extends Component {
   };
 
   _handleLogout = async () => {
-    this._handleRemoveToken();
+    await this._handleRemoveToken();
     await AsyncStorage.removeItem("userToken");
     this.props.fetchLogout();
   };
@@ -242,7 +241,7 @@ class Account extends Component {
   };
 
   render() {
-    const { isLoggedIn, contractor, loading } = this.props;
+    const { isLoggedIn, contractor, loading, user } = this.props;
     if (isLoggedIn) {
       if (this.state.switchValue === true) {
         this._handlePermissionNotification();

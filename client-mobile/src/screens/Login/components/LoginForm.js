@@ -57,7 +57,19 @@ class LoginForm extends Component {
           textStyle={styles.textStyle}
           onPress={onPress}
         />
-        <Text style={styles.caption}>Forgot your password?</Text>
+        <Text
+          style={[
+            styles.forgotPassword,
+            { alignSelf: "center", marginTop: 10 }
+          ]}
+        >
+          Forgot your password?
+          <Text style={{ color: colors.text68, fontWeight: "600" }}>
+            {" "}
+            | Sign Up
+          </Text>
+        </Text>
+        {/* <Text style={styles.caption}>Forgot your password?</Text> */}
       </View>
     );
   }
@@ -68,12 +80,12 @@ const styles = StyleSheet.create({
     flex: 1
   },
   wrapperStyle: {
-    marginVertical: 10
+    marginTop: 15,
+    marginBottom: 10
   },
   text: {
-    fontSize: fontSize.secondaryText,
-    color: colors.primaryColor,
-    fontWeight: "500"
+    fontSize: fontSize.caption,
+    color: colors.text68
   },
   title: {
     textAlign: "center",
@@ -86,6 +98,10 @@ const styles = StyleSheet.create({
     fontSize: fontSize.caption,
     height: 15,
     fontWeight: "500"
+  },
+  forgotPassword: {
+    fontSize: fontSize.caption,
+    color: colors.secondaryColor
   }
 });
 
