@@ -49,7 +49,7 @@ import fontSize from "../../config/fontSize";
     }
   })
 )
-class AddDebrisArticle extends Component {
+class AddDebrisPost extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -179,4 +179,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default AddDebrisArticle;
+export default AddDebrisPost;

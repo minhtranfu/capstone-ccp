@@ -16,13 +16,10 @@ import {
   listMaterialTransactionByRequester,
   listDebrisTransactionByRequester
 } from "../../redux/actions/transaction";
-import { getDebrisArticleByRequester } from "../../redux/actions/debris";
-import { isSignedIn } from "../../config/auth";
 import RequireLogin from "../Login/RequireLogin";
 import Feather from "@expo/vector-icons/Feather";
 
 import DebrisTab from "./DebrisTab";
-import DebrisArticleTab from "./DebrisArticleTab";
 import MaterialTab from "./MaterialTab";
 import TabView from "../../components/TabView";
 import Button from "../../components/Button";
@@ -38,6 +35,7 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import DebrisItem from "../../components/DebrisItem";
 import DebrisSearchItem from "../../components/DebrisSearchItem";
+import { COLORS } from "../../Utils/Constants";
 
 const DROPDOWN_OPTIONS = [
   {
@@ -106,21 +104,6 @@ const EQUIPMENT_STATUS = {
   FINISHED: "Equipment has been returned"
 };
 
-const COLORS = {
-  AVAILABLE: "#4DB781",
-  ACCEPTED: "#4DB781", //green
-  DENIED: "#FF5C5C", //red
-  CANCEL: "#FF5C5C",
-  PENDING: "#F9AA33",
-  DELIVERING: "#7199FE",
-  RENTING: "#7199FE",
-  WAITING_FOR_RETURNING: "#7199FE",
-  FINISHED: "#FFDF49",
-  PROCESSING: "#7199FE",
-  default: "#3E3E3E"
-  // blue: 7199FE, yellow: FFDF49
-};
-
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 @connect(
@@ -131,7 +114,6 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       listTransaction: state.transaction.listRequesterTransaction,
       listMaterial: state.transaction.listRequesterMaterial,
       listDebrisTransaction: state.transaction.listRequesterDebris,
-      listDebrisArticle: state.debris.debrisArticles,
       user: state.auth.data,
       token: state.auth.token
     };
@@ -145,9 +127,6 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     },
     fetchGetRequesterDebris: () => {
       dispatch(listDebrisTransactionByRequester());
-    },
-    fetchGetDebrisArticleByRequester: () => {
-      dispatch(getDebrisArticleByRequester());
     }
   })
 )
@@ -167,7 +146,6 @@ class Activity extends Component {
     if (isLoggedIn) {
       this.props.fetchRequesterTransaction(user.contractor.id);
       this.props.fetchRequesterMaterial(user.contractor.id);
-      this.props.fetchGetDebrisArticleByRequester();
       this.props.fetchGetRequesterDebris();
     }
   }
@@ -177,7 +155,6 @@ class Activity extends Component {
     if (prevProps.token !== token && token) {
       this.props.fetchRequesterTransaction(user.contractor.id);
       this.props.fetchRequesterMaterial(user.contractor.id);
-      this.props.fetchGetDebrisArticleByRequester();
       this.props.fetchGetRequesterDebris();
     }
   }
@@ -348,18 +325,11 @@ class Activity extends Component {
   };
 
   _handleActiveTab = index => {
-    const {
-      listTransaction,
-      listMaterial,
-      listDebrisArticle,
-      listDebrisTransaction
-    } = this.props;
+    const { listTransaction, listMaterial, listDebrisTransaction } = this.props;
     switch (index) {
       case 1:
         return <MaterialTab listMaterial={listMaterial} />;
       case 2:
-        return <DebrisArticleTab listDebrisArticle={listDebrisArticle} />;
-      case 3:
         return <DebrisTab listDebrisTransaction={listDebrisTransaction} />;
 
       default:
@@ -372,32 +342,20 @@ class Activity extends Component {
     const { activeTab } = this.state;
     if (isLoggedIn) {
       return (
-        <SafeAreaView
-          style={styles.container}
-          forceInset={{ top: "always" }}
-        >
+        <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
           <Header
-            renderLeftButton={() => (
+            renderRightButton={() => (
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("Notification")}
               >
                 <Feather name="bell" size={20} />
               </TouchableOpacity>
             )}
-            renderRightButton={() => (
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.navigate("AddDebrisArticle")
-                }
-              >
-                <Feather name="plus" size={22} />
-              </TouchableOpacity>
-            )}
           >
             <Text style={styles.header}>My Request</Text>
           </Header>
           <TabView
-            tabs={["Equipments", "Material", "My Posts", "Debris"]}
+            tabs={["Equipments", "Material", "Debris"]}
             onChangeTab={this._onChangeTab}
             activeTab={activeTab}
           />

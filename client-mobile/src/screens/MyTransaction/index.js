@@ -19,10 +19,8 @@ import {
   listDebrisTransactionBySupplier,
   clearSupplierTransactionList
 } from "../../redux/actions/transaction";
-import { getDebrisBidBySupplier } from "../../redux/actions/debris";
 
 import DebrisTab from "./DebrisTab";
-import MyBidsTab from "./MyBidsTab";
 import MaterialTab from "./MaterialTab";
 import RequireLogin from "../Login/RequireLogin";
 import TabView from "../../components/TabView";
@@ -36,7 +34,7 @@ import Header from "../../components/Header";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import Loading from "../../components/Loading";
-
+import { COLORS } from "../../Utils/Constants";
 
 const TRANSACTION_STATUSES = [
   {
@@ -103,21 +101,6 @@ const DROPDOWN_OPTIONS = [
   }
 ];
 
-const COLORS = {
-  AVAILABLE: "#4DB781",
-  ACCEPTED: "#4DB781", //green
-  DENIED: "#FF5C5C", //red
-  CANCEL: "#FF5C5C",
-  PENDING: "#F9AA33",
-  RENTING: "#7199FE",
-  DELIVERING: "#7199FE",
-  WAITING_FOR_RETURNING: "#7199FE",
-  FINISHED: "#FFDF49",
-  PROCESSING: "#7199FE",
-  default: "#3E3E3E"
-  // blue: 7199FE, yellow: FFDF49
-};
-
 const EQUIPMENT_STATUS = {
   AVAILABLE: "Available",
   PENDING: "Pending",
@@ -135,7 +118,6 @@ const EQUIPMENT_STATUS = {
       listTransaction: state.transaction.listSupplierTransaction,
       listMaterial: state.transaction.listSupplierMaterial,
       listDebrisTransaction: state.transaction.listSupplierDebris,
-      listDebrisBids: state.debris.debrisBids,
       loading: state.transaction.loading,
       error: state.transaction.error,
       user: state.auth.data,
@@ -155,9 +137,6 @@ const EQUIPMENT_STATUS = {
     },
     fetchClearMyTransaction: supplierId => {
       dispatch(clearSupplierTransactionList(supplierId));
-    },
-    fetchAllBids: () => {
-      dispatch(getDebrisBidBySupplier());
     }
   })
 )
@@ -180,7 +159,6 @@ class MyTransaction extends Component {
       this.props.fetchListMyTransaction(user.contractor.id);
       this.props.fetchListMaterial(user.contractor.id);
       this.props.fetchListDebris();
-      this.props.fetchAllBids();
     }
   }
 
@@ -190,7 +168,6 @@ class MyTransaction extends Component {
       this.props.fetchListMyTransaction(user.contractor.id);
       this.props.fetchListMaterial(user.contractor.id);
       this.props.fetchListDebris();
-      this.props.fetchAllBids();
     }
 
     console.log("Transaction renderrr");
@@ -318,18 +295,11 @@ class MyTransaction extends Component {
   };
 
   _handleActiveTab = index => {
-    const {
-      listTransaction,
-      listMaterial,
-      listDebrisBids,
-      listDebrisTransaction
-    } = this.props;
+    const { listTransaction, listMaterial, listDebrisTransaction } = this.props;
     switch (index) {
       case 1:
         return <MaterialTab listMaterial={listMaterial} />;
       case 2:
-        return <MyBidsTab listDebrisBids={listDebrisBids} />;
-      case 3:
         return <DebrisTab listDebrisTransaction={listDebrisTransaction} />;
       default:
         return this._renderEquipment(listTransaction);
@@ -352,7 +322,7 @@ class MyTransaction extends Component {
           <Text style={styles.header}>Contracts</Text>
         </Header>
         <TabView
-          tabs={["Equipments", "Materials", "Bids", "Debris"]}
+          tabs={["Equipments", "Materials", "Debris"]}
           onChangeTab={this._onChangeTab}
           activeTab={activeTab}
         />

@@ -25,7 +25,13 @@ import {
   clearSupplierTransactionList
 } from "../../redux/actions/transaction";
 import { getMaterialListFromContractor } from "../../redux/actions/material";
+import {
+  getDebrisBidBySupplier,
+  getDebrisArticleByRequester
+} from "../../redux/actions/debris";
 
+import MyPostTab from "./MyPostTab";
+import MyBidsTab from "./MyBidsTab";
 import MaterialTab from "./components/MaterialTab";
 import MaterialSearchItem from "../../components/MaterialSearchItem";
 import TabView from "../../components/TabView";
@@ -114,10 +120,12 @@ const DROPDOWN_OPTIONS = [
     return {
       loading: state.equipment.loading,
       listEquipment: state.equipment.contractorEquipment,
+      listDebrisBids: state.debris.debrisBids,
+      listMaterial: state.material.materialList,
+      listDebrisPost: state.debris.debrisArticles,
       user: state.auth.data,
       isLoggedIn: state.auth.userIsLoggin,
-      token: state.auth.token,
-      materialList: state.material.materialList
+      token: state.auth.token
     };
   },
   dispatch => ({
@@ -132,6 +140,12 @@ const DROPDOWN_OPTIONS = [
     },
     fetchGetMaterialList: id => {
       dispatch(getMaterialListFromContractor(id));
+    },
+    fetchAllBids: () => {
+      dispatch(getDebrisBidBySupplier());
+    },
+    fetchGetAllPost: () => {
+      dispatch(getDebrisArticleByRequester());
     }
   })
 )
@@ -153,14 +167,19 @@ class MyEquipment extends PureComponent {
     if (isLoggedIn) {
       this.props.fetchContractorEquipment(user.contractor.id);
       this.props.fetchGetMaterialList(user.contractor.id);
+      this.props.fetchAllBids();
+      this.props.fetchGetAllPost();
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { user, token } = this.props;
+    const { user, token, isLoggedIn } = this.props;
     //Check user is login or not. If yes, fetch data
-    if (prevProps.token !== token && token) {
+    if (isLoggedIn && prevProps.token !== token && token) {
       this.props.fetchContractorEquipment(user.contractor.id);
+      this.props.fetchGetMaterialList(user.contractor.id);
+      this.props.fetchAllBids();
+      this.props.fetchGetAllPost();
     }
   }
 
@@ -169,10 +188,15 @@ class MyEquipment extends PureComponent {
   };
 
   _onRefresh = async () => {
-    this.setState({ refreshing: true });
     const { user } = this.props;
+    this.setState({ refreshing: true });
     const res = await this.props.fetchContractorEquipment(user.contractor.id);
-    if (res) {
+    const resMaterial = await this.props.fetchGetMaterialList(
+      user.contractor.id
+    );
+    const resBid = await this.props.fetchAllBids();
+    const resPost = await this.props.fetchGetAllPost();
+    if (res || resMaterial || resBid || resPost) {
       this.setState({ refreshing: false });
     } else {
       setTimeout(() => {
@@ -261,6 +285,25 @@ class MyEquipment extends PureComponent {
     </View>
   );
 
+  _handleActiveTab = index => {
+    const {
+      listMaterial,
+      listDebrisBids,
+      listEquipment,
+      listDebrisPost
+    } = this.props;
+    switch (index) {
+      case 1:
+        return <MaterialTab listMaterial={listMaterial} />;
+      case 2:
+        return <MyPostTab listDebrisPost={listDebrisPost} />;
+      case 3:
+        return <MyBidsTab listDebrisBids={listDebrisBids} />;
+      default:
+        return this._renderContent(listEquipment);
+    }
+  };
+
   _renderContent = listEquipment => {
     return (
       <View style={styles.scrollWrapper}>
@@ -326,7 +369,7 @@ class MyEquipment extends PureComponent {
                 this._setModalVisible(false);
               }}
             >
-              <Text style={styles.text}>Add Equipment</Text>
+              <Text style={styles.text}>Add new equipment</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -335,12 +378,22 @@ class MyEquipment extends PureComponent {
               }}
             >
               <Text style={[styles.text, { paddingTop: 15 }]}>
-                Add Material
+                Add new material
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                this.props.navigation.navigate("AddDebrisPost");
+                this._setModalVisible(false);
+              }}
+            >
+              <Text style={[styles.text, { paddingTop: 15 }]}>
+                Add new debris post
               </Text>
             </TouchableOpacity>
           </AddModal>
           <View style={{ flex: 1 }}>
-            {!loading && listEquipment && materialList ? (
+            {!loading ? (
               <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 refreshControl={
@@ -350,11 +403,12 @@ class MyEquipment extends PureComponent {
                   />
                 }
               >
-                {activeTab == 0 ? (
+                {this._handleActiveTab(activeTab)}
+                {/* {activeTab == 0 ? (
                   this._renderContent(listEquipment)
                 ) : (
                   <MaterialTab materialList={materialList} />
-                )}
+                )} */}
               </ScrollView>
             ) : (
               <Loading />

@@ -17,7 +17,7 @@ import { COLORS } from "../../Utils/Constants";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 
-class DebrisArticleTab extends Component {
+class MyPostTab extends Component {
   _renderEmptyComponent = () => (
     <View style={styles.actionWrapper}>
       <Text style={styles.text}>No data</Text>
@@ -34,7 +34,7 @@ class DebrisArticleTab extends Component {
           debrisBids={item.debrisBids}
           debrisServiceTypes={item.debrisServiceTypes}
           onPress={() =>
-            this.props.navigation.navigate("DebrisArticleDetail", {
+            this.props.navigation.navigate("MyPostDetail", {
               id: item.id
             })
           }
@@ -44,11 +44,11 @@ class DebrisArticleTab extends Component {
   );
 
   render() {
-    const { listDebrisArticle } = this.props;
+    const { listDebrisPost } = this.props;
     return (
       <View style={styles.container}>
-        {listDebrisArticle.length > 0
-          ? this._renderDebris(listDebrisArticle)
+        {listDebrisPost.length > 0
+          ? this._renderDebris(listDebrisPost)
           : this._renderEmptyComponent()}
       </View>
     );
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     borderStyle: "dashed",
     borderWidth: 3,
-    borderColor: "#DEE4E3",
+    borderColor: "#DEE4E3"
   },
   text: {
     fontSize: fontSize.bodyText,
@@ -75,4 +75,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withNavigation(DebrisArticleTab);
+export default withNavigation(MyPostTab);

@@ -39,7 +39,7 @@ import fontSize from "../../config/fontSize";
     }
   })
 )
-class DebrisArticleDetail extends Component {
+class MyPostDetail extends Component {
   _capitalizeLetter = string => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
@@ -128,4 +128,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default DebrisArticleDetail;
+export default MyPostDetail;

@@ -21,7 +21,7 @@ import SearchResult from "../screens/Search/SearchResult";
 import SearchDetail from "../screens/Search/Detail";
 import MyTransaction from "../screens/MyTransaction";
 import MyTransactionDetail from "../screens/MyTransaction/Detail";
-import ConfirmTransaction from "../screens/Transaction/EquipmentTransaction";
+import ConfirmTransaction from "../screens/Transaction/ConfirmTransaction";
 import Activity from "../screens/MyRequest";
 import ActivityDetail from "../screens/MyRequest/Detail";
 import Notification from "../screens/MyRequest/Notification";
@@ -47,12 +47,12 @@ import MaterialTab from "../screens/MyTransaction/MaterialTab";
 import MaterialSupplierDetail from "../screens/MyTransaction/MaterialSupplierDetail";
 import MaterialRequesterDetail from "../screens/MyRequest/MaterialRequesterDetail";
 import MyMaterialDetail from "../screens/Manage/MaterialDetail";
-import AddDebrisArticle from "../screens/MyRequest/AddDebrisArticle";
-import DebrisArticleDetail from "../screens/MyRequest/DebrisArticleDetail";
-import AddServicesTypes from "../screens/MyRequest/AddServicesTypes";
+import AddDebrisPost from "../screens/Manage/AddDebrisPost";
+import MyPostDetail from "../screens/Manage/MyPostDetail";
+import AddServicesTypes from "../screens/Manage/AddServicesTypes";
 import BidSearch from "../screens/Search/BidSearch";
 import BidResult from "../screens/Search/BidResult";
-import MyBidsDetail from "../screens/MyTransaction/MyBidsDetail";
+import MyBidsDetail from "../screens/Manage/MyBidsDetail";
 import BidDetail from "../screens/Search/BidDetail";
 import ConfirmBid from "../screens/Transaction/ConfirmBid";
 import Subscription from "../screens/Account/Subscription";
@@ -149,6 +149,10 @@ const MyEquipmentStack = createStackNavigator(
     AddNewEquipment: AddNewEquipmentStack,
     AddMaterialDetail: AddMaterialDetail,
     MyMaterialDetail: MyMaterialDetail,
+    MyPostDetail: MyPostDetail,
+    MyBidsDetail: MyBidsDetail,
+    AddDebrisPost: AddDebrisPost,
+    AddServicesTypes: AddServicesTypes,
     Login
   },
   {
@@ -178,7 +182,6 @@ const MyTransactionStack = createStackNavigator(
     MyTransactionDetail: MyTransactionDetail,
     MaterialSupplierDetail: MaterialSupplierDetail,
     ContractorProfile: ContractorProfile,
-    MyBidsDetail: MyBidsDetail,
     SupplierDebrisDetail: SupplierDebrisDetail,
     Login,
     Feedback: Feedback
@@ -197,9 +200,6 @@ const ActivityStack = createStackNavigator(
     ConfirmAdjustDate: ConfirmAdjustDate,
     ContractorProfile: ContractorProfile,
     MaterialRequesterDetail: MaterialRequesterDetail,
-    AddDebrisArticle: AddDebrisArticle,
-    DebrisArticleDetail: DebrisArticleDetail,
-    AddServicesTypes: AddServicesTypes,
     DebrisDetail: DebrisDetail,
     LoginModal: Login,
     Feedback: Feedback

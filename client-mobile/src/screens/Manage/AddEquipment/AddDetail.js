@@ -17,7 +17,8 @@ import {
   getCurrentLocation,
   autoCompleteSearch
 } from "../../../redux/actions/location";
-import Autocomplete from "react-native-autocomplete-input";
+//import Autocomplete from "react-native-autocomplete-input";
+import AutoComplete from "../../../components/AutoComplete";
 
 import Loading from "../../../components/Loading";
 import Header from "../../../components/Header";
@@ -278,6 +279,21 @@ class AddDetail extends Component {
     }
   };
 
+  _renderAutoCompleteItem = item => (
+    <TouchableOpacity
+      style={styles.autocompleteWrapper}
+      onPress={() => {
+        this.setState({
+          address: item.main_text + ", " + item.secondary_text,
+          hideResults: true
+        });
+      }}
+    >
+      <Text style={styles.addressMainText}>{item.main_text}</Text>
+      <Text style={styles.caption}>{item.secondary_text}</Text>
+    </TouchableOpacity>
+  );
+
   _renderScrollViewItem = () => {
     const {
       name,
@@ -294,7 +310,6 @@ class AddDetail extends Component {
     const NEW_DROPDOWN_TYPES_OPTIONS = this._handleEquipmentType(
       generalTypeIndex
     );
-    console.log(address);
     return (
       <View>
         <InputField
@@ -350,7 +365,9 @@ class AddDetail extends Component {
           }}
           options={this._handleConstructionDropdown()}
         />
-        <Autocomplete
+        <AutoComplete
+          label={"Address"}
+          placeholder={"Input your address"}
           onFocus={() => this.setState({ hideResults: false })}
           hideResults={this.state.hideResults}
           editable={
@@ -362,19 +379,7 @@ class AddDetail extends Component {
             this.setState({ address: value });
             this._handleAddressChange(value);
           }}
-          renderItem={item => (
-            <TouchableOpacity
-              onPress={() => {
-                this.setState({
-                  address: item.main_text + ", " + item.secondary_text,
-                  hideResults: true
-                });
-              }}
-            >
-              <Text>{item.main_text}</Text>
-              <Text>{item.secondary_text}</Text>
-            </TouchableOpacity>
-          )}
+          renderItem={item => this._renderAutoCompleteItem(item)}
         />
         <InputField
           label={"Description"}
@@ -452,6 +457,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
+  autocompleteWrapper: {
+    paddingBottom: 10,
+    marginVertical: 5,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.text25
+  },
   scrollWrapper: {
     flex: 1,
     paddingHorizontal: 15
@@ -497,6 +508,16 @@ const styles = StyleSheet.create({
     fontSize: fontSize.bodyText,
     fontWeight: "500",
     paddingVertical: 15
+  },
+  addressMainText: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text,
+    fontWeight: "500"
+  },
+  caption: {
+    fontSize: fontSize.caption,
+    color: colors.text50,
+    fontWeight: "600"
   }
 });
 

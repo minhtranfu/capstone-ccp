@@ -130,26 +130,6 @@ class SearchDetail extends Component {
     return year + "-" + month + "-" + dt;
   };
 
-  _renderSuggestionItem = ({ item }) => {
-    return (
-      <Item
-        name={item.name}
-        uploaded={item.uploaded}
-        onPress={() =>
-          this.props.navigation.navigate("Detail", { id: item.id })
-        }
-      />
-    );
-  };
-
-  _loadHandle(i) {
-    let loadQueue = this.state.loadQueue;
-    loadQueue[i] = 1;
-    this.setState({
-      loadQueue
-    });
-  }
-
   _renderSlideItem = (uri, key, loaded) => (
     <View style={styles.slide} key={key}>
       <Image
@@ -268,7 +248,7 @@ class SearchDetail extends Component {
         </View>
         <View style={styles.textWrapper}>
           <View style={{ flexDirection: "column", justifyContent: "center" }}>
-            <Text style={styles.text}>Constructor: {contractor.name}</Text>
+            <Text style={styles.text}>{contractor.name}</Text>
             <Text style={styles.text}>Phone: {contractor.phoneNumber}</Text>
           </View>
           <View
@@ -289,11 +269,11 @@ class SearchDetail extends Component {
         <Title title={"Pricing"} />
         <View style={styles.rowWrapper}>
           <Text style={styles.text}>Daily price</Text>
-          <Text style={styles.text}>{dailyPrice}$/day</Text>
+          <Text style={styles.text}>{dailyPrice}K/day</Text>
         </View>
         <View style={styles.rowWrapper}>
           <Text style={styles.text}>Delivery price</Text>
-          <Text style={styles.text}>{deliveryPrice}$/day</Text>
+          <Text style={styles.text}>{deliveryPrice}K/day</Text>
         </View>
 
         <Title title={"Description"} />
@@ -331,15 +311,6 @@ class SearchDetail extends Component {
             title={"Me"}
           />
         </MapView>
-        <Title title={"Suggestion"} />
-        <CustomFlatList
-          data={discoverData}
-          renderItem={this._renderSuggestionItem}
-          isHorizontal={true}
-          contentContainerStyle={{
-            marginTop: 10
-          }}
-        />
       </View>
     );
   };
@@ -454,8 +425,9 @@ const styles = StyleSheet.create({
     fontWeight: "600"
   },
   description: {
-    color: colors.text,
-    fontSize: fontSize.bodyText
+    color: colors.text50,
+    fontSize: fontSize.bodyText,
+    fontWeight: "600"
   },
   checkAvailability: {
     alignItems: "center",
