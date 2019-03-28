@@ -341,11 +341,12 @@ class MyRequests extends Component {
 
       case TRANSACTION_STATUSES.FINISHED:
         statusClasses += 'badge-success';
-        changeStatusButtons = (
-          <div className="mt-2">
-            <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingEquipmentTransaction(transaction)}>Feedback</button>
-          </div>
-        );
+        // TODO: use or remove comment
+        // changeStatusButtons = (
+        //   <div className="mt-2">
+        //     <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingEquipmentTransaction(transaction)}>Feedback</button>
+        //   </div>
+        // );
         break;
     }
 
