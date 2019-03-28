@@ -29,25 +29,19 @@ import ParallaxList from '../../components/ParallaxList';
 import Title from '../../components/Title';
 import moment from 'moment';
 
-const RADIO_BUTON_DATA = [
-  { id: 1, value: 'Equipment' },
-  { id: 2, value: 'Material' },
-  { id: 3, value: 'Xà bần' }
-]
-
 const DROPDOWN_GENERAL_TYPES_OPTIONS = [
   {
     id: 0,
-    name: 'Select general equipment types',
-    value: 'Select general equipment types'
+    name: 'Any Category',
+    value: 'Any Category'
   }
 ]
 
 const DROPDOWN_TYPES_OPTIONS = [
   {
     id: 0,
-    name: 'Select equipment types',
-    value: 'Select equipment types'
+    name: 'Any Type',
+    value: 'Any Type'
   }
 ]
 
@@ -110,17 +104,13 @@ class Search extends Component {
     })
   }
 
-  _capitalizeLetter = string => {
-    return string.charAt(0).toUpperCase() + string.slice(1)
-  }
-
   //Create new dropdown options for general type
   _handleGeneralEquipmentType = () => {
     const { generalType } = this.props
     let newGeneralEquipmentTypeArray = generalType.map(item => ({
       id: item.id,
-      name: this._capitalizeLetter(item.name),
-      value: this._capitalizeLetter(item.name)
+      name: item.name,
+      value: item.name
     }))
     return [...DROPDOWN_GENERAL_TYPES_OPTIONS, ...newGeneralEquipmentTypeArray]
   }
@@ -136,8 +126,8 @@ class Search extends Component {
     if (result) {
       let newEquipmentTypeArray = result.equipmentTypes.map(item => ({
         id: item.id,
-        name: this._capitalizeLetter(item.name),
-        value: this._capitalizeLetter(item.name),
+        name: item.name,
+        value: item.name,
         additionalSpecsFields: item.additionalSpecsFields
       }))
       return [...DROPDOWN_TYPES_OPTIONS, ...newEquipmentTypeArray]
@@ -176,7 +166,9 @@ class Search extends Component {
             long: currentLong,
             beginDate,
             endDate,
-            equipmentTypeId: id ? id : ''
+            equipmentCat: this.state.generalType,
+            equipmentCatId: id,
+            equipmentType: this.state.type,
           })
         }
       >
@@ -204,17 +196,20 @@ class Search extends Component {
         <Dropdown
           style={{marginBottom: 10}}
           isHorizontal={true}
-          label={'Equipment Category'}
-          defaultText={'Any'}
-          onSelectValue={(value, index) =>
+          label={'Category'}
+          defaultText={DROPDOWN_GENERAL_TYPES_OPTIONS[0].name}
+          onSelectValue={(value, index) => {
+            if (index === 0) {
+              this.setState({ type: DROPDOWN_TYPES_OPTIONS[0].name, typeIndex: 0 })
+            }
             this.setState({ generalTypeIndex: index, generalType: value })
-          }
+          }}
           options={this._handleGeneralEquipmentType()}
         />
         <Dropdown
           isHorizontal={true}
           label={'Type'}
-          defaultText={'Any'}
+          defaultText={DROPDOWN_TYPES_OPTIONS[0].name}
           onSelectValue={(value, index) =>
             this.setState({ type: value, typeIndex: index })
           }
@@ -231,7 +226,6 @@ class Search extends Component {
   };
 
   render() {
-    const { location, fromDate, toDate, generalTypeIndex, checked } = this.state
     return (
       <SafeAreaView
         style={styles.container}

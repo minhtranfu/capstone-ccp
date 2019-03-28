@@ -29,6 +29,7 @@
     "react-native-image-progress": "^1.1.1",
     "react-native-indicators": "^0.13.0",
     "react-native-maps": "^0.22.1",
+    "react-native-modal": "^9.0.0",
     "react-native-modal-datetime-picker": "^6.0.0",
     "react-native-progress": "^3.6.0",
     "react-native-ratings": "^6.3.1",

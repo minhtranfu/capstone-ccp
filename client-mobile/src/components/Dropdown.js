@@ -1,17 +1,17 @@
 import React, { Component } from "react";
+import _ from 'lodash';
 import PropTypes from "prop-types";
 import {
   StyleSheet,
   Text,
   View,
-  Modal,
   Dimensions,
   Picker,
   Image as RNImage,
   TouchableOpacity
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-
+import Modal from "react-native-modal";
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
 import Image from 'react-native-image-progress';
@@ -30,11 +30,24 @@ class Dropdown extends Component {
     ).isRequired
   };
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+
+    if(!_.isEqual(nextProps.options, prevState.options)){
+      console.log('ssss');
+      return {
+        options: nextProps.options,
+        pickerValue: nextProps.options[0].value,
+      };
+    }
+    else return null;
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       pickerValue: props.defaultText || "Please select an option",
-      modalVisible: false
+      modalVisible: false,
+      options: null,
     };
   }
 
@@ -43,11 +56,11 @@ class Dropdown extends Component {
   }
 
   render() {
-    const { options, isHorizontal, onPress, style } = this.props;
+    const { options, isHorizontal, style } = this.props;
     return (
       <View style={[{backgroundColor: '#f5f5f7', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5,}, style]}>
-        <Modal transparent={true} visible={this.state.modalVisible}>
-          <View style={styles.container}>
+        <Modal isVisible={this.state.modalVisible} style={{margin: 0}} onBackdropPress={()=>this.setModalVisible(false)}>
+          <View style={styles.container} pointerEvents={"box-none"}>
             <View style={styles.titleContainer}>
               <TouchableOpacity
                 style={{
@@ -55,7 +68,6 @@ class Dropdown extends Component {
                   marginRight: 15
                 }}
                 onPress={() => {
-                  onPress;
                   this.setModalVisible(!this.state.modalVisible);
                 }}
               >
@@ -64,7 +76,7 @@ class Dropdown extends Component {
               <View style={styles.divider} />
               <Picker
                 selectedValue={this.state.pickerValue}
-                style={{ width: width }}
+                style={{ width, borderTopColor: colors.text25, }}
                 onValueChange={(itemValue, itemIndex) => {
                   this.setState({ pickerValue: itemValue });
                   this.props.onSelectValue(itemValue, itemIndex);
@@ -102,7 +114,7 @@ class Dropdown extends Component {
         ) : (
           <TouchableOpacity
             style={{
-              borderBottomColor: colors.secondaryColorOpacity,
+              borderBottomColor: colors.text25,
               borderBottomWidth: StyleSheet.hairlineWidth
             }}
             onPress={() => {
@@ -122,7 +134,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.4)"
   },
   titleContainer: {
     borderRadius: 5,
