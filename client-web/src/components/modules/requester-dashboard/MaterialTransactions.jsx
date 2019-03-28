@@ -4,6 +4,7 @@ import { CSSTransition } from 'react-transition-group';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
+import StarRatings from 'react-star-ratings';
 
 import { FeedbackModal } from "../../common";
 import { MATERIAL_TRANSACTION_STATUSES } from '../../../common/consts';
@@ -282,7 +283,7 @@ class MaterialTransactions extends Component {
 
   _renderTransaction = transaction => {
     const { filterStatus } = this.state;
-    const { material } = transaction;
+    const { material, supplier } = transaction;
 
     if (filterStatus !== 'all' && transaction.status !== filterStatus) {
       return null;
@@ -335,7 +336,7 @@ class MaterialTransactions extends Component {
         break;
     }
 
-    const thumbnail = transaction.material.thumbnailImageUrl || '/public/upload/product-images/unnamed-19-jpg.jpg';
+    // const thumbnail = transaction.material.thumbnailImageUrl || '/public/upload/product-images/unnamed-19-jpg.jpg';
 
     return (
       <CSSTransition
@@ -344,17 +345,13 @@ class MaterialTransactions extends Component {
         timeout={500}
       >
         <div className="d-flex transaction my-3 rounded shadow-sm flex-column flex-sm-row">
-          <div className="image flex-fill">
-            <img src={thumbnail} className="rounded-left" />
-          </div>
           <div className="detail flex-fill p-2">
-            <h6><span className={statusClasses}>{transaction.status}</span> {material.name}</h6>
+            <h6><span className={statusClasses}>{transaction.status}</span> {supplier.name}</h6>
             <div>
-              <span>Price: {formatPrice(transaction.price)}</span>
+              <span>Material: {transaction.materialTransactionDetails.length}</span>
             </div>
             <div>
-              <span className="">Quantity: {transaction.quantity}</span>
-              <span className="ml-2 pl-2 border-left">Total fee: {formatPrice(transaction.price * transaction.quantity)}</span>
+              <span>Total fee: {formatPrice(transaction.totalPrice)}</span>
             </div>
             {changeStatusButtons}
           </div>
@@ -362,9 +359,18 @@ class MaterialTransactions extends Component {
             <img
               className="rounded-circle"
               style={{width: '50px', height: '50px'}}
-              src={material.contractor.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
+              src={supplier.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
             />
-            <p>{material.contractor.name}</p>
+            <p>{supplier.name}</p>
+            {supplier.averageMaterialRating > 0 &&
+              <StarRatings
+                rating={supplier.averageMaterialRating}
+                numberOfStars={5}
+                starRatedColor="#ffac00"
+                starDimension="20px"
+                starSpacing="0px"
+              />
+            }
           </div>
         </div>
       </CSSTransition>

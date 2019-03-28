@@ -6,6 +6,7 @@ import PlacesAutocomplete, {
 } from 'react-places-autocomplete';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { Redirect } from 'react-router-dom';
 
 import { authActions } from '../../../redux/actions';
 import { formatPrice } from 'Src/utils/format.utils';
@@ -23,6 +24,9 @@ class RequestCard extends Component {
       transaction: {
         material: {
           id: material.id
+        },
+        supplier: {
+          id: material.contractor.id
         }
       },
       error: {},
@@ -110,6 +114,15 @@ class RequestCard extends Component {
   _postTransaction = async () => {
     let { transaction } = this.state;
 
+    transaction.materialTransactionDetails = [{
+      quantity: transaction.quantity,
+      material: {
+        ...transaction.material
+      }
+    }];
+    transaction.quantity = undefined;
+    transaction.material = undefined;
+
     this.setState({
       isFetching: true
     });
@@ -195,7 +208,7 @@ class RequestCard extends Component {
           <span className="float-right text-x-large">
             {formatPrice(material.price)}
             <small>
-              <small className="text-muted">/{material.unit}</small>
+              <small className="text-muted">/{material.materialType.unit}</small>
             </small>
           </span>
         </div>
@@ -267,12 +280,20 @@ class RequestCard extends Component {
           }
         </div>
         {authentication.isAuthenticated &&
-          <button className="btn btn-success btn-block mt-2" disabled={isFetching || !transaction.quantity || !transaction.requesterAddress} onClick={this._postTransaction}>
-            {isFetching &&
-              <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
-            }
-            Request
-          </button>
+          <div>
+            <button className="btn btn-primary btn-block mt-2" disabled={isFetching || !transaction.quantity || !transaction.requesterAddress} onClick={this._postTransaction}>
+              {isFetching &&
+                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+              }
+              Request Now
+            </button>
+            <button className="btn btn-outline-primary btn-block mt-2" disabled={isFetching || !transaction.quantity || !transaction.requesterAddress} onClick={this._postTransaction}>
+              {isFetching &&
+                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+              }
+              Add to card
+            </button>
+          </div>
         }
         {!authentication.isAuthenticated &&
           <button className="btn btn-success btn-block mt-2" onClick={toggleLoginModal}>

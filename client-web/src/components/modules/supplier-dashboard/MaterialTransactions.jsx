@@ -284,7 +284,7 @@ class MaterialTransactions extends Component {
 
   _renderTransaction = transaction => {
     const { filterStatus } = this.state;
-    const { material } = transaction;
+    const { requester } = transaction;
 
     if (filterStatus !== 'all' && transaction.status !== filterStatus) {
       return null;
@@ -336,7 +336,7 @@ class MaterialTransactions extends Component {
         break;
     }
 
-    const thumbnail = transaction.material.thumbnailImageUrl || '/public/upload/product-images/unnamed-19-jpg.jpg';
+    // const thumbnail = transaction.material.thumbnailImageUrl || '/public/upload/product-images/unnamed-19-jpg.jpg';
 
     return (
       <CSSTransition
@@ -345,17 +345,13 @@ class MaterialTransactions extends Component {
         timeout={500}
       >
         <div className="d-flex transaction my-3 rounded shadow-sm flex-column flex-sm-row">
-          <div className="image flex-fill">
-            <img src={thumbnail} className="rounded-left" />
-          </div>
           <div className="detail flex-fill p-2">
-            <h6><span className={statusClasses}>{transaction.status}</span> {material.name}</h6>
+            <h6><span className={statusClasses}>{transaction.status}</span> {requester.name}</h6>
             <div>
-              <span>Price: {formatPrice(transaction.price)}</span>
+              Material: {transaction.materialTransactionDetails.length}
             </div>
             <div>
-              <span className="">Quantity: {transaction.quantity}</span>
-              <span className="ml-2 pl-2 border-left">Total fee: {formatPrice(transaction.price * transaction.quantity)}</span>
+              <span>Total fee: {formatPrice(transaction.totalPrice)}</span>
             </div>
             {changeStatusButtons}
           </div>
