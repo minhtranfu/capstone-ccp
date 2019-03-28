@@ -7,7 +7,7 @@ import axios from 'axios';
  */
 const instance = axios.create({
   baseURL: ConfigService.getBaseUrl(),
-  timeout: 10000
+  timeout: 60000
 });
 
 export default {

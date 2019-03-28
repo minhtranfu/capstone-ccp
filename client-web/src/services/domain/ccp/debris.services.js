@@ -37,3 +37,11 @@ export const getDebrisesByCriteria = criteria => {
 
   return DataAccessService.get(`/debrisPosts?${queryString}`);
 };
+
+export const uploadImages = formData => {
+  return DataAccessService.post('/storage/debrisImages', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};

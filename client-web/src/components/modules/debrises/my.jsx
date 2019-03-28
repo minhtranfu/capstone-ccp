@@ -86,8 +86,19 @@ class MyDebrises extends Component {
   render() {
     return (
       <div className="container">
-        {this._renderLoading()}
-        {this._renderDebrises()}
+        <div className="row">
+          <div className="col-md-9">
+            <h2 className="my-3">My debris requests
+              <Link to={getRoutePath(routeConsts.DEBRIS_ADD)} className="float-right">
+                <button className="btn btn-success">
+                  <i className="fal fa-plus"></i> New request
+                </button>
+              </Link>
+            </h2>
+            {this._renderLoading()}
+            {this._renderDebrises()}
+          </div>
+        </div>
       </div>
     );
   }
