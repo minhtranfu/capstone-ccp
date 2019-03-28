@@ -83,10 +83,11 @@ class SearchBox extends PureComponent {
           </div>
         </div>
         <div className="col-md-6">
-          <div className="form-group">
-            <label htmlFor="time">Time</label>
-            <div className="row">
-              <div className="col-md-6">
+
+          <div className="row">
+            <div className="col-md-6">
+              <div className="form-group">
+                <label htmlFor="begin_date">Start at:</label>
                 <input
                   type="date"
                   className="form-control"
@@ -97,7 +98,10 @@ class SearchBox extends PureComponent {
                   min={moment().format("YYYY-MM-DD")}
                 />
               </div>
-              <div className="col-md-6 mt-md-0 mt-2">
+            </div>
+            <div className="col-md-6 mt-md-0 mt-2">
+              <div className="form-group">
+                <label htmlFor="end_date">End at:</label>
                 <input
                   type="date"
                   className="form-control"
