@@ -23,6 +23,7 @@ export function searchMaterial(text) {
 }
 
 export function addNewMaterial(material) {
+  console.log(material);
   return async dispatch => {
     const res = await axios.post(`materials`, material);
     dispatch({

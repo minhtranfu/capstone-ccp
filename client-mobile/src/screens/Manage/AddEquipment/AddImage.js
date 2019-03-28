@@ -13,16 +13,12 @@ import { ImagePicker, Permissions } from "expo";
 import { SafeAreaView, NavigationActions } from "react-navigation";
 import { Feather } from "@expo/vector-icons";
 import { connect } from "react-redux";
-import { Location, ImageManipulator } from "expo";
-import { grantPermission } from "../../../redux/reducers/permission";
 import { addEquipment } from "../../../redux/actions/equipment";
-import { uploadImage, deleteImageById } from "../../../redux/actions/upload";
 import {
   getAddressByLatLong,
   getLatLongByAddress
 } from "../../../redux/actions/location";
 import axios from "axios";
-import Progress from "react-native-progress";
 
 import Loading from "../../../components/Loading";
 import Header from "../../../components/Header";
@@ -39,12 +35,6 @@ const { width, height } = Dimensions.get("window");
     loading: state.upload.loading
   }),
   dispatch => ({
-    fetchUploadImage: image => {
-      dispatch(uploadImage(image));
-    },
-    fetcDeleteImage: imageId => {
-      dispatch(deleteImageById(imageId));
-    },
     fetchAddEquipment: equipment => {
       dispatch(addEquipment(equipment));
     }
@@ -55,9 +45,8 @@ class AddImage extends Component {
     super(props);
     this.state = {
       images: [],
-      imageUrl: [],
       progress: [],
-      index: 0,
+      imageIndex: 0,
       loading: false
     };
   }
@@ -73,6 +62,7 @@ class AddImage extends Component {
     if (status === "granted") {
       let result = await ImagePicker.launchImageLibraryAsync();
       if (!result.cancelled) {
+        console.log(result);
         this.setState({
           images: [...this.state.images, result.uri]
         });
@@ -81,26 +71,19 @@ class AddImage extends Component {
   };
 
   _handleAddEquipment = async () => {
-    const { imageUrl, images } = this.state;
+    const { images } = this.state;
     const { data } = this.props.navigation.state.params;
     this.setState({ loading: true });
     const form = new FormData();
     images.map((item, i) => {
       form.append("image", {
-        uri: item.uri,
-        type: "image/jpg",
-        name: "image.jpg"
+        uri: item,
+        type: "image/png",
+        name: "image.png"
       });
     });
     const res = await axios.post(`storage/equipmentImages`, form, {
-      headers: { "Content-Type": "multipart/form-data" },
-      onUploadProgress: progressEvent => {
-        console.log(
-          "Upload progress: " +
-            Math.round((progressEvent.loaded / progressEvent.total) * 100) +
-            "%"
-        );
-      }
+      headers: { "Content-Type": "multipart/form-data" }
     });
     const image = {
       equipmentImages: res.data.map(item => {
@@ -127,31 +110,22 @@ class AddImage extends Component {
     });
   };
 
-  _renderImageUpdate = (image, key) => {
+  _renderRowImageUpdate = (image, key, imageIndex) => {
     return (
-      <View key={key}>
-        <Image
-          source={{ uri: image }}
-          style={styles.landscapeImg}
-          resizeMode={"cover"}
-        />
-        <TouchableOpacity
-          style={{
-            ...StyleSheet.absoluteFillObject,
-            justifyContent: "flex-end",
-            alignItems: "flex-end"
-          }}
-          onPress={() => this._handleRemove(key)}
-        >
-          <Text>Delete</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
-  _renderRowImageUpdate = (image, key) => {
-    return (
-      <View key={key} style={{ marginTop: 10, marginRight: 10 }}>
+      <TouchableOpacity
+        key={key}
+        style={[
+          { marginVertical: 10, marginRight: 10 },
+          imageIndex === key
+            ? {
+                borderWidth: 1,
+                borderColor: colors.secondaryColor,
+                borderRadius: 10
+              }
+            : null
+        ]}
+        onPress={() => this.setState({ imageIndex: key })}
+      >
         <Image
           source={{ uri: image }}
           style={styles.smallImage}
@@ -159,22 +133,18 @@ class AddImage extends Component {
         />
 
         <TouchableOpacity
-          style={{
-            ...StyleSheet.absoluteFillObject,
-            justifyContent: "flex-end",
-            alignItems: "flex-end"
-          }}
+          style={styles.iconDelete}
           onPress={() => this._handleRemove(key)}
         >
-          <Text>Delete</Text>
+          <Feather name={"x"} size={20} color={colors.secondaryColor} />
         </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
     );
   };
 
   render() {
     const { data } = this.props.navigation.state.params;
-    const { images, loading } = this.state;
+    const { images, loading, imageIndex } = this.state;
     return (
       <SafeAreaView
         style={styles.container}
@@ -183,7 +153,7 @@ class AddImage extends Component {
         {loading ? (
           <View
             style={{
-              ...StyleSheet.absoluteFillObject,
+              position: "absolute",
               backgroundColor: "white",
               justifyContent: "center",
               alignItems: "center"
@@ -215,7 +185,11 @@ class AddImage extends Component {
         >
           {images.length > 0 ? (
             <View>
-              {this._renderImageUpdate(images[0], 0)}
+              <Image
+                source={{ uri: images[imageIndex] }}
+                style={styles.landscapeImg}
+                resizeMode={"cover"}
+              />
               <View
                 style={{
                   flexDirection: "row",
@@ -223,11 +197,9 @@ class AddImage extends Component {
                   flexWrap: "wrap"
                 }}
               >
-                {images
-                  .slice(1)
-                  .map((item, index) =>
-                    this._renderRowImageUpdate(item, index + 1)
-                  )}
+                {images.map((item, index) =>
+                  this._renderRowImageUpdate(item, index, imageIndex)
+                )}
               </View>
             </View>
           ) : null}
@@ -265,8 +237,9 @@ const styles = StyleSheet.create({
     height: 200
   },
   smallImage: {
-    height: 50,
-    width: 80
+    height: 100,
+    width: width / 4,
+    borderRadius: 10
   },
   buttonWrapper: {
     marginRight: 15,
@@ -285,6 +258,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primaryColor
+  },
+  iconDelete: {
+    position: "absolute",
+    bottom: 5,
+    right: 5,
+    width: 20,
+    height: 20
   },
   textEnable: {
     fontSize: fontSize.bodyText,

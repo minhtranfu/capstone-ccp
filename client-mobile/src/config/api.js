@@ -10,7 +10,6 @@ export default async function configAPI(config) {
 
   axios.interceptors.request.use(
     async config => {
-
       if (
         config.baseURL === "https://ccp.hoctot.net/api" &&
         !config.headers.Authorization
@@ -47,7 +46,7 @@ export default async function configAPI(config) {
           case 400:
             console.log(error.response);
             config.store.dispatch(
-              StatusAction.error(400, error.response.data.message, Date.now())
+              StatusAction.error(400, error.response.data, Date.now())
             );
             break;
           case 404:

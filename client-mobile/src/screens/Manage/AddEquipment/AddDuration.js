@@ -1,209 +1,237 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import {
   View,
   Text,
-  Platform,
   StyleSheet,
   TouchableOpacity,
   Animated,
-  ScrollView,
-  Image
+  Alert,
+  ScrollView
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
-import Calendar from "react-native-calendar-select";
+import { Feather, Ionicons } from "@expo/vector-icons";
 
+import Calendar from "../../../components/Calendar";
+import Loading from "../../../components/Loading";
 import Header from "../../../components/Header";
+import InputField from "../../../components/InputField";
+
 import colors from "../../../config/colors";
 import fontSize from "../../../config/fontSize";
 
-class AddDuration extends Component {
+class AddDuration extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      startDate: "",
-      endDate: "",
-      duration: [],
-      valueArray: [],
-      disabled: false
+      timeRanges: [{}],
+      index: 0,
+      calendarVisible: false,
+      calendarIndex: 0,
+      fromDate: "",
+      toDate: "",
+      endDateRange: ""
     };
-    this.index = 0;
-
-    this.animatedValue = new Animated.Value(0);
   }
 
-  confirmDate = ({ startDate, endDate, startMoment, endMoment }) => {
-    const newDate = {
-      startDate: this.handleFormatDate(new Date(startDate)),
-      endDate: this.handleFormatDate(new Date(endDate))
+  _handleAddMore = () => {
+    const { beginDate, endDate, index } = this.state;
+    // Add new empty data range
+    const newRow = {
+      beginDate: "",
+      endDate: ""
     };
+
     this.setState({
-      duration: [...this.state.duration, newDate],
-      startDate: this.handleFormatDate(new Date(startDate)),
-      endDate: this.handleFormatDate(new Date(endDate))
+      timeRanges: [...this.state.timeRanges, newRow]
     });
   };
-  openCalendar = () => {
-    this.calendar && this.calendar.open();
+
+  _handleRemove = rowIndex => {
+    this.setState({
+      timeRanges: this.state.timeRanges.filter(
+        (item, index) => index !== rowIndex
+      )
+    });
   };
 
-  handleAddMore = () => {
-    this.animatedValue.setValue(0);
+  //Confirm date select. If toDate = null, set toDate = fromDate add more 3 months
+  _onSelectDate = (id, fromDate, toDate, modalVisible) => {
+    const { timeRanges } = this.state;
+    if (!timeRanges) {
+      timeRanges = [];
+    }
+    let newToDate = toDate ? toDate : this._handleAddMoreMonth(fromDate, 3);
+    timeRanges[id] = {
+      beginDate: fromDate,
+      endDate: newToDate
+    };
+    this.setState({
+      timeRanges,
+      calendarVisible: false
+    });
+  };
 
-    let newlyAddedValue = { index: this.index };
+  _showAlert = msg => {
+    Alert.alert("Error", msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
 
-    this.setState(
-      {
-        disabled: true,
-        valueArray: [...this.state.valueArray, newlyAddedValue]
-      },
-      () => {
-        Animated.timing(this.animatedValue, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true
-        }).start(() => {
-          this.index = this.index + 1;
-          this.setState({ disabled: false });
-        });
-      }
+  //Open calendar
+  _setCalendarVisible = (visible, index) => {
+    const { timeRanges, endDateRange } = this.state;
+    if (
+      index > 0 &&
+      !timeRanges[index - 1].endDate &&
+      !timeRanges[index - 1].beginDate
+    ) {
+      this._showAlert("Please select your before time range!!!");
+    } else {
+      this.setState({
+        calendarVisible: visible,
+        calendarIndex: index
+      });
+    }
+  };
+
+  _renderCalendar = (id, beginDate, endDate) => {
+    const { timeRanges } = this.state;
+    return (
+      <Calendar
+        visible={this.state.calendarVisible}
+        onLeftButtonPress={() => this._setCalendarVisible(false)}
+        onSelectDate={(fromDate, endDate, visible) =>
+          this._onSelectDate(id, fromDate, endDate, visible)
+        }
+        minDate={
+          id > 0
+            ? this._handleAddMoreDay(timeRanges[id - 1].endDate, 2)
+            : this._formatDate(beginDate)
+        }
+        maxDate={
+          id > 0
+            ? this._handleAddMoreMonth(timeRanges[id - 1].endDate, 3)
+            : this._formatDate(endDate)
+        }
+      />
     );
   };
 
-  handleFormatDate = date => {
-    year = date.getFullYear();
-    month = date.getMonth() + 1;
-    dt = date.getDate();
-    if (dt < 10) {
-      dt = "0" + dt;
-    }
-    if (month < 10) {
-      month = "0" + month;
-    }
-    return year + "-" + month + "-" + dt;
+  _formatDate = date => {
+    let newDate = new Date(date);
+    let year = newDate.getFullYear();
+    let month = newDate.getMonth() + 1;
+    let newMonth = month < 10 ? "0" + month : month;
+    let day = newDate.getDate();
+    return year + "-" + newMonth + "-" + day;
   };
 
-  render() {
-    const animationValue = this.animatedValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [-59, 0]
-    });
-    let customI18n = {
-      w: ["", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"],
-      weekday: [
-        "",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday"
-      ],
-      text: {
-        start: "Check in",
-        end: "Check out",
-        date: "Date",
-        save: "Save",
-        clear: "Reset"
-      },
-      date: "DD / MM" // date format
-    };
-    // optional property, too.
-    let color = {
-      subColor: "#f0f0f0"
-    };
+  _handleAddMoreDay = (date, day) => {
+    let today = new Date(date);
+    let result = today.setDate(today.getDate() + day);
+    return this._formatDate(result);
+  };
 
-    let newArray = this.state.valueArray.map((item, key) => {
-      if (key == this.index) {
-        return (
-          <Animated.View
-            key={key}
-            style={[
-              styles.viewHolder,
-              {
-                opacity: this.animatedValue,
-                transform: [{ translateY: animationValue }]
-              }
-            ]}
-          >
-            <Text>New time range</Text>
-          </Animated.View>
-        );
-      } else {
-        return (
-          <View key={key} style={styles.viewHolder}>
-            <TouchableOpacity onPress={this.openCalendar}>
-              <Text style={styles.text}>Your available time range</Text>
-            </TouchableOpacity>
-            <Calendar
-              i18n="en"
-              ref={calendar => {
-                this.calendar = calendar;
-              }}
-              customI18n={customI18n}
-              color={color}
-              format="YYYY-MM-DD"
-              minDate={this.handleFormatDate(new Date())}
-              maxDate="2019-03-12"
-              startDate={this.state.startDate}
-              endDate={this.state.endDate}
-              onConfirm={this.confirmDate}
-            />
-            {this.state.duration.length > key ? (
-              <View>
-                <Text>From: {this.state.duration[key].startDate}</Text>
-                <Text>To: {this.state.duration[key].endDate}</Text>
-              </View>
-            ) : (
-              <View>
-                <Text>From: N/A</Text>
-                <Text>To: N/A</Text>
-              </View>
-            )}
-          </View>
-        );
+  _handleAddMoreMonth = (date, month) => {
+    let today = new Date(date);
+    let result = today.setMonth(today.getMonth() + month);
+    return this._formatDate(result);
+  };
+
+  _renderDateRange = (item, index) => {
+    const { timeRanges } = this.state;
+    return (
+      <View key={index}>
+        <TouchableOpacity onPress={() => this._setCalendarVisible(true, index)}>
+          <Text>Select your date range</Text>
+        </TouchableOpacity>
+
+        <InputField
+          label={"From"}
+          placeholder={"yyyy-mm-dd"}
+          customWrapperStyle={{ marginBottom: 20 }}
+          inputType="text"
+          value={timeRanges[index].beginDate}
+          returnKeyType={"next"}
+        />
+        <InputField
+          label={"To"}
+          placeholder={"yyyy-mm-dd"}
+          customWrapperStyle={{ marginBottom: 20 }}
+          inputType="text"
+          value={timeRanges[index].endDate}
+          returnKeyType={"next"}
+        />
+        {index > 0 ? (
+          <TouchableOpacity onPress={() => this._handleRemove(index)}>
+            <Text style={styles.textRemove}>Remove</Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>
+    );
+  };
+
+  _renderBottomButton = (data, dateRange) => (
+    <TouchableOpacity
+      style={[styles.buttonWrapper, styles.buttonEnable]}
+      onPress={() =>
+        this.props.navigation.navigate("AddImage", {
+          data: Object.assign({}, data, {
+            availableTimeRanges: dateRange.map(item => {
+              delete item.id;
+              return item;
+            })
+          })
+        })
       }
-    });
+    >
+      <Text style={styles.textEnable}>Next</Text>
+      <Ionicons
+        name="ios-arrow-forward"
+        size={23}
+        color={"white"}
+        style={{ marginTop: 3 }}
+      />
+    </TouchableOpacity>
+  );
 
+  render() {
+    const { beginDate, endDate, timeRanges, calendarIndex } = this.state;
+    const { data } = this.props.navigation.state.params;
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "never", top: "aways" }}
+        forceInset={{ bottom: "always", top: "always" }}
       >
-        <Header>
-          <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-            <Text>Go Back</Text>
-          </TouchableOpacity>
+        <Header
+          renderLeftButton={() => (
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+              <Feather name="arrow-left" size={24} />
+            </TouchableOpacity>
+          )}
+        >
+          <Text style={styles.header}>Available time range</Text>
         </Header>
-        <Text
-          style={{
-            fontSize: fontSize.h4,
-            fontWeight: "500",
-            color: colors.text
-          }}
-        >
-          Time range
-        </Text>
-        <ScrollView>
-          <View style={{ flex: 1, padding: 4 }}>{newArray}</View>
-        </ScrollView>
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
+          {this.state.timeRanges.map((item, index) =>
+            this._renderDateRange(item, index)
+          )}
+          {this._renderCalendar(
+            calendarIndex,
+            Date.now(),
+            this._handleAddMoreMonth(Date.now(), 3)
+          )}
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={styles.btn}
-          disabled={this.state.disabled}
-          onPress={this.handleAddMore}
-        >
-          <Text>Icon</Text>
-        </TouchableOpacity>
-        <View style={styles.bottomWrapper}>
           <TouchableOpacity
-            style={[styles.buttonWrapper, styles.buttonEnable]}
-            onPress={() => this.props.navigation.navigate("AddImage")}
+            activeOpacity={0.8}
+            style={styles.buttonPlus}
+            onPress={this._handleAddMore}
           >
-            <Text style={styles.text}>Next</Text>
-            <Text>></Text>
+            <Feather name="plus" size={24} color={"white"} />
           </TouchableOpacity>
+        </ScrollView>
+        <View style={styles.bottomWrapper}>
+          {this._renderBottomButton(data, timeRanges)}
         </View>
       </SafeAreaView>
     );
@@ -222,23 +250,42 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     marginRight: 15,
+    paddingVertical: 5,
     width: 80,
-    height: 40,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row"
   },
+  textEnable: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: "white",
+    marginRight: 8
+  },
   buttonEnable: {
     backgroundColor: colors.primaryColor
   },
   buttonDisable: {
-    backgroundColor: "gray"
+    backgroundColor: colors.text25
   },
-  text: {
+  buttonPlus: {
+    backgroundColor: "green",
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  header: {
+    fontSize: fontSize.h4,
+    fontWeight: "500",
+    color: colors.text
+  },
+  textRemove: {
     fontSize: fontSize.bodyText,
-    fontWeight: "bold",
-    color: colors.secondaryColor
+    fontWeight: "500",
+    color: "red"
   }
 });
 

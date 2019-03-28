@@ -250,6 +250,7 @@ class MyTransaction extends Component {
                   role={"Requester"}
                   id={item.id}
                   name={item.equipment.name}
+                  price={item.equipment.dailyPrice}
                   imageURL={
                     "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
                   }
@@ -263,6 +264,8 @@ class MyTransaction extends Component {
                   beginDate={item.beginDate}
                   endDate={item.endDate}
                   equipmentStatus={item.equipment.status}
+                  hasEquipmentStatus={true}
+                  hasStatus={true}
                 />
               </View>
             ))}

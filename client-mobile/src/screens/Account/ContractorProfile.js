@@ -214,7 +214,7 @@ class ContractorProfile extends Component {
         {this._renderFeedbackModal()}
         <Button
           wrapperStyle={{ marginHorizontal: 15 }}
-          text={"Feedback"}
+          text={"Report"}
           onPress={() => {
             this._setModalVisible(true);
           }}

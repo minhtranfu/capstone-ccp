@@ -92,7 +92,9 @@ class AddDetail extends Component {
       additionalSpecsFields: [],
       location: [],
       hideResults: false,
-      address: null
+      address: null,
+      lat: null,
+      lng: null
     };
   }
 
@@ -239,14 +241,15 @@ class AddDetail extends Component {
       description,
       construction,
       additionalSpecsFields,
-      address
+      address,
+      lat,
+      lng
     } = this.state;
     const newTypeOptions = this._handleEquipmentType(generalTypeIndex);
     let type = { id: newTypeOptions[typeIndex].id };
-    const getConstructionByAddress = this.props.construction.find(
+    const findAddressByCons = this.props.construction.find(
       item => item.address === address
     );
-
     if (!address) {
       this._showAlert("Address must be not null");
     } else {
@@ -257,26 +260,20 @@ class AddDetail extends Component {
         description: description,
         equipmentType: type,
         address: address,
-        longitude: getConstructionByAddress.longitude,
-        latitude: getConstructionByAddress.latitude,
+        longitude: findAddressByCons ? findAddressByCons.longitude : lng,
+        latitude: findAddressByCons ? findAddressByCons.latitude : lat,
         additionalSpecsValues: additionalSpecsFields
       };
-      this.props.navigation.navigate("AddDurationText", {
+      this.props.navigation.navigate("AddDuration", {
         data: equipment
       });
     }
   };
 
   _handleAddressChange = async address => {
-    if (address) {
-      this.setState({
-        location: await autoCompleteSearch(address, null, null)
-      });
-    } else {
-      this.setState({
-        location: []
-      });
-    }
+    this.setState({
+      location: await autoCompleteSearch(address, null, null)
+    });
   };
 
   _renderAutoCompleteItem = item => (
@@ -285,6 +282,8 @@ class AddDetail extends Component {
       onPress={() => {
         this.setState({
           address: item.main_text + ", " + item.secondary_text,
+          lat: item.lat,
+          lng: item.lng,
           hideResults: true
         });
       }}
@@ -347,6 +346,7 @@ class AddDetail extends Component {
             this.setState({ generalTypeIndex: index, generalType: value })
           }
           options={NEW_DROPDOWN_GENERAL_TYPES_OPTIONS}
+          style={{ marginBottom: 20 }}
         />
         <Dropdown
           label={"Type"}
@@ -355,6 +355,7 @@ class AddDetail extends Component {
             this.setState({ type: value, typeIndex: index })
           }
           options={NEW_DROPDOWN_TYPES_OPTIONS}
+          style={{ marginBottom: 20 }}
         />
         {this._handleAdditionalSpecsField()}
         <Dropdown
@@ -364,6 +365,7 @@ class AddDetail extends Component {
             this.setState({ construction: value, constructionIndex: index });
           }}
           options={this._handleConstructionDropdown()}
+          style={{ marginBottom: 20 }}
         />
         <AutoComplete
           label={"Address"}
