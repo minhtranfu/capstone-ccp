@@ -4,6 +4,7 @@ import daos.ConstructionDAO;
 import daos.ContractorDAO;
 import dtos.requests.ContractorRequest;
 import entities.ContractorEntity;
+import entities.ContractorVerifyingImageEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -39,6 +40,9 @@ public class ContractorResource {
 
 	@Inject
 	ModelConverter modelConverter;
+
+	@Inject
+	ContractorVerifyingImageResource contractorVerifyingImageResource;
 
 
 	@Inject
@@ -126,6 +130,13 @@ public class ContractorResource {
 		cartRequestResource.setContractorEntity(foundContractor);
 		return cartRequestResource;
 
+	}
+
+	@Path("{id:\\d+}/contractorVerifyingImages")
+	public ContractorVerifyingImageResource toContractorVerifyingImageEntity(@PathParam("id") long contractorId) {
+		ContractorEntity foundContractor = validateContractorId(contractorId);
+		contractorVerifyingImageResource.setContractorEntity(foundContractor);
+		return contractorVerifyingImageResource;
 	}
 
 //	@Path("{id:\\d+}/notifications")

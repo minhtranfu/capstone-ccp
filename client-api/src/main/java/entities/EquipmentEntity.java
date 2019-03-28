@@ -61,7 +61,7 @@ import java.util.Objects;
 @EntityListeners(EquipmentEntityListener.class)
 //for serializing null values ( not hide it)
 @JsonbNillable
-public class EquipmentEntity implements Serializable {
+public class EquipmentEntity  {
 	private long id;
 	@NotNull
 	@NotEmpty
@@ -338,7 +338,7 @@ public class EquipmentEntity implements Serializable {
 		this.longitude = longitude;
 	}
 
-	@OneToMany(mappedBy = "equipment", cascade = {}, fetch = FetchType.LAZY, orphanRemoval = false)
+	@OneToMany(mappedBy = "equipment", orphanRemoval = false)
 	public Collection<EquipmentImageEntity> getEquipmentImages() {
 		return equipmentImages;
 	}

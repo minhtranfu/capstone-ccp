@@ -18,4 +18,5 @@ public class EquipmentPostRequest extends EquipmentRequest {
 	@NotNull
 	public List<AdditionalSpecsValueRequest> additionalSpecsValues;
 
+
 }

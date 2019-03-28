@@ -36,7 +36,6 @@ import java.util.function.Supplier;
 
 import static utils.Constants.BUCKET_NAME;
 
-@Stateless
 @Produces(MediaType.APPLICATION_JSON)
 public class EquipmentImageSubResource {
 	@Context
@@ -64,7 +63,8 @@ public class EquipmentImageSubResource {
 
 	private EquipmentImageEntity validateImage(long imageId) {
 		EquipmentImageEntity foundImage = equipmentImageDAO.findByIdWithValidation(imageId);
-		if (foundImage.getEquipment().getId() != equipmentEntity.getId()) {
+		if (foundImage.getEquipment() != null &&
+				foundImage.getEquipment().getId() != equipmentEntity.getId()) {
 			throw new BadRequestException(String.format("Equipment id=%d not contain EquipmentImage id=%d",
 					equipmentEntity.getId(), imageId));
 		}

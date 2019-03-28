@@ -2,11 +2,11 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
-import javax.enterprise.inject.TransientReference;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.xml.bind.annotation.XmlTransient;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -40,6 +40,8 @@ public class ContractorEntity {
 	private List<SubscriptionEntity> subscriptionEntities;
 
 	private List<NotificationEntity> notifications;
+
+	private Collection<ContractorVerifyingImageEntity> contractorVerifyingImages;
 
 
 	private List<DebrisFeedbackEntity> debrisFeedbacks;
@@ -255,6 +257,24 @@ public class ContractorEntity {
 		this.notifications = notifications;
 	}
 
+	@JsonbTransient
+	@OneToMany(mappedBy = "contractor", cascade = {})
+	public Collection<ContractorVerifyingImageEntity> getContractorVerifyingImages() {
+		return contractorVerifyingImages;
+	}
+
+	public void setContractorVerifyingImages(Collection<ContractorVerifyingImageEntity> contractorVerifyingImages) {
+		this.contractorVerifyingImages = contractorVerifyingImages;
+	}
+	public void addContractorVerifyingImage(ContractorVerifyingImageEntity contractorVerifyingImageEntity) {
+		this.contractorVerifyingImages.add(contractorVerifyingImageEntity);
+		contractorVerifyingImageEntity.setContractor(this);
+	}
+	public void removeContractorVerifyingImage(ContractorVerifyingImageEntity contractorVerifyingImageEntity) {
+		this.contractorVerifyingImages.remove(contractorVerifyingImageEntity);
+		contractorVerifyingImageEntity.setContractor(null);
+	}
+
 
 	@JsonbTransient
 	@OneToMany(mappedBy = "supplier")
@@ -339,6 +359,8 @@ public class ContractorEntity {
 		this.averageEquipmentRating = getEquipmentFeedbacks().stream()
 				.mapToDouble(EquipmentFeedbackEntity::getRating).average().orElse(0);
 	}
+
+
 
 	public enum Status {
 		NOT_VERIFIED,

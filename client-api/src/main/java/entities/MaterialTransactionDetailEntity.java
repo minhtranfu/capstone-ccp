@@ -144,7 +144,7 @@ public class MaterialTransactionDetailEntity {
 	}
 
 	@Basic
-	@Column(name = "is_deleted", nullable = true)
+	@Column(name = "is_deleted", nullable = true, insertable = false)
 	public boolean isDeleted() {
 		return isDeleted;
 	}
