@@ -86,7 +86,7 @@ class MyEquipments extends PureComponent {
         return (
           <div key={equipment.id} className="d-flex transaction my-3 rounded shadow-sm">
             <div className="image flex-fill">
-              <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL)}>
+              <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, {id: equipment.id})}>
                 <img src={thumbnail} className="rounded-left" />
               </Link>
             </div>
