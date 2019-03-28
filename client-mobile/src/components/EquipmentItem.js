@@ -22,6 +22,10 @@ class EquipmentItem extends PureComponent {
       "https://drupway.com/wp-content/uploads/2018/10/person-male.png"
   };
 
+  state = {
+    imageFailed: false,
+  };
+
   render() {
     const {
       id,
@@ -39,11 +43,13 @@ class EquipmentItem extends PureComponent {
         <TouchableOpacity
           onPress={onPress}
           style={{ overflow: "hidden", borderRadius: 10 }}
+          activeOpacity={0.9}
         >
           <ImageCache
-            uri={imageURL}
-            style={{ height: 160 }}
-            resizeMode={"cover"}
+            uri={!this.state.imageFailed ? imageURL : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg"}
+            style={{ height: 160, backgroundColor: '#e9e9e9', }}
+            resizeMode={ !this.state.imageFailed ? "cover" : "contain"}
+            onError={()=>{this.setState({imageFailed: true})}}
           />
           <View style={styles.titleWrapper}>
             <View style={{ flexDirection: "column", flex: 1 }}>
@@ -59,7 +65,7 @@ class EquipmentItem extends PureComponent {
               <Text style={styles.equipmentStatus}>{address}</Text>
             </View>
             <View style={styles.priceWrapper}>
-              <Text style={styles.equipmentPrice}>{price} K</Text>
+              <Text style={styles.equipmentPrice}>{price}k</Text>
             </View>
           </View>
         </TouchableOpacity>

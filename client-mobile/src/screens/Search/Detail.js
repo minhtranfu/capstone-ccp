@@ -233,7 +233,7 @@ class SearchDetail extends Component {
       equipmentImages
     } = this.props.detail.equipmentEntity;
     return (
-      <View style={{ paddingHorizontal: 15 }}>
+      <View style={{paddingHorizontal: 15, backgroundColor: 'white', paddingTop: 15}}>
         <View style={styles.textWrapper}>
           <Text style={styles.title}>{name}</Text>
           <Text
@@ -344,10 +344,11 @@ class SearchDetail extends Component {
     let color = {
       subColor: "#f0f0f0"
     };
+    console.log(detail.equipmentEntity.thumbnailImage);
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "always", top: "always" }}
+        forceInset={{ bottom: "never", top: "always" }}
       >
         <ParallaxList
           title={detail.equipmentEntity.name}
@@ -356,18 +357,18 @@ class SearchDetail extends Component {
           imageURL={
             detail.equipmentEntity.thumbnailImage
               ? detail.equipmentEntity.thumbnailImage.url
-              : imageURL
+              : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg"
           }
           hasLeft={true}
           hasCart={true}
           scrollElement={<Animated.ScrollView />}
           renderScrollItem={this._renderScrollItem}
         />
-        <View style={styles.bottomWrapper}>
+        <SafeAreaView forceInset={{bottom: 'always'}} style={styles.bottomWrapper}>
           <Button
             text={"Book Now"}
             onPress={this._openCalendar}
-            wrapperStyle={{ marginTop: 0 }}
+            buttonStyle={{ marginTop: 0, backgroundColor: 'transparent' }}
           />
           <Calendar
             i18n="en"
@@ -383,7 +384,7 @@ class SearchDetail extends Component {
             endDate={this.state.endDate}
             onConfirm={this._confirmDate}
           />
-        </View>
+        </SafeAreaView>
       </SafeAreaView>
     );
   }
@@ -392,8 +393,6 @@ class SearchDetail extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
   },
   textWrapper: {
     flexDirection: "row",
@@ -412,9 +411,9 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   title: {
-    color: colors.text,
-    fontSize: fontSize.h4,
-    fontWeight: "600"
+    color: colors.primaryColor,
+    fontSize: fontSize.h2,
+    fontWeight: "700"
   },
   text: {
     color: colors.text,
@@ -445,16 +444,12 @@ const styles = StyleSheet.create({
   },
   mapWrapper: {
     flex: 1,
-    height: 500
+    height: 200
   },
   bottomWrapper: {
     justifyContent: "center",
-    width: width,
-    backgroundColor: "white",
-    borderTopWidth: 1,
-    borderTopColor: colors.secondaryColorOpacity,
+    backgroundColor: colors.secondaryColor,
     paddingHorizontal: 15,
-    marginBottom: 5,
     paddingTop: 5
   },
   slideWrapper: {

@@ -6,11 +6,15 @@ import { Header, Left, Right, Button, Body } from "./AnimatedHeader";
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
 
+const NO_IMAGE_URL = "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg";
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 const AnimatedBody = Animated.createAnimatedComponent(Body);
 const AnimatedHeader = Animated.createAnimatedComponent(Header);
 
 class ParallaxList extends Component {
+  state = {
+    imageFailed: false
+  };
   nativeScroll = new Animated.Value(0);
 
   //default value scroll animated
@@ -64,13 +68,13 @@ class ParallaxList extends Component {
   renderBackground = () => (
     <AnimatedImage
       style={{
-        height: 300,
-        width: "100%",
+        height: 200,
+        backgroundColor: '#e9e9e9',
         opacity: 1,
         transform: [
           {
             translateY: this.nativeScroll.interpolate({
-              inputRange: [0, 200, 300],
+              inputRange: [0, 100, 200],
               outputRange: [0, 1, 1],
               extrapolateRight: "extend",
               extrapolateLeft: "clamp"
@@ -85,8 +89,9 @@ class ParallaxList extends Component {
           }
         ]
       }}
-      source={{ uri: this.props.imageURL }}
-      resizeMode={"cover"}
+      source={{ uri: !this.state.imageFailed ? this.props.imageURL : NO_IMAGE_URL }}
+      onError={()=>{this.setState({imageFailed: true})}}
+      resizeMode={this.state.imageFailed ? "contain" : "cover"}
     />
   );
 
@@ -127,7 +132,6 @@ class ParallaxList extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "transparent"
   },
   title: {
     alignItems: "center",
