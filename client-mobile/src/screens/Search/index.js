@@ -168,7 +168,7 @@ class Search extends Component {
             beginDate,
             endDate,
             equipmentCat: this.state.generalType,
-            equipmentCatId: id,
+            equipmentTypeId: id,
             equipmentType: this.state.type,
           })
         }

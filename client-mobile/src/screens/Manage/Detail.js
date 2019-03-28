@@ -26,12 +26,13 @@ import Loading from '../../components/Loading'
 import colors from '../../config/colors'
 import fontSize from '../../config/fontSize'
 import WithRangeCalendar from '../../components/WithRangeCalendar'
+import Title from '../../components/Title';
 
 const DROPDOWN_GENERAL_TYPES_OPTIONS = [
   {
     id: 0,
     name: 'Select general equipment types',
-    value: 'all'
+    value: 'All'
   }
 ]
 
@@ -39,7 +40,7 @@ const DROPDOWN_TYPES_OPTIONS = [
   {
     id: 0,
     name: 'Select equipment types',
-    value: 'all'
+    value: 'All'
   }
 ]
 
@@ -301,8 +302,9 @@ class MyEquipmentDetail extends Component {
             <Feather name="camera" size={24} />
           </TouchableOpacity>
         </View>
+        <Title title={"Equipment Information"}/>
         <InputField
-          label={'Equipment Name'}
+          label={'Name'}
           placeholder={'Input your equipment name'}
           placeholderTextColor={colors.text68}
           customWrapperStyle={{ marginBottom: 20 }}
@@ -312,52 +314,55 @@ class MyEquipmentDetail extends Component {
           editable={data.status === 'AVAILABLE' ? true : false}
           returnKeyType={'next'}
         />
-        <InputField
-          label={'Daily price'}
-          placeholderTextColor={colors.text68}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          onChangeText={value =>
-            this._handleInputChanged('dailyPrice', parseInt(value))
-          }
-          editable={data.status === 'AVAILABLE' ? true : false}
-          value={data.dailyPrice.toLocaleString('en')}
-          keyboardType={'numeric'}
-          returnKeyType={'next'}
-        />
-        <InputField
-          label={'Delivery price'}
-          placeholderTextColor={colors.text68}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          editable={data.status === 'AVAILABLE' ? true : false}
-          onChangeText={value =>
-            this._handleInputChanged('deliveryPrice', parseInt(value))
-          }
-          keyboardType={'numeric'}
-          value={data.deliveryPrice.toLocaleString()}
-        />
+        <View style={{flexDirection: 'row'}}>
+          <InputField
+            label={'Daily price'}
+            placeholderTextColor={colors.text68}
+            customWrapperStyle={{ marginBottom: 20, marginRight: 15 }}
+            inputType="text"
+            onChangeText={value =>
+              this._handleInputChanged('dailyPrice', parseInt(value))
+            }
+            editable={data.status === 'AVAILABLE' ? true : false}
+            value={data.dailyPrice.toLocaleString('en')}
+            keyboardType={'numeric'}
+            returnKeyType={'next'}
+          />
+          <InputField
+            label={'Delivery price'}
+            placeholderTextColor={colors.text68}
+            customWrapperStyle={{ marginBottom: 20 }}
+            inputType="text"
+            editable={data.status === 'AVAILABLE' ? true : false}
+            onChangeText={value =>
+              this._handleInputChanged('deliveryPrice', parseInt(value))
+            }
+            keyboardType={'numeric'}
+            value={data.deliveryPrice.toLocaleString()}
+          />
+        </View>
         <Dropdown
-          label={'General Type'}
+          isHorizontal
+          label={'Category'}
           defaultText={this.state.generalType}
-          options={NEW_DROPDOWN_GENERAL_TYPES_OPTIONS}
+          options={this._handleGeneralEquipmentType()}
           onSelectValue={(value, index) =>
             this.setState({ generalTypeIndex: index, generalType: value })
           }
         />
         <Dropdown
+          isHorizontal
+          style={{marginTop: 20}}
           label={'Type'}
           defaultText={this.state.type}
-          options={NEW_DROPDOWN_TYPES_OPTIONS}
+          options={this._handleEquipmentType(this.state.generalTypeIndex)}
           onSelectValue={(value, index) =>
             this.setState({ type: value, typeIndex: index })
           }
         />
         {data.availableTimeRanges.length > 0 ? (
           <View>
-            <Text style={[styles.title, { marginBottom: 10 }]}>
-              Available time range
-            </Text>
+            <Title title={"Available time range"}/>
             {data.availableTimeRanges.map((item, index) =>
               this._renderDateRange(item, index)
             )}
@@ -390,11 +395,13 @@ class MyEquipmentDetail extends Component {
           value={data.description}
         />
 
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
           <View
             style={{
-              width: 15,
+              width: 25,
               height: 15,
+              borderRadius: 3,
+              marginRight: 5,
               backgroundColor:
                 COLORS[data.status ? data.status : 'AVAILABLE' || 'default']
             }}
@@ -449,10 +456,11 @@ const styles = StyleSheet.create({
   },
   landscapeImgWrapper: {
     height: 200,
-    marginBottom: 15
+    marginBottom: 0
   },
   landscapeImg: {
-    flex: 1
+    flex: 1,
+    marginHorizontal: -15
   },
   buttonChangeImage: {
     position: 'absolute',
@@ -466,8 +474,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   header: {
-    fontSize: fontSize.h4,
-    fontWeight: '500'
+    color: colors.primaryColor,
+    fontSize: fontSize.bodyText,
+    fontWeight: "600"
   },
   title: {
     fontSize: fontSize.bodyText,

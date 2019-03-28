@@ -99,8 +99,8 @@ class SearchResult extends Component {
       query.main_text,
       lat,
       long,
-      beginDate,
-      endDate,
+      moment(beginDate).format('YYYY-MM-DD'),
+      moment(endDate).format('YYYY-MM-DD'),
       equipmentTypeId
     );
   }
@@ -148,8 +148,8 @@ class SearchResult extends Component {
         query.main_text,
         lat,
         long,
-        beginDate,
-        endDate,
+        moment(beginDate).format('YYYY-MM-DD'),
+        moment(endDate).format('YYYY-MM-DD'),
         equipmentTypeId
       );
     }
