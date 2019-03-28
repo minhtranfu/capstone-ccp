@@ -35,17 +35,6 @@ export default class App extends React.Component {
     );
   }
 
-  // componentDidUpdate(prevState) {
-  //   if (
-  //     prevState.notification &&
-  //     this.state.notification &&
-  //     prevState.notification.data !== this.state.notification.data
-  //   ) {
-  //     console.log("new");
-  //     return <Toast message={this.state.notification.data.content} />;
-  //   }
-  // }
-
   _handleNotification = notification => {
     console.log("render");
     this.setState({ notification: notification });

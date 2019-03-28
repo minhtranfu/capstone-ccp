@@ -148,10 +148,10 @@ export function clearSupplierTransactionList() {
 
 export function listMaterialTransactionBySupplier(supplierId) {
   return async dispatch => {
-    dispatch({
-      type: Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.REQUEST
-    });
     try {
+      dispatch({
+        type: Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.REQUEST
+      });
       const res = await axios.get(
         `materialTransactions/supplier/${supplierId}`
       );
@@ -219,11 +219,20 @@ export function changeMaterialTransactionRequest(requestId, request) {
 //DEBRIS
 export function listDebrisTransactionBySupplier() {
   return async dispatch => {
-    const res = await axios.get("debrisTransactions/supplier");
-    dispatch({
-      type: Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.SUCCESS,
-      payload: res
-    });
+    try {
+      dispatch({
+        type: Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.REQUEST
+      });
+      const res = await axios.get("debrisTransactions/supplier");
+      dispatch({
+        type: Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.ERROR
+      });
+    }
   };
 }
 

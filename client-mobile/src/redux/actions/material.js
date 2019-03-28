@@ -2,23 +2,28 @@ import * as Actions from "../types";
 import axios from "axios";
 
 export function searchMaterial(text) {
-  console.log(text);
   return async dispatch => {
-    dispatch({
-      type: Actions.SEARCH_MATERIAL.REQUEST
-    });
-    const res = await axios.get(
-      `materials?q=${text}&limit=10&&orderBy=createdTime.desc`,
-      {
-        headers: {
-          Authorization: undefined
+    try {
+      dispatch({
+        type: Actions.SEARCH_MATERIAL.REQUEST
+      });
+      const res = await axios.get(
+        `materials?q=${text}&limit=10&&orderBy=createdTime.desc`,
+        {
+          headers: {
+            Authorization: undefined
+          }
         }
-      }
-    );
-    dispatch({
-      type: Actions.SEARCH_MATERIAL.SUCCESS,
-      payload: res
-    });
+      );
+      dispatch({
+        type: Actions.SEARCH_MATERIAL.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.SEARCH_MATERIAL.ERROR
+      });
+    }
   };
 }
 

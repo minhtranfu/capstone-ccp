@@ -212,10 +212,21 @@ export default function transactionReducer(state = initialState, action) {
       };
 
     //DEBRIS
+    case Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.REQUEST:
+      return {
+        ...state,
+        debrisLoading: true
+      };
     case Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.SUCCESS:
       return {
         ...state,
+        debrisLoading: false,
         listSupplierDebris: payload.data
+      };
+    case Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.ERROR:
+      return {
+        ...state,
+        debrisLoading: false
       };
     case Actions.GET_DEBRIS_TRANSACTION_BY_REQUESTER.SUCCESS:
       return {

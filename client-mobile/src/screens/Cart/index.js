@@ -14,7 +14,8 @@ import { Image } from "react-native-expo-image-cache";
 import {
   getCartList,
   removeItemCart,
-  cartCheckout
+  cartCheckout,
+  clearMaterialCart
 } from "../../redux/actions/cart";
 import Swipeable from "react-native-swipeable";
 
@@ -24,10 +25,12 @@ import Header from "../../components/Header";
 
 import fontSize from "../../config/fontSize";
 import colors from "../../config/colors";
+import { ScrollView } from "react-native-gesture-handler";
 
 @connect(
   state => ({
     cart: state.cart.list,
+    materialCart: state.cart.listMaterial,
     loading: state.cart.loading,
     user: state.auth.data
   }),
@@ -40,6 +43,9 @@ import colors from "../../config/colors";
     },
     fetchCheckOut: contractorId => {
       dispatch(cartCheckout(contractorId));
+    },
+    fetchClearMaterial: () => {
+      dispatch(clearMaterialCart());
     }
   })
 )
@@ -57,7 +63,7 @@ class Cart extends Component {
     this.props.fetchRemoveItemCart(contractorId, cartId);
   };
 
-  _renderItem = ({ item }) => {
+  _renderItem = item => {
     const { user } = this.props;
     return (
       <TransactionItem
@@ -82,22 +88,39 @@ class Cart extends Component {
     );
   };
 
+  _renderCartItem = item => {
+    console.log(item);
+    return (
+      <View>
+        <Text>{item.contractor.name}</Text>
+        <Text>{item.manufacturer}</Text>
+        <Text>{item.price}</Text>
+        <Text>Input your quantity</Text>
+      </View>
+    );
+  };
+
   _handleCheckOut = () => {
     const { user } = this.props;
     this.props.fetchCheckOut(user.contractor.id);
   };
 
   _renderFlatList = () => {
-    const { cart } = this.props;
-    console.log(cart);
+    const { cart, materialCart } = this.props;
+    console.log(materialCart);
     return (
       <View style={{ flex: 1 }}>
-        <FlatList
-          style={{ paddingHorizontal: 15 }}
-          data={cart}
-          renderItem={this._renderItem}
-          keyExtractor={(item, index) => index.toString()}
-        />
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
+          <Text>Equipment</Text>
+          {cart.map(item => this._renderItem(item))}
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text>Material</Text>
+            <TouchableOpacity onPress={() => this.props.fetchClearMaterial()}>
+              <Text>Clear material</Text>
+            </TouchableOpacity>
+          </View>
+          {materialCart.map(item => this._renderCartItem(item))}
+        </ScrollView>
         <TouchableOpacity
           style={{ paddingHorizontal: 15 }}
           onPress={this._handleCheckOut}

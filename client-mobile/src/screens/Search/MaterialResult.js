@@ -38,8 +38,8 @@ class MaterialResult extends Component {
   }
 
   componentDidMount() {
-    const { materialName } = this.props.navigation.state.params;
-    this.props.fetchSearchMaterial(materialName);
+    const { keyword } = this.props.navigation.state.params;
+    this.props.fetchSearchMaterial(keyword);
   }
 
   _renderItem = ({ item }) => (

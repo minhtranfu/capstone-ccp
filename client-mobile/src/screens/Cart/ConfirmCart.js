@@ -56,7 +56,6 @@ class ConfirmCart extends Component {
       [field]: address,
       location: await autoCompleteSearch(address)
     });
-    console.log(location);
   };
 
   render() {

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import _ from 'lodash';
+import _ from "lodash";
 import PropTypes from "prop-types";
 import {
   StyleSheet,
@@ -14,7 +14,7 @@ import { Feather } from "@expo/vector-icons";
 import Modal from "react-native-modal";
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
-import Image from 'react-native-image-progress';
+import Image from "react-native-image-progress";
 
 const width = Dimensions.get("window").width;
 
@@ -31,15 +31,13 @@ class Dropdown extends Component {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-
-    if(!_.isEqual(nextProps.options, prevState.options)){
-      console.log('ssss');
+    if (!_.isEqual(nextProps.options, prevState.options)) {
+      console.log("ssss");
       return {
         options: nextProps.options,
-        pickerValue: nextProps.options[0].value,
+        pickerValue: nextProps.options[0].value
       };
-    }
-    else return null;
+    } else return null;
   }
 
   constructor(props) {
@@ -47,7 +45,7 @@ class Dropdown extends Component {
     this.state = {
       pickerValue: props.defaultText || "Please select an option",
       modalVisible: false,
-      options: null,
+      options: null
     };
   }
 
@@ -58,8 +56,22 @@ class Dropdown extends Component {
   render() {
     const { options, isHorizontal, style } = this.props;
     return (
-      <View style={[{backgroundColor: '#f5f5f7', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5,}, style]}>
-        <Modal isVisible={this.state.modalVisible} style={{margin: 0}} onBackdropPress={()=>this.setModalVisible(false)}>
+      <View
+        style={[
+          {
+            backgroundColor: "#f5f5f7",
+            paddingHorizontal: 15,
+            paddingVertical: 10,
+            borderRadius: 5
+          },
+          style
+        ]}
+      >
+        <Modal
+          isVisible={this.state.modalVisible}
+          style={{ margin: 0 }}
+          onBackdropPress={() => this.setModalVisible(false)}
+        >
           <View style={styles.container} pointerEvents={"box-none"}>
             <View style={styles.titleContainer}>
               <TouchableOpacity
@@ -76,7 +88,7 @@ class Dropdown extends Component {
               <View style={styles.divider} />
               <Picker
                 selectedValue={this.state.pickerValue}
-                style={{ width, borderTopColor: colors.text25, }}
+                style={{ width, borderTopColor: colors.text25 }}
                 onValueChange={(itemValue, itemIndex) => {
                   this.setState({ pickerValue: itemValue });
                   this.props.onSelectValue(itemValue, itemIndex);
@@ -101,15 +113,14 @@ class Dropdown extends Component {
               this.setModalVisible(true);
             }}
           >
-            <View
-              style={{ flex: 2, flexDirection: "column" }}
-            >
+            <View style={{ flex: 2, flexDirection: "column" }}>
               <Text style={styles.dropdownLabel}>{this.props.label} </Text>
-              <Text style={styles.dropdownValue}>
-                {this.state.pickerValue}
-              </Text>
+              <Text style={styles.dropdownValue}>{this.state.pickerValue}</Text>
             </View>
-            <RNImage source={ require('../../assets/icons/icons8-mail_filter.png') } style={{width: 22, height: 22}} />
+            <RNImage
+              source={require("../../assets/icons/icons8-mail_filter.png")}
+              style={{ width: 22, height: 22 }}
+            />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -133,7 +144,7 @@ class Dropdown extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-end",
+    justifyContent: "flex-end"
   },
   titleContainer: {
     borderRadius: 5,
@@ -178,7 +189,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize.caption,
     color: colors.text50,
     fontWeight: "400",
-    marginBottom: 3,
+    marginBottom: 3
   },
   dropdownValue: {
     fontSize: fontSize.bodyText,
@@ -193,7 +204,7 @@ const styles = StyleSheet.create({
   buttonHorizontal: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   }
 });
 

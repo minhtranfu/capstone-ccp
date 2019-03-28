@@ -4,7 +4,8 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  Animated
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -15,6 +16,7 @@ import {
 import { autoCompleteSearch } from "../../redux/actions/location";
 import Feather from "@expo/vector-icons/Feather";
 
+import ParallaxList from "../../components/ParallaxList";
 import Dropdown from "../../components/Dropdown";
 import SearchBar from "../../components/SearchBar";
 import Loading from "../../components/Loading";
@@ -22,6 +24,14 @@ import Header from "../../components/Header";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+
+const DROPDOWN_MATERIAL_TYPE_OPTIONS = [
+  {
+    id: 0,
+    name: "Any Category",
+    value: "Any Category"
+  }
+];
 
 @connect(
   state => ({
@@ -42,7 +52,9 @@ class MaterialSearch extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      materialName: ""
+      keyword: "",
+      materialType: "",
+      materialTypeIndex: 0
     };
   }
 
@@ -51,64 +63,66 @@ class MaterialSearch extends Component {
   }
 
   _handleOnChangeText = value => {
-    const { materialName } = this.state;
     this.setState({
-      materialName: value.toLowerCase()
+      keyword: value.toLowerCase()
     });
   };
 
-  _showMaterialItem = (id, name) => (
-    <TouchableOpacity
-      key={id}
-      style={styles.itemWrapper}
-      onPress={() =>
-        this.props.navigation.navigate("MaterialResult", {
-          materialName: name
-        })
-      }
-    >
-      <Text style={styles.text}>{name}</Text>
-      <Feather name="chevron-right" size={24} />
-    </TouchableOpacity>
-  );
-
-  _renderItem = () => {
+  //Create new dropdown options for general type
+  _handleMaterialType = () => {
     const { materialType } = this.props;
-    const { materialName } = this.state;
-    let values = [];
-    if (materialName && materialName.length > 0)
-      values = materialType.filter(item => item.name.includes(materialName));
+    let newMaterialTypeArray = materialType.map(item => ({
+      id: item.id,
+      name: item.name,
+      value: item.name
+    }));
+    return [...DROPDOWN_MATERIAL_TYPE_OPTIONS, ...newMaterialTypeArray];
+  };
+
+  _handleSearch = () => {
+    const { materialTypeIndex, keyword } = this.state;
+    this.props.navigation.navigate("MaterialResult", { keyword: keyword });
+  };
+
+  _renderScrollContent = () => {
     return (
-      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
-        {materialType
-          .filter(item => item.name.includes(materialName))
-          .map(item => this._showMaterialItem(item.id, item.name))}
+      <View style={{ paddingTop: 15, paddingHorizontal: 15, flex: 1 }}>
+        <SearchBar
+          style={{ height: 56, marginBottom: 5 }}
+          handleOnChangeText={this._handleOnChangeText}
+          icon={"navigation"}
+          placeholder={"Enter material keyword"}
+          onSubmitEditing={this._handleSearch}
+          renderRightButton={() => (
+            <TouchableOpacity onPress={this._handleSearch}>
+              <Text>Search</Text>
+            </TouchableOpacity>
+          )}
+        />
+        <Dropdown
+          style={{ marginBottom: 10 }}
+          isHorizontal={true}
+          label={"Material type"}
+          defaultText={DROPDOWN_MATERIAL_TYPE_OPTIONS[0].name}
+          onSelectValue={(value, index) => {
+            this.setState({ materialTypeIndex: index, materialType: value });
+          }}
+          options={this._handleMaterialType()}
+        />
       </View>
     );
   };
 
   render() {
     const { loading } = this.props;
-    const { materialName } = this.state;
     return (
-      <SafeAreaView
-        style={styles.container}
-        forceInset={{ bottom: "never", top: "always" }}
-      >
-        <SearchBar
-          handleOnChangeText={this._handleOnChangeText}
-          onSubmitEditing={() =>
-            this.props.navigation.navigate("MaterialResult", {
-              materialName: materialName
-            })
-          }
-          renderRightButton={() => (
-            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-              <Text style={styles.text}>Cancel</Text>
-            </TouchableOpacity>
-          )}
+      <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
+        <ParallaxList
+          title={"Search Material"}
+          hasLeft={true}
+          scrollElement={<Animated.ScrollView />}
+          renderScrollItem={this._renderScrollContent}
         />
-        {!loading ? <ScrollView>{this._renderItem()}</ScrollView> : <Loading />}
       </SafeAreaView>
     );
   }

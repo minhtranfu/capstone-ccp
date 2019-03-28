@@ -15,9 +15,7 @@ import { SafeAreaView } from "react-navigation";
 import Modal from "react-native-modal";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
-import {
-  searchEquipment,
-} from "../../redux/actions/equipment";
+import { searchEquipment } from "../../redux/actions/equipment";
 import { addSubscription } from "../../redux/actions/subscription";
 
 import Calendar from "../../components/Calendar";
@@ -27,28 +25,28 @@ import EquipmentItem from "../../components/EquipmentItem";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
-import {bindActionCreators} from 'redux';
-import moment from 'moment';
-import Title from '../../components/Title';
-import Dropdown from '../../components/Dropdown';
+import { bindActionCreators } from "redux";
+import moment from "moment";
+import Title from "../../components/Title";
+import Dropdown from "../../components/Dropdown";
 
 const ITEM_HEIGHT = 217;
 const width = Dimensions.get("window").width;
 const DROPDOWN_GENERAL_TYPES_OPTIONS = [
   {
     id: 0,
-    name: 'Any Category',
-    value: 'Select general equipment types'
+    name: "Any Category",
+    value: "Select general equipment types"
   }
-]
+];
 
 const DROPDOWN_TYPES_OPTIONS = [
   {
     id: 0,
-    name: 'Any type',
-    value: 'Select equipment types'
+    name: "Any type",
+    value: "Select equipment types"
   }
-]
+];
 
 @connect(
   state => ({
@@ -57,7 +55,8 @@ const DROPDOWN_TYPES_OPTIONS = [
     listSearch: state.equipment.listSearch,
     generalType: state.type.listGeneralEquipmentType
   }),
-  dispatch => bindActionCreators({ fetchSearchEquipment: searchEquipment,}, dispatch)
+  dispatch =>
+    bindActionCreators({ fetchSearchEquipment: searchEquipment }, dispatch)
 )
 class SearchResult extends Component {
   constructor(props) {
@@ -67,20 +66,21 @@ class SearchResult extends Component {
       filterModalVisible: false,
       calendarVisible: false,
       beginDate: null,
-      endDate: null,
+      endDate: null
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const nextParams = nextProps.navigation.state.params;
-    if(nextParams.beginDate !== prevState.beginDate
-      || nextParams.endDate !== prevState.endDate){
+    if (
+      nextParams.beginDate !== prevState.beginDate ||
+      nextParams.endDate !== prevState.endDate
+    ) {
       return {
         beginDate: nextParams.beginDate,
-        endDate: nextParams.endDate,
+        endDate: nextParams.endDate
       };
-    }
-    else return null;
+    } else return null;
   }
 
   componentDidMount() {
@@ -92,7 +92,7 @@ class SearchResult extends Component {
       endDate,
       equipmentTypeId
     } = this.props.navigation.state.params;
-
+    console.log(beginDate, endDate);
     //const fullAddress = query.main_text.concat(", ", query.secondary_text);
 
     this.props.fetchSearchEquipment(
@@ -107,14 +107,14 @@ class SearchResult extends Component {
 
   //Create new dropdown options for general type
   _handleGeneralEquipmentType = () => {
-    const { generalType } = this.props
+    const { generalType } = this.props;
     let newGeneralEquipmentTypeArray = generalType.map(item => ({
       id: item.id,
       name: item.name,
       value: item.name
-    }))
-    return [...DROPDOWN_GENERAL_TYPES_OPTIONS, ...newGeneralEquipmentTypeArray]
-  }
+    }));
+    return [...DROPDOWN_GENERAL_TYPES_OPTIONS, ...newGeneralEquipmentTypeArray];
+  };
 
   _showAlert = (title, msg) => {
     Alert.alert(title, msg, [{ text: "OK" }], {
@@ -188,16 +188,22 @@ class SearchResult extends Component {
     return (
       <Modal
         isVisible={this.state.modalVisible}
-        onBackdropPress={()=>this._setModalVisible(false)}
-        style={{flexDirection: 'column', flex: 1, padding: 0, margin: 0}}
+        onBackdropPress={() => this._setModalVisible(false)}
+        style={{ flexDirection: "column", flex: 1, padding: 0, margin: 0 }}
       >
-        <View style={{flex: 1}} pointerEvents="none"/>
-        <View style={{ paddingHorizontal: 15, backgroundColor: 'white', alignSelf: "stretch" }}>
+        <View style={{ flex: 1 }} pointerEvents="none" />
+        <View
+          style={{
+            paddingHorizontal: 15,
+            backgroundColor: "white",
+            alignSelf: "stretch"
+          }}
+        >
           <Dropdown
-            style={{marginBottom: 10}}
+            style={{ marginBottom: 10 }}
             isHorizontal={true}
-            label={'Equipment Category'}
-            defaultText={'Any'}
+            label={"Equipment Category"}
+            defaultText={"Any"}
             onSelectValue={(value, index) =>
               this.setState({ generalTypeIndex: index, generalType: value })
             }
@@ -208,26 +214,34 @@ class SearchResult extends Component {
             onPress={() => this._setCalendarVisible(true)}
           >
             <Text style={styles.text}>From</Text>
-            <Text style={styles.text}>{moment(beginDate).format('DD/MM/YY')}</Text>
+            <Text style={styles.text}>
+              {moment(beginDate).format("DD/MM/YY")}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.rowWrapper, { borderBottomWidth: 0 }]}
             onPress={() => this._setCalendarVisible(true)}
           >
             <Text style={styles.text}>To</Text>
-            <Text style={styles.text}>{moment(endDate).format('DD/MM/YY')}</Text>
+            <Text style={styles.text}>
+              {moment(endDate).format("DD/MM/YY")}
+            </Text>
           </TouchableOpacity>
         </View>
-        <SafeAreaView forceInset={{bottom: 'always'}} style={{backgroundColor: colors.secondaryColor}}>
+        <SafeAreaView
+          forceInset={{ bottom: "always" }}
+          style={{ backgroundColor: colors.secondaryColor }}
+        >
           <TouchableOpacity
-            style={[styles.buttonWrapper, {backgroundColor: colors.secondaryColor}]}
+            style={[
+              styles.buttonWrapper,
+              { backgroundColor: colors.secondaryColor }
+            ]}
             onPress={() => {
               this._handleSubmitSearch();
             }}
           >
-            <Text style={[styles.text, { color: "white" }]}>
-              Refine Search
-            </Text>
+            <Text style={[styles.text, { color: "white" }]}>Refine Search</Text>
           </TouchableOpacity>
         </SafeAreaView>
       </Modal>
@@ -261,14 +275,11 @@ class SearchResult extends Component {
   };
 
   renderAddSubscription = () => {
-    const {
-      query,
-      equipmentTypeId
-    } = this.props.navigation.state.params;
+    const { query, equipmentTypeId } = this.props.navigation.state.params;
     const { beginDate, endDate } = this.state;
     const subscriptionInfo = {
-      beginDate: moment(beginDate).format('MM/YY'),
-      endDate: moment(endDate).format('MM/YY'),
+      beginDate: moment(beginDate).format("MM/YY"),
+      endDate: moment(endDate).format("MM/YY"),
       equipmentType: {
         id: equipmentTypeId
       },
@@ -347,14 +358,17 @@ class SearchResult extends Component {
 
   render() {
     const { listSearch, loading } = this.props;
-    const { query, beginDate, endDate, equipmentCat, equipmentType } = this.props.navigation.state.params;
+    const {
+      query,
+      beginDate,
+      endDate,
+      equipmentCat,
+      equipmentType
+    } = this.props.navigation.state.params;
     //const result = this._findResultByAddress(equipment);
 
     return (
-      <SafeAreaView
-        style={styles.container}
-        forceInset={{ top: "always" }}
-      >
+      <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
         <Header
           renderLeftButton={() => (
             <TouchableOpacity
@@ -370,12 +384,16 @@ class SearchResult extends Component {
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("Cart")}
               >
-                <Feather name="shopping-cart" size={20} color={colors.secondaryColor} style={{marginRight: 5}}/>
+                <Feather
+                  name="shopping-cart"
+                  size={20}
+                  color={colors.secondaryColor}
+                  style={{ marginRight: 5 }}
+                />
               </TouchableOpacity>
             </View>
           )}
-        >
-        </Header>
+        />
 
         {!loading ? (
           <View style={{ flex: 1 }}>
@@ -383,23 +401,55 @@ class SearchResult extends Component {
             {/*{this._renderCalendar(beginDate, endDate)}*/}
             {listSearch.length > 0 ? (
               <FlatList
-                ListHeaderComponent={()=> (
-                  <View style={{ backgroundColor: 'white', marginHorizontal: -15, paddingHorizontal: 15, paddingTop: 0, paddingBottom: 10, }}>
-                    <Text style={styles.largeTitle}>{`${listSearch.length || 0} Results`}</Text>
-                    <View style={{flexDirection: 'row', backgroundColor: colors.gray, borderRadius: 10, padding: 15, alignItems: 'center'}}>
-                      <View style={{flex: 1}}>
+                ListHeaderComponent={() => (
+                  <View
+                    style={{
+                      backgroundColor: "white",
+                      marginHorizontal: -15,
+                      paddingHorizontal: 15,
+                      paddingTop: 0,
+                      paddingBottom: 10
+                    }}
+                  >
+                    <Text style={styles.largeTitle}>{`${listSearch.length ||
+                      0} Results`}</Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        backgroundColor: colors.gray,
+                        borderRadius: 10,
+                        padding: 15,
+                        alignItems: "center"
+                      }}
+                    >
+                      <View style={{ flex: 1 }}>
                         <Text style={styles.text} numberOfLines={1}>
                           {`${query.main_text}`}
                         </Text>
                         <Text style={styles.caption}>
-                          {moment(beginDate).format('DD/MM/YY') + " - " + moment(endDate).format('DD/MM/YY')}
+                          {moment(beginDate).format("DD/MM/YY") +
+                            " - " +
+                            moment(endDate).format("DD/MM/YY")}
                         </Text>
                         <Text style={styles.caption}>
-                          {`${equipmentCat || "Any"} ▶ ${equipmentType || "Any"}`}
+                          {`${equipmentCat || "Any"} ▶ ${equipmentType ||
+                            "Any"}`}
                         </Text>
                       </View>
-                      <TouchableOpacity onPress={() => {this.setState({ modalVisible: true });}}>
-                        <Text style={{color: colors.secondaryColor, fontWeight: "600", marginLeft: 8}}>Refine</Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          this.setState({ modalVisible: true });
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: colors.secondaryColor,
+                            fontWeight: "600",
+                            marginLeft: 8
+                          }}
+                        >
+                          Refine
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -468,19 +518,19 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: fontSize.h4,
-    fontWeight: "600",
+    fontWeight: "600"
   },
   caption: {
     fontSize: fontSize.caption,
     color: colors.text68,
     fontWeight: "500",
-    marginTop: 3,
+    marginTop: 3
   },
   text: {
     fontSize: fontSize.secondaryText,
     color: colors.text,
     fontWeight: "600",
-    marginBottom: 3,
+    marginBottom: 3
   },
   textDone: {
     fontWeight: "500",
@@ -495,7 +545,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize.h2,
     fontWeight: "700",
     marginBottom: 5
-  },
+  }
 });
 
 export default SearchResult;

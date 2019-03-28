@@ -142,26 +142,46 @@ class AddDuration extends PureComponent {
     const { timeRanges } = this.state;
     return (
       <View key={index}>
-        <TouchableOpacity onPress={() => this._setCalendarVisible(true, index)}>
-          <Text>Select your date range</Text>
+        <TouchableOpacity
+          onPress={() => this._setCalendarVisible(true, index)}
+          style={{
+            padding: 15,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderRadius: 10,
+            borderColor: colors.secondaryColor
+          }}
+        >
+          <Text style={styles.text}>Select your date range</Text>
         </TouchableOpacity>
-
-        <InputField
-          label={"From"}
-          placeholder={"yyyy-mm-dd"}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          value={timeRanges[index].beginDate}
-          returnKeyType={"next"}
-        />
-        <InputField
-          label={"To"}
-          placeholder={"yyyy-mm-dd"}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          value={timeRanges[index].endDate}
-          returnKeyType={"next"}
-        />
+        <View style={styles.timeRangeWrapper}>
+          <View style={{ flexDirection: "column", paddingLeft: 10 }}>
+            <Text style={styles.text}>Begin date</Text>
+            <Text
+              style={{
+                fontSize: fontSize.secondaryText + 1,
+                lineHeight: fontSize.secondaryText + 1
+              }}
+            >
+              {timeRanges[index].beginDate
+                ? timeRanges[index].beginDate
+                : "Begin Date"}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "column", paddingLeft: 10 }}>
+            <Text style={styles.text}>End date</Text>
+            <Text
+              style={{
+                paddingRight: 10,
+                fontSize: fontSize.secondaryText + 1,
+                lineHeight: fontSize.secondaryText + 1
+              }}
+            >
+              {timeRanges[index].endDate
+                ? timeRanges[index].endDate
+                : "End Date"}
+            </Text>
+          </View>
+        </View>
         {index > 0 ? (
           <TouchableOpacity onPress={() => this._handleRemove(index)}>
             <Text style={styles.textRemove}>Remove</Text>
@@ -242,6 +262,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
+  timeRangeWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: colors.gray,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    height: 80
+  },
   bottomWrapper: {
     backgroundColor: "transparent",
     paddingBottom: 20,
@@ -278,14 +307,20 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   header: {
-    fontSize: fontSize.h4,
-    fontWeight: "500",
-    color: colors.text
+    color: colors.primaryColor,
+    fontSize: fontSize.bodyText,
+    fontWeight: "600"
   },
   textRemove: {
     fontSize: fontSize.bodyText,
     fontWeight: "500",
     color: "red"
+  },
+  text: {
+    color: colors.text50,
+    fontSize: fontSize.caption,
+    height: 15,
+    fontWeight: "500"
   }
 });
 

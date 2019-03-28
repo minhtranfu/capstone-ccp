@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
+import { addMaterialItemToCart } from "../../redux/actions/cart";
 import Feather from "@expo/vector-icons/Feather";
 
 import Button from "../../components/Button";
@@ -22,12 +23,19 @@ import fontSize from "../../config/fontSize";
 
 const { width } = Dimensions.get("window");
 
-@connect((state, ownProps) => {
-  const { id } = ownProps.navigation.state.params;
-  return {
-    detail: state.material.listSearch.find(item => item.id === id)
-  };
-})
+@connect(
+  (state, ownProps) => {
+    const { id } = ownProps.navigation.state.params;
+    return {
+      detail: state.material.listSearch.find(item => item.id === id)
+    };
+  },
+  dispatch => ({
+    fetchAddItemToCart: item => {
+      dispatch(addMaterialItemToCart(item));
+    }
+  })
+)
 class MaterialDetail extends Component {
   constructor(props) {
     super(props);
@@ -67,6 +75,10 @@ class MaterialDetail extends Component {
                   material: detail
                 })
               }
+            />
+            <Button
+              text={"Add to cart"}
+              onPress={() => this.props.fetchAddItemToCart(detail)}
             />
           </ScrollView>
         ) : (

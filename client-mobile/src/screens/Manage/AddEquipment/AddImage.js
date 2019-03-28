@@ -203,7 +203,7 @@ class AddImage extends Component {
               </View>
             </View>
           ) : null}
-          {}
+
           <View
             style={{
               flexDirection: "row",

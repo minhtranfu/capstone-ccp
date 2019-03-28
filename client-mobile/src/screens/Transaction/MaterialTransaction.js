@@ -58,19 +58,19 @@ class MaterialTransaction extends Component {
       quantity: null
     };
   }
-  componentDidMount = async () => {
+  componentDidMount() {
     const { user } = this.props;
     this.props.fetchGetConstruction(user.contractor.id);
-    const locationStatus = await grantPermission("location");
-    if (locationStatus === "granted") {
-      const currentLocation = await Location.getCurrentPositionAsync({});
-      const coords = currentLocation.coords;
-      this.setState({
-        currentLat: coords.latitude,
-        currentLong: coords.longitude
-      });
-    }
-  };
+    // const locationStatus = await grantPermission("location");
+    // if (locationStatus === "granted") {
+    //   const currentLocation = await Location.getCurrentPositionAsync({});
+    //   const coords = currentLocation.coords;
+    //   this.setState({
+    //     currentLat: coords.latitude,
+    //     currentLong: coords.longitude
+    //   });
+    // }
+  }
 
   static getDerivedStateFromProps(props, state) {
     if (state.construction) {
@@ -94,22 +94,23 @@ class MaterialTransaction extends Component {
   };
 
   _handleConfirmBooking = async material => {
-    const { quantity, address } = this.state;
-    if (quantity == 0) {
-      this._showAlert("Quantity must >0");
-    } else {
-      const newMaterialDetail = {
-        material: {
-          id: material.id
-        },
-        quantity: quantity,
-        requesterAddress: address,
-        requesterLat: 10.34,
-        requesterLong: 106
-      };
-      await this.props.fetchRequestTransaction(newMaterialDetail);
-      this.props.navigation.goBack();
-    }
+    const { quantity, address, constructionIndex } = this.state;
+    const { construction } = this.props;
+    const newMaterialDetail = {
+      materialTransactionDetails: [
+        {
+          quantity: parseFloat(quantity),
+          material: {
+            id: material.id
+          }
+        }
+      ],
+      requesterAddress: address,
+      requesterLat: construction[constructionIndex - 1].latitude,
+      requesterLong: construction[constructionIndex - 1].longitude
+    };
+    await this.props.fetchRequestTransaction(newMaterialDetail);
+    this.props.navigation.goBack();
   };
 
   _handleInputChange = (field, value) => {

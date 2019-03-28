@@ -51,15 +51,15 @@ export default function cartReducer(state = INITIAL_STATE, action) {
     case Actions.ADD_MATERIAL_ITEM_TO_CART.SUCCESS: {
       return {
         ...state,
-        listMaterial: [...state.listMaterial, payload]
+        listMaterial: [...state.listMaterial, { data: payload }]
       };
     }
     case Actions.UPDATE_MATERIAL_ITEM_TO_CART.SUCCESS: {
       return {
-        ...state,
-        listMaterial: state.listMaterial.map(item =>
-          item.id === payload.id ? (item = payload.data) : item
-        )
+        ...state
+        // listMaterial: state.listMaterial.map(item =>
+        //   item.id === payload.id ? (item = payload.data) : item
+        // )
       };
     }
     case Actions.REMOVE_MATERIAL_ITEM_FROM_CART: {

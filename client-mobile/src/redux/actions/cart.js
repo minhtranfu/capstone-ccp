@@ -59,24 +59,24 @@ export function cartCheckout(contractorId) {
   };
 }
 
-export function addMaterialItemToCart(data) {
+export function addMaterialItemToCart(item) {
   return {
-    type: Actions.ADD_MATERIAL_ITEM.SUCCESS,
-    payload: data
+    type: Actions.ADD_MATERIAL_ITEM_TO_CART.SUCCESS,
+    payload: item
   };
 }
 
-export function updateMaterialItemToCart(id, data) {
+export function updateMaterialItemToCart(supplierId, itemId, item) {
   return {
     type: Actions.UPDATE_MATERIAL_ITEM_TO_CART.SUCCESS,
-    payload: { data, id }
+    payload: { data: item, id: supplierId, itemId: itemId }
   };
 }
 
-export function removeMaterialItemFromCart(id) {
+export function removeMaterialItemFromCart(supplierId) {
   return {
     type: Actions.REMOVE_MATERIAL_ITEM_TO_CART.SUCCESS,
-    payload: id
+    payload: supplierId
   };
 }
 

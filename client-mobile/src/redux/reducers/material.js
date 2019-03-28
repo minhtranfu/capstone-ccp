@@ -50,6 +50,12 @@ export default function materialReducer(state = INITIAL_STATE, action) {
         listSearch: payload.data
       };
     }
+    case Actions.SEARCH_MATERIAL.ERROR: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
     case Actions.ADD_NEW_MATERIAL.SUCCESS: {
       return {
         ...state,

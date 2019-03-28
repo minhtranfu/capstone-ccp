@@ -3,12 +3,36 @@ import PropTypes from "prop-types";
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { CalendarList as CalendarPeriod } from "react-native-calendars";
+import dateFnsFormat from "date-fns/format";
+import compareAsc from "date-fns/compare_asc";
 import Feather from "@expo/vector-icons/Feather";
 
 import Header from "../components/Header";
 import Button from "../components/Button";
 import fontSize from "../config/fontSize";
 import colors from "../config/colors";
+
+// const availableDateRange = [
+//   {
+//     startDate: "2019-03-18",
+//     endDate: "2019-04-01"
+//   },
+//   {
+//     startDate: "2019-04-10",
+//     endDate: "2019-05-01"
+//   },
+//   {
+//     startDate: "2019-05-10",
+//     endDate: "2019-06-02"
+//   }
+// ];
+
+getDaysArray = (start, end) => {
+  for (var arr = [], dt = start; dt <= end; dt.setDate(dt.getDate() + 1)) {
+    arr.push(new Date(dt));
+  }
+  return arr.map(v => v.toISOString().slice(0, 10));
+};
 
 class Calendar extends PureComponent {
   static propTypes = {
@@ -33,6 +57,45 @@ class Calendar extends PureComponent {
   componentWillUnmount() {
     this._handleClearDate();
   }
+
+  _handleNotAvailableDay = () => {
+    const { availableDateRange } = this.props;
+    if (availableDateRange) {
+      const availableDate = availableDateRange.reduce((acc, cur) => {
+        const dateList = getDaysArray(
+          new Date(cur.startDate),
+          new Date(cur.endDate)
+        );
+        console.log(dateList);
+        return acc.concat(dateList);
+      }, []);
+      availableDate.sort((a, b) => compareAsc(new Date(a), new Date(b)));
+      //remove duplicate date if has
+      const uniqueAvailableDate = [...new Set(availableDate)];
+      const firstAvailableDate = uniqueAvailableDate[0];
+      const lastAvailableDate =
+        uniqueAvailableDate[uniqueAvailableDate.length - 1];
+      const allDateList = getDaysArray(
+        new Date(firstAvailableDate),
+        new Date(lastAvailableDate)
+      );
+      const notAvailableDate = allDateList.filter(
+        date => !uniqueAvailableDate.includes(date)
+      );
+      return notAvailableDate.reduce(
+        (acc, cur) => ({
+          ...acc,
+          [cur]: {
+            selected: false,
+            disabled: true,
+            disableTouchEvent: true
+          }
+        }),
+        {}
+      );
+    }
+    return {};
+  };
 
   //Find date between from date and to date
   _findDiffDay = (fromDate, toDate) => {
@@ -163,9 +226,11 @@ class Calendar extends PureComponent {
       animationType,
       transparent,
       visible,
-      onLeftButtonPress
+      onLeftButtonPress,
+      timeRange
     } = this.props;
     const { fromDate, endDate } = this.state;
+
     return (
       <Modal
         animationType={animationType}
@@ -208,23 +273,18 @@ class Calendar extends PureComponent {
             futureScrollRange={10}
             showScrollIndicator={true}
             theme={{
-              calendarBackground: "#333248",
-              textSectionTitleColor: "white",
-              dayTextColor: "white",
-              todayTextColor: "yellow",
-              selectedDayTextColor: "white",
-              monthTextColor: "white",
-              selectedDayBackgroundColor: "#333248",
-              textDisabledColor: "gray",
-              "stylesheet.calendar.header": {
-                week: {
-                  marginTop: 5,
-                  flexDirection: "row",
-                  justifyContent: "space-between"
-                }
-              }
+              textSectionTitleColor: "#0D2421",
+              dayTextColor: "#0D2421",
+              arrowColor: "#065747",
+              monthTextColor: "#065747",
+              textMonthFontSize: 16,
+              textDayFontSize: 15,
+              textDayHeaderFontSize: 15
             }}
-            markedDates={this.state.markedDates}
+            markedDates={{
+              ...this.state.markedDates,
+              ...this._handleNotAvailableDay()
+            }}
             {...this.props}
           />
           <Button

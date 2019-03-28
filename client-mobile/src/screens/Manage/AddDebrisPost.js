@@ -18,7 +18,11 @@ import {
   clearTypeServices
 } from "../../redux/actions/debris";
 import { autoCompleteSearch } from "../../redux/actions/location";
+import { ImagePicker, Permissions } from "expo";
+import axios from "axios";
 
+import Title from "../../components/Title";
+import AutoComplete from "../../components/AutoComplete";
 import InputField from "../../components/InputField";
 import Dropdown from "../../components/Dropdown";
 import Header from "../../components/Header";
@@ -55,7 +59,10 @@ class AddDebrisPost extends Component {
     this.state = {
       address: "",
       title: "",
-      servicesType: []
+      servicesType: [],
+      lat: null,
+      lng: null,
+      images: []
     };
   }
 
@@ -69,14 +76,71 @@ class AddDebrisPost extends Component {
     });
   };
 
-  _handleSubmit = () => {
-    const { address, title } = this.state;
+  _renderAutoCompleteItem = item => (
+    <TouchableOpacity
+      style={styles.autocompleteWrapper}
+      onPress={() => {
+        this.setState({
+          address: item.main_text + ", " + item.secondary_text,
+          lat: item.lat,
+          lng: item.lng,
+          hideResults: true
+        });
+      }}
+    >
+      <Text style={styles.addressMainText}>{item.main_text}</Text>
+      <Text style={styles.caption}>{item.secondary_text}</Text>
+    </TouchableOpacity>
+  );
+
+  _handleAddImage = async () => {
+    const { status } = await Permissions.getAsync(Permissions.CAMERA_ROLL);
+    if (status === "granted") {
+      let result = await ImagePicker.launchImageLibraryAsync();
+      if (!result.cancelled) {
+        this.setState({
+          images: [...this.state.images, result.uri]
+        });
+      }
+    }
+  };
+
+  _handleAddressChange = async address => {
+    this.setState({
+      location: await autoCompleteSearch(address, null, null)
+    });
+  };
+
+  _handleSubmit = async () => {
+    const { address, title, lat, lng, images } = this.state;
     const { typeServices } = this.props;
+    this.setState({ submitLoading: true });
+    const form = new FormData();
+    images.map((item, i) => {
+      form.append("image", {
+        uri: item,
+        type: "image/png",
+        name: "image.png"
+      });
+    });
+    const res = await axios.post(`storage/equipmentImages`, form, {
+      headers: { "Content-Type": "multipart/form-data" }
+    });
+    const image = {
+      debrisImages: res.data.map(item => {
+        return {
+          id: item.id
+        };
+      }),
+      thumbnailImage: {
+        id: res.data[0].id
+      }
+    };
     const article = {
       title,
       address,
-      latitude: 10.001,
-      longitude: 106.121313,
+      latitude: lat,
+      longitude: lng,
       debrisServiceTypes: typeServices.map(item => {
         return { id: item.id };
       })
@@ -90,9 +154,8 @@ class AddDebrisPost extends Component {
   };
 
   _renderContent = () => {
-    const { title, address } = this.state;
+    const { title, address, images } = this.state;
     const { typeServices } = this.props;
-    console.log("type", typeServices);
     return (
       <View>
         <InputField
@@ -104,14 +167,18 @@ class AddDebrisPost extends Component {
           value={title}
           returnKeyType={"next"}
         />
-        <InputField
+        <AutoComplete
           label={"Address"}
           placeholder={"Input your address"}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          onChangeText={value => this.setState({ address: value })}
+          onFocus={() => this.setState({ hideResults: false })}
+          hideResults={this.state.hideResults}
+          data={location}
           value={address}
-          returnKeyType={"next"}
+          onChangeText={value => {
+            this.setState({ address: value });
+            this._handleAddressChange(value);
+          }}
+          renderItem={item => this._renderAutoCompleteItem(item)}
         />
         <Text style={styles.text}>Debris services types</Text>
         <View>
@@ -135,7 +202,33 @@ class AddDebrisPost extends Component {
             <Text style={styles.text}>Add types</Text>
           </TouchableOpacity>
         </View>
-        <Button text={"Submit"} onPress={() => this._handleSubmit()} />
+        <Title text={"Insert your image"} />
+        {images.length > 0 ? (
+          <View>
+            <Image
+              source={{ uri: images[imageIndex] }}
+              style={styles.landscapeImg}
+              resizeMode={"cover"}
+            />
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                flexWrap: "wrap"
+              }}
+            >
+              {images.map((item, index) =>
+                this._renderRowImageUpdate(item, index, imageIndex)
+              )}
+            </View>
+          </View>
+        ) : null}
+        <Button
+          text={"Add Image"}
+          onPress={this._handleAddImage}
+          wrapperStyle={{ marginBottom: 15 }}
+        />
+        <Button text={"Submit"} onPress={this._handleSubmit} />
       </View>
     );
   };
