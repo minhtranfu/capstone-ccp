@@ -38,8 +38,9 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   hasMoreText: {
-    color: colors.primaryColor,
-    fontSize: fontSize.caption
+    color: colors.secondaryColor,
+    fontSize: fontSize.caption,
+    fontWeight: "500"
   }
 });
 

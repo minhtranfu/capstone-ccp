@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   ScrollView,
-  Modal
+  Modal, Animated
 } from 'react-native'
 import { SafeAreaView } from 'react-navigation'
 import { connect } from 'react-redux'
@@ -25,6 +25,9 @@ import { FlatList } from 'react-native-gesture-handler'
 
 import colors from '../../config/colors'
 import fontSize from '../../config/fontSize'
+import ParallaxList from '../../components/ParallaxList';
+import Title from '../../components/Title';
+import moment from 'moment';
 
 const RADIO_BUTON_DATA = [
   { id: 1, value: 'Equipment' },
@@ -150,33 +153,17 @@ class Search extends Component {
     </TouchableOpacity>
   )
 
-  _formatDate = date => {
-    let newDate = new Date(date)
-    let year = newDate.getFullYear()
-    let month = newDate.getMonth() + 1
-    let day = newDate.getDate()
-    return year + '-' + month + '-' + day
-  }
-
-  _handleDateRange = days => {
-    let today = new Date()
-    let result = today.setDate(today.getDate() + days)
-    return this._formatDate(result)
-  }
-
   _renderRowItem = (item, index) => {
     const {
       currentLat,
       currentLong,
-      fromDate,
-      toDate,
       generalTypeIndex,
       typeIndex
-    } = this.state
-    const beginDate = this._formatDate(Date.now())
-    const endDate = this._handleDateRange(30)
-    const newTypeOptions = this._handleEquipmentType(generalTypeIndex)
-    let id = newTypeOptions[typeIndex].id
+    } = this.state;
+    const beginDate = moment();
+    const endDate = moment().add(30, "days");
+    const newTypeOptions = this._handleEquipmentType(generalTypeIndex);
+    let id = newTypeOptions[typeIndex].id;
 
     return (
       <TouchableOpacity
@@ -187,73 +174,75 @@ class Search extends Component {
             query: item,
             lat: currentLat,
             long: currentLong,
-            beginDate: beginDate,
-            endDate: endDate,
+            beginDate,
+            endDate,
             equipmentTypeId: id ? id : ''
           })
         }
       >
-        <Text style={styles.text}>{item.main_text}</Text>
-        <Text style={styles.secondaryText}>{item.secondary_text}</Text>
+        <Text style={styles.addressShort}>{item.main_text}</Text>
+        <Text style={styles.addressFull}>{item.secondary_text}</Text>
       </TouchableOpacity>
     )
-  }
+  };
+
+  _renderScrollContent = () => {
+    const { location, generalTypeIndex } = this.state
+    return (
+      <View style={{paddingTop: 15, paddingHorizontal: 15, flex: 1}}>
+        <SearchBar
+          style={{ height: 56, marginBottom: 5}}
+          handleOnChangeText={this._handleOnChangeText}
+          icon={"navigation"}
+          placeholder={"Enter equipment location"}
+          renderRightButton={() => (
+            <TouchableOpacity>
+              <Feather name={"crosshair"} size={20} color={colors.text}/>
+            </TouchableOpacity>
+          )}
+        />
+        <Dropdown
+          style={{marginBottom: 10}}
+          isHorizontal={true}
+          label={'Equipment Category'}
+          defaultText={'Any'}
+          onSelectValue={(value, index) =>
+            this.setState({ generalTypeIndex: index, generalType: value })
+          }
+          options={this._handleGeneralEquipmentType()}
+        />
+        <Dropdown
+          isHorizontal={true}
+          label={'Type'}
+          defaultText={'Any'}
+          onSelectValue={(value, index) =>
+            this.setState({ type: value, typeIndex: index })
+          }
+          options={this._handleEquipmentType(generalTypeIndex)}
+        />
+        {location.length > 0 ? (
+          <View style={styles.columnWrapper}>
+            <Title title={"Suggested locations"}/>
+            {location.map((item, index) => this._renderRowItem(item, index))}
+          </View>
+        ) : null }
+      </View>
+    )
+  };
 
   render() {
     const { location, fromDate, toDate, generalTypeIndex, checked } = this.state
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: 'always', top: 'always' }}
+        forceInset={{ top: 'always' }}
       >
-        <SearchBar
-          handleOnChangeText={this._handleOnChangeText}
-          renderRightButton={() => (
-            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-              <Text style={styles.text}>Cancel</Text>
-            </TouchableOpacity>
-          )}
+        <ParallaxList
+          title={"Search Equipment"}
+          hasLeft={true}
+          scrollElement={<Animated.ScrollView />}
+          renderScrollItem={this._renderScrollContent}
         />
-        <View style={{ paddingHorizontal: 15 }}>
-          <Dropdown
-            isHorizontal={true}
-            label={'General Equipment Type'}
-            defaultText={'All'}
-            onSelectValue={(value, index) =>
-              this.setState({ generalTypeIndex: index, generalType: value })
-            }
-            options={this._handleGeneralEquipmentType()}
-          />
-          <Dropdown
-            isHorizontal={true}
-            label={'Type'}
-            defaultText={'All'}
-            onSelectValue={(value, index) =>
-              this.setState({ type: value, typeIndex: index })
-            }
-            options={this._handleEquipmentType(generalTypeIndex)}
-          />
-        </View>
-        <ScrollView style={{ marginTop: 10 }}>
-          {location.length > 0 ? (
-            <View style={styles.columnWrapper}>
-              {location.map((item, index) => this._renderRowItem(item, index))}
-            </View>
-          ) : (
-            <View style={styles.columnWrapper}>
-              <TouchableOpacity style={styles.buttonWrapper}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <MaterialIcons name="my-location" size={22} />
-                  <Text style={[styles.text, { paddingLeft: 10 }]}>
-                    Current Location
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <Text style={styles.title}>Recently Search</Text>
-              {this._renderButton('340 Nguyen Tat Thanh')}
-            </View>
-          )}
-        </ScrollView>
       </SafeAreaView>
     )
   }
@@ -262,19 +251,18 @@ class Search extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column'
   },
   columnWrapper: {
     flexDirection: 'column',
-    paddingHorizontal: 15
+    paddingTop: 10,
   },
   buttonWrapper: {
     justifyContent: 'center',
     flexDirection: 'column',
-    marginTop: 10,
-    paddingBottom: 10,
-    borderBottomWidth: 0.5,
-    borderBottomColor: colors.secondaryColorOpacity
+    paddingTop: 10,
+    paddingBottom: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.text25
   },
   typeButtonWrapper: {
     paddingHorizontal: 15,
@@ -292,8 +280,19 @@ const styles = StyleSheet.create({
     fontWeight: '500'
   },
   text: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text,
+    fontWeight: '600'
+  },
+  addressShort: {
     fontSize: fontSize.bodyText,
-    fontWeight: '500'
+    color: colors.text,
+    fontWeight: '600',
+    marginBottom: 5,
+  },
+  addressFull: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text50,
   },
   secondaryText: {
     fontSize: fontSize.secondaryText,
@@ -307,6 +306,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10
   }
-})
+});
 
 export default Search

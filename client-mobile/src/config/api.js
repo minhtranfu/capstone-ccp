@@ -10,15 +10,16 @@ export default async function configAPI(config) {
 
   axios.interceptors.request.use(
     async config => {
+
       if (
         config.baseURL === "https://ccp.hoctot.net/api" &&
         !config.headers.Authorization
       ) {
         const token = await AsyncStorage.getItem("userToken");
-        if (token) {
+        if (token !== null && token) {
           config.headers.Authorization = `Bearer ${token}`;
         } else {
-          config.headers.Authorization = ``;
+          delete config.headers.Authorization;
         }
       }
 

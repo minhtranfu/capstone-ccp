@@ -343,7 +343,7 @@ class MyEquipment extends PureComponent {
       return (
         <SafeAreaView
           style={styles.container}
-          forceInset={{ bottom: "always", top: "always" }}
+          forceInset={{ top: "always" }}
         >
           <Header
             renderRightButton={() => (
@@ -438,7 +438,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 15,
-    marginTop: 5
   },
   equipmentItemContainer: {
     paddingVertical: 8

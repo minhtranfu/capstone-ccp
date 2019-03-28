@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Image
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
@@ -27,39 +27,40 @@ class SearchBar extends Component {
       renderLeftButton,
       clearButtonMode,
       onSubmitEditing,
-      handleOnChangeText
+      handleOnChangeText,
+      icon,
+      placeholder,
+      style
     } = this.props;
 
     return (
-      <View style={[styles.container, this.props.style]}>
-        <View style={styles.textInputContainer}>
-          {renderLeftButton ? renderLeftButton() : null}
-          <View
-            style={[
-              styles.buttonWrapper,
-              renderLeftButton ? { marginLeft: 5 } : null,
-              renderRightButton ? { marginRight: 5 } : null
-            ]}
-          >
-            <Ionicons name="ios-search" size={20} />
-            <TextInput
-              style={styles.input}
-              onChangeText={text => {
-                this.setState({ keyword: text });
-                handleOnChangeText(text);
-              }}
-              placeholder="Search"
-              placeholderTextColor={colors.secondaryColorOpacity}
-              autoCorrect={false}
-              returnKeyType="search"
-              clearButtonMode={
-                clearButtonMode ? clearButtonMode : "while-editing"
-              }
-              onSubmitEditing={onSubmitEditing}
-            />
-          </View>
-          {renderRightButton ? renderRightButton() : null}
+      <View style={[styles.container, style]}>
+        {renderLeftButton ? renderLeftButton() : null}
+        <View
+          style={[
+            styles.buttonWrapper,
+            renderLeftButton ? { marginLeft: 5 } : null,
+            renderRightButton ? { marginRight: 5 } : null
+          ]}
+        >
+          <Feather name={icon || "search"} size={16} />
+          <TextInput
+            style={styles.input}
+            onChangeText={text => {
+              this.setState({ keyword: text });
+              handleOnChangeText(text);
+            }}
+            placeholder={placeholder || "Search"}
+            placeholderTextColor={colors.text50}
+            autoCorrect={false}
+            returnKeyType="search"
+            clearButtonMode={
+              clearButtonMode ? clearButtonMode : "while-editing"
+            }
+            onSubmitEditing={onSubmitEditing}
+          />
         </View>
+        {renderRightButton ? renderRightButton() : null}
       </View>
     );
   }
@@ -67,30 +68,28 @@ class SearchBar extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 5,
     height: 44,
-    marginHorizontal: 15
-  },
-  textInputContainer: {
-    height: 32,
-    flexDirection: "row",
-    alignItems: "center"
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: "center",
+    paddingVertical: 5
   },
   buttonWrapper: {
+    alignSelf: 'stretch',
     flex: 1,
-    backgroundColor: "#00000023",
-    borderRadius: 15,
+    backgroundColor: colors.gray,
+    borderRadius: 5,
     paddingHorizontal: 10,
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 5
+    justifyContent: "center",
   },
   input: {
     flex: 1,
-    height: 32,
-    paddingLeft: 5,
+    paddingLeft: 10,
     backgroundColor: "transparent",
-    fontSize: fontSize.bodyText
+    fontSize: fontSize.secondaryText + 1,
+    lineHeight: fontSize.secondaryText + 1,
   }
 });
 

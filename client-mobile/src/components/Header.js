@@ -24,7 +24,6 @@ class Header extends React.PureComponent {
         <View
           style={[
             styles.header,
-            styles.headerStyle,
             renderLeftButton ? { marginLeft: 5 } : null,
             renderRightButton ? { marginRight: 5 } : null
           ]}

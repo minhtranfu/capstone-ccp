@@ -17,7 +17,6 @@ import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import {
   searchEquipment,
-  clearSearchResult
 } from "../../redux/actions/equipment";
 import { addSubscription } from "../../redux/actions/subscription";
 
@@ -28,6 +27,9 @@ import EquipmentItem from "../../components/EquipmentItem";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+import {bindActionCreators} from 'redux';
+import moment from 'moment';
+import Title from '../../components/Title';
 
 const ITEM_HEIGHT = 217;
 const width = Dimensions.get("window").width;
@@ -38,23 +40,7 @@ const width = Dimensions.get("window").width;
     loading: state.equipment.searchLoading,
     listSearch: state.equipment.listSearch
   }),
-  dispatch => ({
-    fetchSearchEquipment: (
-      address,
-      long,
-      lat,
-      beginDate,
-      endDate,
-      equipmentTypeId
-    ) => {
-      dispatch(
-        searchEquipment(address, long, lat, beginDate, endDate, equipmentTypeId)
-      );
-    },
-    fetchClearSearchEquipment: () => {
-      dispatch(clearSearchResult());
-    }
-  })
+  dispatch => bindActionCreators({ fetchSearchEquipment: searchEquipment,}, dispatch)
 )
 class SearchResult extends Component {
   constructor(props) {
@@ -63,9 +49,21 @@ class SearchResult extends Component {
       modalVisible: true,
       filterModalVisible: false,
       calendarVisible: false,
-      fromDate: "",
-      toDate: ""
+      beginDate: null,
+      endDate: null,
     };
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const nextParams = nextProps.navigation.state.params;
+    if(nextParams.beginDate !== prevState.beginDate
+      || nextParams.endDate !== prevState.endDate){
+      return {
+        beginDate: nextProps.beginDate,
+        toDate: nextProps.endDate,
+      };
+    }
+    else return null;
   }
 
   componentDidMount() {
@@ -77,7 +75,9 @@ class SearchResult extends Component {
       endDate,
       equipmentTypeId
     } = this.props.navigation.state.params;
-    const fullAddress = query.main_text.concat(", ", query.secondary_text);
+
+    //const fullAddress = query.main_text.concat(", ", query.secondary_text);
+
     this.props.fetchSearchEquipment(
       query.main_text,
       lat,
@@ -86,7 +86,6 @@ class SearchResult extends Component {
       endDate,
       equipmentTypeId
     );
-    this.setState({ fromDate: beginDate, toDate: endDate });
   }
 
   _showAlert = (title, msg) => {
@@ -107,73 +106,22 @@ class SearchResult extends Component {
     this.setState({ calendarVisible: visible, modalVisible: !visible });
   };
 
-  _handleDateFormat = date => {
-    let dateFormat = new Date(date);
-    year = dateFormat.getFullYear();
-    month = dateFormat.getMonth() + 1;
-    dt = dateFormat.getDate();
-    if (dt < 10) {
-      dt = "0" + dt;
-    }
-    if (month < 10) {
-      month = "0" + month;
-    }
-    return year + "-" + month + "-" + dt;
-  };
-
-  _formatDate = date => {
-    var monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec"
-    ];
-    let newDate = new Date(date);
-    let year = newDate.getFullYear();
-    let monthIndex = newDate.getMonth();
-    let day = newDate.getDate();
-
-    let newYear = year === 2019 ? "" : "," + year;
-    return monthNames[monthIndex] + " " + day + newYear;
-  };
-
   _handleSubmitSearch = () => {
     const {
       query,
       lat,
       long,
-      beginDate,
-      endDate,
       equipmentTypeId
     } = this.props.navigation.state.params;
-    const { fromDate, toDate } = this.state;
+    const { beginDate, endDate } = this.state;
 
-    console.log(
-      "ahihi search submit",
-      query.main_text,
-      lat,
-      long,
-      fromDate,
-      toDate,
-      equipmentTypeId,
-      beginDate,
-      endDate
-    );
-    if (fromDate && toDate) {
+    if (beginDate && endDate) {
       this.props.fetchSearchEquipment(
         query.main_text,
         lat,
         long,
-        fromDate ? fromDate : beginDate,
-        toDate ? toDate : endDate,
+        beginDate,
+        endDate,
         equipmentTypeId
       );
     }
@@ -208,7 +156,7 @@ class SearchResult extends Component {
 
   _renderSearchModal = () => {
     const { query } = this.props.navigation.state.params;
-    const { fromDate, toDate } = this.state;
+    const { beginDate, endDate } = this.state;
     return (
       <Modal transparent={true} visible={this.state.modalVisible}>
         <TouchableOpacity
@@ -236,14 +184,14 @@ class SearchResult extends Component {
                 onPress={() => this._setCalendarVisible(true)}
               >
                 <Text style={styles.text}>From</Text>
-                <Text style={styles.text}>{this._formatDate(fromDate)}</Text>
+                <Text style={styles.text}>{moment(beginDate).format('DD/MM/YY')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.rowWrapper, { borderBottomWidth: 0 }]}
                 onPress={() => this._setCalendarVisible(true)}
               >
                 <Text style={styles.text}>To</Text>
-                <Text style={styles.text}>{this._formatDate(toDate)}</Text>
+                <Text style={styles.text}>{moment(endDate).format('DD/MM/YY')}</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity
@@ -323,27 +271,15 @@ class SearchResult extends Component {
     );
   };
 
-  formatDateMonth = date => {
-    const dates = date.split("-");
-    const month = dates[1];
-    if (month.length >= 2) {
-      return `${dates[0]}-${month}-${dates[2]}`;
-    } else {
-      return `${dates[0]}-0${month}-${dates[2]}`;
-    }
-  };
-
   renderAddSubscription = () => {
     const {
       query,
-      beginDate,
-      endDate,
       equipmentTypeId
     } = this.props.navigation.state.params;
-    const { fromDate, toDate } = this.state;
+    const { beginDate, endDate } = this.state;
     const subscriptionInfo = {
-      beginDate: this.formatDateMonth(fromDate ? fromDate : beginDate),
-      endDate: this.formatDateMonth(toDate ? toDate : endDate),
+      beginDate: moment(beginDate).format('MM/YY'),
+      endDate: moment(endDate).format('MM/YY'),
       equipmentType: {
         id: equipmentTypeId
       },
@@ -424,11 +360,11 @@ class SearchResult extends Component {
     const { listSearch, loading } = this.props;
     const { query, beginDate, endDate } = this.props.navigation.state.params;
     //const result = this._findResultByAddress(equipment);
-    console.log("ahihi", listSearch);
+
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "always", top: "always" }}
+        forceInset={{ top: "always" }}
       >
         <Header
           renderLeftButton={() => (
@@ -437,7 +373,7 @@ class SearchResult extends Component {
                 this.props.navigation.goBack();
               }}
             >
-              <Feather name="arrow-left" size={24} />
+              <Feather name="arrow-left" size={22} />
             </TouchableOpacity>
           )}
           renderRightButton={() => (
@@ -445,23 +381,15 @@ class SearchResult extends Component {
               <TouchableOpacity
                 style={{ marginRight: 10 }}
                 onPress={() => {
-                  this.setState({ modalVisible: true });
-                }}
-              >
-                <Feather name="search" size={24} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{ marginRight: 10 }}
-                onPress={() => {
                   this.setState({ filterModalVisible: true });
                 }}
               >
-                <Feather name="sliders" size={24} />
+                <Feather name="sliders" size={22} />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("Cart")}
               >
-                <Feather name="shopping-cart" size={24} />
+                <Feather name="shopping-cart" size={22} />
               </TouchableOpacity>
             </View>
           )}
@@ -478,21 +406,26 @@ class SearchResult extends Component {
               {query.main_text}
             </Text>
             <Text style={styles.caption}>
-              {this._formatDate(beginDate) + " - " + this._formatDate(endDate)}
+              {moment(beginDate).format('DD/MM/YY') + " - " + moment(endDate).format('DD/MM/YY')}
             </Text>
           </TouchableOpacity>
         </Header>
 
         {!loading ? (
           <View style={{ flex: 1 }}>
-            {this._renderSearchModal()}
-            {this._renderFilterModal()}
-            {this._renderCalendar(beginDate, endDate)}
+            {/*{this._renderSearchModal()}*/}
+            {/*{this._renderFilterModal()}*/}
+            {/*{this._renderCalendar(beginDate, endDate)}*/}
             {listSearch.length > 0 ? (
               <FlatList
-                style={{ paddingTop: 15, paddingHorizontal: 15 }}
+                ListHeaderComponent={()=> (
+                  <View style={{ backgroundColor: 'white', marginHorizontal: -15, paddingHorizontal: 15 }}>
+                    <Title title={`${listSearch.length} Equipments Found`} hasMore={"Refine Search"}/>
+                  </View>
+                )}
+                stickyHeaderIndices={[0]}
+                contentContainerStyle={{ paddingHorizontal: 15 }}
                 data={listSearch}
-                removeClippedSubviews={false}
                 renderItem={this._renderItem}
                 getItemLayout={(data, index) => ({
                   length: ITEM_HEIGHT,
@@ -572,7 +505,14 @@ const styles = StyleSheet.create({
     color: colors.secondaryColor,
     paddingTop: 15,
     paddingBottom: 15
-  }
+  },
+  largeTitle: {
+    alignItems: "center",
+    color: colors.primaryColor,
+    fontSize: fontSize.h2,
+    marginLeft: 15,
+    fontWeight: "700"
+  },
 });
 
 export default SearchResult;

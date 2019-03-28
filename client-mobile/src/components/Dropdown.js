@@ -43,9 +43,9 @@ class Dropdown extends Component {
   }
 
   render() {
-    const { options, isHorizontal, onPress } = this.props;
+    const { options, isHorizontal, onPress, style } = this.props;
     return (
-      <View style={{backgroundColor: '#f5f5f7', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5,}}>
+      <View style={[{backgroundColor: '#f5f5f7', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5,}, style]}>
         <Modal transparent={true} visible={this.state.modalVisible}>
           <View style={styles.container}>
             <View style={styles.titleContainer}>
