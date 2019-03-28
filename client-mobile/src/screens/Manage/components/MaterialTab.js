@@ -8,7 +8,7 @@ import fontSize from "../../../config/fontSize";
 
 class MaterialTab extends PureComponent {
   render() {
-    return this.props.materialList.map(item => (
+    return this.props.listMaterial.map(item => (
       <MaterialSearchItem
         key={item.id}
         onPress={() =>

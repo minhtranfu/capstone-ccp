@@ -2,7 +2,8 @@ import * as Actions from "../types";
 
 const INITIAL_STATE = {
   loading: false,
-  list: []
+  list: [],
+  listMaterial: []
 };
 
 export default function cartReducer(state = INITIAL_STATE, action) {
@@ -45,6 +46,32 @@ export default function cartReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         list: []
+      };
+    }
+    case Actions.ADD_MATERIAL_ITEM_TO_CART.SUCCESS: {
+      return {
+        ...state,
+        listMaterial: [...state.listMaterial, payload]
+      };
+    }
+    case Actions.UPDATE_MATERIAL_ITEM_TO_CART.SUCCESS: {
+      return {
+        ...state,
+        listMaterial: state.listMaterial.map(item =>
+          item.id === payload.id ? (item = payload.data) : item
+        )
+      };
+    }
+    case Actions.REMOVE_MATERIAL_ITEM_FROM_CART: {
+      return {
+        ...state,
+        listMaterial: listMaterial.filter(item => item.id !== payload)
+      };
+    }
+    case Actions.CLEAR_MATERIAL_CART.SUCCESS: {
+      return {
+        ...state,
+        listMaterial: []
       };
     }
     default:

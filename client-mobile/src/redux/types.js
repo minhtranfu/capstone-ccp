@@ -108,6 +108,16 @@ export const UPDATE_ITEM_CART = renderActions("@@cart/UPDATE_ITEM_CART");
 export const REMOVE_ITEM_CART = renderActions("@@cart/REMOVE_ITEM_CART");
 export const REMOVE_ALL_ITEM = renderActions("@@cart/REMOVE_ALL_ITEM");
 export const CART_CHECK_OUT = renderActions("@@cart/CART_CHECK_OUT");
+export const ADD_MATERIAL_ITEM_TO_CART = renderActions(
+  "@@cart/ADD_MATERIAL_ITEM_TO_CART"
+);
+export const REMOVE_MATERIAL_ITEM_FROM_CART = renderActions(
+  "@@cart/REMOVE_MATERIAL_ITEM_FROM_CART"
+);
+export const UPDATE_MATERIAL_ITEM_TO_CART = renderActions(
+  "@@cart/UPDATE_MATERIAL_ITEM_TO_CART"
+);
+export const CLEAR_MATERIAL_CART = renderActions("@@cart/CLEAR_MATERIAL_CART");
 
 // STATUS
 export const STATUS_LOADING = "@@status/LOADING";

@@ -41,10 +41,10 @@ class AutoComplete extends Component {
           autoCapitalize={autoCapitalize}
           style={[styles.placeholder, placeholderStyle]}
         />
-        {data && data.length > 0 ? (
-          <ScrollView
+        {data && data.length > 0 && !hideResults ? (
+          <View
             style={{
-              height: 250,
+              flex: 1,
               backgroundColor: "white"
             }}
             contentContainerStyle={{
@@ -52,7 +52,7 @@ class AutoComplete extends Component {
             }}
           >
             {data.slice(0, 5).map(item => renderItem(item))}
-          </ScrollView>
+          </View>
         ) : null}
       </View>
     );

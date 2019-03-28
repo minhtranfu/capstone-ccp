@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Image as ImageCache } from "react-native-expo-image-cache";
 import { Entypo, Ionicons } from "@expo/vector-icons";
-import moment from 'moment';
+import moment from "moment";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
@@ -45,12 +45,14 @@ class TransactionItem extends PureComponent {
     endDate: PropTypes.string
   };
 
+  static defaultProps = {};
+
   _renderEquipmentStatus = () => {
     const { status, equipmentStatus } = this.props;
 
     if (status !== "DENIED") {
       return (
-        <Text style={{color: COLORS[equipmentStatus || "default"]}}>
+        <Text style={{ color: COLORS[equipmentStatus || "default"] }}>
           {EQUIPMENT_STATUS[equipmentStatus]}
         </Text>
       );
@@ -68,12 +70,14 @@ class TransactionItem extends PureComponent {
       beginDate,
       endDate,
       onPress,
+      hasStatus,
       status,
       statusBackgroundColor,
       avatarURL,
       role,
       hasEquipmentStatus,
-      containerStyle
+      containerStyle,
+      price
     } = this.props;
 
     // Calculate date differences
@@ -81,47 +85,85 @@ class TransactionItem extends PureComponent {
     const begin = moment(beginDate);
     const duration = moment.duration(end.diff(begin));
     const days = duration.asDays() + 1;
+    const totalPrice = days * price;
 
     return (
-      <TouchableOpacity style={[styles.container, containerStyle]} onPress={onPress}>
-        <View style={{flexDirection: 'column', flex: 1 }}>
-          <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+      <TouchableOpacity
+        style={[styles.container, containerStyle]}
+        onPress={onPress}
+      >
+        <View style={{ flexDirection: "column", flex: 1 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
             <ImageCache
               uri={avatarURL}
               style={styles.avatar}
               resizeMode={"cover"}
             />
-            <View style={{flexDirection: 'column', marginHorizontal: 8, flex: 1 }}>
+            <View
+              style={{ flexDirection: "column", marginHorizontal: 8, flex: 1 }}
+            >
               <Text style={styles.contractorName}>{contractor}</Text>
               <Text style={styles.equipmentName}>▶ {name}</Text>
             </View>
           </View>
-          <View style={{ marginTop: 10}}>
-            <View style={{flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ marginTop: 10 }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Image
-                source={require('../../assets/icons/icons8-calendar.png')}
+                source={require("../../assets/icons/icons8-calendar.png")}
                 style={styles.calendarIcon}
                 resizeMode={"contain"}
               />
-              <Text style={styles.duration}>{`${days} ${days > 1 ? 'days' : 'day'}`}</Text>
+              <Text style={styles.duration}>
+                {`${days} ${days > 1 ? "days" : "day"}`}
+              </Text>
             </View>
-            <Text style={styles.startEndDate}>{begin.format('DD/MM/YY')} - {end.format('DD/MM/YY')}</Text>
-            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5, marginBottom: 3 }}>
-              <Image
-                source={require('../../assets/icons/icons8-rounded_rectangle.png')}
-                style={[styles.statusIcon, {tintColor: statusBackgroundColor}]}
-                resizeMode={"contain"}
-              />
-              <Text style={styles.duration}>{status}</Text>
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5, marginBottom: 3 }}>
-              <Image
-                source={require('../../assets/icons/icons8-digger.png')}
-                style={[styles.calendarIcon]}
-                resizeMode={"contain"}
-              />
-              {this._renderEquipmentStatus()}
-            </View>
+            <Text style={styles.startEndDate}>
+              {begin.format("DD/MM/YY")} - {end.format("DD/MM/YY")}
+            </Text>
+
+            {hasStatus ? (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 5,
+                  marginBottom: 3
+                }}
+              >
+                <Image
+                  source={require("../../assets/icons/icons8-rounded_rectangle.png")}
+                  style={[
+                    styles.statusIcon,
+                    { tintColor: statusBackgroundColor }
+                  ]}
+                  resizeMode={"contain"}
+                />
+                <Text style={styles.duration}>{status}</Text>
+              </View>
+            ) : null}
+            {hasEquipmentStatus ? (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 5,
+                  marginBottom: 3
+                }}
+              >
+                <Image
+                  source={require("../../assets/icons/icons8-digger.png")}
+                  style={[styles.calendarIcon]}
+                  resizeMode={"contain"}
+                />
+                {this._renderEquipmentStatus()}
+              </View>
+            ) : null}
           </View>
         </View>
         <View style={styles.equipmentThumbnailWrapper}>
@@ -139,12 +181,12 @@ class TransactionItem extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: "white",
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 10,
-    paddingRight: 0,
+    paddingRight: 0
   },
   avatar: {
     height: 36,
@@ -154,23 +196,23 @@ const styles = StyleSheet.create({
   contractorName: {
     fontSize: fontSize.caption,
     color: colors.text,
-    fontWeight: "600",
+    fontWeight: "600"
   },
   equipmentName: {
     fontSize: fontSize.caption,
     color: colors.text68,
-    fontWeight: "500",
+    fontWeight: "500"
     // alignSelf: 'flex-end'
   },
   equipmentThumbnailWrapper: {
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
     marginVertical: -10,
-    overflow: 'hidden'
+    overflow: "hidden"
   },
   equipmentThumbnail: {
     width: 90,
-    flex: 1,
+    flex: 1
   },
   calendarIcon: {
     width: 15,
@@ -181,21 +223,26 @@ const styles = StyleSheet.create({
   duration: {
     fontSize: fontSize.caption,
     color: colors.text50,
-    fontWeight: "500",
+    fontWeight: "500"
   },
   startEndDate: {
     fontSize: fontSize.caption,
     color: colors.text,
     fontWeight: "600",
     marginLeft: 15 + 3,
-    marginTop: 3,
+    marginTop: 3
   },
   statusIcon: {
     width: 13,
     height: 15,
     tintColor: colors.text50,
     marginRight: 4,
-    marginLeft: 1,
+    marginLeft: 1
+  },
+  price: {
+    fontSize: fontSize.h4,
+    color: colors.primaryColor,
+    fontWeight: "600"
   }
 });
 

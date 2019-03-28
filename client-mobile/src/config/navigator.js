@@ -29,7 +29,6 @@ import MyEquipment from "../screens/Manage";
 import MyEquipmentDetail from "../screens/Manage/Detail";
 import AddDetail from "../screens/Manage/AddEquipment/AddDetail";
 import AddDuration from "../screens/Manage/AddEquipment/AddDuration";
-import AddDurationText from "../screens/Manage/AddEquipment/AddDurationText";
 import AddImage from "../screens/Manage/AddEquipment/AddImage";
 import RequireLogin from "../screens/Login/RequireLogin";
 import ConfirmAdjustDate from "../screens/MyRequest/ConfirmAdjustDate";
@@ -133,8 +132,8 @@ const AddNewEquipmentStack = DismissableStackNav(
   {
     AddDetail: AddDetail,
     AddDuration: AddDuration,
-    AddDurationText: AddDurationText,
-    AddImage: AddImage
+    AddImage: AddImage,
+    AddMaterialDetail: AddMaterialDetail
   },
   {
     headerMode: "none",
@@ -147,7 +146,6 @@ const MyEquipmentStack = createStackNavigator(
     MyEquipment: MyEquipment,
     MyEquipmentDetail: MyEquipmentDetail,
     AddNewEquipment: AddNewEquipmentStack,
-    AddMaterialDetail: AddMaterialDetail,
     MyMaterialDetail: MyMaterialDetail,
     MyPostDetail: MyPostDetail,
     MyBidsDetail: MyBidsDetail,

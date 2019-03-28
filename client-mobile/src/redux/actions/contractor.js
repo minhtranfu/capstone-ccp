@@ -112,7 +112,7 @@ export function listFeedbackTypes() {
     dispatch({
       type: Actions.LIST_FEEDBACK_TYPES.REQUEST
     });
-    const res = await axios.get(`feedbackTypes`);
+    const res = await axios.get(`reports?from=20&to=12`);
     dispatch({
       type: Actions.LIST_FEEDBACK_TYPES.SUCCESS,
       payload: res
@@ -120,9 +120,9 @@ export function listFeedbackTypes() {
   };
 }
 
-export function createNewFeedback(feedback) {
+export function createNewFeedback(report) {
   return async dispatch => {
-    const res = await axios.post(`feedbacks`, feedback);
+    const res = await axios.post(`reports`, report);
     dispatch({
       type: Actions.CREATE_NEW_FEEDBACK.SUCCESS,
       payload: res

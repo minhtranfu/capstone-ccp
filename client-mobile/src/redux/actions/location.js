@@ -62,7 +62,6 @@ export const autoCompleteSearch = async (stringAddress, lat, long) => {
     .then(res => res.json())
     .then(async res => {
       const predictions = res.predictions;
-      console.log("ahihi auto complete", predictions);
       const autocomplete = await Promise.all(
         predictions.map(async item => {
           const latLong = await getLatLongByAddress(item.description);
@@ -76,4 +75,30 @@ export const autoCompleteSearch = async (stringAddress, lat, long) => {
     });
 
   if (autoComplete) return autoComplete;
+};
+
+export const getDistance = async (srcLatLong, desLatLong) => {
+  const distance = await fetch(
+    `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${
+      srcLatLong.lat
+    },${srcLatLong.lng}&destinations=${desLatLong.lat},${
+      desLatLong.lng
+    }&key=${GOOGLE_MAPS_KEY}`
+  )
+    .then(res => res.json())
+    .then(res => {
+      const distanceRows = res.rows && res.rows[0];
+      const elements = distanceRows && distanceRows.elements;
+      const selectedElement = elements && elements[0];
+      const distance = selectedElement.distance;
+      return distance
+        ? {
+            ...distance,
+            origin_addresses: res.origin_addresses[0],
+            destination_addresses: res.destination_addresses[0]
+          }
+        : {};
+    });
+
+  if (distance) return distance;
 };

@@ -309,6 +309,9 @@ class Activity extends Component {
                       beginDate={item.beginDate}
                       endDate={item.endDate}
                       role={"Supplier"}
+                      price={item.equipment.dailyPrice}
+                      hasEquipmentStatus={true}
+                      hasStatus={true}
                     />
                     {this._renderBottomStatus(
                       item.status,

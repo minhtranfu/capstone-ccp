@@ -58,3 +58,30 @@ export function cartCheckout(contractorId) {
     });
   };
 }
+
+export function addMaterialItemToCart(data) {
+  return {
+    type: Actions.ADD_MATERIAL_ITEM.SUCCESS,
+    payload: data
+  };
+}
+
+export function updateMaterialItemToCart(id, data) {
+  return {
+    type: Actions.UPDATE_MATERIAL_ITEM_TO_CART.SUCCESS,
+    payload: { data, id }
+  };
+}
+
+export function removeMaterialItemFromCart(id) {
+  return {
+    type: Actions.REMOVE_MATERIAL_ITEM_TO_CART.SUCCESS,
+    payload: id
+  };
+}
+
+export function clearMaterialCart() {
+  return {
+    type: Actions.CLEAR_MATERIAL_CART.SUCCESS
+  };
+}

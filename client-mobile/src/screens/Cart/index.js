@@ -4,20 +4,26 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList
+  FlatList,
+  Alert
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
+import { Image } from "react-native-expo-image-cache";
 import {
   getCartList,
   removeItemCart,
   cartCheckout
 } from "../../redux/actions/cart";
+import Swipeable from "react-native-swipeable";
 
+import TransactionItem from "../../components/TransactionItem";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
+
 import fontSize from "../../config/fontSize";
+import colors from "../../config/colors";
 
 @connect(
   state => ({
@@ -54,22 +60,25 @@ class Cart extends Component {
   _renderItem = ({ item }) => {
     const { user } = this.props;
     return (
-      <View
-        key={item.id}
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between"
+      <TransactionItem
+        id={item.id}
+        name={item.equipment.name}
+        imageURL={
+          item.equipment.thumbnailImage ||
+          "https://images1.houstonpress.com/imager/u/745xauto/9832653/dump_edit_resize.jpg"
+        }
+        contractor={item.equipment.contractor.name}
+        phone={item.equipment.contractor.phoneNumber}
+        beginDate={item.beginDate}
+        endDate={item.endDate}
+        avatarURL={item.equipment.contractor.thumbnailImage}
+        price={item.equipment.dailyPrice}
+        containerStyle={{
+          backgroundColor: "white",
+          borderRadius: 10,
+          padding: 10
         }}
-      >
-        <Text style={styles.text}>{item.equipment.name}</Text>
-        <Text style={styles.text}>{item.equipment.address}</Text>
-        <TouchableOpacity
-          onPress={() => this._handleRemoveItem(user.contractor.id, item.id)}
-        >
-          <Feather name={"x"} size={24} />
-        </TouchableOpacity>
-      </View>
+      />
     );
   };
 
@@ -80,8 +89,9 @@ class Cart extends Component {
 
   _renderFlatList = () => {
     const { cart } = this.props;
+    console.log(cart);
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <FlatList
           style={{ paddingHorizontal: 15 }}
           data={cart}
@@ -116,7 +126,7 @@ class Cart extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text style={styles.header}>Cart</Text>
+          <Text style={styles.header}>My Orders</Text>
         </Header>
         {!loading ? this._renderFlatList() : <Loading />}
       </SafeAreaView>
