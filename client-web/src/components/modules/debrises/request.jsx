@@ -140,13 +140,15 @@ class DebriseTransactionsRequest extends Component {
         break;
 
       case DEBRIS_POST_STATUSES.FINISHED:
-        buttons.push(
-          <button
-            key={`finish-${transaction.id}`}
-            className="btn btn-primary mt-2"
-            onClick={() => this._showFeedbackModal(transaction)}
-          >Feedback</button>
-        );
+        if (!transaction.feedbacked) {
+          buttons.push(
+            <button
+              key={`finish-${transaction.id}`}
+              className="btn btn-primary mt-2"
+              onClick={() => this._showFeedbackModal(transaction)}
+            >Feedback</button>
+          );
+        }
         break;
     
       default:
@@ -357,10 +359,25 @@ class DebriseTransactionsRequest extends Component {
     }
   };
 
-  _closeRatingModal = () => {
-    this.setState({
+  _closeRatingModal = (feedback) => {
+    const newState = {
       feedbackingTransaction: undefined
-    });
+    };
+
+    if (feedback && feedback.id) {
+      const { feedbackingTransaction, transactions } = this.state;
+      newState.transactions = transactions.map(transaction => {
+        if (transaction.id !== feedbackingTransaction.id) {
+          return transaction;
+        }
+
+        transaction.feedbacked = true;
+
+        return transaction;
+      });
+    }
+
+    this.setState(newState);
   };
 
   render() {

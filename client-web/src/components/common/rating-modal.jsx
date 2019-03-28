@@ -67,12 +67,13 @@ class RatingModal extends Component {
       id: transaction.id
     }
     try {
-      await feedbackServices.feedbackDebris(this.data);
+      const feebback = await feedbackServices.feedbackDebris(this.data);
 
       // Submit success, close modal
       this.setState({
         isSending: false,
-        isSubmitSuccess: true
+        isSubmitSuccess: true,
+        feebback
       });
     } catch (error) {
       this.setState({
@@ -193,12 +194,12 @@ class RatingModal extends Component {
    * Render form fields
    */
   _renderForm = () => {
-    const { transaction, feedbackTypeEntity } = this.props;
+    const { transaction } = this.props;
     const { validateResult } = this.state;
 
-    // if (!transaction) {
-    //   return null;
-    // }
+    if (!transaction) {
+      return null;
+    }
 
     return (
       <div>
@@ -258,6 +259,7 @@ class RatingModal extends Component {
    * Reset modal data and call close modal
    */
   _handleCloseModal = () => {
+    const { feebback } = this.state;
     const { onClose } = this.props;
     // Reset form
     this.data = {};
@@ -265,7 +267,7 @@ class RatingModal extends Component {
       validateResult: {}
     });
 
-    onClose && onClose();
+    onClose && onClose(feebback);
   };
 
   /**
@@ -296,6 +298,7 @@ class RatingModal extends Component {
    * Close success alert
    */
   _closeSuccessAlert = () => {
+
     this.setState({
       isSubmitSuccess: undefined
     }, () => {
