@@ -142,7 +142,7 @@ class AddEquipment extends Component {
     return (
       <div>
         {this.state.equipmentId &&
-          <Redirect to={getRoutePath(routeConsts.EQUIPMENT_EDIT, {id: this.state.equipmentId})} />
+          <Redirect to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, {id: this.state.equipmentId})} />
         }
         <Nav tabs>
           {tabs}
