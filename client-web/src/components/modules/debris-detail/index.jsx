@@ -5,6 +5,9 @@ import Skeleton from "react-loading-skeleton";
 import Helmet from "react-helmet-async";
 import StarRatings from 'react-star-ratings';
 import { Alert } from "reactstrap";
+import OwlCarousel from "react-owl-carousel";
+import "owl.carousel/dist/assets/owl.carousel.css";
+import "owl.carousel/dist/assets/owl.theme.default.css";
 
 import Image from "../../common/Image";
 import { authActions } from "../../../redux/actions";
@@ -33,6 +36,13 @@ class DebrisDetail extends Component {
     this.setState({
       debris: data
     });
+  };
+
+  /**
+   * Navigate to clicked image in nav owl
+   */
+  _showImage = index => {
+    this.mainOwl.to(index, 250);
   };
 
   componentDidMount() {
@@ -252,13 +262,47 @@ class DebrisDetail extends Component {
         <div className="row py-4">
           {/* Main content */}
           <div className="col-md-9">
-            {/* <div className="image-169 mb-2 shadow-sm">
-              <Image src={debris.thumbnailImageUrl} />
-            </div> */}
             <Alert isOpen={!!message} toggle={this._clearMessage}>
               {message}
             </Alert>
-            <div className="py-2 px-3 shadow-sm bg-white">
+            {(debris.debrisImages && (
+              <OwlCarousel
+                loop
+                autoPlay={true}
+                autoplayTimeout={2000}
+                items={1}
+                className="owl-theme product-images"
+                margin={10}
+                ref={mainOwl => (this.mainOwl = mainOwl)}
+              >
+                {debris.debrisImages.map((image, index) => (
+                  <div key={index} className="item image-169">
+                    <img src={image.url} alt={debris.title} />
+                  </div>
+                ))}
+              </OwlCarousel>
+            )) || <Skeleton height={410} />}
+            {(debris.debrisImages && (
+              <OwlCarousel
+                items={5}
+                className="owl-theme product-images-nav mt-2"
+                margin={10}
+                rewind={false}
+                dots={false}
+                nav={true}
+              >
+                {debris.debrisImages.map((image, index) => (
+                  <div
+                    key={index}
+                    onClick={() => this._showImage(index)}
+                    className="item image-169"
+                  >
+                    <img src={image.url} alt={debris.title} />
+                  </div>
+                ))}
+              </OwlCarousel>
+            )) || <Skeleton height={65} />}
+            <div className="mt-2 py-2 px-3 shadow-sm bg-white">
               <h1 className="">{debris.title || <Skeleton />}</h1>
               <div className="row">
                 <div className="col-md-12 py-2">
