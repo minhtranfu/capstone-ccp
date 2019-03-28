@@ -21,10 +21,10 @@ class Header extends Component {
       to: getRoutePath(routeConsts.EQUIPMENTS),
       name: 'Equipments'
     },
-    {
-      to: getRoutePath(routeConsts.MATERIALS),
-      name: 'Materials'
-    },
+    // {
+    //   to: getRoutePath(routeConsts.MATERIALS),
+    //   name: 'Materials'
+    // },
     {
       to: getRoutePath(routeConsts.DEBRISES),
       name: 'Debrises'
