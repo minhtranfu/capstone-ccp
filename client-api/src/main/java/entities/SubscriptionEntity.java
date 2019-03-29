@@ -65,6 +65,8 @@ public class SubscriptionEntity {
 	@Max(180)
 	private Double longitude;
 
+	private String address;
+
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -185,5 +187,16 @@ public class SubscriptionEntity {
 
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
+	}
+
+
+	@Basic
+	@Column(name = "address")
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 }

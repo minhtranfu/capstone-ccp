@@ -41,6 +41,8 @@ public class SubscriptionRequest {
 	@Max(180)
 	private Double longitude;
 
+	private String address;
+
 	public long getId() {
 		return id;
 	}
@@ -105,5 +107,13 @@ public class SubscriptionRequest {
 
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 }
