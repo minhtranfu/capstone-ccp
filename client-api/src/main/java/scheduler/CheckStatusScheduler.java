@@ -17,8 +17,8 @@ public class CheckStatusScheduler {
 	@Inject
 	EquipmentDAO equipmentDAO;
 
-//	@Schedule(hour = "5", minute = "0", second = "0")
-	@Schedule(hour = "*", minute = "*", second = "0/4")
+	@Schedule(hour = "5", minute = "0", second = "0")
+//	@Schedule(hour = "*", minute = "*", second = "0/4")
 	public void checkRentingStatus() {
 		LOGGER.info("CHECKING RENTING STATUS");
 		// get overdate renting transaction list ( or equipment list)
