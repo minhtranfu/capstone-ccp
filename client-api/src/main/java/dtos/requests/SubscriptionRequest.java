@@ -13,8 +13,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class SubscriptionRequest {
-	private long id;
-
 	//can be null
 	@Valid
 	private IdOnly equipmentType;
@@ -43,13 +41,6 @@ public class SubscriptionRequest {
 
 	private String address;
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public IdOnly getEquipmentType() {
 		return equipmentType;
