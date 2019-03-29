@@ -9,6 +9,7 @@ import * as debrisServices from './debris.services';
 import * as debrisBidServices from './debris-bid.services';
 import * as debrisTransactionServices from './debris-transaction.services';
 import * as debrisFeedbackServices from './debris-feedback.services';
+import * as subscriptionServices from './subscription.services';
 
 export {
   userServices,
@@ -21,5 +22,6 @@ export {
   debrisServices,
   debrisBidServices,
   debrisTransactionServices,
-  debrisFeedbackServices
+  debrisFeedbackServices,
+  subscriptionServices
 };

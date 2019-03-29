@@ -23,6 +23,10 @@ class SubHeader extends Component {
       to: getRoutePath(routeConsts.EQUIPMENT_REQUEST),
       name: 'Equipment requests'
     },
+    {
+      to: getRoutePath(routeConsts.SUBSCRIPTION_REQUEST),
+      name: 'Subscriptions'
+    },
   ];
 
   materialMenu = [

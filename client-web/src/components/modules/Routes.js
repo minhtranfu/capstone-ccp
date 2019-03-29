@@ -66,6 +66,12 @@ export const modules = [
     isPrivate: true
   },
   {
+    name: routeConsts.SUBSCRIPTION_REQUEST,
+    path: '/equipments/subscriptions',
+    modulePath: './subscription/requested',
+    isPrivate: true,
+  },
+  {
     name: routeConsts.EQUIPMENT_DETAIL,
     path: '/equipments/:id',
     modulePath: './equip-detail/EquipDetail'

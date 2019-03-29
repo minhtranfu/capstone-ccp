@@ -7,9 +7,13 @@ import PropTypes from 'prop-types';
 
 export class AddressInput extends Component {
 
-  state = {
-    address: ''
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      address: props.address || ''
+    };
+  }
 
   /**
    * Handle user input to address field
@@ -143,7 +147,9 @@ export class AddressInput extends Component {
 
 AddressInput.props = {
   wrapperProps: PropTypes.object,
-  inputProps: PropTypes.object
+  inputProps: PropTypes.object,
+  onChange: PropTypes.func,
+  onSelect: PropTypes.func
 };
 
 AddressInput.defaultProps = {
