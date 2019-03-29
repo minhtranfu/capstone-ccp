@@ -101,17 +101,6 @@ const DROPDOWN_OPTIONS = [
   }
 ];
 
-const EQUIPMENT_STATUS = {
-  AVAILABLE: "Available",
-  PENDING: "Pending",
-  ACCEPTED: "Accepted",
-  CANCEL: "Cancel",
-  DELIVERING: "Equipment is on delivering",
-  RENTING: "Renting",
-  WAITING_FOR_RETURNING: "Equipment is waiting for return",
-  FINISHED: "Equipment has been returned"
-};
-
 @connect(
   state => {
     return {

@@ -95,13 +95,13 @@ const TRANSACTION_STATUSES = [
 
 const EQUIPMENT_STATUS = {
   AVAILABLE: "Available",
-  PENDING: "Wait for supplier accept",
-  ACCEPTED: "Supplier has been accepted",
-  CANCEL: "Requester has been canceled",
-  DELIVERING: "Equipment is on delivering",
+  PENDING: "Pending",
+  ACCEPTED: "Accepted",
+  CANCEL: "Cancel",
+  DELIVERING: "Delivering",
   RENTING: "Renting",
-  WAITING_FOR_RETURNING: "Equipment is turning back",
-  FINISHED: "Equipment has been returned"
+  WAITING_FOR_RETURNING: "Returning",
+  FINISHED: "Returned"
 };
 
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

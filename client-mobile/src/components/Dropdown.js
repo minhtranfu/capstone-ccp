@@ -31,7 +31,7 @@ class Dropdown extends Component {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (!_.isEqual(nextProps.options, prevState.options)) {
+    if (prevState.options !== null && !_.isEqual(nextProps.options, prevState.options)) {
       console.log("ssss");
       return {
         options: nextProps.options,

@@ -47,11 +47,11 @@ const STEP_PROGRESS_OPTIONS = [
 ];
 
 const EQUIPMENT_IN_PROGRESS = {
-  PENDING: "Wait for supplier accept",
+  PENDING: "Waiting for supplier's acceptance",
   ACCEPTED: "Supplier has been accepted",
   CANCEL: "Requester has been canceled",
-  DELIVERING: "Equipment is on delivering",
-  WAITING_FOR_RETURNING: "Return equipment to supplier",
+  DELIVERING: "Equipment is being delivered",
+  WAITING_FOR_RETURNING: "Returning equipment to supplier",
   FINISHED: "Equipment has been returned"
 };
 

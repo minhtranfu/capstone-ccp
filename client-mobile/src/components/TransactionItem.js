@@ -13,10 +13,10 @@ const EQUIPMENT_STATUS = {
   PENDING: "Pending",
   ACCEPTED: "Accepted",
   CANCEL: "Cancel",
-  DELIVERING: "Equipment is on delivering",
+  DELIVERING: "Delivering",
   RENTING: "Renting",
-  WAITING_FOR_RETURNING: "Equipment is waiting for return",
-  FINISHED: "Equipment has been returned"
+  WAITING_FOR_RETURNING: "Returning",
+  FINISHED: "Returned"
 };
 
 const COLORS = {
