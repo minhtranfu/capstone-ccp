@@ -48,7 +48,7 @@ class MaterialDetail extends Component {
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "never", top: "always" }}
+        forceInset={{ top: "always" }}
       >
         <Header
           renderLeftButton={() => (

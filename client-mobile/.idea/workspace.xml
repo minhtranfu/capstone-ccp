@@ -3,13 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="08833f7d-c7ef-4de4-9a16-c145c38c73e2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Dropdown.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Dropdown.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/TransactionItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TransactionItem.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/screens/MyRequest/Detail.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/MyRequest/Detail.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/screens/MyRequest/EquipmentTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/MyRequest/EquipmentTab.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/screens/MyRequest/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/MyRequest/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/screens/MyTransaction/EquipmentTab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/MyTransaction/EquipmentTab.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/screens/MyTransaction/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/MyTransaction/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Search/Detail.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Search/Detail.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Search/MaterialDetail.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Search/MaterialDetail.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -23,19 +18,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Utils/MockData.js">
+        <entry file="file://$PROJECT_DIR$/src/screens/Search/Detail.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" column="112" selection-start-line="1" selection-start-column="3" selection-end-line="1" selection-end-column="112" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/DebrisItem.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="33" column="33" selection-start-line="33" selection-start-column="33" selection-end-line="33" selection-end-column="33" />
+            <state relative-caret-position="87">
+              <caret line="330" column="14" lean-forward="true" selection-start-line="330" selection-start-column="14" selection-end-line="330" selection-end-column="14" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
               </folding>
@@ -44,13 +30,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/DebrisSearchItem.js">
+        <entry file="file://$PROJECT_DIR$/src/screens/Search/MaterialDetail.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="660">
-              <caret line="52" column="34" selection-start-line="52" selection-start-column="12" selection-end-line="52" selection-end-column="34" />
-              <folding>
-                <element signature="e#0#41#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="82">
+              <caret line="50" column="22" selection-start-line="50" selection-start-column="22" selection-end-line="50" selection-end-column="22" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/screens/Manage/MaterialDetail.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-833">
+              <caret line="202" column="2" selection-start-line="202" selection-start-column="2" selection-end-line="202" selection-end-column="2" />
             </state>
           </provider>
         </entry>
@@ -58,74 +50,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/Dropdown.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="48" column="6" lean-forward="true" selection-start-line="48" selection-start-column="6" selection-end-line="48" selection-end-column="6" />
+            <state relative-caret-position="-377">
+              <caret line="48" column="6" selection-start-line="48" selection-start-column="6" selection-end-line="48" selection-end-column="6" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/TransactionItem.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="231">
-              <caret line="18" column="22" lean-forward="true" selection-start-line="11" selection-start-column="2" selection-end-line="18" selection-end-column="22" />
-              <folding>
-                <element signature="e#0#45#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/screens/MyTransaction/EquipmentTab.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="115" lean-forward="true" selection-start-line="115" selection-end-line="115" />
-              <folding>
-                <element signature="e#0#41#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/screens/MyTransaction/index.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="81">
-              <caret line="101" column="2" selection-start-line="101" selection-start-column="2" selection-end-line="101" selection-end-column="2" />
-              <folding>
-                <element signature="e#0#41#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/screens/MyRequest/EquipmentTab.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="96" column="37" lean-forward="true" selection-start-line="96" selection-start-column="37" selection-end-line="96" selection-end-column="37" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/screens/MyRequest/index.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="231">
-              <caret line="103" column="22" selection-start-line="103" selection-start-column="22" selection-end-line="103" selection-end-column="22" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/screens/MyRequest/Detail.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="201">
-              <caret line="53" column="35" selection-start-line="53" selection-start-column="35" selection-end-line="53" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -134,8 +63,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>My</find>
-      <find>Statuses</find>
       <find>Search</find>
       <find>General E</find>
       <find>order</find>
@@ -164,6 +91,8 @@
       <find>EQUIP</find>
       <find>EQUIPMENT_STATUS</find>
       <find>is on de</find>
+      <find>Time R</find>
+      <find>Material D</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -172,7 +101,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/config/mockData.js" />
         <option value="$PROJECT_DIR$/src/screens/Discover/index.js" />
         <option value="$PROJECT_DIR$/src/components/Button.js" />
         <option value="$PROJECT_DIR$/src/screens/Account/index.js" />
@@ -213,7 +141,6 @@
         <option value="$PROJECT_DIR$/src/screens/Search/index.js" />
         <option value="$PROJECT_DIR$/src/screens/Search/SearchResult.js" />
         <option value="$PROJECT_DIR$/src/Utils/MockData.js" />
-        <option value="$PROJECT_DIR$/src/screens/Search/Detail.js" />
         <option value="$PROJECT_DIR$/src/components/EquipmentItem.js" />
         <option value="$PROJECT_DIR$/src/components/ParallaxList.js" />
         <option value="$PROJECT_DIR$/src/components/Dropdown.js" />
@@ -223,6 +150,8 @@
         <option value="$PROJECT_DIR$/src/screens/MyRequest/EquipmentTab.js" />
         <option value="$PROJECT_DIR$/src/screens/MyRequest/index.js" />
         <option value="$PROJECT_DIR$/src/screens/MyRequest/Detail.js" />
+        <option value="$PROJECT_DIR$/src/screens/Search/Detail.js" />
+        <option value="$PROJECT_DIR$/src/screens/Search/MaterialDetail.js" />
       </list>
     </option>
   </component>
@@ -346,12 +275,12 @@
       <updated>1553595628723</updated>
       <workItem from="1553595632040" duration="24886000" />
       <workItem from="1553659114492" duration="15326000" />
-      <workItem from="1553833564630" duration="843000" />
+      <workItem from="1553833564630" duration="4953000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="78493000" />
+    <option name="totallyTimeSpent" value="82603000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="2" y="23" width="1167" height="1027" extended-state="0" />
@@ -382,23 +311,6 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/screens/Account/Construction.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1755">
-          <caret line="145" column="58" selection-start-line="145" selection-start-column="58" selection-end-line="145" selection-end-column="58" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/screens/Account/components/ConstructionItem.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" selection-start-line="3" selection-end-line="3" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/AnimatedHeader/Body.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -670,17 +582,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/screens/Search/Detail.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4980">
-          <caret line="359" column="17" selection-start-line="359" selection-start-column="17" selection-end-line="359" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-            <element signature="e#627#688#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/EquipmentItem.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="675">
@@ -710,8 +611,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/DebrisSearchItem.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="52" column="34" selection-start-line="52" selection-start-column="12" selection-end-line="52" selection-end-column="34" />
+        <state relative-caret-position="690">
+          <caret line="54" column="34" selection-start-line="54" selection-start-column="34" selection-end-line="54" selection-end-column="34" />
           <folding>
             <element signature="e#0#41#0" expanded="true" />
           </folding>
@@ -735,20 +636,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/Dropdown.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="48" column="6" lean-forward="true" selection-start-line="48" selection-start-column="6" selection-end-line="48" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/TransactionItem.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="231">
-          <caret line="18" column="22" lean-forward="true" selection-start-line="11" selection-start-column="2" selection-end-line="18" selection-end-column="22" />
+          <caret line="18" column="22" selection-start-line="11" selection-start-column="2" selection-end-line="18" selection-end-column="22" />
           <folding>
             <element signature="e#0#45#0" expanded="true" />
           </folding>
@@ -758,7 +649,7 @@
     <entry file="file://$PROJECT_DIR$/src/screens/MyTransaction/EquipmentTab.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="171">
-          <caret line="115" lean-forward="true" selection-start-line="115" selection-end-line="115" />
+          <caret line="115" selection-start-line="115" selection-end-line="115" />
           <folding>
             <element signature="e#0#41#0" expanded="true" />
           </folding>
@@ -775,10 +666,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/screens/MyRequest/EquipmentTab.js">
+    <entry file="file://$PROJECT_DIR$/src/screens/MyRequest/Detail.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="96" column="37" lean-forward="true" selection-start-line="96" selection-start-column="37" selection-end-line="96" selection-end-column="37" />
+        <state relative-caret-position="111">
+          <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
         </state>
       </provider>
     </entry>
@@ -789,10 +680,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/screens/MyRequest/Detail.js">
+    <entry file="file://$PROJECT_DIR$/src/screens/MyRequest/EquipmentTab.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="53" column="35" selection-start-line="53" selection-start-column="35" selection-end-line="53" selection-end-column="35" />
+        <state relative-caret-position="216">
+          <caret line="96" column="37" selection-start-line="96" selection-start-column="37" selection-end-line="96" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Dropdown.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-377">
+          <caret line="48" column="6" selection-start-line="48" selection-start-column="6" selection-end-line="48" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/screens/Search/Detail.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="87">
+          <caret line="330" column="14" lean-forward="true" selection-start-line="330" selection-start-column="14" selection-end-line="330" selection-end-column="14" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/screens/Search/MaterialDetail.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="82">
+          <caret line="50" column="22" selection-start-line="50" selection-start-column="22" selection-end-line="50" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/screens/Manage/MaterialDetail.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-833">
+          <caret line="202" column="2" selection-start-line="202" selection-start-column="2" selection-end-line="202" selection-end-column="2" />
         </state>
       </provider>
     </entry>

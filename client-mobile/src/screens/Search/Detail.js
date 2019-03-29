@@ -7,7 +7,8 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
-  Modal
+  Modal,
+  InteractionManager
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import MapView, { Marker } from "react-native-maps";
@@ -63,8 +64,18 @@ class SearchDetail extends Component {
       toDate: "",
       calendarVisible: false,
       isModalOpen: false,
-      date: {}
+      date: {},
+      finishedAnimation: false,
     };
+  }
+
+  componentDidMount() {
+    // 1: Component has been mounted off-screen
+    InteractionManager.runAfterInteractions(() => {
+      // 2: Component is done animating
+      // 3: Do your anotherAction dispatch() here
+      this.setState({ finishedAnimation: true })
+    });
   }
 
   _setModalVisible(visible) {
@@ -338,7 +349,7 @@ class SearchDetail extends Component {
             <Text style={styles.text}>per day</Text>
           </View>
         </View>
-        <Title title={"Time Range Available"} />
+        <Title title={"Available Time Range"} />
         {availableTimeRanges.map((item, index) =>
           this._renderRangeItem(index, item)
         )}
@@ -373,7 +384,7 @@ class SearchDetail extends Component {
 
         <Title title={"Location"} />
         <Text style={[styles.text, { paddingVertical: 5 }]}>{address}</Text>
-        <MapView
+        {this.state.finishedAnimation && (<MapView
           style={styles.mapWrapper}
           initialRegion={{
             latitude: 10.831668,
@@ -386,7 +397,7 @@ class SearchDetail extends Component {
             coordinate={{ latitude: 10.831668, longitude: 106.682495 }}
             title={"Me"}
           />
-        </MapView>
+        </MapView>)}
       </View>
     );
   };
@@ -432,7 +443,7 @@ class SearchDetail extends Component {
           imageURL={
             detail.equipmentEntity.thumbnailImage
               ? detail.equipmentEntity.thumbnailImage.url
-              : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg"
+              : 'null'
           }
           hasLeft={true}
           hasCart={true}
