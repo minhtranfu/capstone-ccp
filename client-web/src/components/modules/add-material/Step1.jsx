@@ -136,6 +136,7 @@ class AddEquipmentStep1 extends Step {
     if (categoryId) {
       selectedCategory = categories.find(category => category.id === +categoryId);
     }
+    let selectedType = {};
 
     return (
       <div className="container">
@@ -173,6 +174,10 @@ class AddEquipmentStep1 extends Step {
               <select name="materialTypeId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.materialTypeId || ''} id="equip_type_id" className="form-control selectpicker">
                 <option value="">Choose...</option>
                 {selectedCategory && selectedCategory.materialTypes && selectedCategory.materialTypes.map(type => {
+                  if (this.state.materialTypeId && this.state.materialTypeId === type.id) {
+                    selectedType = type;
+                  }
+
                   return (<option value={type.id} key={type.id}>{type.name}</option>);
                 })}
               </select>
@@ -184,12 +189,8 @@ class AddEquipmentStep1 extends Step {
               <input type="text" name="manufacturer" onChange={this._handleFieldChange} className="form-control" id="manufacturer" required />
             </div>
             <div className="form-group">
-              <label htmlFor="price">Price(K): <i className="text-danger">*</i></label>
+              <label htmlFor="price">Price(K/{selectedType.unit}): <i className="text-danger">*</i></label>
               <input type="number" name="price" onChange={this._handleFieldChange} className="form-control" id="price" required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="unit">Unit: <i className="text-danger">*</i></label>
-              <input type="text" name="unit" onChange={this._handleFieldChange} className="form-control" id="unit" required />
             </div>
           </div>
           <div className="col-12 text-center">
