@@ -182,11 +182,14 @@ class ActivityDetail extends Component {
     equipmentId,
     status,
     equipmentStatus,
-    transactionId
+    transactionId,
+    isFeedback
   ) => {
     switch (status) {
       case "FINISHED":
-        return (
+        return isFeedback ? (
+          <Text style={styles.text}>You've been feedbacked</Text>
+        ) : (
           <Button
             text={"Feedback"}
             onPress={() =>
@@ -331,7 +334,8 @@ class ActivityDetail extends Component {
           detail.equipment.id,
           detail.status,
           detail.equipment.status,
-          detail.id
+          detail.id,
+          detail.feedbacked
         )}
       </View>
     );

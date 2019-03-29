@@ -146,3 +146,22 @@ export function clearSearchResult() {
     type: Actions.CLEAR_SEARCH_RESULT.SUCCESS
   };
 }
+
+export function sendEquipmentFeedback(feedback) {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: Actions.SEND_EQUIPMENT_FEEDBACK.REQUEST
+      });
+      const res = await axios.post(`equipmentFeedbacks`, feedback);
+      dispatch({
+        type: Actions.SEND_EQUIPMENT_FEEDBACK.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.SEND_EQUIPMENT_FEEDBACK.ERROR
+      });
+    }
+  };
+}

@@ -91,11 +91,13 @@ class PlaceBid extends Component {
                 <Feather name={"x"} size={26} />
               </TouchableOpacity>
             )}
-          />
-          <ScrollView>
-            <Text>Place a bid on</Text>
-            <Text>{title}</Text>
-            <Text>Paid to you</Text>
+          >
+            <Text style={styles.title}>Place your bid</Text>
+          </Header>
+          <ScrollView style={{ paddingHorizontal: 15 }}>
+            <Text style={styles.text}>Place a bid on</Text>
+            <Text style={styles.text}>{title}</Text>
+            <Text style={styles.text}>Paid to you</Text>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <TextInput
                 style={styles.inputWrapper}
@@ -103,22 +105,18 @@ class PlaceBid extends Component {
                 value={price.toString()}
                 keyboardType={"numeric"}
               />
-              <Text> VND </Text>
+              <Text style={styles.text}> VND </Text>
             </View>
-            <Text>Describe your bid</Text>
+            <Text style={styles.text}>Describe your bid</Text>
             <TextInput
               style={styles.wrapper}
               onChangeText={value => this.setState({ description: value })}
               value={description}
             />
             {isEdited ? (
-              <TouchableOpacity onPress={() => this._handleEditBid()}>
-                <Text>Edit bid</Text>
-              </TouchableOpacity>
+              <Button text={"Edit bid"} onPress={this._handleEditBid} />
             ) : (
-              <TouchableOpacity onPress={() => this._handlePlaceBid()}>
-                <Text>Place bid</Text>
-              </TouchableOpacity>
+              <Button text={"Place bid"} onPress={this._handlePlaceBid} />
             )}
           </ScrollView>
         </SafeAreaView>
@@ -149,6 +147,16 @@ const styles = StyleSheet.create({
     fontSize: fontSize.bodyText,
     color: colors.text,
     fontWeight: "400"
+  },
+  title: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "600",
+    color: colors.text
+  },
+  text: {
+    fontSize: fontSize.secondaryText,
+    fontWeight: "300",
+    color: colors.text
   }
 });
 

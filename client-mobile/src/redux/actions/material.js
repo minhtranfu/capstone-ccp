@@ -1,20 +1,17 @@
 import * as Actions from "../types";
 import axios from "axios";
 
-export function searchMaterial(text) {
+export function searchMaterial(text, id) {
+  console.log(id);
   return async dispatch => {
     try {
       dispatch({
         type: Actions.SEARCH_MATERIAL.REQUEST
       });
       const res = await axios.get(
-        `materials?q=${text}&limit=10&&orderBy=createdTime.desc`,
-        {
-          headers: {
-            Authorization: undefined
-          }
-        }
+        `materials?q=${text}&limit=10&orderBy=createdTime.desc&materialTypeId=${id}`
       );
+      console.log(res);
       dispatch({
         type: Actions.SEARCH_MATERIAL.SUCCESS,
         payload: res
@@ -84,5 +81,24 @@ export function getMaterialListFromContractor(contractorId) {
       type: Actions.GET_MATERIAL_LIST_BY_CONTRACTOR.SUCCESS,
       payload: res
     });
+  };
+}
+
+export function sendMaterialFeedback(feedback) {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: Actions.SEND_MATERIAL_FEEDBACK.REQUEST
+      });
+      const res = await axios.post(`materialFeedbacks`, feedback);
+      dispatch({
+        type: Actions.SEND_MATERIAL_FEEDBACK.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.SEND_MATERIAL_FEEDBACK.ERROR
+      });
+    }
   };
 }

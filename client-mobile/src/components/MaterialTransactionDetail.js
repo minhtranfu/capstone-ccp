@@ -52,12 +52,10 @@ class componentName extends Component {
         <Text style={styles.text}>
           Price: {price} K/{unit}
         </Text>
-        <Text style={styles.text}>Address: {address}</Text>
-        <View style={styles.divider} />
         <Text style={styles.title}>Description</Text>
         <Text style={styles.text}>{description}</Text>
         <View style={styles.divider} />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{ flexDirection: "row", alignItems: "center" }}
         >
           <Image
@@ -70,7 +68,7 @@ class componentName extends Component {
             <Text style={styles.text}>{email}</Text>
             <Text style={styles.text}>{phone}</Text>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     );
   }

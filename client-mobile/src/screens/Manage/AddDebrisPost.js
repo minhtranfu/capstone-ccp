@@ -5,9 +5,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Alert
+  Alert,
+  Dimensions,
+  Image
 } from "react-native";
-import { Image } from "react-native-expo-image-cache";
+//import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import Feather from "@expo/vector-icons/Feather";
@@ -31,6 +33,8 @@ import Button from "../../components/Button";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+
+const { width, height } = Dimensions.get("window");
 
 @connect(
   state => ({
@@ -62,7 +66,8 @@ class AddDebrisPost extends Component {
       servicesType: [],
       lat: null,
       lng: null,
-      images: []
+      images: [],
+      imageIndex: 0
     };
   }
 
@@ -111,6 +116,44 @@ class AddDebrisPost extends Component {
     });
   };
 
+  _renderRowImageUpdate = (image, key, imageIndex) => {
+    return (
+      <TouchableOpacity
+        key={key}
+        style={[
+          { marginVertical: 10, marginRight: 10 },
+          imageIndex === key
+            ? {
+                borderWidth: 1,
+                borderColor: colors.secondaryColor,
+                borderRadius: 10
+              }
+            : null
+        ]}
+        onPress={() => this.setState({ imageIndex: key })}
+      >
+        <Image
+          source={{ uri: image }}
+          style={styles.smallImage}
+          resizeMode={"cover"}
+        />
+
+        <TouchableOpacity
+          style={styles.iconDelete}
+          onPress={() => this._handleRemove(key)}
+        >
+          <Feather name={"x"} size={20} color={colors.secondaryColor} />
+        </TouchableOpacity>
+      </TouchableOpacity>
+    );
+  };
+
+  _handleRemove = rowIndex => {
+    this.setState({
+      images: this.state.images.filter((item, index) => index !== rowIndex)
+    });
+  };
+
   _handleSubmit = async () => {
     const { address, title, lat, lng, images } = this.state;
     const { typeServices } = this.props;
@@ -123,9 +166,14 @@ class AddDebrisPost extends Component {
         name: "image.png"
       });
     });
-    const res = await axios.post(`storage/equipmentImages`, form, {
-      headers: { "Content-Type": "multipart/form-data" }
-    });
+    try {
+      const res = await axios.post(`storage/debrisImages`, form, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+    } catch (error) {
+      this.setState({ submitLoading: false });
+      this._showAlert(error);
+    }
     const image = {
       debrisImages: res.data.map(item => {
         return {
@@ -139,11 +187,12 @@ class AddDebrisPost extends Component {
     const article = {
       title,
       address,
-      latitude: lat,
-      longitude: lng,
+      latitude: 10.001,
+      longitude: 106.121313,
       debrisServiceTypes: typeServices.map(item => {
         return { id: item.id };
-      })
+      }),
+      ...image
     };
     if (typeServices && typeServices.length < 1) {
       this._showAlert("You must add services");
@@ -154,7 +203,7 @@ class AddDebrisPost extends Component {
   };
 
   _renderContent = () => {
-    const { title, address, images } = this.state;
+    const { title, address, images, imageIndex } = this.state;
     const { typeServices } = this.props;
     return (
       <View>
@@ -204,7 +253,7 @@ class AddDebrisPost extends Component {
         </View>
         <Title text={"Insert your image"} />
         {images.length > 0 ? (
-          <View>
+          <View style={{ flex: 1 }}>
             <Image
               source={{ uri: images[imageIndex] }}
               style={styles.landscapeImg}
@@ -249,6 +298,18 @@ class AddDebrisPost extends Component {
         >
           <Text style={styles.text}>Add new article</Text>
         </Header>
+        {this.state.submitLoading ? (
+          <View
+            style={{
+              position: "absolute",
+              backgroundColor: "white",
+              width: width,
+              height: height
+            }}
+          >
+            <Loading />
+          </View>
+        ) : null}
         <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
           {this._renderContent()}
         </ScrollView>
@@ -269,6 +330,14 @@ const styles = StyleSheet.create({
   text: {
     fontSize: fontSize.bodyText,
     fontWeight: "500"
+  },
+  landscapeImg: {
+    height: 200
+  },
+  smallImage: {
+    height: 100,
+    width: width / 4,
+    borderRadius: 10
   }
 });
 

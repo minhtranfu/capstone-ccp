@@ -13,6 +13,7 @@ import { changeMaterialTransactionRequest } from "../../redux/actions/transactio
 import { Image } from "react-native-expo-image-cache";
 import Feather from "@expo/vector-icons/Feather";
 
+import Title from "../../components/Title";
 import MaterialTransactionDetail from "../../components/MaterialTransactionDetail";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
@@ -105,6 +106,7 @@ class MaterialSupplierDetail extends Component {
               "Are you sure to accept?"
             );
           }}
+          wrapperStyle={{ marginBottom: 15 }}
         />
         <Button
           text={"Deny"}
@@ -115,6 +117,7 @@ class MaterialSupplierDetail extends Component {
               "Are you sure to deny transaction?"
             );
           }}
+          wrapperStyle={{ marginBottom: 15 }}
         />
       </View>
     );
@@ -132,23 +135,45 @@ class MaterialSupplierDetail extends Component {
   };
 
   _renderDetail = detail => {
+    console.log(detail);
+    const image =
+      detail.materialTransactionDetails.length > 0
+        ? detail.materialTransactionDetails[0].thumbnailImageUrl
+        : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg";
     return (
       <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-        <MaterialTransactionDetail
-          imageUrl={detail.material.thumbnailImageUrl}
-          name={detail.material.name}
-          manufacturer={detail.material.manufacturer}
-          contractor={detail.requester.name}
-          contractorAvatarUrl={
-            "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
-          }
-          price={detail.price}
-          unit={detail.unit}
-          description={detail.material.description}
-          email={detail.requester.email}
-          phone={detail.requester.phoneNumber}
-          address={detail.requesterAddress}
+        <Image
+          uri={image}
+          style={{ height: 200, paddingHorizontal: 0 }}
+          resizeMode={"cover"}
         />
+        <Title title={"Delivering To"} />
+        <Text style={styles.text}>{detail.requester.name}</Text>
+        <Text style={styles.caption}>{detail.requester.email}</Text>
+        <Text style={styles.caption}>{detail.requester.phoneNumber}</Text>
+        <Title title={"Devlivery Address"} />
+        <Text style={styles.description}>{detail.requesterAddress}</Text>
+        <Title
+          title={`Material order ${
+            detail.materialTransactionDetails.length > 0
+              ? detail.materialTransactionDetails.length
+              : 0
+          } items`}
+        />
+        {detail.materialTransactionDetails.length > 0 ? (
+          detail.materialTransactionDetails.map(item => (
+            <MaterialTransactionDetail
+              imageUrl={item.material.thumbnailImageUrl}
+              name={item.material.name}
+              manufacturer={item.material.manufacturer}
+              price={item.price}
+              unit={item.unit}
+              description={item.material.description}
+            />
+          ))
+        ) : (
+          <Text style={styles.text}>No item/ {detail.totalPrice}K VND</Text>
+        )}
         {this._renderBottomButton(detail.id, detail.status)}
       </ScrollView>
     );
@@ -210,7 +235,19 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: fontSize.bodyText,
-    fontWeight: "500",
+    color: colors.text,
+    paddingBottom: 5
+  },
+  caption: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text50,
+    fontWeight: "600",
+    paddingBottom: 5
+  },
+  description: {
+    fontSize: fontSize.bodyText,
+    color: colors.text50,
+    fontWeight: "600",
     paddingBottom: 5
   },
   avatar: {

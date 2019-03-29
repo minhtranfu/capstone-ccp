@@ -99,16 +99,18 @@ class MaterialTransaction extends Component {
     const newMaterialDetail = {
       materialTransactionDetails: [
         {
-          quantity: parseFloat(quantity),
+          quantity: parseInt(quantity),
           material: {
             id: material.id
           }
         }
       ],
+      supplier: { id: material.contractor.id },
       requesterAddress: address,
       requesterLat: construction[constructionIndex - 1].latitude,
       requesterLong: construction[constructionIndex - 1].longitude
     };
+    console.log(newMaterialDetail);
     await this.props.fetchRequestTransaction(newMaterialDetail);
     this.props.navigation.goBack();
   };
@@ -137,6 +139,7 @@ class MaterialTransaction extends Component {
   render() {
     const { material } = this.props.navigation.state.params;
     const { address, quantity } = this.state;
+    console.log(material);
     return (
       <SafeAreaView
         style={styles.container}

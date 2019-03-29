@@ -121,6 +121,11 @@ class MaterialTab extends PureComponent {
                 totalOrder={item.materialTransactionDetails}
                 status={item.status}
                 statusBackgroundColor={COLORS[item.status]}
+                onPress={() =>
+                  this.props.navigation.navigate("MaterialRequesterDetail", {
+                    id: item.id
+                  })
+                }
               />
             ))}
           </View>

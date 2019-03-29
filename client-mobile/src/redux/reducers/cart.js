@@ -49,10 +49,23 @@ export default function cartReducer(state = INITIAL_STATE, action) {
       };
     }
     case Actions.ADD_MATERIAL_ITEM_TO_CART.SUCCESS: {
-      return {
-        ...state,
-        listMaterial: [...state.listMaterial, { data: payload }]
-      };
+      //check if data is exist in array
+      if (state.listMaterial.find(item => item.id === payload.id)) {
+        return {
+          ...state,
+          listMaterial: state.listMaterial.map(item =>
+            item.id === payload.id ? { ...item, data: payload.data } : item
+          )
+        };
+      } else {
+        return {
+          ...state,
+          listMaterial: [
+            ...state.listMaterial,
+            { id: payload.id, data: payload }
+          ]
+        };
+      }
     }
     case Actions.UPDATE_MATERIAL_ITEM_TO_CART.SUCCESS: {
       return {

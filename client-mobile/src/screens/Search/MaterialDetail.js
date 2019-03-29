@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 import { addMaterialItemToCart } from "../../redux/actions/cart";
 import Feather from "@expo/vector-icons/Feather";
 
+import Title from "../../components/Title";
 import Button from "../../components/Button";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -59,27 +60,43 @@ class MaterialDetail extends Component {
           <Text>Result</Text>
         </Header>
         {detail ? (
-          <ScrollView>
+          <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
             <Image
               uri={detail.thumbnailImageUrl}
               resizeMode={"cover"}
-              style={{ width: width, height: 70 }}
+              style={{ height: 200 }}
             />
-            <Text>{detail.manufacturer}</Text>
-            <Text>{detail.name}</Text>
-            <Text>{detail.price}</Text>
-            <Button
-              text={"Book"}
-              onPress={() =>
-                this.props.navigation.navigate("ConfirmMaterial", {
-                  material: detail
-                })
-              }
-            />
-            <Button
-              text={"Add to cart"}
-              onPress={() => this.props.fetchAddItemToCart(detail)}
-            />
+            <Title title={"Material information"} />
+            <Text style={styles.text}>{detail.name}</Text>
+            <Text style={styles.text}>{detail.manufacturer}</Text>
+            <Text style={styles.text}>{detail.contractor.name}</Text>
+            <Text style={styles.text}>{detail.contractor.email}</Text>
+            <Title title={"Price"} />
+            <Text style={styles.text}>{detail.price}</Text>
+            <Title title={"Description"} />
+            <Text style={styles.description}>{detail.description}</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                flex: 1
+              }}
+            >
+              <Button
+                text={"Book"}
+                onPress={() =>
+                  this.props.navigation.navigate("ConfirmMaterial", {
+                    material: detail
+                  })
+                }
+                wrapperStyle={{ width: 200 }}
+              />
+              <Button
+                text={"Add to cart"}
+                onPress={() => this.props.fetchAddItemToCart(detail)}
+                wrapperStyle={{ width: 200 }}
+              />
+            </View>
           </ScrollView>
         ) : (
           <Loading />
@@ -92,6 +109,16 @@ class MaterialDetail extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  text: {
+    color: colors.text,
+    fontSize: fontSize.bodyText,
+    fontWeight: "500"
+  },
+  description: {
+    color: colors.text50,
+    fontSize: fontSize.bodyText,
+    fontWeight: "600"
   }
 });
 

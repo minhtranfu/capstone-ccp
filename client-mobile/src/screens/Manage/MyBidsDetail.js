@@ -84,7 +84,7 @@ class MyBidsDetail extends Component {
   _handleSubmitEditButton = async () => {
     const { data } = this.state;
     const newBid = {
-      price: parseInt(data.price),
+      price: parseFloat(data.price),
       description: data.description,
       debrisPost: {
         id: data.debrisPost.id

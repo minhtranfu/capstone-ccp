@@ -156,7 +156,6 @@ class AddMaterialDetail extends Component {
       name,
       manufacturer,
       description,
-      unit,
       price,
       typeIndex,
       constructionIndex,
@@ -179,7 +178,6 @@ class AddMaterialDetail extends Component {
       name,
       manufacturer,
       description,
-      unit,
       price: parseFloat(price),
       materialType: {
         id: newTypeOptions[typeIndex].id
@@ -195,8 +193,8 @@ class AddMaterialDetail extends Component {
   };
 
   _validData = () => {
-    const { name, manufacturer, description, unit, price, image } = this.state;
-    if (name && manufacturer && description && unit && price && image) {
+    const { name, manufacturer, description, price, image } = this.state;
+    if (name && manufacturer && description && price && image) {
       return true;
     }
     return false;
@@ -246,15 +244,6 @@ class AddMaterialDetail extends Component {
           onChangeText={value => this.setState({ price: value })}
           value={price}
           keyboardType={"numeric"}
-          returnKeyType={"next"}
-        />
-        <InputField
-          label={"Unit"}
-          placeholder={"Input your equipment name"}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          onChangeText={value => this.setState({ unit: value })}
-          value={unit}
           returnKeyType={"next"}
         />
         <Dropdown

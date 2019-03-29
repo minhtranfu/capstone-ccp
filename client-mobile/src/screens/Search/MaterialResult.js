@@ -26,8 +26,8 @@ import fontSize from "../../config/fontSize";
     listMaterial: state.material.listSearch
   }),
   dispatch => ({
-    fetchSearchMaterial: name => {
-      dispatch(searchMaterial(name));
+    fetchSearchMaterial: (keyword, id) => {
+      dispatch(searchMaterial(keyword, id));
     }
   })
 )
@@ -38,8 +38,8 @@ class MaterialResult extends Component {
   }
 
   componentDidMount() {
-    const { keyword } = this.props.navigation.state.params;
-    this.props.fetchSearchMaterial(keyword);
+    const { keyword, id } = this.props.navigation.state.params;
+    this.props.fetchSearchMaterial(keyword, id);
   }
 
   _renderItem = ({ item }) => (

@@ -44,9 +44,12 @@ export default async function configAPI(config) {
             //goToLogin();
             break;
           case 400:
-            console.log(error.response);
             config.store.dispatch(
-              StatusAction.error(400, error.response.data, Date.now())
+              StatusAction.error(
+                400,
+                error.response.data[0].message,
+                Date.now()
+              )
             );
             break;
           case 404:
@@ -66,6 +69,9 @@ export default async function configAPI(config) {
         }
       } else if (error.request) {
         console.log("Network timeout");
+        config.store.dispatch(
+          StatusAction.error("Eror", "Network timeout", Date.now())
+        );
       } else {
         console.log("Error", error.message);
       }

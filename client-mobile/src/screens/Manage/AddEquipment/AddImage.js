@@ -85,6 +85,8 @@ class AddImage extends Component {
     const res = await axios.post(`storage/equipmentImages`, form, {
       headers: { "Content-Type": "multipart/form-data" }
     });
+    console.log(res);
+
     const image = {
       equipmentImages: res.data.map(item => {
         return {
@@ -95,6 +97,7 @@ class AddImage extends Component {
         id: res.data[0].id
       }
     };
+    console.log(image);
     const newEquipment = Object.assign({}, data, image);
     this.props.fetchAddEquipment(newEquipment);
   };
@@ -153,6 +156,8 @@ class AddImage extends Component {
         {loading ? (
           <View
             style={{
+              width: width,
+              height: height,
               position: "absolute",
               backgroundColor: "white",
               justifyContent: "center",

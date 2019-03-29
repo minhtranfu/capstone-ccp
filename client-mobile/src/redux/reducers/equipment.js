@@ -4,6 +4,7 @@ const INITIAL_STATE = {
   loading: false,
   searchLoading: false,
   imageLoading: false,
+  feedbackLoading: false,
   listSearch: [],
   contractorEquipment: [],
   imageURL: ""
@@ -126,6 +127,25 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
         ...state,
         listSearch: []
       };
+    case Actions.SEND_EQUIPMENT_FEEDBACK.REQUEST: {
+      return {
+        ...state,
+        feedbackLoading: true
+      };
+    }
+    case Actions.SEND_EQUIPMENT_FEEDBACK.SUCCESS: {
+      return {
+        ...state,
+        feedbackLoading: false
+      };
+    }
+    case Actions.SEND_EQUIPMENT_FEEDBACK.ERROR: {
+      return {
+        ...state,
+        feedbackLoading: false
+      };
+    }
+
     default:
       return state;
   }

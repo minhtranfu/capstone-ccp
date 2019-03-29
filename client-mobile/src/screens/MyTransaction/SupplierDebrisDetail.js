@@ -65,12 +65,14 @@ class SupplierDebrisDetail extends Component {
     return (
       <View>
         <Button
-          text={"Travel"}
+          text={"Go working"}
           onPress={() => this._handleChangeStatus(id, "DELIVERING")}
+          wrapperStyle={{ marginBottom: 15 }}
         />
         <Button
           text={"Cancel"}
           onPress={() => this.setState({ isCancel: true })}
+          wrapperStyle={{ marginBottom: 15 }}
         />
       </View>
     );
@@ -86,17 +88,15 @@ class SupplierDebrisDetail extends Component {
             <Button
               text={"Work"}
               onPress={() => this._handleChangeStatus(id, "WORKING")}
+              wrapperStyle={{ marginBottom: 15 }}
             />
             <Button
               text={"Cancel"}
-              onPress={() => this.setState({ isCancel: true })}
+              onPress={() => this.setState({ isCancel: !isCancel })}
+              wrapperStyle={{ marginBottom: 15 }}
             />
           </View>
         );
-      case "FINISHED":
-        return <Button text={"Feedback"} />;
-      case "CANCELED":
-        return <Button text={"Feedback"} />;
       default:
         return null;
     }
@@ -105,6 +105,7 @@ class SupplierDebrisDetail extends Component {
   _renderContent = () => {
     const { detail } = this.props;
     const { isCancel, reason } = this.state;
+    console.log(detail);
     return (
       <View>
         <Text>{detail.debrisPost.title}</Text>
@@ -163,7 +164,9 @@ class SupplierDebrisDetail extends Component {
             </TouchableOpacity>
           )}
         />
-        <ScrollView>{this._renderContent()}</ScrollView>
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
+          {this._renderContent()}
+        </ScrollView>
       </SafeAreaView>
     );
   }

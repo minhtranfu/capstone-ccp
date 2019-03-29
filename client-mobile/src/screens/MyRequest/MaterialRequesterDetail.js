@@ -12,6 +12,7 @@ import { changeMaterialTransactionRequest } from "../../redux/actions/transactio
 import { Image } from "react-native-expo-image-cache";
 import Feather from "@expo/vector-icons/Feather";
 
+import Title from "../../components/Title";
 import MaterialTransactionDetail from "../../components/MaterialTransactionDetail";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
@@ -91,14 +92,53 @@ class MaterialRequesterDetail extends Component {
             this._handleFinished(id, "FINISHED", "Transaction finish!");
           }}
         />
+        <Button
+          text={"Deny"}
+          onPress={() => {
+            this._handleFinished(id, "CANCELED", "Transaction Cancel!");
+          }}
+        />
       </View>
     );
   };
 
-  _renderRequesterBottomButton = (id, status) => {
+  _renderCancel = id => {
+    return (
+      <View style={styles.bottomWrapper}>
+        <Button
+          text={"Deny"}
+          onPress={() => {
+            this._handleChangeTransaction(
+              id,
+              "CANCELED",
+              "Transaction cancel!"
+            );
+          }}
+        />
+      </View>
+    );
+  };
+
+  _renderRequesterBottomButton = (id, status, isFeedback) => {
     switch (status) {
       case "DELIVERING":
         return this._renderDelivering(id);
+      case "PENDING":
+        return this._renderCancel(id);
+      case "FINISHED":
+        return isFeedback ? (
+          <Text style={styles.text}>You've been feedbacked</Text>
+        ) : (
+          <Button
+            text={"Feedback"}
+            onPress={() =>
+              this.props.navigation.navigate("Feedback", {
+                transactionId: id,
+                type: "Material"
+              })
+            }
+          />
+        );
       default:
         return null;
     }
@@ -106,28 +146,50 @@ class MaterialRequesterDetail extends Component {
 
   _renderDetail = detail => {
     //check if contractorId = requesterId => item is belong to requester else item is belong to supplier
-    const contractorId = detail.material.contractor.id;
-    const requesterId = detail.requester.id;
     const { user } = this.props;
+    const image =
+      detail.materialTransactionDetails.length > 0
+        ? detail.materialTransactionDetails[0].thumbnailImageUrl
+        : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg";
     return (
       <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-        <MaterialTransactionDetail
-          imageUrl={detail.material.thumbnailImageUrl}
-          name={detail.material.name}
-          manufacturer={detail.material.manufacturer}
-          contractor={detail.material.contractor.name}
-          contractorAvatarUrl={
-            "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
-          }
-          price={detail.price}
-          unit={detail.unit}
-          description={detail.material.description}
-          email={detail.material.contractor.email}
-          phone={detail.material.contractor.phoneNumber}
-          address={detail.materialAddress}
+        <Image
+          uri={image}
+          style={{ height: 200, paddingHorizontal: 0 }}
+          resizeMode={"cover"}
         />
-
-        {this._renderRequesterBottomButton(detail.id, detail.status)}
+        <Title title={"Supplier Info"} />
+        <Text style={styles.text}>{detail.supplier.name}</Text>
+        <Text style={styles.caption}>{detail.supplier.email}</Text>
+        <Text style={styles.caption}>{detail.supplier.phoneNumber}</Text>
+        <Title title={"Devlivery Address"} />
+        <Text style={styles.description}>{detail.requesterAddress}</Text>
+        <Title
+          title={`Material order ${
+            detail.materialTransactionDetails.length > 0
+              ? detail.materialTransactionDetails.length
+              : 0
+          } items`}
+        />
+        {detail.materialTransactionDetails.length > 0 ? (
+          detail.materialTransactionDetails.map(item => (
+            <MaterialTransactionDetail
+              imageUrl={item.material.thumbnailImageUrl}
+              name={item.material.name}
+              manufacturer={item.material.manufacturer}
+              price={item.price}
+              unit={item.unit}
+              description={item.material.description}
+            />
+          ))
+        ) : (
+          <Text style={styles.text}>No item/ {detail.totalPrice}K VND</Text>
+        )}
+        {this._renderRequesterBottomButton(
+          detail.id,
+          detail.status,
+          detail.feedbacked
+        )}
       </ScrollView>
     );
   };
@@ -146,7 +208,7 @@ class MaterialRequesterDetail extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text style={styles.text}>Material Detail</Text>
+          <Text style={styles.title}>Material Detail</Text>
         </Header>
         {Object.keys(materialDetail).length > 0 ? (
           this._renderDetail(materialDetail)
@@ -170,14 +232,26 @@ const styles = StyleSheet.create({
     fontWeight: "500"
   },
   title: {
-    fontSize: fontSize.h4,
-    fontWeight: "400",
+    fontSize: fontSize.body,
+    fontWeight: "500",
     color: colors.text,
     marginBottom: 10
   },
   text: {
     fontSize: fontSize.bodyText,
-    fontWeight: "500",
+    color: colors.text,
+    paddingBottom: 5
+  },
+  caption: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text50,
+    fontWeight: "600",
+    paddingBottom: 5
+  },
+  description: {
+    fontSize: fontSize.bodyText,
+    color: colors.text50,
+    fontWeight: "600",
     paddingBottom: 5
   }
 });

@@ -154,6 +154,7 @@ class MyTransactionDetail extends Component {
             "Are you sure you want delivery now?"
           );
         }}
+        wrapperStyle={{ marginBottom: 15 }}
       />
       <Button
         text={"Refuse"}
@@ -161,6 +162,7 @@ class MyTransactionDetail extends Component {
           this.props.fetchCancelTransaction(id);
           this.props.navigation.goBack();
         }}
+        wrapperStyle={{ marginBottom: 15 }}
       />
     </View>
   );
@@ -177,6 +179,7 @@ class MyTransactionDetail extends Component {
               "Are you sure to accept?"
             );
           }}
+          wrapperStyle={{ marginBottom: 15 }}
         />
         <Button
           text={"Deny"}
@@ -187,6 +190,7 @@ class MyTransactionDetail extends Component {
               "Are you sure to deny transaction?"
             );
           }}
+          wrapperStyle={{ marginBottom: 15 }}
         />
       </View>
     );

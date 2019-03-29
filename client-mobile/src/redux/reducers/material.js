@@ -2,6 +2,7 @@ import * as Actions from "../types";
 
 const INITIAL_STATE = {
   loading: false,
+  feedbackLoading: false,
   generalMaterialType: [],
   materialType: [],
   listSearch: [],
@@ -78,6 +79,24 @@ export default function materialReducer(state = INITIAL_STATE, action) {
         ...state,
         loading: false,
         materialList: payload.data
+      };
+    }
+    case Actions.SEND_MATERIAL_FEEDBACK.REQUEST: {
+      return {
+        ...state,
+        feedbackLoading: true
+      };
+    }
+    case Actions.SEND_MATERIAL_FEEDBACK.SUCCESS: {
+      return {
+        ...state,
+        feedbackLoading: false
+      };
+    }
+    case Actions.SEND_MATERIAL_FEEDBACK.ERROR: {
+      return {
+        ...state,
+        feedbackLoading: false
       };
     }
     default:

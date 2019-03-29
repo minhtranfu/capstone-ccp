@@ -6,7 +6,8 @@ import {
   Animated,
   Image,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
+  Modal
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import MapView, { Marker } from "react-native-maps";
@@ -17,7 +18,7 @@ import Calendar from "react-native-calendar-select";
 import Swiper from "react-native-swiper";
 import { getEquipmentDetail } from "../../redux/actions/equipment";
 
-//import Calendar from "../../components/Calendar";
+import WithRangeCalendar from "../../components/WithRangeCalendar";
 import CustomFlatList from "../../components/CustomFlatList";
 import ParallaxList from "../../components/ParallaxList";
 import Button from "../../components/Button";
@@ -60,7 +61,9 @@ class SearchDetail extends Component {
       loadQueue: [0, 0, 0, 0],
       fromDate: "",
       toDate: "",
-      calendarVisible: false
+      calendarVisible: false,
+      isModalOpen: false,
+      date: {}
     };
   }
 
@@ -82,7 +85,6 @@ class SearchDetail extends Component {
       name
     } = this.props.detail.equipmentEntity;
     const { query } = this.props.navigation.state.params;
-    console.log("Detail", query);
     this.setState({
       startDate,
       endDate
@@ -141,31 +143,99 @@ class SearchDetail extends Component {
   );
 
   _setCalendarVisible = visible => {
-    this.setState({ calendarVisible: visible });
+    this.setState({ isModalOpen: visible });
   };
+
+  _handleAddMoreMonth = (date, month) => {
+    let today = new Date(date);
+    let result = today.setMonth(today.getMonth() + month);
+    return this._formatDate(result);
+  };
+
+  _handleDateChanged = (id, selectedDate) => {
+    const { name } = this.props.detail.equipmentEntity;
+    const { query } = this.props.navigation.state.params;
+    console.log(id);
+    let newToDate = selectedDate.endDate
+      ? selectedDate.endDate
+      : this._handleAddMoreMonth(selectedDate.startDate, 3);
+    const equipment = {
+      // requesterAddress: "Phu Nhuan",
+      // requesterLatitude: 60,
+      // requesterLongitude: 128,
+      equipmentId: id,
+      beginDate: selectedDate.beginDate,
+      endDate: newToDate
+    };
+    this.props.navigation.navigate("ConfirmTransaction", {
+      equipment: equipment,
+      name: name,
+      query: query
+    });
+  };
+
+  renderDateTimeModal = (id, dateRange) => {
+    const { isModalOpen } = this.state;
+    return (
+      <Modal visible={isModalOpen}>
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <WithRangeCalendar
+            onConfirm={date => {
+              this._handleDateChanged(id, date);
+              this.setState(() => ({ isModalOpen: false }));
+            }}
+            onClose={() => this.setState(() => ({ isModalOpen: false }))}
+            single={true}
+            availableDateRange={dateRange}
+          />
+        </View>
+      </Modal>
+    );
+  };
+
+  // _renderCalendar = availableDateRange => {
+  //   return (
+  //     <Calendar
+  //       visible={this.state.calendarVisible}
+  //       onLeftButtonPress={() => this._setCalendarVisible(false)}
+  //       onSelectDate={(fromDate, endDate, visible) =>
+  //         this._onSelectDate(id, fromDate, endDate, visible)
+  //       }
+  //       availableDateRange={availableDateRange}
+  //     />
+  //   );
+  // };
 
   _onSelectDate = (fromDate, toDate, modalVisible) => {
     const { id } = this.props.detail.equipmentEntity;
-    this.setState({ fromDate, toDate, calendarVisible: false });
+    let newToDate = toDate ? toDate : this._handleAddMoreMonth(fromDate, 3);
     const cart = {
       equipment: {
         id: id
       },
       beginDate: fromDate,
-      endDate: toDate
+      endDate: newToDate
     };
-    this.props.navigation("ConfirmCart", { cart });
+    this.props.navigation.navigate("ConfirmCart", { cart });
   };
 
-  _renderCalendar = (beginDate, endDate) => (
-    <Calendar
-      visible={this.state.calendarVisible}
-      onLeftButtonPress={() => this._setCalendarVisible(false)}
-      onSelectDate={this._onSelectDate}
-      fromDate={beginDate}
-      endDate={endDate}
-    />
-  );
+  // _renderCalendar = (beginDate, endDate) => (
+  //   <Calendar
+  //     visible={this.state.calendarVisible}
+  //     onLeftButtonPress={() => this._setCalendarVisible(false)}
+  //     onSelectDate={this._onSelectDate}
+  //     fromDate={beginDate}
+  //     endDate={endDate}
+  //   />
+  // );
+
+  // _setCalendarVisible = visible => {
+  //   this.setState({
+  //     calendarVisible: visible
+  //   });
+  // };
 
   _onAddToCart = ({ startDate, endDate }) => {
     const { id } = this.props.detail.equipmentEntity;
@@ -233,7 +303,13 @@ class SearchDetail extends Component {
       equipmentImages
     } = this.props.detail.equipmentEntity;
     return (
-      <View style={{paddingHorizontal: 15, backgroundColor: 'white', paddingTop: 15}}>
+      <View
+        style={{
+          paddingHorizontal: 15,
+          backgroundColor: "white",
+          paddingTop: 15
+        }}
+      >
         <View style={styles.textWrapper}>
           <Text style={styles.title}>{name}</Text>
           <Text
@@ -271,10 +347,10 @@ class SearchDetail extends Component {
           <Text style={styles.text}>Daily price</Text>
           <Text style={styles.text}>{dailyPrice}K/day</Text>
         </View>
-        <View style={styles.rowWrapper}>
+        {/* <View style={styles.rowWrapper}>
           <Text style={styles.text}>Delivery price</Text>
           <Text style={styles.text}>{deliveryPrice}K/day</Text>
-        </View>
+        </View> */}
 
         <Title title={"Description"} />
         <Text style={styles.description}>{description}</Text>
@@ -344,7 +420,6 @@ class SearchDetail extends Component {
     let color = {
       subColor: "#f0f0f0"
     };
-    console.log(detail.equipmentEntity.thumbnailImage);
     return (
       <SafeAreaView
         style={styles.container}
@@ -364,11 +439,19 @@ class SearchDetail extends Component {
           scrollElement={<Animated.ScrollView />}
           renderScrollItem={this._renderScrollItem}
         />
-        <SafeAreaView forceInset={{bottom: 'always'}} style={styles.bottomWrapper}>
+
+        {this.renderDateTimeModal(
+          detail.equipmentEntity.id,
+          detail.equipmentEntity.availableTimeRanges
+        )}
+        <SafeAreaView
+          forceInset={{ bottom: "always" }}
+          style={styles.bottomWrapper}
+        >
           <Button
             text={"Book Now"}
-            onPress={this._openCalendar}
-            buttonStyle={{ marginTop: 0, backgroundColor: 'transparent' }}
+            onPress={() => this._setCalendarVisible(true)}
+            buttonStyle={{ marginTop: 0, backgroundColor: "transparent" }}
           />
           <Calendar
             i18n="en"
@@ -392,7 +475,7 @@ class SearchDetail extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   textWrapper: {
     flexDirection: "row",

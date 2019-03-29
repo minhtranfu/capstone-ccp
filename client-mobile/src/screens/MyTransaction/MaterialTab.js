@@ -1,5 +1,7 @@
 import React, { PureComponent } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
+
+import MaterialOrder from "../../components/MaterialOrder";
 import MaterialItem from "../../components/MaterialItem";
 import { withNavigation } from "react-navigation";
 import Dropdown from "../../components/Dropdown";
@@ -107,26 +109,39 @@ class MaterialTab extends PureComponent {
               code={materialStatus.code}
             />
             {materialList.map(item => (
-              <MaterialItem
+              <MaterialOrder
                 key={item.id}
-                manufacturer={item.material.manufacturer}
-                name={item.material.name}
-                price={item.price}
-                unit={item.unit}
-                imageUrl={item.material.thumbnailImageUrl}
-                contractor={item.material.contractor.name}
-                contractorThumbnail={
-                  item.material.contractor.thumbnailImage
-                    ? item.material.contractor.thumbnailImage
-                    : "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
-                }
+                contractor={item.requester.name}
+                phone={item.requester.phoneNumber}
+                avatarURL={item.requester.thumbnailImage}
+                address={item.requesterAddress}
+                totalPrice={item.totalPrice}
+                createdTime={item.createdTime}
+                totalOrder={item.materialTransactionDetails}
                 status={item.status}
+                statusBackgroundColor={COLORS[item.status]}
                 onPress={() =>
                   this.props.navigation.navigate("MaterialSupplierDetail", {
                     id: item.id
                   })
                 }
               />
+              // <MaterialItem
+              //   key={item.id}
+              //   manufacturer={item.material.manufacturer}
+              //   name={item.material.name}
+              //   price={item.price}
+              //   unit={item.unit}
+              //   imageUrl={item.material.thumbnailImageUrl}
+              //   contractor={item.material.contractor.name}
+              //   contractorThumbnail={
+              //     item.material.contractor.thumbnailImage
+              //       ? item.material.contractor.thumbnailImage
+              //       : "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
+              //   }
+              //   status={item.status}
+
+              // />
             ))}
           </View>
         );

@@ -66,15 +66,15 @@ class ConfirmTransaction extends Component {
   componentDidMount = async () => {
     const { user } = this.props;
     this.props.fetchGetConstruction(user.contractor.id);
-    const locationStatus = await grantPermission("location");
-    if (locationStatus === "granted") {
-      const currentLocation = await Location.getCurrentPositionAsync({});
-      const coords = currentLocation.coords;
-      this.setState({
-        currentLat: coords.latitude,
-        currentLong: coords.longitude
-      });
-    }
+    // const locationStatus = await grantPermission("location");
+    // if (locationStatus === "granted") {
+    //   const currentLocation = await Location.getCurrentPositionAsync({});
+    //   const coords = currentLocation.coords;
+    //   this.setState({
+    //     currentLat: coords.latitude,
+    //     currentLong: coords.longitude
+    //   });
+    // }
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -94,8 +94,17 @@ class ConfirmTransaction extends Component {
     }
   }
 
-  _handleConfirmBooking = async transactionDetail => {
-    await this.props.fetchSendRequest(transactionDetail);
+  _handleConfirmBooking = async () => {
+    const { equipment } = this.props.navigation.state.params;
+    const { constructionIndex } = this.state;
+    const { construction } = this.props;
+    const newEquipment = {
+      ...equipment,
+      requesterAddress: construction[constructionIndex - 1].address,
+      requesterLatitude: construction[constructionIndex - 1].latitude,
+      requesterLongitude: construction[constructionIndex - 1].longitude
+    };
+    await this.props.fetchSendRequest(newEquipment);
   };
 
   _handleInputChange = (field, value) => {
@@ -194,7 +203,7 @@ class ConfirmTransaction extends Component {
               text={"Confirm Booking"}
               wrapperStyle={{ marginTop: 15 }}
               onPress={() => {
-                this._handleConfirmBooking(equipment);
+                this._handleConfirmBooking();
                 this.props.navigation.goBack();
               }}
             />

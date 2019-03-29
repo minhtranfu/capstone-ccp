@@ -11,6 +11,8 @@ import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import { Feather } from "@expo/vector-icons";
 import { sendDebrisFeedback } from "../../redux/actions/debris";
+import { sendMaterialFeedback } from "../../redux/actions/material";
+import { sendEquipmentFeedback } from "../../redux/actions/equipment";
 import { AirbnbRating } from "react-native-ratings";
 
 import ParallaxList from "../../components/ParallaxList";
@@ -27,8 +29,14 @@ import fontSize from "../../config/fontSize";
     contractor: state.contractor.detail
   }),
   dispatch => ({
-    fetchSendFeedback: (id, contractor) => {
+    fetchSendDebrisFeedback: (id, contractor) => {
       dispatch(sendDebrisFeedback(id, contractor));
+    },
+    fetchSendMaterialFeedback: (id, contractor) => {
+      dispatch(sendMaterialFeedback(id, contractor));
+    },
+    fetchSendEquipmentFeedback: (id, contractor) => {
+      dispatch(sendEquipmentFeedback(id, contractor));
     }
   })
 )
@@ -43,7 +51,6 @@ class Feedback extends Component {
   }
 
   ratingCompleted = rating => {
-    console.log("Rating is: " + rating);
     this.setState({ rating });
   };
 
@@ -54,14 +61,23 @@ class Feedback extends Component {
       rating,
       content
     };
+    console.log(transactionId);
     switch (type) {
       case "Debris":
-        return this.props.fetchSendFeedback({
+        return this.props.fetchSendDebrisFeedback({
           ...feedback,
           debrisTransaction: { id: transactionId }
         });
       case "Equipment":
+        return this.props.fetchSendEquipmentFeedback({
+          ...feedback,
+          hiringTransaction: { id: transactionId }
+        });
       case "Material":
+        return this.props.fetchSendMaterialFeedback({
+          ...feedback,
+          materialTransactionDetail: { id: transactionId }
+        });
       default:
         return null;
     }

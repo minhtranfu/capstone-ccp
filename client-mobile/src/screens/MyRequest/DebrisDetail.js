@@ -68,7 +68,9 @@ class DebrisDetail extends Component {
           />
         );
       case "FINISHED":
-        return isFeedback ? null : (
+        return isFeedback ? (
+          <Text style={styles.text}>You've been feedbacked</Text>
+        ) : (
           <Button
             text={"Feedback"}
             onPress={() =>

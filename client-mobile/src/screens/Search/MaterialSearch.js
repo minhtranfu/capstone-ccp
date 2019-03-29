@@ -80,8 +80,14 @@ class MaterialSearch extends Component {
   };
 
   _handleSearch = () => {
+    const { materialType } = this.props;
     const { materialTypeIndex, keyword } = this.state;
-    this.props.navigation.navigate("MaterialResult", { keyword: keyword });
+    console.log(materialTypeIndex);
+    console.log(materialType);
+    this.props.navigation.navigate("MaterialResult", {
+      keyword: keyword,
+      id: materialTypeIndex > 0 ? materialType[materialTypeIndex - 1].id : 0
+    });
   };
 
   _renderScrollContent = () => {

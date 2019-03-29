@@ -10,8 +10,10 @@ import {
 import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
 import { editMaterial } from "../../redux/actions/material";
-import { getGeneralEquipmentType } from "../../redux/actions/type";
+import { ImagePicker, Permissions } from "expo";
+import { getGeneralMaterialType } from "../../redux/actions/material";
 import Feather from "@expo/vector-icons/Feather";
+import axios from "axios";
 
 import Button from "../../components/Button";
 import TextArea from "../../components/TextArea";
@@ -31,6 +33,22 @@ const DROPDOWN_CONSTRUCTION_OPTIONS = [
   }
 ];
 
+const DROPDOWN_GENERAL_MATERIALS_TYPES_OPTIONS = [
+  {
+    id: 0,
+    name: "Select general material types",
+    value: "Select general material types"
+  }
+];
+
+const DROPDOWN_MATERIALS_TYPES_OPTIONS = [
+  {
+    id: 0,
+    name: "Select material types",
+    value: "Select material types"
+  }
+];
+
 @connect(
   (state, ownProps) => {
     const { id } = ownProps.navigation.state.params;
@@ -46,7 +64,7 @@ const DROPDOWN_CONSTRUCTION_OPTIONS = [
       dispatch(editMaterial(materialId, material));
     },
     fetchGeneralType: () => {
-      dispatch(getGeneralEquipmentType());
+      dispatch(getGeneralMaterialType());
     }
   })
 )
@@ -61,8 +79,14 @@ class MyMaterialDetail extends Component {
       generalType: null,
       typeIndex: 0,
       type: null,
-      typeIdDefault: 0
+      typeIdDefault: 0,
+      image: null,
+      submitLoading: null
     };
+  }
+
+  componentDidMount() {
+    this.props.fetchGeneralType();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -72,11 +96,11 @@ class MyMaterialDetail extends Component {
       nextProps.materialDetail !== prevState.data
     ) {
       return {
-        data: nextProps.materialDetail
-        // generalType:
-        //   nextProps.materialDetail.materialType.generalMaterialType.name,
-        // type: nextProps.materialDetail.materialType.name,
-        // typeIdDefault: nextProps.materialDetail.materialType.id
+        data: nextProps.materialDetail,
+        generalType:
+          nextProps.materialDetail.materialType.generalMaterialType.name,
+        type: nextProps.materialDetail.materialType.name,
+        typeIdDefault: nextProps.materialDetail.materialType.id
       };
     } else return null;
   }
@@ -94,12 +118,24 @@ class MyMaterialDetail extends Component {
     });
   };
 
+  _handleChangeBackgroundImage = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    if (status === "granted") {
+      let result = await ImagePicker.launchImageLibraryAsync();
+      if (!result.cancelled) {
+        this.setState({
+          image: result.uri
+        });
+      }
+    }
+  };
+
   _handleGeneralMaterialTypeDropdown = () => {
     const { generalType } = this.props;
     const newGeneralType = generalType.map(item => ({
       id: item.id,
-      name: this._capitalizeFirstLetter(item.name),
-      value: this._capitalizeFirstLetter(item.name)
+      name: this._capitalizeLetter(item.name),
+      value: this._capitalizeLetter(item.name)
     }));
     return [...DROPDOWN_GENERAL_MATERIALS_TYPES_OPTIONS, ...newGeneralType];
   };
@@ -133,15 +169,44 @@ class MyMaterialDetail extends Component {
     return [...DROPDOWN_CONSTRUCTION_OPTIONS, ...newConstructionDropdown];
   };
 
-  _handleSubmit = () => {};
+  _handleSubmit = async () => {
+    const { data, typeIndex, constructionIndex } = this.state;
+    const { constructionList } = this.props;
+    const newTypeOptions = this._handleMaterialTypeDropdown();
+    const form = new FormData();
+    this.setState({ submitLoading: true });
+    form.append("image", {
+      uri: image,
+      type: "image/jpg",
+      name: "image.jpg"
+    });
+    const res = await axios.post(`storage/equipmentImages`, form, {
+      headers: { "Content-Type": "multipart/form-data" }
+    });
+    const material = {
+      name: data.name,
+      manufacturer: data.manufacturer,
+      description: data.description,
+      price: parseFloat(data.price),
+      materialType: {
+        id: newTypeOptions[typeIndex].id
+      },
+      construction: {
+        id: constructionList[constructionIndex - 1].id
+      },
+      thumbnailImageUrl: res.data[0].url
+    };
+    await this.props.fetchUpdateMaterialDetail(data.id, material);
+    this.props.navigation.goBack();
+  };
 
   _renderScrollView = () => {
-    const { data, typeIndex, generalTypeIndex } = this.state;
+    const { data, typeIndex, generalTypeIndex, image } = this.state;
     return (
       <View>
         <View style={styles.landscapeImgWrapper}>
           <Image
-            uri={data.thumbnailImageUrl}
+            uri={image ? image : data.thumbnailImageUrl}
             style={styles.landscapeImg}
             resizeMode={"cover"}
           />
@@ -197,7 +262,7 @@ class MyMaterialDetail extends Component {
           value={data.unit}
           returnKeyType={"next"}
         />
-        {/* <Dropdown
+        <Dropdown
           label={"General Material Type"}
           defaultText={"Select your general material type"}
           onSelectValue={(value, index) =>
@@ -212,7 +277,7 @@ class MyMaterialDetail extends Component {
             this.setState({ type: value, typeIndex: index })
           }
           options={this._handleMaterialTypeDropdown()}
-        /> */}
+        />
         <Dropdown
           label={"Construction"}
           defaultText={"Select your construction"}
@@ -225,13 +290,13 @@ class MyMaterialDetail extends Component {
           value={data.description}
           onChangeText={value => this._handleInputChanged("description", value)}
         />
-        <Button text={"Submit"} />
+        <Button text={"Submit"} onPress={this._handleSubmit} />
       </View>
     );
   };
 
   render() {
-    const { materialDetail } = this.props;
+    const { generalType, loading } = this.props;
     return (
       <SafeAreaView
         style={styles.container}
@@ -250,11 +315,15 @@ class MyMaterialDetail extends Component {
         >
           <Text style={styles.text}>Material Detail</Text>
         </Header>
-        <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 15, paddingBottom: 15 }}
-        >
-          {this._renderScrollView()}
-        </ScrollView>
+        {!loading ? (
+          <ScrollView
+            contentContainerStyle={{ paddingHorizontal: 15, paddingBottom: 15 }}
+          >
+            {this._renderScrollView()}
+          </ScrollView>
+        ) : (
+          <Loading />
+        )}
       </SafeAreaView>
     );
   }
