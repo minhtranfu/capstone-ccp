@@ -23,10 +23,6 @@ class DebrisSearch extends Component {
   _loadData = async () => {
     const products = await debrisServices.getDebrisesByCriteria({});
 
-    if (products.length === 0) {
-      alert('Data is empty!');
-    }
-
     this.setState({
       products,
       isFetching: false
