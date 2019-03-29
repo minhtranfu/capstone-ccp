@@ -93,7 +93,6 @@ public class MaterialTransactionResource {
 		materialTransactionEntity.setTotalPrice(totalPrice);
 		//  1/30/19 set status to pending
 		materialTransactionEntity.setStatus(MaterialTransactionEntity.Status.PENDING);
-
 		materialTransactionDAO.persist(materialTransactionEntity);
 		return Response.status(Response.Status.CREATED).entity(
 				materialTransactionDAO.findByID(materialTransactionEntity.getId())

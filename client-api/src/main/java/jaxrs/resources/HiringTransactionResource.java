@@ -81,7 +81,6 @@ public class HiringTransactionResource {
 		//  1/30/19 set status to pending
 		hiringTransactionEntity.setStatus(HiringTransactionEntity.Status.PENDING);
 
-
 		hiringTransactionDAO.persist(hiringTransactionEntity);
 		return Response.status(Response.Status.CREATED).entity(
 				hiringTransactionDAO.findByID(hiringTransactionEntity.getId())
