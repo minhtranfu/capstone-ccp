@@ -23,6 +23,9 @@ class MaterialCard extends PureComponent {
               </h6>
               {/* <div className="text-muted"><i className="fal fa-map-marker"></i> {product.address}</div> */}
               <div className="text-muted">
+                <i className="fal fa-calendar"></i> {product.materialType.name}
+              </div>
+              <div className="text-muted">
                 <i className="fal fa-user-circle"></i> {product.manufacturer}
               </div>
             </div>

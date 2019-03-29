@@ -68,18 +68,18 @@ class MaterialSearchBox extends PureComponent {
           
             <div className="col-md-6">
               <div className="form-group">
-                <label htmlFor="equipment_type">Material type:</label>
+                <label htmlFor="material_type">Material type:</label>
                 <select
-                  name="equipmentTypeId"
-                  id="equipment_type"
+                  name="materialTypeId"
+                  id="material_type"
                   className="form-control"
                   onChange={this._handleChangeCriteria}
                 >
                   <option value="">--Choose--</option>
                   {materialTypes &&
-                    materialTypes.map(equipmentType => (
-                      <option key={equipmentType.id} value={equipmentType.id}>
-                        {equipmentType.name}
+                    materialTypes.map(materialType => (
+                      <option key={materialType.id} value={materialType.id}>
+                        {materialType.name}
                       </option>
                     ))}
                 </select>

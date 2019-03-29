@@ -32,7 +32,6 @@ class MaterialSearch extends Component {
   };
 
   _handleSearch = async (criteria) => {
-    console.log(criteria);
 
     this.setState({
       isFetching: true
