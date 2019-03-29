@@ -8,7 +8,6 @@ import listeners.events.EquipmentDataChangedEvent;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.persistence.*;
 
 public class EquipmentEntityListener {
@@ -62,7 +61,10 @@ public class EquipmentEntityListener {
 	@PostUpdate
 	void postUpdate(EquipmentEntity equipmentEntity) {
 		notifyEquipmentChanged(equipmentEntity);
+		// TODO: 3/29/19 send notifications for realted sides
+
 	}
+
 
 	@PostPersist
 	void postPersist(EquipmentEntity equipmentEntity) {

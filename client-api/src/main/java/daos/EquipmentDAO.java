@@ -1,12 +1,16 @@
 package daos;
 
+import dtos.notifications.NotificationDTO;
 import dtos.queryResults.MatchedSubscriptionResult;
 import entities.AvailableTimeRangeEntity;
+import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
+import managers.FirebaseMessagingManager;
 import utils.Constants;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -24,6 +28,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	@PersistenceContext
 	EntityManager entityManager;
 
+	@Inject
+	FirebaseMessagingManager firebaseMessagingManager;
 
 	public List<EquipmentEntity> searchEquipment(String query, LocalDate beginDate, LocalDate endDate,
 												 Long contractorId, long equipmentTypeId,
@@ -54,7 +60,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		ParameterExpression<LocalDate> beginDateParam = criteriaBuilder.parameter(LocalDate.class);
 		ParameterExpression<LocalDate> endDateParam = criteriaBuilder.parameter(LocalDate.class);
 		ParameterExpression<Long> equipmentTypeIdParam = criteriaBuilder.parameter(Long.class);
-
 
 
 //		select equipment available in current timerange
@@ -122,7 +127,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 		TypedQuery<EquipmentEntity> typeQuery = entityManager.createQuery(criteriaQuery);
 
-		typeQuery.setParameter(queryParam, "%"+query+"%");
+		typeQuery.setParameter(queryParam, "%" + query + "%");
 		if (contractorId != null) {
 			typeQuery.setParameter(contractorParam, contractorId);
 		}
@@ -224,14 +229,35 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	}
 
 	public void changeAllStatusToWaitingForReturning(List<EquipmentEntity> overdateRentingEquipments) {
+
 		for (EquipmentEntity equipmentEntity : overdateRentingEquipments) {
 			equipmentEntity.setStatus(EquipmentEntity.Status.WAITING_FOR_RETURNING);
-			entityManager.merge(equipmentEntity);
+			EquipmentEntity managedEquipment = entityManager.merge(equipmentEntity);
+
+			HiringTransactionEntity processingHiringTransaction = managedEquipment.getProcessingHiringTransactions().get(0);
+			ContractorEntity requester = processingHiringTransaction.getRequester();
+			ContractorEntity supplier = equipmentEntity.getContractor();
+
+			//notify status changed to WAITING_FOR_RETURNING
+			//to supplier
+			firebaseMessagingManager.sendMessage(new NotificationDTO("Renting time ended",
+					String.format("Renting session of \"%s\" has finished. It's time to receive your equipment from %s"
+							, managedEquipment.getName()
+							, requester.getName())
+					, supplier.getId()
+					, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, processingHiringTransaction.getId())));
+
+			//to requester
+			firebaseMessagingManager.sendMessage(new NotificationDTO("Renting time ended",
+					String.format("Your renting time for \"%s\" has finished. It's time to return it to %s", managedEquipment.getName(), supplier.getName())
+					, supplier.getId()
+					, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, processingHiringTransaction.getId())));
+
 		}
 	}
 
 	public List<MatchedSubscriptionResult> getMatchedEquipmentForSubscription(int timeOffset) {
-		return entityManager.createNamedQuery("EquipmentEntity.getMatchedEquipmentForSubscriptions",MatchedSubscriptionResult.class)
+		return entityManager.createNamedQuery("EquipmentEntity.getMatchedEquipmentForSubscriptions", MatchedSubscriptionResult.class)
 				.setParameter("timeOffset", timeOffset)
 				.getResultList();
 

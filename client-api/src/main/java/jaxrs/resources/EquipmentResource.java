@@ -1,6 +1,7 @@
 package jaxrs.resources;
 
 import daos.*;
+import dtos.notifications.NotificationDTO;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentPutRequest;
 import dtos.responses.EquipmentResponse;
@@ -9,6 +10,7 @@ import dtos.wrappers.LocalDateWrapper;
 import dtos.wrappers.LocationWrapper;
 import dtos.responses.MessageResponse;
 import entities.*;
+import managers.FirebaseMessagingManager;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 import utils.Constants;
@@ -59,6 +61,9 @@ public class EquipmentResource {
 
 	@Resource
 	Validator validator;
+
+	@Inject
+	FirebaseMessagingManager firebaseMessagingManager;
 
 	@Context
 	HttpHeaders httpHeaders;
@@ -354,8 +359,9 @@ public class EquipmentResource {
 	public Response updateEquipmentStatus(@PathParam("id") long id, EquipmentEntity entity) {
 
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(id);
-
-		long requesterId = foundEquipment.getProcessingHiringTransactions().get(0).getRequester().getId();
+		HiringTransactionEntity processingHiringTransaction = foundEquipment.getProcessingHiringTransactions().get(0);
+		ContractorEntity requester = processingHiringTransaction.getRequester();
+		long requesterId = requester.getId();
 
 
 		EquipmentEntity.Status status = entity.getStatus();
@@ -408,8 +414,46 @@ public class EquipmentResource {
 		}
 
 		foundEquipment.setStatus(entity.getStatus());
-		equipmentDAO.merge(foundEquipment);
-		return Response.ok(equipmentDAO.findByID(id)).build();
+
+		foundEquipment = equipmentDAO.merge(foundEquipment);
+		sendNotificationsForStatusChanged(foundEquipment, processingHiringTransaction);
+		return Response.ok(foundEquipment).build();
+
+	}
+
+	private void sendNotificationsForStatusChanged(EquipmentEntity managedEquipment, HiringTransactionEntity hiringTransaction) {
+		ContractorEntity requester = hiringTransaction.getRequester();
+
+		ContractorEntity supplier = managedEquipment.getContractor();
+		EquipmentEntity.Status status = managedEquipment.getStatus();
+		switch (status) {
+			case AVAILABLE:
+				//notify nothing
+				break;
+
+			case DELIVERING:
+				firebaseMessagingManager.sendMessage(new NotificationDTO("Equipment Delivering!",
+						String.format("equipment \"%s\" is delivering to you by %s", managedEquipment.getName(), supplier.getName())
+						, requester.getId()
+						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, hiringTransaction.getId())));
+
+				break;
+			case RENTING:
+				firebaseMessagingManager.sendMessage(new NotificationDTO("Equipment Receiving confirmed",
+						String.format("%s confirmed having received your equipment \"%s\"", requester.getName(), managedEquipment.getName())
+						, supplier.getId()
+						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, hiringTransaction.getId())));
+
+				break;
+
+			case WAITING_FOR_RETURNING:
+				firebaseMessagingManager.sendMessage(new NotificationDTO("Renting transaction ended",
+						String.format("%s has finished renting transaction early and want to return the equipment \"%s\"", requester.getName(), managedEquipment.getName())
+						, supplier.getId()
+						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, hiringTransaction.getId())));
+
+				break;
+		}
 
 	}
 

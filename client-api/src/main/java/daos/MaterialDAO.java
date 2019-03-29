@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @Stateless
 public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 
-	public List<MaterialEntity> searchMaterial(Long contractorId, String query, long materialTypeId, String orderBy, int offset, int limit) {
+		public List<MaterialEntity> searchMaterial(Long contractorId, String query, long materialTypeId, String orderBy, int offset, int limit) {
 
 		//"select e from MaterialEntity  e where e.materialType.id = :materialTypeId and e.name like '%query%'"
 

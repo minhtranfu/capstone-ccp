@@ -36,6 +36,7 @@ public class HiringTransactionEntityListener {
 		EquipmentEntity equipment = entity.getEquipment();
 		switch (entity.getStatus()) {
 			case PROCESSING:
+				// notified in equipment service
 				break;
 			case ACCEPTED:
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Request accepted",

@@ -3333,6 +3333,7 @@
     <column id="700" parent="309" name="status">
       <Position>8</Position>
       <DataType>varchar(45)|0s</DataType>
+      <NotNull>1</NotNull>
       <DefaultExpression>&apos;PENDING&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>

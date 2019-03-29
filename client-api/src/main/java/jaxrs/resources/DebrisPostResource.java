@@ -12,6 +12,7 @@ import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
 import javax.validation.Valid;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @Path("debrisPosts")
+@Stateless
 @Produces(MediaType.APPLICATION_JSON)
 public class DebrisPostResource {
 	public static final Logger LOGGER = Logger.getLogger(DebrisPostResource.class.toString());
@@ -129,6 +131,7 @@ public class DebrisPostResource {
 
 		debrisPostDAO.persist(debrisPostEntity);
 
+		// TODO: 3/29/19 check bug image thumbnail id not references
 
 		// TODO: 3/23/19 check if image already belongs to another post
 		//only add this in post, every edit in future related to image, we use image sub resource
