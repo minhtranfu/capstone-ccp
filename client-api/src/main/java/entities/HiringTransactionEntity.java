@@ -276,6 +276,10 @@ public class HiringTransactionEntity {
 	}
 
 
+	@Transient
+	public boolean isFeedbacked() {
+		return this.getEquipmentFeedback() != null;
+	}
 
 	@Override
 	public String toString() {
