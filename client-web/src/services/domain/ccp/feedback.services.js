@@ -27,3 +27,7 @@ export const feedbackDebris = data => {
 export const feedbackEquipmentTransaction = data => {
   return DataAccessService.post(`/equipmentFeedbacks`, data);
 };
+
+export const feedbackMaterialTransaction = data => {
+  return DataAccessService.post(`/materialFeedbacks`, data);
+};

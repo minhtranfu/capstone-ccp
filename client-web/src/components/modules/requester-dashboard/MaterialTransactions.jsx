@@ -6,7 +6,7 @@ import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
 import StarRatings from 'react-star-ratings';
 
-import { FeedbackModal } from "../../common";
+import { FeedbackModal, RatingMaterialModal } from "../../common";
 import { MATERIAL_TRANSACTION_STATUSES } from '../../../common/consts';
 import { materialTransactionServices } from 'Src/services/domain/ccp';
 import { formatPrice } from 'Src/utils/format.utils';
@@ -281,6 +281,17 @@ class MaterialTransactions extends Component {
     });
   };
 
+  /**
+   * Show feedback modal
+   */
+  _toggleRatingMaterialTransaction = (feedbackTransaction) => {
+    const { isShowRatingMaterialTransaction } = this.state;
+    this.setState({
+      isShowRatingMaterialTransaction: !isShowRatingMaterialTransaction,
+      feedbackTransaction
+    });
+  };
+
   _renderTransaction = transaction => {
     const { filterStatus } = this.state;
     const { material, supplier } = transaction;
@@ -328,11 +339,11 @@ class MaterialTransactions extends Component {
 
       case MATERIAL_TRANSACTION_STATUSES.FINISHED:
         statusClasses += 'badge-success';
-        // changeStatusButtons = (
-        //   <div className="mt-2">
-        //     <button className="btn btn-sm btn-success" onClick={() => this._toggleFeedbackModal(transaction)}>Feedback</button>
-        //   </div>
-        // );
+        changeStatusButtons = (
+          <div className="mt-2">
+            <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingMaterialTransaction(transaction)}>Feedback</button>
+          </div>
+        );
         break;
     }
 
@@ -361,7 +372,7 @@ class MaterialTransactions extends Component {
               style={{width: '50px', height: '50px'}}
               src={supplier.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
             />
-            <p>{supplier.name}</p>
+            <div>{supplier.name}</div>
             {supplier.averageMaterialRating > 0 &&
               <StarRatings
                 rating={supplier.averageMaterialRating}
@@ -378,17 +389,22 @@ class MaterialTransactions extends Component {
   };
 
   render() {
-    const { isShowFeedbackModal, feedbackTransaction } = this.state;
+    const { isShowFeedbackModal, feedbackTransaction, isShowRatingMaterialTransaction } = this.state;
     this._renderTabContents();
 
     return (
       <div className="container py-5 user-dashboard">
+        <RatingMaterialModal
+          isOpen={isShowRatingMaterialTransaction}
+          onClose={() => this._toggleRatingMaterialTransaction()}
+          transaction={feedbackTransaction}
+        />
         {this._renderAlert()}
-        <FeedbackModal
+        {/* <FeedbackModal
           isOpen={isShowFeedbackModal}
           onClose={() => this._toggleFeedbackModal()}
           transaction={feedbackTransaction}
-        />
+        /> */}
         <div className="row">
           <div className="col-md-3">
             <div className="border-right border-primary h-100">
