@@ -1,6 +1,7 @@
 export const routeConsts = {
   HOME: 'HOME',
   LOGIN: 'LOGIN',
+  SIGNUP: 'SIGNUP',
 
   // Construction
   CONSTRUCTIONS: 'CONSTRUCTIONS',

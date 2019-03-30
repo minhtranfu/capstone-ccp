@@ -30,6 +30,11 @@ export const modules = [
     modulePath: './login/Login'
   },
   {
+    name: routeConsts.SIGNUP,
+    path: '/signup',
+    modulePath: './register'
+  },
+  {
     name: routeConsts.EQUIPMENT_ADD,
     path: '/equipments/add',
     modulePath: './add-equipment/AddEquipment',

@@ -4,6 +4,10 @@ export const login = (username, password) => {
   return DataAccessService.post('/authen', { username, password });
 };
 
+export const register = (data) => {
+  return DataAccessService.post('/register', data);
+};
+
 export const getUserInfo = () => {
   return DataAccessService.get('/token/contractor');
 };
