@@ -12,4 +12,14 @@ public class MaterialFeedbackDAO extends BaseDAO<MaterialFeedbackEntity, Long> {
 				.setParameter("supplierId", supplierId)
 				.getResultList();
 	}
+
+	public List<MaterialFeedbackEntity> getFeedbacksByMaterial(long materialId, int limit, int offset) {
+		return entityManager.createNamedQuery("MaterialFeedbackEntity.byMaterial", MaterialFeedbackEntity.class)
+				.setParameter("materialId", materialId)
+				.setFirstResult(offset)
+				.setMaxResults(limit)
+				.getResultList();
+
+
+	}
 }

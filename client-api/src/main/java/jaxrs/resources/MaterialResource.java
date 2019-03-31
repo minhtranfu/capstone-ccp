@@ -1,12 +1,7 @@
 package jaxrs.resources;
 
-import daos.ConstructionDAO;
-import daos.ContractorDAO;
-import daos.MaterialDAO;
-import daos.MaterialTypeDAO;
+import daos.*;
 import dtos.requests.MaterialRequest;
-import dtos.responses.EquipmentResponse;
-import dtos.wrappers.LocationWrapper;
 import entities.*;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
@@ -14,6 +9,7 @@ import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
 import javax.validation.Valid;
@@ -23,10 +19,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("materials")
@@ -50,6 +42,9 @@ public class MaterialResource {
 	ConstructionDAO constructionDAO;
 
 	@Inject
+	MaterialFeedbackDAO materialFeedbackDAO;
+
+	@Inject
 	@Claim("contractorId")
 	ClaimValue<JsonNumber> claimId;
 
@@ -66,6 +61,16 @@ public class MaterialResource {
 	public Response getMaterial(@PathParam("id") long id) {
 		return Response.ok(materialDAO.findByIdWithValidation(id)).build();
 	}
+
+	@GET
+	@Path("{id:\\d+}/feedbacks")
+	public Response getFeedbacksByMaterial(@PathParam("id") long id,
+										   @QueryParam("limit") @DefaultValue(DEFAULT_RESULT_LIMIT) int limit,
+										   @QueryParam("offset") @DefaultValue("0") int offset) {
+		materialDAO.findByIdWithValidation(id);
+		return Response.ok(materialFeedbackDAO.getFeedbacksByMaterial(id, limit, offset)).build();
+	}
+
 
 
 	@POST
@@ -88,6 +93,7 @@ public class MaterialResource {
 		).build();
 
 	}
+
 
 	private void validatePostPutMaterial(MaterialEntity materialEntity) {
 		//check for constructor id
@@ -185,7 +191,6 @@ public class MaterialResource {
 //		}
 		return Response.ok(materialEntities).build();
 	}
-
 
 
 }
