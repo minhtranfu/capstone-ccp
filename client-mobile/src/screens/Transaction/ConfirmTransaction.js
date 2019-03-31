@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 import {
   View,
   Text,
@@ -6,34 +6,34 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert
-} from "react-native";
-import { SafeAreaView, NavigationActions } from "react-navigation";
-import { connect } from "react-redux";
-import { Feather } from "@expo/vector-icons";
-import { sendTransactionRequest } from "../../redux/actions/transaction";
-import { getConstructionList } from "../../redux/actions/contractor";
+} from 'react-native'
+import { SafeAreaView, NavigationActions } from 'react-navigation'
+import { connect } from 'react-redux'
+import { Feather } from '@expo/vector-icons'
+import { sendTransactionRequest } from '../../redux/actions/transaction'
+import { getConstructionList } from '../../redux/actions/contractor'
 import {
   getCurrentLocation,
   autoCompleteSearch
-} from "../../redux/actions/location";
+} from '../../redux/actions/location'
 
-import AutoComplete from "../../components/AutoComplete";
-import Dropdown from "../../components/Dropdown";
-import InputField from "../../components/InputField";
-import Header from "../../components/Header";
-import Button from "../../components/Button";
-import Loading from "../../components/Loading";
+import AutoComplete from '../../components/AutoComplete'
+import Dropdown from '../../components/Dropdown'
+import InputField from '../../components/InputField'
+import Header from '../../components/Header'
+import Button from '../../components/Button'
+import Loading from '../../components/Loading'
 
-import colors from "../../config/colors";
-import fontSize from "../../config/fontSize";
+import colors from '../../config/colors'
+import fontSize from '../../config/fontSize'
 
 const DROPDOWN_CONSTRUCTION_OPTIONS = [
   {
     id: 0,
-    name: "Select your construction",
-    value: "Select your construction"
+    name: 'Select your construction',
+    value: 'Select your construction'
   }
-];
+]
 
 @connect(
   state => ({
@@ -43,29 +43,29 @@ const DROPDOWN_CONSTRUCTION_OPTIONS = [
   }),
   dispatch => ({
     fetchSendRequest: transactionDetail => {
-      dispatch(sendTransactionRequest(transactionDetail));
+      dispatch(sendTransactionRequest(transactionDetail))
     },
     fetchGetConstruction: contractorId => {
-      dispatch(getConstructionList(contractorId));
+      dispatch(getConstructionList(contractorId))
     }
   })
 )
 class ConfirmTransaction extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
-      address: "",
-      construction: "",
+      address: '',
+      construction: '',
       constructionIndex: 0,
       location: [],
-      currentLat: "",
-      currentLong: "",
+      currentLat: '',
+      currentLong: '',
       hideResults: false
-    };
+    }
   }
   componentDidMount = async () => {
-    const { user } = this.props;
-    this.props.fetchGetConstruction(user.contractor.id);
+    const { user } = this.props
+    this.props.fetchGetConstruction(user.contractor.id)
     // const locationStatus = await grantPermission("location");
     // if (locationStatus === "granted") {
     //   const currentLocation = await Location.getCurrentPositionAsync({});
@@ -75,89 +75,86 @@ class ConfirmTransaction extends Component {
     //     currentLong: coords.longitude
     //   });
     // }
-  };
+  }
 
   static getDerivedStateFromProps(props, state) {
-    if (state.construction !== "Select your construction") {
+    if (state.construction !== 'Select your construction') {
       const getConstructionByAddress = props.construction.find(
         item => item.name === state.construction
-      );
+      )
       if (getConstructionByAddress) {
         return {
           address: getConstructionByAddress.address
-        };
+        }
       }
-    } else {
-      return {
-        address: ""
-      };
     }
+    return null
   }
 
   _handleConfirmBooking = async () => {
-    const { equipment } = this.props.navigation.state.params;
-    const { constructionIndex } = this.state;
-    const { construction } = this.props;
+    const { equipment } = this.props.navigation.state.params
+    const { constructionIndex } = this.state
+    const { construction } = this.props
     const newEquipment = {
       ...equipment,
       requesterAddress: construction[constructionIndex - 1].address,
       requesterLatitude: construction[constructionIndex - 1].latitude,
       requesterLongitude: construction[constructionIndex - 1].longitude
-    };
-    await this.props.fetchSendRequest(newEquipment);
-  };
+    }
+    await this.props.fetchSendRequest(newEquipment)
+  }
 
   _handleInputChange = (field, value) => {
-    this.setState({ [field]: value });
-  };
+    this.setState({ [field]: value })
+  }
 
   _handleOnChangeText = async address => {
-    const { currentLat, currentLong } = this.state;
+    const { currentLat, currentLong } = this.state
     if (address) {
       this.setState({
         address: address,
         location: await autoCompleteSearch(address, currentLat, currentLong)
-      });
+      })
     } else {
       this.setState({
         location: []
-      });
+      })
     }
-  };
+  }
 
   _handleConstructionDropdown = () => {
-    const { construction } = this.props;
+    const { construction } = this.props
     const newConstructionDropdown = construction.map(item => ({
       id: item.id,
       name: item.name,
       value: item.name
-    }));
-    return [...DROPDOWN_CONSTRUCTION_OPTIONS, ...newConstructionDropdown];
-  };
+    }))
+    return [...DROPDOWN_CONSTRUCTION_OPTIONS, ...newConstructionDropdown]
+  }
 
   _renderAutoCompleteItem = item => (
     <TouchableOpacity
       style={styles.autocompleteWrapper}
       onPress={() => {
         this.setState({
-          address: item.main_text + ", " + item.secondary_text,
+          address: item.main_text + ', ' + item.secondary_text,
           hideResults: true,
           location: []
-        });
+        })
       }}
     >
       <Text style={styles.addressMainText}>{item.main_text}</Text>
       <Text style={styles.caption}>{item.secondary_text}</Text>
     </TouchableOpacity>
-  );
+  )
 
   render() {
-    const { equipment, name } = this.props.navigation.state.params;
-    const { address, location, construction } = this.state;
+    const { equipment, name } = this.props.navigation.state.params
+    const { address, location, construction } = this.state
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ bottom: "always", top: "always" }}
+        forceInset={{ bottom: 'always', top: 'always' }}
       >
         <Header
           renderLeftButton={() => (
@@ -174,37 +171,37 @@ class ConfirmTransaction extends Component {
             <Text style={styles.text}>Begin date: {equipment.beginDate}</Text>
             <Text style={styles.text}>End date:{equipment.endDate}</Text>
             <Dropdown
-              label={"Construction"}
-              defaultText={"Select your construction"}
+              label={'Construction'}
+              defaultText={'Select your construction'}
               onSelectValue={(value, index) => {
                 this.setState({
                   construction: value,
                   constructionIndex: index
-                });
+                })
               }}
               options={this._handleConstructionDropdown()}
             />
             <AutoComplete
-              label={"Address"}
-              placeholder={"Input your address"}
+              label={'Address'}
+              placeholder={'Input your address'}
               onFocus={() => this.setState({ hideResults: false })}
               hideResults={this.state.hideResults}
               editable={
-                !construction || construction === "Select your construction"
+                !construction || construction === 'Select your construction'
               }
               data={location}
               value={address}
               onChangeText={value => {
-                this._handleOnChangeText(value);
+                this._handleOnChangeText(value)
               }}
               renderItem={item => this._renderAutoCompleteItem(item)}
             />
             <Button
-              text={"Confirm Booking"}
+              text={'Confirm Booking'}
               wrapperStyle={{ marginTop: 15 }}
               onPress={() => {
-                this._handleConfirmBooking();
-                this.props.navigation.goBack();
+                this._handleConfirmBooking()
+                this.props.navigation.goBack()
               }}
             />
           </ScrollView>
@@ -212,7 +209,7 @@ class ConfirmTransaction extends Component {
           <Loading />
         )}
       </SafeAreaView>
-    );
+    )
   }
 }
 
@@ -228,22 +225,22 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: fontSize.h4,
-    fontWeight: "600"
+    fontWeight: '600'
   },
   text: {
     fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontWeight: '500'
   },
   addressMainText: {
     fontSize: fontSize.secondaryText,
     color: colors.text,
-    fontWeight: "500"
+    fontWeight: '500'
   },
   caption: {
     fontSize: fontSize.caption,
     color: colors.text50,
-    fontWeight: "600"
+    fontWeight: '600'
   }
-});
+})
 
-export default ConfirmTransaction;
+export default ConfirmTransaction
