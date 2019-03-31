@@ -8,6 +8,7 @@ import dtos.requests.RegisterRequest;
 import dtos.responses.RegisterResponse;
 import entities.ContractorAccountEntity;
 import entities.ContractorEntity;
+import org.mindrot.jbcrypt.BCrypt;
 import org.modelmapper.ModelMapper;
 import utils.ModelConverter;
 
@@ -44,6 +45,11 @@ public class RegisterResource {
 		Credentials credentials = registerRequest.credentials;
 		ContractorRequest contractorRequest = registerRequest.contractor;
 
+		// hash password
+		String hashedPassword = BCrypt.hashpw(credentials.getPassword(), BCrypt.gensalt());
+		credentials.setPassword(hashedPassword);
+
+
 		// check username password
 		List<ContractorAccountEntity> accountsByUsername = contractorAccountDAO.findByUsername(
 				credentials.getUsername()
@@ -58,6 +64,10 @@ public class RegisterResource {
 		//persist account
 		ContractorEntity contractorEntity = modelConverter.toEntity(contractorRequest);
 		ContractorAccountEntity contractorAccountEntity = modelConverter.toEntity(credentials);
+
+
+
+
 
 		contractorAccountDAO.persist(contractorAccountEntity);
 		contractorDAO.persist(contractorEntity);

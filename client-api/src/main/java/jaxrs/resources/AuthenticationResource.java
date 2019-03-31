@@ -7,6 +7,7 @@ import dtos.responses.AuthenResponse;
 import dtos.responses.TokenWrapper;
 import entities.ContractorAccountEntity;
 import jaxrs.providers.MPJWTConfigurationProvider;
+import org.mindrot.jbcrypt.BCrypt;
 import utils.TokenUtil;
 
 import javax.inject.Inject;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @Path("authen")
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthenticationResource {
-	private static final long DEFAULT_EXPIRATION_TIME = 60*60*24*90; // 90 days
+	private static final long DEFAULT_EXPIRATION_TIME = 60 * 60 * 24 * 90; // 90 days
 
 
 	@Inject
@@ -33,6 +34,9 @@ public class AuthenticationResource {
 		String username = credentials.getUsername();
 		String password = credentials.getPassword();
 
+		// TODO: 3/31/19 hash password
+		String hashedPassword = BCrypt.hashpw(credentials.getPassword(), BCrypt.gensalt());
+
 
 		ContractorAccountEntity contractorAccount = authenticate(username, password);
 		if (contractorAccount.getContractor() == null) {
@@ -41,7 +45,7 @@ public class AuthenticationResource {
 		}
 		final long expiresIn = DEFAULT_EXPIRATION_TIME; // still in seconds
 
-		String token = issueToken(contractorAccount,expiresIn);
+		String token = issueToken(contractorAccount, expiresIn);
 		AuthenResponse authenResponse = new AuthenResponse();
 		authenResponse.setContractor(contractorAccount.getContractor());
 		authenResponse.setUsername(username);
@@ -53,11 +57,10 @@ public class AuthenticationResource {
 		));
 
 
-
 		return Response.ok(authenResponse).build();
 	}
 
-	private String issueToken(ContractorAccountEntity account, long expiresIn ) throws Exception {
+	private String issueToken(ContractorAccountEntity account, long expiresIn) throws Exception {
 		// TODO: 3/6/19 generate token here
 		final List<String> scopes = new ArrayList<>();
 		scopes.add("contractor");
@@ -70,12 +73,12 @@ public class AuthenticationResource {
 				.claim("groups", scopes)
 				.claim("username", account.getUsername())
 				.claim("name", account.getContractor().getName())
-				.claim("contractorId",new Long(account.getContractor().getId()))
-				.subject(""+account.getContractor().getId())
+				.claim("contractorId", new Long(account.getContractor().getId()))
+				.subject("" + account.getContractor().getId())
 				.issuer(MPJWTConfigurationProvider.ISSUED_BY)
 				.build();
 
-		String token =  TokenUtil.generateTokenString(claimsSet.toJSONObject(), null, new HashMap<String, Long>() {{
+		String token = TokenUtil.generateTokenString(claimsSet.toJSONObject(), null, new HashMap<String, Long>() {{
 			put("exp", expires);
 		}});
 
@@ -85,14 +88,19 @@ public class AuthenticationResource {
 	}
 
 	private ContractorAccountEntity authenticate(String username, String password) {
-		// Authenticate against a database, LDAP, file or whatever
 		// Throw an Exception if the credentials are invalid
 
-		List<ContractorAccountEntity> accountsByUsernamePassword = contractorAccountDAO.findAccountsByUsernamePassword(username, password);
+		List<ContractorAccountEntity> accountsByUsernamePassword = contractorAccountDAO.findByUsername(username);
 		if (accountsByUsernamePassword == null || accountsByUsernamePassword.size() == 0) {
-			throw new ForbiddenException("incorrect username or password ");
+			throw new ForbiddenException(String.format("incorrect username=%s", username));
 		}
-		return accountsByUsernamePassword.get(0);
+		for (ContractorAccountEntity contractorAccountEntity : accountsByUsernamePassword) {
+			if (BCrypt.checkpw(password, contractorAccountEntity.getPassword())) {
+				return contractorAccountEntity;
+			}
+		}
+
+		throw new ForbiddenException("Password not correct");
 	}
 
 
