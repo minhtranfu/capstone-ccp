@@ -5,6 +5,7 @@ import dtos.requests.*;
 import dtos.responses.ContractorResponse;
 import dtos.responses.DebrisBidResponse;
 import dtos.responses.GeneralMaterialTypeResponse;
+import dtos.responses.TokenContractorResponse;
 import entities.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -180,6 +181,11 @@ public class ModelConverter {
 
 	public EquipmentFeedbackEntity toEntity(EquipmentFeedbackRequest equipmentFeedbackRequest) {
 		return modelMapper.map(equipmentFeedbackRequest, EquipmentFeedbackEntity.class);
+	}
+
+	public TokenContractorResponse toTokenContractorResponse(ContractorEntity contractorEntity) {
+		return modelMapper.map(contractorEntity, TokenContractorResponse.class);
+
 	}
 }
 

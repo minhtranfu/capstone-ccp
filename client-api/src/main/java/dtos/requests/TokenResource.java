@@ -1,8 +1,12 @@
 package dtos.requests;
 
 import daos.ContractorDAO;
+import daos.NotificationDAO;
+import dtos.responses.TokenContractorResponse;
+import entities.ContractorEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -16,8 +20,12 @@ public class TokenResource {
 
 
 	@Inject
+	ModelConverter modelConverter;
+	@Inject
 	ContractorDAO contractorDAO;
 
+	@Inject
+	NotificationDAO notificationDAO;
 	@Inject
 	@Claim("contractorId")
 	ClaimValue<JsonNumber> claimContractorId;
@@ -30,6 +38,12 @@ public class TokenResource {
 	@GET
 	@Path("contractor")
 	public Response getContractorByToken() {
-		return Response.ok(contractorDAO.findByIdWithValidation(getClaimContractorId())).build();
+		ContractorEntity contractorEntity = contractorDAO.findByIdWithValidation(getClaimContractorId());
+		TokenContractorResponse response = modelConverter.toTokenContractorResponse(contractorEntity);
+		response.setTotalUnreadNotifications(notificationDAO.getTotalUnreadNotification(getClaimContractorId()));
+
+		return Response.ok(response).build();
 	}
+
+
 }

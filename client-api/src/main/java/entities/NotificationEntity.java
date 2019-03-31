@@ -9,7 +9,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notification", schema = "capstone_ccp")
+@NamedQueries({
 @NamedQuery(name = "NotificationEntity.getByContractorId", query = "select e from NotificationEntity e where e.contractor.id =:contractorId order by e.createdTime desc ")
+,@NamedQuery(name = "NotificationEntity.countUnreadByContractorId", query = "select count(e.id) from NotificationEntity e where e.contractor.id = :contractorId and e.read = false")
+})
 public class NotificationEntity {
 	private long id;
 	private String title;

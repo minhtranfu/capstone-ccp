@@ -40,6 +40,7 @@ public class ContractorEntity {
 	private List<SubscriptionEntity> subscriptionEntities;
 
 	private List<NotificationEntity> notifications;
+	private List<NotificationEntity> unreadNotification;
 
 	private Collection<ContractorVerifyingImageEntity> contractorVerifyingImages;
 
@@ -256,6 +257,8 @@ public class ContractorEntity {
 
 		this.notifications = notifications;
 	}
+
+
 
 	@JsonbTransient
 	@OneToMany(mappedBy = "contractor", cascade = {})
