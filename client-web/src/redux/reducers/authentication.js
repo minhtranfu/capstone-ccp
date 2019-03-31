@@ -10,7 +10,6 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
       };
 
     case authConstants.LOGIN_REQUEST:
-      console.log('Fetching.....');
       return {
         ...state,
         loggingIn: true,
@@ -53,6 +52,20 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
       return {
         ...state,
         isShowLoginModal: !state.isShowLoginModal
+      };
+
+    case authConstants.ADD_NOTIFICATIONS_COUNT:
+      state.user.contractor.totalUnreadNotifications++;
+
+      return {
+        ...state
+      };
+
+    case authConstants.MIN_NOTIFICATIONS_COUNT:
+      state.user.contractor.totalUnreadNotifications--;
+
+      return {
+        ...state
       };
 
     default:

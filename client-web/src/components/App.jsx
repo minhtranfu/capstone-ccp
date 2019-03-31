@@ -38,7 +38,7 @@ class App extends Component {
     return (
       <div className="d-flex flex-column min-vh-100">
         <Header />
-        {authentication.user &&
+        {authentication.isAuthenticated &&
           <SubHeader />
         }
         {Routes}

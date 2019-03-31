@@ -54,10 +54,10 @@ class LoginForm extends Component {
     e.preventDefault();
 
     const validateResult = this._validate(this.data, this.validateOptions);
+    this.setState({
+      validateResult
+    });
     if (validateResult.isInvalid) {
-      this.setState({
-        validateResult
-      });
       
       return;
     }

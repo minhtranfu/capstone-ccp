@@ -39,3 +39,15 @@ export const getErrorMessage = error => {
 
   return 'Unknown error occurr!';
 };
+
+export const toQueryString = data => {
+  if (typeof data !== 'object' || data === null) {
+    return '';
+  }
+
+  const params = Object.keys(data).map(key => {
+    return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
+  });
+
+  return params.join('&');
+};

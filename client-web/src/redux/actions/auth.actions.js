@@ -14,7 +14,9 @@ export const authActions = {
   loadUserFromToken,
   showLoginModal,
   hideLoginModal,
-  toggleLoginModal  
+  toggleLoginModal,
+  addNotificationsCount,
+  minusNotificationsCount
 };
 
 /**
@@ -106,4 +108,16 @@ function toggleLoginModal() {
   return {
     type: authConstants.LOGIN_MODAL_TOGGLE
   };
+}
+
+function minusNotificationsCount() {
+  return {
+    type: authConstants.MIN_NOTIFICATIONS_COUNT
+  }
+}
+
+function addNotificationsCount() {
+  return {
+    type: authConstants.ADD_NOTIFICATIONS_COUNT
+  }
 }

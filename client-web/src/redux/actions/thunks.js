@@ -1,7 +1,7 @@
 import { ENTITY_KEY } from '../../common/app-const';
 import { loadEntity } from 'redux-entity';
 import CcpApiService from '../../services/domain/ccp-api-service';
-import { debrisServices, equipmentServices } from 'Services/domain/ccp';
+import { debrisServices, equipmentServices, userServices } from 'Services/domain/ccp';
 
 export const fetchEquipmentTypes = () => {
   return loadEntity(
@@ -43,4 +43,14 @@ export const fetchDebrisServiceTypes = () => {
     ENTITY_KEY.DEBRIS_SERVICE_TYPES,
     debrisServices.getDebrisServiceTypes()
   );
+};
+
+export const fetchNotifications = ({ limit, offset }) => {
+  return loadEntity(
+    ENTITY_KEY.NOTIFICATIONS,
+    userServices.getNotifications({ limit, offset }),
+    {
+      append: true
+    }
+  )
 };

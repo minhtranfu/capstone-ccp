@@ -500,12 +500,51 @@ nav.navbar {
     padding-left: 0.5em;
   }
   .dropdown-menu {
-    min-width: 18em;
+    width: 380px;
     padding-top: 0;
+    padding-bottom: 0;
+    transform: translateX(-50%);
   }
   .list-notifications {
-    max-height: 224px;
+    max-height: 500px;
     overflow-y: auto;
+
+    .dropdown-item {
+      padding: 0.9rem .5rem;
+      border-bottom: 1px solid #eee;
+      white-space: normal;
+      min-height: 68px;
+
+      &.unread {
+        background: #edf2fa;
+        border-color: #dadada;
+      }
+      .mark-as-read {
+        visibility: hidden;
+        height: 14px;
+        line-height: 14px;
+      }
+      .title {
+        font-size: .9em;
+        -webkit-box-orient: vertical;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        max-height: 2.67em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
+        color: #16181b;
+      }
+      .text-muted {
+        font-size: .8em;
+      }
+
+      &:hover{
+        .mark-as-read {
+          visibility: visible;
+        }
+      }
+    }
   }
   .dropdown-divider {
     margin-top: 0;

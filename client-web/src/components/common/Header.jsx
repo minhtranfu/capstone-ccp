@@ -5,9 +5,9 @@ import { connect } from 'react-redux';
 import { authActions } from '../../redux/actions';
 
 import LoginModal from '../modules/login/LoginModal';
-import { authConstants } from '../../redux/_constants';
 import { getRoutePath } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
+import Notifications from './notifications';
 
 class Header extends Component {
 
@@ -105,9 +105,33 @@ class Header extends Component {
     });
   };
 
+  _toggleNotifications = () => {
+    const { isShowNotifications } = this.state;
+    if (!isShowNotifications) {
+      // attach/remove event handler
+      document.addEventListener('click', this._handleOutsideClick, false);
+    } else {
+      document.removeEventListener('click', this._handleOutsideClick, false);
+    }
+
+    this.setState({
+      isShowNotifications: !isShowNotifications
+    });
+  };
+
+  _handleOutsideClick = e => {
+    // ignore clicks on the component itself
+    if (this.noticationComponent && this.noticationComponent.contains(e.target)) {
+      return;
+    }
+    
+    this._toggleNotifications();
+  }
+
   render() {
-    const { showOffCanvas } = this.state;
+    const { showOffCanvas, isShowNotifications } = this.state;
     const { authentication } = this.props;
+    const { user } = authentication;
 
     return (
       <nav className="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
@@ -128,41 +152,12 @@ class Header extends Component {
             </ul>
             {authentication.isAuthenticated &&
               <ul className="navbar-nav">
-                <li className="nav-item dropdown notifications mr-2">
-                  <a className="text-light d-flex h-100 align-items-center px-3" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                <li className="nav-item dropdown notifications mr-2" ref={noticationComponent => { this.noticationComponent = noticationComponent; }}>
+                  <a className="text-light d-flex h-100 align-items-center px-3" href="#" onClick={this._toggleNotifications}>
                     <i className="fal fa-bell"></i>
-                    <span className="badge badge-pill badge-danger">10</span>
+                    <span className="badge badge-pill badge-danger">{user.contractor.totalUnreadNotifications}</span>
                   </a>
-                  <div className="dropdown-menu shadow mt-2 rounded-top-0">
-                    <div className="list-notifications custom-scrollbar">
-                      <a className="dropdown-item" href="#">
-                        <div>Profile</div>
-                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        <div>Profile</div>
-                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        <div>Profile</div>
-                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        <div>Profile</div>
-                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        <div>Profile</div>
-                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        <div>Profile</div>
-                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
-                      </a>
-                    </div>
-                    <div className="dropdown-divider"></div>
-                    <a className="dropdown-item text-center" href="#">View all <i className="fal fa-chevron-right"></i></a>
-                  </div>
+                  <Notifications isShow={isShowNotifications}/>
                 </li>
                 <li className="nav-item dropdown">
                   <a className="dropdown-toggle text-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
