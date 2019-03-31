@@ -5,13 +5,13 @@ import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import Helmet from "react-helmet-async";
-import moment from "moment";
 import Image from "../../common/Image";
 import { connect } from "react-redux";
 import { authActions } from "../../../redux/actions";
 
 import ccpApiService from "../../../services/domain/ccp-api-service";
 import RequestCard from "./RequestCard";
+import { formatPrice } from "Utils/format.utils";
 
 class EquipDetail extends Component {
   state = {
@@ -118,42 +118,18 @@ class EquipDetail extends Component {
             <div className="py-2 px-3 shadow-sm bg-white">
               <h1 className="">{equip.name || <Skeleton />}</h1>
               <div className="row">
-                <div className="col-md-4">
-                  <h6>
-                    Construction:{" "}
-                    {equip.construction && equip.construction.name}
-                  </h6>
+                <div className="col-md-6">
+                  <h6><i className="fal fa-tags"></i> Type: {equip.equipmentType && equip.equipmentType.name}</h6>
                 </div>
-                <div className="col-md-4">
-                  <h6>Daily price:{equip.dailyPrice}K</h6>
-                </div>
-                <div className="col-md-4">
-                  <h6>Delivery price: {equip.deliveryPrice}K</h6>
+                <div className="col-md-6">
+                  <h6><i className="fal fa-dollar-sign"></i> Daily price: {formatPrice(equip.dailyPrice)}</h6>
                 </div>
                 <div className="col-md-12">
-                  <h6>Address: {equip.address}</h6>
+                  <h6><i className="fal fa-map-marker"></i> Address: {equip.address}</h6>
                 </div>
               </div>
-              <h5 className="mt-2">Available Time Ranges:</h5>
-              <div className="time-ranges">
-                {equip.availableTimeRanges &&
-                  equip.availableTimeRanges.map((range, index) => (
-                    <span
-                      className="badge badge-success badge-pill mr-2"
-                      key={index}
-                    >
-                      <h4 className="m-0 px-2 pb-1">
-                        {moment(range.beginDate).format("YYYY/MM/DD")} -{" "}
-                        {moment(range.endDate).format("YYYY/MM/DD")}
-                      </h4>
-                    </span>
-                  ))}
-              </div>
               <h5 className="mt-3">Description:</h5>
-              <div
-                className="description"
-                dangerouslySetInnerHTML={{ __html: equip.description }}
-              />
+              <div className="description">{equip.description}</div>
             </div>
             {!equip.id && <Skeleton count={10} />}
           </div>

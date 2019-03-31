@@ -11,6 +11,7 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 
 import { authActions } from '../../../redux/actions';
 import ccpApiService from '../../../services/domain/ccp-api-service';
+import { formatPrice } from 'Utils/format.utils';
 
 class RequestCard extends Component {
 
@@ -252,9 +253,7 @@ class RequestCard extends Component {
     return (
       <div className="request-card bg-white shadow">
         {this._renderAlert()}
-        <div className="my-2">Daily price: <span className="float-right">{equip.dailyPrice}K</span></div>
-        <div className="my-2 pb-2 border-bottom">Delivery price: <span className="float-right">{equip.deliveryPrice}K</span></div>
-
+        <div className="my-2 pb-2 border-bottom">Daily price: <span className="float-right text-x-large">{formatPrice(equip.dailyPrice)}</span></div>
         <div className="form-group">
           <label htmlFor="requesterAddress"><strong>Receive address:</strong></label>
           <PlacesAutocomplete
@@ -325,7 +324,7 @@ class RequestCard extends Component {
           {transaction.beginDate &&
             <div>
               <div className="text-left">Days: <span className="float-right">{numOfDays}</span></div>
-              <div className="text-left">Fee: <span className="float-right">{numOfDays * equip.dailyPrice}K</span></div>
+              <div className="text-left">Fee: <span className="float-right text-x-large">{formatPrice(numOfDays * equip.dailyPrice)}</span></div>
             </div>
           }
         </div>
