@@ -59,10 +59,15 @@ export function cartCheckout(contractorId) {
   };
 }
 
-export function addMaterialItemToCart(id, item) {
+export function listMaterialCartItem() {
+  return {
+    type: Actions.LIST_MATERIAL_CART_ITEM.SUCCESS
+  };
+}
+export function addMaterialItemToCart(supplierId, item) {
   return {
     type: Actions.ADD_MATERIAL_ITEM_TO_CART.SUCCESS,
-    payload: { id: id, data: item }
+    payload: { id: supplierId, item }
   };
 }
 

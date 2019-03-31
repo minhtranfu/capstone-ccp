@@ -65,7 +65,7 @@ class SearchDetail extends Component {
       calendarVisible: false,
       isModalOpen: false,
       date: {},
-      finishedAnimation: false,
+      finishedAnimation: false
     };
   }
 
@@ -74,7 +74,7 @@ class SearchDetail extends Component {
     InteractionManager.runAfterInteractions(() => {
       // 2: Component is done animating
       // 3: Do your anotherAction dispatch() here
-      this.setState({ finishedAnimation: true })
+      this.setState({ finishedAnimation: true });
     });
   }
 
@@ -384,20 +384,22 @@ class SearchDetail extends Component {
 
         <Title title={"Location"} />
         <Text style={[styles.text, { paddingVertical: 5 }]}>{address}</Text>
-        {this.state.finishedAnimation && (<MapView
-          style={styles.mapWrapper}
-          initialRegion={{
-            latitude: 10.831668,
-            longitude: 106.682495,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421
-          }}
-        >
-          <Marker
-            coordinate={{ latitude: 10.831668, longitude: 106.682495 }}
-            title={"Me"}
-          />
-        </MapView>)}
+        {this.state.finishedAnimation && (
+          <MapView
+            style={styles.mapWrapper}
+            initialRegion={{
+              latitude: 10.831668,
+              longitude: 106.682495,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421
+            }}
+          >
+            <Marker
+              coordinate={{ latitude: 10.831668, longitude: 106.682495 }}
+              title={"Me"}
+            />
+          </MapView>
+        )}
       </View>
     );
   };
@@ -406,31 +408,6 @@ class SearchDetail extends Component {
     const { id } = this.props.navigation.state.params;
     const { detail } = this.props;
 
-    let customI18n = {
-      w: ["", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"],
-      weekday: [
-        "",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday"
-      ],
-      text: {
-        start: "Check in",
-        end: "Check out",
-        date: "Date",
-        save: "Save",
-        clear: "Reset"
-      },
-      date: "DD / MM" // date format
-    };
-    // optional property, too.
-    let color = {
-      subColor: "#f0f0f0"
-    };
     return (
       <SafeAreaView
         style={styles.container}
@@ -443,7 +420,7 @@ class SearchDetail extends Component {
           imageURL={
             detail.equipmentEntity.thumbnailImage
               ? detail.equipmentEntity.thumbnailImage.url
-              : 'null'
+              : "null"
           }
           hasLeft={true}
           hasCart={true}
@@ -463,20 +440,6 @@ class SearchDetail extends Component {
             text={"Book Now"}
             onPress={() => this._setCalendarVisible(true)}
             buttonStyle={{ marginTop: 0, backgroundColor: "transparent" }}
-          />
-          <Calendar
-            i18n="en"
-            ref={calendar => {
-              this.calendar = calendar;
-            }}
-            customI18n={customI18n}
-            color={color}
-            format="YYYY-MM-DD"
-            minDate={this._handleFormatDate(new Date())}
-            maxDate="2019-04-30"
-            startDate={this.state.startDate}
-            endDate={this.state.endDate}
-            onConfirm={this._confirmDate}
           />
         </SafeAreaView>
       </SafeAreaView>
@@ -538,7 +501,8 @@ const styles = StyleSheet.create({
   },
   mapWrapper: {
     flex: 1,
-    height: 200
+    height: 300,
+    marginBottom: 15
   },
   bottomWrapper: {
     justifyContent: "center",

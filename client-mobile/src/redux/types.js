@@ -39,10 +39,13 @@ export const CLEAR_IMAGE_LIST = "@@equip/CLEAR_IMAGE_LIST";
 
 //TRANSACTION
 export const LIST_SUPPLIER_TRANSACTION = renderActions(
-  "@@equip/LIST_SUPPLIER_TRANSACTION"
+  "@@transaction/LIST_SUPPLIER_TRANSACTION"
 );
 export const LIST_REQUESTER_TRANSACTION = renderActions(
   "@@transaction/LIST_REQUESTER_TRANSACTION"
+);
+export const GET_TRANSACTION_DETAIL = renderActions(
+  "@@transaction/GET_TRANSACTION_DETAIL"
 );
 export const UPDATE_TRANSACTION_EQUIPMENT_STATUS = renderActions(
   "@@transaction/UPDATE_TRANSACTION_EQUIPMENT_STATUS"
@@ -117,6 +120,9 @@ export const REMOVE_MATERIAL_ITEM_FROM_CART = renderActions(
 export const UPDATE_MATERIAL_ITEM_TO_CART = renderActions(
   "@@cart/UPDATE_MATERIAL_ITEM_TO_CART"
 );
+export const LIST_MATERIAL_CART_ITEM = renderActions(
+  "@@cart/LIST_MATERIAL_CART_ITEM"
+);
 export const CLEAR_MATERIAL_CART = renderActions("@@cart/CLEAR_MATERIAL_CART");
 
 // STATUS
@@ -155,6 +161,9 @@ export const LIST_FEEDBACK_TYPES = renderActions(
 );
 
 //SUBSCRIPTION
+export const ADD_SUBSCRIPTIONS = renderActions(
+  "@@subscription/ADD_SUBSCRIPTIONS"
+);
 export const GET_SUBSCRIPTIONS = renderActions(
   "@@subscription/GET_SUBSCRIPTIONS"
 );
@@ -261,3 +270,6 @@ export const GET_MATERIAL_FEEDBACK = renderActions(
 export const GET_EQUIPMENT_FEEDBACK = renderActions(
   "@@feedback/GET_EQUIPMENT_FEEDBACK"
 );
+
+//REGISTER
+export const REGISTER = renderActions("@@feedback/REGISTER");

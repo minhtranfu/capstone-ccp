@@ -4,6 +4,7 @@ const initialState = {
   loading: false,
   adjustLoading: false,
   debrisLoading: false,
+  feedbackLoading: {},
   listSupplierTransaction: [],
   listRequesterTransaction: [],
   listSupplierMaterial: [],
@@ -46,6 +47,17 @@ export default function transactionReducer(state = initialState, action) {
     case Actions.LIST_REQUESTER_TRANSACTION.ERROR: {
       return { ...state, loading: false };
     }
+
+    // If list requester or list supplier not available
+    // So when user click go detai
+    case Actions.GET_TRANSACTION_DETAIL.SUCCESS: {
+      return {
+        ...state,
+        listRequesterTransaction: [payload.data],
+        listSupplierTransaction: [payload.data]
+      };
+    }
+
     //Requester send transaction to supplier
     case Actions.SEND_TRANSACTION_REQUEST.SUCCESS:
       return {
@@ -250,6 +262,33 @@ export default function transactionReducer(state = initialState, action) {
           item.id === payload.id ? (item = payload.data.data) : item
         )
       };
+    case Actions.SEND_EQUIPMENT_FEEDBACK.REQUEST: {
+      return {
+        ...state,
+        feedbackLoading: { [payload.id]: true }
+        // listRequesterTransaction: state.listRequesterTransaction.map(item =>
+        //   item.id === payload.id ? { ...item, feedbacked: true } : item
+        // )
+      };
+    }
+    case Actions.SEND_EQUIPMENT_FEEDBACK.SUCCESS: {
+      const { hiringTransaction } = payload.data;
+      return {
+        ...state,
+        listRequesterTransaction: state.listRequesterTransaction.map(item =>
+          item.id === hiringTransaction.id
+            ? { ...item, feedbacked: hiringTransaction.feedbacked }
+            : item
+        ),
+        feedbackLoading: { [hiringTransaction.id]: false }
+      };
+    }
+    case Actions.SEND_EQUIPMENT_FEEDBACK.ERROR: {
+      return {
+        ...state,
+        feedbackLoading: {}
+      };
+    }
     default:
       return state;
   }

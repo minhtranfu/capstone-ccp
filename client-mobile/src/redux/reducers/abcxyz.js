@@ -277,3 +277,20 @@ disableText: {
                 }
               />
             ))} */}
+
+
+
+            <Calendar
+            i18n="en"
+            ref={calendar => {
+              this.calendar = calendar;
+            }}
+            customI18n={customI18n}
+            color={color}
+            format="YYYY-MM-DD"
+            minDate={this._handleFormatDate(new Date())}
+            maxDate="2019-04-30"
+            startDate={this.state.startDate}
+            endDate={this.state.endDate}
+            onConfirm={this._confirmDate}
+          />

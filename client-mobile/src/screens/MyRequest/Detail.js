@@ -64,6 +64,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       detail: state.transaction.listRequesterTransaction.find(
         item => item.id === id
       ),
+      feedbackLoading: state.transaction.feedbackLoading[id],
       user: state.auth.data
     };
   },
@@ -183,15 +184,17 @@ class ActivityDetail extends Component {
     status,
     equipmentStatus,
     transactionId,
-    isFeedback
+    hasFeedback
   ) => {
     switch (status) {
       case "FINISHED":
-        return isFeedback ? (
+        return hasFeedback ? (
           <Text style={styles.text}>You've been feedbacked</Text>
         ) : (
           <Button
             text={"Feedback"}
+            disabled={!!this.props.feedbackLoading}
+            style={{ opacity: this.props.feedbackLoading ? 0.5 : 1 }}
             onPress={() =>
               this.props.navigation.navigate("Feedback", {
                 transactionId: transactionId,

@@ -49,8 +49,12 @@ class DebrisDetail extends Component {
     super(props);
     this.state = {
       isCancel: false,
-      reason: null
+      reason: null,
+      modalVisible: false
     };
+  }
+  _setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
   }
 
   _handleChangeStatus = (transactionId, status) => {

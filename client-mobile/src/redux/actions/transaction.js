@@ -1,6 +1,7 @@
 import axios from "axios";
 import StatusAction from "./status";
 import * as Actions from "../types";
+import { CART_CHECK_OUT } from "../types";
 
 export function listTransactionBySupplier(contractorId) {
   return async dispatch => {
@@ -67,6 +68,22 @@ export function requestTransaction(id, transactionStatus) {
     }
   };
 }
+
+export function getTransactionDetail(id) {
+  return async dispatch => {
+    try {
+      dispatch({ type: Actions.GET_TRANSACTION_DETAIL.REQUEST });
+      const res = await axios.get(`transactions/${id}`);
+      dispatch({
+        type: Actions.GET_TRANSACTION_DETAIL.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({ type: Actions.GET_TRANSACTION_DETAIL.ERROR });
+    }
+  };
+}
+
 export function getAdjustTransaction(transactionId) {
   return async dispatch => {
     dispatch({
@@ -263,5 +280,26 @@ export function updateDebrisTransactionStatus(transactionId, status) {
       type: Actions.UPDATE_DEBRIS_TRANSACTION_STATUS.SUCCESS,
       payload: { data: res, id: transactionId }
     });
+  };
+}
+
+export function sendEquipmentFeedback(transactionId, feedback) {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: Actions.SEND_EQUIPMENT_FEEDBACK.REQUEST,
+        payload: { id: transactionId }
+      });
+      const res = await axios.post(`equipmentFeedbacks`, feedback);
+      dispatch({
+        type: Actions.SEND_EQUIPMENT_FEEDBACK.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: Actions.SEND_EQUIPMENT_FEEDBACK.ERROR
+      });
+    }
   };
 }

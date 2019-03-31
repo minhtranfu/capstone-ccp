@@ -71,7 +71,28 @@ class SupplierDebrisDetail extends Component {
         />
         <Button
           text={"Cancel"}
-          onPress={() => this.setState({ isCancel: true })}
+          onPress={() =>
+            this.props.navigation.navigate("CancelBid", { transactionId: id })
+          }
+          wrapperStyle={{ marginBottom: 15 }}
+        />
+      </View>
+    );
+  };
+
+  _renderDeliveryCase = id => {
+    return (
+      <View>
+        <Button
+          text={"Work"}
+          onPress={() => this._handleChangeStatus(id, "WORKING")}
+          wrapperStyle={{ marginBottom: 15 }}
+        />
+        <Button
+          text={"Cancel"}
+          onPress={() =>
+            this.props.navigation.navigate("CancelBid", { transactionId: id })
+          }
           wrapperStyle={{ marginBottom: 15 }}
         />
       </View>
@@ -83,20 +104,7 @@ class SupplierDebrisDetail extends Component {
       case "ACCEPTED":
         return this._renderAcceptedCase(id);
       case "DELIVERING":
-        return (
-          <View>
-            <Button
-              text={"Work"}
-              onPress={() => this._handleChangeStatus(id, "WORKING")}
-              wrapperStyle={{ marginBottom: 15 }}
-            />
-            <Button
-              text={"Cancel"}
-              onPress={() => this.setState({ isCancel: !isCancel })}
-              wrapperStyle={{ marginBottom: 15 }}
-            />
-          </View>
-        );
+        return this._renderDeliveryCase(id);
       default:
         return null;
     }

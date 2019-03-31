@@ -15,6 +15,7 @@ import {
   Button as HeaderButton,
   Body
 } from "../../components/AnimatedHeader";
+import Loading from "../../components/Loading";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
@@ -38,8 +39,9 @@ class Subscription extends PureComponent {
   };
 
   render() {
+    console.log(listSubscription);
     const { listSubscription } = this.props.subscription;
-    if (!listSubscription.length) return null;
+    if (!listSubscription) return null;
 
     return (
       <SafeAreaView
@@ -54,46 +56,53 @@ class Subscription extends PureComponent {
           </Left>
           <Body title="Subscription" />
           <Right>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => this.props.navigation.navigate("AddSubscription")}
+            >
               <Feather name="plus" size={24} />
             </TouchableOpacity>
           </Right>
         </Header>
         <ScrollView style={{ flex: 1, paddingVertical: 30 }}>
-          {listSubscription.map(item => {
-            return (
-              <View
-                key={item.id}
-                style={{
-                  marginTop: 10,
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                  alignItems: "center"
-                }}
-              >
-                <View>
-                  <Text>ID: {item.id}</Text>
-                  <Text>
-                    Location: {item.latitude} / {item.longitude}
-                  </Text>
-                  <Text>Begin date: {item.beginDate}</Text>
-                  <Text>End date: {item.endDate}</Text>
+          {/* <Text>Ho</Text> */}
+          {listSubscription.length > 0 ? (
+            listSubscription.map(item => {
+              return (
+                <View
+                  key={item.id}
+                  style={{
+                    marginTop: 10,
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                    alignItems: "center"
+                  }}
+                >
+                  <View>
+                    <Text>ID: {item.id}</Text>
+                    <Text>
+                      Location: {item.latitude} / {item.longitude}
+                    </Text>
+                    <Text>Begin date: {item.beginDate}</Text>
+                    <Text>End date: {item.endDate}</Text>
+                  </View>
+                  <View>
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: "red",
+                        padding: 10,
+                        borderRadius: 5
+                      }}
+                      onPress={() => this.props.deleteSubscription(item.id)}
+                    >
+                      <Text>Delete</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View>
-                  <TouchableOpacity
-                    style={{
-                      backgroundColor: "red",
-                      padding: 10,
-                      borderRadius: 5
-                    }}
-                    onPress={() => this.props.deleteSubscription(item.id)}
-                  >
-                    <Text>Delete</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            );
-          })}
+              );
+            })
+          ) : (
+            <Loading />
+          )}
         </ScrollView>
       </SafeAreaView>
     );

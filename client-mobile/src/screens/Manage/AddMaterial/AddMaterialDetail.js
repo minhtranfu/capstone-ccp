@@ -101,7 +101,7 @@ class AddMaterialDetail extends Component {
   };
 
   _handleAddImage = async () => {
-    const { status } = await Permissions.getAsync(Permissions.CAMERA_ROLL);
+    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
     if (status === "granted") {
       let result = await ImagePicker.launchImageLibraryAsync();
       if (!result.cancelled) {

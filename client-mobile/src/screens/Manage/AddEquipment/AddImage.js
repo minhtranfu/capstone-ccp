@@ -82,24 +82,28 @@ class AddImage extends Component {
         name: "image.png"
       });
     });
-    const res = await axios.post(`storage/equipmentImages`, form, {
-      headers: { "Content-Type": "multipart/form-data" }
-    });
-    console.log(res);
-
-    const image = {
-      equipmentImages: res.data.map(item => {
-        return {
-          id: item.id
-        };
-      }),
-      thumbnailImage: {
-        id: res.data[0].id
-      }
-    };
-    console.log(image);
-    const newEquipment = Object.assign({}, data, image);
-    this.props.fetchAddEquipment(newEquipment);
+    try {
+      const res = await axios.post(`storage/equipmentImages`, form, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      const image = {
+        equipmentImages: res.data.map(item => {
+          return {
+            id: item.id
+          };
+        }),
+        thumbnailImage: {
+          id: res.data[0].id
+        }
+      };
+      console.log(image);
+      const newEquipment = Object.assign({}, data, image);
+      this.props.fetchAddEquipment(newEquipment);
+    } catch (error) {
+      this.setState({ loading: false });
+      this._showAlert("Error", error);
+      this.props.navigation.dismiss();
+    }
   };
 
   _handleSubmit = async () => {

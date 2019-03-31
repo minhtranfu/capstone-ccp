@@ -58,6 +58,8 @@ import Subscription from "../screens/Account/Subscription";
 import DebrisDetail from "../screens/MyRequest/DebrisDetail";
 import SupplierDebrisDetail from "../screens/MyTransaction/SupplierDebrisDetail";
 import Feedback from "../screens/MyRequest/Feedback";
+import AddSubscription from "../screens/Account/AddSubscription";
+import CancelBid from "../screens/MyTransaction/components/CancelBid";
 // import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
@@ -90,6 +92,7 @@ DiscoverStack.navigationOptions = ({ navigation }) => {
 
   if (
     routeName == "SearchDetail" ||
+    routeName == "MaterialDetail" ||
     routeName == "BidDetail" ||
     routeName == "ConfirmBid"
   ) {
@@ -118,7 +121,8 @@ const AccountStack = createStackNavigator(
     AboutUs: AboutUs,
     Construction: Construction,
     ConstructionDetail: ConstructionDetail,
-    Subcription: Subscription
+    Subcription: Subscription,
+    AddSubscription: AddSubscription
     // AuthLoading: AuthLoading,
     // Auth: AuthStack
   },
@@ -182,7 +186,8 @@ const MyTransactionStack = createStackNavigator(
     ContractorProfile: ContractorProfile,
     SupplierDebrisDetail: SupplierDebrisDetail,
     Login,
-    Feedback: Feedback
+    Feedback: Feedback,
+    CancelBid: CancelBid
   },
   {
     headerMode: "none",
@@ -200,7 +205,8 @@ const ActivityStack = createStackNavigator(
     MaterialRequesterDetail: MaterialRequesterDetail,
     DebrisDetail: DebrisDetail,
     LoginModal: Login,
-    Feedback: Feedback
+    Feedback: Feedback,
+    CancelBid: CancelBid
   },
   {
     headerMode: "none",

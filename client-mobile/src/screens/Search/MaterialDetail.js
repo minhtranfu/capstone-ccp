@@ -7,13 +7,16 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Alert
+  Alert,
+  Animated
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { addMaterialItemToCart } from "../../redux/actions/cart";
 import Feather from "@expo/vector-icons/Feather";
 
+import ParallaxList from "../../components/ParallaxList";
 import Title from "../../components/Title";
 import Button from "../../components/Button";
 import Header from "../../components/Header";
@@ -31,11 +34,8 @@ const { width } = Dimensions.get("window");
       detail: state.material.listSearch.find(item => item.id === id)
     };
   },
-  dispatch => ({
-    fetchAddItemToCart: item => {
-      dispatch(addMaterialItemToCart(item));
-    }
-  })
+  dispatch =>
+    bindActionCreators({ fetchAddItemToCart: addMaterialItemToCart }, dispatch)
 )
 class MaterialDetail extends Component {
   constructor(props) {
@@ -43,64 +43,71 @@ class MaterialDetail extends Component {
     this.state = {};
   }
 
+  _renderScrollItem = () => {
+    const { detail } = this.props;
+    return (
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: 15,
+          backgroundColor: "white",
+          paddingTop: 15
+        }}
+      >
+        <Title title={"Material information"} />
+        <View style={{ flexDirection: "column", justifyContent: "center" }}>
+          <Text style={styles.text}>{detail.name}</Text>
+          <Text style={styles.text}>{detail.manufacturer}</Text>
+          <Text style={styles.text}>{detail.contractor.name}</Text>
+          <Text style={styles.text}>{detail.contractor.email}</Text>
+        </View>
+        <Title title={"Price"} />
+        <Text style={styles.text}>{detail.price}</Text>
+        <Title title={"Description"} />
+        <Text style={styles.description}>{detail.description}</Text>
+      </View>
+    );
+  };
+
   render() {
     const { detail } = this.props;
     return (
-      <SafeAreaView
-        style={styles.container}
-        forceInset={{ top: "always" }}
-      >
-        <Header
-          renderLeftButton={() => (
-            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-              <Feather name="chevron-left" size={24} />
-            </TouchableOpacity>
-          )}
+      <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
+        <ParallaxList
+          title={detail.name}
+          removeTitle={true}
+          hasThumbnail={true}
+          imageURL={
+            detail.thumbnailImageUrl ? detail.thumbnailImageUrl : "null"
+          }
+          hasLeft={true}
+          hasCart={true}
+          scrollElement={<Animated.ScrollView />}
+          renderScrollItem={this._renderScrollItem}
+        />
+        <SafeAreaView
+          style={styles.bottomWrapper}
+          forceInset={{ bottom: "always" }}
         >
-          <Text>Result</Text>
-        </Header>
-        {detail ? (
-          <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-            <Image
-              uri={detail.thumbnailImageUrl}
-              resizeMode={"cover"}
-              style={{ height: 200 }}
-            />
-            <Title title={"Material information"} />
-            <Text style={styles.text}>{detail.name}</Text>
-            <Text style={styles.text}>{detail.manufacturer}</Text>
-            <Text style={styles.text}>{detail.contractor.name}</Text>
-            <Text style={styles.text}>{detail.contractor.email}</Text>
-            <Title title={"Price"} />
-            <Text style={styles.text}>{detail.price}</Text>
-            <Title title={"Description"} />
-            <Text style={styles.description}>{detail.description}</Text>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                flex: 1
-              }}
-            >
-              <Button
-                text={"Book"}
-                onPress={() =>
-                  this.props.navigation.navigate("ConfirmMaterial", {
-                    material: detail
-                  })
-                }
-                wrapperStyle={{ width: 200 }}
-              />
-              <Button
-                text={"Add to cart"}
-                onPress={() => this.props.fetchAddItemToCart(detail)}
-                wrapperStyle={{ width: 200 }}
-              />
-            </View>
-          </ScrollView>
-        ) : (
-          <Loading />
-        )}
+          <Button
+            text={"Book"}
+            onPress={() =>
+              this.props.navigation.navigate("ConfirmMaterial", {
+                material: detail
+              })
+            }
+            wrapperStyle={{ flex: 1 }}
+            buttonStyle={{ borderRadius: 0 }}
+          />
+          <Button
+            text={"Add to cart"}
+            onPress={() =>
+              this.props.fetchAddItemToCart(detail.contractor.id, detail)
+            }
+            wrapperStyle={{ flex: 1 }}
+            buttonStyle={{ borderRadius: 0 }}
+          />
+        </SafeAreaView>
       </SafeAreaView>
     );
   }
@@ -119,6 +126,10 @@ const styles = StyleSheet.create({
     color: colors.text50,
     fontSize: fontSize.bodyText,
     fontWeight: "600"
+  },
+  bottomWrapper: {
+    flexDirection: "row",
+    alignItems: "center"
   }
 });
 

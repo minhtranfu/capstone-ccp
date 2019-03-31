@@ -8,9 +8,9 @@ export function searchMaterial(text, id) {
       dispatch({
         type: Actions.SEARCH_MATERIAL.REQUEST
       });
-      const res = await axios.get(
-        `materials?q=${text}&limit=10&orderBy=createdTime.desc&materialTypeId=${id}`
-      );
+      const url = `materials?q=${text}&limit=10&orderBy=createdTime.desc&materialTypeId=${id}`;
+      console.log(url);
+      const res = await axios.get(url);
       console.log(res);
       dispatch({
         type: Actions.SEARCH_MATERIAL.SUCCESS,

@@ -15,7 +15,8 @@ import {
   getCartList,
   removeItemCart,
   cartCheckout,
-  clearMaterialCart
+  clearMaterialCart,
+  listMaterialCartItem
 } from "../../redux/actions/cart";
 import Swipeable from "react-native-swipeable";
 
@@ -46,6 +47,9 @@ import { ScrollView } from "react-native-gesture-handler";
     },
     fetchClearMaterial: () => {
       dispatch(clearMaterialCart());
+    },
+    fetchListMaterialCart: () => {
+      dispatch(listMaterialCartItem());
     }
   })
 )
@@ -57,6 +61,7 @@ class Cart extends Component {
 
   componentDidMount() {
     this.props.fetchGetCartList(12);
+    this.props.fetchListMaterialCart();
   }
 
   _handleRemoveItem = (contractorId, cartId) => {
@@ -132,7 +137,8 @@ class Cart extends Component {
   };
 
   render() {
-    const { loading, navigation } = this.props;
+    const { loading, navigation, materialCart } = this.props;
+    console.log(materialCart);
     return (
       <SafeAreaView
         forceInset={{ bottom: "always", top: "always" }}
@@ -151,7 +157,7 @@ class Cart extends Component {
         >
           <Text style={styles.header}>My Orders</Text>
         </Header>
-        {!loading ? this._renderFlatList() : <Loading />}
+        {/* {!loading ? this._renderFlatList() : <Loading />} */}
       </SafeAreaView>
     );
   }

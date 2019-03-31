@@ -25,32 +25,22 @@ export const EQUIPMETN_TRANSACTION_STATUSES = [
   }
 ];
 
-export const MATERIAL_TRANSACTION_STATUSES = [
-  {
-    code: "PENDING",
-    title: "Pending" // On Waiting,
-  },
-  {
-    code: "ACCEPTED",
-    title: "Accepted"
-  },
-  {
-    code: "DELIVERING",
-    title: "Delivering"
-  },
-  {
-    code: "FINISHED",
-    title: "Finished"
-  },
-  {
-    code: "DENIED",
-    title: "Denied"
-  },
-  {
-    code: "CANCEL",
-    title: "Cancel"
-  }
-];
+export const DROPDOWN_OPTIONS = {
+  CATEGORY: [
+    {
+      id: 0,
+      name: "Select your caterogy",
+      value: "Select your category"
+    }
+  ],
+  TYPE: [
+    {
+      id: 0,
+      name: "Select your type",
+      value: "Select your type"
+    }
+  ]
+};
 
 export const COLORS = {
   AVAILABLE: "#4DB781",

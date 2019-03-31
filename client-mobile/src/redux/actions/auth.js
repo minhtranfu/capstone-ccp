@@ -35,6 +35,10 @@ export function logOut() {
   };
 }
 
+export function register(user) {
+  return axios.post("register", user);
+}
+
 export function isSignedIn() {
   return async dispatch => {
     const userToken = await AsyncStorage.getItem("userToken");
