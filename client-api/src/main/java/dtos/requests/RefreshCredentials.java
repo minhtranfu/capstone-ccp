@@ -9,20 +9,10 @@ public class RefreshCredentials {
 	@NotBlank
 	private String refreshToken;
 
-	@NotNull
-	@NotBlank
-	private String accessToken;
 
 	public RefreshCredentials() {
 	}
 
-	public String getAccessToken() {
-		return accessToken;
-	}
-
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
-	}
 
 	public String getRefreshToken() {
 		return refreshToken;
