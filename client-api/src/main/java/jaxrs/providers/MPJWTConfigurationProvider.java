@@ -24,6 +24,8 @@ public class MPJWTConfigurationProvider {
 		final X509EncodedKeySpec spec = new X509EncodedKeySpec(encodedBytes);
 		final KeyFactory kf = KeyFactory.getInstance("RSA");
 		final RSAPublicKey pk = (RSAPublicKey) kf.generatePublic(spec);
+
+
 		contextInfo.setSignerKey(pk);
 
 		//time after expired time while token still accepted

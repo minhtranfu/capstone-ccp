@@ -1,6 +1,9 @@
 package entities;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "contractor_account",schema = "capstone_ccp")
@@ -16,6 +19,9 @@ public class ContractorAccountEntity
 	private String username;
 	private String password;
 
+	private LocalDateTime createdTime;
+	private LocalDateTime updatedTime;
+
 	private ContractorEntity contractor;
 	public ContractorAccountEntity() {
 	}
@@ -29,6 +35,27 @@ public class ContractorAccountEntity
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	@Basic
+	@Column(name = "created_time", insertable = false, updatable = false)
+	public LocalDateTime getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(LocalDateTime createdTime) {
+		this.createdTime = createdTime;
+	}
+
+
+	@Basic
+	@Column(name = "updated_time", insertable = false, updatable = false)
+	public LocalDateTime getUpdatedTime() {
+		return updatedTime;
+	}
+
+	public void setUpdatedTime(LocalDateTime updatedTime) {
+		this.updatedTime = updatedTime;
 	}
 
 	@Basic
@@ -52,7 +79,8 @@ public class ContractorAccountEntity
 		this.password = password;
 	}
 
-	@ManyToOne
+
+	@ManyToOne(cascade = {CascadeType.PERSIST})
 	@JoinColumn(name = "contractor_id")
 	public ContractorEntity getContractor() {
 		return contractor;

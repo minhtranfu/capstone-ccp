@@ -19,7 +19,7 @@ public class ContractorAccountDAO extends BaseDAO<ContractorAccountEntity, Long>
 	}
 
 	public List<ContractorAccountEntity> findByUsername(String username) {
-		return entityManager.createNamedQuery("ContractorAccountEntity.findByUsername")
+		return entityManager.createNamedQuery("ContractorAccountEntity.findByUsername",ContractorAccountEntity.class)
 				.setParameter("username", username)
 				.getResultList();
 	}
