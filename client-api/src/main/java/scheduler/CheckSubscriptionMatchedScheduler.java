@@ -34,12 +34,12 @@ public class CheckSubscriptionMatchedScheduler {
 	SubscriptionDAO subscriptionDAO;
 
 
-	@Schedule(hour = "*", minute = "30", second = "0")
-//	@Schedule(hour = "*", minute = "*", second = "0/4")
+//	@Schedule(hour = "*", minute = "30", second = "0")
+	@Schedule(hour = "*", minute = "*", second = "0/4")
 	public void checkMatchedEquipments() {
 
-		int timeOffset = 30 * 60; // 30 mins
-//		int timeOffset = 30 * 60 * 60 * 60*60;
+//		int timeOffset = 30 * 60; // 30 mins
+		int timeOffset = 30 * 60 * 60 * 60*60;
 		LOGGER.info("CheckSubscriptionMatchedScheduler checking subscriptions");
 		List<MatchedSubscriptionResult> matchedSubscriptionResults = equipmentDAO.getMatchedEquipmentForSubscription(timeOffset);
 		for (MatchedSubscriptionResult matchedSubscriptionResult : matchedSubscriptionResults) {

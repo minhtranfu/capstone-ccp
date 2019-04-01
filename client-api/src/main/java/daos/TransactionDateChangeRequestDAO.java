@@ -21,11 +21,14 @@ public class TransactionDateChangeRequestDAO extends BaseDAO<TransactionDateChan
 		}
 	}
 
-	public List<TransactionDateChangeRequestEntity> getRequestsByTransactionId(long transactionId) {
+	public List<TransactionDateChangeRequestEntity> getRequestsByTransactionId(long transactionId, int limit, int offset) {
 
 
-		return entityManager.createNamedQuery("TransactionDateChangeRequestEntity.getRequestsByTransactionId")
+		return entityManager.createNamedQuery("TransactionDateChangeRequestEntity.getRequestsByTransactionId"
+				, TransactionDateChangeRequestEntity.class)
 				.setParameter("transactionId", transactionId)
+				.setMaxResults(limit)
+				.setFirstResult(offset)
 				.getResultList();
 
 	}

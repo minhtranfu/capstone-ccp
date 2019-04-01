@@ -7,9 +7,11 @@ import java.util.List;
 
 @Stateless
 public class MaterialFeedbackDAO extends BaseDAO<MaterialFeedbackEntity, Long> {
-	public List<MaterialFeedbackEntity> getFeedbacksBySupplier(long supplierId) {
+	public List<MaterialFeedbackEntity> getFeedbacksBySupplier(long supplierId, int limit, int offset) {
 		return entityManager.createNamedQuery("MaterialFeedbackEntity.bySupplier", MaterialFeedbackEntity.class)
 				.setParameter("supplierId", supplierId)
+				.setMaxResults(limit)
+				.setFirstResult(offset)
 				.getResultList();
 	}
 

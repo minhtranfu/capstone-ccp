@@ -16,9 +16,11 @@ import java.util.regex.Pattern;
 
 @Stateless
 public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
-	public List<DebrisPostEntity> getByRequester(long requesterId) {
+	public List<DebrisPostEntity> getByRequester(long requesterId, int limit, int offset) {
 		return entityManager.createNamedQuery("DebrisPostEntity.byRequester", DebrisPostEntity.class)
 				.setParameter("requesterId", requesterId)
+				.setMaxResults(limit)
+				.setFirstResult(offset)
 				.getResultList();
 
 	}

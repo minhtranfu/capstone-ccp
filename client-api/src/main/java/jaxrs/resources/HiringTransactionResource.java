@@ -12,6 +12,7 @@ import entities.HiringTransactionEntity;
 import jaxrs.validators.HiringTransactionValidator;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -253,7 +254,10 @@ public class HiringTransactionResource {
 
 	@GET
 	@Path("supplier/{id:\\d+}")
-	public Response getReceivedTransactionAsSupplier(@PathParam("id") long supplierId) {
+	public Response getReceivedTransactionAsSupplier(
+			@PathParam("id") long supplierId,
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset) {
 
 
 		if (supplierId != claimContractorId.getValue().longValue()) {
@@ -267,7 +271,8 @@ public class HiringTransactionResource {
 			throw new BadRequestException(String.format("Supplier id=%d not found", supplierId));
 		}
 
-		List<HiringTransactionEntity> hiringTransactionsBySupplierId = hiringTransactionDAO.getHiringTransactionsBySupplierId(supplierId);
+		List<HiringTransactionEntity> hiringTransactionsBySupplierId = hiringTransactionDAO
+				.getHiringTransactionsBySupplierId(supplierId, limit, offset);
 
 		return Response.ok(hiringTransactionsBySupplierId).build();
 
@@ -276,7 +281,10 @@ public class HiringTransactionResource {
 
 	@GET
 	@Path("requester/{id:\\d+}")
-	public Response getSentTransactionsAsRequester(@PathParam("id") long requesterId) {
+	public Response getSentTransactionsAsRequester(
+			@PathParam("id") long requesterId,
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit,
+			@QueryParam("offset") @DefaultValue("0") int offset) {
 
 		if (requesterId != claimContractorId.getValue().longValue()) {
 			throw new BadRequestException("You cannot view other people's transaction");
@@ -288,7 +296,8 @@ public class HiringTransactionResource {
 			throw new BadRequestException(String.format("requester id=%s not found!", requesterId));
 		}
 
-		List<HiringTransactionEntity> transactionsByRequesterId = hiringTransactionDAO.getHiringTransactionsByRequesterId(requesterId);
+		List<HiringTransactionEntity> transactionsByRequesterId = hiringTransactionDAO
+				.getHiringTransactionsByRequesterId(requesterId, limit, offset);
 
 		return Response.ok(transactionsByRequesterId).build();
 	}

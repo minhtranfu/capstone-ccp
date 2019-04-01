@@ -10,6 +10,7 @@ import entities.*;
 import jaxrs.validators.HiringTransactionValidator;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -86,7 +87,7 @@ public class MaterialTransactionResource {
 			materialTransactionDetail.setMaterialTransaction(materialTransactionEntity);
 			materialTransactionDetail.setPrice(foundMaterial.getPrice());
 
-			totalPrice += materialTransactionDetail.getPrice()*materialTransactionDetail.getQuantity();
+			totalPrice += materialTransactionDetail.getPrice() * materialTransactionDetail.getQuantity();
 		}
 
 		// TODO: 3/25/19 do this after insert all the details
@@ -167,7 +168,6 @@ public class MaterialTransactionResource {
 		// TODO: 3/10/19 validate authority
 
 
-
 		MaterialTransactionEntity foundTransaction = materialTransactionDAO.findByIdWithValidation(id);
 		if (transactionEntity.getStatus() == null) {
 			throw new BadRequestException("Status is null!");
@@ -188,7 +188,7 @@ public class MaterialTransactionResource {
 				break;
 			case ACCEPTED:
 				//validate
-				if (getClaimContractorId() != supplierId ) {
+				if (getClaimContractorId() != supplierId) {
 					throw new BadRequestException("Only supplier can change this status!");
 				}
 
@@ -203,7 +203,7 @@ public class MaterialTransactionResource {
 			case DENIED:
 				//validate
 
-				if (getClaimContractorId() != supplierId ) {
+				if (getClaimContractorId() != supplierId) {
 					throw new BadRequestException("Only supplier can change this status!");
 				}
 
@@ -215,7 +215,7 @@ public class MaterialTransactionResource {
 				break;
 			case DELIVERING:
 				//validate
-				if (getClaimContractorId() != supplierId ) {
+				if (getClaimContractorId() != supplierId) {
 					throw new BadRequestException("Only supplier can change this status!");
 				}
 
@@ -228,7 +228,7 @@ public class MaterialTransactionResource {
 				}
 				break;
 			case CANCELED:
-				if (getClaimContractorId() != requesterId ) {
+				if (getClaimContractorId() != requesterId) {
 					throw new BadRequestException("Only requester can change this status!");
 				}
 				//validate
@@ -240,7 +240,7 @@ public class MaterialTransactionResource {
 				}
 				break;
 			case FINISHED:
-				if (getClaimContractorId() != requesterId ) {
+				if (getClaimContractorId() != requesterId) {
 					throw new BadRequestException("Only requester can change this status!");
 				}
 
@@ -262,7 +262,10 @@ public class MaterialTransactionResource {
 
 	@GET
 	@Path("supplier/{id:\\d+}")
-	public Response getReceivedTransactionAsSupplier(@PathParam("id") long supplierId) {
+	public Response getReceivedTransactionAsSupplier(
+			@PathParam("id") long supplierId,
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit,
+			@QueryParam("offset") @DefaultValue("0") int offset) {
 
 
 		if (supplierId != claimContractorId.getValue().longValue()) {
@@ -277,7 +280,7 @@ public class MaterialTransactionResource {
 		}
 
 		List<MaterialTransactionEntity> materialTransactionsBySupplierId =
-				materialTransactionDAO.getMaterialTransactionsBySupplierId(supplierId);
+				materialTransactionDAO.getMaterialTransactionsBySupplierId(supplierId, limit, offset);
 
 		return Response.ok(materialTransactionsBySupplierId).build();
 
@@ -286,7 +289,10 @@ public class MaterialTransactionResource {
 
 	@GET
 	@Path("requester/{id:\\d+}")
-	public Response getSentTransactionsAsRequester(@PathParam("id") long requesterId) {
+	public Response getSentTransactionsAsRequester(
+			@PathParam("id") long requesterId,
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit,
+			@QueryParam("offset") @DefaultValue("0") int offset) {
 
 		if (requesterId != claimContractorId.getValue().longValue()) {
 			throw new BadRequestException("You cannot view other people's transaction");
@@ -298,7 +304,8 @@ public class MaterialTransactionResource {
 			throw new BadRequestException(String.format("requester id=%s not found!", requesterId));
 		}
 
-		List<MaterialTransactionEntity> transactionsByRequesterId = materialTransactionDAO.getMaterialTransactionsByRequeseterId(requesterId);
+		List<MaterialTransactionEntity> transactionsByRequesterId = materialTransactionDAO
+				.getMaterialTransactionsByRequeseterId(requesterId, limit, offset);
 
 		return Response.ok(transactionsByRequesterId).build();
 	}

@@ -14,4 +14,5 @@ public class Constants {
 	public static final String CREDENTIAL_JSON_FILENAME = "capstone-ccp-credential.json";
 
 
+	public static final String DEFAULT_RESULT_LIMIT = "100";
 }

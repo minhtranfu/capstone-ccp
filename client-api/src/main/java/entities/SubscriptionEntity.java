@@ -32,6 +32,7 @@ import java.time.LocalDate;
 
 		"and not exists (select * from hiring_transaction h where h.equipment_id = :equipmentId and (h.status = 'ACCEPTED' or h.status = 'PROCESSING') and not (h.end_date > s.end_date or h.end_date< s.begin_date))")
 })
+@NamedQuery(name = "SubscriptionEntity.byContractor", query = "select e from SubscriptionEntity e where e.contractor.id = :contractorId ")
 public class SubscriptionEntity {
 	private long id;
 

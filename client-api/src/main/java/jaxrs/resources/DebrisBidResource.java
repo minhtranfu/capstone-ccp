@@ -11,6 +11,7 @@ import entities.DebrisBidEntity;
 import entities.DebrisPostEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -166,10 +167,14 @@ public class DebrisBidResource {
 	@GET
 	@Path("supplier")
 	@RolesAllowed("contractor")
-	public Response getAllBySupplier() {
+	public Response getAllBySupplier(
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset) {
 		contractorDAO.findByIdWithValidation(getClaimContractorId());
 		List<DebrisBidEntity> bySupplier = debrisBidDAO.getBySupplier(
-				getClaimContractorId());
+				getClaimContractorId()
+				, limit, offset);
+
 		List<DebrisBidResponse> debrisBidResponses = modelConverter.toResponse(bySupplier);
 
 		return Response.ok(debrisBidResponses).build();

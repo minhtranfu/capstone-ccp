@@ -42,6 +42,13 @@ public abstract class EquipmentRequest {
 	@NotNull
 	@Valid
 	public IdOnly equipmentType;
+	@Valid
+	@NotNull
+	public List<AvailableTimeRangeRequest> availableTimeRanges;
+
+
+	public EquipmentRequest() {
+	}
 
 	//take this information from token
 //	@NotNull
@@ -53,9 +60,6 @@ public abstract class EquipmentRequest {
 //	public IdOnly construction;
 
 
-	@Valid
-	@NotNull
-	public List<AvailableTimeRangeRequest> availableTimeRanges;
 
 
 
