@@ -1,5 +1,5 @@
-# fetch basic image
-FROM maven:3.3.9-jdk-8
+# for builder
+FROM maven:3.6.0-jdk-8-alpine as builder
 
 # application placed into /opt/app
 RUN mkdir -p /opt/app
@@ -8,6 +8,7 @@ WORKDIR /opt/app
 # selectively add the POM file and
 # install dependencies
 COPY pom.xml /opt/app/
+RUN ["/usr/local/bin/mvn-entrypoint.sh", "mvn", "dependency:go-offline"]
 
 # rest of the project
 COPY src /opt/app/src
@@ -19,9 +20,13 @@ RUN mvn tomee:build
 # create excutable file
 RUN mvn tomee:exec
 
+# for runner
+FROM openjdk:8-jre-alpine
+RUN mkdir -p /app
+COPY --from=builder /opt/app/target /app/capstone
 # local application port
 EXPOSE 8080
 
 # execute it
 #CMD ["mvn", "tomcat7:run-war-only"]
-CMD ["java" , "-jar", "./target/CcpApi-exec.jar"]
+CMD ["java" , "-jar", "/app/capstone/CcpApi-exec.jar"]
