@@ -17,18 +17,25 @@ class SubscriptionCardAdd extends Component {
   constructor(props) {
     super(props);
 
+    let { subscription } = this.props;
+    if (!subscription) {
+      subscription = {};
+    }
+
     this.state = {
       subscription: {
         id: 'new',
-        beginDate: moment(),
-        endDate: moment(),
-        latitude: null,
-        longitude: null,
-        maxDistance: null,
-        maxPrice: null,
-        address: null,
+        beginDate: subscription.beginDate ? moment(subscription.beginDate) : moment(),
+        endDate: subscription.endDate
+          ? moment(subscription.endDate)
+          : (subscription.beginDate ? moment(subscription.beginDate) : moment()),
+        latitude: subscription.latitude || null,
+        longitude: subscription.longitude || null,
+        maxDistance: subscription.maxDistance || null,
+        maxPrice: subscription.maxPrice || null,
+        address: subscription.address || null,
         equipmentType: {
-          id: 0
+          id: subscription.equipmentType ? subscription.equipmentType.id : 0
         }
       }
     };
@@ -179,7 +186,7 @@ class SubscriptionCardAdd extends Component {
   /**
    * Update address, longitude, latitude
    */
-  _handleSelectAddress = ({address, longitude, latitude}) => {
+  _handleSelectAddress = ({ address, longitude, latitude }) => {
     const { subscription } = this.state;
     this.setState({
       subscription: {
@@ -209,11 +216,28 @@ class SubscriptionCardAdd extends Component {
   };
 
   render() {
-    const { isFetching, subscription, selectedCategoryId } = this.state;
+    const { isFetching, subscription } = this.state;
+    let { selectedCategoryId } = this.state;
     const { equipmentTypeCategories } = this.props;
-    
+
     const typeCategories = equipmentTypeCategories.data || [];
     let equipmentTypes = [];
+    const categoryOptions = typeCategories.map(category => {
+      if (!selectedCategoryId) {
+        category.equipmentTypes.forEach(equipmentType => {
+          equipmentTypes.push(equipmentType);
+
+          if (subscription.equipmentType && equipmentType.id === +subscription.equipmentType.id) {
+            selectedCategoryId = category.id;
+          }
+        });
+        
+      } else if (selectedCategoryId === category.id) {
+        equipmentTypes = category.equipmentTypes;
+      }
+
+      return (<option key={category.id} value={category.id}>{category.name}</option>);
+    });    
 
     return (
       <div className="subscription-card bg-white shadow p-3 my-2 position-relative">
@@ -227,23 +251,12 @@ class SubscriptionCardAdd extends Component {
             <div className="col-md-9">
               <select name="equipmentType" value={selectedCategoryId} onChange={this._handleSelectCategory} id={`equipment_type_category_${subscription.id}`} className="form-control">
                 <option value="0">Choose a type category...</option>
-                {typeCategories.map(category => {
-                  if (!selectedCategoryId) {
-                    equipmentTypes = [
-                      ...equipmentTypes,
-                      ...category.equipmentTypes
-                    ];
-                  } else if (selectedCategoryId === category.id) {
-                    equipmentTypes = category.equipmentTypes;
-                  }
-
-                  return (<option key={category.id} value={category.id}>{category.name}</option>);
-                })}
+                {categoryOptions}
               </select>
             </div>
           </div>
           <div className="form-group row">
-            <label htmlFor={`equipment_type_${subscription.id}`} className="col-md-3 col-form-label">Equipment type: <i className="text-danger">*</i></label>
+            <label htmlFor={`equipment_type_${subscription.id}`} className="col-md-3 col-form-label">Equipment type:</label>
             <div className="col-md-9">
               <select name="equipmentType" onChange={this._handleFieldChanged} value={subscription.equipmentType.id} id={`equipment_type_${subscription.id}`} className="form-control">
                 <option value="0">Choose a equipment type...</option>
@@ -255,7 +268,7 @@ class SubscriptionCardAdd extends Component {
             </div>
           </div>
           <div className="form-group row">
-            <label htmlFor={`timerange_${subscription.id}`} className="col-md-3 col-form-label">Time range: <i className="text-danger">*</i></label>
+            <label htmlFor={`timerange_${subscription.id}`} className="col-md-3 col-form-label">Time range:</label>
             <div className="col-md-9">
               <DateRangePicker minDate={moment()} onApply={this._onChangeDateRanage} containerClass="w-100" data-range-id="1" startDate={subscription.beginDate} endDate={subscription.endDate}>
                 <div className="input-group date-range-picker">
@@ -268,7 +281,7 @@ class SubscriptionCardAdd extends Component {
             </div>
           </div>
           <div className="form-group row">
-            <label htmlFor={`max_price_${subscription.id}`} className="col-md-3 col-form-label">Max price(K): <i className="text-danger">*</i></label>
+            <label htmlFor={`max_price_${subscription.id}`} className="col-md-3 col-form-label">Max price(K):</label>
             <div className="col-md-9">
               <input
                 type="number" className="form-control"
@@ -281,7 +294,7 @@ class SubscriptionCardAdd extends Component {
             </div>
           </div>
           <div className="form-group row">
-            <label htmlFor={`max_dicstance_${subscription.id}`} className="col-md-3 col-form-label">Max distance(Km): <i className="text-danger">*</i></label>
+            <label htmlFor={`max_dicstance_${subscription.id}`} className="col-md-3 col-form-label">Max distance(Km):</label>
             <div className="col-md-9">
               <input
                 type="number" className="form-control"
@@ -294,7 +307,7 @@ class SubscriptionCardAdd extends Component {
             </div>
           </div>
           <div className="form-group row">
-            <label htmlFor={`address_${subscription.id}`} className="col-md-3 col-form-label">Address: <i className="text-danger">*</i></label>
+            <label htmlFor={`address_${subscription.id}`} className="col-md-3 col-form-label">Address:</label>
             <div className="col-md-9">
               <AddressInput
                 inputProps={{ id: `address_${subscription.id}` }}
@@ -314,7 +327,7 @@ class SubscriptionCardAdd extends Component {
 }
 
 SubscriptionCardAdd.props = {
-  subscription: PropTypes.object.isRequired,
+  subscription: PropTypes.object,
   onCancelEdit: PropTypes.func,
   onCreated: PropTypes.func,
   equipmentTypeCategories: PropTypes.array,
