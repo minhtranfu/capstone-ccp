@@ -60,6 +60,7 @@ import SupplierDebrisDetail from "../screens/MyTransaction/SupplierDebrisDetail"
 import Feedback from "../screens/MyRequest/Feedback";
 import AddSubscription from "../screens/Account/AddSubscription";
 import CancelBid from "../screens/MyTransaction/components/CancelBid";
+import EditSubscription from "../screens/Account/EditSubscription";
 // import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
@@ -122,7 +123,8 @@ const AccountStack = createStackNavigator(
     Construction: Construction,
     ConstructionDetail: ConstructionDetail,
     Subcription: Subscription,
-    AddSubscription: AddSubscription
+    AddSubscription: AddSubscription,
+    EditSubscription: EditSubscription
     // AuthLoading: AuthLoading,
     // Auth: AuthStack
   },
@@ -169,7 +171,7 @@ MyEquipmentStack.navigationOptions = ({ navigation }) => {
 
   let routeName = navigation.state.routes[navigation.state.index].routeName;
 
-  if (routeName == "AddNewEquipment") {
+  if (routeName == "AddNewEquipment" || routeName == "MyPostDetail") {
     tabBarVisible = false;
   }
 

@@ -4,7 +4,8 @@ const initialState = {
   loading: false,
   adjustLoading: false,
   debrisLoading: false,
-  feedbackLoading: {},
+  // feedbackLoading: {},
+  feedbackLoading: false,
   listSupplierTransaction: [],
   listRequesterTransaction: [],
   listSupplierMaterial: [],
@@ -265,7 +266,8 @@ export default function transactionReducer(state = initialState, action) {
     case Actions.SEND_EQUIPMENT_FEEDBACK.REQUEST: {
       return {
         ...state,
-        feedbackLoading: { [payload.id]: true }
+        feedbackLoading: true
+        // feedbackLoading: { [payload.id]: true }
         // listRequesterTransaction: state.listRequesterTransaction.map(item =>
         //   item.id === payload.id ? { ...item, feedbacked: true } : item
         // )
@@ -280,13 +282,63 @@ export default function transactionReducer(state = initialState, action) {
             ? { ...item, feedbacked: hiringTransaction.feedbacked }
             : item
         ),
-        feedbackLoading: { [hiringTransaction.id]: false }
+        // feedbackLoading: { [hiringTransaction.id]: false }
+        feedbackLoading: false
       };
     }
     case Actions.SEND_EQUIPMENT_FEEDBACK.ERROR: {
       return {
         ...state,
-        feedbackLoading: {}
+        feedbackLoading: false
+      };
+    }
+
+    //SEND debris feedback
+    case Actions.SEND_DEBRIS_FEEDBACK.REQUEST: {
+      return {
+        ...state,
+        feedbackLoading: true
+      };
+    }
+    case Actions.SEND_DEBRIS_FEEDBACK.SUCCESS: {
+      return {
+        ...state,
+        listRequesterDebris: state.listRequesterDebris.map(item =>
+          item.id === hiringTransaction.id
+            ? { ...item, feedbacked: hiringTransaction.feedbacked }
+            : item
+        ),
+        feedbackLoading: false
+      };
+    }
+    case Actions.SEND_DEBRIS_FEEDBACK.ERROR: {
+      return {
+        ...state,
+        feedbackLoading: false
+      };
+    }
+
+    case Actions.SEND_MATERIAL_FEEDBACK.REQUEST: {
+      return {
+        ...state,
+        feedbackLoading: true
+      };
+    }
+    case Actions.SEND_MATERIAL_FEEDBACK.SUCCESS: {
+      return {
+        ...state,
+        listRequesterMaterial: state.listRequesterMaterial.map(item =>
+          item.id === hiringTransaction.id
+            ? { ...item, feedbacked: hiringTransaction.feedbacked }
+            : item
+        ),
+        feedbackLoading: false
+      };
+    }
+    case Actions.SEND_MATERIAL_FEEDBACK.ERROR: {
+      return {
+        ...state,
+        feedbackLoading: false
       };
     }
     default:

@@ -42,19 +42,36 @@ class TransactionItem extends PureComponent {
     contractor: PropTypes.string,
     phone: PropTypes.string,
     beginDate: PropTypes.string,
-    endDate: PropTypes.string
+    endDate: PropTypes.string,
+    role: PropTypes.string
   };
 
-  static defaultProps = {};
+  static defaultProps = {
+    imageURL:
+      "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+  };
 
   _renderEquipmentStatus = () => {
     const { status, equipmentStatus } = this.props;
-
-    if (status !== "DENIED") {
+    if (status !== "Denied") {
       return (
-        <Text style={{ color: COLORS[equipmentStatus || "default"] }}>
-          {EQUIPMENT_STATUS[equipmentStatus]}
-        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: 5,
+            marginBottom: 3
+          }}
+        >
+          <Image
+            source={require("../../assets/icons/icons8-digger.png")}
+            style={[styles.calendarIcon]}
+            resizeMode={"contain"}
+          />
+          <Text style={{ color: COLORS[equipmentStatus || "default"] }}>
+            {EQUIPMENT_STATUS[equipmentStatus]}
+          </Text>
+        </View>
       );
     }
     return null;
@@ -79,7 +96,6 @@ class TransactionItem extends PureComponent {
       containerStyle,
       price
     } = this.props;
-
     // Calculate date differences
     const end = moment(endDate);
     const begin = moment(beginDate);
@@ -108,7 +124,9 @@ class TransactionItem extends PureComponent {
             <View
               style={{ flexDirection: "column", marginHorizontal: 8, flex: 1 }}
             >
-              <Text style={styles.contractorName}>{contractor}</Text>
+              <Text style={styles.contractorName}>
+                {role}: {contractor}
+              </Text>
               <Text style={styles.equipmentName}>▶ {name}</Text>
             </View>
           </View>
@@ -147,23 +165,7 @@ class TransactionItem extends PureComponent {
                 <Text style={styles.duration}>{status}</Text>
               </View>
             ) : null}
-            {hasEquipmentStatus ? (
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: 5,
-                  marginBottom: 3
-                }}
-              >
-                <Image
-                  source={require("../../assets/icons/icons8-digger.png")}
-                  style={[styles.calendarIcon]}
-                  resizeMode={"contain"}
-                />
-                {this._renderEquipmentStatus()}
-              </View>
-            ) : null}
+            {hasEquipmentStatus ? this._renderEquipmentStatus() : null}
           </View>
         </View>
         <View style={styles.equipmentThumbnailWrapper}>
@@ -211,7 +213,8 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   equipmentThumbnail: {
-    width: 90,
+    width: 120,
+    backgroundColor: "white",
     flex: 1
   },
   calendarIcon: {

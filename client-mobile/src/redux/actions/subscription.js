@@ -2,7 +2,8 @@ import axios from "axios";
 import {
   GET_SUBSCRIPTIONS,
   DELETE_SUBSCRIPTION,
-  ADD_SUBSCRIPTIONS
+  ADD_SUBSCRIPTIONS,
+  EDIT_SUBSCRIPTION
 } from "../types";
 
 export function addSubscription(sub) {
@@ -34,6 +35,23 @@ export function getSubscriptions() {
     } catch (err) {
       dispatch({
         type: GET_SUBSCRIPTIONS.ERROR
+      });
+    }
+  };
+}
+
+export function editSubscription(id, subscription) {
+  return async dispatch => {
+    try {
+      dispatch({ type: EDIT_SUBSCRIPTION.REQUEST });
+      const res = await axios.put(`subscriptions/${id}`, subscription);
+      dispatch({
+        type: EDIT_SUBSCRIPTION.SUCCESS,
+        payload: { id, data: subscription }
+      });
+    } catch (error) {
+      dispatch({
+        type: EDIT_SUBSCRIPTION.ERROR
       });
     }
   };

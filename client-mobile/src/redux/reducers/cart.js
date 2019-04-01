@@ -78,7 +78,10 @@ export default function cartReducer(state = INITIAL_STATE, action) {
       //   state.listMaterial[payload.id]={items: {[payload.item.id]:{quantity: 1,...payload.item}}
       // }
       //cart: [{ id: 12, items: [{id: 1, quantity 10},{id: 2, quantity: 20}]}]
-      if (state.listMaterial.find(item => item.id === payload.id)) {
+      if (
+        state.listMaterial &&
+        state.listMaterial.find(item => item.id === payload.id)
+      ) {
         return {
           ...state,
           listMaterial: state.listMaterial.map(supplier =>
@@ -103,7 +106,7 @@ export default function cartReducer(state = INITIAL_STATE, action) {
         ...state,
         listMaterial: [
           ...state.listMaterial,
-          { id: payload.id, items: [{ item: payload.item, quantity: 1 }] }
+          { id: payload.id, items: [{ ...payload.item, quantity: 1 }] }
         ]
       };
 
@@ -126,18 +129,29 @@ export default function cartReducer(state = INITIAL_STATE, action) {
       //   }
       // }
     }
-    case Actions.UPDATE_MATERIAL_ITEM_TO_CART.SUCCESS: {
-      return {
-        ...state
-        // listMaterial: state.listMaterial.map(item =>
-        //   item.id === payload.id ? (item = payload.data) : item
-        // )
-      };
-    }
+    // case Actions.UPDATE_MATERIAL_ITEM_TO_CART.SUCCESS: {
+    //   return {
+    //     ...state,
+    //     listMaterial: state.listMaterial.map(supplier =>
+    //       supplier.id === payload.id
+    //         ? supplier.items.map(item =>
+    //             item.id === payload.item.id
+    //               ? { ...item, quantity: payload.quantity }
+    //               : item
+    //           )
+    //         : supplier
+    //     )
+    //     // listMaterial: state.listMaterial.map(item =>
+    //     //   item.id === payload.id ? (item = payload.data) : item
+    //     // )
+    //   };
+    // }
     case Actions.REMOVE_MATERIAL_ITEM_FROM_CART: {
       return {
         ...state,
-        listMaterial: listMaterial.filter(item => item.id !== payload)
+        listMaterial: listMaterial.filter(
+          supplier => supplier.id !== payload.id
+        )
       };
     }
     case Actions.CLEAR_MATERIAL_CART.SUCCESS: {

@@ -39,7 +39,6 @@ class Subscription extends PureComponent {
   };
 
   render() {
-    console.log(listSubscription);
     const { listSubscription } = this.props.subscription;
     if (!listSubscription) return null;
 
@@ -68,8 +67,13 @@ class Subscription extends PureComponent {
           {listSubscription.length > 0 ? (
             listSubscription.map(item => {
               return (
-                <View
+                <TouchableOpacity
                   key={item.id}
+                  onPress={() =>
+                    this.props.navigation.navigate("EditSubscription", {
+                      id: item.id
+                    })
+                  }
                   style={{
                     marginTop: 10,
                     flexDirection: "row",
@@ -97,7 +101,7 @@ class Subscription extends PureComponent {
                       <Text>Delete</Text>
                     </TouchableOpacity>
                   </View>
-                </View>
+                </TouchableOpacity>
               );
             })
           ) : (

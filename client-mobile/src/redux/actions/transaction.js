@@ -303,3 +303,43 @@ export function sendEquipmentFeedback(transactionId, feedback) {
     }
   };
 }
+
+export function sendMaterialFeedback(transactionId, feedback) {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: Actions.SEND_MATERIAL_FEEDBACK.REQUEST,
+        payload: { id: transactionId }
+      });
+      const res = await axios.post(`materialFeedbacks`, feedback);
+      dispatch({
+        type: Actions.SEND_MATERIAL_FEEDBACK.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.SEND_MATERIAL_FEEDBACK.ERROR
+      });
+    }
+  };
+}
+
+export function sendDebrisFeedback(transactionId, feedback) {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: Actions.SEND_DEBRIS_FEEDBACK.REQUEST,
+        payload: { id: transactionId }
+      });
+      const res = await axios.post(`debrisFeedbacks`, feedback);
+      dispatch({
+        type: Actions.SEND_DEBRIS_FEEDBACK.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.SEND_DEBRIS_FEEDBACK.ERROR
+      });
+    }
+  };
+}

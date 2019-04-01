@@ -5,7 +5,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Modal
 } from "react-native";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -15,6 +16,7 @@ import { autoCompleteSearch } from "../../redux/actions/location";
 import Feather from "@expo/vector-icons/Feather";
 
 import { DROPDOWN_OPTIONS } from "../../Utils/Constants";
+import TimeRange from "../../components/TimeRange";
 import InputField from "../../components/InputField";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
@@ -76,6 +78,10 @@ class AddSubscription extends Component {
 
   _capitalizeLetter = string => {
     return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  _setModalVisible = visible => {
+    this.setState({ isModalOpen: visible });
   };
 
   _formatNumber = num => {
@@ -172,6 +178,26 @@ class AddSubscription extends Component {
     </TouchableOpacity>
   );
 
+  _renderDateTimeModal = () => {
+    const { isModalOpen } = this.state;
+    return (
+      <Modal visible={isModalOpen}>
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <WithRangeCalendar
+            onConfirm={timeRange => {
+              this._handleOnChangeDate(false, timeRange);
+              this.setState(() => ({ isModalOpen: false }));
+            }}
+            onClose={() => this.setState(() => ({ isModalOpen: false }))}
+            single={true}
+          />
+        </View>
+      </Modal>
+    );
+  };
+
   _handleSubmit = async () => {
     const { subscription, typeIndex } = this.state;
     const result = this._findEquipmentTypeByCategoryId();
@@ -182,6 +208,7 @@ class AddSubscription extends Component {
       }
     };
     await this.props.fetchSubmitSubscription(newSubscription);
+    this.props.navigation.goBack();
   };
 
   _renderContent = () => {
@@ -242,13 +269,12 @@ class AddSubscription extends Component {
           options={this._handleEquipmentTypeOptions()}
           style={{ marginBottom: 20 }}
         />
-        <WithRangeCalendar
-          onConfirm={timeRange => {
-            this._handleOnChangeDate(false, timeRange);
-          }}
-          onClose={() => this.setState(() => ({ isModalOpen: false }))}
-          single={true}
+        <TimeRange
+          beginDate={subscription.beginDate}
+          endDate={subscription.endDate}
+          onPress={() => this._setModalVisible(true)}
         />
+        {this._renderDateTimeModal()}
       </View>
     );
   };

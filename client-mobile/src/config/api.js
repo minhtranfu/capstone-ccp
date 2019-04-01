@@ -5,13 +5,13 @@ import { AsyncStorage } from "react-native";
 import { goToLogin } from "../Utils/Helpers";
 
 export default async function configAPI(config) {
-  axios.defaults.baseURL = "https://ccp.hoctot.net/api";
+  axios.defaults.baseURL = "http://35.198.233.204:8080/api/";
   axios.defaults.headers.post["Content-Type"] = "application/json";
 
   axios.interceptors.request.use(
     async config => {
       if (
-        config.baseURL === "https://ccp.hoctot.net/api" &&
+        config.baseURL === "http://35.198.233.204:8080/api/" &&
         !config.headers.Authorization
       ) {
         const token = await AsyncStorage.getItem("userToken");

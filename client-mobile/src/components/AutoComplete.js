@@ -12,6 +12,27 @@ class AutoComplete extends Component {
     value: PropTypes.string.isRequired,
     data: PropTypes.array
   };
+
+  // _renderItem=(item)=>{
+  //   const {hasCaption} = this.props;
+  //   return(
+  //     <TouchableOpacity
+  //     style={styles.autocompleteWrapper}
+  //     onPress={() => {
+  //       this.setState({
+  //         address: item.main_text + ", " + item.secondary_text,
+  //         lat: item.lat,
+  //         lng: item.lng,
+  //         hideResults: true
+  //       });
+  //     }}
+  //   >
+  //     <Text style={styles.addressMainText}>{item.main_text}</Text>
+  //     {hasCaption?<Text style={styles.caption}>{item.secondary_text}</Text>:null}
+  //   </TouchableOpacity>
+  //   )
+  // }
+
   render() {
     const {
       label,

@@ -17,6 +17,7 @@ import {
 } from "../../../redux/actions/debris";
 import Feather from "@expo/vector-icons/Feather";
 
+import Button from "../../../components/Button";
 import Header from "../../../components/Header";
 
 import colors from "../../../config/colors";

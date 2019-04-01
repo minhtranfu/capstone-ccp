@@ -170,40 +170,40 @@ class AddDebrisPost extends Component {
       const res = await axios.post(`storage/debrisImages`, form, {
         headers: { "Content-Type": "multipart/form-data" }
       });
+      const image = {
+        debrisImages: res.data.map(item => {
+          return {
+            id: item.id
+          };
+        }),
+        thumbnailImage: {
+          id: res.data[0].id
+        }
+      };
+      const article = {
+        title,
+        address,
+        latitude: 10.001,
+        longitude: 106.121313,
+        debrisServiceTypes: typeServices.map(item => {
+          return { id: item.id };
+        }),
+        ...image
+      };
+      if (typeServices && typeServices.length < 1) {
+        this._showAlert("You must add services");
+      } else {
+        this.props.fetchCreateNewArticle(article);
+        this.props.navigation.goBack();
+      }
     } catch (error) {
       this.setState({ submitLoading: false });
       this._showAlert(error);
     }
-    const image = {
-      debrisImages: res.data.map(item => {
-        return {
-          id: item.id
-        };
-      }),
-      thumbnailImage: {
-        id: res.data[0].id
-      }
-    };
-    const article = {
-      title,
-      address,
-      latitude: 10.001,
-      longitude: 106.121313,
-      debrisServiceTypes: typeServices.map(item => {
-        return { id: item.id };
-      }),
-      ...image
-    };
-    if (typeServices && typeServices.length < 1) {
-      this._showAlert("You must add services");
-    } else {
-      this.props.fetchCreateNewArticle(article);
-      this.props.navigation.goBack();
-    }
   };
 
   _renderContent = () => {
-    const { title, address, images, imageIndex } = this.state;
+    const { title, address, images, imageIndex, location } = this.state;
     const { typeServices } = this.props;
     return (
       <View>
@@ -229,8 +229,9 @@ class AddDebrisPost extends Component {
           }}
           renderItem={item => this._renderAutoCompleteItem(item)}
         />
-        <Text style={styles.text}>Debris services types</Text>
-        <View>
+
+        <View style={{ marginTop: 10 }}>
+          <Title title={"Debris services types"} />
           {typeServices !== undefined && typeServices.length > 0
             ? typeServices.map(item => (
                 <View style={styles.rowTypeWrapper} key={item.id}>
@@ -238,6 +239,11 @@ class AddDebrisPost extends Component {
                   <TouchableOpacity
                     onPress={() => this.props.fetchRemoveTypeServices(item.id)}
                   >
+                    <Image
+                      source={require("../../../assets/icons/icon_remove.png")}
+                      resizeMode={"contain"}
+                      style={{ width: 24, height: 24 }}
+                    />
                     <Text style={styles.text}>Remove</Text>
                   </TouchableOpacity>
                 </View>
@@ -338,6 +344,12 @@ const styles = StyleSheet.create({
     height: 100,
     width: width / 4,
     borderRadius: 10
+  },
+  autocompleteWrapper: {
+    paddingBottom: 10,
+    marginVertical: 5,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.text25
   }
 });
 

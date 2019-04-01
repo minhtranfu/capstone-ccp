@@ -13,7 +13,9 @@ import { SafeAreaView } from "react-navigation";
 import Feather from "@expo/vector-icons/Feather";
 import { updateEquipmentStatus } from "../../redux/actions/equipment";
 import { cancelTransaction } from "../../redux/actions/transaction";
+import moment from "moment";
 
+import Title from "../../components/Title";
 import Calendar from "../../components/Calendar";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -64,7 +66,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       detail: state.transaction.listRequesterTransaction.find(
         item => item.id === id
       ),
-      feedbackLoading: state.transaction.feedbackLoading[id],
+      feedbackLoading: state.transaction.feedbackLoading,
       user: state.auth.data
     };
   },
@@ -169,7 +171,7 @@ class ActivityDetail extends Component {
   //If status is renting, return null
   _renderStepProgress = (status, equipmentStatus) => {
     return (
-      <View style={styles.columnWrapper}>
+      <View style={[styles.columnWrapper, { marginBottom: 15 }]}>
         <StepProgress
           options={STEP_PROGRESS_OPTIONS}
           status={status}
@@ -201,6 +203,7 @@ class ActivityDetail extends Component {
                 type: "Equipment"
               })
             }
+            wrapperStyle={{ marginTop: 15 }}
           />
         );
       case "PENDING":
@@ -209,6 +212,7 @@ class ActivityDetail extends Component {
             <Button
               text={"Cancel"}
               onPress={this._handleCancelRequestTransaction}
+              wrapperStyle={{ marginTop: 15 }}
             />
           </View>
         );
@@ -220,6 +224,7 @@ class ActivityDetail extends Component {
                 <Button
                   text={"Extend Time Range"}
                   onPress={() => this._setCalendarVisible(true)}
+                  wrapperStyle={{ marginTop: 15 }}
                 />
                 <Button
                   text={"Early return"}
@@ -230,6 +235,7 @@ class ActivityDetail extends Component {
                       "WAITING_FOR_RETURNING"
                     )
                   }
+                  wrapperStyle={{ marginTop: 15 }}
                 />
               </View>
             ) : (
@@ -242,6 +248,7 @@ class ActivityDetail extends Component {
                     "RENTING"
                   )
                 }
+                wrapperStyle={{ marginTop: 15 }}
               />
             )}
           </View>
@@ -254,60 +261,64 @@ class ActivityDetail extends Component {
   };
 
   _renderScrollViewItem = detail => {
-    const totalDay = this._countTotalDay(detail.beginDate, detail.endDate);
-    const totalPrice = totalDay * detail.dailyPrice;
+    const end = moment(detail.endDate);
+    const begin = moment(detail.beginDate);
+    const duration = moment.duration(end.diff(begin));
+    const days = duration.asDays() + 1;
+    const totalPrice = days * detail.dailyPrice;
     console.log(detail);
     return (
       <View style={{ paddingHorizontal: 15 }}>
-        <View style={styles.imageWrapper}>
-          <Image
-            source={{
-              uri:
-                "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-            }}
-            resizeMode={"cover"}
-            style={styles.image}
-          />
-          <View style={{ flexDirection: "column", paddingLeft: 10 }}>
-            <Text style={styles.title}>{detail.equipment.name}</Text>
+        <ImageCache
+          uri={
+            "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+          }
+          resizeMode={"cover"}
+          style={styles.image}
+        />
+        <Text style={styles.title}>{detail.equipment.name}</Text>
+        <Text
+          style={{ fontSize: fontSize.secondaryText, color: colors.text50 }}
+        >
+          {detail.equipmentAddress}
+        </Text>
+        <View>
+          <Title title={"Hiring date"} />
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Image
+              source={require("../../../assets/icons/icons8-calendar.png")}
+              style={styles.calendarIcon}
+              resizeMode={"contain"}
+            />
+            <Text style={styles.duration}>
+              {`${days} ${days > 1 ? "days" : "day"}`}
+            </Text>
           </View>
-        </View>
-        <View style={styles.columnWrapper}>
-          <Text style={styles.title}>Available time ranges</Text>
-          <Text style={styles.text}>
-            From:{" "}
-            <Text style={[styles.text, { paddingLeft: 10 }]}>
-              {this._formatDate(detail.beginDate)}
-            </Text>
-          </Text>
-          <Text style={styles.text}>
-            To:{" "}
-            <Text style={[styles.text, { paddingLeft: 10 }]}>
-              {this._formatDate(detail.endDate)}
-            </Text>
+          <Text style={styles.startEndDate}>
+            {begin.format("DD/MM/YY")} - {end.format("DD/MM/YY")}
           </Text>
         </View>
-        <View style={styles.columnWrapper}>
-          <Text style={styles.title}>Price</Text>
+        <View style={{ marginTop: 5 }}>
           <View style={styles.priceItemWrapper}>
-            <Text style={styles.text}>Price/day:</Text>
-            <Text style={styles.text}>{detail.dailyPrice} K</Text>
+            <Text style={styles.text}>Price per day:</Text>
+            <Text style={styles.price}>{detail.dailyPrice} K</Text>
           </View>
           <View style={styles.priceItemWrapper}>
             <Text style={styles.text}>Total price:</Text>
-            <Text style={styles.text}>{totalPrice} K</Text>
+            <Text style={styles.price}>{totalPrice} K</Text>
           </View>
         </View>
-        <View style={styles.columnWrapper}>
-          <Text style={styles.title}>Contractor</Text>
-          <View style={styles.rowWrapper}>
-            <TouchableOpacity
-              onPress={() =>
-                this.props.navigation.navigate("ContractorProfile", {
-                  id: detail.equipment.contractor.id
-                })
-              }
-            >
+        <View>
+          <Title title={"Contractor"} />
+          <TouchableOpacity
+            style={styles.rowWrapper}
+            onPress={() =>
+              this.props.navigation.navigate("ContractorProfile", {
+                id: detail.equipment.contractor.id
+              })
+            }
+          >
+            <View>
               <ImageCache
                 uri={
                   "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
@@ -315,9 +326,12 @@ class ActivityDetail extends Component {
                 style={styles.avatar}
                 resizeMode={"cover"}
               />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ flexDirection: "column", paddingLeft: 15 }}
+            </View>
+            <View
+              style={{
+                flexDirection: "column",
+                paddingLeft: 15
+              }}
             >
               <Text style={styles.text}>
                 Name: {detail.equipment.contractor.name}
@@ -328,8 +342,8 @@ class ActivityDetail extends Component {
               <Text style={styles.text}>
                 Email: {detail.equipment.contractor.email}
               </Text>
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
         </View>
         {this._renderCalendar(this._handleAddDay(detail.endDate, 1))}
         {this._renderStepProgress(detail.status, detail.equipment.status)}
@@ -380,13 +394,9 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {
     paddingVertical: 15,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    flexDirection: "row",
-    alignItems: "center"
+    borderBottomWidth: StyleSheet.hairlineWidth
   },
   columnWrapper: {
-    paddingVertical: 15,
-    borderBottomWidth: StyleSheet.hairlineWidth,
     flexDirection: "column",
     justifyContent: "center"
   },
@@ -400,28 +410,45 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   image: {
-    width: 120,
-    height: 80,
-    borderRadius: 10
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 15
   },
   header: {
-    fontSize: fontSize.h4,
+    fontSize: fontSize.bodyText,
     fontWeight: "500"
   },
   title: {
-    fontSize: fontSize.h4,
-    fontWeight: "500",
-    paddingBottom: 10
+    fontSize: fontSize.bodyText,
+    fontWeight: "500"
   },
   text: {
-    fontSize: fontSize.bodyText,
+    fontSize: fontSize.secondaryText,
     fontWeight: "500",
     paddingBottom: 5
+  },
+  price: {
+    color: colors.secondaryColor,
+    fontSize: fontSize.bodyText,
+    fontWeight: "500"
   },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25
+  },
+  calendarIcon: {
+    width: 15,
+    aspectRatio: 1,
+    tintColor: colors.text50,
+    marginRight: 3
+  },
+  startEndDate: {
+    fontSize: fontSize.caption,
+    color: colors.text,
+    fontWeight: "600",
+    marginLeft: 15 + 3,
+    marginTop: 3
   }
 });
 

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { SafeAreaView } from "react-navigation";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { connect } from "react-redux";
 import {
   addTypeServices,
@@ -8,6 +8,7 @@ import {
   getAllDebrisServiceTypes
 } from "../../redux/actions/debris";
 
+import Title from "../../components/Title";
 import Loading from "../../components/Loading";
 import SearchBar from "../../components/SearchBar";
 import Header from "../../components/Header";
@@ -69,6 +70,10 @@ class AddServicesTypes extends Component {
     });
   };
 
+  _capitalizeLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   _handleAddItem = item => {
     console.log("add", item);
     this.setState({ listType: [...this.state.listType, item] });
@@ -80,12 +85,16 @@ class AddServicesTypes extends Component {
       style={{
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "spacebetween"
+        justifyContent: "space-between"
       }}
     >
-      <Text style={styles.text}>{item.name}</Text>
+      <Text style={styles.text}>{this._capitalizeLetter(item.name)}</Text>
       <TouchableOpacity onPress={() => this._handleRemoveItem(item.id)}>
-        <Text style={styles.text}>Remove</Text>
+        <Image
+          source={require("../../../assets/icons/icon_remove.png")}
+          resizeMode={"contain"}
+          style={{ width: 24, height: 24 }}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -96,10 +105,10 @@ class AddServicesTypes extends Component {
       style={{
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "spacebetween"
+        justifyContent: "space-between"
       }}
     >
-      <Text style={styles.text}>{item.name}</Text>
+      <Text style={styles.text}>{this._capitalizeLetter(item.name)}</Text>
       <TouchableOpacity
         onPress={() =>
           this._checkItemIsExist(item.id)
@@ -108,7 +117,19 @@ class AddServicesTypes extends Component {
         }
       >
         <Text style={styles.text}>
-          {this._checkItemIsExist(item.id) ? "Remove" : "Add"}
+          {this._checkItemIsExist(item.id) ? (
+            <Image
+              source={require("../../../assets/icons/icon_remove.png")}
+              resizeMode={"contain"}
+              style={{ width: 24, height: 24 }}
+            />
+          ) : (
+            <Image
+              source={require("../../../assets/icons/icon_add.png")}
+              resizeMode={"contain"}
+              style={{ width: 24, height: 24 }}
+            />
+          )}
         </Text>
       </TouchableOpacity>
     </View>
@@ -125,7 +146,7 @@ class AddServicesTypes extends Component {
         <Header
           renderLeftButton={() => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={styles.text}>Cancel</Text>
+              <Text style={styles.title}>Cancel</Text>
             </TouchableOpacity>
           )}
           renderRightButton={() => (
@@ -141,16 +162,16 @@ class AddServicesTypes extends Component {
         >
           <Text style={styles.text}>Select your services</Text>
         </Header>
-        <SearchBar handleOnChangeText={this._handleOnChangeText} />
         {!loading ? (
-          <ScrollView>
-            <Text style={styles.text}>Selected services</Text>
+          <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
+            <Title title={"Select your services"} />
             {listType.length > 0 ? (
               listType.map(item => this._renderSelectedItem(item))
             ) : (
               <Text style={styles.text}>List is empty</Text>
             )}
-            <Text style={styles.text}>Type services</Text>
+            <View style={styles.divider} />
+            <Title title={"Type services"} />
             {debrisTypes.map(item => this._renderItem(item))}
           </ScrollView>
         ) : (
@@ -165,9 +186,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  text: {
+  title: {
     fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontWeight: "500",
+    color: colors.text
+  },
+  text: {
+    fontSize: fontSize.secondaryText,
+    paddingBottom: 5
+  },
+  divider: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.text25,
+    marginVertical: 5
   }
 });
 

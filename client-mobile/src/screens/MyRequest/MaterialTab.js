@@ -109,24 +109,30 @@ class MaterialTab extends PureComponent {
               title={materialStatus.title}
               code={materialStatus.code}
             />
-            {materialList.map(item => (
-              <MaterialOrder
-                key={item.id}
-                contractor={item.requester.name}
-                phone={item.requester.phoneNumber}
-                avatarURL={item.requester.thumbnailImage}
-                address={item.requesterAddress}
-                totalPrice={item.totalPrice}
-                createdTime={item.createdTime}
-                totalOrder={item.materialTransactionDetails}
-                status={item.status}
-                statusBackgroundColor={COLORS[item.status]}
-                onPress={() =>
-                  this.props.navigation.navigate("MaterialRequesterDetail", {
-                    id: item.id
-                  })
-                }
-              />
+            {materialList.map((item, index) => (
+              <View key={`mat${item.id}`} style={styles.rowWrapper}>
+                <MaterialOrder
+                  key={item.id}
+                  role={"Supplier"}
+                  contractor={item.supplier.name}
+                  phone={item.supplier.phoneNumber}
+                  avatarURL={
+                    item.supplier.thumbnailImage
+                      ? item.supplier.thumbnailImage
+                      : "http://bootstraptema.ru/snippets/icons/2016/mia/2.png"
+                  }
+                  totalPrice={item.totalPrice}
+                  createdTime={item.createdTime}
+                  totalOrder={item.materialTransactionDetails}
+                  status={item.status}
+                  statusBackgroundColor={COLORS[item.status]}
+                  onPress={() =>
+                    this.props.navigation.navigate("MaterialRequesterDetail", {
+                      id: item.id
+                    })
+                  }
+                />
+              </View>
             ))}
           </View>
         );
@@ -175,6 +181,11 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: "#DEE4E3",
     padding: 30
+  },
+  rowWrapper: {
+    marginVertical: 8,
+    ...colors.shadow,
+    elevation: 2
   },
   text: {
     fontSize: fontSize.bodyText,

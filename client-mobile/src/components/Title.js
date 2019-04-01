@@ -28,14 +28,14 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-between"
   },
   text: {
     color: colors.primaryColor,
-    fontSize: fontSize.secondaryText,
-    fontWeight: "600",
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
     paddingTop: 15,
-    paddingBottom: 10,
+    paddingBottom: 10
   },
   hasMoreText: {
     color: colors.secondaryColor,

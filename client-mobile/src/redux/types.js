@@ -167,6 +167,9 @@ export const ADD_SUBSCRIPTIONS = renderActions(
 export const GET_SUBSCRIPTIONS = renderActions(
   "@@subscription/GET_SUBSCRIPTIONS"
 );
+export const EDIT_SUBSCRIPTION = renderActions(
+  "@@subscription/EDIT_SUBSCRIPTION"
+);
 export const DELETE_SUBSCRIPTION = renderActions(
   "@@subscription/DELETE_SUBSCRIPTION"
 );

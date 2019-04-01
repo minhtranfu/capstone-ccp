@@ -111,9 +111,14 @@ class MaterialTab extends PureComponent {
             {materialList.map(item => (
               <MaterialOrder
                 key={item.id}
+                role={"Requester"}
                 contractor={item.requester.name}
                 phone={item.requester.phoneNumber}
-                avatarURL={item.requester.thumbnailImage}
+                avatarURL={
+                  item.requester.thumbnailImage
+                    ? item.requester.thumbnailImage
+                    : "http://bootstraptema.ru/snippets/icons/2016/mia/2.png"
+                }
                 address={item.requesterAddress}
                 totalPrice={item.totalPrice}
                 createdTime={item.createdTime}

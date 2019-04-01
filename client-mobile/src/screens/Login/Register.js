@@ -19,11 +19,24 @@ class Register extends Component {
     };
   }
 
+  _handleInputChanged = (field, value) => {
+    this.setState({ [field]: value });
+  };
+
+  _handleSubmit = () => {};
+
   render() {
+    const {
+      username,
+      password,
+      confirmPassword,
+      name,
+      email,
+      phoneNumber
+    } = this.state;
     return (
       <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
         <ScrollView contentContainerStyle={{ paddingHorizontal }}>
-          <Text style={styles.title}>Register</Text>
           <InputField
             label={"Username"}
             labelStyle={{ color: colors.text50 }}
@@ -33,7 +46,7 @@ class Register extends Component {
             autoCapitalize={"none"}
             inputType="text"
             placeholderTextColor={colors.text50}
-            onChangeText={onChangeUsername}
+            onChangeText={value => this._handleInputChanged("username", value)}
             value={username}
             returnKeyType={"next"}
           />
@@ -46,7 +59,7 @@ class Register extends Component {
             placeholderStyle={{ borderBottomColor: colors.text50 }}
             placeholderTextColor={colors.text50}
             inputType="password"
-            onChangeText={onChangePassword}
+            onChangeText={value => this._handleInputChanged("password", value)}
             value={password}
           />
           <InputField
@@ -58,8 +71,10 @@ class Register extends Component {
             placeholderStyle={{ borderBottomColor: colors.text50 }}
             placeholderTextColor={colors.text50}
             inputType="password"
-            onChangeText={onChangePassword}
-            value={password}
+            onChangeText={value =>
+              this._handleInputChanged("confirmPassword", value)
+            }
+            value={confirmPassword}
           />
           <InputField
             label={"Your name"}
@@ -70,8 +85,8 @@ class Register extends Component {
             autoCapitalize={"none"}
             inputType="text"
             placeholderTextColor={colors.text50}
-            onChangeText={onChangeUsername}
-            value={username}
+            onChangeText={value => this._handleInputChanged("name", value)}
+            value={name}
             returnKeyType={"next"}
           />
           <InputField
@@ -83,8 +98,8 @@ class Register extends Component {
             autoCapitalize={"none"}
             inputType="text"
             placeholderTextColor={colors.text50}
-            onChangeText={onChangeUsername}
-            value={username}
+            onChangeText={value => this._handleInputChanged("email", value)}
+            value={email}
             returnKeyType={"next"}
           />
           <InputField
@@ -96,17 +111,31 @@ class Register extends Component {
             autoCapitalize={"none"}
             inputType="text"
             placeholderTextColor={colors.text50}
-            onChangeText={onChangeUsername}
-            value={username}
+            onChangeText={value =>
+              this._handleInputChanged("phoneNumber", value)
+            }
+            value={phoneNumber}
             returnKeyType={"next"}
           />
           <Button
-            text={"Login"}
+            text={"Sign Up"}
             wrapperStyle={styles.wrapperStyle}
             buttonStyle={styles.buttonStyle}
             textStyle={styles.textStyle}
             onPress={onPress}
           />
+          <Text
+            style={[
+              styles.forgotPassword,
+              { alignSelf: "center", marginTop: 10 }
+            ]}
+          >
+            Already have an account?
+            <Text style={{ color: colors.text68, fontWeight: "600" }}>
+              {" "}
+              | Sign In
+            </Text>
+          </Text>
         </ScrollView>
       </SafeAreaView>
     );
@@ -116,6 +145,10 @@ class Register extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  forgotPassword: {
+    fontSize: fontSize.caption,
+    color: colors.secondaryColor
   }
 });
 

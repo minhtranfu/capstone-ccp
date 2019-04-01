@@ -100,6 +100,12 @@ class AddMaterialDetail extends Component {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  _showAlert = (title, msg) => {
+    Alert.alert(title, msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
+
   _handleAddImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
     if (status === "granted") {
@@ -170,26 +176,32 @@ class AddMaterialDetail extends Component {
       type: "image/jpg",
       name: "image.jpg"
     });
-    const res = await axios.post(`storage/equipmentImages`, form, {
-      headers: { "Content-Type": "multipart/form-data" }
-    });
-    console.log(res);
-    const material = {
-      name,
-      manufacturer,
-      description,
-      price: parseFloat(price),
-      materialType: {
-        id: newTypeOptions[typeIndex].id
-      },
-      //constructionIndex based on construction dropdown
-      construction: {
-        id: constructionList[constructionIndex - 1].id
-      },
-      thumbnailImageUrl: res.data[0].url
-    };
-    await this.props.fetchAddNewMaterial(material);
-    this.props.navigation.dismiss();
+    try {
+      const res = await axios.post(`storage/equipmentImages`, form, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      console.log(res);
+      const material = {
+        name,
+        manufacturer,
+        description,
+        price: parseFloat(price),
+        materialType: {
+          id: newTypeOptions[typeIndex].id
+        },
+        //constructionIndex based on construction dropdown
+        construction: {
+          id: constructionList[constructionIndex - 1].id
+        },
+        thumbnailImageUrl: res.data[0].url
+      };
+      await this.props.fetchAddNewMaterial(material);
+      this.props.navigation.dismiss();
+    } catch (error) {
+      this._showAlert(error);
+      this.setState({ submitLoading: false });
+      this.props.navigation.dismiss();
+    }
   };
 
   _validData = () => {

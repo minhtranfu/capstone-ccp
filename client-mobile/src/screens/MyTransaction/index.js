@@ -241,7 +241,9 @@ class MyTransaction extends Component {
                   name={item.equipment.name}
                   price={item.equipment.dailyPrice}
                   imageURL={
-                    "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+                    item.equipment.thumbnailImage
+                      ? item.equipment.thumbnailImage.url
+                      : null
                   }
                   avatarURL={
                     "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"

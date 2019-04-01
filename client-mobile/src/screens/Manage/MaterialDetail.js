@@ -180,24 +180,29 @@ class MyMaterialDetail extends Component {
       type: "image/jpg",
       name: "image.jpg"
     });
-    const res = await axios.post(`storage/equipmentImages`, form, {
-      headers: { "Content-Type": "multipart/form-data" }
-    });
-    const material = {
-      name: data.name,
-      manufacturer: data.manufacturer,
-      description: data.description,
-      price: parseFloat(data.price),
-      materialType: {
-        id: newTypeOptions[typeIndex].id
-      },
-      construction: {
-        id: constructionList[constructionIndex - 1].id
-      },
-      thumbnailImageUrl: res.data[0].url
-    };
-    await this.props.fetchUpdateMaterialDetail(data.id, material);
-    this.props.navigation.goBack();
+    try {
+      const res = await axios.post(`storage/equipmentImages`, form, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      const material = {
+        name: data.name,
+        manufacturer: data.manufacturer,
+        description: data.description,
+        price: parseFloat(data.price),
+        materialType: {
+          id: newTypeOptions[typeIndex].id
+        },
+        construction: {
+          id: constructionList[constructionIndex - 1].id
+        },
+        thumbnailImageUrl: res.data[0].url
+      };
+      await this.props.fetchUpdateMaterialDetail(data.id, material);
+      this.props.navigation.goBack();
+    } catch (error) {
+      this.setState({ submitLoading: true });
+      this.props.navigation.goBack();
+    }
   };
 
   _renderScrollView = () => {
@@ -297,6 +302,7 @@ class MyMaterialDetail extends Component {
 
   render() {
     const { generalType, loading } = this.props;
+    const { submitLoading } = this.state;
     return (
       <SafeAreaView
         style={styles.container}
@@ -315,6 +321,7 @@ class MyMaterialDetail extends Component {
         >
           <Text style={styles.text}>Material Detail</Text>
         </Header>
+        {submitLoading ? <Loading /> : null}
         {!loading ? (
           <ScrollView
             contentContainerStyle={{ paddingHorizontal: 15, paddingBottom: 15 }}

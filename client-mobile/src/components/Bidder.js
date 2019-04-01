@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Image } from "react-native-expo-image-cache";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Rating } from "react-native-ratings";
+import moment from "moment";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
@@ -33,59 +34,78 @@ class Bidder extends Component {
       price,
       description,
       hasDivider,
-      onPress
+      onPress,
+      createdTime,
+      feedbackCount
     } = this.props;
     return (
-      <TouchableOpacity
-        style={{ flexDirection: "row", alignItems: "flex-start" }}
-        onPress={onPress}
-      >
-        <Image
-          uri={
-            imageUrl
-              ? imageUrl
-              : "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
-          }
-          resizeMode={"cover"}
-          style={{ width: 40, height: 40, borderRadius: 20 }}
-        />
-        <View style={{ flex: 1, paddingLeft: 15 }}>
-          <Text style={styles.text}>{name}</Text>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <View
-              style={{
-                borderRadius: 10,
-                paddingHorizontal: 10,
-                backgroundColor: colors.secondaryColor,
-                alignItems: "center",
-                justifyContent: "center",
-                marginRight: 10
-              }}
-            >
-              <Text
-                style={{
-                  color: "white",
-                  fontSize: fontSize.secondaryText
-                }}
-              >
-                {rating}
-              </Text>
-            </View>
+      <TouchableOpacity style={styles.container} onPress={onPress}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: "white"
+          }}
+        >
+          <Image
+            uri={
+              imageUrl
+                ? imageUrl
+                : "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
+            }
+            resizeMode={"cover"}
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: 5,
+              marginLeft: 15
+            }}
+          />
+          <View style={{ flex: 1, paddingLeft: 15, paddingVertical: 10 }}>
+            <Text style={styles.title}>{name}</Text>
+            <Text style={styles.dateText}>
+              {moment(createdTime).format("DD-MM-YYYY")}
+            </Text>
             <Rating
               readonly={true}
               ratingCount={5}
               fractions={1}
               startingValue={rating}
               imageSize={20}
-              style={{ paddingVertical: 10 }}
+              style={{
+                paddingVertical: 10,
+                backgroundColor: "transparent",
+                alignItems: "flex-start"
+              }}
             />
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View
+                style={{
+                  borderRadius: 10,
+                  paddingHorizontal: 10,
+                  backgroundColor: colors.secondaryColor,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: 10
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: fontSize.secondaryText
+                  }}
+                >
+                  {rating.toFixed(2)}
+                </Text>
+              </View>
+              <Text style={styles.text}>{feedbackCount}</Text>
+            </View>
+            {phone ? <Text style={styles.text}>Phone: {phone}</Text> : null}
+            {price ? <Text style={styles.text}>Bid: {price}</Text> : null}
+            {description ? (
+              <Text style={styles.text}>Description: {description}</Text>
+            ) : null}
           </View>
-          {phone ? <Text style={styles.text}>Phone: {phone}</Text> : null}
-          {price ? <Text style={styles.text}>Bid: {price}</Text> : null}
-          {description ? (
-            <Text style={styles.text}>Description: {description}</Text>
-          ) : null}
-          {hasDivider ? <View style={styles.divider} /> : null}
         </View>
       </TouchableOpacity>
     );
@@ -94,16 +114,30 @@ class Bidder extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 10,
+    ...colors.shadow
   },
   divider: {
     height: 1,
     backgroundColor: colors.primaryColor,
     marginVertical: 10
   },
-  text: {
+  title: {
     fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontWeight: "500",
+    paddingBottom: 5,
+    color: colors.text
+  },
+  dateText: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text50
+  },
+  text: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text68
   }
 });
 

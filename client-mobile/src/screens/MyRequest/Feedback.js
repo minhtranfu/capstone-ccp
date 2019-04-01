@@ -10,10 +10,11 @@ import {
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import { Feather } from "@expo/vector-icons";
-import { sendDebrisFeedback } from "../../redux/actions/debris";
-import { sendMaterialFeedback } from "../../redux/actions/material";
-//import { sendEquipmentFeedback } from "../../redux/actions/equipment";
-import { sendEquipmentFeedback } from "../../redux/actions/transaction";
+import {
+  sendEquipmentFeedback,
+  sendMaterialFeedback,
+  sendDebrisFeedback
+} from "../../redux/actions/transaction";
 import { AirbnbRating } from "react-native-ratings";
 
 import ParallaxList from "../../components/ParallaxList";

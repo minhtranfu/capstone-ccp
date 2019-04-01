@@ -90,6 +90,8 @@ class MyTransactionDetail extends Component {
   componentDidMount() {
     const { id } = this.props.navigation.state.params;
     this.props.fetchGetAdjustTransaction(id);
+    if (!this.props.transactionDetail) {
+    }
   }
 
   _handleRequestButton = (id, status) => {
@@ -450,10 +452,11 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   text: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "500",
-    paddingBottom: 5
+    fontSize: fontSize.secondaryText,
+    paddingBottom: 5,
+    fontWeight: "500"
   },
+  price: {},
   avatar: {
     width: 50,
     height: 50,

@@ -118,26 +118,15 @@ class Login extends Component {
               </Text>
             </View>
           </View>
-            <KeyboardAvoidingView
-              style={styles.formWrapper}
-              behavior="position"
-            >
-              {activeTab === 0 ? (
-                <LoginForm
-                  username={username}
-                  password={password}
-                  onChangeUsername={value =>
-                    this._onChangeText("username", value)
-                  }
-                  onChangePassword={value =>
-                    this._onChangeText("password", value)
-                  }
-                  onPress={this._signIn}
-                />
-              ) : (
-                <RegisterForm username={username} password={password} />
-              )}
-            </KeyboardAvoidingView>
+          <KeyboardAvoidingView style={styles.formWrapper} behavior="position">
+            <LoginForm
+              username={username}
+              password={password}
+              onChangeUsername={value => this._onChangeText("username", value)}
+              onChangePassword={value => this._onChangeText("password", value)}
+              onPress={this._signIn}
+            />
+          </KeyboardAvoidingView>
         </ScrollView>
       </SafeAreaView>
     );
@@ -162,7 +151,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 60,
     backgroundColor: "white",
-    width: 350,
     padding: 10,
     marginVertical: 30
   }

@@ -28,6 +28,7 @@ import fontSize from "../../config/fontSize";
       materialDetail: state.transaction.listRequesterMaterial.find(
         item => item.id === id
       ),
+      feedbackLoading: state.transaction.feedbackLoading,
       loading: state.material.loading,
       user: state.auth.data
     };
@@ -131,6 +132,7 @@ class MaterialRequesterDetail extends Component {
         ) : (
           <Button
             text={"Feedback"}
+            style={{ opacity: this.props.feedbackLoading ? 0.5 : 1 }}
             onPress={() =>
               this.props.navigation.navigate("Feedback", {
                 transactionId: id,

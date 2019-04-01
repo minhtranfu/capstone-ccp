@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-navigation";
 import { updateDebrisTransactionStatus } from "../../redux/actions/transaction";
 import Feather from "@expo/vector-icons/Feather";
 
+import Title from "../../components/Title";
 import Bidder from "../../components/Bidder";
 import DebrisBid from "./components/DebrisBid";
 import Header from "../../components/Header";
@@ -35,7 +36,10 @@ const STATUS = {
   (state, ownProps) => {
     const { id } = ownProps.navigation.state.params;
     return {
-      detail: state.transaction.listRequesterDebris.find(item => item.id === id)
+      detail: state.transaction.listRequesterDebris.find(
+        item => item.id === id
+      ),
+      feedbackLoading: state.transaction.feedbackLoading
     };
   },
   dispatch => ({
@@ -77,6 +81,7 @@ class DebrisDetail extends Component {
         ) : (
           <Button
             text={"Feedback"}
+            style={{ opacity: this.props.feedbackLoading ? 0.5 : 1 }}
             onPress={() =>
               this.props.navigation.navigate("Feedback", {
                 transactionId: transactionId,
@@ -92,20 +97,63 @@ class DebrisDetail extends Component {
 
   _renderContent = () => {
     const { detail } = this.props;
+    console.log(detail);
     const { isCancel } = this.state;
     return (
       <View>
-        <Text>{detail.debrisPost.title}</Text>
-        <Text>{STATUS[detail.status]}</Text>
-        <Text>{detail.debrisPost.address}</Text>
+        <Text style={[styles.header, { paddingBottom: 5 }]}>
+          {detail.debrisPost.title}
+        </Text>
+        <Text style={styles.title}>{STATUS[detail.status]}</Text>
+        <Text style={styles.description}>
+          Address: {detail.debrisPost.address}
+        </Text>
+        <Title title={"Services required"} />
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: 5,
+            marginBottom: 3
+          }}
+        >
+          <Feather
+            name={"tag"}
+            size={12}
+            style={{ marginRight: 3 }}
+            color={colors.text50}
+          />
+          {detail.debrisPost.debrisServiceTypes &&
+            detail.debrisPost.debrisServiceTypes.map(item => (
+              <Text
+                key={`${item.name || Math.random()}`}
+                style={styles.description}
+              >
+                - {item.name}
+              </Text>
+            ))}
+        </View>
+        <Title title={"Employee"} />
         <Bidder
+          feedbackCount={detail.debrisBid.supplier.debrisFeedbacksCount}
+          createdTime={detail.debrisBid.createdTime}
           description={detail.debrisBid.description}
           price={detail.debrisBid.price}
           rating={detail.debrisBid.supplier.averageDebrisRating}
           imageUrl={detail.debrisBid.supplier.thumbnailImage}
           name={detail.debrisBid.supplier.name}
-          hasDivider={true}
         />
+        {/* <Text>Total bids {detail.debrisPost.debrisBids.length}</Text>
+        {detail.debrisPost.debrisBids.map(item => (
+          <Bidder
+            feedbackCount={item.supplier.debrisFeedbacksCount}
+            createdTime={item.createdTime}
+            price={item.price}
+            rating={item.supplier.averageDebrisRating}
+            imageUrl={item.supplier.thumbnailImage}
+            name={item.supplier.name}
+          />
+        ))} */}
         {this._renderBottomButton(detail.id, detail.status, detail.feedbacked)}
         {isCancel ? (
           <View>
@@ -149,7 +197,7 @@ class DebrisDetail extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text>Debris Detail</Text>
+          <Text style={styles.header}>Debris Detail</Text>
         </Header>
         <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
           {this._renderContent()}
@@ -162,6 +210,22 @@ class DebrisDetail extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  header: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: colors.text
+  },
+  title: {
+    fontSize: fontSize.secondaryText,
+    fontWeight: "bold",
+    color: "#55A7B4",
+    paddingBottom: 5
+  },
+  description: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text68,
+    paddingBottom: 5
   }
 });
 

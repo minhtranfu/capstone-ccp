@@ -294,10 +294,13 @@ class Activity extends Component {
                         })
                       }
                       id={item.id}
+                      role={"Supplier"}
                       name={item.equipment.name}
                       equipmentStatus={item.equipment.status}
                       imageURL={
-                        "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+                        item.equipment.thumbnailImage
+                          ? item.equipment.thumbnailImage.url
+                          : "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
                       }
                       avatarURL={
                         "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"

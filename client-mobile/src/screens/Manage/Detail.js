@@ -480,6 +480,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
+  calendarIcon: {
+    width: 15,
+    aspectRatio: 1,
+    tintColor: colors.text50,
+    marginRight: 3
+  },
   header: {
     color: colors.primaryColor,
     fontSize: fontSize.bodyText,

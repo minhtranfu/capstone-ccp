@@ -47,7 +47,27 @@ export default function subscriptionReducer(state = INITIAL_STATE, action) {
         listSubscription: []
       };
     }
-
+    case Actions.EDIT_SUBSCRIPTION.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+    case Actions.EDIT_SUBSCRIPTION.SUCCESS: {
+      return {
+        ...state,
+        listSubscription: state.listSubscription.map(item =>
+          item.id === payload.id ? (item = payload.data.data) : item
+        ),
+        loading: false
+      };
+    }
+    case Actions.EDIT_SUBSCRIPTION.ERROR: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
     case Actions.DELETE_SUBSCRIPTION.SUCCESS: {
       return {
         ...state,

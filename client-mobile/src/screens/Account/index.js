@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,61 +9,61 @@ import {
   Switch,
   Image as RNImage,
   RefreshControl
-} from 'react-native'
-import { Image } from 'react-native-expo-image-cache'
-import { connect } from 'react-redux'
-import { SafeAreaView } from 'react-navigation'
-import axios from 'axios'
-import { Notifications, Permissions } from 'expo'
+} from "react-native";
+import { Image } from "react-native-expo-image-cache";
+import { connect } from "react-redux";
+import { SafeAreaView } from "react-navigation";
+import axios from "axios";
+import { Notifications, Permissions } from "expo";
 
 import {
   getConstructionList,
   getContractorDetail
-} from '../../redux/actions/contractor'
-import { logOut } from '../../redux/actions/auth'
+} from "../../redux/actions/contractor";
+import { logOut } from "../../redux/actions/auth";
 import {
   deleteNoticationToken,
   allowPushNotification
-} from '../../redux/actions/notification'
+} from "../../redux/actions/notification";
 
-import Login from '../Login'
-import SettingItem from './components/SettingItem'
-import Loading from '../../components/Loading'
+import Login from "../Login";
+import SettingItem from "./components/SettingItem";
+import Loading from "../../components/Loading";
 import {
   Header,
   Left,
   Right,
   Button as HeaderButton,
   Body
-} from '../../components/AnimatedHeader'
-import LogoutIcon from '../../../assets/icons/icons8-export.png'
+} from "../../components/AnimatedHeader";
+import LogoutIcon from "../../../assets/icons/icons8-export.png";
 
-import colors from '../../config/colors'
-import fontSize from '../../config/fontSize'
-import { ACTION_NIGHT_DISPLAY_SETTINGS } from 'expo/build/IntentLauncherAndroid'
+import colors from "../../config/colors";
+import fontSize from "../../config/fontSize";
+import { ACTION_NIGHT_DISPLAY_SETTINGS } from "expo/build/IntentLauncherAndroid";
 
 const SETTING_ITEMS_VALUE = [
   {
     id: 1,
-    value: 'Edit profile',
-    code: 'Profile'
+    value: "Edit profile",
+    code: "Profile"
   },
   {
     id: 2,
-    value: 'My constructions',
-    code: 'Construction'
+    value: "My constructions",
+    code: "Construction"
   },
   {
     id: 4,
-    value: 'My subscription',
-    code: 'Subcription'
+    value: "My subscription",
+    code: "Subcription"
   },
   {
     id: 5,
-    value: 'Push notifications',
-    code: 'Notifications'
+    value: "Push notifications",
+    code: "Notifications"
   }
-]
+];
 
 @connect(
   state => {
@@ -73,48 +73,48 @@ const SETTING_ITEMS_VALUE = [
       loading: state.contractor.loading,
       user: state.auth.data,
       allowPushNotification: state.notification.allowPushNotification
-    }
+    };
   },
   dispatch => ({
     fetchLogout: () => {
-      dispatch(logOut())
+      dispatch(logOut());
     },
     fetchGetConstructionList: userId => {
-      dispatch(getConstructionList(userId))
+      dispatch(getConstructionList(userId));
     },
     fetchGetContractorDetail: userId => {
-      dispatch(getContractorDetail(userId))
+      dispatch(getContractorDetail(userId));
     },
     fetchRemoveNotiToken: token => {
-      dispatch(deleteNoticationToken(token))
+      dispatch(deleteNoticationToken(token));
     },
     fetchAllowPushNotification: () => {
-      dispatch(allowPushNotification())
+      dispatch(allowPushNotification());
     }
   })
 )
 class Account extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       signedIn: false,
       checkedSignIn: false,
       switchValue: null,
       refreshing: false
-    }
+    };
   }
 
   async componentDidMount() {
-    const { user, isLoggedIn } = this.props
-    console.log('ahihi user', user)
+    const { user, isLoggedIn } = this.props;
+    console.log("ahihi user", user);
     if (isLoggedIn) {
-      this.props.fetchGetConstructionList(user.contractor.id)
-      this.props.fetchGetContractorDetail(user.contractor.id)
+      this.props.fetchGetConstructionList(user.contractor.id);
+      this.props.fetchGetContractorDetail(user.contractor.id);
       if (this.state.switchValue === true) {
-        await this._handlePermissionNotification()
-        await this._registerForPushNotificationsAsync()
+        await this._handlePermissionNotification();
+        await this._registerForPushNotificationsAsync();
       } else {
-        this._handleRemoveToken()
+        this._handleRemoveToken();
       }
     }
   }
@@ -123,146 +123,146 @@ class Account extends Component {
     if (nextProps.allowPushNotification && state.switchValue === null) {
       return {
         switchValue: nextProps.allowPushNotification
-      }
+      };
     }
-    return null
+    return null;
   }
 
   async componentDidUpdate(prevProps) {
     if (this.props.isLoggedIn && Object.entries(prevProps.user).length === 0) {
-      console.log(this.props.user)
-      this.props.fetchGetContractorDetail(this.props.user.contractor.id)
+      console.log(this.props.user);
+      this.props.fetchGetContractorDetail(this.props.user.contractor.id);
       if (this.state.switchValue === true) {
-        await this._handlePermissionNotification()
-        await this._registerForPushNotificationsAsync()
+        await this._handlePermissionNotification();
+        await this._registerForPushNotificationsAsync();
       } else {
-        this._handleRemoveToken()
+        this._handleRemoveToken();
       }
     } else {
-      console.log(prevProps.user)
+      console.log(prevProps.user);
     }
   }
 
   _onRefresh = async () => {
-    this.setState({ refreshing: true })
-    const { user } = this.props
-    const res = await this.props.fetchGetContractorDetail(user.contractor.id)
+    this.setState({ refreshing: true });
+    const { user } = this.props;
+    const res = await this.props.fetchGetContractorDetail(user.contractor.id);
     if (res) {
-      this.setState({ refreshing: false })
+      this.setState({ refreshing: false });
     } else {
       setTimeout(() => {
-        this.setState({ refreshing: false })
-      }, 1000)
+        this.setState({ refreshing: false });
+      }, 1000);
     }
-  }
+  };
 
   _handlePermissionNotification = async () => {
     const { existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
-    )
-    let finalStatus = existingStatus
+    );
+    let finalStatus = existingStatus;
 
-    if (existingStatus !== 'granted') {
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS)
-      finalStatus = status
+    if (existingStatus !== "granted") {
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
     }
 
     // Stop here if the user did not grant permissions
-    if (finalStatus !== 'granted') {
-      return
+    if (finalStatus !== "granted") {
+      return;
     }
-    this.props.fetchAllowPushNotification()
-  }
+    this.props.fetchAllowPushNotification();
+  };
 
   _registerForPushNotificationsAsync = async () => {
     // Get the token that uniquely identifies this device
-    let token = await Notifications.getExpoPushTokenAsync()
+    let token = await Notifications.getExpoPushTokenAsync();
     if (token) {
       const notiToken = {
         registrationToken: token,
-        deviceType: 'EXPO'
-      }
+        deviceType: "EXPO"
+      };
       axios.post(`notificationTokens`, notiToken).then(
         res => {
-          AsyncStorage.setItem('NotiToken', res.data.id.toString())
+          AsyncStorage.setItem("NotiToken", res.data.id.toString());
         },
         error => {
-          console.log(error)
+          console.log(error);
         }
-      )
+      );
     }
-  }
+  };
 
   _handleRemoveToken = async () => {
-    const tokenId = await AsyncStorage.getItem('NotiToken')
+    const tokenId = await AsyncStorage.getItem("NotiToken");
     if (tokenId) {
-      await this.props.fetchRemoveNotiToken(tokenId)
-      AsyncStorage.removeItem('NotiToken')
+      await this.props.fetchRemoveNotiToken(tokenId);
+      AsyncStorage.removeItem("NotiToken");
     }
-  }
+  };
 
   _handleLogout = async () => {
-    await this._handleRemoveToken()
-    await AsyncStorage.removeItem('userToken')
-    this.props.fetchLogout()
-  }
+    await this._handleRemoveToken();
+    await AsyncStorage.removeItem("userToken");
+    this.props.fetchLogout();
+  };
 
   _handleOnSwitchChange = value => {
-    this.setState({ switchValue: value })
-  }
+    this.setState({ switchValue: value });
+  };
 
   _renderImageProfile = thumbnailImage => (
     <View style={{ flex: 1 }}>
       <Image
         uri={
-          'https://www.bimcommunity.com/files/images/userlib/construction_trends_bimcommunity.jpg'
+          "https://www.bimcommunity.com/files/images/userlib/construction_trends_bimcommunity.jpg"
         }
         style={styles.thumbnail}
-        resizeMode={'cover'}
+        resizeMode={"cover"}
       />
       <View style={styles.avatarWrapper}>
         <Image
-          uri={'http://bootstraptema.ru/snippets/icons/2016/mia/2.png'}
-          resizeMode={'cover'}
+          uri={"http://bootstraptema.ru/snippets/icons/2016/mia/2.png"}
+          resizeMode={"cover"}
           style={styles.avatar}
         />
       </View>
     </View>
-  )
+  );
 
   _dateConverter = timeStamp => {
     // multiplied by 1000 so that the argument is in milliseconds, not seconds
-    let date = new Date(timeStamp)
+    let date = new Date(timeStamp);
     let months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ]
-    let year = date.getFullYear()
-    let month = months[date.getMonth()]
-    let day = date.getDay()
-    return month + ' ' + day + ', ' + year
-  }
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ];
+    let year = date.getFullYear();
+    let month = months[date.getMonth()];
+    let day = date.getDay();
+    return month + " " + day + ", " + year;
+  };
 
   render() {
-    const { isLoggedIn, contractor, loading, user } = this.props
+    const { isLoggedIn, contractor, loading, user } = this.props;
     if (isLoggedIn) {
-      if (!contractor) return <Loading />
+      if (!contractor) return <Loading />;
       return (
         <SafeAreaView
           style={styles.container}
-          forceInset={{ bottom: 'never', top: 'always' }}
+          forceInset={{ bottom: "never", top: "always" }}
         >
-          <Header style={{ position: 'relative' }}>
+          <Header style={{ position: "relative" }}>
             <Left />
             <Body title="Settings" />
             <Right>
@@ -270,7 +270,7 @@ class Account extends Component {
                 <RNImage
                   source={LogoutIcon}
                   style={{ width: 22, height: 22, marginRight: 5 }}
-                  resizeMode={'cover'}
+                  resizeMode={"cover"}
                 />
               </TouchableOpacity>
             </Right>
@@ -285,7 +285,7 @@ class Account extends Component {
               }
             >
               <View>
-                {/* {this._renderImageProfile(contractor.thumbnailImage)} */}
+                {this._renderImageProfile(contractor.thumbnailImage)}
                 <View style={styles.nameWrapper}>
                   <Text style={styles.name}>{contractor.name}</Text>
                   <Text style={styles.text}>
@@ -313,9 +313,9 @@ class Account extends Component {
             <Loading />
           )}
         </SafeAreaView>
-      )
+      );
     } else {
-      return <Login navigation={this.props.navigation} />
+      return <Login navigation={this.props.navigation} />;
     }
   }
 }
@@ -329,12 +329,12 @@ const styles = StyleSheet.create({
   },
   avatarWrapper: {
     marginTop: -40,
-    alignItems: 'center',
-    justifyContent: 'flex-end'
+    alignItems: "center",
+    justifyContent: "flex-end"
   },
   nameWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderBottomColor: colors.primaryColor,
     paddingVertical: 8
   },
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    borderColor: 'white',
+    borderColor: "white",
     borderWidth: 2,
     backgroundColor: colors.secondaryColor
   },
@@ -352,17 +352,17 @@ const styles = StyleSheet.create({
   header: {
     color: colors.primaryColor,
     fontSize: fontSize.bodyText,
-    fontWeight: '600'
+    fontWeight: "600"
   },
   name: {
     fontSize: fontSize.h3,
-    fontWeight: '700'
+    fontWeight: "700"
   },
   text: {
     fontSize: fontSize.caption,
     color: colors.text50,
-    fontWeight: '400'
+    fontWeight: "400"
   }
-})
+});
 
-export default Account
+export default Account;
