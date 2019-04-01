@@ -22,10 +22,6 @@ class Home extends Component {
       beginDate: moment().format('YYYY-MM-DD')
     });
 
-    if (products.length === 0) {
-      alert('Data is empty!');
-    }
-
     this.setState({
       products,
       isFetching: false
