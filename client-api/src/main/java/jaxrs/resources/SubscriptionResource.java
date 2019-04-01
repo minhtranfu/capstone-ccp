@@ -8,6 +8,7 @@ import entities.ContractorEntity;
 import entities.SubscriptionEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -40,11 +41,9 @@ public class SubscriptionResource {
 	ClaimValue<JsonNumber> claimContractorId;
 
 
-
 	private long getClaimContractorId() {
 		return claimContractorId.getValue().longValue();
 	}
-
 
 
 	@GET
@@ -56,10 +55,11 @@ public class SubscriptionResource {
 
 	@GET
 	@RolesAllowed("contractor")
-	public Response getAllSubscriptionFromContractor() {
+	public Response getAllSubscriptionFromContractor(
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit,
+			@QueryParam("offset") @DefaultValue("0") int offset) {
 		ContractorEntity managedContractor = contractorDAO.findByIdWithValidation(getClaimContractorId());
-//		List<SubscriptionEntity> resultList = entityManager.createQuery("select e from SubscriptionEntity  e", SubscriptionEntity.class)
-//				.getResultList();
+		subscriptionDAO.getSubscriptionsByContractorId(getClaimContractorId(), limit, offset);
 		return Response.ok(managedContractor.getSubscriptionEntities()).build();
 	}
 

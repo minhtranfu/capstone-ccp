@@ -13,15 +13,19 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 	@PersistenceContext
 	EntityManager entityManager;
 
-	public List<HiringTransactionEntity> getHiringTransactionsBySupplierId(long supplierId) {
-		return entityManager.createNamedQuery("HiringTransactionEntity.getTransactionBySupplierId")
+	public List<HiringTransactionEntity> getHiringTransactionsBySupplierId(long supplierId, int limit, int offset) {
+		return entityManager.createNamedQuery("HiringTransactionEntity.getTransactionBySupplierId", HiringTransactionEntity.class)
 				.setParameter("supplierId", supplierId)
+				.setMaxResults(limit)
+				.setFirstResult(offset)
 				.getResultList();
 	}
 
-	public List<HiringTransactionEntity> getHiringTransactionsByRequesterId(long requesterId) {
-		return entityManager.createNamedQuery("HiringTransactionEntity.getTransactionsByRequesterId")
+	public List<HiringTransactionEntity> getHiringTransactionsByRequesterId(long requesterId, int limit, int offset) {
+		return entityManager.createNamedQuery("HiringTransactionEntity.getTransactionsByRequesterId", HiringTransactionEntity.class)
 				.setParameter("requesterId", requesterId)
+				.setMaxResults(limit)
+				.setFirstResult(offset)
 				.getResultList();
 	}
 
@@ -37,7 +41,7 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 	}
 
 	public List<HiringTransactionEntity> getPendingTransactionIntersectingWith(long equipmentId, LocalDate beginDate, LocalDate endDate){
-		return entityManager.createNamedQuery("HiringTransactionEntity.getPendingTransactionIntersectingWith")
+		return entityManager.createNamedQuery("HiringTransactionEntity.getPendingTransactionIntersectingWith",HiringTransactionEntity.class)
 				.setParameter("equipmentId", equipmentId)
 				.setParameter("curBeginDate", beginDate)
 				.setParameter("curEndDate", endDate)

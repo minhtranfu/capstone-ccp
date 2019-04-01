@@ -11,6 +11,7 @@ import entities.DebrisPostEntity;
 import entities.DebrisTransactionEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -34,7 +35,6 @@ public class DebrisTransactionResource {
 	DebrisPostDAO debrisPostDAO;
 	@Inject
 	DebrisBidDAO debrisBidDAO;
-
 
 
 	@Inject
@@ -66,7 +66,6 @@ public class DebrisTransactionResource {
 
 		DebrisBidEntity managedBid = debrisBidDAO.findByIdWithValidation(debrisTransactionEntity.getDebrisBid().getId());
 		debrisTransactionEntity.setDebrisBid(managedBid);
-
 
 
 		if (requesterId != managedPost.getRequester().getId()) {
@@ -186,7 +185,7 @@ public class DebrisTransactionResource {
 
 				// 3/21/19 only requester or supplier can do this
 				if (foundTransaction.getRequester().getId() != getClaimContractorId()
-				&& foundTransaction.getSupplier().getId() != getClaimContractorId()) {
+						&& foundTransaction.getSupplier().getId() != getClaimContractorId()) {
 					throw new BadRequestException("Only requester or supplier can change this status");
 				}
 
@@ -211,36 +210,33 @@ public class DebrisTransactionResource {
 	@GET
 	@Path("supplier")
 	@RolesAllowed("contractor")
-	public Response getDebrisTransactionsBySupplierId() {
-
-
+	public Response getDebrisTransactionsBySupplierId(@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset) {
 		long supplierId = getClaimContractorId();
-
-		List<DebrisTransactionEntity> debrisTransactionsBySupplierId = debrisTransactionDAO.getDebrisTransactionsBySupplierId(supplierId);
+		List<DebrisTransactionEntity> debrisTransactionsBySupplierId =
+				debrisTransactionDAO.getDebrisTransactionsBySupplierId(supplierId, limit, offset);
 
 		return Response.ok(debrisTransactionsBySupplierId).build();
 
 	}
 
 
-
 	@GET
 	@Path("requester")
 	@RolesAllowed("contractor")
-	public Response getDebrisTransactionsAsRequester() {
+	public Response getDebrisTransactionsAsRequester(@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset) {
 		long requesterId = getClaimContractorId();
 //		//validate claim contractor
 //		if (requesterId != claimContractorId.getValue().longValue()) {
 //			throw new BadRequestException("You cannot view other people's transaction");
 //		}
 
-		List<DebrisTransactionEntity> transactionsByRequesterId = debrisTransactionDAO.getDebrisTransactionsByRequesterId(requesterId);
+		List<DebrisTransactionEntity> transactionsByRequesterId = debrisTransactionDAO.
+				getDebrisTransactionsByRequesterId(requesterId, limit, offset);
 
 		return Response.ok(transactionsByRequesterId).build();
 	}
-
-
-
 
 
 }

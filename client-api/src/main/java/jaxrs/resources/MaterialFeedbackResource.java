@@ -8,6 +8,7 @@ import entities.MaterialTransactionDetailEntity;
 import entities.MaterialTransactionEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -71,8 +72,11 @@ public class MaterialFeedbackResource {
 	@GET
 	@Path("supplier")
 	@RolesAllowed("contractor")
-	public Response getFeedbacksBySupplier() {
+	public Response getFeedbacksBySupplier(
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit,
+			@QueryParam("offset") @DefaultValue("0") int offset
+	) {
 		//no need to validate contractor because it will return empty list
-		return Response.ok(materialFeedbackDAO.getFeedbacksBySupplier(getClaimContractorId())).build();
+		return Response.ok(materialFeedbackDAO.getFeedbacksBySupplier(getClaimContractorId(),limit,offset)).build();
 	}
 }

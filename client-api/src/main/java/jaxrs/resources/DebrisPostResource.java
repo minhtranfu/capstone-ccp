@@ -64,7 +64,7 @@ public class DebrisPostResource {
 
 	@GET
 	public Response searchdebris(
-			@QueryParam("q")  @DefaultValue("") String query,
+			@QueryParam("q") @DefaultValue("") String query,
 			@QueryParam("lat") Double latitude,
 			@QueryParam("long") Double longitude,
 			@QueryParam("maxDistance") Double maxDistance,
@@ -115,11 +115,11 @@ public class DebrisPostResource {
 				"thumbnail id=%d not included in image list", debrisPostEntity.getThumbnailImage().getId())));
 
 	}
+
 	@POST
 	@RolesAllowed("contractor")
 	public Response insertDebrisPost(@Valid DebrisPostPostRequest debrisPostRequest) {
 		DebrisPostEntity debrisPostEntity = modelConverter.toEntity(debrisPostRequest);
-
 
 
 		long requesterId = getClaimContractorId();
@@ -217,9 +217,12 @@ public class DebrisPostResource {
 	@GET
 	@Path("requester")
 	@RolesAllowed("contractor")
-	public Response getAllByRequester() {
+	public Response getAllByRequester(
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+	) {
 		contractorDAO.findByIdWithValidation(getClaimContractorId());
-		return Response.ok(debrisPostDAO.getByRequester(getClaimContractorId())).build();
+		return Response.ok(debrisPostDAO.getByRequester(getClaimContractorId(), limit, offset)).build();
 	}
 
 	@Path("{id:\\d+}/images")

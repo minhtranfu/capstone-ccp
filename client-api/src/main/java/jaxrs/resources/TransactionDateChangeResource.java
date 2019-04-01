@@ -9,6 +9,7 @@ import entities.HiringTransactionEntity;
 import entities.TransactionDateChangeRequestEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -94,7 +95,8 @@ public class TransactionDateChangeResource {
 	}
 
 	@GET
-	public Response getRequestForChangingHiringDate() {
+	public Response getRequestForChangingHiringDate(@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit,
+													@QueryParam("offset") @DefaultValue("0") int offset) {
 		//  2/10/19 validate authority
 		//supplier or requester is ok
 		if (getClaimContractId() != hiringTransactionEntity.getRequester().getId()
@@ -102,11 +104,9 @@ public class TransactionDateChangeResource {
 			throw new BadRequestException("Only requester or supplier can see this!");
 		}
 		List<TransactionDateChangeRequestEntity> results =
-				transactionDateChangeRequestDAO.getRequestsByTransactionId(hiringTransactionEntity.getId());
+				transactionDateChangeRequestDAO.getRequestsByTransactionId(hiringTransactionEntity.getId(), limit, offset);
 		return Response.ok(results).build();
 	}
-
-
 
 
 	@DELETE
