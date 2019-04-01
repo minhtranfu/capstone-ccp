@@ -5,7 +5,7 @@ export const login = (username, password) => {
 };
 
 export const register = (data) => {
-  return DataAccessService.post('/register', data);
+  return DataAccessService.post('/authen/register', data);
 };
 
 export const getUserInfo = () => {

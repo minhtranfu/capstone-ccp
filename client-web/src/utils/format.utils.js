@@ -5,6 +5,10 @@ export const formatDate = time => {
     return '';
   }
 
+  if (time.format) {
+    return time.format('DD-MM-YYYY');
+  }
+
   return moment(time).format('DD-MM-YYYY');
 };
 
