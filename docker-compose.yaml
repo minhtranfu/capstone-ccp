@@ -15,7 +15,9 @@ services:
       - MYSQL_USER=capstone_ccp
       - MYSQL_PASSWORD=capstone_ccp123!@#
     ports:
-      - "8082:3306"
+      - "3306:3306"
+    networks:
+      - capstone-ccp
 
   client-api:
     build:
@@ -23,7 +25,7 @@ services:
     restart: always
     port:
       - "8080:8080"
-    network:
+    networks:
       - capstone-ccp
     depends_on:
       - mysqldb
