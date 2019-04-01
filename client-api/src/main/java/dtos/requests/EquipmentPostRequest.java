@@ -9,14 +9,19 @@ import java.util.Collection;
 import java.util.List;
 
 public class EquipmentPostRequest extends EquipmentRequest {
-	// TODO: 3/4/19 chekc this when do description image upload
+	// TODO: 3/4/19 check this when do description image upload
 	@Valid
 	@NotNull
-	public Collection<IdOnly> equipmentImages;
+	public List<IdOnly> equipmentImages;
 
 	@Valid
 	@NotNull
 	public List<AdditionalSpecsValueRequest> additionalSpecsValues;
+
+	public EquipmentPostRequest() {
+		super();
+	}
+
 
 
 }
