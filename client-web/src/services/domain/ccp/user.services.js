@@ -1,5 +1,4 @@
 import DataAccessService from '../../data/data-access-service';
-import { toQueryString } from 'Utils/common.utils';
 
 export const login = (username, password) => {
   return DataAccessService.post('/authen', { username, password });
@@ -22,8 +21,7 @@ export const unsubcribeNotification = registrationToken => {
 };
 
 export const getNotifications = ({limit, offset}) => {
-  const query = toQueryString({limit, offset});
-  return DataAccessService.get(`/notifications?${query}`)
+  return DataAccessService.get(`/notifications?limit=${limit}&offset=${offset}`);
 };
 
 export const updateNotificationStatus = (id, isRead) => {

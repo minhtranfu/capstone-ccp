@@ -123,6 +123,12 @@ export const modules = [
     isPrivate: true
   },
   {
+    name: routeConsts.MATERIAL_REQUEST_DETAIL,
+    path: '/materials/request/:id',
+    modulePath: './material/request-detail',
+    isPrivate: true
+  },
+  {
     name: routeConsts.MATERIAL_DETAIL,
     path: '/materials/:id',
     modulePath: './material-detail'

@@ -5,11 +5,13 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
 import StarRatings from 'react-star-ratings';
+import { Link } from "react-router-dom";
 
 import { FeedbackModal, RatingMaterialModal } from "../../common";
-import { MATERIAL_TRANSACTION_STATUSES } from '../../../common/consts';
+import { MATERIAL_TRANSACTION_STATUSES, routeConsts } from '../../../common/consts';
 import { materialTransactionServices } from 'Src/services/domain/ccp';
 import { formatPrice } from 'Src/utils/format.utils';
+import { getRoutePath } from 'Utils/common.utils';
 
 class MaterialTransactions extends Component {
   state = {
@@ -366,22 +368,8 @@ class MaterialTransactions extends Component {
             </div>
             {changeStatusButtons}
           </div>
-          <div className="contractor-detail flex-fill p-2 text-center">
-            <img
-              className="rounded-circle"
-              style={{width: '50px', height: '50px'}}
-              src={supplier.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
-            />
-            <div>{supplier.name}</div>
-            {supplier.averageMaterialRating > 0 &&
-              <StarRatings
-                rating={supplier.averageMaterialRating}
-                numberOfStars={5}
-                starRatedColor="#ffac00"
-                starDimension="20px"
-                starSpacing="0px"
-              />
-            }
+          <div className="px-3 d-flex flex-column justify-content-center">
+            <Link to={getRoutePath(routeConsts.MATERIAL_REQUEST_DETAIL, { id: transaction.id })} className="btn btn-outline-primary">View detail</Link>
           </div>
         </div>
       </CSSTransition>
@@ -400,11 +388,6 @@ class MaterialTransactions extends Component {
           transaction={feedbackTransaction}
         />
         {this._renderAlert()}
-        {/* <FeedbackModal
-          isOpen={isShowFeedbackModal}
-          onClose={() => this._toggleFeedbackModal()}
-          transaction={feedbackTransaction}
-        /> */}
         <div className="row">
           <div className="col-md-3">
             <div className="border-right border-primary h-100">
