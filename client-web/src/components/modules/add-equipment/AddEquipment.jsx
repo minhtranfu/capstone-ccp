@@ -5,6 +5,7 @@ import {
   CSSTransition
 } from 'react-transition-group';
 import { Redirect } from 'react-router-dom';
+import { connect } from "react-redux";
 
 import Step1 from './Step1';
 import Step2 from './Step2';
@@ -12,7 +13,7 @@ import Step3 from './Step3';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
 import { getRoutePath } from 'Utils/common.utils';
-import { routeConsts } from 'Common/consts';
+import { routeConsts, CONTRACTOR_STATUSES } from 'Common/consts';
 
 class AddEquipment extends Component {
   constructor(props) {
@@ -155,6 +156,15 @@ class AddEquipment extends Component {
   };
 
   render() {
+    
+    const { contractor } = this.props;
+
+    if (contractor.status !== CONTRACTOR_STATUSES.ACTIVATED) {
+      return (
+        <h1 className="text-center my-3 alert alert-warning">Your account was deactived!</h1>
+      );
+    }
+
     return (
       <div className="container pb-5">
         <div className="row">
@@ -169,4 +179,14 @@ class AddEquipment extends Component {
   }
 }
 
-export default AddEquipment;
+const mapStateToProps = state => {
+  const { authentication } = state;
+  const { user } = authentication;
+  const { contractor } = user;
+
+  return {
+    contractor
+  };
+};
+
+export default connect(mapStateToProps)(AddEquipment);

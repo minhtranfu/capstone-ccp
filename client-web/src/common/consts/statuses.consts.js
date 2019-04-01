@@ -1,3 +1,7 @@
+
+/**
+ * Equipment, equipment transaction statuses
+ */
 export const TRANSACTION_STATUSES = {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',
@@ -21,6 +25,9 @@ export const EQUIPMENT_SHOWABLE_STATUSES = {
   WAITING_FOR_RETURNING: 'Wait for returning'
 };
 
+/**
+ * Material transaction status
+ */
 export const MATERIAL_TRANSACTION_STATUSES = {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',
@@ -30,6 +37,9 @@ export const MATERIAL_TRANSACTION_STATUSES = {
   FINISHED: 'FINISHED'
 };
 
+/**
+ * Deris statuses, color of each status
+ */
 export const DEBRIS_POST_STATUSES = {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',
@@ -45,4 +55,12 @@ export const DEBRIS_POST_STATUS_COLORS = {
   WORKING: 'warning',
   FINISHED: 'success',
   CANCELED: 'danger'
+};
+
+/**
+ * Contactor status
+ */
+export const CONTRACTOR_STATUSES = {
+  ACTIVATED: "ACTIVATED",
+  DEACTIVATED: "DEACTIVATED",
 };

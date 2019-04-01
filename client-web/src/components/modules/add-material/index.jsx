@@ -5,11 +5,13 @@ import {
   CSSTransition
 } from 'react-transition-group';
 import { Redirect, Link } from 'react-router-dom';
+import { connect } from "react-redux";
 
 import Step1 from './Step1';
 import Step3 from './Step3';
 
 import { materialServices } from "Services/domain/ccp";
+import { CONTRACTOR_STATUSES } from 'Common/consts';
 
 class AddMaterial extends Component {
   constructor(props) {
@@ -146,6 +148,15 @@ class AddMaterial extends Component {
   };
 
   render() {
+    
+    const { contractor } = this.props;
+
+    if (contractor.status !== CONTRACTOR_STATUSES.ACTIVATED) {
+      return (
+        <h1 className="text-center my-3 alert alert-warning">Your account was deactived!</h1>
+      );
+    }
+
     return (
       <div className="container pb-5">
         <div className="row">
@@ -160,4 +171,14 @@ class AddMaterial extends Component {
   }
 }
 
-export default AddMaterial;
+const mapStateToProps = state => {
+  const { authentication } = state;
+  const { user } = authentication;
+  const { contractor } = user;
+
+  return {
+    contractor
+  };
+};
+
+export default connect(mapStateToProps)(AddMaterial);
