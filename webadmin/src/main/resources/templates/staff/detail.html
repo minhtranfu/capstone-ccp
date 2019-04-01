@@ -43,19 +43,32 @@
                                         <input th:field="*{username}" class="form-control" placeholder="User Name">
                                     </div>
                                     <div class="form-group">
+                                        <span th:if="${errorMessage}" th:text="${errorMessage}" style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
                                         <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Full Name</label>
                                         <input th:field="*{adminUserEntity.name}" class="form-control" placeholder="Full Name">
                                     </div>
+
                                     <div class="form-group">
                                         <span th:if="${#fields.hasErrors('adminUserEntity.name')}" th:errors="*{adminUserEntity.name}" style="color: red"></span>
                                     </div>
                                     <div class="form-group">
-                                        <label>Avarta:</label>
+                                        <label>Avatar:</label>
                                         <img th:src="*{adminUserEntity.thumbnail}" style="width: 100px; height: 100px"/>
                                         <input type="hidden" th:field="*{adminUserEntity.thumbnail}">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                                            </div>
+                                            <div class="custom-file">
+                                                <input type="file" name="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                                                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label>Gender</label>
@@ -76,6 +89,9 @@
                                         <input th:field="*{adminUserEntity.email}" class="form-control" placeholder="Email">
                                     </div>
                                     <div class="form-group">
+                                        <span th:if="${errorMessageEmail}" th:text="${errorMessageEmail}" style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
                                         <span th:if="${#fields.hasErrors('adminUserEntity.email')}" th:errors="*{adminUserEntity.email}" style="color: red"></span>
                                     </div>
                                     <div class="form-group">
@@ -87,7 +103,7 @@
                                         <div class="col-lg-6">
                                             <input type="submit" class="btn btn-success"
                                                     value="Save">
-                                            <a href="#" class="btn btn-danger" data-toggle="modal"
+                                            <a href="#" class="btn btn-default" data-toggle="modal"
                                                data-target="#smallModalCancel">Cancel</a>
 
                                             <div class="modal fade" id="smallModalCancel" tabindex="-1" role="dialog"

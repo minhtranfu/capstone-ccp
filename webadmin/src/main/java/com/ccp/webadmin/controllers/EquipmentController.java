@@ -4,6 +4,7 @@ import com.ccp.webadmin.entities.EquipmentEntity;
 import com.ccp.webadmin.entities.HiringTransactionEntity;
 import com.ccp.webadmin.services.EquipmentImageService;
 import com.ccp.webadmin.services.EquipmentService;
+import com.ccp.webadmin.services.EquipmentTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,12 +19,13 @@ import java.util.Arrays;
 public class EquipmentController {
 
     private final EquipmentService equipmentService;
+    private final EquipmentTypeService equipmentTypeService;
     private final EquipmentImageService equipmentImageService;
 
-
     @Autowired
-    public EquipmentController(EquipmentService equipmentService, EquipmentImageService equipmentImageService) {
+    public EquipmentController(EquipmentService equipmentService, EquipmentTypeService equipmentTypeService, EquipmentImageService equipmentImageService) {
         this.equipmentService = equipmentService;
+        this.equipmentTypeService = equipmentTypeService;
         this.equipmentImageService = equipmentImageService;
     }
 
@@ -38,6 +40,7 @@ public class EquipmentController {
         EquipmentEntity equipmentEntity = equipmentService.findById(id);
         model.addAttribute("equipment", equipmentEntity);
         model.addAttribute("equipmentImage", equipmentImageService.findByEquipmentEntity(equipmentEntity));
+        model.addAttribute("equipmentType", equipmentTypeService.findAll());
         model.addAttribute("equipmentStatus", Arrays.asList(EquipmentEntity.Status.values()));
         return "equipment/detail";
     }
@@ -61,11 +64,14 @@ public class EquipmentController {
             equipmentEntity.setCreatedTime(foundEquipment.getCreatedTime());
             equipmentEntity.setUpdatedTime(foundEquipment.getUpdatedTime());
             model.addAttribute("equipmentImage", equipmentImageService.findByEquipmentEntity(foundEquipment));
+            model.addAttribute("equipmentType", equipmentTypeService.findAll());
             return "equipment/detail";
         }
         model.addAttribute("equipmentStatus", Arrays.asList(HiringTransactionEntity.Status.values()));
+        model.addAttribute("equipmentType", equipmentTypeService.findAll());
         EquipmentEntity foundEquipment = equipmentService.findById(equipmentEntity.getId());
         foundEquipment.setName(equipmentEntity.getName());
+        foundEquipment.setEquipmentTypeEntity(equipmentEntity.getEquipmentTypeEntity());
         foundEquipment.setDailyPrice(equipmentEntity.getDailyPrice());
         foundEquipment.setDeliveryPrice(equipmentEntity.getDeliveryPrice());
         foundEquipment.setAddress(equipmentEntity.getAddress());

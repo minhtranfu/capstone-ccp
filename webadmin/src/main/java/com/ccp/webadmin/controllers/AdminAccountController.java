@@ -6,10 +6,10 @@ import com.ccp.webadmin.entities.AdminUserEntity;
 import com.ccp.webadmin.entities.EquipmentTypeEntity;
 import com.ccp.webadmin.repositories.AdminAccountRepository;
 import com.ccp.webadmin.services.AdminAccountService;
+import com.ccp.webadmin.utils.ImageUtil;
 import com.ccp.webadmin.utils.PasswordAutoGenerator;
 import com.ccp.webadmin.utils.SendEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,26 +41,17 @@ public class AdminAccountController {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping({"", "/", "/index"})
     public String getStaff(Model model) {
         model.addAttribute("staffs", adminAccountService.findAll());
         return "staff/index";
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("staff", adminAccountService.findById(id));
         return "staff/detail";
     }
-
-//    @GetMapping("/detail/{username}")
-//    public String detailByUserName(@PathVariable("username") String username, Model model) {
-//        model.addAttribute("staff", adminAccountService.findByUsername(username));
-//        return "staff/detail";
-//    }
-
 
     @GetMapping("/changePassword/{id}")
     public String changePassword(@PathVariable("id") Integer id, Model model) {
@@ -68,14 +59,12 @@ public class AdminAccountController {
         return "staff/changePassword";
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("staff", new AdminAccountEntity());
         return "staff/create";
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/saveProcess")
     public String saveProcess(
             @Valid @ModelAttribute("staff") AdminAccountEntity adminAccountEntity,
@@ -88,21 +77,40 @@ public class AdminAccountController {
             } else
                 return "staff/create";
         }
+        String imageUrl = updateImageFile(file);
+
+        //update staff account
         if (adminAccountEntity.getId() != null) {
+            System.out.println("aaaa" + adminAccountEntity.getId());
             AdminAccountEntity foundAdminAccount = adminAccountService.findById(adminAccountEntity.getId());
+            // validate existed username or email
+            if(!adminAccountEntity.getUsername().equals(foundAdminAccount.getUsername()) || !adminAccountEntity.getAdminUserEntity().getEmail().equals(foundAdminAccount.getAdminUserEntity().getEmail())){
+                if (adminAccountService.existsByUsername(adminAccountEntity.getUsername()) || adminAccountService.existsByEmail(adminAccountEntity.getAdminUserEntity().getEmail())) {
+                    adminAccountEntity.getAdminUserEntity().setRole(foundAdminAccount.getAdminUserEntity().getRole());
+                    model.addAttribute("errorMessage", "Exitsted Username");
+                    model.addAttribute("errorMessageEmail", "Exitsted Email");
+                    return "staff/detail";
+                }
+            }
+
+            foundAdminAccount.getAdminUserEntity().setThumbnail(imageUrl);
             adminAccountService.save(foundAdminAccount);
+            //create staff account
         } else {
-        String fileName = file.getOriginalFilename();
-        adminAccountEntity.getAdminUserEntity().setThumbnail(fileName);
+            System.out.println("bbbbb" + adminAccountEntity.getId());
+            // validate existed username or email
             if (adminAccountService.existsByUsername(adminAccountEntity.getUsername()) || adminAccountService.existsByEmail(adminAccountEntity.getAdminUserEntity().getEmail())) {
                 model.addAttribute("errorMessage", "Exitsted Username");
                 model.addAttribute("errorMessageEmail", "Exitsted Email");
                 return "staff/create";
             }
 
+            //generate random password and encodedpassword
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(11);
             String password = passwordAutoGenerator.generatePassayPassword();
             String encodedPassword = passwordEncoder.encode(password);
+
+            // send email
             try {
                 sendEmailService.sendmail(adminAccountEntity.getUsername(), password, adminAccountEntity.getAdminUserEntity().getEmail());
             } catch (MessagingException e) {
@@ -110,6 +118,7 @@ public class AdminAccountController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            adminAccountEntity.getAdminUserEntity().setThumbnail(imageUrl);
             adminAccountEntity.setPassword(encodedPassword);
             adminAccountService.save(adminAccountEntity);
         }
@@ -142,6 +151,19 @@ public class AdminAccountController {
         adminAccountService.save(adminAccountEntity);
         Integer id = adminAccountEntity.getId();
         return "redirect:detail/" + id;
+    }
+
+
+    private String updateImageFile(MultipartFile file) {
+        String credentialPath = this.getClass().getClassLoader().getResource("capstone-ccp-credential.json").getPath();
+        String url = "";
+        try {
+            url = ImageUtil.uploadFile(credentialPath, file.getInputStream(), file.getOriginalFilename());
+            System.out.println("URL=" + url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return url;
     }
 
 

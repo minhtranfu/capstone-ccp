@@ -1,5 +1,7 @@
 package com.ccp.webadmin.services;
 
+import com.ccp.webadmin.dtos.LineChartStatisticDTO;
+import com.ccp.webadmin.dtos.PieChartStatisticDTO;
 import com.ccp.webadmin.entities.EquipmentEntity;
 import com.ccp.webadmin.entities.EquipmentTypeEntity;
 import com.ccp.webadmin.entities.MaterialEntity;
@@ -23,6 +25,8 @@ public interface MaterialService {
 
     void deleteById(Integer id);
 
-    Integer countMaterial(LocalDateTime beginDate, LocalDateTime endDate);
+    List<LineChartStatisticDTO> countMaterial(String byType, LocalDateTime beginDate, LocalDateTime endDate);
+
+    List<PieChartStatisticDTO> countMaterialByMaterialType(LocalDateTime beginDate, LocalDateTime endDate);
 
 }

@@ -52,8 +52,6 @@
                                 <th>Equipment</th>
                                 <th>Requester</th>
                                 <th>Daily Price</th>
-                                <th>Delivery Price</th>
-                                <th>Total Price</th>
                                 <th>Equipment Address</th>
                                 <th>Requester Adddress</th>
                             </tr>
@@ -80,8 +78,6 @@
                                     <span th:text="${item.requester.name}" class="link"></span></a>
                                 </td>
                                 <td th:text="${item.dailyPrice}"></td>
-                                <td th:text="${item.deliveryPrice}"></td>
-                                <td th:text="${item.dailyPrice + item.deliveryPrice}"></td>
                                 <td th:text="${item.equipmentAddress}"></td>
                                 <td th:text="${item.requesterAddress}"></td>
 

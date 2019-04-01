@@ -28,15 +28,6 @@ public class HiringTransactionEntity implements Serializable {
     @Column(name = "delivery_price")
     private Double deliveryPrice;
 
-
-    @Column(name = "created_time", insertable = false, updatable = false)
-    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
-    private LocalDateTime createdTime;
-
-    @Column(name = "updated_time", insertable = false, updatable = false)
-    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
-    private LocalDateTime updatedTime;
-
     @Column(name = "begin_date")
     private LocalDate beginDate;
 
@@ -71,6 +62,14 @@ public class HiringTransactionEntity implements Serializable {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
+
+    @Column(name = "created_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private LocalDateTime createdTime;
+
+    @Column(name = "updated_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private LocalDateTime updatedTime;
 
     public HiringTransactionEntity() {
     }

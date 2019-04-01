@@ -6,6 +6,7 @@ import com.ccp.webadmin.entities.MaterialEntity;
 import com.ccp.webadmin.services.EquipmentImageService;
 import com.ccp.webadmin.services.EquipmentService;
 import com.ccp.webadmin.services.MaterialService;
+import com.ccp.webadmin.services.MaterialTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,10 +21,12 @@ import java.util.Arrays;
 public class MaterialController {
 
     private final MaterialService materialService;
+    private final MaterialTypeService materialTypeService;
 
     @Autowired
-    public MaterialController(MaterialService materialService) {
+    public MaterialController(MaterialService materialService, MaterialTypeService materialTypeService) {
         this.materialService = materialService;
+        this.materialTypeService = materialTypeService;
     }
 
     @GetMapping({"", "/", "/index"})
@@ -36,6 +39,7 @@ public class MaterialController {
     public String detail(@PathVariable("id") Integer id, Model model) {
         MaterialEntity materialEntity = materialService.findById(id);
         model.addAttribute("material", materialEntity);
+        model.addAttribute("materialTypes", materialTypeService.findAll());
         return "material/detail";
     }
 
@@ -52,6 +56,7 @@ public class MaterialController {
         if (bindingResult.hasErrors()) {
 
             //todo updatedTime null
+            model.addAttribute("materialTypes", materialTypeService.findAll());
             MaterialEntity foundMaterial = materialService.findById(materialEntity.getId());
             materialEntity.setContractorEntity(foundMaterial.getContractorEntity());
             materialEntity.setHidden(foundMaterial.getHidden());
@@ -59,8 +64,10 @@ public class MaterialController {
             materialEntity.setUpdatedTime(foundMaterial.getUpdatedTime());
             return "material/detail";
         }
+        model.addAttribute("materialTypes", materialTypeService.findAll());
         MaterialEntity foundMaterial = materialService.findById(materialEntity.getId());
         foundMaterial.setName(materialEntity.getName());
+        foundMaterial.setMaterialTypeEntity(materialEntity.getMaterialTypeEntity());
         foundMaterial.setPrice(materialEntity.getPrice());
         foundMaterial.setManufacturer(materialEntity.getManufacturer());
 

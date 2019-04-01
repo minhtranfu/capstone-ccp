@@ -95,6 +95,7 @@ public class HiringTransactionController {
 
 
 
+
         EquipmentEntity foundEquipment = foundHiringTransaction.getEquipment();
         foundEquipment.setStatus(hiringTransactionEntity.getEquipment().getStatus());
         equipmentService.save(foundEquipment);
@@ -102,13 +103,12 @@ public class HiringTransactionController {
         String title = "Change Hiring Transaction Status";
         String content = "Hiring Transaction Status: " + foundHiringTransaction.getStatus().getValue()
                 + " Equipment Status:" + foundEquipment.getStatus().getValue();
-
         try {
-            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(hiringTransactionEntity.getRequester())
+            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(foundHiringTransaction.getRequester())
             ) {
                 pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
             }
-            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(hiringTransactionEntity.getEquipment().getContractorEntity())
+            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(foundHiringTransaction.getEquipment().getContractorEntity())
             ) {
                 pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
             }

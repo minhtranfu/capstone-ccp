@@ -54,6 +54,6 @@ public class NotificationController {
             e.printStackTrace();
         }
         model.addAttribute("contractors", contractorService.findAll());
-        return "redirect:./contractor/index";
+        return "redirect:/contractor/index";
     }
 }

@@ -1,6 +1,7 @@
 package com.ccp.webadmin.controllers;
 
-import com.ccp.webadmin.dtos.StatisticDTO;
+import com.ccp.webadmin.dtos.LineChartStatisticDTO;
+import com.ccp.webadmin.dtos.PieChartStatisticDTO;
 import com.ccp.webadmin.dtos.StatisticHiringTransactionDTO;
 import com.ccp.webadmin.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,16 +37,8 @@ public class HomeController {
     public String home(Model model) {
         model.addAttribute("newContractor", contractorService.countNewContractor());
         model.addAttribute("newFeedback", reportService.countNewReport());
-        LocalDateTime beginDate = LocalDateTime.now().minusMonths(1);
-        LocalDateTime endDate = LocalDateTime.now();
-        StatisticDTO statisticDTO = new StatisticDTO();
-        statisticDTO.setEquipment(equipmentService.countEquipment(beginDate, endDate));
-        statisticDTO.setMaterial(materialService.countMaterial(beginDate, endDate));
-        model.addAttribute("reports", statisticDTO);
-        String byType = "month";
-        List<StatisticHiringTransactionDTO> statisticHiringTransactionDTOS = new ArrayList<StatisticHiringTransactionDTO>();
-        statisticHiringTransactionDTOS = hiringTransactionService.statisticHiringTransaction(byType, beginDate,endDate);
-        model.addAttribute("reports2", statisticHiringTransactionDTOS);
+
+
         return "home/index";
     }
 

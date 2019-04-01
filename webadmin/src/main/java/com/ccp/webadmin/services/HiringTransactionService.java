@@ -1,5 +1,6 @@
 package com.ccp.webadmin.services;
 
+import com.ccp.webadmin.dtos.LineChartStatisticDTO;
 import com.ccp.webadmin.dtos.StatisticHiringTransactionDTO;
 import com.ccp.webadmin.entities.HiringTransactionEntity;
 import org.springframework.stereotype.Service;
@@ -20,5 +21,8 @@ public interface HiringTransactionService {
 
     List<StatisticHiringTransactionDTO> statisticHiringTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate);
 
+    List<LineChartStatisticDTO> statisticTotalTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate);
+
+    List<LineChartStatisticDTO> statisticTotalPrice(String byType, LocalDateTime beginDate, LocalDateTime endDate);
 
 }

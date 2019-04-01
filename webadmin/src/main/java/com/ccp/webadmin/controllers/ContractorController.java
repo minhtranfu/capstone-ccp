@@ -71,6 +71,7 @@ public class ContractorController {
 
     @GetMapping("/updateStatus")
     public String updateStatus(@RequestParam("id") Integer id) {
+
         ContractorEntity contractorEntity = contractorService.findById(id);
 
         //change contractor status Not Verify into Active

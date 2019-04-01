@@ -59,7 +59,6 @@ public class MaterialTransactionController {
     @PostMapping("/saveProcess")
     public String saveProcess(
             @Valid @ModelAttribute("transaction") MaterialTransactionEntity materialTransactionEntity,
-//            @ModelAttribute("errorMessage") String error,
             BindingResult bindingResult, Model model, RedirectAttributes attributes) {
 
         model.addAttribute("transactionStatus", Arrays.asList(MaterialTransactionEntity.Status.values()));
@@ -84,11 +83,11 @@ public class MaterialTransactionController {
         String content = "Buying Material Transaction Status: " + foundMaterialTransaction.getStatus().getValue();
 
         try {
-            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(materialTransactionEntity.getRequester())
+            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(foundMaterialTransaction.getRequester())
             ) {
                 pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
             }
-            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(materialTransactionEntity.getSupplier())
+            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(foundMaterialTransaction.getSupplier())
             ) {
                 pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
             }

@@ -9,4 +9,6 @@ import java.util.List;
 public interface GeneralEquipmentTypeRepository extends JpaRepository<GeneralEquipmentTypeEntity, Integer>
 {
     List<GeneralEquipmentTypeEntity> findBy();
+
+    boolean existsByName(String name);
 }

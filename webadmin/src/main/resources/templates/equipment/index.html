@@ -49,9 +49,9 @@
                                 <th>Id</th>
                                 <th>Status</th>
                                 <th>Name</th>
+                                <th>Equipment Type</th>
                                 <th>Supplier</th>
                                 <th>Daily Price</th>
-                                <th>Delivery Price</th>
                                 <th>Address</th>
                             </tr>
                             </thead>
@@ -61,6 +61,7 @@
                                 <td><a th:href="@{/equipment/detail/{id}(id = ${item.id})}">
                                     <span th:text="${item.id}" class="link"></span></a>
                                 </td>
+
                                 <td th:switch="${item.status.toString()}">
                                     <span th:case="AVAILABLE" class="" style="color: green">Available</span>
                                     <span th:case="DELIVERING" class="" style="color: #1ab7ea">Delivering</span>
@@ -71,11 +72,12 @@
                                 <td><a th:href="@{/equipment/detail/{id}(id = ${item.id})}">
                                     <span th:text="${item.name}" class="link"></span></a>
                                 </td>
+                                <td th:text="${item.equipmentTypeEntity.name}"></td>
                                 <td><a th:href="@{/contractor/detail/{id}(id = ${item.contractorEntity.id})}">
                                     <span th:text="${item.contractorEntity.name}" class="link"></span></a>
                                 </td>
                                 <td th:text="${item.dailyPrice}"></td>
-                                <td th:text="${item.deliveryPrice}"></td>
+
                                 <td th:text="${item.address}"></td>
                             </tr>
 

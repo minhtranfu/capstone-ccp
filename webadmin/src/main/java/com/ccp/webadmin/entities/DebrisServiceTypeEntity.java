@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
+import java.util.Collection;
 
 @Entity
 @Table(name = "debris_service_type")
@@ -29,6 +30,17 @@ public class DebrisServiceTypeEntity {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
+
+    @ManyToMany(mappedBy = "debrisServiceTypes")
+    private Collection<DebrisPostEntity> debrisPosts;
+
+    public Collection<DebrisPostEntity> getDebrisPosts() {
+        return debrisPosts;
+    }
+
+    public void setDebrisPosts(Collection<DebrisPostEntity> debrisPosts) {
+        this.debrisPosts = debrisPosts;
+    }
 
     public DebrisServiceTypeEntity() {
     }

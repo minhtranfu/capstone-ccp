@@ -9,7 +9,6 @@ public class StatisticHiringTransactionDTO implements Serializable {
 
 
     private Integer timeUnit;
-    private Long totalCount;
     private Long totalFinished;
     private Long totalProcessing;
     private Long totalCanceled;
@@ -17,9 +16,8 @@ public class StatisticHiringTransactionDTO implements Serializable {
     public StatisticHiringTransactionDTO() {
     }
 
-    public StatisticHiringTransactionDTO(Integer timeUnit, Long totalCount, Long totalFinished, Long totalProcessing, Long totalCanceled) {
+    public StatisticHiringTransactionDTO(Integer timeUnit, Long totalFinished, Long totalProcessing, Long totalCanceled) {
         this.timeUnit = timeUnit;
-        this.totalCount = totalCount;
         this.totalFinished = totalFinished;
         this.totalProcessing = totalProcessing;
         this.totalCanceled = totalCanceled;
@@ -31,14 +29,6 @@ public class StatisticHiringTransactionDTO implements Serializable {
 
     public void setTimeUnit(Integer timeUnit) {
         this.timeUnit = timeUnit;
-    }
-
-    public Long getTotalCount() {
-        return totalCount;
-    }
-
-    public void setTotalCount(Long totalCount) {
-        this.totalCount = totalCount;
     }
 
     public Long getTotalFinished() {

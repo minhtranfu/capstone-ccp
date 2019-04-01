@@ -1,5 +1,7 @@
 package com.ccp.webadmin.services.impl;
 
+import com.ccp.webadmin.dtos.LineChartStatisticDTO;
+import com.ccp.webadmin.dtos.PieChartStatisticDTO;
 import com.ccp.webadmin.entities.EquipmentEntity;
 import com.ccp.webadmin.entities.EquipmentTypeEntity;
 import com.ccp.webadmin.entities.MaterialEntity;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -50,8 +53,28 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public Integer countMaterial(LocalDateTime beginDate, LocalDateTime endDate) {
-        return materialRepository.countMaterial(beginDate, endDate);
+    public List<LineChartStatisticDTO> countMaterial(String byType, LocalDateTime beginDate, LocalDateTime endDate) {
+        List<LineChartStatisticDTO> lineChartStatisticDTOS = new ArrayList<>();
+        switch (byType) {
+            case "year":
+                lineChartStatisticDTOS = materialRepository.countMaterialByYear(beginDate,endDate);
+                break;
+            case "month":
+                lineChartStatisticDTOS = materialRepository.countMaterialByMonth(beginDate,endDate);
+                break;
+            case "week":
+                lineChartStatisticDTOS = materialRepository.countMaterialByWeek(beginDate,endDate);
+                break;
+            default:
+                lineChartStatisticDTOS = materialRepository.countMaterialByWeek(beginDate,endDate);
+                break;
+        }
+        return lineChartStatisticDTOS;
+    }
+
+    @Override
+    public List<PieChartStatisticDTO> countMaterialByMaterialType(LocalDateTime beginDate, LocalDateTime endDate) {
+        return materialRepository.countMaterialByMaterialType(beginDate, endDate);
     }
 
 

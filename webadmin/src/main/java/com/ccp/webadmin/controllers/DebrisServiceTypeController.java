@@ -89,10 +89,8 @@ public class DebrisServiceTypeController {
 //        GeneralEquipmentTypeEntity toCategory = generalEquipmentTypeService.findGeneralEquipmentTypeById(migrateDTO.getToCate());
 //        List<EquipmentTypeEntity> equipmentTypeEntities = equipmentTypeService.findByGeneralEquipmentType(fromCategory);
 //        for (EquipmentTypeEntity equipmentTypeEntity : equipmentTypeEntities) {
-//            System.out.println("aaaaaaa " + equipmentTypeEntity.getGeneralEquipmentType().getName());
 //            equipmentTypeEntity.setGeneralEquipmentType(toCategory);
 //            equipmentTypeService.save(equipmentTypeEntity);
-//            System.out.println("bbbbbbb " + equipmentTypeEntity.getGeneralEquipmentType().getName());
 //        }
 //        generalEquipmentTypeService.deleteById(fromCategory.getId());
 //        return "redirect:index";

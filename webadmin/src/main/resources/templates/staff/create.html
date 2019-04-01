@@ -44,42 +44,55 @@
                                         <input th:field="*{username}" class="form-control" placeholder="User Name">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${errorMessage}" th:text="${errorMessage}" style="color: red"></span>
+                                        <span th:if="${errorMessage}" th:text="${errorMessage}"
+                                              style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
                                               style="color: red"></span>
                                     </div>
-
-                                    <!--<div class="form-group">-->
-                                        <!--<label>Password (required)</label>-->
-                                        <!--<input th:field="*{password}" class="form-control" type="password" id="password"-->
-                                               <!--placeholder="Password">-->
-                                    <!--</div>-->
-                                    <!--<div class="form-group">-->
-                                        <!--<label>Confirm Password </label>-->
-                                        <!--<input class="form-control" type="password" placeholder="Confirm Password"-->
-                                               <!--id="confirm_password">-->
-                                    <!--</div>-->
                                     <div class="form-group">
                                         <label>Full Name</label>
-                                        <input th:field="*{adminUserEntity.name}" class="form-control" placeholder="Full Name">
+                                        <input th:field="*{adminUserEntity.name}" class="form-control"
+                                               placeholder="Full Name">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${#fields.hasErrors('adminUserEntity.name')}" th:errors="*{adminUserEntity.name}"
+                                        <span th:if="${#fields.hasErrors('adminUserEntity.name')}"
+                                              th:errors="*{adminUserEntity.name}"
                                               style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Address</label>
-                                        <input th:field="*{adminUserEntity.address}" class="form-control" placeholder="Address">
+                                        <input th:field="*{adminUserEntity.address}" class="form-control"
+                                               placeholder="Address">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${#fields.hasErrors('adminUserEntity.address')}" th:errors="*{adminUserEntity.address}"
+                                        <span th:if="${#fields.hasErrors('adminUserEntity.address')}"
+                                              th:errors="*{adminUserEntity.address}"
                                               style="color: red"></span>
                                     </div>
                                     <div class="form-group">
-                                        <label>Avarta:</label>
-                                        <input type="file" name="file">
+                                        <label>Avatar :</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="inputGroupFileAddon01"></span>
+                                            </div>
+                                            <div class="custom-file">
+                                                <input type="file" name="file" class="custom-file-input"
+                                                       id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                                                <label class="custom-file-label" for="inputGroupFile01"></label>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group input-file" name="Fichier1">
+                                            <input type="text" class="form-control" placeholder='Choose a file...'/>
+                                            <span class="input-group-btn">
+        		                            <button class="btn btn-default btn-choose" type="button">Choose</button>
+                                            </span>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label>Phone Number</label>
@@ -87,7 +100,8 @@
                                                placeholder="Phone Number">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${#fields.hasErrors('adminUserEntity.phone')}" th:errors="*{adminUserEntity.phone}"
+                                        <span th:if="${#fields.hasErrors('adminUserEntity.phone')}"
+                                              th:errors="*{adminUserEntity.phone}"
                                               style="color: red"></span>
                                     </div>
                                     <div class="form-group">
@@ -96,10 +110,12 @@
                                                placeholder="Email Address">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${errorMessageEmail}" th:text="${errorMessageEmail}" style="color: red"></span>
+                                        <span th:if="${errorMessageEmail}" th:text="${errorMessageEmail}"
+                                              style="color: red"></span>
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${#fields.hasErrors('adminUserEntity.email')}" th:errors="*{adminUserEntity.email}"
+                                        <span th:if="${#fields.hasErrors('adminUserEntity.email')}"
+                                              th:errors="*{adminUserEntity.email}"
                                               style="color:red"></span>
                                     </div>
                                     <div class="form-group">

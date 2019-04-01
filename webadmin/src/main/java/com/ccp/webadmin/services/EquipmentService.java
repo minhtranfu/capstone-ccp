@@ -1,5 +1,7 @@
 package com.ccp.webadmin.services;
 
+import com.ccp.webadmin.dtos.LineChartStatisticDTO;
+import com.ccp.webadmin.dtos.PieChartStatisticDTO;
 import com.ccp.webadmin.entities.*;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ public interface EquipmentService {
 
     void deleteById(Integer id);
 
-    Integer countEquipment(LocalDateTime beginDate, LocalDateTime endDate);
+    List<LineChartStatisticDTO> countEquipment(String byType, LocalDateTime beginDate, LocalDateTime endDate);
 
+    List<PieChartStatisticDTO> countEquipmentByEquipmentType(LocalDateTime beginDate, LocalDateTime endDate);
 }
