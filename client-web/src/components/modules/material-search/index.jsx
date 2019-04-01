@@ -21,10 +21,6 @@ class MaterialSearch extends Component {
   _loadData = async () => {
     const products = await materialServices.searchMaterials({});
 
-    if (products.length === 0) {
-      alert('Data is empty!');
-    }
-
     this.setState({
       products,
       isFetching: false
