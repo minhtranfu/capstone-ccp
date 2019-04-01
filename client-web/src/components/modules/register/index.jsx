@@ -10,6 +10,7 @@ class Register extends Component {
   state = {};
   data = {};
 
+  // validate rules for validate.js
   constraints = {
     username: {
       presence: true,
@@ -53,6 +54,9 @@ class Register extends Component {
     this.data[name] = value;
   };
 
+  /**
+   * Validate and submit data when user submit form
+   */
   _handleSubmitForm = e => {
     e.preventDefault();
     const { isFetching } = this.state;
@@ -60,11 +64,12 @@ class Register extends Component {
       return;
     }
 
-    // const validateResult = validate(this.data, this.constraints);
-    // if (validateResult) {
-    //   this.setState({ validateResult });
-    //   return;
-    // }
+    // validate with validate.js
+    const validateResult = validate(this.data, this.constraints);
+    if (validateResult) {
+      this.setState({ validateResult });
+      return;
+    }
 
     // Prepare data
     const data = {
@@ -80,12 +85,12 @@ class Register extends Component {
     };
 
     try {
-
+      // Set isFetch to block UI
       this.setState({
         isFetching: true
       });
-      const result = userServices.register(data);
 
+      const result = userServices.register(data);
       if (result.id) {
         this.setState({
           isFetching: false,
@@ -107,6 +112,10 @@ class Register extends Component {
 
   };
 
+  /**
+   * Get validate message from validate result
+   * with bootstrap 4 input feedback
+   */
   _getValidateFeedback = fieldName => {
     const { validateResult } = this.state;
 
