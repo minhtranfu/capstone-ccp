@@ -23,7 +23,7 @@ services:
     build:
       context: client-api/
     restart: always
-    port:
+    ports:
       - "8080:8080"
     networks:
       - capstone-ccp
