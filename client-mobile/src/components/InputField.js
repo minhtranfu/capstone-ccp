@@ -18,6 +18,9 @@ const Touchable =
   Platform.OS === "ios" ? TouchableOpacity : TouchableNativeFeedback;
 
 class InputField extends Component {
+  static defaultProps = {
+    editable: true,
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -41,6 +44,7 @@ class InputField extends Component {
       autoCapitalize,
       placeholderTextColor,
       showLabelStyle,
+      editable,
       ...others
     } = this.props;
     const { secureInput } = this.state;
@@ -58,12 +62,13 @@ class InputField extends Component {
           </Touchable>
         ) : null}
         <TextInput
+          editable={editable}
           placeholder={placeholder}
           placeholderTextColor={placeholderTextColor}
           autoCorrect={false}
           autoFocus={autoFocus}
           autoCapitalize={autoCapitalize}
-          style={[styles.placeholder, placeholderStyle]}
+          style={[styles.placeholder, placeholderStyle, {borderBottomColor: editable ? colors.text25 : 'white' }]}
           secureTextEntry={secureInput}
           {...others}
         />

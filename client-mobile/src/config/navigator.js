@@ -160,7 +160,6 @@ const MyEquipmentStack = createStackNavigator(
     Login
   },
   {
-    mode: "modal",
     headerMode: "none",
     initialRouteName: "MyEquipment"
   }
