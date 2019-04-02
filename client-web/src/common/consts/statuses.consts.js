@@ -61,6 +61,7 @@ export const DEBRIS_POST_STATUS_COLORS = {
  * Contactor status
  */
 export const CONTRACTOR_STATUSES = {
+  NOT_VERIFIED: "NOT_VERIFIED",
   ACTIVATED: "ACTIVATED",
   DEACTIVATED: "DEACTIVATED",
 };

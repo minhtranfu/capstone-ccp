@@ -29,3 +29,11 @@ export const updateNotificationStatus = (id, isRead) => {
     read: isRead
   });
 };
+
+export const uploadAvatar = formData => {
+  return DataAccessService.post('/storage', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};

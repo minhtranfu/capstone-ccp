@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import validate from 'validate.js';
+import { Fade } from 'reactstrap';
+import { connect } from 'react-redux';
 
 import { userServices } from 'Services/domain/ccp';
-import { getErrorMessage } from 'Utils/common.utils';
-import validate from 'validate.js';
-import { ComponentBlocking } from 'Components/common';
+import { getErrorMessage, getRoutePath } from 'Utils/common.utils';
+import { ComponentBlocking, DropzoneUploadImage } from 'Components/common';
+import { routeConsts } from 'Common/consts';
 
 class Register extends Component {
   state = {};
@@ -57,7 +60,7 @@ class Register extends Component {
   /**
    * Validate and submit data when user submit form
    */
-  _handleSubmitForm = e => {
+  _handleSubmitForm = async e => {
     e.preventDefault();
     const { isFetching } = this.state;
     if (isFetching) {
@@ -90,8 +93,11 @@ class Register extends Component {
         isFetching: true
       });
 
-      const result = userServices.register(data);
-      if (result.id) {
+      // upload avatar
+      data.contractor.thumbnailImageUrl = await this._uploadAvatar();
+
+      const result = await userServices.register(data);
+      if (result.username) {
         this.setState({
           isFetching: false,
           user: result
@@ -112,6 +118,20 @@ class Register extends Component {
 
   };
 
+  _uploadAvatar = async () => {
+    const { avatarFile } = this.state;
+
+    if (!avatarFile) {
+      return '';
+    }
+
+    const formData = new FormData();
+    formData.append('file', avatarFile);
+    const uploadResult = await userServices.uploadAvatar(formData);
+
+    return uploadResult[0];
+  };
+
   /**
    * Get validate message from validate result
    * with bootstrap 4 input feedback
@@ -130,23 +150,86 @@ class Register extends Component {
     );
   };
 
+  // Receive files(array) from dropzone and set fisrt image to state
+  _onSelectAvatar = files => {
+    if (!files[0]) {
+      return;
+    }
+
+    const avatarFile = files[0];
+    const avatar = URL.createObjectURL(avatarFile);
+    this.setState({
+      avatar,
+      avatarFile
+    });
+  };
+
+  // revoke preview URL and clear avatar in state
+  _clearAvatar = () => {
+    const { avatar } = this.state;
+    URL.revokeObjectURL(avatar);
+    this.setState({
+      avatar: undefined,
+      avatarFile: undefined
+    });
+  };
+
+  _renderSuccessMessage = () => {
+    return (
+      <div className="container text-center">
+        <div>
+          <i className="fal fa-check-circle fa-9x text-success"></i>
+        </div>
+        <h1 className="text-success">Register successfully!</h1>
+        <p>Your account is being verify.</p>
+      </div>
+    );
+  };
+
   render() {
-    const { isFetching, message } = this.state;
+    const { isFetching, message, avatar, user } = this.state;
+    const { authentication } = this.props;
+
+    if (authentication.isAuthenticated) {
+      return <Redirect to={getRoutePath(routeConsts.HOME)}/>
+    }
+
+    if (user) {
+      return (
+        <Fade in={true} className="my-auto">
+          {this._renderSuccessMessage()}
+        </Fade>
+      );
+    }
 
     return (
       <div className="container">
         {isFetching &&
           <ComponentBlocking/>
         }
-        <h1 className="text-center my-3">Sign Up</h1>
+        <h1 className="text-center my-3 pb-2 border-bottom">Sign Up</h1>
         {message &&
           <div className="alert alert-warning">
             {message}
           </div>
         }
         <div className="row">
+          <div className="col-md-4 offset-md-4 mb-4 text-center">
+            <h5>Avatar</h5>
+            {!avatar &&
+              <DropzoneUploadImage onChange={this._onSelectAvatar} multiple={false} />
+            }
+            {avatar &&
+              <div>
+                <img src={avatar} alt="Preview avatar" width="170" height="170" className="rounded-circle shadow"/>
+                <div>
+                  <button className="btn btn-outline-primary mt-2" onClick={this._clearAvatar}><i className="fal fa-times"></i> Remove</button>
+                </div>
+              </div>
+            }
+          </div>
           <div className="col-md-6 border-right">
-            <h4>Login information:</h4>
+            <h5>Login information</h5>
             <div className="form-group">
               <label htmlFor="register_username">Username: <i className="text-danger">*</i></label>
               <input type="text" className="form-control" id="register_username" name="username"
@@ -170,7 +253,7 @@ class Register extends Component {
             </div>
           </div>
           <div className="col-md-6">
-            <h4>Contact information:</h4>
+            <h5>Contact information</h5>
             <div className="form-group">
               <label htmlFor="register_name">Name: <i className="text-danger">*</i></label>
               <input type="text" className="form-control" id="register_name" name="name"
@@ -211,4 +294,12 @@ class Register extends Component {
   }
 }
 
-export default Register;
+const mapStateToProps = state => {
+  const { authentication } = state;
+
+  return {
+    authentication
+  };
+};
+
+export default connect(mapStateToProps)(Register);
