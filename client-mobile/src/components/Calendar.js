@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import Modal from 'react-native-modal';
 import { SafeAreaView } from "react-navigation";
 import { CalendarList as CalendarPeriod } from "react-native-calendars";
 import dateFnsFormat from "date-fns/format";
@@ -11,23 +12,9 @@ import Header from "../components/Header";
 import Button from "../components/Button";
 import fontSize from "../config/fontSize";
 import colors from "../config/colors";
+import moment from 'moment';
 
-// const availableDateRange = [
-//   {
-//     startDate: "2019-03-18",
-//     endDate: "2019-04-01"
-//   },
-//   {
-//     startDate: "2019-04-10",
-//     endDate: "2019-05-01"
-//   },
-//   {
-//     startDate: "2019-05-10",
-//     endDate: "2019-06-02"
-//   }
-// ];
-
-getDaysArray = (start, end) => {
+const getDaysArray = (start, end) => {
   for (var arr = [], dt = start; dt <= end; dt.setDate(dt.getDate() + 1)) {
     arr.push(new Date(dt));
   }
@@ -49,8 +36,8 @@ class Calendar extends PureComponent {
       isToDatePicked: false,
       markedDates: {},
       //Add from date range to make user only click from date to date
-      fromDate: props.fromDate ? props.fromDate : "",
-      endDate: props.endDate ? props.endDate : ""
+      fromDate: this._handleDateFormat(props.fromDate) || "",
+      endDate: this._handleDateFormat(props.endDate) || ""
     };
   }
 
@@ -107,17 +94,7 @@ class Calendar extends PureComponent {
 
   //Format date to yyyy-mm-dd
   _handleDateFormat = date => {
-    let dateFormat = new Date(date);
-    year = dateFormat.getFullYear();
-    month = dateFormat.getMonth() + 1;
-    dt = dateFormat.getDate();
-    if (dt < 10) {
-      dt = "0" + dt;
-    }
-    if (month < 10) {
-      month = "0" + month;
-    }
-    return year + "-" + month + "-" + dt;
+    return moment(date).format('YYYY-MM-DD')
   };
 
   //Add new day
@@ -132,7 +109,7 @@ class Calendar extends PureComponent {
       [day.dateString]: {
         startingDay: true,
         endingDay: true,
-        color: "red",
+        color: colors.secondaryColor,
         textColor: "white"
       }
     };
@@ -151,7 +128,7 @@ class Calendar extends PureComponent {
       if (range == 0) {
         markedDates = {
           [toDate]: {
-            color: "red",
+            color: colors.secondaryColor,
             textColor: "white"
           }
         };
@@ -162,19 +139,19 @@ class Calendar extends PureComponent {
             markedDates[fromDate] = {
               endingDay: false,
               startingDay: true,
-              color: "red",
+              color: colors.secondaryColor,
               textColor: "white"
             };
           }
           if (i < range) {
             markedDates[tempDate] = {
-              color: "red",
+              color: colors.secondaryColor,
               textColor: "white"
             };
           } else {
             markedDates[tempDate] = {
               endingDay: true,
-              color: "red",
+              color: colors.secondaryColor,
               textColor: "white"
             };
           }
@@ -233,22 +210,22 @@ class Calendar extends PureComponent {
 
     return (
       <Modal
-        animationType={animationType}
-        transparent={transparent}
-        visible={visible}
+        style={{margin: 0, padding: 0, flex: 1}}
+        isVisible={visible}
+        hasBackdrop={false}
       >
         <SafeAreaView
-          forceInset={{ bottom: "always", top: "always" }}
+          forceInset={{ bottom: "none", top: "always" }}
           style={styles.container}
         >
           <Header
             renderLeftButton={() => (
               <TouchableOpacity>
-                <Feather name={"x"} size={26} onPress={onLeftButtonPress} />
+                <Feather name={"x"} size={22} onPress={onLeftButtonPress} />
               </TouchableOpacity>
             )}
             renderRightButton={() => (
-              <TouchableOpacity onPress={() => this._handleClearDate()}>
+              <TouchableOpacity onPress={this._handleClearDate}>
                 <Text>Clear</Text>
               </TouchableOpacity>
             )}
@@ -272,14 +249,19 @@ class Calendar extends PureComponent {
             pastScrollRange={2}
             futureScrollRange={10}
             showScrollIndicator={true}
+
             theme={{
               textSectionTitleColor: "#0D2421",
-              dayTextColor: "#0D2421",
+              todayTextColor: colors.secondaryColor,
+              dayTextColor: '#2d4150',
               arrowColor: "#065747",
-              monthTextColor: "#065747",
-              textMonthFontSize: 16,
-              textDayFontSize: 15,
-              textDayHeaderFontSize: 15
+              monthTextColor: colors.text,
+              textMonthFontSize: fontSize.h2,
+              textMonthFontWeight: '700',
+              textDayFontSize: fontSize.secondaryText,
+              textDayFontWeight: '600',
+              textDayHeaderFontSize: fontSize.secondaryText,
+              textDayHeaderFontWeight: '600',
             }}
             markedDates={{
               ...this.state.markedDates,
@@ -287,22 +269,25 @@ class Calendar extends PureComponent {
             }}
             {...this.props}
           />
-          <Button
-            text={"Confirm"}
-            wrapperStyle={{
-              backgroundColor: "white",
-              paddingVertical: 10,
-              paddingHorizontal: 15,
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0
-            }}
-            onPress={() => {
-              onSelectDate(fromDate, endDate, false);
-              this.setState({ markedDates: {} });
-            }}
-          />
+          <SafeAreaView forceInset={{bottom: 'always'}} style={{backgroundColor: colors.primaryColor}}>
+            <Button
+              text={"Confirm"}
+              bordered={false}
+              wrapperStyle={{
+                backgroundColor: "transparent",
+                paddingVertical: 15,
+                paddingHorizontal: -15,
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0
+              }}
+              onPress={() => {
+                onSelectDate(fromDate, endDate, false);
+                this.setState({ markedDates: {} });
+              }}
+            />
+          </SafeAreaView>
         </SafeAreaView>
       </Modal>
     );
@@ -326,7 +311,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    flexDirection: "column"
+    flexDirection: "column",
+    backgroundColor: 'white',
   }
 });
 

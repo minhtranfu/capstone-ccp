@@ -20,6 +20,7 @@ const Touchable =
 class InputField extends Component {
   static defaultProps = {
     editable: true,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   };
   constructor(props) {
     super(props);
@@ -45,6 +46,7 @@ class InputField extends Component {
       placeholderTextColor,
       showLabelStyle,
       editable,
+      borderBottomWidth,
       ...others
     } = this.props;
     const { secureInput } = this.state;
@@ -68,7 +70,7 @@ class InputField extends Component {
           autoCorrect={false}
           autoFocus={autoFocus}
           autoCapitalize={autoCapitalize}
-          style={[styles.placeholder, placeholderStyle, {borderBottomColor: editable ? colors.text25 : 'white' }]}
+          style={[styles.placeholder, placeholderStyle, {borderBottomColor: editable ? colors.text25 : 'white', borderBottomWidth }]}
           secureTextEntry={secureInput}
           {...others}
         />
@@ -82,10 +84,10 @@ const styles = StyleSheet.create({
     flex: 1
   },
   label: {
-    fontSize: fontSize.secondaryText,
-    color: colors.text68,
-    fontWeight: "400",
-    marginTop: 5
+    fontSize: fontSize.caption,
+    color: colors.text50,
+    fontWeight: "500",
+    marginBottom: 8,
   },
   showLabel: {
     color: colors.secondaryColor,
@@ -96,9 +98,9 @@ const styles = StyleSheet.create({
   placeholder: {
     fontSize: fontSize.bodyText,
     color: colors.text,
-    fontWeight: "400",
+    fontWeight: "500",
     marginBottom: 5,
-    paddingVertical: 10,
+    paddingBottom: 10,
     borderBottomColor: colors.text25,
     borderBottomWidth: StyleSheet.hairlineWidth
   },

@@ -17,7 +17,7 @@ import ConstructionDetail from "../screens/Account/Detail";
 import CallOrTextUs from "../screens/Account/CallOrTextUs";
 import AboutUs from "../screens/Account/AboutUs";
 import Search from "../screens/Search";
-import SearchResult from "../screens/Search/SearchResult";
+import EquipmentResult from "../screens/Search/EquipmentResult";
 import SearchDetail from "../screens/Search/Detail";
 import MyTransaction from "../screens/MyTransaction";
 import MyTransactionDetail from "../screens/MyTransaction/Detail";
@@ -68,7 +68,7 @@ const DiscoverStack = createStackNavigator(
     Discover: Discover,
     ConfirmTransaction: ConfirmTransaction,
     Search: Search,
-    Result: SearchResult,
+    Result: EquipmentResult,
     SearchDetail: SearchDetail,
     Cart: Cart,
     ConfirmCart: ConfirmCart,

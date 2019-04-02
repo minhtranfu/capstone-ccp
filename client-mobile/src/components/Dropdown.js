@@ -168,15 +168,15 @@ const styles = StyleSheet.create({
     paddingBottom: 15
   },
   label: {
-    fontSize: fontSize.secondaryText,
+    fontSize: fontSize.caption,
     color: colors.text68,
-    fontWeight: "400",
+    fontWeight: "500",
     marginTop: 5
   },
   placeholder: {
     fontSize: fontSize.bodyText,
     color: colors.text,
-    fontWeight: "400",
+    fontWeight: "500",
     marginBottom: 5,
     marginTop: 15
   },
@@ -188,8 +188,8 @@ const styles = StyleSheet.create({
   dropdownLabel: {
     fontSize: fontSize.caption,
     color: colors.text50,
-    fontWeight: "400",
-    marginBottom: 3
+    fontWeight: "500",
+    marginBottom: 5
   },
   dropdownValue: {
     fontSize: fontSize.bodyText,

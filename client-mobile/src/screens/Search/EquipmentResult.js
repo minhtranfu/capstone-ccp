@@ -3,22 +3,18 @@ import {
   StyleSheet,
   Text,
   View,
-  ScrollView,
   TouchableOpacity,
-  TouchableHighlight,
   FlatList,
   Alert,
   Dimensions,
   TextInput
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
-import Modal from "react-native-modal";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { searchEquipment } from "../../redux/actions/equipment";
 import { addSubscription } from "../../redux/actions/subscription";
 
-import Calendar from "../../components/Calendar";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import EquipmentItem from "../../components/EquipmentItem";
@@ -27,26 +23,9 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import { bindActionCreators } from "redux";
 import moment from "moment";
-import Title from "../../components/Title";
-import Dropdown from "../../components/Dropdown";
 
 const ITEM_HEIGHT = 217;
 const width = Dimensions.get("window").width;
-const DROPDOWN_GENERAL_TYPES_OPTIONS = [
-  {
-    id: 0,
-    name: "Any Category",
-    value: "Select general equipment types"
-  }
-];
-
-const DROPDOWN_TYPES_OPTIONS = [
-  {
-    id: 0,
-    name: "Any type",
-    value: "Select equipment types"
-  }
-];
 
 @connect(
   state => ({
@@ -58,7 +37,7 @@ const DROPDOWN_TYPES_OPTIONS = [
   dispatch =>
     bindActionCreators({ fetchSearchEquipment: searchEquipment }, dispatch)
 )
-class SearchResult extends Component {
+class EquipmentResult extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -105,55 +84,10 @@ class SearchResult extends Component {
     );
   }
 
-  //Create new dropdown options for general type
-  _handleGeneralEquipmentType = () => {
-    const { generalType } = this.props;
-    let newGeneralEquipmentTypeArray = generalType.map(item => ({
-      id: item.id,
-      name: item.name,
-      value: item.name
-    }));
-    return [...DROPDOWN_GENERAL_TYPES_OPTIONS, ...newGeneralEquipmentTypeArray];
-  };
-
   _showAlert = (title, msg) => {
     Alert.alert(title, msg, [{ text: "OK" }], {
       cancelable: true
     });
-  };
-
-  _setModalVisible = visible => {
-    this.setState({ modalVisible: visible });
-  };
-
-  _setFilterModalVisible = visible => {
-    this.setState({ filterModalVisible: visible });
-  };
-
-  _setCalendarVisible = visible => {
-    this.setState({ calendarVisible: visible, modalVisible: !visible });
-  };
-
-  _handleSubmitSearch = () => {
-    const {
-      query,
-      lat,
-      long,
-      equipmentTypeId
-    } = this.props.navigation.state.params;
-    const { beginDate, endDate } = this.state;
-
-    if (beginDate && endDate) {
-      this.props.fetchSearchEquipment(
-        query.main_text,
-        lat,
-        long,
-        moment(beginDate).format('YYYY-MM-DD'),
-        moment(endDate).format('YYYY-MM-DD'),
-        equipmentTypeId
-      );
-    }
-    this._setModalVisible(!this.state.modalVisible);
   };
 
   _handleAddMoreMonth = (date, month) => {
@@ -170,82 +104,6 @@ class SearchResult extends Component {
       calendarVisible: visible,
       modalVisible: !visible
     });
-  };
-
-  _renderCalendar = (beginDate, endDate) => (
-    <Calendar
-      visible={this.state.calendarVisible}
-      onLeftButtonPress={() => this._setCalendarVisible(false)}
-      onSelectDate={this._onSelectDate}
-      fromDate={beginDate}
-      endDate={endDate}
-    />
-  );
-
-  _renderSearchModal = () => {
-    const { query } = this.props.navigation.state.params;
-    const { beginDate, endDate } = this.state;
-    return (
-      <Modal
-        isVisible={this.state.modalVisible}
-        onBackdropPress={() => this._setModalVisible(false)}
-        style={{ flexDirection: "column", flex: 1, padding: 0, margin: 0 }}
-      >
-        <View style={{ flex: 1 }} pointerEvents="none" />
-        <View
-          style={{
-            paddingHorizontal: 15,
-            backgroundColor: "white",
-            alignSelf: "stretch"
-          }}
-        >
-          <Dropdown
-            style={{ marginBottom: 10 }}
-            isHorizontal={true}
-            label={"Equipment Category"}
-            defaultText={"Any"}
-            onSelectValue={(value, index) =>
-              this.setState({ generalTypeIndex: index, generalType: value })
-            }
-            options={this._handleGeneralEquipmentType()}
-          />
-          <TouchableOpacity
-            style={styles.rowWrapper}
-            onPress={() => this._setCalendarVisible(true)}
-          >
-            <Text style={styles.text}>From</Text>
-            <Text style={styles.text}>
-              {moment(beginDate).format("DD/MM/YY")}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.rowWrapper, { borderBottomWidth: 0 }]}
-            onPress={() => this._setCalendarVisible(true)}
-          >
-            <Text style={styles.text}>To</Text>
-            <Text style={styles.text}>
-              {moment(endDate).format("DD/MM/YY")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <SafeAreaView
-          forceInset={{ bottom: "always" }}
-          style={{ backgroundColor: colors.secondaryColor }}
-        >
-          <TouchableOpacity
-            style={[
-              styles.buttonWrapper,
-              { backgroundColor: colors.secondaryColor }
-            ]}
-            onPress={() => {
-              this._handleSubmitSearch();
-            }}
-          >
-            <Text style={[styles.text, { color: "white" }]}>Refine Search</Text>
-          </TouchableOpacity>
-        </SafeAreaView>
-      </Modal>
-    );
   };
 
   _renderItem = ({ item }) => {
@@ -397,8 +255,6 @@ class SearchResult extends Component {
 
         {!loading ? (
           <View style={{ flex: 1 }}>
-            {this._renderSearchModal()}
-            {/*{this._renderCalendar(beginDate, endDate)}*/}
             {listSearch.length > 0 ? (
               <FlatList
                 ListHeaderComponent={() => (
@@ -427,9 +283,9 @@ class SearchResult extends Component {
                           {`${query.main_text}`}
                         </Text>
                         <Text style={styles.caption}>
-                          {moment(beginDate).format("DD/MM/YY") +
+                          {moment(beginDate).format("DD MMM, YYYY") +
                             " - " +
-                            moment(endDate).format("DD/MM/YY")}
+                            moment(endDate).format("DD MMM, YYYY")}
                         </Text>
                         <Text style={styles.caption}>
                           {`${equipmentCat || "Any"} ▶ ${equipmentType ||
@@ -438,7 +294,7 @@ class SearchResult extends Component {
                       </View>
                       <TouchableOpacity
                         onPress={() => {
-                          this.setState({ modalVisible: true });
+                          this.props.navigation.goBack();
                         }}
                       >
                         <Text
@@ -548,4 +404,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SearchResult;
+export default EquipmentResult;
