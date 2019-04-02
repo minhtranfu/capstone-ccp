@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Image } from "react-native-expo-image-cache";
+import { Image as ImageCache } from "react-native-expo-image-cache";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
@@ -19,6 +19,10 @@ class MaterialSearchItem extends PureComponent {
   static defaultProps = {
     requesterThumbnail:
       "https://drupway.com/wp-content/uploads/2018/10/person-male.png"
+  };
+
+  state = {
+    imageFailed: false,
   };
 
   render() {
@@ -40,33 +44,20 @@ class MaterialSearchItem extends PureComponent {
             borderRadius: 10,
             backgroundColor: "white"
           }}
+          activeOpacity={0.9}
         >
-          <Image uri={imageUrl} style={{ height: 160 }} resizeMode={"cover"} />
-          <View style={styles.overlay}>
-            <View style={styles.textWrapper}>
-              <Text
-                style={{
-                  fontSize: fontSize.bodyText,
-                  fontWeight: "500",
-                  color: "white"
-                }}
-              >
-                Material
-              </Text>
-            </View>
-          </View>
-          <View
-            style={{
-              paddingHorizontal: 10,
-              borderTopWidth: 0.2,
-              borderColor: colors.secondaryColorOpacity
-            }}
-          >
-            <Text style={[styles.nameText, { paddingTop: 10 }]}>{name}</Text>
+          <ImageCache
+            uri={!this.state.imageFailed ? imageUrl : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg"}
+            style={{ height: 160, backgroundColor: '#e9e9e9', }}
+            resizeMode={ !this.state.imageFailed ? "cover" : "contain"}
+            onError={()=>{this.setState({imageFailed: true})}}
+          />
+          <View style={{ paddingHorizontal: 10, paddingVertical: 10 }}>
+            <Text style={[styles.nameText, {}]}>{name}</Text>
             <Text style={styles.text}>{manufacturer}</Text>
-            <Text style={styles.text}>{price} K VND</Text>
+            <Text style={[styles.text, { color: colors.secondaryColor, fontWeight: '600' }]}>{price}k VND</Text>
             <Text
-              style={[styles.text, { paddingBottom: 10 }]}
+              style={[styles.text, { paddingBottom: 5, fontSize: fontSize.caption, color: colors.text50 }]}
               numberOfLines={2}
             >
               {description}
@@ -81,12 +72,10 @@ class MaterialSearchItem extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    shadowColor: "#A42A2A",
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
+    ...colors.shadow,
     elevation: 2,
-    marginBottom: 20
+    marginBottom: 20,
+    marginTop: 5,
   },
   titleWrapper: {
     flexDirection: "row",
@@ -94,12 +83,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
     backgroundColor: "white"
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "flex-end"
   },
   textWrapper: {
     paddingHorizontal: 10,
@@ -112,14 +95,14 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   nameText: {
-    fontSize: fontSize.h4,
-    color: "#484848",
-    fontWeight: "500",
-    paddingBottom: 5
+    fontSize: fontSize.bodyText,
+    color: colors.text,
+    fontWeight: "600",
+    marginBottom: 5
   },
   text: {
-    fontSize: fontSize.bodyText,
-    color: "#474747",
+    fontSize: fontSize.secondaryText,
+    color: colors.text68,
     paddingBottom: 5,
     fontWeight: "500"
   }

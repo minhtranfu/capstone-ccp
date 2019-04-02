@@ -300,7 +300,7 @@ class MyEquipmentDetail extends Component {
             style={styles.buttonChangeImage}
             onPress={this._handleChangeBackgroundImage}
           >
-            <Feather name="camera" size={24} />
+            <Feather name="camera" size={18} color={'white'}/>
           </TouchableOpacity>
         </View>
         <Title title={"Equipment Information"} />
@@ -371,7 +371,7 @@ class MyEquipmentDetail extends Component {
         ) : null}
         {data.additionalSpecsValues.length > 0 ? (
           <View>
-            <Text>Addition Specs Value</Text>
+            <Title title={"Addition Specs"} />
             {data.additionalSpecsValues.map((item, index) => (
               <InputField
                 key={item.id}
@@ -437,7 +437,7 @@ class MyEquipmentDetail extends Component {
                 this.props.navigation.goBack();
               }}
             >
-              <Feather name="x" size={24} />
+              <Feather name="arrow-left" size={22} />
             </TouchableOpacity>
           )}
         >
@@ -473,9 +473,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 15,
     right: 15,
-    backgroundColor: colors.primaryColor,
-    width: 40,
-    height: 40,
+    backgroundColor: colors.text68,
+    width: 32,
+    height: 32,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center"

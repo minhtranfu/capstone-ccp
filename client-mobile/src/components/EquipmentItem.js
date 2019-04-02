@@ -65,7 +65,7 @@ class EquipmentItem extends PureComponent {
               <Text style={styles.equipmentStatus}>{address}</Text>
             </View>
             <View style={styles.priceWrapper}>
-              <Text style={styles.equipmentPrice}>{price}k</Text>
+              <Text style={styles.equipmentPrice}>{price}k/d</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -89,17 +89,19 @@ const styles = StyleSheet.create({
     backgroundColor: "white"
   },
   equipmentName: {
-    fontSize: fontSize.h4,
-    fontWeight: "500",
+    fontSize: fontSize.bodyText,
+    fontWeight: "600",
     color: colors.text
   },
   equipmentStatus: {
-    fontSize: fontSize.body,
+    fontSize: fontSize.secondaryText,
     fontWeight: "400",
-    color: colors.text50
+    color: colors.text50,
+    marginTop: 3,
+    marginBottom: 3,
   },
   equipmentPrice: {
-    fontSize: fontSize.h2,
+    fontSize: fontSize.h3,
     fontWeight: "600",
     color: colors.text
   },

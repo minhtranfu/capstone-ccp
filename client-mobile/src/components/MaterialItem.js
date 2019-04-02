@@ -37,7 +37,7 @@ class MaterialItem extends Component {
       quantity
     } = this.props;
     return (
-      <TouchableOpacity style={styles.conainter} onPress={onPress}>
+      <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.9}>
         <View style={styles.wrapper}>
           <Image uri={imageUrl} resizeMode={"cover"} style={styles.image} />
           <View style={{ flex: 2 }}>
@@ -99,14 +99,12 @@ class MaterialItem extends Component {
 }
 
 const styles = StyleSheet.create({
-  conainter: {
+  container: {
     flex: 1,
-    shadowColor: "#3E3E3E",
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 1, height: 2 },
-    shadowRadius: 2,
+    ...colors.shadow,
     elevation: 2,
-    marginBottom: 20
+    marginBottom: 15,
+    marginTop: 5,
   },
   wrapper: {
     borderRadius: 10,
