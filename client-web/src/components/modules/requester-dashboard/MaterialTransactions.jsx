@@ -4,10 +4,8 @@ import { CSSTransition } from 'react-transition-group';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
-import StarRatings from 'react-star-ratings';
 import { Link } from "react-router-dom";
 
-import { FeedbackModal, RatingMaterialModal } from "../../common";
 import { MATERIAL_TRANSACTION_STATUSES, routeConsts } from '../../../common/consts';
 import { materialTransactionServices } from 'Src/services/domain/ccp';
 import { formatPrice } from 'Src/utils/format.utils';
@@ -283,17 +281,6 @@ class MaterialTransactions extends Component {
     });
   };
 
-  /**
-   * Show feedback modal
-   */
-  _toggleRatingMaterialTransaction = (feedbackTransaction) => {
-    const { isShowRatingMaterialTransaction } = this.state;
-    this.setState({
-      isShowRatingMaterialTransaction: !isShowRatingMaterialTransaction,
-      feedbackTransaction
-    });
-  };
-
   _renderTransaction = transaction => {
     const { filterStatus } = this.state;
     const { material, supplier } = transaction;
@@ -341,11 +328,6 @@ class MaterialTransactions extends Component {
 
       case MATERIAL_TRANSACTION_STATUSES.FINISHED:
         statusClasses += 'badge-success';
-        changeStatusButtons = (
-          <div className="mt-2">
-            <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingMaterialTransaction(transaction)}>Feedback</button>
-          </div>
-        );
         break;
     }
 
@@ -377,16 +359,10 @@ class MaterialTransactions extends Component {
   };
 
   render() {
-    const { isShowFeedbackModal, feedbackTransaction, isShowRatingMaterialTransaction } = this.state;
     this._renderTabContents();
 
     return (
       <div className="container py-5 user-dashboard">
-        <RatingMaterialModal
-          isOpen={isShowRatingMaterialTransaction}
-          onClose={() => this._toggleRatingMaterialTransaction()}
-          transaction={feedbackTransaction}
-        />
         {this._renderAlert()}
         <div className="row">
           <div className="col-md-3">

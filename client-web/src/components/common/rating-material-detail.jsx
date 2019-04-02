@@ -25,7 +25,7 @@ class RatingMaterialModal extends Component {
    */
   _hanleSubmit = async e => {
     e.preventDefault();
-    
+
     const validateResult = this._validateForm();
 
     if (!validateResult.isValid) {
@@ -205,10 +205,10 @@ class RatingMaterialModal extends Component {
             id="feedback_content"
             cols="30" rows="5"
             placeholder="Please fill in your feedback"
-            className={classnames('form-control', {'is-invalid': validateResult.content})}
+            className={classnames('form-control', { 'is-invalid': validateResult.content })}
             ref={(e) => { this.formFields.content = e; }}
             onChange={this._handleFieldChange}
-            ></textarea>
+          ></textarea>
           {this._getValidateFeeback('content')}
         </div>
       </div>
@@ -239,15 +239,18 @@ class RatingMaterialModal extends Component {
   /**
    * Reset modal data and call close modal
    */
-  _handleCloseModal = () => {
-    const { onClose } = this.props;
+  _handleCloseModal = feedbacked => {
+    const { onClose, transaction } = this.props;
     // Reset form
     this.data = {};
     this.setState({
       validateResult: {}
     });
+    if (feedbacked === true) {
+      transaction.feedbacked = feedbacked;
+    }
 
-    onClose && onClose();
+    onClose && onClose(transaction);
   };
 
   /**
@@ -281,7 +284,7 @@ class RatingMaterialModal extends Component {
     this.setState({
       isSubmitSuccess: undefined
     }, () => {
-      this._handleCloseModal();
+      this._handleCloseModal(true);
     });
   };
 
@@ -311,7 +314,7 @@ class RatingMaterialModal extends Component {
               <button type="submit" className="btn btn-success" disabled={!!isSending}>
                 {isSending && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>} Send
               </button>
-              <span tabIndex="0" className="btn btn-outline-info" onClick={this._handleCloseModal}>Cancel</span>
+              <button type="button" className="btn btn-outline-info" onClick={this._handleCloseModal}>Cancel</button>
             </ModalFooter>
           </form>
         </Modal>

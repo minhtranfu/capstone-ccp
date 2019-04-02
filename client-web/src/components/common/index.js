@@ -6,4 +6,4 @@ export { default as ComponentBlocking } from './component-blocking';
 export { default as DropzoneUploadImage } from './dropzone-upload-image';
 export { default as RatingModal } from './rating-modal';
 export { default as RatingEquipmentTransaction } from './rating-equipment-transaction';
-export { default as RatingMaterialModal } from './rating-material-transaction';
+export { default as RatingMaterialModal } from './rating-material-detail';

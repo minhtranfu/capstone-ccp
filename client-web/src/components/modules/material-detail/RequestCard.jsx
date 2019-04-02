@@ -11,6 +11,8 @@ import { Redirect } from 'react-router-dom';
 import { authActions } from '../../../redux/actions';
 import { formatPrice } from 'Src/utils/format.utils';
 import { materialTransactionServices } from 'Src/services/domain/ccp';
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 class RequestCard extends Component {
 
@@ -190,7 +192,7 @@ class RequestCard extends Component {
         }
         {/* Redirect if user click button view sent transaction */}
         {redirectToTransaction &&
-          <Redirect to={`/dashboard/transaction/${transactionId}`} />
+          <Redirect to={getRoutePath(routeConsts.MATERIAL_REQUEST_DETAIL, { id: transactionId })} />
         }
       </div>
     )
@@ -267,7 +269,7 @@ class RequestCard extends Component {
         </div>
         <div className="form-group">
           <label htmlFor="transaction_quantity">Quantity:<i className="text-danger">*</i></label>
-          <input type="number" name="quantity" id="transaction_quantity" className="form-control" onChange={this._handleFieldChange} min="1"/>
+          <input type="number" name="quantity" id="transaction_quantity" className="form-control" onChange={this._handleFieldChange} min="1" />
         </div>
         <div className="text-center border-top border-bottom my-3 py-2">
           {!transaction.quantity &&
