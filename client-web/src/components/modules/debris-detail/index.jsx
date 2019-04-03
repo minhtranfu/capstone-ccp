@@ -121,8 +121,8 @@ class DebrisDetail extends Component {
           <div className="flex-fill d-flex flex-column flex-lg-row">
             <div className="d-flex bider text-nowrap flex-wrap flex-sm-nowrap">
               <div>
-                <Image src={bid.supplier && bid.supplier.thumbnailImage
-                  ? bid.supplier.thumbnailImage
+                <Image src={bid.supplier && bid.supplier.thumbnailImageUrl
+                  ? bid.supplier.thumbnailImageUrl
                   : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"}
                   className="rounded-circle avatar"
                 />
@@ -359,8 +359,8 @@ class DebrisDetail extends Component {
               <div className="constructor-card text-center">
                 <Image
                   src={
-                    debris.requester && debris.requester.thumbnailImage
-                      ? debris.requester.thumbnailImage
+                    debris.requester && debris.requester.thumbnailImageUrl
+                      ? debris.requester.thumbnailImageUrl
                       : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"
                   }
                   className="rounded-circle w-50"

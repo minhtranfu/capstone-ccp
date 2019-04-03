@@ -113,8 +113,8 @@ class MaterialDetail extends Component {
               <div className="constructor-card text-center">
                 <Image
                   src={
-                    material.contractor && material.contractor.thumbnailImage
-                      ? material.contractor.thumbnailImage
+                    material.contractor && material.contractor.thumbnailImageUrl
+                      ? material.contractor.thumbnailImageUrl
                       : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"
                   }
                   className="rounded-circle w-50"

@@ -9,7 +9,7 @@ class MaterialTransaction extends Component {
         <img
           className="rounded-circle"
           style={{ width: '50px', height: '50px' }}
-          src={supplier.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
+          src={supplier.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
         />
         <div>{supplier.name}</div>
         {supplier.averageMaterialRating > 0 &&

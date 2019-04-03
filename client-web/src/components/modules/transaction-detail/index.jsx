@@ -60,7 +60,7 @@ class TransactionDetail extends Component {
           <div className="col-md-3">
             <h4 className="text-center">Supplier</h4>
             <div className="constructor-card text-center">
-                <Image src={transaction.equipment.contractor && transaction.equipment.contractor.thumbnailImage ? transaction.equipment.contractor.thumbnailImage : 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'} className="rounded-circle w-50" alt="" />
+                <Image src={transaction.equipment.contractor && transaction.equipment.contractor.thumbnailImageUrl ? transaction.equipment.contractor.thumbnailImageUrl : 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'} className="rounded-circle w-50" alt="" />
                 <h5>{transaction.equipment.contractor ? transaction.equipment.contractor.name : <Skeleton />}</h5>
                 <p className="mt-0">
                   Join at: {transaction.equipment.contractor

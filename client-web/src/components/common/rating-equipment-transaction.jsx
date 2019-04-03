@@ -159,7 +159,7 @@ class RatingEquipmentModal extends Component {
   //       <div className="col-md-6">
   //         <div className="d-flex">
   //           <div className="mr-2">
-  //             <img src={partner.thumbnailImage} alt={`${partner.name}'s avatar`} style={{width: '50px', height: '50px'}}/>
+  //             <img src={partner.thumbnailImageUrl} alt={`${partner.name}'s avatar`} style={{width: '50px', height: '50px'}}/>
   //           </div>
   //           <div className="flex-fill">
   //             <div><strong>{partner.name}</strong></div>

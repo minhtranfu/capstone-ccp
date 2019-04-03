@@ -161,7 +161,7 @@ class Header extends Component {
                 </li>
                 <li className="nav-item dropdown">
                   <a className="dropdown-toggle text-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    <img src={authentication.user.contractor.thumbnailImage} className="rounded-circle mr-2" width={40} height={40} />
+                    <img src={user.contractor.thumbnailImageUrl} className="rounded-circle mr-2" width={40} height={40} />
                     {authentication.user.contractor.name}
                   </a>
                   <div className="dropdown-menu shadow mt-2 rounded-top-0">

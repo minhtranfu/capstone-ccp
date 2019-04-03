@@ -97,7 +97,7 @@ class DebrisSearch extends Component {
             }
             {!isFetching && products && products.map((product, index) => {
               const { requester, debrisServiceTypes, debrisBids } = product;
-              const avatarSrc = requester.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg';
+              const avatarSrc = requester.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg';
               const services = debrisServiceTypes.map(type => type.name).join(', ');
 
               return (

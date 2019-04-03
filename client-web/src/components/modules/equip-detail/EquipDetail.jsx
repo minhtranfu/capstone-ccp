@@ -139,8 +139,8 @@ class EquipDetail extends Component {
               <div className="constructor-card text-center">
                 <Image
                   src={
-                    equip.contractor && equip.contractor.thumbnailImage
-                      ? equip.contractor.thumbnailImage
+                    equip.contractor && equip.contractor.thumbnailImageUrl
+                      ? equip.contractor.thumbnailImageUrl
                       : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"
                   }
                   className="rounded-circle w-50"
