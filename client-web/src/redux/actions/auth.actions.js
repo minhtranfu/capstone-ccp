@@ -10,6 +10,7 @@ import { askForPermissioToReceiveNotifications } from "../../push-notification";
  */
 export const authActions = {
   login,
+  loginSuccess,
   logout,
   loadUserFromToken,
   showLoginModal,
@@ -37,10 +38,7 @@ function login(username, password) {
       console.log(user);
       localStorage.setItem(appConsts.JWT_KEY, user.tokenWrapper.accessToken);
 
-      dispatch({
-        type: authConstants.LOGIN_SUCCESS,
-        user
-      });
+      dispatch(loginSuccess(user));
       askForPermissioToReceiveNotifications();
 
     } catch (error) {
@@ -90,6 +88,13 @@ function loadUserFromToken() {
       dispatch({ type: authConstants.LOAD_USER_FAILURE });
     }
   };
+}
+
+function loginSuccess(user) {
+  return {
+    type: authConstants.LOGIN_SUCCESS,
+    user
+  }
 }
 
 function showLoginModal() {

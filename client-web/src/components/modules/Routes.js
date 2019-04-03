@@ -14,6 +14,12 @@ export const modules = [
     modulePath: './home'
   },
   {
+    name: routeConsts.PROFILE,
+    path: '/me',
+    modulePath: './profile',
+    isPrivate: true
+  },
+  {
     name: routeConsts.CONSTRUCTIONS,
     path: '/constructions',
     modulePath: './supplier-dashboard/MyConstructions',

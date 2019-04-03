@@ -165,7 +165,7 @@ class Header extends Component {
                     {authentication.user.contractor.name}
                   </a>
                   <div className="dropdown-menu shadow mt-2 rounded-top-0">
-                    <a className="dropdown-item" href="#"><i className="fal fa-user-circle"></i> Profile</a>
+                    <Link className="dropdown-item" to={getRoutePath(routeConsts.PROFILE)}><i className="fal fa-user-circle"></i> Profile</Link>
                     <a className="dropdown-item" href="#"><i className="fal fa-cogs"></i> Settings</a>
                     <div className="dropdown-divider"></div>
                     <a className="dropdown-item" href="#" onClick={this._logout}><i className="fal fa-sign-out"></i> Logout</a>

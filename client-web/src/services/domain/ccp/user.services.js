@@ -37,3 +37,7 @@ export const uploadAvatar = formData => {
     }
   });
 };
+
+export const updateContractorById = (id, data) => {
+  return DataAccessService.put(`/contractors/${id}`, data);
+};
