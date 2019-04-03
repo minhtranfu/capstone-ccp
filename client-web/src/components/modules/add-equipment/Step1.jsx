@@ -2,11 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
-// Require Editor JS files.
-import 'froala-editor/js/froala_editor.pkgd.min.js';
-// Require Editor CSS files.
-import 'froala-editor/css/froala_style.min.css';
-import 'froala-editor/css/froala_editor.pkgd.min.css';
+import validate from 'validate.js';
 
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
@@ -16,6 +12,7 @@ import { fetchEquipmentTypes, fetchEquipmentTypeSpecs } from '../../../redux/act
 import { ENTITY_KEY } from '../../../common/app-const';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
+import { getValidateFeedback } from 'Utils/common.utils';
 
 class AddEquipmentStep1 extends Step {
   constructor(props) {
@@ -24,11 +21,50 @@ class AddEquipmentStep1 extends Step {
     this.state = {
       constructions: [],
       categories: [],
-      availableTimeRanges: [
-        {}
-      ]
+      availableTimeRanges: [],
+      validateResult: {}
     };
   }
+
+  validateRules = {
+    name: {
+      presence: {
+        allowEmpty: false
+      }
+    },
+    constructionId: {
+      presence: {
+        allowEmpty: false,
+        message: 'is required'
+      }
+    },
+    address: {
+      presence: {
+        allowEmpty: false
+      }
+    },
+    equipmentTypeId: {
+      presence: {
+        allowEmpty: false,
+        message: 'is required'
+      }
+    },
+    dailyPrice: {
+      presence: {
+        allowEmpty: false,
+        message: 'is required'
+      },
+      numericality: {
+        greaterThan: 0
+      }
+    },
+    availableTimeRanges: {
+      presence: {
+        allowEmpty: false,
+        message: 'is required'
+      },
+    }
+  };
 
   componentDidMount() {
     this._loadEquipmentTypes();
@@ -127,19 +163,33 @@ class AddEquipmentStep1 extends Step {
   };
 
   _handleSubmitForm = () => {
-    // Todo: Validate form
+    const data = {
+      ...this.state,
+      constructions: undefined,
+      validateResult: undefined
+    };
+    
+    const validateResult = validate(data, this.validateRules);
+    if (validateResult) {
+      this.setState({
+        validateResult
+      });
+      return;
+    }
 
-    this._handleStepDone({
-      data: {
-        ...this.state,
-        constructions: undefined
-      }
+    this.setState({
+      validateResult
+    }, () => {
+      this._handleStepDone({ data });
     });
   };
 
   _renderDateRangePickers = () => {
-    const { availableTimeRanges } = this.state;
-    const numOfRange = availableTimeRanges.length;
+    let { availableTimeRanges, validateResult } = this.state;
+    if (!availableTimeRanges || availableTimeRanges.length === 0) {
+      availableTimeRanges = [{}];
+    }
+    const numOfRange = 1;
 
     return availableTimeRanges.map((range, i) => {
       return (
@@ -162,6 +212,7 @@ class AddEquipmentStep1 extends Step {
               </div>
             }
           </div>
+          {getValidateFeedback('availableTimeRanges', validateResult)}
         </div>
       );
     });
@@ -225,7 +276,7 @@ class AddEquipmentStep1 extends Step {
   render() {
     const { entities } = this.props;
     const equipmentTypes = entities[ENTITY_KEY.EQUIPMENT_TYPES];
-    const { constructions, categories, categoryId } = this.state;
+    const { constructions, categories, categoryId, validateResult } = this.state;
 
     return (
       <div className="container">
@@ -237,6 +288,7 @@ class AddEquipmentStep1 extends Step {
             <div className="form-group">
               <label htmlFor="">Equipment name: <i className="text-danger">*</i></label>
               <input type="text" name="name" onChange={this._handleFieldChange} value={this.state.name || ''} className="form-control" maxLength="80" required />
+              {getValidateFeedback('name', validateResult)}
             </div>
             <div className="form-group">
               <label htmlFor="">Construction: <i className="text-danger">*</i></label>
@@ -244,19 +296,22 @@ class AddEquipmentStep1 extends Step {
                 <option value="">Choose...</option>
                 {constructions.map(construction => <option key={construction.id} value={construction.id}>{construction.name}</option>)}
               </select>
+              {getValidateFeedback('constructionId', validateResult)}
             </div>
             <div className="form-group">
               <label htmlFor="">Address: <i className="text-danger">*</i></label>
               <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" />
+              {getValidateFeedback('address', validateResult)}
             </div>
             <div className="form-group">
-              <label htmlFor="">Equipment Category: <i className="text-danger">*</i></label>
+              <label htmlFor="">Equipment Category: </label>
               <select name="categoryId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.categoryId || ''} id="equip_type_id" className="form-control selectpicker">
                 <option value="0">Choose...</option>
                 {categories && categories.map(cat => {
                   return (<option value={cat.id} key={cat.id}>{cat.name}</option>);
                 })}
               </select>
+              {getValidateFeedback('categoryId', validateResult)}
             </div>
             <div className="form-group">
               <label htmlFor="">Equipment type: <i className="text-danger">*</i></label>
@@ -271,16 +326,14 @@ class AddEquipmentStep1 extends Step {
                   return (<option value={type.id} key={type.id}>{type.name}</option>);
                 })}
               </select>
+              {getValidateFeedback('equipmentTypeId', validateResult)}
             </div>
           </div>
           <div className="col-md-6">
             <div className="form-group">
               <label htmlFor="daily_price">Price per day (K): <i className="text-danger">*</i></label>
               <input type="number" name="dailyPrice" onChange={this._handleFieldChange} defaultValue={this._getShowablePrice(this.state.showableDailyPrice)} className="form-control" id="daily_price" required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="delivery_price">Delivery price per km (K): <i className="text-danger">*</i></label>
-              <input type="number" name="deliveryPrice" onChange={this._handleFieldChange} defaultValue={this._getShowablePrice(this.state.showableDeliveryPrice)} className="form-control" id="delivery_price" required />
+              {getValidateFeedback('dailyPrice', validateResult)}
             </div>
             {this._renderDateRangePickers()}
             <div className="form-group text-center">
