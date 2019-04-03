@@ -85,17 +85,8 @@ class DebrisSearchBox extends PureComponent {
           </div>
           <div className="col-md-12">
             <div className="form-group">
-              <label htmlFor="service_types" className="text-light">Debris type:</label>
-              <Select
-                isMulti
-                openMenuOnFocus
-                closeMenuOnSelect={false}
-                tabSelectsValue={false}
-                inputId="service_types"
-                placeholder="Select some services you need..."
-                options={typeOptions}
-                onChange={this._handleSelectServiceTypes}
-              />
+              <label htmlFor="keyword" className="text-light">Keyword:</label>
+              <input type="text" name="q" onChange={this._handleChangeCriteria} id="keyword" className="form-control" />
             </div>
           </div>
           <div className="col-md-6">
@@ -106,8 +97,18 @@ class DebrisSearchBox extends PureComponent {
           </div>
           <div className="col-md-6">
             <div className="form-group">
-              <label htmlFor="keyword" className="text-light">Keyword:</label>
-              <input type="text" name="q" onChange={this._handleChangeCriteria} id="keyword" className="form-control" />
+              <label htmlFor="service_types" className="text-light">Debris type:</label>
+              <Select
+                isMulti
+                openMenuOnFocus
+                isSearchable={false}
+                closeMenuOnSelect={false}
+                tabSelectsValue={false}
+                inputId="service_types"
+                placeholder="Select some services you need..."
+                options={typeOptions}
+                onChange={this._handleSelectServiceTypes}
+              />
             </div>
           </div>
           <div className="col-md-12">

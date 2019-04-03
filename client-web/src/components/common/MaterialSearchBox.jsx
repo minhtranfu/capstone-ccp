@@ -68,6 +68,12 @@ class MaterialSearchBox extends PureComponent {
           
             <div className="col-md-6">
               <div className="form-group">
+                <label htmlFor="keyword">Keyword</label>
+                <input type="text" name="q" onChange={this._handleChangeCriteria} id="keyword" className="form-control"/>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="form-group">
                 <label htmlFor="material_type">Material type:</label>
                 <select
                   name="materialTypeId"
@@ -83,12 +89,6 @@ class MaterialSearchBox extends PureComponent {
                       </option>
                     ))}
                 </select>
-              </div>
-            </div>
-            <div className="col-md-6">
-              <div className="form-group">
-                <label htmlFor="keyword">Keyword</label>
-                <input type="text" name="q" onChange={this._handleChangeCriteria} id="keyword" className="form-control"/>
               </div>
             </div>
             <div className="col-md-12">
