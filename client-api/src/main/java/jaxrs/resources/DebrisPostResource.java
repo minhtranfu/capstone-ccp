@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @Path("debrisPosts")
-@Stateless
 @Produces(MediaType.APPLICATION_JSON)
 public class DebrisPostResource {
 	public static final Logger LOGGER = Logger.getLogger(DebrisPostResource.class.toString());
@@ -141,8 +140,8 @@ public class DebrisPostResource {
 			managedImage.setDebrisPost(debrisPostEntity);
 			debrisImageDAO.merge(managedImage);
 		}
-
-		return Response.status(Response.Status.CREATED).entity(debrisPostDAO.findByID(debrisPostEntity.getId())).build();
+		DebrisPostEntity byID = debrisPostDAO.findByID(debrisPostEntity.getId());
+		return Response.status(Response.Status.CREATED).entity(byID).build();
 	}
 
 

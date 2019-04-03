@@ -291,7 +291,7 @@ public class ContractorEntity {
 
 	@Transient
 	public int getDebrisFeedbacksCount() {
-		return getDebrisFeedbacks().size();
+		return getDebrisFeedbacks() != null ? getDebrisFeedbacks().size() : 0;
 	}
 
 	@Transient
@@ -315,7 +315,7 @@ public class ContractorEntity {
 
 	@Transient
 	public int getMaterialFeedbacksCount() {
-		return materialFeedbacks.size();
+		return getMaterialFeedbacks() != null ? getMaterialFeedbacks().size() : 0;
 	}
 
 	@Transient
@@ -340,7 +340,7 @@ public class ContractorEntity {
 
 	@Transient
 	public int getEquipmentFeedbacksCount() {
-		return getEquipmentFeedbacks().size();
+		return getEquipmentFeedbacks() != null ? getEquipmentFeedbacks().size() : 0;
 	}
 
 	@Transient
