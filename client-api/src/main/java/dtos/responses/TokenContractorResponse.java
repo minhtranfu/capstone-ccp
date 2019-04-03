@@ -16,7 +16,7 @@ public class TokenContractorResponse {
 	private String email;
 
 	private String phoneNumber;
-	private String thumbnailImage;
+	private String thumbnailImageUrl;
 
 	private ContractorEntity.Status status;
 
@@ -73,12 +73,12 @@ public class TokenContractorResponse {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public String getThumbnailImage() {
-		return thumbnailImage;
+	public String getThumbnailImageUrl() {
+		return thumbnailImageUrl;
 	}
 
-	public void setThumbnailImage(String thumbnailImage) {
-		this.thumbnailImage = thumbnailImage;
+	public void setThumbnailImageUrl(String thumbnailImageUrl) {
+		this.thumbnailImageUrl = thumbnailImageUrl;
 	}
 
 	public ContractorEntity.Status getStatus() {
