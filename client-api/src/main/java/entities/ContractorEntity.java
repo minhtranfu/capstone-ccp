@@ -22,7 +22,7 @@ public class ContractorEntity {
 	private String email;
 
 	private String phoneNumber;
-	private String thumbnailImage;
+	private String thumbnailImageUrl;
 
 	private Status status;
 
@@ -129,12 +129,12 @@ public class ContractorEntity {
 
 	@Basic
 	@Column(name = "thumbnail_image_url", nullable = true, length = 255)
-	public String getThumbnailImage() {
-		return thumbnailImage;
+	public String getThumbnailImageUrl() {
+		return thumbnailImageUrl;
 	}
 
-	public void setThumbnailImage(String thumbnailImage) {
-		this.thumbnailImage = thumbnailImage;
+	public void setThumbnailImageUrl(String thumbnailImage) {
+		this.thumbnailImageUrl = thumbnailImage;
 	}
 
 	@Basic
