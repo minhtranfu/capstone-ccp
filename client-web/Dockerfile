@@ -9,7 +9,7 @@ ENV PATH /root/src/app/node_modules/.bin:$PATH
 COPY package.json package.json
 
 # Install package
-RUN npm ci
+RUN yarn install
 
 # Add source code
 COPY src src
