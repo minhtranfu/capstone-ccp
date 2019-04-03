@@ -83,19 +83,19 @@ class DebrisSearchBox extends PureComponent {
           <div className="col-md-12 text-light">
             <h3>Search</h3>
           </div>
-          <div className="col-md-12">
+          <div className="col-md-4">
             <div className="form-group">
               <label htmlFor="keyword" className="text-light">Keyword:</label>
               <input type="text" name="q" onChange={this._handleChangeCriteria} id="keyword" className="form-control" />
             </div>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-4">
             <div className="form-group">
               <label htmlFor="location" className="text-light">Location:</label>
               <AddressInput onSelect={this._handleChangeLocation} inputProps={{id: 'location'}} />
             </div>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-4">
             <div className="form-group">
               <label htmlFor="service_types" className="text-light">Debris type:</label>
               <Select
