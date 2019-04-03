@@ -24,7 +24,7 @@ class EquipmentCard extends PureComponent {
               </h6>
               <div className="text-muted"><i className="fal fa-archive"></i> {product.equipmentType.name}</div>
               <div className="text-muted d-flex align-items-center">
-                <img src={product.contractor.thumbnailImageUrl} alt={`${product.contractor.name}'s avatar`} className="rounded-cirle mr-2" width="50" height="50"/>
+                <img src={product.contractor.thumbnailImageUrl} alt={`${product.contractor.name}'s avatar`} className="rounded-circle mr-2" width="50" height="50"/>
                 {product.contractor.name}
               </div>
             </div>
