@@ -18,8 +18,11 @@ import {
   clearMaterialCart,
   listMaterialCartItem
 } from "../../redux/actions/cart";
+import { requestMaterialTransaction } from "../../redux/actions/transaction";
 import Swipeable from "react-native-swipeable";
 
+import Title from "../../components/Title";
+import MaterialItem from "./components/MaterialItem";
 import TransactionItem from "../../components/TransactionItem";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
@@ -50,6 +53,9 @@ import { ScrollView } from "react-native-gesture-handler";
     },
     fetchListMaterialCart: () => {
       dispatch(listMaterialCartItem());
+    },
+    fetchSendMaterialRequest: material => {
+      dispatch(requestMaterialTransaction(material));
     }
   })
 )
@@ -136,6 +142,27 @@ class Cart extends Component {
     );
   };
 
+  _renderScrollViewContent = () => {
+    const { materialCart } = this.props;
+
+    return (
+      <View>
+        <Title title={"Material"} />
+        {materialCart.map(supplierItems => (
+          <MaterialItem
+            id={supplierItems.id}
+            items={supplierItems.items}
+            onPress={() =>
+              this.props.navigation.navigate("MaterialCartDetail", {
+                id: supplierItems.id
+              })
+            }
+          />
+        ))}
+      </View>
+    );
+  };
+
   render() {
     const { loading, navigation, materialCart } = this.props;
     console.log(materialCart);
@@ -157,6 +184,9 @@ class Cart extends Component {
         >
           <Text style={styles.header}>My Orders</Text>
         </Header>
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
+          {this._renderScrollViewContent()}
+        </ScrollView>
         {/* {!loading ? this._renderFlatList() : <Loading />} */}
       </SafeAreaView>
     );
@@ -168,7 +198,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   header: {
-    fontSize: fontSize.h4,
+    fontSize: fontSize.bodyText,
     fontWeight: "500"
   },
   text: {

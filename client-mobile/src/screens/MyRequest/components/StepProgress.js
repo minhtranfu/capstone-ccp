@@ -66,7 +66,9 @@ class StepProgress extends Component {
                   : null
               ]}
             >
-              <Text style={styles.text}>{step.name}</Text>
+              <Text style={styles.text} adjustsFontSizeToFit={true}>
+                {step.name}
+              </Text>
             </View>
           ))}
         </View>

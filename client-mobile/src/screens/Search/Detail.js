@@ -12,12 +12,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import MapView, { Marker } from "react-native-maps";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import Calendar from "react-native-calendar-select";
 import Swiper from "react-native-swiper";
 import { getEquipmentDetail } from "../../redux/actions/equipment";
+import moment from "moment";
 
 import WithRangeCalendar from "../../components/WithRangeCalendar";
 import CustomFlatList from "../../components/CustomFlatList";
@@ -31,22 +32,17 @@ import { imageURL } from "../../Utils/MockData";
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import Title from "../../components/Title";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const { width } = Dimensions.get("window");
-
-const IMAGE_LIST = [
-  "https://s3.amazonaws.com/toyotaforklifts/content/20150902212609/mid-electric-hero.png",
-  "https://s3.amazonaws.com/toyotaforklifts/content/20150902212609/mid-electric-hero.png",
-  "https://s3.amazonaws.com/toyotaforklifts/content/20150902212609/mid-electric-hero.png",
-  "https://s3.amazonaws.com/toyotaforklifts/content/20150902212609/mid-electric-hero.png"
-];
 
 @connect((state, ownProps) => {
   const { id } = ownProps.navigation.state.params;
   return {
     detail: state.equipment.listSearch.find(
       item => item.equipmentEntity.id === id
-    )
+    ),
+    isLoggedIn: state.auth.userIsLoggin
   };
 })
 class SearchDetail extends Component {
@@ -78,16 +74,6 @@ class SearchDetail extends Component {
     });
   }
 
-  _setModalVisible(visible) {
-    this.setState({ modalVisible: visible });
-  }
-
-  _selectDate = date => {
-    this.setState(() => ({
-      selectedDate: date
-    }));
-  };
-
   _confirmDate = ({ startDate, endDate }) => {
     const {
       id,
@@ -114,20 +100,6 @@ class SearchDetail extends Component {
       name: name,
       query: query
     });
-  };
-
-  _openCalendar = () => {
-    this.calendar && this.calendar.open();
-  };
-
-  _openCalendarCart = () => {
-    this.calendarCart && this.calendarCart.open();
-  };
-
-  _handleRangeDate = dates => {
-    let minDate = new Date(Math.min.apply(null, dates));
-    let maxDate = new Date(Math.max.apply(null, dates));
-    this.setState({ minDate: minDate, maxDate: maxDate });
   };
 
   _handleFormatDate = date => {
@@ -206,19 +178,6 @@ class SearchDetail extends Component {
     );
   };
 
-  // _renderCalendar = availableDateRange => {
-  //   return (
-  //     <Calendar
-  //       visible={this.state.calendarVisible}
-  //       onLeftButtonPress={() => this._setCalendarVisible(false)}
-  //       onSelectDate={(fromDate, endDate, visible) =>
-  //         this._onSelectDate(id, fromDate, endDate, visible)
-  //       }
-  //       availableDateRange={availableDateRange}
-  //     />
-  //   );
-  // };
-
   _onSelectDate = (fromDate, toDate, modalVisible) => {
     const { id } = this.props.detail.equipmentEntity;
     let newToDate = toDate ? toDate : this._handleAddMoreMonth(fromDate, 3);
@@ -231,23 +190,6 @@ class SearchDetail extends Component {
     };
     this.props.navigation.navigate("ConfirmCart", { cart });
   };
-
-  // _renderCalendar = (beginDate, endDate) => (
-  //   <Calendar
-  //     visible={this.state.calendarVisible}
-  //     onLeftButtonPress={() => this._setCalendarVisible(false)}
-  //     onSelectDate={this._onSelectDate}
-  //     fromDate={beginDate}
-  //     endDate={endDate}
-  //   />
-  // );
-
-  // _setCalendarVisible = visible => {
-  //   this.setState({
-  //     calendarVisible: visible
-  //   });
-  // };
-
   _onAddToCart = ({ startDate, endDate }) => {
     const { id } = this.props.detail.equipmentEntity;
     // this.setState({ fromDate, toDate, calendarVisible: false });
@@ -261,42 +203,34 @@ class SearchDetail extends Component {
     this.props.navigation.navigate("ConfirmCart", { cart });
   };
 
-  _renderRangeItem = (index, item) => (
-    <View key={index} style={styles.rowWrapper}>
-      <View style={styles.columnWrapper}>
-        <Text style={[styles.text, { marginBottom: 10 }]}>
-          From: {new Date(item.beginDate).toDateString()}
-        </Text>
-        <Text style={styles.text}>
-          To: {new Date(item.endDate).toDateString()}
-        </Text>
-      </View>
-
-      <TouchableOpacity onPress={this._openCalendarCart}>
+  _showAvailableTimeRange = (item, index) => {
+    return (
+      <View key={index} style={styles.dateBoxWrapper}>
+        <View>
+          <Text style={styles.captionText}>From</Text>
+          <Text style={styles.text}>
+            {moment(item.beginDate).format("DD MMM, YYYY")}
+          </Text>
+        </View>
         <Text
           style={{
-            color: colors.secondaryColorOpacity,
-            fontSize: fontSize.secondaryText
+            fontSize: fontSize.caption,
+            color: colors.text68,
+            fontWeight: "500",
+            marginTop: 15
           }}
         >
-          Add to cart
+          ▶
         </Text>
-      </TouchableOpacity>
-      <Calendar
-        i18n="en"
-        ref={calendar => {
-          this.calendarCart = calendar;
-        }}
-        format="YYYY-MM-DD"
-        minDate={item.beginDate}
-        maxDate={item.endDate}
-        startDate={this.state.startDate}
-        endDate={this.state.endDate}
-        onConfirm={this._onAddToCart}
-      />
-      {/* {this._renderCalendar(item.beginDate, item.endDate)} */}
-    </View>
-  );
+        <View>
+          <Text style={[styles.captionText, { textAlign: "right" }]}>To</Text>
+          <Text style={styles.text}>
+            {moment(item.endDate).format("DD MMM, YYYY")}
+          </Text>
+        </View>
+      </View>
+    );
+  };
 
   _renderScrollItem = () => {
     const {
@@ -311,8 +245,11 @@ class SearchDetail extends Component {
       deliveryPrice,
       description,
       thumbnailImage,
-      equipmentImages
+      equipmentImages,
+      latitude,
+      longitude
     } = this.props.detail.equipmentEntity;
+    console.log(this.props.detail);
     return (
       <View
         style={{
@@ -335,7 +272,9 @@ class SearchDetail extends Component {
         </View>
         <View style={styles.textWrapper}>
           <View style={{ flexDirection: "column", justifyContent: "center" }}>
-            <Text style={styles.text}>{contractor.name}</Text>
+            <Text style={[styles.text, { fontWeight: "600" }]}>
+              {contractor.name}
+            </Text>
             <Text style={styles.text}>Phone: {contractor.phoneNumber}</Text>
           </View>
           <View
@@ -350,8 +289,9 @@ class SearchDetail extends Component {
           </View>
         </View>
         <Title title={"Available Time Range"} />
+
         {availableTimeRanges.map((item, index) =>
-          this._renderRangeItem(index, item)
+          this._showAvailableTimeRange(index, item)
         )}
         <Title title={"Pricing"} />
         <View style={styles.rowWrapper}>
@@ -383,20 +323,26 @@ class SearchDetail extends Component {
         ) : null}
 
         <Title title={"Location"} />
-        <Text style={[styles.text, { paddingVertical: 5 }]}>{address}</Text>
+        <Text
+          style={[styles.text, { color: colors.text68, alignItems: "center" }]}
+        >
+          <MaterialIcons name={"location-on"} size={15} color={colors.text68} />
+          {address}
+        </Text>
         {this.state.finishedAnimation && (
           <MapView
             style={styles.mapWrapper}
             initialRegion={{
-              latitude: 10.831668,
-              longitude: 106.682495,
+              latitude: latitude,
+              longitude: longitude,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421
             }}
           >
             <Marker
-              coordinate={{ latitude: 10.831668, longitude: 106.682495 }}
-              title={"Me"}
+              coordinate={{ latitude: latitude, longitude: longitude }}
+              title={"Contractor location"}
+              image={require("../../../assets/icons/icon8-marker-96.png")}
             />
           </MapView>
         )}
@@ -436,11 +382,19 @@ class SearchDetail extends Component {
           forceInset={{ bottom: "always" }}
           style={styles.bottomWrapper}
         >
-          <Button
-            text={"Book Now"}
-            onPress={() => this._setCalendarVisible(true)}
-            buttonStyle={{ marginTop: 0, backgroundColor: "transparent" }}
-          />
+          {this.props.isLoggedIn ? (
+            <Button
+              text={"Book Now"}
+              onPress={() => this._setCalendarVisible(true)}
+              buttonStyle={{ marginTop: 0, backgroundColor: "transparent" }}
+            />
+          ) : (
+            <Button
+              text={"Login to book "}
+              onPress={() => this.props.navigation.navigate("Login")}
+              buttonStyle={{ marginTop: 0, backgroundColor: "transparent" }}
+            />
+          )}
         </SafeAreaView>
       </SafeAreaView>
     );
@@ -463,10 +417,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 5
   },
-  columnWrapper: {
-    flexDirection: "column",
-    justifyContent: "center"
-  },
   title: {
     color: colors.primaryColor,
     fontSize: fontSize.h2,
@@ -474,34 +424,22 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.text,
-    fontSize: fontSize.bodyText
+    fontSize: fontSize.secondaryText,
+    marginBottom: 5
   },
   price: {
     fontSize: fontSize.h3,
-    fontWeight: "600"
+    fontWeight: "600",
+    color: colors.secondaryColor
   },
   description: {
     color: colors.text50,
     fontSize: fontSize.bodyText,
     fontWeight: "600"
   },
-  checkAvailability: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: 180,
-    height: 35,
-    borderRadius: 5,
-    backgroundColor: colors.primaryColor
-  },
-  image: {
-    width: 120,
-    height: 120,
-    marginRight: 10,
-    marginTop: 5
-  },
   mapWrapper: {
     flex: 1,
-    height: 300,
+    height: 400,
     marginBottom: 15
   },
   bottomWrapper: {
@@ -523,15 +461,23 @@ const styles = StyleSheet.create({
     height: 200,
     backgroundColor: "transparent"
   },
-  loadingView: {
-    position: "absolute",
-    justifyContent: "center",
+  dateBoxWrapper: {
+    flexDirection: "row",
+    backgroundColor: colors.gray,
+    paddingHorizontal: 15,
+    paddingBottom: 15,
+    marginTop: 10,
+    marginBottom: 5,
+    borderRadius: 5,
     alignItems: "center",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,.5)"
+    justifyContent: "space-between"
+  },
+  captionText: {
+    fontSize: fontSize.caption,
+    color: colors.text50,
+    fontWeight: "500",
+    marginTop: 10,
+    marginBottom: 5
   }
 });
 

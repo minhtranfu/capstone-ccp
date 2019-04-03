@@ -15,6 +15,7 @@ import { updateEquipmentStatus } from "../../redux/actions/equipment";
 import { cancelTransaction } from "../../redux/actions/transaction";
 import moment from "moment";
 
+import ParallaxList from "../../components/ParallaxList";
 import Title from "../../components/Title";
 import Calendar from "../../components/Calendar";
 import Header from "../../components/Header";
@@ -212,7 +213,7 @@ class ActivityDetail extends Component {
             <Button
               text={"Cancel"}
               onPress={this._handleCancelRequestTransaction}
-              wrapperStyle={{ marginTop: 15 }}
+              wrapperStyle={{ marginTop: 15, marginBottom: 15 }}
             />
           </View>
         );
@@ -376,7 +377,7 @@ class ActivityDetail extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text style={styles.header}>Request Transaction</Text>
+          <Text style={styles.header}>Equipment request</Text>
         </Header>
         {detail ? (
           <ScrollView>{this._renderScrollViewItem(detail)}</ScrollView>
@@ -420,12 +421,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontWeight: "500",
+    marginBottom: 5
   },
   text: {
     fontSize: fontSize.secondaryText,
     fontWeight: "500",
-    paddingBottom: 5
+    marginBottom: 5
   },
   price: {
     color: colors.secondaryColor,

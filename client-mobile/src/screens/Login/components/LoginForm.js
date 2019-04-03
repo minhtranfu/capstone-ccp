@@ -56,18 +56,7 @@ class LoginForm extends Component {
           textStyle={styles.textStyle}
           onPress={onPress}
         />
-        <Text
-          style={[
-            styles.forgotPassword,
-            { alignSelf: "center", marginTop: 10 }
-          ]}
-        >
-          Forgot your password?
-          <Text style={{ color: colors.text68, fontWeight: "600" }}>
-            {" "}
-            | Sign Up
-          </Text>
-        </Text>
+
         {/* <Text style={styles.caption}>Forgot your password?</Text> */}
       </View>
     );

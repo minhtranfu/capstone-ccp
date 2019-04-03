@@ -129,17 +129,18 @@ class Account extends Component {
   }
 
   async componentDidUpdate(prevProps) {
-    if (this.props.isLoggedIn && Object.entries(prevProps.user).length === 0) {
-      console.log(this.props.user);
+    // Check if user is first time login
+    if (this.props.isLoggedIn && Object.keys(prevProps.user).length === 0) {
       this.props.fetchGetContractorDetail(this.props.user.contractor.id);
-      if (this.state.switchValue === true) {
-        await this._handlePermissionNotification();
-        await this._registerForPushNotificationsAsync();
-      } else {
-        this._handleRemoveToken();
-      }
     } else {
       console.log(prevProps.user);
+    }
+    //Check if user is login so access push notification
+    if (this.props.isLoggedIn && this.state.switchValue === true) {
+      await this._handlePermissionNotification();
+      await this._registerForPushNotificationsAsync();
+    } else {
+      this._handleRemoveToken();
     }
   }
 
@@ -161,7 +162,7 @@ class Account extends Component {
       Permissions.NOTIFICATIONS
     );
     let finalStatus = existingStatus;
-
+    console.log("final", finalStatus);
     if (existingStatus !== "granted") {
       const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
       finalStatus = status;
@@ -177,6 +178,7 @@ class Account extends Component {
   _registerForPushNotificationsAsync = async () => {
     // Get the token that uniquely identifies this device
     let token = await Notifications.getExpoPushTokenAsync();
+    console.log(token);
     if (token) {
       const notiToken = {
         registrationToken: token,

@@ -22,7 +22,7 @@ class MaterialSearchItem extends PureComponent {
   };
 
   state = {
-    imageFailed: false,
+    imageFailed: false
   };
 
   render() {
@@ -47,17 +47,45 @@ class MaterialSearchItem extends PureComponent {
           activeOpacity={0.9}
         >
           <ImageCache
-            uri={!this.state.imageFailed ? imageUrl : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg"}
-            style={{ height: 160, backgroundColor: '#e9e9e9', }}
-            resizeMode={ !this.state.imageFailed ? "cover" : "contain"}
-            onError={()=>{this.setState({imageFailed: true})}}
+            uri={
+              !this.state.imageFailed
+                ? imageUrl
+                : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg"
+            }
+            style={{ height: 160, backgroundColor: "#e9e9e9" }}
+            resizeMode={!this.state.imageFailed ? "cover" : "contain"}
+            onError={() => {
+              this.setState({ imageFailed: true });
+            }}
           />
           <View style={{ paddingHorizontal: 10, paddingVertical: 10 }}>
             <Text style={[styles.nameText, {}]}>{name}</Text>
-            <Text style={styles.text}>{manufacturer}</Text>
-            <Text style={[styles.text, { color: colors.secondaryColor, fontWeight: '600' }]}>{price}k VND</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between"
+              }}
+            >
+              <Text style={styles.text}>{manufacturer}</Text>
+              <Text
+                style={[
+                  styles.text,
+                  { color: colors.secondaryColor, fontWeight: "600" }
+                ]}
+              >
+                {price}k VND
+              </Text>
+            </View>
             <Text
-              style={[styles.text, { paddingBottom: 5, fontSize: fontSize.caption, color: colors.text50 }]}
+              style={[
+                styles.text,
+                {
+                  paddingBottom: 5,
+                  fontSize: fontSize.caption,
+                  color: colors.text50
+                }
+              ]}
               numberOfLines={2}
             >
               {description}
@@ -75,7 +103,7 @@ const styles = StyleSheet.create({
     ...colors.shadow,
     elevation: 2,
     marginBottom: 20,
-    marginTop: 5,
+    marginTop: 5
   },
   titleWrapper: {
     flexDirection: "row",

@@ -61,6 +61,7 @@ import Feedback from "../screens/MyRequest/Feedback";
 import AddSubscription from "../screens/Account/AddSubscription";
 import CancelBid from "../screens/MyTransaction/components/CancelBid";
 import EditSubscription from "../screens/Account/EditSubscription";
+import Register from "../screens/Login/Register";
 // import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
@@ -124,7 +125,8 @@ const AccountStack = createStackNavigator(
     ConstructionDetail: ConstructionDetail,
     Subcription: Subscription,
     AddSubscription: AddSubscription,
-    EditSubscription: EditSubscription
+    EditSubscription: EditSubscription,
+    Register: Register
     // AuthLoading: AuthLoading,
     // Auth: AuthStack
   },

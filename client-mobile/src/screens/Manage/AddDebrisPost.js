@@ -244,7 +244,6 @@ class AddDebrisPost extends Component {
                       resizeMode={"contain"}
                       style={{ width: 24, height: 24 }}
                     />
-                    <Text style={styles.text}>Remove</Text>
                   </TouchableOpacity>
                 </View>
               ))

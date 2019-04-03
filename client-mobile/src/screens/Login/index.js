@@ -126,6 +126,19 @@ class Login extends Component {
               onChangePassword={value => this._onChangeText("password", value)}
               onPress={this._signIn}
             />
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={[styles.forgotPassword]}>
+                Forgot your password? |
+              </Text>
+              <TouchableOpacity
+                style={{ alignItems: "center" }}
+                onPress={() => this.props.navigation.navigate("Register")}
+              >
+                <Text style={{ color: colors.text68, fontWeight: "600" }}>
+                  Sign Up
+                </Text>
+              </TouchableOpacity>
+            </View>
           </KeyboardAvoidingView>
         </ScrollView>
       </SafeAreaView>

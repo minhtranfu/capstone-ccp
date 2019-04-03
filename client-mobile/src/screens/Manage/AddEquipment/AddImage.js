@@ -162,7 +162,7 @@ class AddImage extends Component {
             style={{
               width: width,
               height: height,
-              position: "absolute",
+              zIndex: 1,
               backgroundColor: "white",
               justifyContent: "center",
               alignItems: "center"

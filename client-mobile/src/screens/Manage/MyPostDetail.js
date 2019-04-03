@@ -8,7 +8,7 @@ import {
   ScrollView
 } from "react-native";
 import { connect } from "react-redux";
-import moment  from "moment";
+import moment from "moment";
 import {
   addTypeServices,
   removeTypeServices,
@@ -17,26 +17,33 @@ import {
 } from "../../redux/actions/debris";
 import Feather from "@expo/vector-icons/Feather";
 
-import AutoComplete from '../../components/AutoComplete';
+import AutoComplete from "../../components/AutoComplete";
 import Button from "../../components/Button";
 import Header from "../../components/Header";
 import InputField from "../../components/InputField";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
-import Title from '../../components/Title';
+import Title from "../../components/Title";
 
 const Bid = ({ bid }) => {
-  const {
-    createdTime,
-    description,
-    price,
-    status,
-    supplier,
-  } = bid;
+  const { createdTime, description, price, status, supplier } = bid;
   return (
-    <View style={{paddingBottom: 5, paddingTop: 15, ...colors.shadow, backgroundColor: 'white', paddingHorizontal: 15, borderRadius: 10, marginBottom: 15, marginTop: 5 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+    <View
+      style={{
+        paddingBottom: 5,
+        paddingTop: 15,
+        ...colors.shadow,
+        backgroundColor: "white",
+        paddingHorizontal: 15,
+        borderRadius: 10,
+        marginBottom: 15,
+        marginTop: 5
+      }}
+    >
+      <View
+        style={{ flexDirection: "row", alignItems: "center", marginBottom: 5 }}
+      >
         <View style={{ flex: 1, marginRight: 8 }}>
           <Text style={styles.bidSupplierName}>{supplier.name}</Text>
           <Text style={styles.bidTime}>{moment(createdTime).fromNow()}</Text>
@@ -44,16 +51,40 @@ const Bid = ({ bid }) => {
         <Text style={styles.bidPrice}>{`${price}k VND`}</Text>
       </View>
       <Text style={styles.bidDescription}>{description}</Text>
-      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.text50, padding: 10}}>
-        <View style={{ flexDirection: 'row', borderWidth: 1, borderColor: colors.text25, padding: 8, borderRadius: 5 }}>
-          <Feather name={'thumbs-up'} size={16} color={'green'}/>
-          <Text style={{ marginLeft: 3, color: colors.text, fontSize: fontSize.secondaryText, fontWeight: '500'}}>
+      <TouchableOpacity
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderTopColor: colors.text50,
+          padding: 10
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            borderWidth: 1,
+            borderColor: colors.text25,
+            padding: 8,
+            borderRadius: 5
+          }}
+        >
+          <Feather name={"thumbs-up"} size={16} color={"green"} />
+          <Text
+            style={{
+              marginLeft: 3,
+              color: colors.text,
+              fontSize: fontSize.secondaryText,
+              fontWeight: "500"
+            }}
+          >
             Accept
           </Text>
         </View>
       </TouchableOpacity>
     </View>
-  )
+  );
 };
 
 @connect(
@@ -110,6 +141,10 @@ class MyPostDetail extends Component {
     this.props.fetchClearTypeServices();
   }
 
+  _capitalizeLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   _handleInputChanged = (field, value) => {
     this.setState({
       data: {
@@ -142,7 +177,7 @@ class MyPostDetail extends Component {
     const { typeServices } = this.props;
     return (
       <View>
-        <Title title={"Information"}/>
+        <Title title={"Information"} />
         <InputField
           label={"Tittle"}
           placeholder={"Input your title"}
@@ -150,7 +185,7 @@ class MyPostDetail extends Component {
           customWrapperStyle={{ marginBottom: 15 }}
           inputType="text"
           onChangeText={value => this._handleInputChanged("title", value)}
-          value={postDetail.title}
+          value={this._capitalizeLetter(postDetail.title)}
           returnKeyType={"next"}
           editable={editMode}
         />
@@ -165,8 +200,10 @@ class MyPostDetail extends Component {
           returnKeyType={"next"}
           editable={editMode}
         />
-        <View style={{flexDirection: 'row', alignItems: 'center', marginTop: -10}}>
-        <Title title={"Service Requirement Types"}/>
+        <View
+          style={{ flexDirection: "row", alignItems: "center", marginTop: -10 }}
+        >
+          <Title title={"Service Requirement Types"} />
           {editMode && (
             <TouchableOpacity
               style={{ flexDirection: "row", alignItems: "center" }}
@@ -175,31 +212,32 @@ class MyPostDetail extends Component {
               <Feather name="plus-circle" size={20} />
             </TouchableOpacity>
           )}
-
         </View>
 
         <View>
           {typeServices !== undefined && typeServices.length > 0 ? (
             typeServices.map(item => (
               <View style={styles.rowTypeWrapper} key={item.id}>
-                <Text style={styles.text}>{item.name}</Text>
-                <TouchableOpacity
-                  onPress={() => this.props.fetchRemoveTypeServices(item.id)}
-                >
-                  <Text style={styles.text}>Remove</Text>
-                </TouchableOpacity>
+                <Text style={styles.text}>
+                  {this._capitalizeLetter(item.name)}
+                </Text>
+                {editMode ? (
+                  <TouchableOpacity
+                    onPress={() => this.props.fetchRemoveTypeServices(item.id)}
+                  >
+                    <Text style={styles.text}>Remove</Text>
+                  </TouchableOpacity>
+                ) : null}
               </View>
             ))
           ) : (
-            <Text style={styles.emptyText}>No service information provided</Text>
+            <Text style={styles.emptyText}>
+              No service information provided
+            </Text>
           )}
-          {!editMode && (
-            <Title title={`Bids (${bids.length})`}/>
-          )}
-          {
-            !editMode && bids.map(bid => <Bid key={bid.id.toString()} bid={bid}/>)
-          }
-
+          {!editMode && <Title title={`Bids (${bids.length})`} />}
+          {!editMode &&
+            bids.map(bid => <Bid key={bid.id.toString()} bid={bid} />)}
         </View>
       </View>
     );
@@ -211,7 +249,7 @@ class MyPostDetail extends Component {
     return (
       <SafeAreaView
         style={styles.container}
-        forceInset={{ top: "always", bottom: 'none' }}
+        forceInset={{ top: "always", bottom: "none" }}
       >
         <Header
           renderLeftButton={() => (
@@ -219,19 +257,41 @@ class MyPostDetail extends Component {
               <Feather name="arrow-left" size={24} />
             </TouchableOpacity>
           )}
-          renderRightButton={() => (
-            editMode ?
-            <TouchableOpacity onPress={() => this.setState({editMode: !this.state.editMode})}>
-              <Text style={{fontWeight: '500', color: colors.text, fontSize: fontSize.bodyText}}>
-                Cancel
-              </Text>
-            </TouchableOpacity> :
-              <TouchableOpacity onPress={() => this.setState({editMode: !this.state.editMode})}>
-                <Text style={{fontWeight: '500', color: colors.text, fontSize: fontSize.bodyText}}>
+          renderRightButton={() =>
+            editMode ? (
+              <TouchableOpacity
+                onPress={() =>
+                  this.setState({ editMode: !this.state.editMode })
+                }
+              >
+                <Text
+                  style={{
+                    fontWeight: "500",
+                    color: colors.text,
+                    fontSize: fontSize.bodyText
+                  }}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={() =>
+                  this.setState({ editMode: !this.state.editMode })
+                }
+              >
+                <Text
+                  style={{
+                    fontWeight: "500",
+                    color: colors.text,
+                    fontSize: fontSize.bodyText
+                  }}
+                >
                   Edit
                 </Text>
               </TouchableOpacity>
-          )}
+            )
+          }
         >
           <Text style={styles.header}>Post Detail</Text>
         </Header>
@@ -240,8 +300,8 @@ class MyPostDetail extends Component {
         </ScrollView>
         {editMode && (
           <SafeAreaView
-            forceInset={{ bottom: "always", }}
-            style={{backgroundColor: colors.primaryColor}}
+            forceInset={{ bottom: "always" }}
+            style={{ backgroundColor: colors.primaryColor }}
           >
             <Button
               text={"Save"}
@@ -259,7 +319,7 @@ class MyPostDetail extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: "column"
   },
   rowTypeWrapper: {
     flexDirection: "row",
@@ -269,7 +329,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: fontSize.bodyText,
     fontWeight: "500",
-    color: colors.text,
+    color: colors.text
   },
   emptyText: {
     fontSize: fontSize.secondaryText,
@@ -295,7 +355,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize.bodyText,
     color: colors.text,
     fontWeight: "400",
-    marginBottom: 10,
+    marginBottom: 10
   },
   bidPrice: {
     fontSize: fontSize.bodyText,

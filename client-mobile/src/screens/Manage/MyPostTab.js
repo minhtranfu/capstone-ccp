@@ -26,20 +26,22 @@ class MyPostTab extends Component {
 
   _renderDebris = listArticle => (
     <View style={{ flex: 1 }}>
-      {listArticle.map(item => (
-        <DebrisItem
-          key={item.id}
-          title={item.title}
-          address={item.address}
-          debrisBids={item.debrisBids}
-          debrisServiceTypes={item.debrisServiceTypes}
-          onPress={() =>
-            this.props.navigation.navigate("MyPostDetail", {
-              id: item.id
-            })
-          }
-        />
-      ))}
+      {listArticle
+        .filter(item => item.status === "PENDING")
+        .map(item => (
+          <DebrisItem
+            key={item.id}
+            title={item.title}
+            address={item.address}
+            debrisBids={item.debrisBids}
+            debrisServiceTypes={item.debrisServiceTypes}
+            onPress={() =>
+              this.props.navigation.navigate("MyPostDetail", {
+                id: item.id
+              })
+            }
+          />
+        ))}
     </View>
   );
 

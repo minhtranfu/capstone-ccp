@@ -78,8 +78,8 @@ class EquipmentResult extends Component {
       query.main_text,
       lat,
       long,
-      moment(beginDate).format('YYYY-MM-DD'),
-      moment(endDate).format('YYYY-MM-DD'),
+      moment(beginDate).format("YYYY-MM-DD"),
+      moment(endDate).format("YYYY-MM-DD"),
       equipmentTypeId
     );
   }
@@ -288,8 +288,8 @@ class EquipmentResult extends Component {
                             moment(endDate).format("DD MMM, YYYY")}
                         </Text>
                         <Text style={styles.caption}>
-                          {`${equipmentCat || "Any"} ▶ ${equipmentType ||
-                            "Any"}`}
+                          {`${equipmentCat ||
+                            "Any caterogy"} ▶ ${equipmentType || "Any type"}`}
                         </Text>
                       </View>
                       <TouchableOpacity

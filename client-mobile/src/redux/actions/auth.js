@@ -36,7 +36,7 @@ export function logOut() {
 }
 
 export function register(user) {
-  return axios.post("register", user);
+  return axios.post("authen/register", user);
 }
 
 export function isSignedIn() {
