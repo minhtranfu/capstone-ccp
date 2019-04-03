@@ -366,8 +366,20 @@ public class ContractorEntity {
 
 
 	public enum Status {
-		NOT_VERIFIED,
-		ACTIVATED,
-		DEACTIVATED
+		NOT_VERIFIED("not verified"),
+		ACTIVATED("activated"),
+		DEACTIVATED("deactivated");
+
+		private String beautifiedName;
+
+		Status(String beautifiedName) {
+
+			this.beautifiedName = beautifiedName;
+		}
+
+		public String getBeautifiedName() {
+			return beautifiedName;
+		}
+
 	}
 }

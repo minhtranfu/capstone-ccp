@@ -29,6 +29,11 @@ public class HiringTransactionValidator {
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(hiringTransactionRequest.getEquipmentId());
 		ContractorEntity foundRequester = contractorDAO.findByIdWithValidation(hiringTransactionRequest.getRequesterId());
 
+		//  4/3/19 validate if active
+		if (!foundRequester.isActivated()) {
+			throw new BadRequestException(String.format("Requester %s is %s",
+					foundRequester.getName(), foundRequester.getStatus().getBeautifiedName()));
+		}
 
 		//todo validate supplier cannot request his own equipment
 		if (foundEquipment.getContractor().getId() == foundRequester.getId()) {

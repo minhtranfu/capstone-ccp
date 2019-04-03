@@ -16,7 +16,7 @@ public class ContractorDAO extends BaseDAO<ContractorEntity, Long> {
 	}
 
 	public void validateContractorActivated(ContractorEntity managedContractorEntity) {
-		if (managedContractorEntity.getStatus() == ContractorEntity.Status.DEACTIVATED) {
+		if (managedContractorEntity.getStatus() != ContractorEntity.Status.ACTIVATED) {
 			throw new BadRequestException(String.format("Contractor id=%d must be activated"
 					, managedContractorEntity.getId()));
 		}

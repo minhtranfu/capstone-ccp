@@ -134,8 +134,15 @@ public class HiringTransactionResource {
 		}
 
 		EquipmentEntity foundEquipment = foundTransaction.getEquipment();
+		ContractorEntity foundContractor = foundEquipment.getContractor();
 		switch (transactionEntity.getStatus()) {
 			case PENDING:
+				//  4/3/19 validate if active
+				if (!foundContractor.isActivated()) {
+					throw new BadRequestException(String.format("Supplier %s is %s",
+							foundContractor.getName(), foundContractor.getStatus().getBeautifiedName()));
+				}
+				
 				//validate
 				if (foundTransaction.getStatus() != transactionEntity.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
@@ -145,6 +152,12 @@ public class HiringTransactionResource {
 				break;
 			case ACCEPTED:
 				//validate
+
+				//  4/3/19 validate if active
+				if (!foundContractor.isActivated()) {
+					throw new BadRequestException(String.format("Supplier %s is %s",
+							foundContractor.getName(), foundContractor.getStatus().getBeautifiedName()));
+				}
 
 				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING
 						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
@@ -191,7 +204,7 @@ public class HiringTransactionResource {
 				}
 
 
-				// TODO: 2/18/19 validate there'are no processing transaction related to equipment
+				//  2/18/19 validate there'are no processing transaction related to equipment
 				List<HiringTransactionEntity> processingTransactionsByEquipmentId = hiringTransactionDAO.getProcessingTransactionsByEquipmentId(foundEquipment.getId());
 				if (processingTransactionsByEquipmentId.size() > 0) {
 					if (processingTransactionsByEquipmentId.size() == 1) {
@@ -205,7 +218,7 @@ public class HiringTransactionResource {
 					}
 				}
 
-				// TODO: 2/18/19 validate equipment status must be available
+				// 2/18/19 validate equipment status must be available
 				if (foundEquipment.getStatus() != EquipmentEntity.Status.AVAILABLE) {
 					throw new BadRequestException(String.format("Equipment id=%d status must be AVAILABLE to process transaction", foundEquipment.getId()));
 				}

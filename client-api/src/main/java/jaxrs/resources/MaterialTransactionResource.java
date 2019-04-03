@@ -165,13 +165,11 @@ public class MaterialTransactionResource {
 	@Path("{id:\\d+}")
 	public Response updateTransactionStatus(@PathParam("id") long id, MaterialTransactionEntity transactionEntity) {
 
-		// TODO: 3/10/19 validate authority
-
-
 		MaterialTransactionEntity foundTransaction = materialTransactionDAO.findByIdWithValidation(id);
 		if (transactionEntity.getStatus() == null) {
 			throw new BadRequestException("Status is null!");
 		}
+
 
 		long supplierId = foundTransaction.getSupplier().getId();
 		long requesterId = foundTransaction.getRequester().getId();
@@ -179,17 +177,21 @@ public class MaterialTransactionResource {
 		switch (transactionEntity.getStatus()) {
 			case PENDING:
 				//validate
-
 				if (foundTransaction.getStatus() != transactionEntity.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), transactionEntity.getStatus()));
-
 				}
 				break;
 			case ACCEPTED:
 				//validate
 				if (getClaimContractorId() != supplierId) {
 					throw new BadRequestException("Only supplier can change this status!");
+				}
+				// TODO: 3/10/19 validate status
+				//  4/3/19 validate if active
+				if (!foundTransaction.getSupplier().isActivated()) {
+					throw new BadRequestException(String.format("Supplier %s is %s",
+							foundTransaction.getSupplier().getName(), foundTransaction.getSupplier().getStatus().getBeautifiedName()));
 				}
 
 				if (foundTransaction.getStatus() != MaterialTransactionEntity.Status.PENDING

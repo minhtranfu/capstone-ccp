@@ -71,6 +71,7 @@ public class DebrisBidResource {
 
 		long supplierId = getClaimContractorId();
 
+		contractorDAO.validateContractorActivated(supplierId);
 
 		//3/21/19 validate cannot post his own post
 		DebrisPostEntity managedPost = debrisPostDAO.findByIdWithValidation(debrisBidEntity.getDebrisPost().getId());
@@ -140,8 +141,7 @@ public class DebrisBidResource {
 				throw new BadRequestException("Not allowed to change to " + request.getStatus());
 			case ACCEPTED:
 				//  3/20/19 check pending
-				// TODO: 3/21/19 let debrisTransaction handle this
-
+				//let debrisTransaction handle this
 				throw new BadRequestException("Not allowed to change to " + request.getStatus());
 //				if (managedDebrisBidEntity.getStatus() != DebrisBidEntity.Status.PENDING) {
 //					throw new BadRequestException(String.format("Cannot change from %s to %s",

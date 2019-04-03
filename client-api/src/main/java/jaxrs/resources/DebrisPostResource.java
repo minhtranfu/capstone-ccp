@@ -127,6 +127,7 @@ public class DebrisPostResource {
 		requester.setId(requesterId);
 		debrisPostEntity.setRequester(requester);
 
+		contractorDAO.validateContractorActivated(requesterId);
 		validatePutPost(debrisPostEntity);
 
 		debrisPostDAO.persist(debrisPostEntity);

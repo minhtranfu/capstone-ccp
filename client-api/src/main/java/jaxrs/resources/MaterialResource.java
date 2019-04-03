@@ -78,12 +78,18 @@ public class MaterialResource {
 	public Response postMaterial(@NotNull @Valid MaterialRequest materialRequest) {
 
 
+
 		MaterialEntity materialEntity = modelConverter.toEntity(materialRequest);
 
 		//get contractor from token
 		ContractorEntity foundContractor = contractorDAO.findByIdWithValidation(claimId.getValue().longValue());
 		materialEntity.setContractor(foundContractor);
 
+		// 4/3/19 validate contractor activated
+		if (!foundContractor.isActivated()) {
+			throw new BadRequestException(String.format("Supplier %s is %s",
+					foundContractor.getName(), foundContractor.getStatus().getBeautifiedName()));
+		}
 
 		validatePostPutMaterial(materialEntity);
 		materialDAO.persist(materialEntity);

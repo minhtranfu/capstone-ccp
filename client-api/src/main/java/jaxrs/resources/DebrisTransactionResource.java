@@ -72,6 +72,10 @@ public class DebrisTransactionResource {
 			throw new BadRequestException("Only Post Requester can make debris transaction!");
 		}
 
+		// 4/3/19 validate reqquester must be activated
+		contractorDAO.validateContractorActivated(requesterId);
+
+
 		// 3/21/19 validate status of post and bid
 		if (managedBid.getStatus() != DebrisBidEntity.Status.PENDING) {
 			throw new BadRequestException("DebrisBid must be PENDING to be ACCEPTED!");
@@ -116,14 +120,19 @@ public class DebrisTransactionResource {
 			throw new BadRequestException("Status is null!");
 		}
 
+
+
 		switch (statusRequest.getStatus()) {
 			case ACCEPTED:
 				//validate
+
 				if (foundTransaction.getStatus() != DebrisTransactionEntity.Status.ACCEPTED) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), statusRequest.getStatus()));
 
 				}
+				contractorDAO.validateContractorActivated(foundTransaction.getRequester());
+				contractorDAO.validateContractorActivated(foundTransaction.getSupplier());
 				break;
 			case DELIVERING:
 
