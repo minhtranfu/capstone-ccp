@@ -42,6 +42,7 @@ class Profile extends Component {
     }
   };
 
+  // Handle submit form update info
   _handleSubmitForm = async e => {
     e.preventDefault();
     const { isFetching, editedData } = this.state;
@@ -51,6 +52,7 @@ class Profile extends Component {
       return;
     }
 
+    // Prepare data for update contractor info
     const updateData = {
       ...contractor,
       ...editedData,
@@ -69,6 +71,7 @@ class Profile extends Component {
 
       const result = await userServices.updateContractorById(contractor.id, updateData);
 
+      // Update contractor info to redux to make change globally
       updateUserInfo({
         contractor: result
       });
@@ -88,6 +91,7 @@ class Profile extends Component {
     }
   };
 
+  // Update editedData in state when field was changed
   _handleFieldChanged = e => {
     const { name, value } = e.target;
     const { editedData } = this.state;
@@ -117,6 +121,49 @@ class Profile extends Component {
     }
 
     // Handle upload file[0]
+    this.setState({
+      isFetching: true
+    });
+    try {
+      // Upload avatar
+      const formData = new FormData();
+      formData.append('file', files[0]);
+      const uploadResult = await userServices.uploadAvatar(formData);
+      if (!uploadResult[0]) {
+        this.setState({
+          errorMessage: 'Can not upload, please try again!',
+          isFetching: false
+        });
+        return;
+      }
+
+      // Update avatar to current user
+      const thumbnailImageUrl = uploadResult[0];
+      const { contractor, updateUserInfo } = this.props;
+      const updateData = {
+        ...contractor,
+        thumbnailImageUrl
+      };
+      const updateResult = await userServices.updateContractorById(contractor.id, updateData);
+
+      // Update contractor info to redux to make change globally
+      updateUserInfo({
+        contractor: updateResult
+      });
+
+      this.setState({
+        isFetching: false,
+        isChangingAvatar: false,
+        successMessage: 'Your avatar has been updated!'
+      });
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+
+      this.setState({
+        errorMessage,
+        isFetching: false
+      });
+    }
   };
 
   // Discard all changes
@@ -144,6 +191,7 @@ class Profile extends Component {
     );
   };
 
+  // Render avatar and change avatar section
   _renderAvatarSection = () => {
     const { isChangingAvatar, editedData } = this.state;
     const { contractor } = this.props;
@@ -162,7 +210,7 @@ class Profile extends Component {
             />
           }
           {!isChangingAvatar &&
-            <img src={currentData.thumbnailImageUrl} alt="Avatar" className="w-100 rounded-circle" />
+            <img src={currentData.thumbnailImageUrl} alt="Avatar" className="rounded-circle" width="280" height="280"/>
           }
           <div>
             <button className="btn btn-outline-primary btn-sm mt-2"
@@ -174,6 +222,7 @@ class Profile extends Component {
     );
   };
 
+  // Render form update info section
   _renderFormSection = () => {
     const { isFetching, editedData } = this.state;
     const { contractor } = this.props;
@@ -231,6 +280,7 @@ class Profile extends Component {
     );
   };
 
+  // Render message
   _renderMessage = () => {
     const { successMessage, errorMessage } = this.state;
 
@@ -278,7 +328,8 @@ class Profile extends Component {
 }
 
 Profile.props = {
-  contractor: PropTypes.object.isRequired
+  contractor: PropTypes.object.isRequired,
+  updateUserInfo: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
