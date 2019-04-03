@@ -63,7 +63,17 @@ class SearchBox extends PureComponent {
         <div className="col-md-12">
           <h3>Search</h3>
         </div>
-        <div className="col-md-6">
+        <div className="col-md-3">
+          <div className="form-group">
+            <label htmlFor="equipment_keyword">Keyword:</label>
+            <input type="text" className="form-control"
+              name="q"
+              id="equipment_keyword"
+              onChange={this._handleChangeCriteria}
+            />
+          </div>
+        </div>
+        <div className="col-md-3">
           <div className="form-group">
             <label htmlFor="equipment_type">Equipment type:</label>
             <select
@@ -78,7 +88,8 @@ class SearchBox extends PureComponent {
                   <option key={equipmentType.id} value={equipmentType.id}>
                     {equipmentType.name}
                   </option>
-                ))}
+                ))
+              }
             </select>
           </div>
         </div>

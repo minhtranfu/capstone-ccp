@@ -122,7 +122,7 @@ class Home extends Component {
                     <SubscriptionCardAdd
                       subscription={{
                         ...criteria,
-                        equipmentType: !criteria.equipmentTypeId ? undefined : { id: criteria.equipmentTypeId }
+                        equipmentType: !criteria.equipmentTypeId ? undefined : { id: +criteria.equipmentTypeId }
                       }}
                       onCancelEdit={this._toggleSubcribeBox}
                       onCreated={this._handleSubcribed}

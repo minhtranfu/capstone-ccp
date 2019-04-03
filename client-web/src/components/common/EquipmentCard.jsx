@@ -22,15 +22,11 @@ class EquipmentCard extends PureComponent {
               <h6 className="card-title">{product.name} <span className="float-right">{product.dailyPrice}K</span>
                 <span className="clearfix"></span>
               </h6>
-              {/* <div className="text-muted"><i className="fal fa-map-marker"></i> {product.address}</div> */}
-              {product.availableTimeRanges[0] &&
-                <div className="text-muted">
-                  <i className="fal fa-calendar"></i> {moment(product.availableTimeRanges[0].beginDate).format('YYYY/MM/DD')} - {moment(product.availableTimeRanges[0].endDate).format('YYYY/MM/DD')}
-                  {product.availableTimeRanges.length > 1 &&
-                    <i> ({product.availableTimeRanges.length - 1} more)</i>
-                  }
-                </div>
-              }
+              <div className="text-muted"><i className="fal fa-archive"></i> {product.equipmentType.name}</div>
+              <div className="text-muted d-flex align-items-center">
+                <img src={product.contractor.thumbnailImageUrl} alt={`${product.contractor.name}'s avatar`} className="rounded-cirle mr-2" width="50" height="50"/>
+                {product.contractor.name}
+              </div>
             </div>
           </div>
         </Link>
