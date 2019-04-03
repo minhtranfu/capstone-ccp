@@ -21,7 +21,8 @@ deploy_stage:
         cd /home/capstone/capstone-ccp-run-web/ &&
         git pull https://$GITUSER:$GITPASS@github.com/minhtranfu/capstone-ccp.git web-client &&
         cd client-web &&
-        yarn install &&
-        yarn build:prod &&
-        ln -s \"\$PWD/public\" \"\$PWD/dist\"
+        docker build -t client-web . &&
+        docker stop client-web-proxy &&
+        docker rm client-web-proxy &&
+        docker run -v $PWD/public:/home/capstone/web/public -d --network capstone-ccp_capstone-ccp -p 80:80 --name client-web-proxy client-web
         "
