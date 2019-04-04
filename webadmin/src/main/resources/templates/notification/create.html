@@ -37,6 +37,7 @@
                                 <form th:action="@{/notification/sendNotification}" method="post" th:object="${notification}"
                                       enctype="multipart/form-data">
                                     <div class="form-group">
+                                        <input type="hidden" th:field="*{contractorEntity.id}">
                                         <label>Title</label>
                                         <input th:field="*{title}" class="form-control" placeholder="Title">
                                     </div>
@@ -46,11 +47,10 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Contractor:</label>
-                                        <a th:href="@{/contractor/detail/{id}(id = *{contractorId})}">
-                                            <p th:text="${contractor.name}" class="link form-control-static"
+                                        <a th:href="@{/contractor/detail/{id}(id = *{contractorEntity.id})}">
+                                            <p th:text="*{contractorEntity.name}" class="link form-control-static"
                                                placeholder="Contractor" style="color: #1ab7ea;"></p>
                                         </a>
-                                        <input type="hidden" th:field="*{contractorId}">
                                     </div>
 
                                     <input type="Submit" value="Save" class="btn btn-success">

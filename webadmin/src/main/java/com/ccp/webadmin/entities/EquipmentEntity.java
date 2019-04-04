@@ -26,9 +26,6 @@ public class EquipmentEntity {
     @Column(name = "daily_price")
     private Double dailyPrice;
 
-    @Column(name = "delivery_price")
-    private Double deliveryPrice;
-
     @Column(name = "description", nullable = true, length = -1, columnDefinition = "TEXT")
     private String description;
 
@@ -37,7 +34,7 @@ public class EquipmentEntity {
     private Status status;
 
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private boolean isDeleted;
 
     @Column(name = "created_time", insertable = false, updatable = false)
     @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
@@ -110,14 +107,6 @@ public class EquipmentEntity {
         this.dailyPrice = dailyPrice;
     }
 
-    public Double getDeliveryPrice() {
-        return deliveryPrice;
-    }
-
-    public void setDeliveryPrice(Double deliveryPrice) {
-        this.deliveryPrice = deliveryPrice;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -134,11 +123,11 @@ public class EquipmentEntity {
         this.status = status;
     }
 
-    public Boolean getDeleted() {
+    public boolean getDeleted() {
         return isDeleted;
     }
 
-    public void setDeleted(Boolean deleted) {
+    public void setDeleted(boolean deleted) {
         isDeleted = deleted;
     }
 
@@ -214,25 +203,5 @@ public class EquipmentEntity {
         public String getValue() {
             return value;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "EquipmentEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", dailyPrice=" + dailyPrice +
-                ", deliveryPrice=" + deliveryPrice +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                ", isDeleted=" + isDeleted +
-                ", createdTime=" + createdTime +
-                ", updatedTime=" + updatedTime +
-                ", address='" + address + '\'' +
-                ", longitude=" + longitude +
-                ", lat=" + lat +
-                ", equipmentTypeEntity=" + equipmentTypeEntity +
-                ", contractorEntity=" + contractorEntity +
-                '}';
     }
 }

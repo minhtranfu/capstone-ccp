@@ -13,7 +13,6 @@ import java.util.List;
 public interface DebrisPostService {
     List<DebrisPostEntity> findAll();
 
-//    List<EquipmentEntity> findByEquipmentType(EquipmentTypeEntity equipmentTypeEntity);
 
     DebrisPostEntity findById(Integer id);
 
@@ -22,6 +21,4 @@ public interface DebrisPostService {
     void deleteById(Integer id);
 
     List<LineChartStatisticDTO> countPost(String byType, LocalDateTime beginDate, LocalDateTime endDate);
-
-    List<PieChartStatisticDTO> countEquipmentByEquipmentType(LocalDateTime beginDate, LocalDateTime endDate);
 }

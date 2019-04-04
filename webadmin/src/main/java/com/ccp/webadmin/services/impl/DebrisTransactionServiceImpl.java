@@ -1,5 +1,6 @@
 package com.ccp.webadmin.services.impl;
 
+import com.ccp.webadmin.dtos.LineChartStatisticDTO;
 import com.ccp.webadmin.dtos.StatisticHiringTransactionDTO;
 import com.ccp.webadmin.entities.DebrisTransactionEntity;
 import com.ccp.webadmin.repositories.DebrisTransactionRepository;
@@ -42,22 +43,43 @@ public class DebrisTransactionServiceImpl implements DebrisTransactionService {
     }
 
     @Override
-    public List<StatisticHiringTransactionDTO> statisticTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate) {
+    public List<StatisticHiringTransactionDTO> statisticDebrisTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate) {
         List<StatisticHiringTransactionDTO> statisticHiringTransactionDTOS = new ArrayList<>();
-//        switch (byType) {
-//            case "year":
-//                statisticHiringTransactionDTOS = debrisTransactionRepository.countStatisticByYear(beginDate,endDate);
-//                break;
-//            case "month":
-//                statisticHiringTransactionDTOS = debrisTransactionRepository.countStatisticByMonth(beginDate,endDate);
-//                break;
-//            case "week":
-//                statisticHiringTransactionDTOS = debrisTransactionRepository.countStatisticByWeek(beginDate,endDate);
-//                break;
-//            default:
-//                statisticHiringTransactionDTOS = debrisTransactionRepository.countStatisticByMonth(beginDate,endDate);
-//                break;
-//        }
+        switch (byType) {
+            case "year":
+                statisticHiringTransactionDTOS = debrisTransactionRepository.countStatisticByYear(beginDate,endDate);
+                break;
+            case "month":
+                statisticHiringTransactionDTOS = debrisTransactionRepository.countStatisticByMonth(beginDate,endDate);
+                break;
+            case "week":
+                statisticHiringTransactionDTOS = debrisTransactionRepository.countStatisticByWeek(beginDate,endDate);
+                break;
+            default:
+                statisticHiringTransactionDTOS = debrisTransactionRepository.countStatisticByMonth(beginDate,endDate);
+                break;
+        }
         return statisticHiringTransactionDTOS;
+    }
+
+    @Override
+    public List<LineChartStatisticDTO> statisticTotalDebrisTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate) {
+        List<LineChartStatisticDTO> lineChartStatisticDTOS = new ArrayList<>();
+        switch (byType) {
+            case "year":
+                lineChartStatisticDTOS = debrisTransactionRepository.countTotalTransactionByYear(beginDate,endDate);
+                break;
+            case "month":
+                lineChartStatisticDTOS = debrisTransactionRepository.countTotalTransactionByMonth(beginDate,endDate);
+                break;
+            case "week":
+                lineChartStatisticDTOS = debrisTransactionRepository.countTotalTransactionByWeek(beginDate,endDate);
+                break;
+            default:
+                lineChartStatisticDTOS = debrisTransactionRepository.countTotalTransactionByWeek(beginDate,endDate);
+                break;
+        }
+        return lineChartStatisticDTOS;
+
     }
 }

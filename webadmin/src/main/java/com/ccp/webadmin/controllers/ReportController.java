@@ -1,6 +1,7 @@
 package com.ccp.webadmin.controllers;
 
 import com.ccp.webadmin.entities.ContractorEntity;
+import com.ccp.webadmin.entities.NotificationEntity;
 import com.ccp.webadmin.entities.ReportEntity;
 import com.ccp.webadmin.entities.NotificationDeviceTokenEntity;
 import com.ccp.webadmin.services.*;
@@ -23,14 +24,16 @@ public class ReportController {
     private final ContractorService contractorService;
     private final NotificationDeviceTokenService notificationDeviceTokenService;
     private final PushNotifictionHelper pushNotifictionHelper;
+    private final NotificationService notificationService;
 
     @Autowired
-    public ReportController(ReportTypeService reportTypeService, ReportService reportService, ContractorService contractorService, NotificationDeviceTokenService notificationDeviceTokenService, PushNotifictionHelper pushNotifictionHelper) {
+    public ReportController(ReportTypeService reportTypeService, ReportService reportService, ContractorService contractorService, NotificationDeviceTokenService notificationDeviceTokenService, PushNotifictionHelper pushNotifictionHelper, NotificationService notificationService) {
         this.reportTypeService = reportTypeService;
         this.reportService = reportService;
         this.contractorService = contractorService;
         this.notificationDeviceTokenService = notificationDeviceTokenService;
         this.pushNotifictionHelper = pushNotifictionHelper;
+        this.notificationService = notificationService;
     }
 
     @GetMapping({"", "/", "/index"})
@@ -66,21 +69,27 @@ public class ReportController {
 
         foundFeedback.setStatus(reportEntity.getStatus());
         reportService.save(foundFeedback);
-
         String title = "Warning Contractor " + contractorEntity.getName();
         String content = "You has been violated 2 times. The next time, you will be deactivated";
+        String clickAction = "";
+        NotificationEntity notificationEntity = new NotificationEntity();
+        notificationEntity.setTitle(title);
+        notificationEntity.setContent(content);
+        notificationEntity.setClickAction(clickAction);
+        notificationEntity.setContractorEntity(contractorEntity);
         if (contractorEntity.countReceivedFeedbackEntity() == 2){
             try {
                 for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(contractorEntity)
                 ) {
-                    pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
-
+                    pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content, clickAction);
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            notificationService.save(notificationEntity);
         }
+
         Integer id = reportEntity.getId();
         return "redirect:detail/" +  id;
     }

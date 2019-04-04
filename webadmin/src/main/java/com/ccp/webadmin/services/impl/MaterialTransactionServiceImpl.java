@@ -1,5 +1,6 @@
 package com.ccp.webadmin.services.impl;
 
+import com.ccp.webadmin.dtos.LineChartStatisticDTO;
 import com.ccp.webadmin.dtos.StatisticHiringTransactionDTO;
 import com.ccp.webadmin.entities.HiringTransactionEntity;
 import com.ccp.webadmin.entities.MaterialTransactionEntity;
@@ -62,5 +63,45 @@ public class MaterialTransactionServiceImpl implements MaterialTransactionServic
                 break;
         }
         return statisticHiringTransactionDTOS;
+    }
+
+    @Override
+    public List<LineChartStatisticDTO> statisticTotalMaterialTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate) {
+        List<LineChartStatisticDTO> lineChartStatisticDTOS = new ArrayList<>();
+        switch (byType) {
+            case "year":
+                lineChartStatisticDTOS = materialTransactionRepository.countTotalTransactionByYear(beginDate,endDate);
+                break;
+            case "month":
+                lineChartStatisticDTOS = materialTransactionRepository.countTotalTransactionByMonth(beginDate,endDate);
+                break;
+            case "week":
+                lineChartStatisticDTOS = materialTransactionRepository.countTotalTransactionByWeek(beginDate,endDate);
+                break;
+            default:
+                lineChartStatisticDTOS = materialTransactionRepository.countTotalTransactionByWeek(beginDate,endDate);
+                break;
+        }
+        return lineChartStatisticDTOS;
+    }
+
+    @Override
+    public List<LineChartStatisticDTO> statisticTotalMaterialPrice(String byType, LocalDateTime beginDate, LocalDateTime endDate) {
+        List<LineChartStatisticDTO> lineChartStatisticDTOS = new ArrayList<>();
+        switch (byType) {
+            case "year":
+                lineChartStatisticDTOS = materialTransactionRepository.countTotalPriceTransactionByYear(beginDate,endDate);
+                break;
+            case "month":
+                lineChartStatisticDTOS = materialTransactionRepository.countTotalPriceTransactionByMonth(beginDate,endDate);
+                break;
+            case "week":
+                lineChartStatisticDTOS = materialTransactionRepository.countTotalPriceTransactionByWeek(beginDate,endDate);
+                break;
+            default:
+                lineChartStatisticDTOS = materialTransactionRepository.countTotalPriceTransactionByWeek(beginDate,endDate);
+                break;
+        }
+        return lineChartStatisticDTOS;
     }
 }

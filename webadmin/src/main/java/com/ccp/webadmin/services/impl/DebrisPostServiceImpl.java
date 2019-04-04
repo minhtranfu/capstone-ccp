@@ -47,28 +47,23 @@ public class DebrisPostServiceImpl implements DebrisPostService {
     @Override
     public List<LineChartStatisticDTO> countPost(String byType, LocalDateTime beginDate, LocalDateTime endDate) {
         List<LineChartStatisticDTO> lineChartStatisticDTOS = new ArrayList<>();
-//        switch (byType) {
-//            case "year":
-//                lineChartStatisticDTOS = equipmentRepository.countEquipmentByYear(beginDate,endDate);
-//                break;
-//            case "month":
-//                lineChartStatisticDTOS = equipmentRepository.countEquipmentByMonth(beginDate,endDate);
-//                break;
-//            case "week":
-//                lineChartStatisticDTOS = equipmentRepository.countEquipmentByWeek(beginDate,endDate);
-//                break;
-//            default:
-//                lineChartStatisticDTOS = equipmentRepository.countEquipmentByWeek(beginDate,endDate);
-//                break;
-//        }
+        switch (byType) {
+            case "year":
+                lineChartStatisticDTOS = debrisPostRepository.countDebrisPostByYear(beginDate,endDate);
+                break;
+            case "month":
+                lineChartStatisticDTOS = debrisPostRepository.countDebrisPostByMonth(beginDate,endDate);
+                break;
+            case "week":
+                lineChartStatisticDTOS = debrisPostRepository.countDebrisPostByWeek(beginDate,endDate);
+                break;
+            default:
+                lineChartStatisticDTOS = debrisPostRepository.countDebrisPostByWeek(beginDate,endDate);
+                break;
+        }
         return lineChartStatisticDTOS;
     }
 
-    @Override
-    public List<PieChartStatisticDTO> countEquipmentByEquipmentType(LocalDateTime beginDate, LocalDateTime endDate) {
-//        return equipmentRepository.countEquipmentByEquipmentType(beginDate, endDate);
-        return null;
-    }
 
 
 }

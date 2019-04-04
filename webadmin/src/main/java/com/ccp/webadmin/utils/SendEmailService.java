@@ -33,7 +33,7 @@ public class SendEmailService {
             }
         });
         Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress("truongtokiet@gmail.com", false));
+        msg.setFrom(new InternetAddress("ccphotronguoidung@gmail.com", false));
 
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
         msg.setSubject("Staff Account Information");
@@ -51,41 +51,6 @@ public class SendEmailService {
         MimeBodyPart attachPart = new MimeBodyPart();
 
         attachPart.attachFile("/Users/mymac/capstone-ccp/webadmin/src/main/resources/static/images/logo.png");
-        multipart.addBodyPart(attachPart);
-        msg.setContent(multipart);
-        Transport.send(msg);
-    }
-
-    public void sendPassword(String password, String toEmail) throws  MessagingException, IOException {
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-
-        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("ccphotronguoidung@gmail.com", "truongkiet");
-            }
-        });
-        Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress("truongtokiet@gmail.com", false));
-
-        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-        msg.setSubject("Staff Account Information - New Password");
-        msg.setContent("Verify account", "text/html");
-        msg.setSentDate(new Date());
-
-        MimeBodyPart messageBodyPart = new MimeBodyPart();
-        messageBodyPart.setContent("Verify account", "text/html");
-        messageBodyPart.setContent(" Your password: " + password,
-                "text/html");
-
-        Multipart multipart = new MimeMultipart();
-        multipart.addBodyPart(messageBodyPart);
-        MimeBodyPart attachPart = new MimeBodyPart();
-
-        attachPart.attachFile("/Users/mymac/capstone-ccp/webadmin/src/main/resources/static/logo.png");
         multipart.addBodyPart(attachPart);
         msg.setContent(multipart);
         Transport.send(msg);

@@ -25,7 +25,6 @@ public class ImageUtil {
 	}
 
 	public static String uploadFile(String credentialPath, InputStream uploadedInputStream, String originFileName) throws IOException {
-		System.out.println("uploading " + originFileName);
 		Credentials credentials = null;
 		credentials = GoogleCredentials.fromStream(new FileInputStream(credentialPath));
 		Storage storage = StorageOptions.newBuilder().setCredentials(credentials)

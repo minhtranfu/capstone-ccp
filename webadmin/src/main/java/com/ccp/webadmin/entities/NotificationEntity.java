@@ -24,8 +24,8 @@ public class NotificationEntity implements Serializable {
     @Column(name = "click_action")
     private String clickAction;
 
-    @Column(name = "is_read")
-    private Boolean isRead;
+    @Column(name = "is_read", insertable = false)
+    private boolean isRead;
 
     @ManyToOne
     @JoinColumn(name = "contractor_id")
@@ -36,6 +36,17 @@ public class NotificationEntity implements Serializable {
     private LocalDateTime createdTime;
 
     public NotificationEntity() {
+    }
+
+    public NotificationEntity(String title, String content, String clickAction, ContractorEntity contractorEntity) {
+        this.title = title;
+        this.content = content;
+        this.clickAction = clickAction;
+        this.contractorEntity = contractorEntity;
+    }
+
+    public NotificationEntity(ContractorEntity contractorEntity) {
+        this.contractorEntity = contractorEntity;
     }
 
     public Integer getId() {
@@ -70,11 +81,11 @@ public class NotificationEntity implements Serializable {
         this.clickAction = clickAction;
     }
 
-    public Boolean getRead() {
+    public boolean getRead() {
         return isRead;
     }
 
-    public void setRead(Boolean read) {
+    public void setRead(boolean read) {
         isRead = read;
     }
 
@@ -92,5 +103,18 @@ public class NotificationEntity implements Serializable {
 
     public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
+    }
+
+    @Override
+    public String toString() {
+        return "NotificationEntity{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", clickAction='" + clickAction + '\'' +
+                ", isRead=" + isRead +
+                ", contractorEntity=" + contractorEntity +
+                ", createdTime=" + createdTime +
+                '}';
     }
 }

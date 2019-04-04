@@ -28,6 +28,7 @@ public class AdditionalSpecialFieldEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "equipment_type_id")
+//    @Where(clause = "is_deleted = 'false'")
     private EquipmentTypeEntity equipmentTypeEntity;
 
     @Column(name = "created_time", insertable = false, updatable = false)

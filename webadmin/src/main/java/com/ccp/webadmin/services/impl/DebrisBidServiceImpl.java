@@ -31,12 +31,6 @@ public class DebrisBidServiceImpl implements DebrisBidService {
         return debrisBidRepository.findAll();
     }
 
-//    @Override
-//    public List<DebrisBidEntity> findByEquipmentType(DebrisBidEntity debrisBidEntity) {
-//        return debrisBidRepository.findByEquipmentTypeEntity(debrisBidEntity);
-//    }
-
-
     public DebrisBidEntity findById(Integer id) {
         return debrisBidRepository.findById(id).get();
     }
@@ -55,28 +49,21 @@ public class DebrisBidServiceImpl implements DebrisBidService {
     @Override
     public List<LineChartStatisticDTO> countBid(String byType, LocalDateTime beginDate, LocalDateTime endDate) {
         List<LineChartStatisticDTO> lineChartStatisticDTOS = new ArrayList<>();
-//        switch (byType) {
-//            case "year":
-//                lineChartStatisticDTOS = equipmentRepository.countEquipmentByYear(beginDate,endDate);
-//                break;
-//            case "month":
-//                lineChartStatisticDTOS = equipmentRepository.countEquipmentByMonth(beginDate,endDate);
-//                break;
-//            case "week":
-//                lineChartStatisticDTOS = equipmentRepository.countEquipmentByWeek(beginDate,endDate);
-//                break;
-//            default:
-//                lineChartStatisticDTOS = equipmentRepository.countEquipmentByWeek(beginDate,endDate);
-//                break;
-//        }
+        switch (byType) {
+            case "year":
+                lineChartStatisticDTOS = debrisBidRepository.countDebrisBidByYear(beginDate,endDate);
+                break;
+            case "month":
+                lineChartStatisticDTOS = debrisBidRepository.countDebrisBidByMonth(beginDate,endDate);
+                break;
+            case "week":
+                lineChartStatisticDTOS = debrisBidRepository.countDebrisBidByWeek(beginDate,endDate);
+                break;
+            default:
+                lineChartStatisticDTOS = debrisBidRepository.countDebrisBidByWeek(beginDate,endDate);
+                break;
+        }
         return lineChartStatisticDTOS;
     }
-
-    @Override
-    public List<PieChartStatisticDTO> countEquipmentByEquipmentType(LocalDateTime beginDate, LocalDateTime endDate) {
-//        return equipmentRepository.countEquipmentByEquipmentType(beginDate, endDate);
-        return null;
-    }
-
 
 }

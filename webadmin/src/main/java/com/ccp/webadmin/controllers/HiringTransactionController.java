@@ -1,12 +1,12 @@
 package com.ccp.webadmin.controllers;
 
-import com.ccp.webadmin.entities.EquipmentEntity;
-import com.ccp.webadmin.entities.HiringTransactionEntity;
-import com.ccp.webadmin.entities.NotificationDeviceTokenEntity;
+import com.ccp.webadmin.entities.*;
 import com.ccp.webadmin.services.EquipmentService;
 import com.ccp.webadmin.services.HiringTransactionService;
 import com.ccp.webadmin.services.NotificationDeviceTokenService;
+import com.ccp.webadmin.services.NotificationService;
 import com.ccp.webadmin.utils.PushNotifictionHelper;
+import com.ccp.webadmin.utils.SendNotificationForTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,8 +14,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.management.Notification;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @RequestMapping("hiring_transaction")
@@ -23,15 +26,13 @@ public class HiringTransactionController {
 
     private final HiringTransactionService hiringTransactionService;
     private final EquipmentService equipmentService;
-    private final PushNotifictionHelper pushNotifictionHelper;
-    private final NotificationDeviceTokenService notificationDeviceTokenService;
+    private final SendNotificationForTransaction sendNotificationForTransaction;
 
     @Autowired
-    public HiringTransactionController(HiringTransactionService hiringTransactionService, EquipmentService equipmentService, PushNotifictionHelper pushNotifictionHelper, NotificationDeviceTokenService notificationDeviceTokenService) {
+    public HiringTransactionController(HiringTransactionService hiringTransactionService, EquipmentService equipmentService, SendNotificationForTransaction sendNotificationForTransaction) {
         this.hiringTransactionService = hiringTransactionService;
         this.equipmentService = equipmentService;
-        this.pushNotifictionHelper = pushNotifictionHelper;
-        this.notificationDeviceTokenService = notificationDeviceTokenService;
+        this.sendNotificationForTransaction = sendNotificationForTransaction;
     }
 
     @GetMapping({"", "/", "/index"})
@@ -93,9 +94,6 @@ public class HiringTransactionController {
             }
         }
 
-
-
-
         EquipmentEntity foundEquipment = foundHiringTransaction.getEquipment();
         foundEquipment.setStatus(hiringTransactionEntity.getEquipment().getStatus());
         equipmentService.save(foundEquipment);
@@ -103,18 +101,10 @@ public class HiringTransactionController {
         String title = "Change Hiring Transaction Status";
         String content = "Hiring Transaction Status: " + foundHiringTransaction.getStatus().getValue()
                 + " Equipment Status:" + foundEquipment.getStatus().getValue();
-        try {
-            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(foundHiringTransaction.getRequester())
-            ) {
-                pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
-            }
-            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(foundHiringTransaction.getEquipment().getContractorEntity())
-            ) {
-                pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String clickAction = "hiringTransactions/" + foundEquipment.getId();
+        ContractorEntity supplier = foundHiringTransaction.getEquipment().getContractorEntity();
+        ContractorEntity requester = foundHiringTransaction.getRequester();
+        sendNotificationForTransaction.sendNotificationForTransaction(title,content,clickAction,supplier,requester);
         Integer id = foundHiringTransaction.getId();
         return "redirect:detail/" + id;
     }

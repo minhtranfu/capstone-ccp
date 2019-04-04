@@ -17,7 +17,7 @@ public class PushNotifictionHelper {
     public final static String API_URL_FCM = "https://fcm.googleapis.com/fcm/send";
 
 
-    public static void pushFCMNotification(String userDeviceIdKey, String title, String content) throws Exception {
+    public static void pushFCMNotification(String userDeviceIdKey, String title, String content, String clickAction) throws Exception {
 
         String authKey = AUTH_KEY_FCM; // You FCM AUTH key
         String FMCurl = API_URL_FCM;
@@ -38,7 +38,7 @@ public class PushNotifictionHelper {
         JSONObject info = new JSONObject();
         info.put("title", title); // Notification title
         info.put("body", content); // Notification body
-        info.put("click_action", "https://ccp.hoctot.net/"); // Notification body
+        info.put("click_action", clickAction); // Notification body
         info.put("icon", "https://ccp.hoctot.net/public/assets/images/logo.png"); // Notification body
         json.put("notification", info);
 

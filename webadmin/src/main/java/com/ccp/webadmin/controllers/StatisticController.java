@@ -26,15 +26,23 @@ public class StatisticController {
     private final EquipmentService equipmentService;
     private final MaterialService materialService;
     private final MaterialTransactionService materialTransactionService;
+    private final DebrisTransactionService debrisTransactionService;
+    private final DebrisPostService debrisPostService;
+    private final DebrisBidService debrisBidService;
+    private final DebrisServiceTypeService debrisServiceTypeService;
 
     @Autowired
-    public StatisticController(ContractorService contractorService, HiringTransactionService hiringTransactionService, ReportService reportService, EquipmentService equipmentService, MaterialService materialService, MaterialTransactionService materialTransactionService) {
+    public StatisticController(ContractorService contractorService, HiringTransactionService hiringTransactionService, ReportService reportService, EquipmentService equipmentService, MaterialService materialService, MaterialTransactionService materialTransactionService, DebrisTransactionService debrisTransactionService, DebrisPostService debrisPostService, DebrisBidService debrisBidService, DebrisServiceTypeService debrisServiceTypeService) {
         this.contractorService = contractorService;
         this.hiringTransactionService = hiringTransactionService;
         this.reportService = reportService;
         this.equipmentService = equipmentService;
         this.materialService = materialService;
         this.materialTransactionService = materialTransactionService;
+        this.debrisTransactionService = debrisTransactionService;
+        this.debrisPostService = debrisPostService;
+        this.debrisBidService = debrisBidService;
+        this.debrisServiceTypeService = debrisServiceTypeService;
     }
 
     // STATISTIC for equipment
@@ -141,8 +149,99 @@ public class StatisticController {
         return lineChartStatisticDTOS;
     }
 
+    //  Total Material Transaction
+    @GetMapping("/materialTotalTransaction")
+    public List<LineChartStatisticDTO> materialTotalTransaction(
+            @RequestParam(value = "selectType") String selectType,
+            @RequestParam(value = "beginDate") String beginDateString,
+            @RequestParam(value = "endDate") String endDateString) {
+        LocalDateTime beginDate = beginDateTimeFormat(beginDateString);
+        LocalDateTime endDate = endDateTimeFormat(endDateString);
+        List<LineChartStatisticDTO> lineChartStatisticDTOS = new ArrayList<>();
+        lineChartStatisticDTOS = materialTransactionService.statisticTotalMaterialTransaction(selectType, beginDate, endDate);
+        return lineChartStatisticDTOS;
+    }
 
-    // format datetime
+    //  Total Material Price Transaction
+    @GetMapping("/materialTotalPriceTransaction")
+    public List<LineChartStatisticDTO> materialTotalPriceTransaction(
+            @RequestParam(value = "selectType") String selectType,
+            @RequestParam(value = "beginDate") String beginDateString,
+            @RequestParam(value = "endDate") String endDateString) {
+        LocalDateTime beginDate = beginDateTimeFormat(beginDateString);
+        LocalDateTime endDate = endDateTimeFormat(endDateString);
+        List<LineChartStatisticDTO> lineChartStatisticDTOS = new ArrayList<>();
+        lineChartStatisticDTOS = materialTransactionService.statisticTotalMaterialPrice(selectType, beginDate, endDate);
+        return lineChartStatisticDTOS;
+    }
+
+    // STATISTIC for debris
+    // Debris Transaction
+    @GetMapping("/debrisTransacton")
+    public List<StatisticHiringTransactionDTO> debrisTransaction(
+            @RequestParam(value = "selectType") String selectType,
+            @RequestParam(value = "beginDate") String beginDateString,
+            @RequestParam(value = "endDate") String endDateString) {
+        LocalDateTime beginDate = beginDateTimeFormat(beginDateString);
+        LocalDateTime endDate = endDateTimeFormat(endDateString);
+        List<StatisticHiringTransactionDTO> statisticHiringTransactionDTOS = new ArrayList<StatisticHiringTransactionDTO>();
+        statisticHiringTransactionDTOS = debrisTransactionService.statisticDebrisTransaction(selectType, beginDate, endDate);
+        return statisticHiringTransactionDTOS;
+    }
+
+    // Debris Type
+    @GetMapping("/debrisType")
+    public List<PieChartStatisticDTO> debrisType(
+            @RequestParam(value = "beginDate") String beginDateString,
+            @RequestParam(value = "endDate") String endDateString) {
+        LocalDateTime beginDate = beginDateTimeFormat(beginDateString);
+        LocalDateTime endDate = endDateTimeFormat(endDateString);
+        List<PieChartStatisticDTO> pieChartStatisticDTOs = new ArrayList<>();
+        pieChartStatisticDTOs = debrisServiceTypeService.countDebrisPostByDebrisServiceType(beginDate, endDate);
+        return pieChartStatisticDTOs;
+    }
+
+    // Debris Post
+    @GetMapping("/debrisPost")
+    public List<LineChartStatisticDTO> debrisPost(
+            @RequestParam(value = "selectType") String selectType,
+            @RequestParam(value = "beginDate") String beginDateString,
+            @RequestParam(value = "endDate") String endDateString) {
+        LocalDateTime beginDate = beginDateTimeFormat(beginDateString);
+        LocalDateTime endDate = endDateTimeFormat(endDateString);
+        List<LineChartStatisticDTO> lineChartStatisticDTOS = new ArrayList<>();
+        lineChartStatisticDTOS = debrisPostService.countPost(selectType, beginDate, endDate);
+        return lineChartStatisticDTOS;
+    }
+
+    // Debris Bid
+    @GetMapping("/debrisBid")
+    public List<LineChartStatisticDTO> debrisBid(
+            @RequestParam(value = "selectType") String selectType,
+            @RequestParam(value = "beginDate") String beginDateString,
+            @RequestParam(value = "endDate") String endDateString) {
+        LocalDateTime beginDate = beginDateTimeFormat(beginDateString);
+        LocalDateTime endDate = endDateTimeFormat(endDateString);
+        List<LineChartStatisticDTO> lineChartStatisticDTOS = new ArrayList<>();
+        lineChartStatisticDTOS = debrisBidService.countBid(selectType, beginDate, endDate);
+        return lineChartStatisticDTOS;
+    }
+
+    //  Total Debris Transaction
+    @GetMapping("/debrisTotalTransaction")
+    public List<LineChartStatisticDTO> debrisTotalTransaction(
+            @RequestParam(value = "selectType") String selectType,
+            @RequestParam(value = "beginDate") String beginDateString,
+            @RequestParam(value = "endDate") String endDateString) {
+        LocalDateTime beginDate = beginDateTimeFormat(beginDateString);
+        LocalDateTime endDate = endDateTimeFormat(endDateString);
+        List<LineChartStatisticDTO> lineChartStatisticDTOS = new ArrayList<>();
+        lineChartStatisticDTOS = debrisTransactionService.statisticTotalDebrisTransaction(selectType, beginDate, endDate);
+        return lineChartStatisticDTOS;
+    }
+
+
+    // format datetime beginDate
     public LocalDateTime beginDateTimeFormat(String dateString) {
         dateString = dateString + " 00:00:00";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -150,24 +249,12 @@ public class StatisticController {
         return dateTime;
     }
 
+    // format datetime endDate
     public LocalDateTime endDateTimeFormat(String dateString) {
         dateString = dateString + " 23:59:59";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
         return dateTime;
-    }
-
-    @GetMapping("/hiringTransacton/year")
-    public List<StatisticHiringTransactionDTO> year(
-//            @RequestParam(value = "byType") String byType,
-            @RequestParam(value = "beginDate") String beginDateString,
-            @RequestParam(value = "endDate") String endDateString) {
-        LocalDateTime beginDate = beginDateTimeFormat(beginDateString);
-        LocalDateTime endDate = endDateTimeFormat(endDateString);
-        String byType = "year";
-        List<StatisticHiringTransactionDTO> statisticHiringTransactionDTOS = new ArrayList<StatisticHiringTransactionDTO>();
-        statisticHiringTransactionDTOS = hiringTransactionService.statisticHiringTransaction(byType, beginDate, endDate);
-        return statisticHiringTransactionDTOS;
     }
 
 }

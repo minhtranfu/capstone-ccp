@@ -73,7 +73,6 @@ public class EquipmentController {
         foundEquipment.setName(equipmentEntity.getName());
         foundEquipment.setEquipmentTypeEntity(equipmentEntity.getEquipmentTypeEntity());
         foundEquipment.setDailyPrice(equipmentEntity.getDailyPrice());
-        foundEquipment.setDeliveryPrice(equipmentEntity.getDeliveryPrice());
         foundEquipment.setAddress(equipmentEntity.getAddress());
 
         equipmentService.save(foundEquipment);

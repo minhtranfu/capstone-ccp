@@ -9,7 +9,14 @@ public class PieChartStatisticDTO implements Serializable {
 
     private Long quantity;
 
+    private Integer size;
+
     public PieChartStatisticDTO() {
+    }
+
+    public PieChartStatisticDTO(String type, Integer size) {
+        this.type = type;
+        this.size = size;
     }
 
     public PieChartStatisticDTO(String type, Long quantity) {
@@ -31,5 +38,13 @@ public class PieChartStatisticDTO implements Serializable {
 
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
     }
 }

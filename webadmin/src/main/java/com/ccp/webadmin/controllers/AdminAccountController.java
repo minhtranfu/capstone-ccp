@@ -81,10 +81,10 @@ public class AdminAccountController {
 
         //update staff account
         if (adminAccountEntity.getId() != null) {
-            System.out.println("aaaa" + adminAccountEntity.getId());
             AdminAccountEntity foundAdminAccount = adminAccountService.findById(adminAccountEntity.getId());
+
             // validate existed username or email
-            if(!adminAccountEntity.getUsername().equals(foundAdminAccount.getUsername()) || !adminAccountEntity.getAdminUserEntity().getEmail().equals(foundAdminAccount.getAdminUserEntity().getEmail())){
+            if (!adminAccountEntity.getUsername().equals(foundAdminAccount.getUsername()) || !adminAccountEntity.getAdminUserEntity().getEmail().equals(foundAdminAccount.getAdminUserEntity().getEmail())) {
                 if (adminAccountService.existsByUsername(adminAccountEntity.getUsername()) || adminAccountService.existsByEmail(adminAccountEntity.getAdminUserEntity().getEmail())) {
                     adminAccountEntity.getAdminUserEntity().setRole(foundAdminAccount.getAdminUserEntity().getRole());
                     model.addAttribute("errorMessage", "Exitsted Username");
@@ -92,12 +92,13 @@ public class AdminAccountController {
                     return "staff/detail";
                 }
             }
-
-            foundAdminAccount.getAdminUserEntity().setThumbnail(imageUrl);
+            if(!file.isEmpty()){
+                System.out.println("aaaaa");
+                foundAdminAccount.getAdminUserEntity().setThumbnail(imageUrl);
+            }
             adminAccountService.save(foundAdminAccount);
             //create staff account
         } else {
-            System.out.println("bbbbb" + adminAccountEntity.getId());
             // validate existed username or email
             if (adminAccountService.existsByUsername(adminAccountEntity.getUsername()) || adminAccountService.existsByEmail(adminAccountEntity.getAdminUserEntity().getEmail())) {
                 model.addAttribute("errorMessage", "Exitsted Username");
@@ -133,8 +134,6 @@ public class AdminAccountController {
         AdminAccountEntity adminAccountEntity = adminAccountService.findById(staffDTO.getId());
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(11);
         //check password
-
-
         if (!BCrypt.checkpw(staffDTO.getPassword(), adminAccountEntity.getPassword())) {
             model.addAttribute("errorMessage", "Old Password is not correct");
             return "staff/changePassword";
@@ -144,9 +143,7 @@ public class AdminAccountController {
                 return "staff/changePassword";
             }
         }
-
         String encodedNewPassword = passwordEncoder.encode(staffDTO.getNewPassword());
-
         adminAccountEntity.setPassword(encodedNewPassword);
         adminAccountService.save(adminAccountEntity);
         Integer id = adminAccountEntity.getId();
@@ -159,7 +156,6 @@ public class AdminAccountController {
         String url = "";
         try {
             url = ImageUtil.uploadFile(credentialPath, file.getInputStream(), file.getOriginalFilename());
-            System.out.println("URL=" + url);
         } catch (IOException e) {
             e.printStackTrace();
         }

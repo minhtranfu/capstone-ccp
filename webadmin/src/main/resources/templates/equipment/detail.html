@@ -50,13 +50,11 @@
                                               style="color: red"></span>
                                     </div>
                                     <div class="form-group">
-                                        <label>Equipment Type</label>
-                                        <select th:field="*{equipmentTypeEntity}" class="form-control">
-                                            <option th:each="equipmentTypeEntity : ${equipmentType}"
-                                                    th:value="${equipmentTypeEntity.id}"
-                                                    th:text="${equipmentTypeEntity.name}">
-                                            </option>
-                                        </select>
+                                        <label>Equipment Type:</label>
+                                        <a th:href="@{/equipment_type/detail/{id}(id = *{equipmentTypeEntity.id})}">
+                                            <p th:text="*{equipmentTypeEntity.name}" class="link form-control-static"
+                                               placeholder="Equipment Type" style="color: #1ab7ea;"></p>
+                                        </a>
                                     </div>
                                     <div class="form-group">
                                         <label>Equipment Picture:</label>
@@ -77,11 +75,6 @@
                                         <label>Daily Price:</label>
                                         <input th:field="*{dailyPrice}" class="form-control"
                                                placeholder="Daily Price">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Delivery Price:</label>
-                                        <input th:field="*{deliveryPrice}" class="form-control"
-                                               placeholder="Delivery Price">
                                     </div>
                                     <div class="form-group">
                                         <label>Equipment Address:</label>

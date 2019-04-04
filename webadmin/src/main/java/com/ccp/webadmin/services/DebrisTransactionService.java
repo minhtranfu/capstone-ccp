@@ -1,5 +1,6 @@
 package com.ccp.webadmin.services;
 
+import com.ccp.webadmin.dtos.LineChartStatisticDTO;
 import com.ccp.webadmin.dtos.StatisticHiringTransactionDTO;
 import com.ccp.webadmin.entities.DebrisTransactionEntity;
 import org.springframework.stereotype.Service;
@@ -18,5 +19,8 @@ public interface DebrisTransactionService {
 
     void deleteById(Integer id);
 
-    List<StatisticHiringTransactionDTO> statisticTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate);
+    List<StatisticHiringTransactionDTO> statisticDebrisTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate);
+
+    List<LineChartStatisticDTO> statisticTotalDebrisTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate);
+
 }

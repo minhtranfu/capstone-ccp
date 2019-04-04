@@ -24,10 +24,6 @@ public class HiringTransactionEntity implements Serializable {
     @Column(name = "daily_price")
     private Double dailyPrice;
 
-    @NotNull(message = "Price is required not empty")
-    @Column(name = "delivery_price")
-    private Double deliveryPrice;
-
     @Column(name = "begin_date")
     private LocalDate beginDate;
 
@@ -97,14 +93,6 @@ public class HiringTransactionEntity implements Serializable {
 
     public void setDailyPrice(Double dailyPrice) {
         this.dailyPrice = dailyPrice;
-    }
-
-    public Double getDeliveryPrice() {
-        return deliveryPrice;
-    }
-
-    public void setDeliveryPrice(Double deliveryPrice) {
-        this.deliveryPrice = deliveryPrice;
     }
 
     public LocalDateTime getCreatedTime() {

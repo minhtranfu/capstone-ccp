@@ -36,10 +36,10 @@ public class MaterialEntity {
     private String thumbnail;
 
     @Column(name = "is_hidden")
-    private Boolean isHidden;
+    private boolean isHidden;
 
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private boolean isDeleted;
 
     @Column(name = "created_time", insertable = false, updatable = false)
     @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
@@ -108,11 +108,11 @@ public class MaterialEntity {
         this.thumbnail = thumbnail;
     }
 
-    public Boolean getDeleted() {
+    public boolean getDeleted() {
         return isDeleted;
     }
 
-    public void setDeleted(Boolean deleted) {
+    public void setDeleted(boolean deleted) {
         isDeleted = deleted;
     }
 
@@ -149,11 +149,11 @@ public class MaterialEntity {
         this.contractorEntity = contractorEntity;
     }
 
-    public Boolean getHidden() {
+    public boolean getHidden() {
         return isHidden;
     }
 
-    public void setHidden(Boolean hidden) {
+    public void setHidden(boolean hidden) {
         isHidden = hidden;
     }
 }

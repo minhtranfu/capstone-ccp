@@ -48,7 +48,6 @@ public interface HiringTransactionRepository extends JpaRepository<HiringTransac
     List<StatisticHiringTransactionDTO> countStatisticByWeek(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
 
 
-
     @Query("select new com.ccp.webadmin.dtos.LineChartStatisticDTO(FUNCTION('year',(e.createdTime))," +
             "count(e.id)) " +
             "from HiringTransactionEntity e " +

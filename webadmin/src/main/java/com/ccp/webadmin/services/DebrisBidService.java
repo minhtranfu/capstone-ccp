@@ -14,8 +14,6 @@ import java.util.List;
 public interface DebrisBidService {
     List<DebrisBidEntity> findAll();
 
-//    List<EquipmentEntity> findByEquipmentType(EquipmentTypeEntity equipmentTypeEntity);
-
     DebrisBidEntity findById(Integer id);
 
     void save(DebrisBidEntity debrisBidEntity);
@@ -24,5 +22,4 @@ public interface DebrisBidService {
 
     List<LineChartStatisticDTO> countBid(String byType, LocalDateTime beginDate, LocalDateTime endDate);
 
-    List<PieChartStatisticDTO> countEquipmentByEquipmentType(LocalDateTime beginDate, LocalDateTime endDate);
 }

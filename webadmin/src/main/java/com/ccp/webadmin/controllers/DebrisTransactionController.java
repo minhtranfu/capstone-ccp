@@ -3,6 +3,7 @@ package com.ccp.webadmin.controllers;
 import com.ccp.webadmin.entities.*;
 import com.ccp.webadmin.services.*;
 import com.ccp.webadmin.utils.PushNotifictionHelper;
+import com.ccp.webadmin.utils.SendNotificationForTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,16 +21,14 @@ public class DebrisTransactionController {
     private final DebrisTransactionService debrisTransactionService;
     private final DebrisBidService debrisBidService;
     private final DebrisPostService debrisPostService;
-    private final PushNotifictionHelper pushNotifictionHelper;
-    private final NotificationDeviceTokenService notificationDeviceTokenService;
+    private final SendNotificationForTransaction sendNotificationForTransaction;
 
     @Autowired
-    public DebrisTransactionController(DebrisTransactionService debrisTransactionService, DebrisBidService debrisBidService, DebrisPostService debrisPostService, PushNotifictionHelper pushNotifictionHelper, NotificationDeviceTokenService notificationDeviceTokenService) {
+    public DebrisTransactionController(DebrisTransactionService debrisTransactionService, DebrisBidService debrisBidService, DebrisPostService debrisPostService, SendNotificationForTransaction sendNotificationForTransaction) {
         this.debrisTransactionService = debrisTransactionService;
         this.debrisBidService = debrisBidService;
         this.debrisPostService = debrisPostService;
-        this.pushNotifictionHelper = pushNotifictionHelper;
-        this.notificationDeviceTokenService = notificationDeviceTokenService;
+        this.sendNotificationForTransaction = sendNotificationForTransaction;
     }
 
     @GetMapping({"", "/", "/index"})
@@ -111,25 +110,14 @@ public class DebrisTransactionController {
         foundDebrisPost.setStatus(debrisTransactionEntity.getDebrisBidEntity().getDebrisPostEntity().getStatus());
         debrisBidService.save(foundDebrisBid);
         debrisTransactionService.save(foundDebrisTransaction);
-        String title = "Change Hiring Transaction Status";
+        String title = "Change Debris Transaction Status";
         String content = "Debris Transaction Status: " + foundDebrisTransaction.getStatus().getValue()
                 + " Debris Bid Status: " + foundDebrisBid.getStatus().getValue()
                 + " Debris Post Status: " + foundDebrisBid.getDebrisPostEntity().getStatus().getValue();
-        try {
-            //send notification to supplier
-            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(foundDebrisTransaction.getDebrisBidEntity().getSupplier())
-            ) {
-                pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
-            }
-
-            // send notification to requester
-            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(foundDebrisTransaction.getDebrisBidEntity().getDebrisPostEntity().getRequester())
-            ) {
-                pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String clickAction = "debrisTransactions/" + foundDebrisTransaction.getId();
+        ContractorEntity supplier = foundDebrisTransaction.getDebrisBidEntity().getSupplier();
+        ContractorEntity requester = foundDebrisTransaction.getDebrisBidEntity().getDebrisPostEntity().getRequester();
+        sendNotificationForTransaction.sendNotificationForTransaction(title,content,clickAction,supplier,requester);
         Integer id = foundDebrisTransaction.getId();
         return "redirect:detail/" + id;
     }

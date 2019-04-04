@@ -47,13 +47,11 @@
                                               style="color: red"></span>
                                     </div>
                                     <div class="form-group">
-                                        <label>Material Type</label>
-                                        <select th:field="*{materialTypeEntity}" class="form-control">
-                                            <option th:each="materialTypeEntity : ${materialTypes}"
-                                                    th:value="${materialTypeEntity.id}"
-                                                    th:text="${materialTypeEntity.name}">
-                                            </option>
-                                        </select>
+                                        <label>Material Type:</label>
+                                        <a th:href="@{/material_type/detail/{id}(id = *{materialTypeEntity.id})}">
+                                            <p th:text="*{materialTypeEntity.name}" class="link form-control-static"
+                                               placeholder="Material Type" style="color: #1ab7ea;"></p>
+                                        </a>
                                     </div>
                                     <div class="form-group">
                                         <label>Unit:</label>

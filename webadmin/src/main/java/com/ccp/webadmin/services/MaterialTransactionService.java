@@ -1,5 +1,6 @@
 package com.ccp.webadmin.services;
 
+import com.ccp.webadmin.dtos.LineChartStatisticDTO;
 import com.ccp.webadmin.dtos.StatisticHiringTransactionDTO;
 import com.ccp.webadmin.entities.HiringTransactionEntity;
 import com.ccp.webadmin.entities.MaterialTransactionEntity;
@@ -21,4 +22,7 @@ public interface MaterialTransactionService {
 
     List<StatisticHiringTransactionDTO> statisticMaterialTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate);
 
+    List<LineChartStatisticDTO> statisticTotalMaterialTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate);
+
+    List<LineChartStatisticDTO> statisticTotalMaterialPrice(String byType, LocalDateTime beginDate, LocalDateTime endDate);
 }

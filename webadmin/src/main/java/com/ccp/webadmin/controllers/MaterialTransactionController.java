@@ -1,9 +1,12 @@
 package com.ccp.webadmin.controllers;
 
+import com.ccp.webadmin.entities.ContractorEntity;
 import com.ccp.webadmin.entities.MaterialTransactionEntity;
 import com.ccp.webadmin.entities.NotificationDeviceTokenEntity;
+import com.ccp.webadmin.entities.NotificationEntity;
 import com.ccp.webadmin.services.*;
 import com.ccp.webadmin.utils.PushNotifictionHelper;
+import com.ccp.webadmin.utils.SendNotificationForTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,16 +24,14 @@ public class MaterialTransactionController {
     private final MaterialTransactionService materialTransactionService;
     private final MaterialTransactionDetailService materialTransactionDetailService;
     private final MaterialService materialService;
-    private final PushNotifictionHelper pushNotifictionHelper;
-    private final NotificationDeviceTokenService notificationDeviceTokenService;
+    private final SendNotificationForTransaction sendNotificationForTransaction;
 
     @Autowired
-    public MaterialTransactionController(MaterialTransactionService materialTransactionService, MaterialTransactionDetailService materialTransactionDetailService, MaterialService materialService, PushNotifictionHelper pushNotifictionHelper, NotificationDeviceTokenService notificationDeviceTokenService) {
+    public MaterialTransactionController(MaterialTransactionService materialTransactionService, MaterialTransactionDetailService materialTransactionDetailService, MaterialService materialService, SendNotificationForTransaction sendNotificationForTransaction) {
         this.materialTransactionService = materialTransactionService;
         this.materialTransactionDetailService = materialTransactionDetailService;
         this.materialService = materialService;
-        this.pushNotifictionHelper = pushNotifictionHelper;
-        this.notificationDeviceTokenService = notificationDeviceTokenService;
+        this.sendNotificationForTransaction = sendNotificationForTransaction;
     }
 
     @GetMapping({"", "/", "/index"})
@@ -81,19 +82,10 @@ public class MaterialTransactionController {
         materialTransactionService.save(foundMaterialTransaction);
         String title = "Change Buying Material Transaction Status";
         String content = "Buying Material Transaction Status: " + foundMaterialTransaction.getStatus().getValue();
-
-        try {
-            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(foundMaterialTransaction.getRequester())
-            ) {
-                pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
-            }
-            for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(foundMaterialTransaction.getSupplier())
-            ) {
-                pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String clickAction = "materialTransations/" + foundMaterialTransaction.getId();
+        ContractorEntity supplier = foundMaterialTransaction.getSupplier();
+        ContractorEntity requester = foundMaterialTransaction.getRequester();
+        sendNotificationForTransaction.sendNotificationForTransaction(title, content, clickAction, supplier, requester);
         Integer id = foundMaterialTransaction.getId();
         return "redirect:detail/" + id;
     }
