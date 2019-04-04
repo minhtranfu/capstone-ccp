@@ -21,7 +21,7 @@ class Home extends Component {
 
     this.state = {
       products: [],
-      isFetching: true
+      isFetching: false
     };
   }
 
@@ -56,10 +56,6 @@ class Home extends Component {
       isShowSubcribeBox: false
     });
   };
-
-  componentDidMount() {
-    this._loadData();
-  }
 
   // show or hide subcribe box
   _toggleSubcribeBox = () => {
