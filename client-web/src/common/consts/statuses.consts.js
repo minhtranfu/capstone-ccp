@@ -57,6 +57,11 @@ export const DEBRIS_POST_STATUS_COLORS = {
   CANCELED: 'danger'
 };
 
+export const DEBRIS_BID_STATUSES = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+};
+
 /**
  * Contactor status
  */

@@ -607,6 +607,7 @@ nav.navbar {
 .bid {
   .avatar {
     width: 75px;
+    height: 75px;
   }
   .bider {
     .star-container {
@@ -712,4 +713,8 @@ nav.navbar {
   &:focus {
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
+}
+
+.border-2 {
+  border-width: 2px !important;
 }
