@@ -37,6 +37,7 @@ import java.util.function.Supplier;
 import static utils.Constants.BUCKET_NAME;
 
 @Produces(MediaType.APPLICATION_JSON)
+
 public class EquipmentImageSubResource {
 	@Context
 	ServletContext servletContext;
@@ -97,10 +98,12 @@ public class EquipmentImageSubResource {
 						equipmentImageEntity.getId(),
 						equipmentImageEntity.getEquipment().getId()));
 			}
-			equipmentEntity.addEquipmentImage(equipmentImageEntity);
+			equipmentImageEntity.setEquipment(equipmentEntity);
+			equipmentImageDAO.merge(equipmentImageEntity);
+//			equipmentEntity.addEquipmentImage(equipmentImageEntity);
 		}
 
-		return Response.status(Response.Status.CREATED).entity(equipmentDAO.merge(equipmentEntity)).build();
+		return Response.status(Response.Status.CREATED).entity(equipmentDAO.findByID(equipmentEntity.getId())).build();
 	}
 
 	@DELETE
