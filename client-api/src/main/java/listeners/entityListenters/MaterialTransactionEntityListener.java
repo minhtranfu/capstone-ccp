@@ -32,7 +32,7 @@ public class MaterialTransactionEntityListener {
 				break;
 			case ACCEPTED:
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Materials are preparing",
-						String.format("Your material transaction id=%s is Accepted and being prepared by %s",
+						String.format("Your material transaction #%s is Accepted and being prepared by %s",
 								entity.getId(), supplier.getName())
 						, requester.getId()
 						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.MATERIAL_TRANSACTIONS, entity.getId())));
@@ -40,14 +40,14 @@ public class MaterialTransactionEntityListener {
 
 			case DENIED:
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Materials transaction Denied",
-						String.format("Your material transaction id=%s is Denied by %s",
+						String.format("Your material transaction #%s is Denied by %s",
 								entity.getId(), supplier.getName())
 						, requester.getId()
 						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.MATERIAL_TRANSACTIONS, entity.getId())));
 				break;
 			case DELIVERING:
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Materials is Delivering!",
-						String.format("The material transaction is delivering to you by %s. You can check it status with id=%s",
+						String.format("The material transaction is delivering to you by %s. You can check it status with id #%s",
 								entity.getId()
 								, supplier.getName())
 						, requester.getId()
@@ -65,13 +65,13 @@ public class MaterialTransactionEntityListener {
 			case CANCELED:
 
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Materials transaction Canceled",
-						String.format("Materials transaction with id=%s has been Canceled"
-								, requester.getName())
+						String.format("Materials transaction #%s has been Canceled"
+								, entity.getId())
 						, supplier.getId()
 						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.MATERIAL_TRANSACTIONS, entity.getId())));
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Materials transaction Canceled",
-						String.format("Materials transaction with id=%s has been Canceled"
-								, requester.getName())
+						String.format("Materials transaction #%s has been Canceled"
+								, entity.getId())
 						, requester.getId()
 						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.MATERIAL_TRANSACTIONS, entity.getId())));
 

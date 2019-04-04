@@ -59,8 +59,8 @@ public class CheckSubscriptionMatchedScheduler {
 
 		String clickAction = NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.EQUIPMENTS, equipmentId);
 
-		NotificationDTO notificationDTO = new NotificationDTO("Subscribed equipment found!", "We have found the equipment that you're looking for! \n" +
-				"id=" + equipmentId
+		NotificationDTO notificationDTO = new NotificationDTO("Subscribed equipment found!",
+				"We have found the equipment that you've subscribed for! id=" + equipmentId
 				, contractorId, clickAction);
 
 
