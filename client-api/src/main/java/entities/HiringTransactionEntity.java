@@ -28,7 +28,6 @@ public class HiringTransactionEntity {
 	private long id;
 	private Status status;
 	private Integer dailyPrice;
-	private Integer deliveryPrice;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 
@@ -70,7 +69,6 @@ public class HiringTransactionEntity {
 		this.requester = requester;
 
 		this.dailyPrice = equipment.getDailyPrice();
-		this.deliveryPrice = equipment.getDeliveryPrice();
 	}
 	@Id
 	@GeneratedValue
@@ -102,16 +100,6 @@ public class HiringTransactionEntity {
 
 	public void setDailyPrice(Integer dailyPrice) {
 		this.dailyPrice = dailyPrice;
-	}
-
-	@Basic
-	@Column(name = "delivery_price", nullable = true)
-	public Integer getDeliveryPrice() {
-		return deliveryPrice;
-	}
-
-	public void setDeliveryPrice(Integer deliveryPrice) {
-		this.deliveryPrice = deliveryPrice;
 	}
 
 
@@ -287,7 +275,6 @@ public class HiringTransactionEntity {
 				"id=" + id +
 				", status=" + status +
 				", dailyPrice=" + dailyPrice +
-				", deliveryPrice=" + deliveryPrice +
 				", createdTime=" + createdTime +
 				", updatedTime=" + updatedTime +
 				", beginDate=" + beginDate +

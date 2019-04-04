@@ -13,7 +13,6 @@ public class IndependentHiringTransactionWrapper {
 	private long id;
 	private HiringTransactionEntity.Status status;
 	private Integer dailyPrice;
-	private Integer deliveryPrice;
 	private LocalDate beginDate;
 	private LocalDate endDate;
 
@@ -31,7 +30,6 @@ public class IndependentHiringTransactionWrapper {
 		this.id = hiringTransactionEntity.getId();
 		this.status = hiringTransactionEntity.getStatus();
 		this.dailyPrice = hiringTransactionEntity.getDailyPrice();
-		this.deliveryPrice = hiringTransactionEntity.getDeliveryPrice();
 		this.beginDate = hiringTransactionEntity.getBeginDate();
 		this.endDate = hiringTransactionEntity.getEndDate();
 		this.equipmentAddress = hiringTransactionEntity.getEquipmentAddress();
@@ -68,13 +66,7 @@ public class IndependentHiringTransactionWrapper {
 		this.dailyPrice = dailyPrice;
 	}
 
-	public Integer getDeliveryPrice() {
-		return deliveryPrice;
-	}
 
-	public void setDeliveryPrice(Integer deliveryPrice) {
-		this.deliveryPrice = deliveryPrice;
-	}
 
 
 	public LocalDate getBeginDate() {

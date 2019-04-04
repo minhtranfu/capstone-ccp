@@ -15,11 +15,8 @@ public abstract class EquipmentRequest {
 	public String name;
 
 	@NotNull
-
 	public Integer dailyPrice;
 
-	@NotNull
-	public Integer deliveryPrice;
 
 	// TODO: 3/4/19 validate ths ?
 	public String description;

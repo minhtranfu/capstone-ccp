@@ -76,7 +76,6 @@ public class HiringTransactionResource {
 		hiringTransactionEntity.setEquipmentLongitude(foundEquipment.getFinalLongitude());
 		hiringTransactionEntity.setEquipmentLatitude(foundEquipment.getFinalLatitude());
 
-		hiringTransactionEntity.setDeliveryPrice(foundEquipment.getDeliveryPrice());
 		hiringTransactionEntity.setDailyPrice(foundEquipment.getDailyPrice());
 
 		//  1/30/19 set status to pending
@@ -142,7 +141,7 @@ public class HiringTransactionResource {
 					throw new BadRequestException(String.format("Supplier %s is %s",
 							foundContractor.getName(), foundContractor.getStatus().getBeautifiedName()));
 				}
-				
+
 				//validate
 				if (foundTransaction.getStatus() != transactionEntity.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",

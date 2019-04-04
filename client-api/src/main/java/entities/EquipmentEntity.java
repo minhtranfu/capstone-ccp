@@ -69,8 +69,6 @@ public class EquipmentEntity  {
 
 	@NotNull
 	private Integer dailyPrice;
-	@NotNull
-	private Integer deliveryPrice;
 	private String description;
 	private Status status;
 	private EquipmentImageEntity thumbnailImage;
@@ -148,15 +146,6 @@ public class EquipmentEntity  {
 		this.dailyPrice = dailyPrice;
 	}
 
-	@Basic
-	@Column(name = "delivery_price", nullable = true)
-	public Integer getDeliveryPrice() {
-		return deliveryPrice;
-	}
-
-	public void setDeliveryPrice(Integer deliveryPrice) {
-		this.deliveryPrice = deliveryPrice;
-	}
 
 	@Basic
 	@Column(name = "description", nullable = true, length = -1)
