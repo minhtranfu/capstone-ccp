@@ -692,3 +692,24 @@ nav.navbar {
   z-index: 2;
   display: flex;
 }
+
+// Select thumbail
+.is-thumbnail {
+  border-width: 3px !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+.top-right-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  text-shadow: 0 0 4px rgba(0, 0, 0, .4);
+  line-height: 1;
+
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+}

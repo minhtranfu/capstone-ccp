@@ -8,7 +8,7 @@ import 'bootstrap-daterangepicker/daterangepicker.css';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 
 import Step from './Step';
-import { fetchEquipmentTypes, fetchEquipmentTypeSpecs } from '../../../redux/actions/thunks';
+import { fetchEquipmentTypes } from '../../../redux/actions/thunks';
 import { ENTITY_KEY } from '../../../common/app-const';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
@@ -85,6 +85,7 @@ class AddEquipmentStep1 extends Step {
     }
   };
 
+  // Load equipment type categories
   _loadEquipmentTypeCategories = async () => {
 
     try {
@@ -97,16 +98,14 @@ class AddEquipmentStep1 extends Step {
     }
   };
 
+  // Load equipment
   _loadEquipmentTypes = () => {
     const { fetchEquipmentTypes } = this.props;
 
     fetchEquipmentTypes();
   };
 
-  _onChangeDescription = (description) => {
-    this.setState({ description });
-  };
-
+  // Handle select date range
   _onChangeDateRanage = (picker, rangeId) => {
     let { availableTimeRanges } = this.state;
     if (!availableTimeRanges) {
@@ -123,6 +122,7 @@ class AddEquipmentStep1 extends Step {
     });
   };
 
+  // Get date range in string by range id
   _getLabelOfRange = (rangeId) => {
     const { availableTimeRanges } = this.state;
     if (availableTimeRanges == undefined || availableTimeRanges.length == 0) {
@@ -139,29 +139,33 @@ class AddEquipmentStep1 extends Step {
     return `${beginDate} - ${endDate}`;
   }
 
+  // Change value of field in state
   _handleFieldChange = e => {
     const name = e.target.name;
     let value = e.target.value;
+    const newState = {};
 
     if (name === 'constructionId') {
       this._handleSelectConstruction(value);
+    }
+
+    if (name === 'address') {
+      newState.isAddressEditted = true;
+    } else if (name === 'dailyPrice') {
+      value = value.replace(/[^0-9\.]+/g, '');
+      newState.showableDailyPrice = value;
     }
 
     if (!isNaN(value)) {
       value = +value;
     }
 
-    const newState = {
-      [name]: value
-    };
-
-    if (name === 'address') {
-      newState.isAddressEditted = true;
-    }
+    newState[name] = value;
 
     this.setState(newState);
   };
 
+  // Validate and call back step done
   _handleSubmitForm = () => {
     const data = {
       ...this.state,
@@ -169,6 +173,7 @@ class AddEquipmentStep1 extends Step {
       validateResult: undefined
     };
     
+    // Validate form
     const validateResult = validate(data, this.validateRules);
     if (validateResult) {
       this.setState({
@@ -184,6 +189,7 @@ class AddEquipmentStep1 extends Step {
     });
   };
 
+  // render list date range picker with remove option
   _renderDateRangePickers = () => {
     let { availableTimeRanges, validateResult } = this.state;
     if (!availableTimeRanges || availableTimeRanges.length === 0) {
@@ -218,6 +224,7 @@ class AddEquipmentStep1 extends Step {
     });
   };
 
+  // Add one date range
   _addTimeRangePicker = () => {
     const { availableTimeRanges } = this.state;
 
@@ -229,6 +236,7 @@ class AddEquipmentStep1 extends Step {
     });
   };
 
+  // Remove one date range by id
   _removeTimeRangePicker = rangeId => {
     let { availableTimeRanges } = this.state;
     availableTimeRanges = availableTimeRanges.filter((range, id) => id !== rangeId);
@@ -252,26 +260,28 @@ class AddEquipmentStep1 extends Step {
     });
   };
 
-  _getShowablePrice = (amount, decimalCount = 2, decimal = ".", thousands = ",") => {
+  // Format price
+  // _getShowablePrice = (amount, decimalCount = 2, decimal = ".", thousands = ",") => {
 
-    if (!amount) {
-      return '';
-    }
+  //   if (!amount) {
+  //     return '';
+  //   }
 
-    try {
-      decimalCount = Math.abs(decimalCount);
-      decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+  //   try {
+  //     decimalCount = Math.abs(decimalCount);
+  //     decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
 
-      const negativeSign = amount < 0 ? "-" : "";
+  //     const negativeSign = amount < 0 ? "-" : "";
 
-      let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
-      let j = (i.length > 3) ? i.length % 3 : 0;
+  //     let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+  //     let j = (i.length > 3) ? i.length % 3 : 0;
 
-      return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
-    } catch (e) {
-      return '';
-    }
-  };
+  //     let result = negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+  //     return result.replace(/\.00$/, '');
+  //   } catch (e) {
+  //     return '';
+  //   }
+  // };
 
   render() {
     const { entities } = this.props;
@@ -332,7 +342,7 @@ class AddEquipmentStep1 extends Step {
           <div className="col-md-6">
             <div className="form-group">
               <label htmlFor="daily_price">Price per day (K): <i className="text-danger">*</i></label>
-              <input type="number" name="dailyPrice" onChange={this._handleFieldChange} defaultValue={this._getShowablePrice(this.state.showableDailyPrice)} className="form-control" id="daily_price" required />
+              <input type="string" name="dailyPrice" onChange={this._handleFieldChange} value={this.state.showableDailyPrice} className="form-control text-right" id="daily_price" />
               {getValidateFeedback('dailyPrice', validateResult)}
             </div>
             {this._renderDateRangePickers()}
@@ -342,7 +352,7 @@ class AddEquipmentStep1 extends Step {
           </div>
           <div className="col-12 text-center">
             <div className="form-group">
-              <button className="btn btn-success" onClick={this._handleSubmitForm}>NEXT STEP <i className="fal fa-chevron-right"></i></button>
+              <button className="btn btn-primary" onClick={this._handleSubmitForm}>NEXT STEP <i className="fal fa-chevron-right"></i></button>
             </div>
           </div>
         </div>
@@ -353,8 +363,7 @@ class AddEquipmentStep1 extends Step {
 
 AddEquipmentStep1.propTypes = {
   entities: PropTypes.object.isRequired,
-  fetchEquipmentTypes: PropTypes.func.isRequired,
-  fetchEquipmentTypeSpecs: PropTypes.func.isRequired
+  fetchEquipmentTypes: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
@@ -369,6 +378,5 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  fetchEquipmentTypes,
-  fetchEquipmentTypeSpecs
+  fetchEquipmentTypes
 })(AddEquipmentStep1);

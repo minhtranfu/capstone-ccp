@@ -34,6 +34,7 @@ class AddEquipmentSpecs extends Step {
 
   _handleSubmitForm = () => {
     
+    // Validate form
     const validateResult = validate(this.stepData, this.validateRules, {
       fullMessages: false
     });
@@ -60,6 +61,7 @@ class AddEquipmentSpecs extends Step {
     });
   };
 
+  // Get select equipment type base on id from previous step
   _getSelectedEquipmentTypeFields = () => {
     const { entities, currentState } = this.props;
     const equipmentTypes = entities[ENTITY_KEY.EQUIPMENT_TYPES].data || [];
@@ -131,7 +133,7 @@ class AddEquipmentSpecs extends Step {
               onClick={this._handleBackStep}>
               <i className="fal fa-chevron-left"></i> PREVIOUS STEP
             </button>
-            <button className="btn btn-success ml-2"
+            <button className="btn btn-primary ml-2"
               onClick={this._handleSubmitForm}>
               NEXT STEP <i className="fal fa-chevron-right"></i>
             </button>

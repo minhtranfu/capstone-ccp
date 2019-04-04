@@ -1,9 +1,6 @@
 import React from "react";
 import Step from "./Step";
 import PropTypes from "prop-types";
-import DropZone from "react-dropzone";
-
-import "bootstrap-daterangepicker/daterangepicker.css";
 
 import {
   fetchEquipmentTypes,
@@ -11,179 +8,225 @@ import {
 } from "../../../redux/actions/thunks";
 import { connect } from "react-redux";
 import { equipmentServices } from "Services/domain/ccp";
-
-const thumbsContainer = {
-  display: "flex",
-  flexDirection: "row",
-  flexWrap: "wrap",
-  marginTop: 16
-};
-
-const thumb = {
-  display: "inline-flex",
-  borderRadius: 2,
-  border: "1px solid #eaeaea",
-  marginBottom: 8,
-  marginRight: 8,
-  width: 100,
-  height: 100,
-  padding: 4,
-  boxSizing: "border-box"
-};
-
-const thumbInner = {
-  display: "flex",
-  minWidth: 0,
-  overflow: "hidden"
-};
-
-const img = {
-  display: "block",
-  width: "auto",
-  height: "100%"
-};
-
-class DropzoneWithPreview extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      files: []
-    };
-  }
-
-  onDrop(files) {
-    const { onChange } = this.props;
-    if (onChange) {
-      onChange(files);
-    }
-
-    this.setState({
-      files: files.map(file =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file)
-        })
-      )
-    });
-  }
-
-  componentWillUnmount() {
-    // Make sure to revoke the data uris to avoid memory leaks
-    this.state.files.forEach(file => URL.revokeObjectURL(file.preview));
-  }
-
-  render() {
-    const { files } = this.state;
-
-    const thumbs = files.map(file => (
-      <div style={thumb} key={file.name}>
-        <div style={thumbInner}>
-          <img src={file.preview} style={img} />
-        </div>
-      </div>
-    ));
-
-    return (
-      <section>
-        <DropZone accept="image/*" onDrop={this.onDrop.bind(this)}>
-          {({ getRootProps, getInputProps }) => (
-            <div
-              {...getRootProps()}
-              className="image-dropzone d-flex align-items-center justify-content-center rounded"
-            >
-              <input {...getInputProps()} />
-              <p>Click to select or drop photos here</p>
-            </div>
-          )}
-        </DropZone>
-        <aside style={thumbsContainer}>{thumbs}</aside>
-      </section>
-    );
-  }
-}
+import { DropzoneUploadImage, ComponentBlocking } from "Components/common";
+import { getErrorMessage, getValidateFeedback } from "Utils/common.utils";
+import validate from 'validate.js';
 
 class AddEquipmentStep3 extends Step {
-  constructor(props) {
-    super(props);
-
-    this.state = {};
-  }
-
-  _onChangeDescription = description => {
-    this.setState({ description });
+  state = {
+    images: [],
+    validateResult: {}
   };
 
+  // Validate rules
+  validateRules = {
+    equipmentImages: {
+      presence: {
+        allowEmpty: false,
+        message: '^Please upload at least one image'
+      },
+    },
+    description: {
+      presence: {
+        allowEmpty: false
+      }
+    }
+  };
+
+  /**
+   * Change field value in state
+   * Delete validate feedback for the field
+   */
   _handleFieldChange = e => {
-    const name = e.target.name;
-    const value = e.target.value;
+    const { name, value } = e.target;
+    const { validateResult } = this.state;
     this.setState({
-      [name]: value
+      [name]: value,
+      validateResult: {
+        ...validateResult,
+        [name]: undefined
+      }
     });
   };
 
-  _handleSelectFiles = files => {
-    this.setState({ files });
-  };
-
-  _handleSubmitForm = async () => {
-    const { files, description } = this.state;
+  /**
+   * Upload equipment
+   */
+  _uploadImages = async files => {
     const formData = new FormData();
     files.forEach(file => {
       formData.append("file", file);
     });
     
+    const images = await equipmentServices.uploadEquipmentImage(formData);
+    return images;
+  };
+
+  // Upload selected images and set to state
+  _handleSelectFiles = async selectedFiles => {
+    let { selectedThumbnailIndex, images, validateResult } = this.state;
+
+    if (!selectedFiles || !selectedFiles.length) {
+      return;
+    }
+
     this.setState({
       isFetching: true
     });
+    try {
+      // Upload images
+      const uploadedImages = await this._uploadImages(selectedFiles);
+
+      if (typeof selectedThumbnailIndex === 'undefined') {
+        selectedThumbnailIndex = 0;
+      }
+  
+      images = [
+        ...images,
+        ...uploadedImages
+      ];
+  
+      // Update state, delete feedback message for images
+      this.setState({
+        images,
+        selectedThumbnailIndex,
+        isFetching: false,
+        validateResult: {
+          ...validateResult,
+          equipmentImages: undefined
+        }
+      });
+
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      this.setState({
+        errorMessage,
+        isFetching: false
+      });
+    }
+  };
+
+  // Validate form and call step done callback with step data
+  _handleSubmitForm = async () => {
+    const { images, description, selectedThumbnailIndex } = this.state;
 
     let data = {
-      description
+      description,
+      equipmentImages: images.map(image => ({id: image.id}))
     };
 
-    // Upload images
-    if (files && files.length > 0) {
-      const images = await equipmentServices.uploadEquipmentImage(formData);
-      data = {
-        ...data,
-        equipmentImages: images.map(image => ({id: image.id})),
-        thumbnailImage: {
-          id: images[0].id
-        }
-      };
+    // Validate form
+    const validateResult = validate(data, this.validateRules);
+    if (validateResult) {
+      this.setState({
+        validateResult
+      });
+
+      return;
     }
+
+    data.thumbnailImage = {
+      id: images[selectedThumbnailIndex].id
+    };
     
     // Hanlde step done
     this._handleStepDone({
       data
     });
+  };
 
-    // Remove page loader
+  // Set image as thumbnail
+  _handleSelectThumbnail = selectedThumbnailIndex => {
     this.setState({
-      isFetching: true
+      selectedThumbnailIndex
     });
   };
 
+  // Delete image by index
+  _deleteImage = needDeleted => {
+    let { images, selectedThumbnailIndex } = this.state;
+
+    if (needDeleted === selectedThumbnailIndex) {
+      selectedThumbnailIndex = 0;
+    }
+
+    images = images.filter((file, index) => index !== needDeleted);
+    this.setState({
+      images,
+      selectedThumbnailIndex
+    });
+  };
+
+  // Render list preview images
+  _renderPreview = () => {
+    const { images, selectedThumbnailIndex } = this.state;
+
+    if (!images || images.length === 0) {
+      return null;
+    }
+
+    const imageElements = images.map((file, index) => {
+      const statusClass = index === selectedThumbnailIndex ? 'is-thumbnail border-primary border' : '';
+
+      return (
+        <div key={index} className="col-6 col-lg-3 my-2">
+          <div className={`cursor-pointer position-relative ${statusClass}`}>
+            <img
+              className="w-100"
+              tabIndex="0"
+              src={file.url}
+              onClick={() => this._handleSelectThumbnail(index)}
+              onKeyUp={e => {
+                if (e.keyCode === 32 || e.keyCode === 13) {
+                  this._handleSelectThumbnail(index);
+                }
+              }}
+            />
+            <button
+              className="btn btn-link top-right-button text-danger"
+              onClick={() => this._deleteImage(index)}
+              >
+              <i className="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      );
+    });
+
+    return (
+      <div className="my-2 row">
+        <h6 className="col-12">Select a thumbnail</h6>
+        {imageElements}
+      </div>
+    );
+  };
+
   render() {
+    const { isFetching, errorMessage, validateResult } = this.state;
+
     return (
       <div className="container">
-        {this.state.isFetching &&
-          <div className="page-loader d-flex align-items-center justify-content-center flex-column">
-            <div className="spinner-border" style={{ width: '5rem', height: '5rem' }} role="status">
-              <span className="sr-only">Loading...</span>
-            </div>
-            <div>Processing...</div>
-          </div>
+        {isFetching &&
+          <ComponentBlocking/>
         }
         <div className="row">
           <div className="col-md-12">
             <h4 className="my-3">More information</h4>
+            {errorMessage &&
+              <div className="alert alert-warning shadow-sm">
+                <i className="fal fa-info-circle"></i> {errorMessage}
+              </div>
+            }
           </div>
           <div className="col-md-6">
             <label htmlFor="">Upload some photo of equipment</label>
-            <DropzoneWithPreview onChange={this._handleSelectFiles} />
+            <DropzoneUploadImage onChange={this._handleSelectFiles} />
+            {getValidateFeedback('equipmentImages', validateResult)}
+            {this._renderPreview()}
           </div>
           <div className="col-md-6">
             <div className="form-group">
-              <label htmlFor="">Mô tả</label>
+              <label htmlFor="">Description</label>
               <textarea
                 tag="textarea"
                 className="form-control"
@@ -192,6 +235,7 @@ class AddEquipmentStep3 extends Step {
                 value={this.state.description || ""}
                 onChange={this._handleFieldChange}
               />
+              {getValidateFeedback('description', validateResult)}
             </div>
           </div>
           <div className="col-md-12 text-center">
@@ -203,10 +247,10 @@ class AddEquipmentStep3 extends Step {
                 <i className="fal fa-chevron-left" /> PREVIOUS STEP
               </button>
               <button
-                className="btn btn-success ml-2"
+                className="btn btn-primary ml-2"
                 onClick={this._handleSubmitForm}
               >
-                NEXT STEP <i className="fal fa-chevron-right" />
+                POST EQUIPMENT <i className="fal fa-paper-plane" />
               </button>
             </div>
           </div>
