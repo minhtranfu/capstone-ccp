@@ -38,4 +38,10 @@ public class NotificationDAO extends BaseDAO<NotificationEntity,Long> {
 				.getSingleResult();
 
 	}
+
+	public int markAllAsRead(long contractorId) {
+		return entityManager.createNamedQuery("NotificationEntity.markAllAsRead")
+				.setParameter("contractorId", contractorId)
+				.executeUpdate();
+	}
 }

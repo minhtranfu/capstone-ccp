@@ -7,10 +7,13 @@ import entities.NotificationEntity;
 import managers.FirebaseMessagingManager;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import org.json.JSONObject;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
@@ -65,6 +68,16 @@ public class NotificationResource {
 	public Response sendNotification(NotificationEntity request) {
 		messagingManager.sendMessage(new NotificationDTO(request.getTitle(), request.getContent(), getClaimContractorId(), request.getClickAction()));
 		return Response.ok().build();
+	}
+
+	@POST
+	@Path("readAll")
+	public Response markAllNotiAsRead() {
+		long contractorId = getClaimContractorId();
+		contractorDAO.findByIdWithValidation(contractorId);
+
+		int updatedRows = notificationDAO.markAllAsRead(contractorId);;
+		return Response.ok(new JSONObject().put("totalNotificationsRead", updatedRows).toString()).build();
 	}
 
 }
