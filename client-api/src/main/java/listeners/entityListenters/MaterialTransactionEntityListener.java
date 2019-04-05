@@ -85,8 +85,9 @@ public class MaterialTransactionEntityListener {
 
 		entity = materialTransactionDAO.findByID(entity.getId());
 		ContractorEntity supplier = entity.getSupplier();
+		ContractorEntity requester = entity.getRequester();
 		firebaseMessagingManager.sendMessage(new NotificationDTO("New Pending materials request",
-				String.format("You have a new materials request for from %s", supplier.getName())
+				String.format("You have a new materials request from %s", requester.getName())
 				, supplier.getId()
 				, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.MATERIAL_TRANSACTIONS, entity.getId())));
 

@@ -5,6 +5,7 @@ import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import daos.ContractorAccountDAO;
 import daos.ContractorDAO;
+import daos.NotificationDAO;
 import dtos.Credentials;
 import dtos.requests.ChangePasswordRequest;
 import dtos.requests.ContractorRequest;
@@ -12,11 +13,11 @@ import dtos.requests.RefreshCredentials;
 import dtos.requests.RegisterRequest;
 import dtos.responses.AuthenResponse;
 import dtos.responses.RegisterResponse;
+import dtos.responses.TokenContractorResponse;
 import dtos.responses.TokenWrapper;
 import entities.ContractorAccountEntity;
 import entities.ContractorEntity;
 import jaxrs.providers.MPJWTConfigurationProvider;
-import org.eclipse.microprofile.jwt.Claims;
 import org.mindrot.jbcrypt.BCrypt;
 import utils.ModelConverter;
 import utils.TokenUtil;
@@ -28,7 +29,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.security.interfaces.RSAPublicKey;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -46,6 +46,8 @@ public class AuthenticationResource {
 	ModelConverter modelConverter;
 	@Inject
 	ContractorDAO contractorDAO;
+	@Inject
+	NotificationDAO notificationDAO;
 
 
 	@Inject
@@ -69,7 +71,7 @@ public class AuthenticationResource {
 		String token = issueToken(contractorAccount, expiresIn);
 		String refreshToken = issueToken(contractorAccount, DEFAULT_REFRESH_TOKEN_EXPIRE_TIME);
 		AuthenResponse authenResponse = new AuthenResponse();
-		authenResponse.setContractor(contractorAccount.getContractor());
+		authenResponse.setContractor(prepareContractorResponse(contractorAccount.getContractor()));
 		authenResponse.setUsername(username);
 		authenResponse.setTokenWrapper(new TokenWrapper(
 				token,
@@ -83,6 +85,11 @@ public class AuthenticationResource {
 		return Response.ok(authenResponse).build();
 	}
 
+	private TokenContractorResponse prepareContractorResponse(ContractorEntity contractorEntity) {
+		TokenContractorResponse tokenContractorResponse = modelConverter.toTokenContractorResponse(contractorEntity);
+		tokenContractorResponse.setTotalUnreadNotifications(notificationDAO.getTotalUnreadNotification(contractorEntity.getId()));
+		return tokenContractorResponse;
+	}
 	private String issueToken(ContractorAccountEntity account, long expiresIn) throws Exception {
 		// TODO: 3/6/19 generate token here
 		final List<String> scopes = new ArrayList<>();
@@ -202,7 +209,7 @@ public class AuthenticationResource {
 		String token = issueToken(contractorAccount, expiresIn);
 		String refreshToken = issueToken(contractorAccount, DEFAULT_REFRESH_TOKEN_EXPIRE_TIME);
 		AuthenResponse authenResponse = new AuthenResponse();
-		authenResponse.setContractor(contractorAccount.getContractor());
+		authenResponse.setContractor(prepareContractorResponse(contractorAccount.getContractor()));
 		authenResponse.setUsername(username);
 		authenResponse.setTokenWrapper(new TokenWrapper(
 				token,
@@ -258,7 +265,7 @@ public class AuthenticationResource {
 		String token = issueToken(accountEntity, expiresIn);
 
 		AuthenResponse authenResponse = new AuthenResponse();
-		authenResponse.setContractor(accountEntity.getContractor());
+		authenResponse.setContractor(prepareContractorResponse(accountEntity.getContractor()));
 		authenResponse.setUsername(username);
 		authenResponse.setTokenWrapper(new TokenWrapper(
 				token,
@@ -269,6 +276,7 @@ public class AuthenticationResource {
 		));
 		return Response.ok(authenResponse).build();
 	}
+
 
 
 //	@POST
