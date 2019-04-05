@@ -24,7 +24,7 @@ class EquipmentCard extends PureComponent {
                   {product.contractor.name}
                 </span>
 
-                <span className="ml-auto text-large price">{product.dailyPrice}K</span>
+                <span className="ml-auto text-large price bg-primary">{product.dailyPrice}K</span>
               </div>
             </div>
             <div className="card-body">
