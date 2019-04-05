@@ -392,7 +392,10 @@ class DebriseTransactionsRequest extends Component {
         {isChangingStatus &&
           <ComponentBlocking/>
         }
-        <h1 className="my-3">Debris transactions are requested by me</h1>
+        <h1 className="my-3">
+          Debris transactions are requested by me
+          <button className="btn btn-outline-primary float-right" onClick={this._loadData}><i className="fal fa-sync"></i></button>
+        </h1>
         <div className="row">
           <div className="col-md-3">
             <div className="border-right border-primary h-100">

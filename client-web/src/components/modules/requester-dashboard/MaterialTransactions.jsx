@@ -365,6 +365,11 @@ class MaterialTransactions extends Component {
       <div className="container py-5 user-dashboard">
         {this._renderAlert()}
         <div className="row">
+          <div className="col-md-12">
+            <h5>
+              <button className="btn btn-outline-primary float-right" onClick={this._loadData}><i className="fal fa-sync"></i></button>
+            </h5>
+          </div>
           <div className="col-md-3">
             <div className="border-right border-primary h-100">
               <div className="sticky-top sticky-sidebar nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
