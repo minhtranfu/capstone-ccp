@@ -30,6 +30,10 @@ export const updateNotificationStatus = (id, isRead) => {
   });
 };
 
+export const markAllNotificationsAsRead = () => {
+  return DataAccessService.post('/notifications/readAll');
+};
+
 export const uploadAvatar = formData => {
   return DataAccessService.post('/storage', formData, {
     headers: {

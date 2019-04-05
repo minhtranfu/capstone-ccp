@@ -61,6 +61,13 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
         ...state
       };
 
+    case authConstants.SET_NOTIFICATIONS_COUNT:
+      state.user.contractor.totalUnreadNotifications = action.totalUnreadNotifications;
+
+      return {
+        ...state
+      };
+
     case authConstants.MIN_NOTIFICATIONS_COUNT:
       state.user.contractor.totalUnreadNotifications--;
 

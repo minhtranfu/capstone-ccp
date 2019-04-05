@@ -17,7 +17,8 @@ export const authActions = {
   hideLoginModal,
   toggleLoginModal,
   addNotificationsCount,
-  minusNotificationsCount
+  minusNotificationsCount,
+  setUnreadNotificationsCount
 };
 
 /**
@@ -124,5 +125,12 @@ function minusNotificationsCount() {
 function addNotificationsCount() {
   return {
     type: authConstants.ADD_NOTIFICATIONS_COUNT
+  }
+}
+
+function setUnreadNotificationsCount(totalUnreadNotifications) {
+  return {
+    type: authConstants.SET_NOTIFICATIONS_COUNT,
+    totalUnreadNotifications
   }
 }

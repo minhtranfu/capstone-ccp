@@ -20,6 +20,10 @@ class Notifications extends Component {
   scrollBuffer = 40;
   changingNotificationIds = [];
 
+  /**
+   * Capture event scroll
+   * If scroll reach bottom call load more data
+   */
   _handleScroll = (e) => {
 
     const bottom = e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + this.scrollBuffer;
@@ -28,6 +32,9 @@ class Notifications extends Component {
     }
   }
 
+  /**
+   * Load more notification
+   */
   _loadMore = () => {
     const { notifications, fetchNotifications } = this.props;
 
@@ -48,6 +55,36 @@ class Notifications extends Component {
     });
   };
 
+  /**
+   * Mark all notifications as read
+   */
+  _markAllAsRead = async () => {
+    const { setNotificationsCount, notifications } = this.props;
+
+    if (this.markingAllAsRead) {
+      return;
+    }
+    this.markingAllAsRead = true;
+
+    try {
+      await userServices.markAllNotificationsAsRead();
+      setNotificationsCount(0);
+      const readNotificationIds = notifications.data.map(notification => notification.id);
+
+      this.setState({
+        readNotificationIds,
+        unreadNotificationIds: []
+      });
+      this.markingAllAsRead = false;
+    } catch (error) {
+      this.markingAllAsRead = false;
+      console.log(error);
+    }
+  };
+
+  /**
+   * Request to mark notification as read or unread
+   */
   _toggleReadStatus = async (e, notification) => {
     e.preventDefault();
     if (this.changingNotificationIds.includes(notification.id)) {
@@ -58,7 +95,7 @@ class Notifications extends Component {
 
     this.changingNotificationIds.push(notification.id);
     try {
-      const isUnread = !notification.read && !readNotificationIds.includes(notification.id) || unreadNotificationIds.includes(notification.id);
+      const isUnread = (!notification.read && !readNotificationIds.includes(notification.id)) || (unreadNotificationIds.includes(notification.id));
       const result = await userServices.updateNotificationStatus(notification.id, isUnread);
       this._removeIdFromChangingList(notification.id);
 
@@ -102,10 +139,17 @@ class Notifications extends Component {
     }
   };
 
+  /**
+   * Remove id of notification from changing status list
+   */
   _removeIdFromChangingList = notiId => {
     this.changingNotificationIds = this.changingNotificationIds.filter(id => id !== notiId);
   };
 
+  /**
+   * After component updated
+   * Check data is empty to fetch new data
+   */
   componentDidUpdate() {
     const { notifications, fetchNotifications } = this.props;
 
@@ -118,6 +162,9 @@ class Notifications extends Component {
 
   }
 
+  /**
+   * Render list of notification
+   */
   _renderListNotifications = () => {
     const { readNotificationIds, unreadNotificationIds } = this.state;
     const { notifications, authentication } = this.props;
@@ -142,7 +189,7 @@ class Notifications extends Component {
     }
 
     return notifications.data.map(notification => {
-      const isUnread = !notification.read && !readNotificationIds.includes(notification.id) || unreadNotificationIds.includes(notification.id);
+      const isUnread = (!notification.read && !readNotificationIds.includes(notification.id)) ||  (unreadNotificationIds.includes(notification.id));
       return (
         <div key={notification.id} className={classnames('dropdown-item', 'd-flex', {'unread': isUnread})}>
           <a href="/" className="flex-fill">
@@ -155,7 +202,7 @@ class Notifications extends Component {
               </div>
             </div>
           </a>
-          <button className="btn btn-sm mark-as-read btn-link" onClick={e => this._toggleReadStatus(e, notification)} title="Mark as read">
+          <button className="btn btn-sm mark-as-read btn-link" onClick={e => this._toggleReadStatus(e, notification)} title={isUnread ? "Mark as unread" : "Mark as read"}>
             <i className={classnames('fa-circle', 'text-primary', {fas: isUnread, far: !isUnread})}></i>
           </button>
         </div>
@@ -174,7 +221,7 @@ class Notifications extends Component {
       <div className="dropdown-menu shadow mt-2 rounded-top-0 show">
         <div className="dropdown-item px-1 border-bottom">
           <h6 className="d-inline">Notifications</h6>
-          <button className="btn btn-link float-right py-0">Mark all as read</button>
+          <button className="btn btn-link float-right py-0" onClick={this._markAllAsRead}>Mark all as read</button>
           <div className="clearfix"></div>
         </div>
         <div className="list-notifications custom-scrollbar" onScroll={this._handleScroll}>
@@ -207,7 +254,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   fetchNotifications: fetchNotifications,
   minusNotificationsCount: authActions.minusNotificationsCount,
-  addNotificationsCount: authActions.addNotificationsCount
+  addNotificationsCount: authActions.addNotificationsCount,
+  setNotificationsCount: authActions.setUnreadNotificationsCount
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Notifications);
