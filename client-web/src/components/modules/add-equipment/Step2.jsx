@@ -18,7 +18,7 @@ class AddEquipmentSpecs extends Step {
 
   _handleFieldChange = e => {
     const name = e.target.name;
-    const value = e.target.value;
+    let value = e.target.value;
 
     this.stepData[name] = value;
 
@@ -46,8 +46,12 @@ class AddEquipmentSpecs extends Step {
       return;
     }
 
-    const additionalSpecsValues = Object.keys(this.state).map(specKey => {
-      return this.state[specKey];
+    const stepData = {
+      ...this.state
+    };
+    delete stepData.validateResult;
+    const additionalSpecsValues = Object.keys(stepData).map(specKey => {
+      return stepData[specKey];
     });
 
     this.setState({
