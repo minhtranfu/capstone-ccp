@@ -14,8 +14,8 @@ class MaterialCard extends PureComponent {
       <div className={`equip-card my-2 ${className}`}>
         <Link to={getRoutePath(routeConsts.MATERIAL_DETAIL, {id: product.id})}>
           <div className="card">
-            <div className="image-169">
-              <Image src={thumbnail} className="card-img-top" alt={product.name} />
+            <div className="image-169 lh-1">
+              <Image src={thumbnail} height={210} className="card-img-top" alt={product.name} />
             </div>
             <div className="card-body">
               <h6 className="card-title">{product.name} <span className="float-right">{formatPrice(product.price)}<small className="text-muted">/{product.materialType.unit}</small></span>

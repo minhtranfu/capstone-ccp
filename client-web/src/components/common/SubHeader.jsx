@@ -41,11 +41,11 @@ class SubHeader extends Component {
     },
     {
       to: getRoutePath(routeConsts.MATERIAL_SUPPLY),
-      name: 'Material supply'
+      name: 'Transaction as supplier'
     },
     {
       to: getRoutePath(routeConsts.MATERIAL_REQUEST),
-      name: 'Material requests'
+      name: 'Transaction as requester'
     },
   ];
 

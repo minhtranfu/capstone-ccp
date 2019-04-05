@@ -130,6 +130,17 @@ class Notifications extends Component {
       return null;
     }
 
+    if (notifications.data.length === 0) {
+      return (
+        <div className="py-3 text-center">
+          <div>
+            <i className="fal fa-envelope-open fa-6x text-muted mb-3"></i>
+          </div>
+          No result!
+        </div>
+      );
+    }
+
     return notifications.data.map(notification => {
       const isUnread = !notification.read && !readNotificationIds.includes(notification.id) || unreadNotificationIds.includes(notification.id);
       return (
@@ -137,7 +148,10 @@ class Notifications extends Component {
           <a href="/" className="flex-fill">
             <div className="align-items-center">
               <div className={classnames('title', { 'font-weight-bold': isUnread })}>
-                {notification.title} <span className="text-muted">{notification.content}</span>
+                {notification.title}
+              </div>
+              <div className="title text-muted">
+                {notification.content}
               </div>
             </div>
           </a>
@@ -158,6 +172,11 @@ class Notifications extends Component {
 
     return (
       <div className="dropdown-menu shadow mt-2 rounded-top-0 show">
+        <div className="dropdown-item px-1 border-bottom">
+          <h6 className="d-inline">Notifications</h6>
+          <button className="btn btn-link float-right py-0">Mark all as read</button>
+          <div className="clearfix"></div>
+        </div>
         <div className="list-notifications custom-scrollbar" onScroll={this._handleScroll}>
           {this._renderListNotifications()}
           {notifications.isFetching &&

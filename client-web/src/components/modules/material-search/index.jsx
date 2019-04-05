@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import MaterialSearchBox from '../../common/MaterialSearchBox';
 import MaterialCard from '../../common/MaterialCard';
 import Helmet from 'react-helmet-async';
-import moment from 'moment';
 import Skeleton from 'react-loading-skeleton';
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
 import { materialServices } from "Services/domain/ccp";
 
 class MaterialSearch extends Component {

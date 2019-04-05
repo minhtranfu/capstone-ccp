@@ -76,7 +76,6 @@ class MyDebrises extends Component {
           <Link to={getRoutePath(routeConsts.DEBRIS_DETAIL, { id: debris.id })}><h6>{debris.title}</h6></Link>
           <div className="text-muted"><small><i className="fal fa-tags"></i></small> {services}</div>
           <div className="text-muted"><i className="fal fa-map-marker"></i> {debris.address}</div>
-          <div className="description">{debris.description}</div>
           <div><i className="fas fa-gavel"></i> Bided: {debrisBids.length}</div>
         </div>
       );

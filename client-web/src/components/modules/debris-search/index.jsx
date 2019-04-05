@@ -107,14 +107,17 @@ class DebrisSearch extends Component {
                       <Link to={getRoutePath(routeConsts.DEBRIS_DETAIL, {id: product.id})}><h6>{product.title}</h6></Link>
                       <div className="text-muted"><small><i className="fal fa-tags"></i></small> {services}</div>
                       <div className="text-muted"><i className="fal fa-map-marker"></i> {product.address}</div>
-                      <div className="description text-muted"><i className="fal fa-info-circle"></i> {product.description}</div>
+                      {criteria.latitude &&
+                        <div className="text-muted">
+                          <i className="fal fa-map-marker-alt"></i> Distance: {this.calcCrow(criteria.latitude, criteria.longitude, product.latitude, product.longitude)}Km
+                        </div>
+                      }
                       <div><i className="fas fa-gavel"></i> Bid: {debrisBids.length}</div>
-                      {/* {criteria.latitude &&
-                        <div className="text-muted"><i className="fal fa-map-marker-alt"></i> Distance: {this.calcCrow(criteria.latitude, criteria.longitude, product.latitude, product.longitude)}</div>
-                      } */}
                     </div>
                     <div className="d-flex align-items-center flex-column justify-content-center">
-                      <Image src={avatarSrc} className="rounded-circle avatar" circle={true}/>
+                      <div className="lh-1">
+                        <Image width={80} height={80} src={avatarSrc} className="rounded-circle avatar" circle/>
+                      </div>
                       <h6>{requester.name}</h6>
                     </div>
                   </div>

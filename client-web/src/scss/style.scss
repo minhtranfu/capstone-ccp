@@ -107,6 +107,8 @@ nav.navbar {
 // Constructor card
 .constructor-card>img {
   background-color: #e8e8e8;
+  width: 125px;
+  height: 125px;
 }
 
 .page-loader {
@@ -206,9 +208,32 @@ nav.navbar {
   }
 }
 
-.equip-card .card {
-  border: none;
-  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.22);
+.equip-card {
+  .card {
+    border: none;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.22);
+
+    .thumbnail {
+      position: relative;
+
+      .info {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding: 5px 10px;
+        background: linear-gradient(45deg, #000 0%, rgba(0, 0, 0, .5) 60%, rgba(0, 0, 0, 0) 100%);
+        color: #fff;
+
+        .price {
+          background: #ffc107;
+          margin-right: -10px;
+          padding: 10px 10px 10px 12px;
+          border-top-left-radius: 20px;
+          border-bottom-left-radius: 20px;
+        }
+      }
+    }
+  }
 }
 
 .white-space-normal {
@@ -580,6 +605,7 @@ nav.navbar {
     top: 50%;
     transform: translateY(-50%);
     width: 100%;
+    height: auto !important;
   }
 }
 .date-range-picker .custom-file-label::after {
@@ -601,7 +627,7 @@ nav.navbar {
 .debris-request {
   .avatar {
     width: 80px;
-    height: auto;
+    height: 80px;
   }
 }
 .bid {

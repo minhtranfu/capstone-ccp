@@ -82,7 +82,6 @@ class MaterialRequestDetail extends Component {
 
     let total = 0;
     const list = transaction.materialTransactionDetails.map(detail => {
-      console.log('detail', detail);
       const { material } = detail;
 
       total += detail.price * detail.quantity;
@@ -99,6 +98,9 @@ class MaterialRequestDetail extends Component {
             <div className="mt-2">
               {transaction.status === MATERIAL_TRANSACTION_STATUSES.FINISHED && !detail.feedbacked &&
                 <button className="btn btn-sm btn-outline-primary mr-2" onClick={() => this._toggleRatingMaterialDetail(detail)}>Feedback</button>
+              }
+              {transaction.status === MATERIAL_TRANSACTION_STATUSES.FINISHED && detail.feedbacked &&
+                <span className="text-success mr-3">Feedbacked</span>
               }
               <Link className="btn btn-sm btn-outline-primary" to={getRoutePath(routeConsts.MATERIAL_DETAIL, { id: material.id })}>Buy again</Link>
             </div>

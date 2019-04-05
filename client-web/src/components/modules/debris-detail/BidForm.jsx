@@ -157,7 +157,7 @@ class BidForm extends Component {
                 {message}
               </Alert>
               <div className="form-group">
-                <label htmlFor="bid_price">Price: <i className="text-danger">*</i></label>
+                <label htmlFor="bid_price">Price (K): <i className="text-danger">*</i></label>
                 <input type="number" name="price" className={classnames('form-control', {'is-invalid': validateResult.price})} min="1" id="bid_price"
                   onChange={this._handleFieldChange}
                 />

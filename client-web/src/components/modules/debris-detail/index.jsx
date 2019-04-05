@@ -117,14 +117,18 @@ class DebrisDetail extends Component {
       }
 
       return (
-        <div key={bid.id} className={`my-2 bg-white p-3 d-flex bid ${bid.status === DEBRIS_BID_STATUSES.ACCEPTED ? 'border border-primary border-2 shadow' : 'shadow-sm'}`}>
+        <div key={bid.id} className={`my-2 bg-white p-3 d-flex bid ${bid.status !== DEBRIS_BID_STATUSES.PENDING ? 'border border-primary border-2 shadow' : 'shadow-sm'}`}>
           <div className="flex-fill d-flex flex-column flex-lg-row">
             <div className="d-flex bider text-nowrap flex-wrap flex-sm-nowrap">
-              <div>
-                <Image src={bid.supplier && bid.supplier.thumbnailImageUrl
-                  ? bid.supplier.thumbnailImageUrl
-                  : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"}
-                  className="rounded-circle avatar mr-2"
+              <div className="lh-1 mr-2">
+                <Image
+                  circle
+                  width={75}
+                  height={75}
+                  src={bid.supplier && bid.supplier.thumbnailImageUrl
+                    ? bid.supplier.thumbnailImageUrl
+                    : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"}
+                  className="rounded-circle avatar"
                 />
               </div>
               <div className="flex-fill">
@@ -148,7 +152,7 @@ class DebrisDetail extends Component {
                 {isRequester && isPending &&
                   <button className="btn btn-outline-primary float-right mt-2" onClick={() => this._handleChooseBid(bid.id)}>Choose</button>
                 }
-                {bid.status === DEBRIS_BID_STATUSES.ACCEPTED &&
+                {bid.status !== DEBRIS_BID_STATUSES.PENDING &&
                   <span className="float-right text-primary mt-2">Selected</span>
                 }
               </div>
@@ -164,7 +168,7 @@ class DebrisDetail extends Component {
             {isRequester && isPending &&
               <button className="btn btn-outline-primary float-right mt-2" onClick={() => this._handleChooseBid(bid.id)}>Choose</button>
             }
-            {bid.status === DEBRIS_BID_STATUSES.ACCEPTED &&
+            {bid.status !== DEBRIS_BID_STATUSES.PENDING &&
               <span className="float-right text-primary mt-2">Selected</span>
             }
           </div>
@@ -317,7 +321,7 @@ class DebrisDetail extends Component {
                       <span className="text-success">Waiting for bids</span>
                     }
                     {debris.status !== DEBRIS_POST_STATUSES.PENDING &&
-                      <span className="text-secondary">DONE</span>
+                      <span className="text-primary">{debris.status}</span>
                     }
                   </h5>
                 </div>
@@ -343,6 +347,12 @@ class DebrisDetail extends Component {
                     {debris.address || <Skeleton width={250} />}
                   </h6>
                 </div>
+                <div className="col-md-12 py-2">
+                  <h6>
+                    <span className="text-muted"><i className="fal fa-align-justify"></i> Description: </span>
+                  </h6>
+                  {debris.description}
+                </div>
               </div>
             </div>
             {!debris.id && <Skeleton height={135} count={10} />}
@@ -361,16 +371,17 @@ class DebrisDetail extends Component {
           </div>
           {/* Right Sidebar */}
           <div className="col-md-3">
-            <div className="sticky-top sticky-sidebar">
+            <div className="sticky-top sticky-sidebar pt-2">
               <div className="constructor-card text-center">
                 <Image
+                  circle
                   src={
                     debris.requester && debris.requester.thumbnailImageUrl
                       ? debris.requester.thumbnailImageUrl
                       : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"
                   }
-                  className="rounded-circle w-50"
-                  alt=""
+                  className="rounded-circle"
+                  alt="Avatar"
                 />
                 <h5>
                   {debris.requester ? debris.requester.name : <Skeleton />}
@@ -386,11 +397,6 @@ class DebrisDetail extends Component {
                     )}
                 </p>
               </div>
-              {/* {debris.id &&
-                (!authentication.isAuthenticated ||
-                  debris.contractor.id !== user.contractor.id) && (
-                  <RequestCard debris={debris} />
-                )} */}
               {debris.id &&
                 authentication.isAuthenticated &&
                 debris.requester.id == user.contractor.id && (
