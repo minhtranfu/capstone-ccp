@@ -31,11 +31,32 @@ export const UPDATE_EQUIPMENT_STATUS = renderActions(
 export const CLEAR_SEARCH_RESULT = renderActions("@@equip/CLEAR_SEARCH_RESULT");
 
 //UPLOAD IMAGE
-export const UPLOAD_IMAGE = renderActions("@@equip/UPLOAD_IMAGE");
-export const INSERT_NEW_IMAGE = renderActions("@@equip/INSERT_NEW_IMAGE");
-export const GET_IMAGE_BY_ID = renderActions("@@equip/GET_IMAGE_BY_ID");
-export const DELETE_IMAGE = renderActions("@@equip/DELETE_IMAGE");
-export const CLEAR_IMAGE_LIST = "@@equip/CLEAR_IMAGE_LIST";
+export const GET_EQUIPMENT_IMAGES_LIST = renderActions(
+  "@@equip/GET_EQUIPMENT_IMAGES_LIST"
+);
+export const UPLOAD_EQUIPMENT_IMAGE = renderActions(
+  "@@equip/UPLOAD_EQUIPMENT_IMAGE"
+);
+export const INSERT_NEW_EQUIPMENT_IMAGE = renderActions(
+  "@@equip/INSERT_NEW_EQUIPMENT_IMAGE"
+);
+export const DELETE_EQUIPMENT_IMAGE = renderActions(
+  "@@equip/DELETE_EQUIPMENT_IMAGE"
+);
+
+//UPLOAD DEBRIS
+export const GET_DEBRIS_IMAGES_LIST = renderActions(
+  "@@debris/GET_DEBRIS_IMAGES_LIST"
+);
+export const UPLOAD_DEBRIS_IMAGE = renderActions(
+  "@@debris/UPLOAD_DEBRIS_IMAGE"
+);
+export const INSERT_NEW_DEBRIS_IMAGE = renderActions(
+  "@@debris/INSERT_NEW_DEBRIS_IMAGE"
+);
+export const DELETE_DEBRIS_IMAGE = renderActions(
+  "@@debris/DELETE_DEBRIS_IMAGE"
+);
 
 //TRANSACTION
 export const LIST_SUPPLIER_TRANSACTION = renderActions(
@@ -175,6 +196,9 @@ export const DELETE_SUBSCRIPTION = renderActions(
 );
 
 //NOTIFICATION
+export const READ_ALL_NOTIFICATION = renderActions(
+  "@@contractor/READ_ALL_NOTIFICATION"
+);
 export const INSERT_NOTIFICATION_TOKEN = renderActions(
   "@@contractor/INSERT_NOTIFICATION_TOKEN"
 );
@@ -276,3 +300,5 @@ export const GET_EQUIPMENT_FEEDBACK = renderActions(
 
 //REGISTER
 export const REGISTER = renderActions("@@feedback/REGISTER");
+
+//UPLOAD

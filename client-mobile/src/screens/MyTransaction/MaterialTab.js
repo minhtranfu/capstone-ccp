@@ -109,44 +109,30 @@ class MaterialTab extends PureComponent {
               code={materialStatus.code}
             />
             {materialList.map(item => (
-              <MaterialOrder
-                key={item.id}
-                role={"Requester"}
-                contractor={item.requester.name}
-                phone={item.requester.phoneNumber}
-                avatarURL={
-                  item.requester.thumbnailImage
-                    ? item.requester.thumbnailImage
-                    : "http://bootstraptema.ru/snippets/icons/2016/mia/2.png"
-                }
-                address={item.requesterAddress}
-                totalPrice={item.totalPrice}
-                createdTime={item.createdTime}
-                totalOrder={item.materialTransactionDetails}
-                status={item.status}
-                statusBackgroundColor={COLORS[item.status]}
-                onPress={() =>
-                  this.props.navigation.navigate("MaterialSupplierDetail", {
-                    id: item.id
-                  })
-                }
-              />
-              // <MaterialItem
-              //   key={item.id}
-              //   manufacturer={item.material.manufacturer}
-              //   name={item.material.name}
-              //   price={item.price}
-              //   unit={item.unit}
-              //   imageUrl={item.material.thumbnailImageUrl}
-              //   contractor={item.material.contractor.name}
-              //   contractorThumbnail={
-              //     item.material.contractor.thumbnailImage
-              //       ? item.material.contractor.thumbnailImage
-              //       : "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
-              //   }
-              //   status={item.status}
-
-              // />
+              <View key={`mat${item.id}`} style={styles.rowWrapper}>
+                <MaterialOrder
+                  transactionId={item.id}
+                  role={"Requester"}
+                  contractor={item.requester.name}
+                  phone={item.requester.phoneNumber}
+                  avatarURL={
+                    item.requester.thumbnailImage
+                      ? item.requester.thumbnailImage
+                      : "http://bootstraptema.ru/snippets/icons/2016/mia/2.png"
+                  }
+                  address={item.requesterAddress}
+                  totalPrice={item.totalPrice}
+                  createdTime={item.createdTime}
+                  totalOrder={item.materialTransactionDetails}
+                  status={item.status}
+                  statusBackgroundColor={COLORS[item.status]}
+                  onPress={() =>
+                    this.props.navigation.navigate("MaterialSupplierDetail", {
+                      id: item.id
+                    })
+                  }
+                />
+              </View>
             ))}
           </View>
         );
@@ -199,6 +185,11 @@ const styles = StyleSheet.create({
   text: {
     fontSize: fontSize.bodyText,
     fontWeight: "500"
+  },
+  rowWrapper: {
+    marginVertical: 8,
+    ...colors.shadow,
+    elevation: 2
   }
 });
 

@@ -30,10 +30,7 @@ import fontSize from "../../../config/fontSize";
 const { width, height } = Dimensions.get("window");
 
 @connect(
-  state => ({
-    imageUrl: state.upload.imageURL,
-    loading: state.upload.loading
-  }),
+  state => ({}),
   dispatch => ({
     fetchAddEquipment: equipment => {
       dispatch(addEquipment(equipment));
@@ -96,8 +93,8 @@ class AddImage extends Component {
           id: res.data[0].id
         }
       };
-      console.log(image);
       const newEquipment = Object.assign({}, data, image);
+      console.log(newEquipment);
       this.props.fetchAddEquipment(newEquipment);
     } catch (error) {
       this.setState({ loading: false });
@@ -115,6 +112,14 @@ class AddImage extends Component {
     this.setState({
       images: this.state.images.filter((item, index) => index !== rowIndex)
     });
+  };
+
+  _checkHasImage = () => {
+    const { images } = this.state;
+    if (images.length > 0) {
+      return true;
+    }
+    return false;
   };
 
   _renderRowImageUpdate = (image, key, imageIndex) => {
@@ -180,7 +185,7 @@ class AddImage extends Component {
         >
           <Text
             style={{
-              fontSize: fontSize.h4,
+              fontSize: fontSize.bodyText,
               fontWeight: "500",
               color: colors.text
             }}
@@ -213,26 +218,22 @@ class AddImage extends Component {
             </View>
           ) : null}
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between"
-            }}
-          >
-            <Button
-              buttonStyle={styles.buttonStyle}
-              text={"Add Image"}
-              onPress={() => this._handleAddImage()}
-            />
-          </View>
-          <TouchableOpacity
-            style={styles.buttonEnable}
-            onPress={() => this._handleSubmit()}
-          >
-            <Text style={styles.textEnable}>Submit</Text>
-          </TouchableOpacity>
+          <Button
+            buttonStyle={styles.buttonStyle}
+            text={"Add Image"}
+            onPress={() => this._handleAddImage()}
+          />
         </ScrollView>
+        <TouchableOpacity
+          style={[
+            styles.buttonWrapper,
+            this._checkHasImage() ? styles.buttonEnable : styles.buttonDisable
+          ]}
+          disabled={!this._checkHasImage()}
+          onPress={() => this._handleSubmit()}
+        >
+          <Text style={styles.textEnable}>Submit</Text>
+        </TouchableOpacity>
       </SafeAreaView>
     );
   }
@@ -251,13 +252,9 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   buttonWrapper: {
-    marginRight: 15,
-    width: 80,
-    paddingVertical: 8,
-    borderRadius: 5,
+    height: 44,
     alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row"
+    justifyContent: "center"
   },
   buttonEnable: {
     marginTop: 20,
@@ -279,6 +276,12 @@ const styles = StyleSheet.create({
     fontSize: fontSize.bodyText,
     fontWeight: "500",
     color: "white"
+  },
+  buttonEnable: {
+    backgroundColor: colors.primaryColor
+  },
+  buttonDisable: {
+    backgroundColor: colors.text25
   }
 });
 

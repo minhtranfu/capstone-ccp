@@ -42,6 +42,7 @@ class Bidder extends Component {
       <TouchableOpacity style={styles.container} onPress={onPress}>
         <View
           style={{
+            borderRadius: 10,
             flexDirection: "row",
             alignItems: "center",
             backgroundColor: "white"
@@ -117,7 +118,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 10,
     ...colors.shadow
   },
   divider: {

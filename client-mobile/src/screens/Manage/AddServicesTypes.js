@@ -156,11 +156,11 @@ class AddServicesTypes extends Component {
                 this.props.navigation.goBack();
               }}
             >
-              <Text style={styles.text}>Done</Text>
+              <Text style={styles.title}>Done</Text>
             </TouchableOpacity>
           )}
         >
-          <Text style={styles.text}>Select your services</Text>
+          <Text style={styles.title}>Select your services</Text>
         </Header>
         {!loading ? (
           <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
@@ -193,7 +193,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: fontSize.secondaryText,
-    paddingBottom: 5
+    color: colors.text68,
+    marginBottom: 5
   },
   divider: {
     borderWidth: StyleSheet.hairlineWidth,

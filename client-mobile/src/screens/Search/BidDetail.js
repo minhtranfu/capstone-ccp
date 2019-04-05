@@ -16,6 +16,8 @@ import {
   clearDebrisDetail
 } from "../../redux/actions/debris";
 import Feather from "@expo/vector-icons/Feather";
+import { Rating } from "react-native-ratings";
+import moment from "moment";
 
 import PlaceBid from "./component/PlaceBid";
 import Bidder from "../../components/Bidder";
@@ -25,6 +27,7 @@ import Header from "../../components/Header";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+import Title from "../../components/Title";
 
 const STATUS = {
   PENDING: "OPENING",
@@ -63,6 +66,59 @@ class BidDetail extends Component {
 
   _setModalVisible = visible => {
     this.setState({ modalVisible: visible });
+  };
+
+  _renderContractorBid = () => {
+    const { detail } = this.props;
+    return (
+      <View
+        style={{
+          paddingBottom: 5,
+          paddingTop: 15,
+          ...colors.shadow,
+          backgroundColor: "white",
+          paddingHorizontal: 15,
+          borderRadius: 10,
+          marginBottom: 15,
+          marginTop: 5
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 5
+          }}
+        >
+          <Image
+            uri={detail.requester.thumbnailImageUrl}
+            resizeMode={"cover"}
+            style={{ width: 40, height: 40, borderRadius: 20 }}
+          />
+          <View style={{ flex: 1, marginRight: 8 }}>
+            <Text style={styles.bidSupplierName}>{detail.requester.name}</Text>
+            <Rating
+              readonly={true}
+              ratingCount={5}
+              fractions={1}
+              startingValue={detail.requester.averageDebrisRating}
+              imageSize={20}
+              style={{
+                paddingVertical: 10,
+                backgroundColor: "transparent",
+                alignItems: "flex-start"
+              }}
+            />
+            <Text style={styles.bidTime}>
+              Post created from: {moment(detail.createdTime).fromNow()}
+            </Text>
+          </View>
+        </View>
+        {detail.description ? (
+          <Text style={styles.bidDescription}>{detail.description}</Text>
+        ) : null}
+      </View>
+    );
   };
 
   _renderBottomButton = contractorId => {
@@ -111,15 +167,11 @@ class BidDetail extends Component {
     return (
       <View>
         <Text style={styles.title}>{detail.title}</Text>
-        <Text style={styles.text}>{STATUS[detail.status]}</Text>
+        <Text style={styles.status}>{STATUS[detail.status]}</Text>
         {detail.description ? (
           <Text style={styles.text}>Description: {detail.description}</Text>
         ) : null}
-        <Text style={styles.text}>Total bids</Text>
-        <Text style={styles.text}>
-          {detail.debrisBids.length > 0 ? detail.debrisBids.length : 0}
-        </Text>
-        <Text style={styles.text}>Services required</Text>
+        <Title title={"Services required"} />
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {detail.debrisServiceTypes.map(item => (
             <Text style={styles.text}>{item.name}</Text>
@@ -127,12 +179,7 @@ class BidDetail extends Component {
         </View>
         <View style={styles.divider} />
         <Text style={styles.text}>Requester</Text>
-        <Bidder
-          imageUrl={detail.requester.thumbnailImage}
-          name={detail.requester.name}
-          rating={detail.requester.averageDebrisRating}
-          phone={detail.requester.phoneNumber}
-        />
+        {this._renderContractorBid()}
         <View style={styles.divider} />
         <Text style={[styles.text, { marginBottom: 15 }]}>Bids</Text>
         {detail.debrisBids.length > 0 ? (
@@ -202,12 +249,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15
   },
   title: {
-    fontSize: fontSize.h4,
-    fontWeight: "bold"
+    fontSize: fontSize.bodyText,
+    fontWeight: "bold",
+    color: colors.text,
+    marginBottom: 5
+  },
+  status: {
+    fontSize: fontSize.secondaryText,
+    fontWeight: "600",
+    color: colors.lightGreen,
+    marginBottom: 5
   },
   text: {
     fontSize: fontSize.bodyText,
     fontWeight: "500"
+  },
+  bidSupplierName: {
+    fontSize: fontSize.bodyText,
+    color: colors.text,
+    fontWeight: "600"
+  },
+  bidTime: {
+    fontSize: fontSize.caption,
+    color: colors.text50,
+    fontWeight: "400"
+  },
+  bidDescription: {
+    fontSize: fontSize.bodyText,
+    color: colors.text,
+    fontWeight: "400",
+    marginBottom: 10
+  },
+  bidPrice: {
+    fontSize: fontSize.bodyText,
+    color: colors.secondaryColor,
+    fontWeight: "700"
   }
 });
 

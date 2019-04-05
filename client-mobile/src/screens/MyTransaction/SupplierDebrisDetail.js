@@ -20,6 +20,7 @@ import Button from "../../components/Button";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
+import Title from "../../components/Title";
 
 const STATUS = {
   PENDING: "OPENING",
@@ -47,7 +48,6 @@ class SupplierDebrisDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isCancel: false,
       reason: null
     };
   }
@@ -67,14 +67,14 @@ class SupplierDebrisDetail extends Component {
         <Button
           text={"Go working"}
           onPress={() => this._handleChangeStatus(id, "DELIVERING")}
-          wrapperStyle={{ marginBottom: 15 }}
+          wrapperStyle={{ marginTop: 15 }}
         />
         <Button
           text={"Cancel"}
           onPress={() =>
             this.props.navigation.navigate("CancelBid", { transactionId: id })
           }
-          wrapperStyle={{ marginBottom: 15 }}
+          wrapperStyle={{ marginTop: 15 }}
         />
       </View>
     );
@@ -86,14 +86,14 @@ class SupplierDebrisDetail extends Component {
         <Button
           text={"Work"}
           onPress={() => this._handleChangeStatus(id, "WORKING")}
-          wrapperStyle={{ marginBottom: 15 }}
+          wrapperStyle={{ marginTop: 15 }}
         />
         <Button
           text={"Cancel"}
           onPress={() =>
             this.props.navigation.navigate("CancelBid", { transactionId: id })
           }
-          wrapperStyle={{ marginBottom: 15 }}
+          wrapperStyle={{ marginTop: 15 }}
         />
       </View>
     );
@@ -112,16 +112,34 @@ class SupplierDebrisDetail extends Component {
 
   _renderContent = () => {
     const { detail } = this.props;
-    const { isCancel, reason } = this.state;
+    const { reason } = this.state;
     console.log(detail);
     return (
       <View>
-        <Text>{detail.debrisPost.title}</Text>
-        <Text>{STATUS[detail.status]}</Text>
+        <Text style={styles.title}>{detail.debrisPost.title}</Text>
+        <Text style={styles.status}>{STATUS[detail.status]}</Text>
         {detail.cancelReason ? (
-          <Text>Cancel reason: {detail.cancelReason}</Text>
+          <Text style={styles.reason}>
+            Cancel reason: {detail.cancelReason}
+          </Text>
         ) : null}
-        <Text>{detail.debrisPost.address}</Text>
+        <Text style={styles.text}>Address: {detail.debrisPost.address}</Text>
+        <Title title={"Services types"} />
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 5
+          }}
+        >
+          {detail.debrisPost.debrisServiceTypes.map(item => (
+            <Text style={styles.text}>{item.name}</Text>
+          ))}
+        </View>
+        <Text style={[styles.title, { marginBottom: 0 }]}>
+          Total bids ({detail.debrisPost.debrisBids.length})
+        </Text>
+        <Title title={"Requester"} />
         <Bidder
           description={detail.description}
           price={detail.price}
@@ -131,30 +149,6 @@ class SupplierDebrisDetail extends Component {
           hasDivider={true}
         />
         {this._renderBottomButton(detail.id, detail.status)}
-        {isCancel ? (
-          <View>
-            <InputField
-              label={"Cancel Reason"}
-              placeholder={"Input your reason to cancel"}
-              customWrapperStyle={{ marginBottom: 20 }}
-              inputType="text"
-              onChangeText={value => this.setState({ reason: value })}
-              value={reason}
-              returnKeyType={"next"}
-            />
-            <Button
-              text={"Submit"}
-              onPress={() => {
-                this.props.fetchUpdateStatus(detail.id, {
-                  status: "CANCELED",
-                  cancelReason: this.state.reason
-                });
-                this.setState({ isCancel: false });
-                this.props.navigation.goBack();
-              }}
-            />
-          </View>
-        ) : null}
       </View>
     );
   };
@@ -168,7 +162,7 @@ class SupplierDebrisDetail extends Component {
         <Header
           renderLeftButton={() => (
             <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-              <Feather name="x" size={24} />
+              <Feather name="chevron-left" size={24} />
             </TouchableOpacity>
           )}
         />
@@ -183,6 +177,28 @@ class SupplierDebrisDetail extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  title: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: colors.text,
+    marginBottom: 5
+  },
+  status: {
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
+    color: "#55A7B4",
+    marginBottom: 5
+  },
+  reason: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text50,
+    marginBottom: 5
+  },
+  text: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text,
+    marginBottom: 5
   }
 });
 

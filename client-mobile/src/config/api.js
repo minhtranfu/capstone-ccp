@@ -43,13 +43,17 @@ export default async function configAPI(config) {
             config.store.dispatch(logOut());
             //goToLogin();
             break;
-          case 400:
+          case 403:
             config.store.dispatch(
-              StatusAction.error(
-                400,
-                error.response.data[0].message,
-                Date.now()
-              )
+              StatusAction.error(401, "Wrong username or password", Date.now())
+            );
+            config.store.dispatch(logOut());
+            //goToLogin();
+            break;
+          case 400:
+            console.log(error.response);
+            config.store.dispatch(
+              StatusAction.error(400, error.response.data.message, Date.now())
             );
             break;
           case 404:

@@ -112,17 +112,20 @@ class AddDetail extends Component {
           address: getConstructionByAddress.address
         };
       }
-    } else {
-      return {
-        address: null
-      };
     }
   }
 
   //All data must be fill before move to next screen
   _validateEnableButton = () => {
-    const { name, dailyPrice, type, generalType, deliveryPrice } = this.state;
-    if (name && dailyPrice && type && generalType && deliveryPrice) {
+    const {
+      name,
+      dailyPrice,
+      type,
+      generalType,
+      deliveryPrice,
+      address
+    } = this.state;
+    if (name && dailyPrice && type && generalType && deliveryPrice && address) {
       return false;
     }
     return true;
@@ -165,17 +168,16 @@ class AddDetail extends Component {
 
   _handleInputSpecsField = (specId, value) => {
     const { additionalSpecsFields } = this.state;
-    this.setState({
-      additionalSpecsFields: [
-        ...additionalSpecsFields,
-        {
-          value: value,
-          additionalSpecsField: {
-            id: specId
-          }
-        }
-      ]
-    });
+    if (!additionalSpecsFields) {
+      additionalSpecsFields = [];
+    }
+    additionalSpecsFields[specId] = {
+      value: value,
+      additionalSpecsField: {
+        id: specId
+      }
+    };
+    this.setState({ additionalSpecsFields });
   };
 
   _handleAdditionalSpecsField = () => {
@@ -262,7 +264,10 @@ class AddDetail extends Component {
         address: address,
         longitude: findAddressByCons ? findAddressByCons.longitude : lng,
         latitude: findAddressByCons ? findAddressByCons.latitude : lat,
-        additionalSpecsValues: additionalSpecsFields
+        additionalSpecsValues:
+          additionalSpecsFields.length > 1
+            ? additionalSpecsFields.filter(item => item !== null)
+            : []
       };
       this.props.navigation.navigate("AddDuration", {
         data: equipment
@@ -303,12 +308,14 @@ class AddDetail extends Component {
       description,
       construction,
       address,
-      location
+      location,
+      values
     } = this.state;
     const NEW_DROPDOWN_GENERAL_TYPES_OPTIONS = this._handleGeneralEquipmentType();
     const NEW_DROPDOWN_TYPES_OPTIONS = this._handleEquipmentType(
       generalTypeIndex
     );
+    console.log(this.state.additionalSpecsFields);
     return (
       <View>
         <InputField
@@ -503,8 +510,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.text25
   },
   header: {
-    fontSize: fontSize.h4,
-    fontWeight: "500"
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: colors.text
   },
   text: {
     fontSize: fontSize.bodyText,

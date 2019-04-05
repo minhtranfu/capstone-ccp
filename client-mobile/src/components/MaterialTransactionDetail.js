@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 
+import Title from "./Title";
+
 import fontSize from "../config/fontSize";
 import colors from "../config/colors";
 
@@ -26,7 +28,8 @@ class componentName extends Component {
     contractorAvatarUrl: PropTypes.stirng,
     price: PropTypes.string,
     unit: PropTypes.string,
-    description: PropTypes.string
+    description: PropTypes.string,
+    quantity: PropTypes.number
   };
   render() {
     const {
@@ -40,20 +43,25 @@ class componentName extends Component {
       description,
       email,
       phone,
-      address
+      address,
+      quantity
     } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.imageWrapper}>
           <Image uri={imageUrl} resizeMode={"cover"} style={styles.image} />
         </View>
-        <Text style={styles.text}>{name}</Text>
+        <Text style={styles.title}>{name}</Text>
         <Text style={styles.text}>{manufacturer}</Text>
         <Text style={styles.text}>
           Price: {price} K/{unit}
         </Text>
-        <Text style={styles.title}>Description</Text>
-        <Text style={styles.text}>{description}</Text>
+        <Text style={styles.text}>Quantity: {quantity}</Text>
+        <Text style={[styles.text, { marginBottom: 0 }]}>
+          Total price: {price * quantity}K VND
+        </Text>
+        <Title title={"Description"} />
+        <Text style={styles.description}>{description}</Text>
         <View style={styles.divider} />
         {/* <TouchableOpacity
           style={{ flexDirection: "row", alignItems: "center" }}
@@ -97,13 +105,20 @@ const styles = StyleSheet.create({
     fontWeight: "500"
   },
   title: {
-    fontSize: fontSize.h4,
-    fontWeight: "500",
+    fontSize: fontSize.bodyText,
+    fontWeight: "600",
+    color: colors.text,
     marginBottom: 5
   },
   text: {
-    fontSize: fontSize.bodyText,
+    fontSize: fontSize.secondaryText,
     fontWeight: "500",
+    marginVertical: 5
+  },
+  description: {
+    fontSize: fontSize.caption,
+    color: colors.text68,
+    fontWeight: "600",
     marginVertical: 5
   },
   avatar: {

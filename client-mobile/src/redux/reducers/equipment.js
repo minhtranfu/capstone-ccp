@@ -7,7 +7,7 @@ const INITIAL_STATE = {
   feedbackLoading: false,
   listSearch: [],
   contractorEquipment: [],
-  imageURL: ""
+  imageList: []
 };
 
 export default function equipmentReducer(state = INITIAL_STATE, action) {
@@ -49,25 +49,6 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         loading: false
-      };
-    }
-    case Actions.UPLOAD_IMAGE.REQUEST: {
-      return {
-        ...state,
-        imageLoading: true
-      };
-    }
-    case Actions.UPLOAD_IMAGE.SUCCESS: {
-      return {
-        ...state,
-        imageLoading: false,
-        imageURL: payload.data
-      };
-    }
-    case Actions.UPLOAD_IMAGE.ERROR: {
-      return {
-        ...state,
-        imageLoading: false
       };
     }
     case Actions.UPDATE_EQUIPMENT.REQUEST: {
@@ -146,6 +127,63 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       };
     }
 
+    case Actions.GET_EQUIPMENT_IMAGES_LIST.REQUEST: {
+      return {
+        ...state,
+        imageLoading: true
+      };
+    }
+    case Actions.GET_EQUIPMENT_IMAGES_LIST.SUCCESS: {
+      return {
+        ...state,
+        imageLoading: false,
+        imageList: payload.data
+      };
+    }
+    case Actions.GET_EQUIPMENT_IMAGES_LIST.ERROR: {
+      return {
+        ...state,
+        imageLoading: false
+      };
+    }
+    case Actions.INSERT_NEW_EQUIPMENT_IMAGE.REQUEST: {
+      return {
+        ...state,
+        imageLoading: true
+      };
+    }
+    case Actions.INSERT_NEW_EQUIPMENT_IMAGE.SUCCESS: {
+      return {
+        ...state,
+        imageLoading: false,
+        imageList: [...state.imageList, payload.data]
+      };
+    }
+    case Actions.INSERT_NEW_EQUIPMENT_IMAGE.ERROR: {
+      return {
+        ...state,
+        imageLoading: false
+      };
+    }
+    case Actions.DELETE_EQUIPMENT_IMAGE.REQUEST: {
+      return {
+        ...state,
+        imageLoading: true
+      };
+    }
+    case Actions.DELETE_EQUIPMENT_IMAGE.SUCCESS: {
+      return {
+        ...state,
+        imageLoading: false,
+        imageList: state.imageList.filter(item => item.id !== payload.id)
+      };
+    }
+    case Actions.DELETE_EQUIPMENT_IMAGE.ERROR: {
+      return {
+        ...state,
+        imageLoading: false
+      };
+    }
     default:
       return state;
   }

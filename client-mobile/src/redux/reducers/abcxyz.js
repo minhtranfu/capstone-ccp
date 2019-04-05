@@ -294,3 +294,20 @@ disableText: {
             endDate={this.state.endDate}
             onConfirm={this._confirmDate}
           />
+
+          // <MaterialItem
+              //   key={item.id}
+              //   manufacturer={item.material.manufacturer}
+              //   name={item.material.name}
+              //   price={item.price}
+              //   unit={item.unit}
+              //   imageUrl={item.material.thumbnailImageUrl}
+              //   contractor={item.material.contractor.name}
+              //   contractorThumbnail={
+              //     item.material.contractor.thumbnailImage
+              //       ? item.material.contractor.thumbnailImage
+              //       : "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
+              //   }
+              //   status={item.status}
+
+              // />

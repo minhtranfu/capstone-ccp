@@ -6,7 +6,8 @@ import { Header, Left, Right, Button, Body } from "./AnimatedHeader";
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
 
-const NO_IMAGE_URL = "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg";
+const NO_IMAGE_URL =
+  "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg";
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 const AnimatedBody = Animated.createAnimatedComponent(Body);
 const AnimatedHeader = Animated.createAnimatedComponent(Header);
@@ -21,11 +22,11 @@ class ParallaxList extends Component {
   scroll = new Animated.Value(0);
   navOpacity = this.nativeScroll.interpolate({
     inputRange: [0, 40, 50],
-    outputRange: [0, 1, 1]
+    outputRange: [0, 0.7, 1]
   });
   headerOpacity = this.nativeScroll.interpolate({
     inputRange: [0, 35, 50],
-    outputRange: [1, 0, 0]
+    outputRange: [1, 0.3, 0]
   });
   constructor(props) {
     super(props);
@@ -69,7 +70,7 @@ class ParallaxList extends Component {
     <AnimatedImage
       style={{
         height: 200,
-        backgroundColor: '#e9e9e9',
+        backgroundColor: "#e9e9e9",
         opacity: 1,
         transform: [
           {
@@ -89,8 +90,12 @@ class ParallaxList extends Component {
           }
         ]
       }}
-      source={{ uri: !this.state.imageFailed ? this.props.imageURL : NO_IMAGE_URL }}
-      onError={()=>{this.setState({imageFailed: true})}}
+      source={{
+        uri: !this.state.imageFailed ? this.props.imageURL : NO_IMAGE_URL
+      }}
+      onError={() => {
+        this.setState({ imageFailed: true });
+      }}
       resizeMode={this.state.imageFailed ? "contain" : "cover"}
     />
   );
@@ -102,15 +107,15 @@ class ParallaxList extends Component {
         {React.cloneElement(
           this.props.scrollElement,
           {
-            style: { marginTop: 44, backgroundColor: "transparent", flex: 1, },
+            style: { marginTop: 44, backgroundColor: "transparent", flex: 1 },
             onScroll: Animated.event(
               [{ nativeEvent: { contentOffset: { y: this.nativeScroll } } }],
               { useNativeDriver: true }
             ),
-            scrollEventThrottle: 1,
-            ListHeaderComponent: this.props.removeTitle
-              ? null
-              : this.renderHeader()
+            scrollEventThrottle: 1
+            // ListHeaderComponent: this.props.removeTitle
+            //   ? null
+            //   : this.renderHeader()
           },
           [
             this.props.removeTitle ? null : (
@@ -131,7 +136,7 @@ class ParallaxList extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   title: {
     alignItems: "center",
@@ -139,7 +144,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize.h2,
     marginLeft: 15,
     fontWeight: "700"
-  },
+  }
 });
 
 ParallaxList.propTypes = {

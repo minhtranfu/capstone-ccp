@@ -62,6 +62,10 @@ class MaterialSearch extends Component {
     this.props.fetchGetMaterialType();
   }
 
+  _capitializeLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   _handleOnChangeText = value => {
     this.setState({
       keyword: value.toLowerCase()
@@ -73,8 +77,8 @@ class MaterialSearch extends Component {
     const { materialType } = this.props;
     let newMaterialTypeArray = materialType.map(item => ({
       id: item.id,
-      name: item.name,
-      value: item.name
+      name: this._capitializeLetter(item.name),
+      value: this._capitializeLetter(item.name)
     }));
     return [...DROPDOWN_MATERIAL_TYPE_OPTIONS, ...newMaterialTypeArray];
   };
@@ -99,7 +103,7 @@ class MaterialSearch extends Component {
           onSubmitEditing={this._handleSearch}
           renderRightButton={() => (
             <TouchableOpacity onPress={this._handleSearch}>
-              <Text>Search</Text>
+              <Text style={styles.text}>Search</Text>
             </TouchableOpacity>
           )}
         />
@@ -145,8 +149,9 @@ const styles = StyleSheet.create({
     paddingBottom: 15
   },
   text: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontSize: fontSize.caption,
+    color: colors.primaryColor,
+    fontWeight: "600"
   }
 });
 

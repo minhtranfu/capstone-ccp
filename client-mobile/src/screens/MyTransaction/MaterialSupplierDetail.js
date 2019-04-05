@@ -142,11 +142,11 @@ class MaterialSupplierDetail extends Component {
         : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg";
     return (
       <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-        <Image
+        {/* <Image
           uri={image}
           style={{ height: 200, paddingHorizontal: 0 }}
           resizeMode={"cover"}
-        />
+        /> */}
         <Title title={"Delivering To"} />
         <Text style={styles.text}>{detail.requester.name}</Text>
         <Text style={styles.caption}>{detail.requester.email}</Text>
@@ -168,6 +168,7 @@ class MaterialSupplierDetail extends Component {
               manufacturer={item.material.manufacturer}
               price={item.price}
               unit={item.unit}
+              quantity={item.quantity}
               description={item.material.description}
             />
           ))

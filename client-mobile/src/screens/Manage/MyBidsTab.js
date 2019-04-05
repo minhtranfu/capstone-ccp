@@ -26,43 +26,46 @@ class MyBidsTab extends PureComponent {
 
   _renderBidDebris = listBids => (
     <View style={{ flex: 1 }}>
-      {listBids.map(item => (
-        <DebrisItem
-          key={item.id}
-          title={item.debrisPost.title}
-          address={item.debrisPost.address}
-          price={item.price}
-          onPress={() =>
-            this.props.navigation.navigate("MyBidsDetail", {
-              id: item.id,
-              postId: item.debrisPost.id
-            })
-          }
-        />
-        // <TouchableOpacity
-        //   style={{
-        //     flexDirection: "row",
-        //     alignItems: "center",
-        //     justifyContent: "space-between"
-        //   }}
-        //   onPress={() =>
-        //     this.props.navigation.navigate("BidDetail", { id: item.id })
-        //   }
-        // >
-        //   <View>
-        //     <Text>Title</Text>
-        //     <View style={{flexDirection}}>
-        //     <Text>{item.price} VND</Text>
-        //     </View>
-        //   </View>
-        //   <Feather name="arrow-right" size={24} />
-        // </TouchableOpacity>
-      ))}
+      {listBids
+        .filter(item => item.status === "PENDING")
+        .map(item => (
+          <DebrisItem
+            key={item.id}
+            title={item.debrisPost.title}
+            address={item.debrisPost.address}
+            price={item.price}
+            onPress={() =>
+              this.props.navigation.navigate("MyBidsDetail", {
+                id: item.id,
+                postId: item.debrisPost.id
+              })
+            }
+          />
+          // <TouchableOpacity
+          //   style={{
+          //     flexDirection: "row",
+          //     alignItems: "center",
+          //     justifyContent: "space-between"
+          //   }}
+          //   onPress={() =>
+          //     this.props.navigation.navigate("BidDetail", { id: item.id })
+          //   }
+          // >
+          //   <View>
+          //     <Text>Title</Text>
+          //     <View style={{flexDirection}}>
+          //     <Text>{item.price} VND</Text>
+          //     </View>
+          //   </View>
+          //   <Feather name="arrow-right" size={24} />
+          // </TouchableOpacity>
+        ))}
     </View>
   );
 
   render() {
     const { listDebrisBids } = this.props;
+    console.log(listDebrisBids);
     return (
       <View style={styles.container}>
         {listDebrisBids.length > 0
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     borderStyle: "dashed",
     borderWidth: 3,
-    borderColor: "#DEE4E3",
+    borderColor: "#DEE4E3"
   },
   text: {
     fontSize: fontSize.bodyText,

@@ -148,7 +148,8 @@ class AddDuration extends PureComponent {
             padding: 15,
             borderWidth: StyleSheet.hairlineWidth,
             borderRadius: 10,
-            borderColor: colors.secondaryColor
+            borderColor: colors.secondaryColor,
+            marginBottom: 15
           }}
         >
           <Text style={styles.text}>Select your date range</Text>
@@ -183,7 +184,10 @@ class AddDuration extends PureComponent {
           </View>
         </View>
         {index > 0 ? (
-          <TouchableOpacity onPress={() => this._handleRemove(index)}>
+          <TouchableOpacity
+            onPress={() => this._handleRemove(index)}
+            style={{ alignItems: "flex-end" }}
+          >
             <Text style={styles.textRemove}>Remove</Text>
           </TouchableOpacity>
         ) : null}
@@ -191,13 +195,31 @@ class AddDuration extends PureComponent {
     );
   };
 
-  _renderBottomButton = (data, dateRange) => (
+  _validateEnableButton = () => {
+    const { timeRanges } = this.state;
+
+    if (
+      (timeRanges[0].beginDate && timeRanges[0].endDate) ||
+      timeRanges.length > 1
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  _renderBottomButton = (data, timeRanges) => (
     <TouchableOpacity
-      style={[styles.buttonWrapper, styles.buttonEnable]}
+      style={[
+        styles.buttonWrapper,
+        this._validateEnableButton()
+          ? styles.buttonEnable
+          : styles.buttonDisable
+      ]}
+      disabled={!this._validateEnableButton()}
       onPress={() =>
         this.props.navigation.navigate("AddImage", {
           data: Object.assign({}, data, {
-            availableTimeRanges: dateRange.map(item => {
+            availableTimeRanges: timeRanges.map(item => {
               delete item.id;
               return item;
             })
@@ -218,6 +240,7 @@ class AddDuration extends PureComponent {
   render() {
     const { beginDate, endDate, timeRanges, calendarIndex } = this.state;
     const { data } = this.props.navigation.state.params;
+    console.log(timeRanges);
     return (
       <SafeAreaView
         style={styles.container}
@@ -287,7 +310,7 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   textEnable: {
-    fontSize: fontSize.bodyText,
+    fontSize: fontSize.secondaryText,
     fontWeight: "500",
     color: "white",
     marginRight: 8
@@ -320,7 +343,8 @@ const styles = StyleSheet.create({
     color: colors.text50,
     fontSize: fontSize.caption,
     height: 15,
-    fontWeight: "500"
+    fontWeight: "500",
+    marginBottom: 5
   }
 });
 

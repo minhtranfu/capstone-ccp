@@ -67,7 +67,8 @@ class AddDebrisPost extends Component {
       lat: null,
       lng: null,
       images: [],
-      imageIndex: 0
+      imageIndex: 0,
+      submitLoading: null
     };
   }
 
@@ -282,13 +283,31 @@ class AddDebrisPost extends Component {
           onPress={this._handleAddImage}
           wrapperStyle={{ marginBottom: 15 }}
         />
-        <Button text={"Submit"} onPress={this._handleSubmit} />
+        <Button
+          text={"Submit"}
+          disabled={!this._checkUserFillAll()}
+          onPress={this._handleSubmit}
+          buttonStyle={
+            this._checkUserFillAll()
+              ? styles.buttonEnable
+              : styles.buttonDisable
+          }
+        />
       </View>
     );
   };
 
+  _checkUserFillAll = () => {
+    const { address, title, servicesType, images } = this.state;
+    if (address && title && servicesType.length > 0 && images.length > 0) {
+      return true;
+    }
+    return false;
+  };
+
   render() {
     const { navigation, loading } = this.props;
+    console.log(this.state.location);
     return (
       <SafeAreaView
         style={styles.container}
@@ -297,17 +316,19 @@ class AddDebrisPost extends Component {
         <Header
           renderLeftButton={() => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Feather name="x" size={24} />
+              <Feather name="chevron-left" size={24} />
             </TouchableOpacity>
           )}
         >
-          <Text style={styles.text}>Add new article</Text>
+          <Text style={styles.title}>Add new article</Text>
         </Header>
         {this.state.submitLoading ? (
           <View
             style={{
-              position: "absolute",
+              zIndex: 1,
               backgroundColor: "white",
+              alignItems: "center",
+              justifyContent: "center",
               width: width,
               height: height
             }}
@@ -332,9 +353,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between"
   },
-  text: {
+  title: {
     fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontWeight: "600",
+    color: colors.text
+  },
+  text: {
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
+    color: colors.text,
+    marginBottom: 5
   },
   landscapeImg: {
     height: 200
@@ -349,6 +377,12 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.text25
+  },
+  buttonEnable: {
+    backgroundColor: colors.primaryColor
+  },
+  buttonDisable: {
+    backgroundColor: colors.text25
   }
 });
 

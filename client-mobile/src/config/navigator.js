@@ -62,6 +62,7 @@ import AddSubscription from "../screens/Account/AddSubscription";
 import CancelBid from "../screens/MyTransaction/components/CancelBid";
 import EditSubscription from "../screens/Account/EditSubscription";
 import Register from "../screens/Login/Register";
+import ManageImages from "../screens/Manage/components/ManageImages";
 // import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
@@ -136,6 +137,20 @@ const AccountStack = createStackNavigator(
   }
 );
 
+AccountStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = true;
+
+  let routeName = navigation.state.routes[navigation.state.index].routeName;
+
+  if (routeName == "AddSubscription") {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarVisible
+  };
+};
+
 const AddNewEquipmentStack = DismissableStackNav(
   {
     AddDetail: AddDetail,
@@ -159,6 +174,7 @@ const MyEquipmentStack = createStackNavigator(
     MyBidsDetail: MyBidsDetail,
     AddDebrisPost: AddDebrisPost,
     AddServicesTypes: AddServicesTypes,
+    ManageImages: ManageImages,
     Login
   },
   {

@@ -218,7 +218,7 @@ class MyPostDetail extends Component {
           {typeServices !== undefined && typeServices.length > 0 ? (
             typeServices.map(item => (
               <View style={styles.rowTypeWrapper} key={item.id}>
-                <Text style={styles.text}>
+                <Text style={[styles.text, { marginBottom: 5 }]}>
                   {this._capitalizeLetter(item.name)}
                 </Text>
                 {editMode ? (
@@ -307,7 +307,7 @@ class MyPostDetail extends Component {
               text={"Save"}
               disabled={!editMode}
               bordered={false}
-              onPress={() => this._handleSubmitEdit()}
+              onPress={this._handleSubmitEdit}
             />
           </SafeAreaView>
         )}

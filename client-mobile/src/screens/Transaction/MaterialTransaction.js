@@ -82,9 +82,7 @@ class MaterialTransaction extends Component {
           address: getConstructionByAddress.address
         };
       }
-      return null;
     }
-    return undefined;
   }
 
   _showAlert = msg => {
@@ -177,6 +175,7 @@ class MaterialTransaction extends Component {
                 });
               }}
               options={this._handleConstructionDropdown()}
+              style={{ marginBottom: 20 }}
             />
             <InputField
               label={"Address"}
@@ -186,6 +185,9 @@ class MaterialTransaction extends Component {
               onChangeText={value => this._handleOnChangeText(value)}
               value={address}
             />
+            <Text style={styles.text}>
+              Total price: {quantity * material.price}K VND
+            </Text>
             <Button
               text={"Confirm Booking"}
               onPress={() => {
@@ -206,12 +208,14 @@ const styles = StyleSheet.create({
     flex: 1
   },
   header: {
-    fontSize: fontSize.h4,
-    fontWeight: "600"
+    fontSize: fontSize.bodyText,
+    fontWeight: "600",
+    color: colors.text
   },
   text: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
+    marginBottom: 15
   },
   buttonWrapper: {}
 });

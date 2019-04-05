@@ -11,7 +11,8 @@ import { connect } from "react-redux";
 import Feather from "@expo/vector-icons/Feather";
 import {
   getAllNotification,
-  readNotification
+  readNotification,
+  readAllNotification
 } from "../../redux/actions/notification";
 import axios from "axios";
 
@@ -32,13 +33,18 @@ import fontSize from "../../config/fontSize";
     },
     fetchReadNotifiction: (notificationId, content) => {
       dispatch(readNotification(notificationId, content));
+    },
+    fetchReadAllNotifcation: () => {
+      dispatch(readAllNotification());
     }
   })
 )
 class Notification extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      readAllLoading: null
+    };
   }
 
   componentDidMount() {
@@ -46,19 +52,40 @@ class Notification extends Component {
   }
 
   _handleClickAction = async (notificaitonId, string, read) => {
-    if (string.includes("equipments")) {
-      this.props.navigation.navigate("MyEquipmentDetail", { id: 37 });
-      this.props.fetchReadNotifiction(notificaitonId, { read: isRead });
-    } else if (string.includes("transactions")) {
-      const res = await axios.get("transactions/14");
-      this.props.fetchReadNotifiction(notificaitonId, { read: isRead });
-      //If contractor.id === requester.id => user is requester else user is supplier
-      if (res.data.equipment.contractor.id === res.data.requester.id) {
-        this.props.navigation.navigate("Detail", { id: 14 });
-      } else {
-        this.props.navigation.navigate("MyTransactionDetail", { id: 14 });
+    let parts = string.split("/");
+    let actionId = parts[parts.length - 1];
+
+    switch (string) {
+      case string.includes("debrisTransactions"): {
+        this.props.navigation.navigate("DebrisDetail", { id: actionId });
+        this.props.fetchReadNotifiction(notificaitonId, { read: isRead });
       }
+      case string.includes("materialTransactions"): {
+        this.props.navigation.navigate("MaterialRequesterDetail", {
+          id: actionId
+        });
+        this.props.fetchReadNotifiction(notificaitonId, { read: isRead });
+      }
+      case string.includes("equipments"): {
+        this.props.navigation.navigate("MyEquipmentDetail", { id: actionId });
+        this.props.fetchReadNotifiction(notificaitonId, { read: isRead });
+      }
+      default:
+        return null;
     }
+    // if (string.includes("equipments")) {
+    //   this.props.navigation.navigate("MyEquipmentDetail", { id: 37 });
+    //   this.props.fetchReadNotifiction(notificaitonId, { read: isRead });
+    // } else if (string.includes("transactions")) {
+    //   const res = await axios.get("transactions/14");
+    //   this.props.fetchReadNotifiction(notificaitonId, { read: isRead });
+    //   //If contractor.id === requester.id => user is requester else user is supplier
+    //   if (res.data.equipment.contractor.id === res.data.requester.id) {
+    //     this.props.navigation.navigate("Detail", { id: 14 });
+    //   } else {
+    //     this.props.navigation.navigate("MyTransactionDetail", { id: 14 });
+    //   }
+    // }
   };
 
   _handleReadNotification = (id, isRead) => {
@@ -81,6 +108,16 @@ class Notification extends Component {
     }
   };
 
+  _handleReadAll = async () => {
+    try {
+      this.setState({ readAllLoading: true });
+      await this.props.fetchReadAllNotifcation();
+      this.setState({ readAllLoading: false });
+    } catch (error) {
+      this.setState({ readAllLoading: false });
+    }
+  };
+
   _renderItem = ({ item }) => (
     <TouchableOpacity
       style={[
@@ -91,24 +128,33 @@ class Notification extends Component {
       ]}
       onPress={() => this._handleClickAction(item.id, item.clickAction, true)}
     >
-      <View>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.text}>{item.content}</Text>
+      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.text}>{item.content}</Text>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between"
+        }}
+      >
         <Text style={styles.caption}>
           {this._findDiffDayFromToday(item.createdTime)}
         </Text>
+        <TouchableOpacity
+          onPress={() => this._handleReadNotification(item.id, true)}
+          style={item.read ? { backgroundColor: "blue" } : null}
+        >
+          <Text style={[styles.caption, { color: colors.text }]}>
+            Mark as read
+          </Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        onPress={() => this._handleReadNotification(item.id, true)}
-        style={item.read ? { backgroundColor: "blue" } : null}
-      >
-        <Text style={styles.text}>Mark as read</Text>
-      </TouchableOpacity>
     </TouchableOpacity>
   );
 
   render() {
     const { loading, listNotification } = this.props;
+    const { readAllLoading } = this.state;
     return (
       <SafeAreaView
         style={styles.container}
@@ -117,12 +163,22 @@ class Notification extends Component {
         <Header
           renderLeftButton={() => (
             <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-              <Feather name="x" size={24} />
+              <Feather name="chevron-left" size={24} />
+            </TouchableOpacity>
+          )}
+          renderRightButton={() => (
+            <TouchableOpacity
+              onPress={() => {
+                this.props.fetchReadAllNotifcation();
+              }}
+            >
+              <Text>Mark all as read</Text>
             </TouchableOpacity>
           )}
         >
-          <Text style={styles.text}>Notification</Text>
+          <Text style={styles.header}>Notification</Text>
         </Header>
+        {readAllLoading ? <Loading /> : null}
         {!loading ? (
           <FlatList
             data={listNotification}
@@ -142,33 +198,31 @@ const styles = StyleSheet.create({
     flex: 1
   },
   notificationWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 15,
-    borderRadius: 5,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.primaryColor,
     marginHorizontal: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     marginBottom: 15,
-    shadowColor: "#3E3E3E",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 3,
-    elevation: 2,
-    overflow: "hidden"
+    ...colors.shadow
+  },
+  header: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "600",
+    color: colors.text
   },
   title: {
     fontSize: fontSize.bodyText,
-    fontWeight: "bold"
+    fontWeight: "600",
+    color: colors.text,
+    marginBottom: 5
   },
   text: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontSize: fontSize.secondaryText,
+    color: colors.text68,
+    marginBottom: 5
   },
   caption: {
     fontSize: fontSize.caption,
-    fontWeight: "500",
+    fontWeight: "600",
     color: "red"
   }
 });

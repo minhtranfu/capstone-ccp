@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import Modal from 'react-native-modal';
+import Modal from "react-native-modal";
 import { SafeAreaView } from "react-navigation";
 import { CalendarList as CalendarPeriod } from "react-native-calendars";
 import dateFnsFormat from "date-fns/format";
@@ -12,14 +12,7 @@ import Header from "../components/Header";
 import Button from "../components/Button";
 import fontSize from "../config/fontSize";
 import colors from "../config/colors";
-import moment from 'moment';
-
-const getDaysArray = (start, end) => {
-  for (var arr = [], dt = start; dt <= end; dt.setDate(dt.getDate() + 1)) {
-    arr.push(new Date(dt));
-  }
-  return arr.map(v => v.toISOString().slice(0, 10));
-};
+import moment from "moment";
 
 class Calendar extends PureComponent {
   static propTypes = {
@@ -45,45 +38,6 @@ class Calendar extends PureComponent {
     this._handleClearDate();
   }
 
-  _handleNotAvailableDay = () => {
-    const { availableDateRange } = this.props;
-    if (availableDateRange) {
-      const availableDate = availableDateRange.reduce((acc, cur) => {
-        const dateList = getDaysArray(
-          new Date(cur.startDate),
-          new Date(cur.endDate)
-        );
-        console.log(dateList);
-        return acc.concat(dateList);
-      }, []);
-      availableDate.sort((a, b) => compareAsc(new Date(a), new Date(b)));
-      //remove duplicate date if has
-      const uniqueAvailableDate = [...new Set(availableDate)];
-      const firstAvailableDate = uniqueAvailableDate[0];
-      const lastAvailableDate =
-        uniqueAvailableDate[uniqueAvailableDate.length - 1];
-      const allDateList = getDaysArray(
-        new Date(firstAvailableDate),
-        new Date(lastAvailableDate)
-      );
-      const notAvailableDate = allDateList.filter(
-        date => !uniqueAvailableDate.includes(date)
-      );
-      return notAvailableDate.reduce(
-        (acc, cur) => ({
-          ...acc,
-          [cur]: {
-            selected: false,
-            disabled: true,
-            disableTouchEvent: true
-          }
-        }),
-        {}
-      );
-    }
-    return {};
-  };
-
   //Find date between from date and to date
   _findDiffDay = (fromDate, toDate) => {
     let firstDate = new Date(fromDate);
@@ -94,7 +48,7 @@ class Calendar extends PureComponent {
 
   //Format date to yyyy-mm-dd
   _handleDateFormat = date => {
-    return moment(date).format('YYYY-MM-DD')
+    return moment(date).format("YYYY-MM-DD");
   };
 
   //Add new day
@@ -210,7 +164,7 @@ class Calendar extends PureComponent {
 
     return (
       <Modal
-        style={{margin: 0, padding: 0, flex: 1}}
+        style={{ margin: 0, padding: 0, flex: 1 }}
         isVisible={visible}
         hasBackdrop={false}
       >
@@ -249,33 +203,34 @@ class Calendar extends PureComponent {
             pastScrollRange={2}
             futureScrollRange={10}
             showScrollIndicator={true}
-
             theme={{
               textSectionTitleColor: "#0D2421",
               todayTextColor: colors.secondaryColor,
-              dayTextColor: '#2d4150',
+              dayTextColor: "#2d4150",
               arrowColor: "#065747",
               monthTextColor: colors.text,
               textMonthFontSize: fontSize.h2,
-              textMonthFontWeight: '700',
+              textMonthFontWeight: "700",
               textDayFontSize: fontSize.secondaryText,
-              textDayFontWeight: '600',
+              textDayFontWeight: "600",
               textDayHeaderFontSize: fontSize.secondaryText,
-              textDayHeaderFontWeight: '600',
+              textDayHeaderFontWeight: "600"
             }}
             markedDates={{
-              ...this.state.markedDates,
-              ...this._handleNotAvailableDay()
+              ...this.state.markedDates
             }}
             {...this.props}
           />
-          <SafeAreaView forceInset={{bottom: 'always'}} style={{backgroundColor: colors.primaryColor}}>
+          <SafeAreaView
+            forceInset={{ bottom: "always" }}
+            style={{ backgroundColor: colors.primaryColor }}
+          >
             <Button
               text={"Confirm"}
               bordered={false}
               wrapperStyle={{
                 backgroundColor: "transparent",
-                paddingVertical: 15,
+                paddingTop: 15,
                 paddingHorizontal: -15,
                 position: "absolute",
                 bottom: 0,
@@ -312,7 +267,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     flexDirection: "column",
-    backgroundColor: 'white',
+    backgroundColor: "white"
   }
 });
 

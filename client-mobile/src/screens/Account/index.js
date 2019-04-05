@@ -224,7 +224,11 @@ class Account extends Component {
       />
       <View style={styles.avatarWrapper}>
         <Image
-          uri={"http://bootstraptema.ru/snippets/icons/2016/mia/2.png"}
+          uri={
+            thumbnailImage
+              ? thumbnailImage
+              : "http://bootstraptema.ru/snippets/icons/2016/mia/2.png"
+          }
           resizeMode={"cover"}
           style={styles.avatar}
         />
@@ -287,7 +291,7 @@ class Account extends Component {
               }
             >
               <View>
-                {this._renderImageProfile(contractor.thumbnailImage)}
+                {this._renderImageProfile(contractor.thumbnailImageUrl)}
                 <View style={styles.nameWrapper}>
                   <Text style={styles.name}>{contractor.name}</Text>
                   <Text style={styles.text}>

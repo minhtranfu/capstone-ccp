@@ -21,7 +21,7 @@ class Button extends PureComponent {
     text: PropTypes.string,
     disabled: PropTypes.bool,
     bordered: PropTypes.bool,
-    disabledOpacity: PropTypes.number,
+    disabledOpacity: PropTypes.number
   };
 
   static defaultProps = {
@@ -30,10 +30,30 @@ class Button extends PureComponent {
   };
 
   render() {
-    const { onPress, buttonStyle, text, wrapperStyle, textStyle, disabled, bordered, disabledOpacity } = this.props;
+    const {
+      onPress,
+      buttonStyle,
+      text,
+      wrapperStyle,
+      textStyle,
+      disabled,
+      bordered,
+      disabledOpacity
+    } = this.props;
     return (
       <View style={[styles.btnWrapper, wrapperStyle]}>
-        <Touchable onPress={onPress} style={[styles.button, buttonStyle,  {opacity: disabled ? disabledOpacity : 1, borderRadius: bordered ? 10 : 0}]} disabled={disabled}>
+        <Touchable
+          onPress={onPress}
+          style={[
+            styles.button,
+            buttonStyle,
+            {
+              opacity: disabled ? disabledOpacity : 1,
+              borderRadius: bordered ? 10 : 0
+            }
+          ]}
+          disabled={disabled}
+        >
           <View style={styles.textWrapper}>
             <Text style={[styles.buttonText, textStyle]}>{text}</Text>
           </View>
@@ -44,8 +64,7 @@ class Button extends PureComponent {
 }
 
 const styles = StyleSheet.create({
-  btnWrapper: {
-  },
+  btnWrapper: {},
   button: {
     backgroundColor: colors.primaryColor,
     borderRadius: 10,

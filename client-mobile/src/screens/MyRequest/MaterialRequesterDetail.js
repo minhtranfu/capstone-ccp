@@ -5,7 +5,8 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  Alert
 } from "react-native";
 import { connect } from "react-redux";
 import { changeMaterialTransactionRequest } from "../../redux/actions/transaction";
@@ -64,25 +65,27 @@ class MaterialRequesterDetail extends Component {
       },
       {
         text: "OK",
-        onPress: () =>
-          this.fetchChangeTransactionStatus(transactionId, {
+        onPress: () => {
+          this.props.fetchChangeTransactionStatus(transactionId, {
             status: transactionStatus
-          })
+          });
+          this.props.navigation.goBack();
+        }
       }
     ]);
   };
 
-  _handleFinished = (transactionId, transactionStatus, transactionTitle) => {
-    Alert.alert(transactionTitle, undefined, [
-      {
-        text: "OK",
-        onPress: () =>
-          this.fetchChangeTransactionStatus(transactionId, {
-            status: transactionStatus
-          })
-      }
-    ]);
-  };
+  // _handleFinished = (transactionId, transactionStatus, transactionTitle) => {
+  //   Alert.alert(transactionTitle, undefined, [
+  //     {
+  //       text: "OK",
+  //       onPress: () =>
+  //         this.props.fetchChangeTransactionStatus(transactionId, {
+  //           status: transactionStatus
+  //         })
+  //     }
+  //   ]);
+  // };
 
   _renderDelivering = id => {
     return (
@@ -90,14 +93,20 @@ class MaterialRequesterDetail extends Component {
         <Button
           text={"Receive"}
           onPress={() => {
-            this._handleFinished(id, "FINISHED", "Transaction finish!");
+            this._handleChangeTransaction(id, "FINISHED", "Delivery success!");
           }}
+          wrapperStyle={{ marginVertical: 15 }}
         />
         <Button
           text={"Deny"}
           onPress={() => {
-            this._handleFinished(id, "CANCELED", "Transaction Cancel!");
+            this._handleChangeTransaction(
+              id,
+              "CANCELED",
+              "Transaction Cancel!"
+            );
           }}
+          wrapperStyle={{ marginBottom: 15 }}
         />
       </View>
     );
@@ -115,6 +124,7 @@ class MaterialRequesterDetail extends Component {
               "Transaction cancel!"
             );
           }}
+          wrapperStyle={{ marginVertical: 15 }}
         />
       </View>
     );
@@ -139,6 +149,7 @@ class MaterialRequesterDetail extends Component {
                 type: "Material"
               })
             }
+            wrapperStyle={{ marginVertical: 15 }}
           />
         );
       default:
@@ -153,17 +164,34 @@ class MaterialRequesterDetail extends Component {
       detail.materialTransactionDetails.length > 0
         ? detail.materialTransactionDetails[0].thumbnailImageUrl
         : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg";
+    console.log(detail);
     return (
       <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-        <Image
+        {/* <Image
           uri={image}
           style={{ height: 200, paddingHorizontal: 0 }}
           resizeMode={"cover"}
-        />
+        /> */}
         <Title title={"Supplier Info"} />
-        <Text style={styles.text}>{detail.supplier.name}</Text>
-        <Text style={styles.caption}>{detail.supplier.email}</Text>
-        <Text style={styles.caption}>{detail.supplier.phoneNumber}</Text>
+        <TouchableOpacity
+          style={{ flexDirection: "row", alignItems: "center" }}
+          onPress={() =>
+            this.props.navigation.navigate("ContractorProfile", {
+              id: detail.supplier.id
+            })
+          }
+        >
+          <Image
+            uri={detail.supplier.thumbnailImageUrl}
+            resize={"cover"}
+            style={{ width: 60, height: 60, borderRadius: 30, marginRight: 15 }}
+          />
+          <View>
+            <Text style={styles.text}>{detail.supplier.name}</Text>
+            <Text style={styles.caption}>{detail.supplier.email}</Text>
+            <Text style={styles.caption}>{detail.supplier.phoneNumber}</Text>
+          </View>
+        </TouchableOpacity>
         <Title title={"Devlivery Address"} />
         <Text style={styles.description}>{detail.requesterAddress}</Text>
         <Title
@@ -181,6 +209,7 @@ class MaterialRequesterDetail extends Component {
               manufacturer={item.material.manufacturer}
               price={item.price}
               unit={item.unit}
+              quantity={item.quantity}
               description={item.material.description}
             />
           ))
@@ -206,7 +235,7 @@ class MaterialRequesterDetail extends Component {
         <Header
           renderLeftButton={() => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Feather name="x" size={24} />
+              <Feather name="chevron-left" size={24} />
             </TouchableOpacity>
           )}
         >

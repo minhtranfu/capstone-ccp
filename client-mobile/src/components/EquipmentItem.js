@@ -23,7 +23,7 @@ class EquipmentItem extends PureComponent {
   };
 
   state = {
-    imageFailed: false,
+    imageFailed: false
   };
 
   render() {
@@ -46,19 +46,27 @@ class EquipmentItem extends PureComponent {
           activeOpacity={0.9}
         >
           <ImageCache
-            uri={!this.state.imageFailed ? imageURL : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg"}
-            style={{ height: 160, backgroundColor: '#e9e9e9', }}
-            resizeMode={ !this.state.imageFailed ? "cover" : "contain"}
-            onError={()=>{this.setState({imageFailed: true})}}
+            uri={
+              !this.state.imageFailed
+                ? imageURL
+                : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg"
+            }
+            style={{ height: 160, backgroundColor: "#e9e9e9" }}
+            resizeMode={!this.state.imageFailed ? "cover" : "contain"}
+            onError={() => {
+              this.setState({ imageFailed: true });
+            }}
           />
           <View style={styles.titleWrapper}>
             <View style={{ flexDirection: "column", flex: 1 }}>
               <Text style={styles.equipmentName}>{name}</Text>
-              {contractor ? <Text>Contractor: {contractor}</Text> : null}
+              {contractor ? (
+                <Text style={styles.text}>Contractor: {contractor}</Text>
+              ) : null}
 
               {timeRange ? (
-                <Text>
-                  {timeRange.beginDate} To {timeRange.endDate}
+                <Text style={styles.text}>
+                  {timeRange.beginDate} ▶ {timeRange.endDate}
                 </Text>
               ) : null}
 
@@ -98,7 +106,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: colors.text50,
     marginTop: 3,
-    marginBottom: 3,
+    marginBottom: 3
   },
   equipmentPrice: {
     fontSize: fontSize.h3,
@@ -109,6 +117,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "white"
+  },
+  text: {
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
+    color: colors.text68
   }
 });
 

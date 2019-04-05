@@ -50,8 +50,8 @@ class AddSubscription extends Component {
     super(props);
     this.state = {
       subscription: {
-        price: 0,
-        distance: 0,
+        price: null,
+        distance: null,
         beginDate: null,
         endDate: null,
         address: null,
@@ -92,8 +92,14 @@ class AddSubscription extends Component {
   };
 
   _validateData = () => {
-    const { subscription } = this.state;
-    if (subscription) {
+    const {
+      price,
+      distance,
+      address,
+      beginDate,
+      endDate
+    } = this.state.subscription;
+    if (price && distance && address && beginDate && endDate) {
       return true;
     }
     return false;

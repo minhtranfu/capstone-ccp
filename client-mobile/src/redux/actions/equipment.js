@@ -87,7 +87,7 @@ export function searchEquipment(
   equipmentTypeId,
   pageNo
 ) {
-  console.log("date action", beginDate, endDate);
+  console.log("date action", beginDate, endDate, address, long, lat);
   const page = pageNo > 0 ? pageNo : 0;
   let url = `equipments?begin_date=${beginDate}&end_date=${endDate}&long=${long}&lad=${lat}&lquery=${address}&equipmentTypeId=${equipmentTypeId}&offset=${page}&limit=100`;
   console.log(url);
@@ -161,6 +161,70 @@ export function sendEquipmentFeedback(feedback) {
     } catch (error) {
       dispatch({
         type: Actions.SEND_EQUIPMENT_FEEDBACK.ERROR
+      });
+    }
+  };
+}
+
+export function getEquipmentImage(equipmentId) {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: Actions.GET_EQUIPMENT_IMAGES_LIST.REQUEST
+      });
+      const res = await axios.get(`equipments/${equipmentId}/images`);
+      dispatch({
+        type: Actions.GET_EQUIPMENT_IMAGES_LIST.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.GET_EQUIPMENT_IMAGES_LIST.ERROR
+      });
+    }
+  };
+}
+
+// export function uploadImage(image) {
+//   return axios.post('subscriptions', image)
+// }
+
+export function insertImageToEquipmentList(equipmentId, image) {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: Actions.INSERT_NEW_EQUIPMENT_IMAGE.REQUEST
+      });
+      const res = await axios.post(`equipments/${equipmentId}/images`, image);
+      dispatch({
+        type: Actions.INSERT_NEW_EQUIPMENT_IMAGE.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.INSERT_NEW_EQUIPMENT_IMAGE.ERROR
+      });
+    }
+  };
+}
+
+export function deleteEquipmentImage(equipmentId, imageId) {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: Actions.DELETE_EQUIPMENT_IMAGE.REQUEST
+      });
+      const res = await axios.delete(
+        `equipments/${equipmentId}/images/${imageId}`
+      );
+      dispatch({
+        type: Actions.DELETE_EQUIPMENT_IMAGE.SUCCESS,
+        payload: res
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: Actions.DELETE_EQUIPMENT_IMAGE.ERROR
       });
     }
   };

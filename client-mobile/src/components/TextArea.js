@@ -23,12 +23,14 @@ class TextArea extends Component {
       value,
       maxLength,
       placeholderStyle,
+      placeholder,
       onChangeText
     } = this.props;
     return (
       <TextInput
         style={[styles.placeholder, placeholderStyle]}
         multiline={true}
+        placeholder={placeholder}
         numberOfLines={numberOfLines}
         onChangeText={onChangeText}
         value={value}
@@ -48,7 +50,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     fontSize: fontSize.bodyText,
     color: colors.text,
-    fontWeight: "400"
+    fontWeight: "500"
   }
 });
 

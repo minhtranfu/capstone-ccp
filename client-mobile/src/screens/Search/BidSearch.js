@@ -50,6 +50,10 @@ class BidSearch extends Component {
     this.props.fetchGetTypeSerivces();
   }
 
+  _capitializeLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   _handleOnChangeText = value => {
     const { keyword } = this.state;
     this.setState({
@@ -62,8 +66,8 @@ class BidSearch extends Component {
     console.log(debrisTypes);
     let newDebrisTypeArray = debrisTypes.map(item => ({
       id: item.id,
-      name: item.name,
-      value: item.name
+      name: this._capitializeLetter(item.name),
+      value: this._capitializeLetter(item.name)
     }));
     return [...DROPDOWN_DEBRIS_TYPE_OPTIONS, ...newDebrisTypeArray];
   };

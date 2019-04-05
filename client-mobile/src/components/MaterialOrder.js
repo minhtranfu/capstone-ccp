@@ -37,7 +37,8 @@ class MaterialOrder extends Component {
       status,
       statusBackgroundColor,
       onPress,
-      role
+      role,
+      transactionId
     } = this.props;
     return (
       <TouchableOpacity style={styles.container} onPress={onPress}>
@@ -45,7 +46,7 @@ class MaterialOrder extends Component {
           <View
             style={{
               flexDirection: "row",
-              justifyContent: "center",
+              justifyContent: "space-between",
               alignItems: "center"
             }}
           >
@@ -55,7 +56,7 @@ class MaterialOrder extends Component {
               resizeMode={"cover"}
             />
             <View
-              style={{ flexDirection: "column", marginHorizontal: 8, flex: 1 }}
+              style={{ flexDirection: "column", marginHorizontal: 8, flex: 2 }}
             >
               <Text style={styles.contractorName}>
                 {role}: {contractor}
@@ -64,15 +65,38 @@ class MaterialOrder extends Component {
                 <Text style={styles.address}>Address ▶ {address}</Text>
               ) : null}
             </View>
+            <Text style={styles.transactionId}>#{transactionId}</Text>
           </View>
           <View style={{ paddingTop: 10 }}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Image
-                source={require("../../assets/icons/icons8-calendar.png")}
-                style={styles.calendarIcon}
-                resizeMode={"contain"}
-              />
-              <Text style={styles.duration}>Order created from:</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between"
+              }}
+            >
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Image
+                  source={require("../../assets/icons/icons8-calendar.png")}
+                  style={styles.calendarIcon}
+                  resizeMode={"contain"}
+                />
+                <Text style={styles.duration}>Order created from:</Text>
+              </View>
+              <Text
+                style={{
+                  fontSize: fontSize.secondaryText,
+                  color: colors.secondaryColor,
+                  fontWeight: "600",
+                  alignSelf: "center",
+                  paddingRight: 10
+                }}
+              >
+                {totalPrice.toFixed(2)}K/
+                {totalOrder.length > 0
+                  ? totalOrder.length + " items"
+                  : 0 + " item"}
+              </Text>
             </View>
             <Text style={styles.date}>
               {moment(createdTime).format("DD/MM/YY")}
@@ -97,7 +121,7 @@ class MaterialOrder extends Component {
             </View>
           </View>
         </View>
-        <Text
+        {/* <Text
           style={{
             fontSize: fontSize.secondaryText,
             color: colors.secondaryColor,
@@ -108,7 +132,7 @@ class MaterialOrder extends Component {
         >
           {totalPrice.toFixed(2)}K/
           {totalOrder.length > 0 ? totalOrder.length + " items" : 0 + " item"}
-        </Text>
+        </Text> */}
       </TouchableOpacity>
     );
   }
@@ -122,7 +146,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 10,
-    paddingRight: 0
+    paddingRight: 0,
+    ...colors.shadow
   },
   avatar: {
     height: 36,
@@ -171,6 +196,13 @@ const styles = StyleSheet.create({
     color: colors.text68,
     fontWeight: "500"
     // alignSelf: 'flex-end'
+  },
+  transactionId: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text,
+    fontWeight: "600",
+    alignSelf: "center",
+    paddingRight: 10
   }
 });
 

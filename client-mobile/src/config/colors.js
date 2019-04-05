@@ -8,6 +8,7 @@ export default {
   gray: "#f5f5f7",
   lightBlue: "#3B4961",
   lightYellow: "#ECE8AC",
+  lightGreen: "#55A7B4",
   dark: "#000000",
   text: "#1b2b4b",
   text68: "#1b2b4bAD",
@@ -15,10 +16,10 @@ export default {
   text50: "#1b2b4b7F",
   text25: "#1b2b4b3F",
   shadow: {
-    shadowColor: '#1b2b4b',
+    shadowColor: "#1b2b4b",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
-    shadowRadius: 4,
+    shadowRadius: 4
   },
   status: {
     AVAILABLE: "#4DB781",

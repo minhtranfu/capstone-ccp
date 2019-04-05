@@ -14,6 +14,7 @@ import {
 } from "../../redux/actions/debris";
 import { Feather, Entypo } from "@expo/vector-icons";
 
+import Title from "../../components/Title";
 import InputField from "../../components/InputField";
 import TextArea from "../../components/TextArea";
 import Header from "../../components/Header";
@@ -108,8 +109,10 @@ class MyBidsDetail extends Component {
     // console.log(data);
     return (
       <View>
-        <Text>{data.debrisPost.title}</Text>
-        <Text>{data.status}</Text>
+        <Text style={[styles.title, { marginBottom: 5 }]}>
+          {data.debrisPost.title}
+        </Text>
+        <Text style={styles.status}>{data.status}</Text>
         <InputField
           label={"Your current bid (VND)"}
           placeholder={"Your current bid (VND)"}
@@ -120,6 +123,7 @@ class MyBidsDetail extends Component {
           keyboardType={"numeric"}
           returnKeyType={"next"}
         />
+        <Title title={"Description"} />
         <TextArea
           value={data.description}
           onChangeText={value => this._handleInputChanged("description", value)}
@@ -136,12 +140,14 @@ class MyBidsDetail extends Component {
     const { postDetail, bidDetail } = this.props;
     return (
       <View>
-        <Text>{bidDetail.debrisPost.title}</Text>
-        <Text>{bidDetail.status}</Text>
-        <Text>Your current bid (VND)</Text>
-        <Text>{bidDetail.price}</Text>
-        <Text>Services Required</Text>
-        {/* <View
+        <Text style={[styles.title, { marginBottom: 5 }]}>
+          {bidDetail.debrisPost.title}
+        </Text>
+        <Text style={styles.status}>{bidDetail.status}</Text>
+        <Title title={"Your current bid (VND)"} />
+        <Text style={styles.text}>{bidDetail.price}K VND</Text>
+        {/* <Title title={"Services Required"} />
+        <View
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -149,7 +155,7 @@ class MyBidsDetail extends Component {
           }}
         >
           {postDetail.debrisServiceTypes.map((item, index) => (
-            <Text>
+            <Text style={styles.text}>
               {index == 0 ? null : <Entypo name="dot-single" size={15} />}
               {this._capitalizeFirstLetter(item.name)}
             </Text>
@@ -157,8 +163,10 @@ class MyBidsDetail extends Component {
         </View> */}
         {bidDetail.description ? (
           <View>
-            <Text>Description</Text>
-            <Text>{this._capitalizeFirstLetter(bidDetail.description)}</Text>
+            <Title title={"Description"} />
+            <Text style={styles.description}>
+              {this._capitalizeFirstLetter(bidDetail.description)}
+            </Text>
           </View>
         ) : null}
       </View>
@@ -184,7 +192,9 @@ class MyBidsDetail extends Component {
               <Text>Edit</Text>
             </TouchableOpacity>
           )}
-        />
+        >
+          <Text style={styles.title}>Bid Detail</Text>
+        </Header>
         {!loading ? (
           <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
             {edit ? this._renderEditContent() : this._renderContent()}
@@ -200,6 +210,28 @@ class MyBidsDetail extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  title: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: colors.text
+  },
+  status: {
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
+    color: colors.lightGreen
+  },
+  text: {
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
+    color: colors.text,
+    marginBottom: 5
+  },
+  description: {
+    fontSize: fontSize.caption,
+    fontWeight: "600",
+    color: colors.text68,
+    marginBottom: 5
   }
 });
 

@@ -112,6 +112,7 @@ class MaterialTab extends PureComponent {
             {materialList.map((item, index) => (
               <View key={`mat${item.id}`} style={styles.rowWrapper}>
                 <MaterialOrder
+                  transactionId={item.id}
                   key={item.id}
                   role={"Supplier"}
                   contractor={item.supplier.name}

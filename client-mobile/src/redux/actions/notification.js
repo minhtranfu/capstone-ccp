@@ -10,6 +10,19 @@ export function allowPushNotification() {
   };
 }
 
+export function readAllNotification() {
+  return axios.post("notifications/readAll");
+}
+// export function readAllNotification(){
+//   return async dispatch=>{
+//     const res = await axios.post(`notifications/readAll`);
+//     dispatch({
+//       type: Actions.GET_ALL_NOTIFICATION.SUCCESS,
+//       payload: res
+//     });
+//   }
+// }
+
 export function getAllNotification() {
   return async dispatch => {
     dispatch({

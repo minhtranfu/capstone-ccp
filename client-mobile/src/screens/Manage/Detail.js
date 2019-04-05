@@ -66,7 +66,8 @@ const COLORS = {
         item => item.id === id
       ),
       generalType: state.type.listGeneralEquipmentType,
-      loading: state.type.loading
+      loading: state.type.loading,
+      user: state.auth.data
     };
   },
   dispatch => ({
@@ -90,7 +91,8 @@ class MyEquipmentDetail extends Component {
       typeIdDefault: 0,
       isModalOpen: false,
       image: null,
-      loading: null
+      loading: null,
+      additionalSpecsFields: []
     };
   }
 
@@ -184,16 +186,14 @@ class MyEquipmentDetail extends Component {
       const newEquipmentDetail = {
         name: data.name,
         dailyPrice: data.dailyPrice,
-        status: "AVAILABLE",
-        deliveryPrice: data.deliveryPrice,
         description: data.description,
         thumbnailImage: { id: res.data[0].id },
         address: "Phú Nhuận",
         latitude: 10.806488,
         longitude: 106.676364,
         equipmentType: { id: equipmentTypeId.id },
-        contractor: { id: 13 },
-        constructionId: null,
+        contractor: { id: user.contractor.id },
+        construction: null,
         availableTimeRanges: data.availableTimeRanges,
         descriptionImages: [
           ...data.descriptionImages,
@@ -247,20 +247,20 @@ class MyEquipmentDetail extends Component {
     });
   };
 
-  _handleInputSpecsField = (specId, value) => {
-    const { additionalSpecsFields, data } = this.state;
+  _handleInputSpecsField = (specId, index, value) => {
+    const { data } = this.state;
+    // data.additionalSpecsFields[index] = {
+    //   value: value,
+    //   ...data.additionalSpecsFields[index]
+    // };
+    // console.log(...data, data.additionalSpecsValues[index]);
+    const newSpecsValue = data.additionalSpecsValues.map(item =>
+      item.id === specId ? { ...item, value: value } : item
+    );
     this.setState({
       data: {
         ...data,
-        additionalSpecsFields: [
-          ...additionalSpecsFields,
-          {
-            value: value,
-            additionalSpecsField: {
-              id: specId
-            }
-          }
-        ]
+        additionalSpecsValues: newSpecsValue
       }
     });
   };
@@ -330,6 +330,8 @@ class MyEquipmentDetail extends Component {
             source={{
               uri: image
                 ? image
+                : data.thumbnailImage
+                ? data.thumbnailImage.url
                 : "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
             }}
             style={styles.landscapeImg}
@@ -337,9 +339,12 @@ class MyEquipmentDetail extends Component {
           />
           <TouchableOpacity
             style={styles.buttonChangeImage}
-            onPress={this._handleChangeBackgroundImage}
+            // onPress={this._handleChangeBackgroundImage}
+            onPress={() =>
+              this.props.navigation.navigate("ManageImages", { id: data.id })
+            }
           >
-            <Feather name="camera" size={18} color={'white'}/>
+            <Feather name="camera" size={18} color={"white"} />
           </TouchableOpacity>
         </View>
         <Title title={"Equipment Information"} />
@@ -368,18 +373,6 @@ class MyEquipmentDetail extends Component {
             keyboardType={"numeric"}
             returnKeyType={"next"}
           />
-          <InputField
-            label={"Delivery price"}
-            placeholderTextColor={colors.text68}
-            customWrapperStyle={{ marginBottom: 20 }}
-            inputType="text"
-            editable={data.status === "AVAILABLE" ? true : false}
-            onChangeText={value =>
-              this._handleInputChanged("deliveryPrice", parseInt(value))
-            }
-            keyboardType={"numeric"}
-            value={data.deliveryPrice.toLocaleString()}
-          />
         </View>
         <Dropdown
           isHorizontal
@@ -400,14 +393,6 @@ class MyEquipmentDetail extends Component {
             this.setState({ type: value, typeIndex: index })
           }
         />
-        {data.availableTimeRanges.length > 0 ? (
-          <View>
-            <Title title={"Available time range"} />
-            {data.availableTimeRanges.map((item, index) =>
-              this._renderDateRange(item, index)
-            )}
-          </View>
-        ) : null}
         {data.additionalSpecsValues.length > 0 ? (
           <View>
             <Title title={"Addition Specs"} />
@@ -419,13 +404,22 @@ class MyEquipmentDetail extends Component {
                 customWrapperStyle={{ marginBottom: 20 }}
                 inputType="text"
                 onChangeText={value =>
-                  this._handleInputSpecsField(item.id, value)
+                  this._handleInputSpecsField(item.id, index, value)
                 }
                 value={item.value}
               />
             ))}
           </View>
         ) : null}
+        {data.availableTimeRanges.length > 0 ? (
+          <View>
+            <Title title={"Available time range"} />
+            {data.availableTimeRanges.map((item, index) =>
+              this._renderDateRange(item, index)
+            )}
+          </View>
+        ) : null}
+
         <InputField
           label={"Description"}
           placeholder={"Input your description"}
