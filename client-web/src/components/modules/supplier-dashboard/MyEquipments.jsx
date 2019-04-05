@@ -92,7 +92,7 @@ class MyEquipments extends PureComponent {
             </div>
             <div className="detail flex-fill p-2">
               <h6>
-                <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL)}>{equipment.name}</Link>
+                <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, {id: equipment.id})}>{equipment.name}</Link>
                 <span className="float-right">
                   <Link to={getRoutePath(routeConsts.EQUIPMENT_EDIT, {id: equipment.id})} className="btn btn-outline-success btn-sm"><i className="fal fa-pencil"></i></Link>
                   <button className="btn btn-outline-danger btn-sm ml-2"><i className="fal fa-trash"></i></button>
