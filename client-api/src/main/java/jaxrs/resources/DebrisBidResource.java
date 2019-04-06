@@ -107,6 +107,8 @@ public class DebrisBidResource {
 			throw new BadRequestException("You cannot edit other people's debris post");
 		}
 
+		// TODO: 4/5/19 khong cho sua price
+		// TODO: 4/5/19 check status la Pending thi moi cho sua
 		modelConverter.toEntity(putRequest, managedDebrisBidEntity);
 		return Response.ok(modelConverter.toResponse(debrisBidDAO.merge(managedDebrisBidEntity))).build();
 	}

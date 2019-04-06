@@ -264,29 +264,59 @@ public class HiringTransactionResource {
 		return Response.status(Response.Status.OK).entity(hiringTransactionDAO.findByID(id)).build();
 	}
 
+	//	@GET
+//	@Path("supplier/{id:\\d+}")
+//	public Response getReceivedTransactionAsSupplier(
+//			@PathParam("id") long supplierId
+//			,@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+//			, @QueryParam("offset") @DefaultValue("0") int offset
+//			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
+//
+//		//2/14/19 validate orderBy pattern
+//		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+//			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+//		}
+//
+//		if (supplierId != claimContractorId.getValue().longValue()) {
+//			throw new BadRequestException("You cannot view other people's transaction");
+//		}
+//
+//		//validate supplierId
+//		ContractorEntity foundContractor = contractorDAO.findByID(supplierId);
+//		if (foundContractor == null) {
+//			//custom message for supplier not contractor
+//			throw new BadRequestException(String.format("Supplier id=%d not found", supplierId));
+//		}
+//
+//		List<HiringTransactionEntity> hiringTransactionsBySupplierId = hiringTransactionDAO
+//				.getNamedHiringTransactionsBySupplierId(supplierId, limit, offset, orderBy);
+//
+//		return Response.ok(hiringTransactionsBySupplierId).build();
+//
+//	}
 	@GET
-	@Path("supplier/{id:\\d+}")
+	@Path("supplier/{id:\\d+}/count")
 	public Response getReceivedTransactionAsSupplier(
-			@PathParam("id") long supplierId,
-			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
-			, @QueryParam("offset") @DefaultValue("0") int offset) {
+			@PathParam("id") long supplierId
+			, @QueryParam("status") HiringTransactionEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
 
+		//2/14/19 validate orderBy pattern
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 
 		if (supplierId != claimContractorId.getValue().longValue()) {
 			throw new BadRequestException("You cannot view other people's transaction");
 		}
 
+
 		//validate supplierId
-		ContractorEntity foundContractor = contractorDAO.findByID(supplierId);
-		if (foundContractor == null) {
-			//custom message for supplier not contractor
-			throw new BadRequestException(String.format("Supplier id=%d not found", supplierId));
-		}
+		contractorDAO.findByIdWithValidation(supplierId);
 
-		List<HiringTransactionEntity> hiringTransactionsBySupplierId = hiringTransactionDAO
-				.getHiringTransactionsBySupplierId(supplierId, limit, offset);
-
-		return Response.ok(hiringTransactionsBySupplierId).build();
+		return Response.ok(hiringTransactionDAO.getHiringTransactionsBySupplierId(supplierId,status, limit, offset, orderBy)).build();
 
 	}
 

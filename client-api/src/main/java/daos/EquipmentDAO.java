@@ -2,11 +2,13 @@ package daos;
 
 import dtos.notifications.NotificationDTO;
 import dtos.queryResults.MatchedSubscriptionResult;
+import dtos.wrappers.OrderByWrapper;
 import entities.AvailableTimeRangeEntity;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 import managers.FirebaseMessagingManager;
+import utils.CommonUtils;
 import utils.Constants;
 
 import javax.ejb.Stateless;
@@ -102,26 +104,13 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 		if (!orderBy.isEmpty()) {
 			List<Order> orderList = new ArrayList<>();
-			// TODO: 2/14/19 string split to orderBy list
-			Pattern pattern = Pattern.compile(Constants.RESOURCE_REGEX_ORDERBY_SINGLEITEM);
-
-			Matcher matcher = pattern.matcher(orderBy);
-			while (matcher.find()) {
-				String orderBySingleItem = orderBy.substring(matcher.start(), matcher.end());
-
-
-				String columnName = matcher.group(1);
-				String orderKeyword = matcher.group(2);
-
-				if (orderKeyword.equals("desc")) {
-					orderList.add(criteriaBuilder.desc(e.get(columnName)));
+			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+				if (orderByWrapper.isAscending()) {
+					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
 				} else {
-					orderList.add(criteriaBuilder.asc(e.get(columnName)));
-
+					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
 				}
 			}
-
-
 			criteriaQuery.orderBy(orderList);
 		}
 
