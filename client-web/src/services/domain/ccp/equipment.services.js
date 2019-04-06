@@ -20,8 +20,8 @@ export const getEquipmentById = id => {
   return DataAccessService.get(`/equipments/${id}`);
 };
 
-export const getEquipmentsByContractorId = constractorId => {
-  return DataAccessService.get(`contractors/${constractorId}/equipments`);
+export const getEquipmentsByContractorId = ({ offset, limit }) => {
+  return DataAccessService.get(`/equipments/supplier?offset=${offset}&limit=${limit}`);
 };
 
 export const searchEquipments = criteria => {
