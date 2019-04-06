@@ -2,14 +2,11 @@ package daos;
 
 import dtos.notifications.NotificationDTO;
 import dtos.queryResults.MatchedSubscriptionResult;
+import dtos.responses.GETListResponse;
 import dtos.wrappers.OrderByWrapper;
-import entities.AvailableTimeRangeEntity;
-import entities.ContractorEntity;
-import entities.EquipmentEntity;
-import entities.HiringTransactionEntity;
+import entities.*;
 import managers.FirebaseMessagingManager;
 import utils.CommonUtils;
-import utils.Constants;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -20,8 +17,6 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Stateless
 public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
@@ -137,11 +132,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		typeQuery.setMaxResults(limit);
 
 
-//		List<EquipmentEntity> resultList = entityManager
-//				.createNamedQuery("EquipmentEntity.searchEquipment", EquipmentEntity.class)
-//				.setParameter("curBeginDate", beginDate)
-//				.setParameter("curEndDate", endDate)
-//				.getResultList();
 
 		return typeQuery.getResultList();
 
@@ -252,7 +242,59 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 	}
 
+	public GETListResponse<EquipmentEntity> getEquipmentsBySupplierId(long supplierId, EquipmentEntity.Status status, int limit, int offset, String orderBy) {
+		//select  e from EquipmentEntity  e where e.contractor.id = :supplierId
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+		CriteriaQuery<EquipmentEntity> criteriaQuery = criteriaBuilder.createQuery(EquipmentEntity.class);
+
+		Root<EquipmentEntity> e = countQuery.from(EquipmentEntity.class);
+		criteriaQuery.from(EquipmentEntity.class);
+
+
+		ParameterExpression<Long> supplierIdParam = criteriaBuilder.parameter(Long.class);
+		ParameterExpression<EquipmentEntity.Status> statusParam = criteriaBuilder.parameter(EquipmentEntity.Status.class);
+
+		Predicate whereClause = criteriaBuilder.and(
+				criteriaBuilder.equal(e.get("contractor").get("id"), supplierIdParam)
+				, status != null ? criteriaBuilder.equal(e.get("status"), statusParam) : criteriaBuilder.conjunction());
+
+		countQuery.select(criteriaBuilder.count(e.get("id"))).where(whereClause);
+		criteriaQuery.select(e).where(whereClause);
+		TypedQuery<Long> countTypedQuery = entityManager.createQuery(countQuery)
+				.setParameter(supplierIdParam, supplierId);
+
+
+		if (!orderBy.isEmpty()) {
+			List<Order> orderList = new ArrayList<>();
+			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+				if (orderByWrapper.isAscending()) {
+					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
+				} else {
+					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
+				}
+			}
+			criteriaQuery.orderBy(orderList);
+		}
+
+		TypedQuery<EquipmentEntity> listTypedQuery = entityManager.createQuery(criteriaQuery)
+				.setParameter(supplierIdParam, supplierId)
+				.setMaxResults(limit)
+				.setFirstResult(offset);
+
+
+		if (status != null) {
+			countTypedQuery.setParameter(statusParam, status);
+			listTypedQuery.setParameter(statusParam, status);
+		}
+
+		Long itemCount = countTypedQuery.getSingleResult();
+		List<EquipmentEntity> equipmentEntities = listTypedQuery.getResultList();
+
+		return new GETListResponse<EquipmentEntity>(itemCount, limit, offset, orderBy, equipmentEntities);
+
+	}
 }
 
-// TODO: 2/22/19 make the dao singleton for a publisher pattern !
 

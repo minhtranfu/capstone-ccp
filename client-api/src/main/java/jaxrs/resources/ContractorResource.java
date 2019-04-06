@@ -2,18 +2,17 @@ package jaxrs.resources;
 
 import daos.ConstructionDAO;
 import daos.ContractorDAO;
+import daos.EquipmentDAO;
 import dtos.requests.ContractorRequest;
 import entities.ContractorEntity;
-import entities.ContractorVerifyingImageEntity;
+import entities.EquipmentEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
-import org.eclipse.microprofile.jwt.JsonWebToken;
+import utils.Constants;
 import utils.ModelConverter;
 
-import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.json.JsonNumber;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -24,6 +23,10 @@ import javax.ws.rs.core.Response;
 @Path("contractors")
 @Produces(MediaType.APPLICATION_JSON)
 public class ContractorResource {
+
+
+	@Inject
+	EquipmentDAO equipmentDAO;
 
 	@Inject
 	ContractorDAO contractorDao;
@@ -106,22 +109,8 @@ public class ContractorResource {
 		return contractorDao.findByIdWithValidation(contractorId);
 	}
 
-	@GET
-	@RolesAllowed("contractor")
-	@Path("{id:\\d+}/equipments")
-	public Response getEquipmentsBySupplierId(@PathParam("id") long id) {
 
-		ContractorEntity foundContractor = validateContractorId(id);
-		return Response.ok(foundContractor.getEquipments()).build();
-	}
 
-	@GET
-	@RolesAllowed("contractor")
-	@Path("{id:\\d+}/materials")
-	public Response getMaterialsBySupplierId(@PathParam("id") long id) {
-		ContractorEntity foundContractor = validateContractorId(id);
-		return Response.ok(foundContractor.getMaterials()).build();
-	}
 
 
 	@Path("{id:\\d+}/cart")

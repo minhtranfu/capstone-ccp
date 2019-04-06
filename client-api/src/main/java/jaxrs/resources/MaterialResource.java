@@ -72,11 +72,9 @@ public class MaterialResource {
 	}
 
 
-
 	@POST
 	@RolesAllowed("contractor")
 	public Response postMaterial(@NotNull @Valid MaterialRequest materialRequest) {
-
 
 
 		MaterialEntity materialEntity = modelConverter.toEntity(materialRequest);
@@ -155,9 +153,10 @@ public class MaterialResource {
 
 	@Context
 	HttpHeaders httpHeaders;
+
 	@GET
 	public Response searchMaterial(
-			@QueryParam("q")  @DefaultValue("") String query,
+			@QueryParam("q") @DefaultValue("") String query,
 			@QueryParam("lat") @DefaultValue(DEFAULT_LAT) double latitude,
 			@QueryParam("long") @DefaultValue(DEFAULT_LONG) double longitude,
 			@QueryParam("materialTypeId") @DefaultValue("0") long materialTypeId,
@@ -196,6 +195,18 @@ public class MaterialResource {
 //			result.add(materialResponse);
 //		}
 		return Response.ok(materialEntities).build();
+	}
+
+	@GET
+	@RolesAllowed("contractor")
+	@Path("supplier")
+	public Response getMaterialsBySupplierId(
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
+
+		long supplierId = getClaimContractorId();
+		return Response.ok(materialDAO.getBySupplierId(supplierId, limit, offset, orderBy)).build();
 	}
 
 
