@@ -6,6 +6,7 @@ import daos.DebrisPostDAO;
 import daos.DebrisServiceTypeDAO;
 import dtos.requests.DebrisBidRequest;
 import dtos.responses.DebrisBidResponse;
+import dtos.responses.GETListResponse;
 import entities.ContractorEntity;
 import entities.DebrisBidEntity;
 import entities.DebrisPostEntity;
@@ -170,16 +171,29 @@ public class DebrisBidResource {
 	@Path("supplier")
 	@RolesAllowed("contractor")
 	public Response getAllBySupplier(
-			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
-			, @QueryParam("offset") @DefaultValue("0") int offset) {
-		contractorDAO.findByIdWithValidation(getClaimContractorId());
-		List<DebrisBidEntity> bySupplier = debrisBidDAO.getBySupplier(
-				getClaimContractorId()
-				, limit, offset);
+			@QueryParam("status") DebrisBidEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
 
-		List<DebrisBidResponse> debrisBidResponses = modelConverter.toResponse(bySupplier);
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 
-		return Response.ok(debrisBidResponses).build();
+		GETListResponse<DebrisBidEntity> bySupplier = debrisBidDAO.getBySupplier(
+				getClaimContractorId(), status, limit, offset, orderBy);
+
+		List<DebrisBidResponse> debrisBidResponses = modelConverter.toResponse(bySupplier.getItems());
+
+		GETListResponse<DebrisBidResponse> response = new GETListResponse<>(
+				bySupplier.getTotalItems()
+				, bySupplier.getLimit()
+				, bySupplier.getOffset()
+				, bySupplier.getOrderBy()
+				, debrisBidResponses
+		);
+
+		return Response.ok(response).build();
 	}
 
 
