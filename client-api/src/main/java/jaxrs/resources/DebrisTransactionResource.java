@@ -5,10 +5,7 @@ import daos.DebrisBidDAO;
 import daos.DebrisPostDAO;
 import daos.DebrisTransactionDAO;
 import dtos.requests.DebrisTransactionRequest;
-import entities.ContractorEntity;
-import entities.DebrisBidEntity;
-import entities.DebrisPostEntity;
-import entities.DebrisTransactionEntity;
+import entities.*;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 import utils.Constants;
@@ -121,7 +118,6 @@ public class DebrisTransactionResource {
 		}
 
 
-
 		switch (statusRequest.getStatus()) {
 			case ACCEPTED:
 				//validate
@@ -219,13 +215,19 @@ public class DebrisTransactionResource {
 	@GET
 	@Path("supplier")
 	@RolesAllowed("contractor")
-	public Response getDebrisTransactionsBySupplierId(@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
-			, @QueryParam("offset") @DefaultValue("0") int offset) {
-		long supplierId = getClaimContractorId();
-		List<DebrisTransactionEntity> debrisTransactionsBySupplierId =
-				debrisTransactionDAO.getDebrisTransactionsBySupplierId(supplierId, limit, offset);
+	public Response getDebrisTransactionsBySupplierId(
+			@QueryParam("status") DebrisTransactionEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
 
-		return Response.ok(debrisTransactionsBySupplierId).build();
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+
+		long supplierId = getClaimContractorId();
+		return Response.ok(debrisTransactionDAO.getDebrisTransactionsBySupplierId
+				(supplierId, status, limit, offset, orderBy)).build();
 
 	}
 
@@ -233,18 +235,18 @@ public class DebrisTransactionResource {
 	@GET
 	@Path("requester")
 	@RolesAllowed("contractor")
-	public Response getDebrisTransactionsAsRequester(@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
-			, @QueryParam("offset") @DefaultValue("0") int offset) {
+	public Response getDebrisTransactionsAsRequester(
+			@QueryParam("status") DebrisTransactionEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
 		long requesterId = getClaimContractorId();
 //		//validate claim contractor
 //		if (requesterId != claimContractorId.getValue().longValue()) {
 //			throw new BadRequestException("You cannot view other people's transaction");
 //		}
-
-		List<DebrisTransactionEntity> transactionsByRequesterId = debrisTransactionDAO.
-				getDebrisTransactionsByRequesterId(requesterId, limit, offset);
-
-		return Response.ok(transactionsByRequesterId).build();
+		return Response.ok(debrisTransactionDAO.
+				getDebrisTransactionsByRequesterId(requesterId, status, limit, offset, orderBy)).build();
 	}
 
 

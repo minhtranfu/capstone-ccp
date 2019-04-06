@@ -82,7 +82,58 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 				.getResultList();
 	}
 
-	public List<HiringTransactionEntity> getHiringTransactionsByRequesterId(long requesterId, int limit, int offset) {
+	public GETListResponse<HiringTransactionEntity> getHiringTransactionsByRequesterId(long requesterId, HiringTransactionEntity.Status status, int limit, int offset, String orderBy) {
+		//select e from HiringTransactionEntity  e where e.requester.id = :requesterId
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+		CriteriaQuery<HiringTransactionEntity> criteriaQuery = criteriaBuilder.createQuery(HiringTransactionEntity.class);
+
+		Root<HiringTransactionEntity> e = countQuery.from(HiringTransactionEntity.class);
+		criteriaQuery.from(HiringTransactionEntity.class);
+
+
+		ParameterExpression<Long> requesterIdParam = criteriaBuilder.parameter(Long.class);
+		ParameterExpression<HiringTransactionEntity.Status> statusParam = criteriaBuilder.parameter(HiringTransactionEntity.Status.class);
+
+		Predicate whereClause = criteriaBuilder.and(
+				criteriaBuilder.equal(e.get("requester").get("id"), requesterIdParam)
+				, status != null ? criteriaBuilder.equal(e.get("status"), statusParam) : criteriaBuilder.conjunction());
+
+		countQuery.select(criteriaBuilder.count(e.get("id"))).where(whereClause);
+		criteriaQuery.select(e).where(whereClause);
+		TypedQuery<Long> countTypedQuery = entityManager.createQuery(countQuery)
+				.setParameter(requesterIdParam, requesterId);
+
+
+		if (!orderBy.isEmpty()) {
+			List<Order> orderList = new ArrayList<>();
+			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+				if (orderByWrapper.isAscending()) {
+					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
+				} else {
+					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
+				}
+			}
+			criteriaQuery.orderBy(orderList);
+		}
+
+		TypedQuery<HiringTransactionEntity> listTypedQuery = entityManager.createQuery(criteriaQuery)
+				.setParameter(requesterIdParam, requesterId)
+				.setMaxResults(limit)
+				.setFirstResult(offset);
+
+
+		if (status != null) {
+			countTypedQuery.setParameter(statusParam, status);
+			listTypedQuery.setParameter(statusParam, status);
+		}
+
+		Long itemCount = countTypedQuery.getSingleResult();
+		List<HiringTransactionEntity> hiringTransactionEntities = listTypedQuery.getResultList();
+
+		return new GETListResponse<>(itemCount, limit, offset, orderBy, hiringTransactionEntities);
+	}
+	public List<HiringTransactionEntity> getNamedHiringTransactionsByRequesterId(long requesterId, int limit, int offset) {
 		return entityManager.createNamedQuery("HiringTransactionEntity.getTransactionsByRequesterId", HiringTransactionEntity.class)
 				.setParameter("requesterId", requesterId)
 				.setMaxResults(limit)
