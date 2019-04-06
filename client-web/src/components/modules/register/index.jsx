@@ -181,7 +181,7 @@ class Register extends Component {
           <i className="fal fa-check-circle fa-9x text-success"></i>
         </div>
         <h1 className="text-success">Register successfully!</h1>
-        <p>Your account is being verify.</p>
+        <p>Your account is being verified.</p>
       </div>
     );
   };

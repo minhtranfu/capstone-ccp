@@ -180,7 +180,9 @@ class AddEquipment extends Component {
 
     if (contractor.status !== CONTRACTOR_STATUSES.ACTIVATED) {
       return (
-        <h1 className="text-center my-3 alert alert-warning">Your account must be actived to post new equipment!</h1>
+        <div className="container">
+          <h1 className="text-center my-3 alert alert-warning">Your account must be activated to post new equipment!</h1>
+        </div>
       );
     }
 
