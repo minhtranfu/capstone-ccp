@@ -265,10 +265,16 @@ public class MaterialTransactionResource {
 	@GET
 	@Path("supplier/{id:\\d+}")
 	public Response getReceivedTransactionAsSupplier(
-			@PathParam("id") long supplierId,
-			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit,
-			@QueryParam("offset") @DefaultValue("0") int offset) {
+			@PathParam("id") long supplierId
+			, @QueryParam("status") MaterialTransactionEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
 
+
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 
 		if (supplierId != claimContractorId.getValue().longValue()) {
 			throw new BadRequestException("You cannot view other people's transaction");
@@ -281,10 +287,9 @@ public class MaterialTransactionResource {
 			throw new BadRequestException(String.format("Supplier id=%d not found", supplierId));
 		}
 
-		List<MaterialTransactionEntity> materialTransactionsBySupplierId =
-				materialTransactionDAO.getMaterialTransactionsBySupplierId(supplierId, limit, offset);
+		;
 
-		return Response.ok(materialTransactionsBySupplierId).build();
+		return Response.ok(materialTransactionDAO.getMaterialTransactionsBySupplierId(supplierId, status, limit, offset, orderBy)).build();
 
 	}
 
@@ -292,9 +297,16 @@ public class MaterialTransactionResource {
 	@GET
 	@Path("requester/{id:\\d+}")
 	public Response getSentTransactionsAsRequester(
-			@PathParam("id") long requesterId,
-			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit,
-			@QueryParam("offset") @DefaultValue("0") int offset) {
+			@PathParam("id") long requesterId
+			, @QueryParam("status") MaterialTransactionEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
+
+
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 
 		if (requesterId != claimContractorId.getValue().longValue()) {
 			throw new BadRequestException("You cannot view other people's transaction");
@@ -306,10 +318,9 @@ public class MaterialTransactionResource {
 			throw new BadRequestException(String.format("requester id=%s not found!", requesterId));
 		}
 
-		List<MaterialTransactionEntity> transactionsByRequesterId = materialTransactionDAO
-				.getMaterialTransactionsByRequeseterId(requesterId, limit, offset);
 
-		return Response.ok(transactionsByRequesterId).build();
+		return Response.ok(materialTransactionDAO
+				.getMaterialTransactionsByRequesterId(requesterId,status, limit, offset, orderBy)).build();
 	}
 
 
