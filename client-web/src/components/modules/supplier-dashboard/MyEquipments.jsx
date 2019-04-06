@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
-import { Pagination } from 'Components/common';
+import { Pagination, Image } from 'Components/common';
 
 import { EQUIPMENT_SHOWABLE_STATUSES, routeConsts } from '../../../common/consts';
 import { getRoutePath } from 'Utils/common.utils';
@@ -100,7 +100,7 @@ class MyEquipments extends PureComponent {
           <div key={equipment.id} className="d-flex transaction my-3 rounded shadow-sm">
             <div className="image flex-fill">
               <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, {id: equipment.id})}>
-                <img src={thumbnail} className="rounded-left" />
+                <Image src={thumbnail} className="rounded-left" height={168} />
               </Link>
             </div>
             <div className="detail flex-fill p-2">
