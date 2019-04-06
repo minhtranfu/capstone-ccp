@@ -218,11 +218,39 @@ public class DebrisPostResource {
 	@Path("requester")
 	@RolesAllowed("contractor")
 	public Response getAllByRequester(
-			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			@QueryParam("status") DebrisPostEntity.Status status
+			,@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
 			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
 	) {
-		contractorDAO.findByIdWithValidation(getClaimContractorId());
-		return Response.ok(debrisPostDAO.getByRequester(getClaimContractorId(), limit, offset)).build();
+		//noneed to validate this because we trust the token
+
+
+//		contractorDAO.findByIdWithValidation(getClaimContractorId());
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+
+		return Response.ok(debrisPostDAO.getByRequester(getClaimContractorId(),status, limit, offset, orderBy)).build();
+	}
+	@GET
+	@Path("supplier")
+	@RolesAllowed("contractor")
+	public Response getAllBySupplier(
+			@QueryParam("status") DebrisPostEntity.Status status
+			,@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
+	) {
+		//noneed to validate this because we trust the token
+
+
+//		contractorDAO.findByIdWithValidation(getClaimContractorId());
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+
+		return Response.ok(debrisPostDAO.getByBidedSupplier(getClaimContractorId(),status, limit, offset, orderBy)).build();
 	}
 
 	@Path("{id:\\d+}/images")
