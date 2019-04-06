@@ -12,11 +12,16 @@ import { equipmentServices } from 'Services/domain/ccp';
 class MyEquipments extends PureComponent {
   state = {
     filterStatus: 'all',
-    activePage: 1
+    activePage: 1,
+    isFetching: false
   };
   pageSize = 6;
 
   _loadData = async (activePage) => {
+    this.setState({
+      isFetching: true
+    });
+
     const equipments = await equipmentServices.getEquipmentsByContractorId({
       offset: (activePage - 1) * this.pageSize,
       limit: this.pageSize,
@@ -24,7 +29,8 @@ class MyEquipments extends PureComponent {
 
     this.setState({
       activePage,
-      equipments: equipments
+      equipments: equipments,
+      isFetching: false
     });
   };
 
@@ -41,7 +47,7 @@ class MyEquipments extends PureComponent {
       loadingPlacholders.push(
         <div key={i} className="d-flex transaction my-3 rounded shadow-sm">
           <div className="image flex-fill">
-            <Skeleton width={300} height={200} className="rounded-left" />
+            <Skeleton width={300} height={168} className="rounded-left" />
           </div>
           <div className="detail flex-fill p-2">
             <h6>
@@ -66,7 +72,7 @@ class MyEquipments extends PureComponent {
     return (
       <div className="py-5 text-center">
         <h2>You have no equipment!</h2>
-        <Link to={getRoutePath(routeConsts.EQUIPMENT_ADD)} className="float-right">
+        <Link to={getRoutePath(routeConsts.EQUIPMENT_ADD)}>
           <button className="btn btn-success btn-lg">
             <i className="fal fa-plus"></i> Add new equipment now
           </button>
@@ -77,13 +83,13 @@ class MyEquipments extends PureComponent {
 
   // Render list equipments
   _renderListEquipments = () => {
-    const { equipments } = this.state;
+    const { equipments, isFetching } = this.state;
 
-    if (!equipments) {
+    if (isFetching) {
       return this._renderListPlaceholders();
     }
 
-    if (equipments.items.length === 0) {
+    if (!equipments || equipments.items.length === 0) {
       return this._renderNoEquipment();
     }
 
