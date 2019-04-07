@@ -38,6 +38,11 @@ export const INITIAL_STATE = {
     authenticating: !!jwt,
     isShowLoginModal: false
   },
+  materialCart: {
+    count: 0,
+    items: [],
+    itemIds: []
+  },
 };
 
 export const ROUTES = [

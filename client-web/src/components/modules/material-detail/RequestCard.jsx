@@ -8,7 +8,7 @@ import 'bootstrap-daterangepicker/daterangepicker.css';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { Redirect } from 'react-router-dom';
 
-import { authActions } from '../../../redux/actions';
+import { authActions, materialCartActions } from 'Redux/actions';
 import { formatPrice } from 'Src/utils/format.utils';
 import { materialTransactionServices } from 'Src/services/domain/ccp';
 import { getRoutePath } from 'Utils/common.utils';
@@ -108,6 +108,17 @@ class RequestCard extends Component {
         }
       });
     });
+  };
+
+  _addToCart = () => {
+    const { material, transaction } = this.state;
+    const { addItem } = this.props;
+
+    const item = {
+      ...material,
+      quantity: transaction.quantity
+    };
+    addItem(item);
   };
 
   /**
@@ -289,7 +300,7 @@ class RequestCard extends Component {
               }
               Request Now
             </button>
-            <button className="btn btn-outline-primary btn-block mt-2" disabled={isFetching || !transaction.quantity || !transaction.requesterAddress} onClick={this._postTransaction}>
+            <button className="btn btn-outline-primary btn-block mt-2" disabled={isFetching || !transaction.quantity || !transaction.requesterAddress} onClick={this._addToCart}>
               {isFetching &&
                 <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
               }
@@ -316,7 +327,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  toggleLoginModal: authActions.toggleLoginModal
+  toggleLoginModal: authActions.toggleLoginModal,
+  addItem: materialCartActions.addItem
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RequestCard);

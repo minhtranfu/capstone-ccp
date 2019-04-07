@@ -1,22 +1,22 @@
 import { INITIAL_STATE } from '../../common/app-const';
-import { authConstants } from '../_constants';
+import { authActionTypes } from '../_types';
 
 const authentication = (state = INITIAL_STATE.authentication, action) => {
   switch (action.type) {
-    case authConstants.LOGIN_SUCCESS:
+    case authActionTypes.LOGIN_SUCCESS:
       return {
         isAuthenticated: true,
         user: action.user
       };
 
-    case authConstants.LOGIN_REQUEST:
+    case authActionTypes.LOGIN_REQUEST:
       return {
         ...state,
         loggingIn: true,
         user: {}
       };
 
-    case authConstants.LOGIN_FAILURE:
+    case authActionTypes.LOGIN_FAILURE:
       return {
         ...state,
         loggingIn: false,
@@ -24,51 +24,51 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
         error: action.error
       };
 
-    case authConstants.LOGOUT:
+    case authActionTypes.LOGOUT:
       return {};
 
-    case authConstants.LOAD_USER_SUCCESS:
+    case authActionTypes.LOAD_USER_SUCCESS:
       return {
         isAuthenticated: true,
         user: action.user
       };
 
-    case authConstants.LOAD_USER_FAILURE:
+    case authActionTypes.LOAD_USER_FAILURE:
       return {};
 
-    case authConstants.LOGIN_MODAL_SHOW:
+    case authActionTypes.LOGIN_MODAL_SHOW:
       return {
         ...state,
         isShowLoginModal: true
       }
 
-    case authConstants.LOGIN_MODAL_HIDE:
+    case authActionTypes.LOGIN_MODAL_HIDE:
       return {
         ...state,
         isShowLoginModal: false
       };
 
-    case authConstants.LOGIN_MODAL_TOGGLE:
+    case authActionTypes.LOGIN_MODAL_TOGGLE:
       return {
         ...state,
         isShowLoginModal: !state.isShowLoginModal
       };
 
-    case authConstants.ADD_NOTIFICATIONS_COUNT:
+    case authActionTypes.ADD_NOTIFICATIONS_COUNT:
       state.user.contractor.totalUnreadNotifications++;
 
       return {
         ...state
       };
 
-    case authConstants.SET_NOTIFICATIONS_COUNT:
+    case authActionTypes.SET_NOTIFICATIONS_COUNT:
       state.user.contractor.totalUnreadNotifications = action.totalUnreadNotifications;
 
       return {
         ...state
       };
 
-    case authConstants.MIN_NOTIFICATIONS_COUNT:
+    case authActionTypes.MIN_NOTIFICATIONS_COUNT:
       state.user.contractor.totalUnreadNotifications--;
 
       return {

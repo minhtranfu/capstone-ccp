@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { authActions } from '../../redux/actions';
+import { authActions } from 'Redux/actions';
 
 import LoginModal from '../modules/login/LoginModal';
 import { getRoutePath } from 'Utils/common.utils';

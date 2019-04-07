@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+
 import { getRoutePath } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
+import MaterialCart from './material-cart';
 
 class SubHeader extends Component {
 
@@ -119,6 +121,9 @@ class SubHeader extends Component {
               </li>
             );
           })}
+          {menus === this.materialMenu &&
+            <MaterialCart/>
+          }
         </nav>
       </div>
     );

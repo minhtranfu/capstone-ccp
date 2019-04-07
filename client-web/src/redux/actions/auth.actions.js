@@ -1,8 +1,7 @@
-import { authConstants } from '../_constants';
-import { appConsts } from '../../common/app-const';
+import { authActionTypes } from 'Redux/_types';
+import { appConsts } from 'Common/app-const';
 
-import ccpServices from '../../services/domain/ccp-api-service';
-import { makeActionCreator } from './action-creators';
+import ccpServices from 'Services/domain/ccp-api-service';
 import { askForPermissioToReceiveNotifications } from "../../push-notification";
 
 /**
@@ -32,7 +31,7 @@ export const authActions = {
  */
 function login(username, password) {
   return async dispatch => {
-    dispatch({ type: authConstants.LOGIN_REQUEST });
+    dispatch({ type: authActionTypes.LOGIN_REQUEST });
 
     try {
       const user = await ccpServices.userServices.login(username, password);
@@ -44,7 +43,7 @@ function login(username, password) {
 
     } catch (error) {
       dispatch({
-        type: authConstants.LOGIN_FAILURE,
+        type: authActionTypes.LOGIN_FAILURE,
         error
       });
     }
@@ -60,7 +59,7 @@ function logout() {
     }
 
     localStorage.removeItem(appConsts.JWT_KEY);
-    dispatch({ type: authConstants.LOGOUT });
+    dispatch({ type: authActionTypes.LOGOUT });
   };
 }
 
@@ -76,7 +75,7 @@ function loadUserFromToken() {
       const contractor = await ccpServices.userServices.getUserInfo();
 
       dispatch({
-        type: authConstants.LOAD_USER_SUCCESS,
+        type: authActionTypes.LOAD_USER_SUCCESS,
         user: {
           contractor
         }
@@ -86,51 +85,51 @@ function loadUserFromToken() {
     } catch (error) {
       console.log('Error!', error);
       localStorage.removeItem(appConsts.JWT_KEY);
-      dispatch({ type: authConstants.LOAD_USER_FAILURE });
+      dispatch({ type: authActionTypes.LOAD_USER_FAILURE });
     }
   };
 }
 
 function loginSuccess(user) {
   return {
-    type: authConstants.LOGIN_SUCCESS,
+    type: authActionTypes.LOGIN_SUCCESS,
     user
   }
 }
 
 function showLoginModal() {
   return {
-    type: authConstants.LOGIN_MODAL_SHOW
+    type: authActionTypes.LOGIN_MODAL_SHOW
   };
 }
 
 function hideLoginModal() {
   return {
-    type: authConstants.LOGIN_MODAL_HIDE
+    type: authActionTypes.LOGIN_MODAL_HIDE
   };
 }
 
 function toggleLoginModal() {
   return {
-    type: authConstants.LOGIN_MODAL_TOGGLE
+    type: authActionTypes.LOGIN_MODAL_TOGGLE
   };
 }
 
 function minusNotificationsCount() {
   return {
-    type: authConstants.MIN_NOTIFICATIONS_COUNT
+    type: authActionTypes.MIN_NOTIFICATIONS_COUNT
   }
 }
 
 function addNotificationsCount() {
   return {
-    type: authConstants.ADD_NOTIFICATIONS_COUNT
+    type: authActionTypes.ADD_NOTIFICATIONS_COUNT
   }
 }
 
 function setUnreadNotificationsCount(totalUnreadNotifications) {
   return {
-    type: authConstants.SET_NOTIFICATIONS_COUNT,
+    type: authActionTypes.SET_NOTIFICATIONS_COUNT,
     totalUnreadNotifications
   }
 }

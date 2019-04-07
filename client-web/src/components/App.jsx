@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import Header from './common/Header';
-import SubHeader from './common/SubHeader';
-import Footer from './common/Footer';
+import Header from './layout/Header';
+import SubHeader from './layout/SubHeader';
+import Footer from './layout/Footer';
 import Routes from './modules/Routes';
 import LoginModal from './modules/login/LoginModal';
-import NotificationRoot from './common/NotificationRoot';
+import NotificationRoot from './layout/NotificationRoot';
 
 import { authActions } from '../redux/actions';
 
