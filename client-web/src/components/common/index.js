@@ -8,3 +8,4 @@ export { default as RatingModal } from './rating-modal';
 export { default as RatingEquipmentTransaction } from './rating-equipment-transaction';
 export { default as RatingMaterialModal } from './rating-material-detail';
 export { default as Pagination } from './pagination';
+export { default as StarRatings } from './star-ratings';

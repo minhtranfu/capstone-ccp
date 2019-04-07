@@ -136,11 +136,10 @@ class RequestCard extends Component {
         data = error.response.data;
       }
     }
-    this.setState({
-      isFetching: false
-    });
 
-    const newState = {};
+    const newState = {
+      isFetching: false
+    };
     newState.error = {};
     if (!data) {
       newState.error.message = 'An unknown error, please try again!';

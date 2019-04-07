@@ -11,7 +11,8 @@ import { authActions } from "../../../redux/actions";
 
 import ccpApiService from "../../../services/domain/ccp-api-service";
 import RequestCard from "./RequestCard";
-import { formatPrice } from "Utils/format.utils";
+import { formatPrice, formatDate } from "Utils/format.utils";
+import { StarRatings } from "Components/common";
 
 class EquipDetail extends Component {
   state = {
@@ -20,7 +21,8 @@ class EquipDetail extends Component {
     transaction: {},
     error: {},
     redirectToTransaction: false,
-    address: ""
+    address: "",
+    isFetching: true
   };
 
   // TODO: Change default images
@@ -47,7 +49,8 @@ class EquipDetail extends Component {
     }
 
     this.setState({
-      equip: data
+      equip: data,
+      isFetching: false
     });
   };
 
@@ -63,10 +66,71 @@ class EquipDetail extends Component {
     // this._getCurrentLocation();
   }
 
-  render() {
-    const { equip } = this.state;
+  _renderRightSidebar = () => {
+    const { equip, isFetching } = this.state;
     const { authentication } = this.props;
     const { user } = authentication;
+
+    return (
+      <div className="sticky-top sticky-sidebar">
+        <div className="constructor-card text-center">
+          <Image
+            src={
+              equip.contractor && equip.contractor.thumbnailImageUrl
+                ? equip.contractor.thumbnailImageUrl
+                : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"
+            }
+            className="rounded-circle w-50"
+            alt=""
+          />
+          <h5>
+            {!isFetching ? equip.contractor.name : <Skeleton />}
+          </h5>
+          {isFetching ? <Skeleton /> :
+            <StarRatings
+              rating={equip.contractor.averageEquipmentRating}
+            />
+          }
+          {isFetching ? <Skeleton /> :
+            <div>
+              <span className="badge badge-pill badge-warning mr-1">{equip.contractor.averageEquipmentRating.toFixed(1)}</span>
+              {equip.contractor.equipmentFeedbacksCount} reviews
+            </div>
+          }
+          <p className="mt-0 text-muted">
+            Join at:{" "}
+            {!isFetching ? (
+              formatDate(equip.contractor.createdTime)
+            ) : (
+                <span className="d-inline">
+                  <Skeleton width={100} />
+                </span>
+              )}
+          </p>
+        </div>
+        {!isFetching &&
+          (!authentication.isAuthenticated ||
+            equip.contractor.id !== user.contractor.id) && (
+            <RequestCard equip={equip} />
+          )}
+        {!isFetching &&
+          authentication.isAuthenticated &&
+          equip.contractor.id == user.contractor.id && (
+            <div className="shadow bg-white rounded p-2">
+              <h5>Current transactions</h5>
+              <p>&nbsp;</p>
+              <p>&nbsp;</p>
+              <p>&nbsp;</p>
+              <p>&nbsp;</p>
+              <p />
+            </div>
+          )}
+      </div>
+    );
+  };
+
+  render() {
+    const { equip } = this.state;
 
     return (
       <div className="container">
@@ -98,7 +162,7 @@ class EquipDetail extends Component {
             {(equip.equipmentImages && (
               <OwlCarousel
                 items={5}
-                className="owl-theme product-images-nav mt-2"
+                className="owl-theme product-images-nav my-2"
                 margin={10}
                 rewind={false}
                 dots={false}
@@ -135,49 +199,7 @@ class EquipDetail extends Component {
           </div>
           {/* Right Sidebar */}
           <div className="col-md-3">
-            <div className="sticky-top sticky-sidebar">
-              <div className="constructor-card text-center">
-                <Image
-                  src={
-                    equip.contractor && equip.contractor.thumbnailImageUrl
-                      ? equip.contractor.thumbnailImageUrl
-                      : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"
-                  }
-                  className="rounded-circle w-50"
-                  alt=""
-                />
-                <h5>
-                  {equip.contractor ? equip.contractor.name : <Skeleton />}
-                </h5>
-                <p className="mt-0">
-                  Join at:{" "}
-                  {equip.contractor ? (
-                    new Date(equip.contractor.createdTime).toDateString()
-                  ) : (
-                    <span className="d-inline">
-                      <Skeleton width={100} />
-                    </span>
-                  )}
-                </p>
-              </div>
-              {equip.id &&
-                (!authentication.isAuthenticated ||
-                  equip.contractor.id !== user.contractor.id) && (
-                  <RequestCard equip={equip} />
-                )}
-              {equip.id &&
-                authentication.isAuthenticated &&
-                equip.contractor.id == user.contractor.id && (
-                  <div className="shadow bg-white rounded p-2">
-                    <h5>Current transactions</h5>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p />
-                  </div>
-                )}
-            </div>
+            {this._renderRightSidebar()}
           </div>
         </div>
       </div>

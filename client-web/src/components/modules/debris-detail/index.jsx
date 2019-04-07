@@ -3,21 +3,19 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import Helmet from "react-helmet-async";
-import StarRatings from 'react-star-ratings';
 import { Alert } from "reactstrap";
 import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
-
-import Image from "../../common/Image";
-import { authActions } from "../../../redux/actions";
-import { formatPrice, formatDate } from "Utils/format.utils";
-import { debrisServices, debrisTransactionServices } from "Services/domain/ccp";
-import BidForm from './BidForm';
-import { getErrorMessage } from "Utils/common.utils";
 import SweetAlert from "react-bootstrap-sweetalert/lib/dist/SweetAlert";
-import { ComponentBlocking } from "Components/common";
-import { DEBRIS_POST_STATUSES, DEBRIS_BID_STATUSES } from "Common/consts";
+
+import { authActions } from 'Redux/actions';
+import { debrisServices, debrisTransactionServices } from 'Services/domain/ccp';
+import BidForm from './BidForm';
+import { getErrorMessage } from 'Utils/common.utils';
+import { formatPrice, formatDate } from 'Utils/format.utils';
+import { Image, ComponentBlocking, StarRatings } from 'Components/common';
+import { DEBRIS_POST_STATUSES, DEBRIS_BID_STATUSES } from 'Common/consts';
 
 class DebrisDetail extends Component {
   state = {
@@ -136,10 +134,6 @@ class DebrisDetail extends Component {
                 <div>
                   <StarRatings
                     rating={bid.supplier.averageDebrisRating}
-                    numberOfStars={5}
-                    starRatedColor="#ffac00"
-                    starDimension="20px"
-                    starSpacing="0px"
                   />
                 </div>
                 <div>
@@ -247,6 +241,65 @@ class DebrisDetail extends Component {
     return null;
   };
 
+  _renderRightSidebar = () => {
+    const { debris } = this.state;
+    const { authentication } = this.props;
+    const { user } = authentication;
+    
+    return (
+      <div className="sticky-top sticky-sidebar pt-2">
+        <div className="constructor-card text-center">
+          <Image
+            circle
+            src={
+              debris.requester && debris.requester.thumbnailImageUrl
+                ? debris.requester.thumbnailImageUrl
+                : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"
+            }
+            className="rounded-circle"
+            alt="Avatar"
+          />
+          <h5>
+            {debris.requester ? debris.requester.name : <Skeleton />}
+          </h5>
+          {!debris.id ? <Skeleton /> :
+            <StarRatings
+              rating={debris.requester.averageDebrisRating}
+            />
+          }
+          {!debris.id ? <Skeleton /> :
+            <div>
+              <span className="badge badge-pill badge-warning mr-1">{debris.requester.averageDebrisRating.toFixed(1)}</span>
+              {debris.requester.debrisFeedbacksCount} reviews
+            </div>
+          }
+          <p className="mt-0 text-muted">
+            Join at:{" "}
+            {debris.requester ? (
+              formatDate(debris.requester.createdTime)
+            ) : (
+                <span className="d-inline">
+                  <Skeleton width={100} />
+                </span>
+              )}
+          </p>
+        </div>
+        {debris.id &&
+          authentication.isAuthenticated &&
+          debris.requester.id == user.contractor.id && (
+            <div className="shadow bg-white rounded p-2">
+              <h5>Current transactions</h5>
+              <p>&nbsp;</p>
+              <p>&nbsp;</p>
+              <p>&nbsp;</p>
+              <p>&nbsp;</p>
+              <p />
+            </div>
+          )}
+      </div>
+    );
+  };
+
   render() {
     const { debris, isFetching, message } = this.state;
     const { debrisBids } = debris;
@@ -262,7 +315,7 @@ class DebrisDetail extends Component {
       <div className="container">
         {this._renderAlert()}
         {isFetching &&
-          <ComponentBlocking/>
+          <ComponentBlocking />
         }
         {/* Change current title */}
         <Helmet>
@@ -371,45 +424,7 @@ class DebrisDetail extends Component {
           </div>
           {/* Right Sidebar */}
           <div className="col-md-3">
-            <div className="sticky-top sticky-sidebar pt-2">
-              <div className="constructor-card text-center">
-                <Image
-                  circle
-                  src={
-                    debris.requester && debris.requester.thumbnailImageUrl
-                      ? debris.requester.thumbnailImageUrl
-                      : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"
-                  }
-                  className="rounded-circle"
-                  alt="Avatar"
-                />
-                <h5>
-                  {debris.requester ? debris.requester.name : <Skeleton />}
-                </h5>
-                <p className="mt-0">
-                  Join at:{" "}
-                  {debris.requester ? (
-                    formatDate(debris.requester.createdTime)
-                  ) : (
-                      <span className="d-inline">
-                        <Skeleton width={100} />
-                      </span>
-                    )}
-                </p>
-              </div>
-              {debris.id &&
-                authentication.isAuthenticated &&
-                debris.requester.id == user.contractor.id && (
-                  <div className="shadow bg-white rounded p-2">
-                    <h5>Current transactions</h5>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p />
-                  </div>
-                )}
-            </div>
+            {this._renderRightSidebar()}
           </div>
         </div>
       </div>
