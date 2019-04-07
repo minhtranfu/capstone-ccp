@@ -48,7 +48,7 @@ export default (state = INITIAL_STATE.materialCart, action) => {
 
           return item.id !== action.itemId;
         }),
-        itemIds: state.itemIds.filter(id => id !== action.item.id),
+        itemIds: state.itemIds.filter(id => id !== action.itemId),
         count: state.count - minusCount,
       };
     }
@@ -62,7 +62,7 @@ export default (state = INITIAL_STATE.materialCart, action) => {
           if (item.id !== action.item.id) {
             return item;
           }
-          countChange = item.quantity - action.item.quantity;
+          countChange = action.item.quantity - item.quantity;
 
           return action.item;
         }),

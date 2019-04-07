@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-
+import { Link } from "react-router-dom";
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 
 class MaterialCart extends Component {
@@ -35,10 +37,10 @@ class MaterialCart extends Component {
 
     return (
       <li className="nav-item">
-        <a className="text-dark d-flex h-100 align-items-center px-3" href="#">
+        <Link to={getRoutePath(routeConsts.MATERIAL_CART)} className="text-dark d-flex h-100 align-items-center px-3">
           <i className="fal fa-shopping-cart"></i>
           <span className={`badge badge-pill badge-danger ${isChanged ? 'heartBeat' : ''}`}>{materialCart.count}</span>
-        </a>
+        </Link>
       </li>
     );
   }

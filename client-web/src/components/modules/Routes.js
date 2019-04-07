@@ -141,6 +141,12 @@ export const modules = [
     isPrivate: true
   },
   {
+    name: routeConsts.MATERIAL_CART,
+    path: '/materials/cart',
+    modulePath: './material/cart',
+    isPrivate: true
+  },
+  {
     name: routeConsts.MATERIAL_DETAIL,
     path: '/materials/:id',
     modulePath: './material-detail'
