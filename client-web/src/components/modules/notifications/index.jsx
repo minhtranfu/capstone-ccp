@@ -4,10 +4,9 @@ import { ENTITY_KEY } from 'Common/app-const';
 import { fetchNotifications } from 'Redux/actions/thunks';
 import { Link } from "react-router-dom";
 import { userServices } from 'Services/domain/ccp';
-import { getErrorMessage, getRoutePath } from 'Utils/common.utils';
+import { getErrorMessage } from 'Utils/common.utils';
 import classnames from 'classnames';
 import { authActions } from 'Redux/actions';
-import { routeConsts } from 'Common/consts';
 
 class Notifications extends Component {
 
@@ -22,10 +21,15 @@ class Notifications extends Component {
    * Capture event scroll
    * If scroll reach bottom call load more data
    */
-  _handleScroll = (e) => {
+  _handleScroll = () => {
 
-    const bottom = e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + this.scrollBuffer;
-    if (bottom) {
+    if (!this.listNotification) {
+      return;
+    }
+    const bottom = this.listNotification.getBoundingClientRect().bottom;
+
+    const isReachBottom = window.innerHeight >= bottom - this.scrollBuffer;
+    if (isReachBottom) {
       this._loadMore();
     }
   }
@@ -141,10 +145,10 @@ class Notifications extends Component {
   };
 
   /**
-   * After component updated
+   * After component mount
    * Check data is empty to fetch new data
    */
-  componentDidUpdate() {
+  componentDidMount() {
     const { notifications, fetchNotifications } = this.props;
 
     if (!notifications.data && !notifications.isFetching) {
@@ -154,17 +158,23 @@ class Notifications extends Component {
       });
     }
 
+    window.addEventListener('scroll', this._handleScroll);
+
+  }
+
+  componentDidUpdate() {
+    this._handleScroll();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._handleScroll);
   }
 
   /**
    * Render list of notification
    */
   _renderListNotifications = () => {
-    const { notifications, authentication, readNotificationIds, unreadNotificationIds } = this.props;
-
-    if (!authentication.isAuthenticated) {
-      return null;
-    }
+    const { notifications, readNotificationIds, unreadNotificationIds } = this.props;
 
     if (!notifications.data) {
       return null;
@@ -184,7 +194,7 @@ class Notifications extends Component {
     return notifications.data.map(notification => {
       const isUnread = (!notification.read && !readNotificationIds.includes(notification.id)) ||  (unreadNotificationIds.includes(notification.id));
       return (
-        <div key={notification.id} className={classnames('dropdown-item', 'd-flex', {'unread': isUnread})}>
+        <div key={notification.id} className={classnames('border-bottom py-2 d-flex', {'unread': isUnread})}>
           <a href="/" className="flex-fill">
             <div className="align-items-center">
               <div className={classnames('title', { 'font-weight-bold': isUnread })}>
@@ -204,30 +214,27 @@ class Notifications extends Component {
   };
 
   render() {
-    const { notifications, isShow } = this.props;
-
-    if (!isShow) {
-      return null;
-    }
+    const { notifications } = this.props;
 
     return (
-      <div className="dropdown-menu shadow mt-2 rounded-top-0 show">
-        <div className="dropdown-item px-1 border-bottom">
-          <h6 className="d-inline">Notifications</h6>
+      <div className="container">
+        <div className="my-3">
+          <h3 className="d-inline">My notifications</h3>
           <button className="btn btn-link float-right py-0" onClick={this._markAllAsRead}>Mark all as read</button>
           <div className="clearfix"></div>
         </div>
-        <div className="list-notifications custom-scrollbar" onScroll={this._handleScroll}>
-          {this._renderListNotifications()}
-          {notifications.isFetching &&
-            <div className="dropdown-item text-center">
-              <div className="spinner-grow text-primary" role="status">
-                <span className="sr-only">Loading...</span>
+        <div className="my-3 bg-white px-3">
+          <div className="list-notifications custom-scrollbar" ref={ref => this.listNotification = ref}>
+            {this._renderListNotifications()}
+            {notifications.isFetching &&
+              <div className="dropdown-item text-center">
+                <div className="spinner-grow text-primary" role="status">
+                  <span className="sr-only">Loading...</span>
+                </div>
               </div>
-            </div>
-          }
+            }
+          </div>
         </div>
-        <Link className="dropdown-item text-center border-top" onClick={() => this.props.toggle()} to={getRoutePath(routeConsts.NOTIFICATIONS)}>View all <i className="fal fa-chevron-right"></i></Link>
       </div>
     );
   }

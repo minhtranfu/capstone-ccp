@@ -115,21 +115,27 @@ function toggleLoginModal() {
   };
 }
 
-function minusNotificationsCount() {
+function minusNotificationsCount({ unreadNotificationIds, readNotificationIds }) {
   return {
-    type: authActionTypes.MIN_NOTIFICATIONS_COUNT
+    type: authActionTypes.MIN_NOTIFICATIONS_COUNT,
+    unreadNotificationIds,
+    readNotificationIds,
   }
 }
 
-function addNotificationsCount() {
+function addNotificationsCount({ unreadNotificationIds, readNotificationIds }) {
   return {
-    type: authActionTypes.ADD_NOTIFICATIONS_COUNT
+    type: authActionTypes.ADD_NOTIFICATIONS_COUNT,
+    unreadNotificationIds,
+    readNotificationIds,
   }
 }
 
-function setUnreadNotificationsCount(totalUnreadNotifications) {
+function setUnreadNotificationsCount({ totalUnreadNotifications, readNotificationIds, unreadNotificationIds }) {
   return {
     type: authActionTypes.SET_NOTIFICATIONS_COUNT,
-    totalUnreadNotifications
+    totalUnreadNotifications,
+    readNotificationIds,
+    unreadNotificationIds
   }
 }

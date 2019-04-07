@@ -38,10 +38,12 @@ ReactDOM.render(
 // Hot Module Replacement API
 if (module.hot) {
   module.hot.accept('./Root', () => {
+    const { store, persistor } = configureStore(INITIAL_STATE);
     const NextApp = require('./Root').default;
+
     ReactDOM.render(
       <AppContainer>
-        <NextApp store={store}/>
+        <NextApp store={store} persistor={persistor}/>
       </AppContainer>,
       document.getElementById(ROOT_ELEMENT_ID_AS_DEFINED_IN_INDEX_HTML)
     );

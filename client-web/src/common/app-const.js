@@ -36,7 +36,9 @@ export const INITIAL_STATE = {
   counter: 0,
   authentication: {
     authenticating: !!jwt,
-    isShowLoginModal: false
+    isShowLoginModal: false,
+    unreadNotificationIds: [],
+    readNotificationIds: []
   },
   materialCart: {
     count: 0,

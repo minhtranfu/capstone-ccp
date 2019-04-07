@@ -153,11 +153,11 @@ class Header extends Component {
             {authentication.isAuthenticated &&
               <ul className="navbar-nav">
                 <li className="nav-item dropdown notifications mr-2" ref={noticationComponent => { this.noticationComponent = noticationComponent; }}>
-                  <a className="text-light d-flex h-100 align-items-center px-3" href="#" onClick={this._toggleNotifications}>
+                  <span className="cursor-pointer text-light d-flex h-100 align-items-center px-3" href="#" onClick={this._toggleNotifications}>
                     <i className="fal fa-bell"></i>
                     <span className="badge badge-pill badge-danger">{user.contractor.totalUnreadNotifications}</span>
-                  </a>
-                  <Notifications isShow={isShowNotifications}/>
+                  </span>
+                  <Notifications isShow={isShowNotifications} toggle={this._toggleNotifications}/>
                 </li>
                 <li className="nav-item dropdown">
                   <a className="dropdown-toggle text-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">

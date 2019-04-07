@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -14,7 +14,7 @@ import { authActions } from '../redux/actions';
 
 import PageLoader from './common/PageLoader';
 
-class App extends Component {
+class App extends PureComponent {
 
   componentDidUpdate() {
     if (typeof window !== "undefined") {
@@ -28,17 +28,31 @@ class App extends Component {
     loadUserFromToken();
   }
 
-  render() {
-    const { authentication } = this.props;
+  // shouldComponentUpdate(nextProps) {
+  //   const { location, isAuthenticated } = this.props;
 
-    if (authentication.authenticating) {
+  //   if (location !== nextProps.location) {
+  //     return true;
+  //   }
+
+  //   if (isAuthenticated !== nextProps.isAuthenticated) {
+  //     return true;
+  //   }
+
+  //   return false;
+  // }
+
+  render() {
+    const { authenticating, isAuthenticated } = this.props;
+
+    if (authenticating) {
       return <PageLoader pastDelay />;
     }
 
     return (
       <div className="d-flex flex-column min-vh-100">
         <Header />
-        {authentication.isAuthenticated &&
+        {isAuthenticated &&
           <SubHeader />
         }
         {Routes}
@@ -53,14 +67,17 @@ class App extends Component {
 App.propTypes = {
   location: PropTypes.instanceOf(Object),
   history: PropTypes.instanceOf(Object),
-  authentication: PropTypes.object.isRequired,
+  authenticating: PropTypes.bool,
+  isAuthenticated: PropTypes.bool,
   loadUserFromToken: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
   const { authentication } = state;
+  const { authenticating, isAuthenticated } = authentication;
   return {
-    authentication
+    authenticating,
+    isAuthenticated
   };
 };
 

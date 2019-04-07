@@ -20,6 +20,12 @@ export const modules = [
     isPrivate: true
   },
   {
+    name: routeConsts.NOTIFICATIONS,
+    path: '/notifications',
+    modulePath: './notifications',
+    isPrivate: true
+  },
+  {
     name: routeConsts.CONSTRUCTIONS,
     path: '/constructions',
     modulePath: './supplier-dashboard/MyConstructions',

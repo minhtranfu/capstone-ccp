@@ -3,6 +3,7 @@ export const routeConsts = {
   LOGIN: 'LOGIN',
   SIGNUP: 'SIGNUP',
   PROFILE: 'PROFILE',
+  NOTIFICATIONS: 'NOTIFICATIONS',
 
   // Construction
   CONSTRUCTIONS: 'CONSTRUCTIONS',
