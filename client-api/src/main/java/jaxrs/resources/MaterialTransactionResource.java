@@ -16,12 +16,14 @@ import utils.ModelConverter;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
-import javax.security.auth.callback.TextOutputCallback;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("materialTransactions")
 @RolesAllowed("contractor")
@@ -79,24 +81,71 @@ public class MaterialTransactionResource {
 		materialTransactionRequest.setRequester(new IdOnly(claimContractorId.getValue().longValue()));
 
 		validateTransactionRequest(materialTransactionRequest);
-		MaterialTransactionEntity materialTransactionEntity = modelConverter.toEntity(materialTransactionRequest);
 
-		double totalPrice = 0;
-		for (MaterialTransactionDetailEntity materialTransactionDetail : materialTransactionEntity.getMaterialTransactionDetails()) {
-			MaterialEntity foundMaterial = materialDAO.findByIdWithValidation(materialTransactionDetail.getMaterial().getId());
-			materialTransactionDetail.setMaterialTransaction(materialTransactionEntity);
-			materialTransactionDetail.setPrice(foundMaterial.getPrice());
+		// TODO: 4/8/19 separate into multiple transaction details by supplier id
 
-			totalPrice += materialTransactionDetail.getPrice() * materialTransactionDetail.getQuantity();
+		List<MaterialTransactionDetailEntity> materialTransactionDetailEntities =
+				modelConverter.toEntityList(materialTransactionRequest.getMaterialTransactionDetails());
+		for (MaterialTransactionDetailEntity detailEntity : materialTransactionDetailEntities) {
+			detailEntity.setMaterial(materialDAO.findByIdWithValidation(detailEntity.getMaterial().getId()));
+			// TODO: 4/8/19 validate can not request his own equipment
+			if (detailEntity.getMaterial().getContractor().getId() == getClaimContractorId()) {
+				throw new BadRequestException("You cannot request your own material!");
+			}
 		}
 
-		// TODO: 3/25/19 do this after insert all the details
-		materialTransactionEntity.setTotalPrice(totalPrice);
-		//  1/30/19 set status to pending
-		materialTransactionEntity.setStatus(MaterialTransactionEntity.Status.PENDING);
-		materialTransactionDAO.persist(materialTransactionEntity);
+		List<MaterialTransactionEntity> separatedList = new ArrayList<>();
+		HashMap<Long, Boolean> supplierIdBundle = new HashMap<>();
+		for (MaterialTransactionDetailEntity detailEntity : materialTransactionDetailEntities) {
+
+			long supplierId = detailEntity.getMaterial().getContractor().getId();
+			if (supplierIdBundle.get(supplierId) == null || supplierIdBundle.get(supplierId) == false) {
+				//not containt
+				//continue
+				supplierIdBundle.put(supplierId, true);
+
+				// TODO: 4/8/19 new transaction
+				MaterialTransactionEntity materialTransactionEntity = modelConverter.toEntity(materialTransactionRequest);
+
+				// set supplier
+				ContractorEntity tempSupplier = new ContractorEntity();
+				tempSupplier.setId(supplierId);
+				materialTransactionEntity.setSupplier(tempSupplier);
+
+				materialTransactionEntity.getMaterialTransactionDetails().clear();
+				List<MaterialTransactionDetailEntity> foundList = materialTransactionDetailEntities.stream().filter(materialTransactionDetailEntity ->
+						materialTransactionDetailEntity.getMaterial().getContractor().getId() == supplierId)
+						.collect(Collectors.toList());
+
+				materialTransactionEntity.getMaterialTransactionDetails().addAll(foundList);
+				separatedList.add(materialTransactionEntity);
+			}
+
+		}
+
+
+		// TODO: 4/8/19 for each transaction entity
+		for (MaterialTransactionEntity materialTransactionEntity : separatedList) {
+
+			double totalPrice = 0;
+			for (MaterialTransactionDetailEntity materialTransactionDetail : materialTransactionEntity.getMaterialTransactionDetails()) {
+				MaterialEntity managedMaterial = materialTransactionDetail.getMaterial();
+				materialTransactionDetail.setMaterialTransaction(materialTransactionEntity);
+				materialTransactionDetail.setPrice(managedMaterial.getPrice());
+				totalPrice += materialTransactionDetail.getPrice() * materialTransactionDetail.getQuantity();
+			}
+
+			// TODO: 3/25/19 do this after insert all the details
+			materialTransactionEntity.setTotalPrice(totalPrice);
+			//  1/30/19 set status to pending
+			materialTransactionEntity.setStatus(MaterialTransactionEntity.Status.PENDING);
+			materialTransactionDAO.persist(materialTransactionEntity);
+		}
+
 		return Response.status(Response.Status.CREATED).entity(
-				materialTransactionDAO.findByID(materialTransactionEntity.getId())
+				separatedList.stream()
+						.map(materialTransactionEntity -> materialTransactionDAO.findByID(materialTransactionEntity.getId()))
+						.collect(Collectors.toList())
 		).build();
 	}
 
@@ -109,7 +158,7 @@ public class MaterialTransactionResource {
 //
 //		validateTransactionRequest(materialTransactionRequest);
 //
-//		MaterialTransactionEntity materialTransactionEntity = modelConverter.toEntity(materialTransactionRequest);
+//		MaterialTransactionEntity materialTransactionEntity = modelConverter.toEntityList(materialTransactionRequest);
 //
 //
 //		MaterialEntity foundMaterial = materialDAO.findByIdWithValidation(materialTransactionEntity.getMaterial().getId());
@@ -320,7 +369,7 @@ public class MaterialTransactionResource {
 
 
 		return Response.ok(materialTransactionDAO
-				.getMaterialTransactionsByRequesterId(requesterId,status, limit, offset, orderBy)).build();
+				.getMaterialTransactionsByRequesterId(requesterId, status, limit, offset, orderBy)).build();
 	}
 
 

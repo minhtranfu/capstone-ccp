@@ -187,5 +187,10 @@ public class ModelConverter {
 		return modelMapper.map(contractorEntity, TokenContractorResponse.class);
 
 	}
+
+	public List<MaterialTransactionDetailEntity> toEntityList(List<MaterialTransactionDetailRequest> materialTransactionDetails) {
+		Type listType = new TypeToken<List<MaterialTransactionDetailEntity>>(){}.getType();
+		return modelMapper.map(materialTransactionDetails, listType);
+	}
 }
 

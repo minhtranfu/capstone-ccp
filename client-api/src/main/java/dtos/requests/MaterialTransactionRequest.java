@@ -29,10 +29,6 @@ public class MaterialTransactionRequest {
 	private IdOnly requester;
 
 	@NotNull
-	@Valid
-	private IdOnly supplier;
-
-	@NotNull
 	private List<@Valid MaterialTransactionDetailRequest> materialTransactionDetails;
 
 
@@ -70,13 +66,6 @@ public class MaterialTransactionRequest {
 		this.requester = requester;
 	}
 
-	public IdOnly getSupplier() {
-		return supplier;
-	}
-
-	public void setSupplier(IdOnly supplier) {
-		this.supplier = supplier;
-	}
 
 
 	public List<MaterialTransactionDetailRequest> getMaterialTransactionDetails() {

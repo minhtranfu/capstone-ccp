@@ -182,7 +182,7 @@ public class DebrisBidResource {
 
 		GETListResponse<DebrisBidEntity> bySupplier = debrisBidDAO.getBySupplier(
 				getClaimContractorId(), status, limit, offset, orderBy);
-
+	
 		List<DebrisBidResponse> debrisBidResponses = modelConverter.toResponse(bySupplier.getItems());
 
 		GETListResponse<DebrisBidResponse> response = new GETListResponse<>(
