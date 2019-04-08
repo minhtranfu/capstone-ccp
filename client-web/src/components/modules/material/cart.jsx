@@ -1,10 +1,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 import { formatPrice } from 'Utils/format.utils';
 import { AddressInput } from 'Components/common';
 import { materialCartActions } from "Redux/actions";
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 class Cart extends PureComponent {
 
@@ -149,7 +152,28 @@ class Cart extends PureComponent {
     );
   };
 
+  /**
+   * Render cart is empty screen
+   */
+  _renderCartEmpty = () => {
+    return (
+      <div className="container flex-fill d-flex justify-content-center align-items-center flex-column flex-sm-row">
+        <i className="fal fa-shopping-cart fa-9x text-muted"></i>
+        <div className="px-3 text-center text-sm-left">
+          <h3>Your cart is empty!</h3>
+          <Link to={getRoutePath(routeConsts.MATERIALS)} className="btn btn-primary mt-2 shadow-sm">Find material</Link>
+        </div>
+      </div>
+    );
+  };
+
   render() {
+    const { materialCart } = this.props;
+
+    if (materialCart.items.length === 0) {
+      return this._renderCartEmpty();
+    }
+
     return (
       <div className="container">
         <h3 className="my-3">
