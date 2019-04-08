@@ -138,7 +138,7 @@ class MyRequests extends Component {
       return;
     }
 
-    transactions.map(transaction => {
+    transactions.items.map(transaction => {
       const transactionItem = this._renderTransaction(transaction);
       if (!this.tabContents[transaction.status]) {
         this.tabContents[transaction.status] = [];
@@ -529,7 +529,7 @@ class MyRequests extends Component {
     this._renderTabContents();
 
     return (
-      <div className="container py-5 user-dashboard">
+      <div className="container py-3 user-dashboard">
         {this._renderAlert()}
         <RatingEquipmentTransaction
           isOpen={isShowRatingEquipmentTransaction}
@@ -538,14 +538,15 @@ class MyRequests extends Component {
         />
         <div className="row">
           <div className="col-md-12">
-            <h5>
+            <h4>
+              Requested transaction
               <button className="btn btn-outline-primary float-right" onClick={this._loadTransactions}><i className="fal fa-sync"></i></button>
-            </h5>
+            </h4>
           </div>
           <div className="col-md-3">
             <div className="border-right border-primary h-100">
               <div className="sticky-top sticky-sidebar nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <h4>Status</h4>
+                <h5>Status</h5>
                 {this._renderTabNavs()}
               </div>
             </div>

@@ -250,11 +250,11 @@ class MaterialTransactions extends Component {
     this.tabContents = {};
     this.needActionCounters = {};
 
-    if (!transactions || transactions.length === 0) {
+    if (!transactions || transactions.items.length === 0) {
       return;
     }
 
-    transactions.map(transaction => {
+    transactions.items.map(transaction => {
       const transactionItem = this._renderTransaction(transaction);
       if (!this.tabContents[transaction.status]) {
         this.tabContents[transaction.status] = [];

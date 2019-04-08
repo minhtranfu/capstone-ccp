@@ -20,8 +20,8 @@ export const getMaterialById = id => {
   return DataAccessService.get(`/materials/${id}`);
 };
 
-export const getMaterialsBySupplierId = id => {
-  return DataAccessService.get(`/contractors/${id}/materials`);
+export const getMaterialsBySupplierId = ({ offset, limit }) => {
+  return DataAccessService.get(`/materials/supplier?offset=${offset}&limit=${limit}`);
 };
 
 export const searchMaterials = criteria => {

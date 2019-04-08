@@ -252,7 +252,7 @@ class MyRequests extends Component {
       return;
     }
 
-    transactions.map(transaction => {
+    transactions.items.map(transaction => {
       const transactionItem = this._renderTransaction(transaction);
       if (!this.tabContents[transaction.status]) {
         this.tabContents[transaction.status] = [];
@@ -402,14 +402,15 @@ class MyRequests extends Component {
         />
         <div className="row">
           <div className="col-md-12">
-            <h5>
+            <h4>
+              My transactions
               <button className="btn btn-outline-primary float-right" onClick={this._loadData}><i className="fal fa-sync"></i></button>
-            </h5>
+            </h4>
           </div>
           <div className="col-md-3">
             <div className="border-right border-primary h-100">
               <div className="sticky-top sticky-sidebar nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <h4>Status</h4>
+                <h5>Status</h5>
                 {Object.keys(this.showableStatuses).map(status => {
                   return (
                     <a key={status} className={`nav-link ${status == TRANSACTION_STATUSES.PENDING ? 'active' : ''}`} id={`v-pills-${status}-tab`} data-toggle="pill" href={`#v-pills-${status}`} role="tab" aria-controls={`v-pills-${status}`} aria-selected={status == TRANSACTION_STATUSES.PENDING}>
