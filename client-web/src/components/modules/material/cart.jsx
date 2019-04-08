@@ -1,19 +1,21 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 import { formatPrice } from 'Utils/format.utils';
-import { AddressInput } from 'Components/common';
+import { AddressInput, ComponentBlocking } from 'Components/common';
 import { materialCartActions } from "Redux/actions";
-import { getRoutePath } from 'Utils/common.utils';
+import { getRoutePath, getErrorMessage } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
+import { materialTransactionServices } from 'Services/domain/ccp';
 
 class Cart extends PureComponent {
 
   state = {
     address: null,
-    isFetching: false
+    isFetching: false,
+    transactions: null
   };
   total = 0;
 
@@ -114,9 +116,46 @@ class Cart extends PureComponent {
   /**
    * Validate and request cart
    */
-  _handleSubmitForm = e => {
+  _handleSubmitForm = async e => {
     e.preventDefault();
+    const { materialCart } = this.props;
+    const { address } = this.state;
 
+    const materialTransactionDetails = materialCart.items.map(item => {
+      return {
+        quantity: item.quantity,
+        material: {
+          id: item.id
+        }
+      };
+    });
+    const transactionData = {
+      requesterAddress: address.address,
+      requesterLat: address.latitude,
+      requesterLong: address.longitude,
+      materialTransactionDetails
+    };
+
+    this.setState({
+      isFetching: true
+    });
+
+    try {
+      const transactions = await materialTransactionServices.postTransaction(transactionData);
+
+      this.setState({
+        transactions,
+        isFetching: false
+      });
+
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+
+      this.setState({
+        errorMessage,
+        isFetching: false
+      });
+    }
   };
 
   /**
@@ -168,17 +207,30 @@ class Cart extends PureComponent {
   };
 
   render() {
+    const { transactions, isFetching, errorMessage } = this.state;
     const { materialCart } = this.props;
 
     if (materialCart.items.length === 0) {
       return this._renderCartEmpty();
     }
 
+    if (transactions) {
+      return <Redirect to={getRoutePath(routeConsts.MATERIAL_REQUEST)} />;
+    }
+
     return (
       <div className="container">
+        {isFetching &&
+          <ComponentBlocking />
+        }
         <h3 className="my-3">
           My material cart
         </h3>
+        {errorMessage &&
+          <div className="alert alert-warning">
+            <i className="fal fa-info-circle"></i> {errorMessage}
+          </div>
+        }
         <div className="row">
           <div className="col-md-9">
             <div className="bg-white">
