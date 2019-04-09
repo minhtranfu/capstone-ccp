@@ -38,9 +38,9 @@ public class LoginController {
         return "/error/403";
     }
 
-    @GetMapping("/forgetPassword")
+    @GetMapping("/forgotPassword")
     public String create(Model model) {
-        return "/forgetPassword";
+        return "forgotPassword";
     }
 
     @GetMapping("/resetPassword")
@@ -49,8 +49,7 @@ public class LoginController {
         if (!adminAccountService.existsByEmail(email)) {
             model.addAttribute("errorMessage", "Email doesnot exist");
             AdminAccountEntity adminAccountEntity = adminAccountService.findByEmail(email);
-            return "forgetPassword";
-
+            return "forgotPassword";
         }
         AdminAccountEntity adminAccountEntity = adminAccountService.findByEmail(email);
 
@@ -67,7 +66,7 @@ public class LoginController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "login";
+        return "redirect:login";
     }
 
 }

@@ -18,76 +18,16 @@
         <ul class="nav navbar-top-links navbar-right">
             <li>
                 <h5 sec:authorize="isAuthenticated()">Welcome, <span style="color: #1ab7ea"
-                                                                     sec:authentication="name"></span></h5>
+                                                                     th:text="${#authentication.principal.adminUserEntity.name}"></span></h5>
             </li>
-            <!-- /.dropdown notification-->
-            <!--<li class="dropdown">-->
-                <!--<a class="dropdown-toggle" data-toggle="dropdown" th:href="@{/home/index}">-->
-                    <!--<i class="fa fa-bell fa-fw"></i> <i class="fa fa-caret-down"></i>-->
-                <!--</a>-->
-                <!--&lt;!&ndash;<ul class="dropdown-menu dropdown-alerts">&ndash;&gt;-->
-                    <!--&lt;!&ndash;<li>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a href="#">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<div>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<i class="fa fa-comment fa-fw"></i> New Comment&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="pull-right text-muted small">4 minutes ago</span>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</li>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<li class="divider"></li>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<li>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a href="#">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<div>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<i class="fa fa-twitter fa-fw"></i> 3 New Followers&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="pull-right text-muted small">12 minutes ago</span>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</li>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<li class="divider"></li>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<li>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a href="#">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<div>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<i class="fa fa-envelope fa-fw"></i> Message Sent&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="pull-right text-muted small">4 minutes ago</span>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</li>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<li class="divider"></li>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<li>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a href="#">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<div>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<i class="fa fa-tasks fa-fw"></i> New Task&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="pull-right text-muted small">4 minutes ago</span>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</li>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<li class="divider"></li>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<li>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a href="#">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<div>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<i class="fa fa-upload fa-fw"></i> Server Rebooted&ndash;&gt;-->
-                                <!--&lt;!&ndash;<span class="pull-right text-muted small">4 minutes ago</span>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</li>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<li class="divider"></li>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<li>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<a class="text-center" href="#">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<strong>See All Alerts</strong>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<i class="fa fa-angle-right"></i>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</li>&ndash;&gt;-->
-                <!--&lt;!&ndash;</ul>&ndash;&gt;-->
-                <!--&lt;!&ndash; /.dropdown-alerts &ndash;&gt;-->
-            <!--</li>-->
-            <!-- /.dropdown -->
+
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-user">
-                    <!--<li><a th:href="@{/staff/detail/{id}(id = ${})}"><i class="fa fa-user fa-fw"></i> User Profile</a>-->
-                    <!--</li>-->
+                    <li><a th:href="@{/home/userdetail/{username}(username = ${#authentication.principal.id})}"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                    </li>
                     <!--<li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>-->
                     <!--</li>-->
                     <li class="divider"></li>
@@ -105,12 +45,12 @@
         <div class="navbar-default sidebar" role="navigation">
             <div class="sidebar-nav navbar-collapse">
                 <ul class="nav" id="side-menu">
-                    <li class="sidebar-search">
-                        <div class="input-group custom-search-form">
+                    <!--<li class="sidebar-search">-->
+                        <!--<div class="input-group custom-search-form">-->
 
-                        </div>
-                        <!-- /input-group -->
-                    </li>
+                        <!--</div>-->
+                        <!--&lt;!&ndash; /input-group &ndash;&gt;-->
+                    <!--</li>-->
                     <li>
                         <a th:href="@{/home/index}"><i
                                 class="fa fa-dashboard fa-fw"></i> Dashboard</a>

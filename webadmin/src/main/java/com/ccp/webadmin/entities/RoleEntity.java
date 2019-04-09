@@ -12,8 +12,9 @@ public class RoleEntity implements Serializable {
     @Column(name = "id")
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role_name")
-    private String roleName;
+    private RoleName roleName;
 
     public RoleEntity() {
     }
@@ -26,11 +27,27 @@ public class RoleEntity implements Serializable {
         this.id = id;
     }
 
-    public String getRoleName() {
+    public RoleName getRoleName() {
         return roleName;
     }
 
-    public void setRoleName(String roleName) {
+    public void setRoleName(RoleName roleName) {
         this.roleName = roleName;
+    }
+
+    public enum RoleName {
+        ROLE_ADMIN("Admin"),
+        ROLE_STAFF("Staff"),
+        ;
+
+        private String value;
+
+        RoleName(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 }

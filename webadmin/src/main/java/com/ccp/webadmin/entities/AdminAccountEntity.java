@@ -35,7 +35,7 @@ public class AdminAccountEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority(this.getAdminUserEntity().getRole().getRoleName());
+        GrantedAuthority authority = new SimpleGrantedAuthority(this.getAdminUserEntity().getRole().getRoleName().toString());
         authorities.add(authority);
         return authorities;
     }
@@ -103,11 +103,11 @@ public class AdminAccountEntity implements UserDetails {
                 this.adminUserEntity.setAdminAccountEntity(null);
             }
         } else {
-            RoleEntity role = new RoleEntity();
-            role.setId(2);
-            if(adminUserEntity.getRole() == null){
-                adminUserEntity.setRole(role);
-            }
+//            RoleEntity role = new RoleEntity();
+//            role.setId(2);
+//            if(adminUserEntity.getRole() == null){
+//                adminUserEntity.setRole(role);
+//            }
 
             adminUserEntity.setAdminAccountEntity(this);
         }

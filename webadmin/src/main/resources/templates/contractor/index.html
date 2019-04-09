@@ -59,7 +59,7 @@
                                 <td th:text="${item.phone}"></td>
                                 <td th:text="${item.countReceivedFeedbackEntity()}"></td>
                                 <td th:switch="${item.status.toString()}">
-                                    <span th:case="NOT_VERIFIED" style="color: #1ab7ea">Pending</span>
+                                    <span th:case="NOT_VERIFIED" style="color: #1ab7ea">Not Verified</span>
                                     <span th:case="ACTIVATED" style="color: green">Activated</span>
                                     <span th:case="DEACTIVATED" style="color: red">Deactivated</span>
                                 </td>

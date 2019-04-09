@@ -6,6 +6,7 @@ import com.ccp.webadmin.entities.AdminUserEntity;
 import com.ccp.webadmin.entities.EquipmentTypeEntity;
 import com.ccp.webadmin.repositories.AdminAccountRepository;
 import com.ccp.webadmin.services.AdminAccountService;
+import com.ccp.webadmin.services.RoleService;
 import com.ccp.webadmin.utils.ImageUtil;
 import com.ccp.webadmin.utils.PasswordAutoGenerator;
 import com.ccp.webadmin.utils.SendEmailService;
@@ -30,16 +31,17 @@ import java.io.IOException;
 public class AdminAccountController {
 
     private final AdminAccountService adminAccountService;
+    private final RoleService roleService;
     private final PasswordAutoGenerator passwordAutoGenerator;
     private final SendEmailService sendEmailService;
 
     @Autowired
-    public AdminAccountController(AdminAccountService adminAccountService, PasswordAutoGenerator passwordAutoGenerator, SendEmailService sendEmailService) {
+    public AdminAccountController(AdminAccountService adminAccountService, RoleService roleService, PasswordAutoGenerator passwordAutoGenerator, SendEmailService sendEmailService) {
         this.adminAccountService = adminAccountService;
+        this.roleService = roleService;
         this.passwordAutoGenerator = passwordAutoGenerator;
         this.sendEmailService = sendEmailService;
     }
-
 
     @GetMapping({"", "/", "/index"})
     public String getStaff(Model model) {
@@ -50,6 +52,7 @@ public class AdminAccountController {
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("staff", adminAccountService.findById(id));
+        model.addAttribute("roles", roleService.findAll());
         return "staff/detail";
     }
 
@@ -62,6 +65,7 @@ public class AdminAccountController {
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("staff", new AdminAccountEntity());
+        model.addAttribute("roles", roleService.findAll());
         return "staff/create";
     }
 
@@ -73,8 +77,12 @@ public class AdminAccountController {
             Model model) {
         if (bindingResult.hasErrors()) {
             if (adminAccountEntity.getId() != null) {
+                AdminAccountEntity foundAdminAccount = adminAccountService.findById(adminAccountEntity.getId());
+                adminAccountEntity.setUsername(foundAdminAccount.getUsername());
+                model.addAttribute("roles", roleService.findAll());
                 return "staff/detail";
             } else
+                model.addAttribute("roles", roleService.findAll());
                 return "staff/create";
         }
         String imageUrl = updateImageFile(file);
@@ -84,18 +92,21 @@ public class AdminAccountController {
             AdminAccountEntity foundAdminAccount = adminAccountService.findById(adminAccountEntity.getId());
 
             // validate existed username or email
-            if (!adminAccountEntity.getUsername().equals(foundAdminAccount.getUsername()) || !adminAccountEntity.getAdminUserEntity().getEmail().equals(foundAdminAccount.getAdminUserEntity().getEmail())) {
-                if (adminAccountService.existsByUsername(adminAccountEntity.getUsername()) || adminAccountService.existsByEmail(adminAccountEntity.getAdminUserEntity().getEmail())) {
-                    adminAccountEntity.getAdminUserEntity().setRole(foundAdminAccount.getAdminUserEntity().getRole());
-                    model.addAttribute("errorMessage", "Exitsted Username");
+            if (!adminAccountEntity.getAdminUserEntity().getEmail().equals(foundAdminAccount.getAdminUserEntity().getEmail())) {
+                if (adminAccountService.existsByEmail(adminAccountEntity.getAdminUserEntity().getEmail())) {
                     model.addAttribute("errorMessageEmail", "Exitsted Email");
+                    model.addAttribute("roles", roleService.findAll());
                     return "staff/detail";
                 }
             }
             if(!file.isEmpty()){
-                System.out.println("aaaaa");
                 foundAdminAccount.getAdminUserEntity().setThumbnail(imageUrl);
             }
+            foundAdminAccount.getAdminUserEntity().setName(adminAccountEntity.getAdminUserEntity().getName());
+            foundAdminAccount.getAdminUserEntity().setMale(adminAccountEntity.getAdminUserEntity().isMale());
+            foundAdminAccount.getAdminUserEntity().setPhone(adminAccountEntity.getAdminUserEntity().getPhone());
+            foundAdminAccount.getAdminUserEntity().setEmail(adminAccountEntity.getAdminUserEntity().getEmail());
+            foundAdminAccount.getAdminUserEntity().setRole(adminAccountEntity.getAdminUserEntity().getRole());
             adminAccountService.save(foundAdminAccount);
             //create staff account
         } else {
@@ -103,6 +114,7 @@ public class AdminAccountController {
             if (adminAccountService.existsByUsername(adminAccountEntity.getUsername()) || adminAccountService.existsByEmail(adminAccountEntity.getAdminUserEntity().getEmail())) {
                 model.addAttribute("errorMessage", "Exitsted Username");
                 model.addAttribute("errorMessageEmail", "Exitsted Email");
+                model.addAttribute("roles", roleService.findAll());
                 return "staff/create";
             }
 
@@ -123,6 +135,7 @@ public class AdminAccountController {
             adminAccountEntity.setPassword(encodedPassword);
             adminAccountService.save(adminAccountEntity);
         }
+        model.addAttribute("roles", roleService.findAll());
         Integer id = adminAccountEntity.getId();
         return "redirect:detail/" + id;
     }

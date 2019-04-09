@@ -42,7 +42,8 @@
                                         <input th:field="*{name}" class="form-control" placeholder="Name">
                                     </div>
                                     <div class="form-group">
-                                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="" style="color: red"></span>
+                                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class=""
+                                              style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Equipment Type Category</label>
@@ -58,37 +59,38 @@
                                 </form>
 
 
-                            <!-- /.col-lg-6 (nested) -->
-                            <div class="col-lg-6">
+                                <!-- /.col-lg-6 (nested) -->
+                                <div class="col-lg-6">
 
+                                </div>
+                                <!-- /.col-lg-6 (nested) -->
                             </div>
-                            <!-- /.col-lg-6 (nested) -->
+                            <!-- /.row (nested) -->
                         </div>
-                        <!-- /.row (nested) -->
+                        <!-- /.panel-body -->
                     </div>
-                    <!-- /.panel-body -->
+                    <!-- /.panel -->
                 </div>
-                <!-- /.panel -->
+                <!-- /.col-lg-12 -->
             </div>
-            <!-- /.col-lg-12 -->
+            <!-- /.row -->
         </div>
-        <!-- /.row -->
+        <!-- /#page-wrapper -->
+
     </div>
-    <!-- /#page-wrapper -->
+    <!-- /#wrapper -->
 
-</div>
-<!-- /#wrapper -->
+    <div th:replace="fragments/footer_javascript :: footer_javascript"></div>
 
-<div th:replace="fragments/footer_javascript :: footer_javascript"></div>
-
-<!-- Page-Level Demo Scripts - Tables - Use for reference -->
-<script>
-    $(document).ready(function () {
-        $('#dataTables-example').DataTable({
-            responsive: true
+    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <script>
+        $(document).ready(function () {
+            $('#dataTables-example').DataTable({
+                responsive: true
+            });
         });
-    });
-</script>
+    </script>
+</div>
 </body>
 
 </html>
