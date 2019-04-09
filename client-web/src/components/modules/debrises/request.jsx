@@ -167,7 +167,7 @@ class DebriseTransactionsRequest extends Component {
     const { transactions, status } = this.state;
     this.needActionCounters = {};
 
-    return transactions.map(transaction => {
+    return transactions.items.map(transaction => {
       if (this.needActionStatuses.includes(transaction.status)) {
         this.needActionCounters[transaction.status] = this.needActionCounters[transaction.status]
           ? ++this.needActionCounters[transaction.status] : 1;

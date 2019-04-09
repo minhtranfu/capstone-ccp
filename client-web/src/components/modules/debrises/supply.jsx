@@ -182,10 +182,18 @@ class DebriseTransactionsSupply extends Component {
    * for navs filter
    */
   _renderTransactions = () => {
-    const { transactions, status } = this.state;
+    const { transactions, status, isFetching } = this.state;
     this.needActionCounters = {};
 
-    return transactions.map(transaction => {
+    if (isFetching) {
+      return this._renderLoading();
+    }
+
+    if (!transactions || !transactions.item || transactions.items.length === 0) {
+      return this._renderNoResult();
+    }
+
+    return transactions.items.map(transaction => {
       if (this.needActionStatuses.includes(transaction.status)) {
         this.needActionCounters[transaction.status] = this.needActionCounters[transaction.status]
           ? ++this.needActionCounters[transaction.status] : 1;
@@ -226,11 +234,6 @@ class DebriseTransactionsSupply extends Component {
    * Return no result info alert
    */
   _renderNoResult = () => {
-    const { transactions, isFetching } = this.state;
-
-    if (isFetching || transactions.length > 0) {
-      return null;
-    }
 
     return (
       <div className="alert alert-info text-center mt-5">
@@ -416,7 +419,6 @@ class DebriseTransactionsSupply extends Component {
             </div>
           </div>
           <div className="col-md-9">
-            {this._renderLoading()}
             {transactionCards}
           </div>
         </div>

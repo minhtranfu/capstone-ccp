@@ -7,27 +7,30 @@ import { Link } from "react-router-dom";
 import { debrisServices } from 'Services/domain/ccp';
 import { getErrorMessage, getRoutePath } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
+import { Pagination } from 'Components/common';
 
 class MyDebrises extends Component {
 
   state = {
-    debrises: [],
-    isFetching: true
+    debrises: {},
+    isFetching: false,
+    activePage: 1
   };
+  pageSize = 6;
 
-  _loadData = async () => {
+  _loadData = async activePage => {
 
+    this.setState({
+      isFetching: true
+    });
     try {
-      const debrises = await debrisServices.getMyDebrises();
-      if (Array.isArray(debrises)) {
-        this.setState({
-          debrises,
-          isFetching: false
-        });
-      }
-
+      const debrises = await debrisServices.getMyDebrises({
+        offset: (activePage - 1) * this.pageSize,
+        limit: this.pageSize,
+      });
       this.setState({
-        message: debrises.message,
+        activePage,
+        debrises,
         isFetching: false
       });
     } catch (error) {
@@ -41,7 +44,8 @@ class MyDebrises extends Component {
   };
 
   componentDidMount() {
-    this._loadData();
+    const { activePage } = this.state;
+    this._loadData(activePage);
   }
 
   // Render placeholder with skeleton while fetching data
@@ -65,10 +69,32 @@ class MyDebrises extends Component {
     return placholders;
   };
 
-  _renderDebrises = () => {
-    const { debrises } = this.state;
+  // Render no debris
+  _renderNoDebris = () => {
+    return (
+      <div className="py-5 text-center">
+        <h2>You have no material!</h2>
+        <Link to={getRoutePath(routeConsts.DEBRIS_ADD)}>
+          <button className="btn btn-success btn-lg">
+            <i className="fal fa-plus"></i> Request for a debris service
+          </button>
+        </Link>
+      </div>
+    );
+  };
 
-    return debrises.map(debris => {
+  _renderDebrises = () => {
+    const { debrises, isFetching } = this.state;
+
+    if (isFetching) {
+      return this._renderLoading();
+    }
+
+    if (!debrises || !debrises.items || debrises.items.length === 0) {
+      return this._renderNoDebris();
+    }
+
+    return debrises.items.map(debris => {
       const { debrisBids, debrisServiceTypes } = debris;
       const services = debrisServiceTypes.map(type => type.name).join(', ');
       return (
@@ -83,6 +109,8 @@ class MyDebrises extends Component {
   };
 
   render() {
+    const { debrises, activePage } = this.state;
+
     return (
       <div className="container">
         <div className="row">
@@ -94,8 +122,18 @@ class MyDebrises extends Component {
                 </button>
               </Link>
             </h2>
-            {this._renderLoading()}
             {this._renderDebrises()}
+            {debrises && debrises.totalItems > this.pageSize &&
+              <div className="text-center">
+                <Pagination
+                  activePage={activePage}
+                  itemsCountPerPage={this.pageSize}
+                  totalItemsCount={debrises.totalItems}
+                  pageRangeDisplayed={5}
+                  onChange={this._loadData}
+                />
+              </div>
+            }
           </div>
         </div>
       </div>
