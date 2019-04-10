@@ -69,7 +69,7 @@ class ParallaxList extends Component {
   renderBackground = () => (
     <AnimatedImage
       style={{
-        height: 200,
+        height: 300,
         backgroundColor: "#e9e9e9",
         opacity: 1,
         transform: [

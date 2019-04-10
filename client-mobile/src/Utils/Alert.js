@@ -13,9 +13,20 @@ class ShowAlert extends Component {
     this.state = {};
   }
 
+  diff_sec = (dateNow, datePrevious) => {
+    const dt1 = new Date(dateNow);
+    const dt2 = new Date(datePrevious);
+    var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+    console.log(diff);
+    return Math.abs(Math.round(diff));
+  };
+
   componentDidUpdate(prevProps, prevState) {
     const { listEquipment, status, navigation, token } = this.props;
-    if (status.type === "error" && status.time !== prevProps.status.time) {
+    if (
+      status.type === "error" &&
+      this.diff_sec(status.time, prevProps.status.time) > 3
+    ) {
       console.log("Equipment renderrr");
       this._showAlert("Error", status.message);
     }

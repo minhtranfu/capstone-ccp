@@ -63,6 +63,8 @@ import CancelBid from "../screens/MyTransaction/components/CancelBid";
 import EditSubscription from "../screens/Account/EditSubscription";
 import Register from "../screens/Login/Register";
 import ManageImages from "../screens/Manage/components/ManageImages";
+import MaterialCartDetail from "../screens/Cart/Detail";
+import UploadImage from "../screens/Login/UploadImage";
 // import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
@@ -73,6 +75,7 @@ const DiscoverStack = createStackNavigator(
     Result: EquipmentResult,
     SearchDetail: SearchDetail,
     Cart: Cart,
+    MaterialCartDetail: MaterialCartDetail,
     ConfirmCart: ConfirmCart,
     MaterialSearch: MaterialSearch,
     MaterialResult: MaterialResult,
@@ -81,7 +84,8 @@ const DiscoverStack = createStackNavigator(
     BidResult: BidResult,
     BidDetail: BidDetail,
     ConfirmBid: ConfirmBid,
-    ConfirmMaterial: MaterialTransaction
+    ConfirmMaterial: MaterialTransaction,
+    AddSubscription: AddSubscription
   },
   {
     headerMode: "none"
@@ -127,7 +131,8 @@ const AccountStack = createStackNavigator(
     Subcription: Subscription,
     AddSubscription: AddSubscription,
     EditSubscription: EditSubscription,
-    Register: Register
+    Register: Register,
+    UploadImage: UploadImage
     // AuthLoading: AuthLoading,
     // Auth: AuthStack
   },

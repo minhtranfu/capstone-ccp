@@ -299,6 +299,7 @@ export const GET_EQUIPMENT_FEEDBACK = renderActions(
 );
 
 //REGISTER
-export const REGISTER = renderActions("@@feedback/REGISTER");
+export const REGISTER = renderActions("@@auth/REGISTER");
 
 //UPLOAD
+export const RESET_EQUIPMENT_IMAGE = "@@equip/RESET_EQUIPMENT_IMAGE";

@@ -8,13 +8,14 @@ import {
   AsyncStorage,
   Switch,
   Image as RNImage,
-  RefreshControl
+  RefreshControl,
+  ActionSheetIOS
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import axios from "axios";
-import { Notifications, Permissions } from "expo";
+import { Notifications, Permissions, Camera } from "expo";
 
 import {
   getConstructionList,
@@ -50,6 +51,11 @@ const SETTING_ITEMS_VALUE = [
   },
   {
     id: 2,
+    value: "Change password",
+    code: "ChangePassword"
+  },
+  {
+    id: 3,
     value: "My constructions",
     code: "Construction"
   },
@@ -100,7 +106,8 @@ class Account extends Component {
       signedIn: false,
       checkedSignIn: false,
       switchValue: null,
-      refreshing: false
+      refreshing: false,
+      hasCameraPermission: null
     };
   }
 

@@ -298,8 +298,9 @@ class AddDebrisPost extends Component {
   };
 
   _checkUserFillAll = () => {
-    const { address, title, servicesType, images } = this.state;
-    if (address && title && servicesType.length > 0 && images.length > 0) {
+    const { address, title, images } = this.state;
+    const { typeServices } = this.props;
+    if (address && title && typeServices.length > 0 && images.length > 0) {
       return true;
     }
     return false;
@@ -320,7 +321,7 @@ class AddDebrisPost extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text style={styles.title}>Add new article</Text>
+          <Text style={styles.title}>Add new debris post</Text>
         </Header>
         {this.state.submitLoading ? (
           <View
@@ -383,6 +384,13 @@ const styles = StyleSheet.create({
   },
   buttonDisable: {
     backgroundColor: colors.text25
+  },
+  iconDelete: {
+    position: "absolute",
+    bottom: 5,
+    right: 5,
+    width: 20,
+    height: 20
   }
 });
 

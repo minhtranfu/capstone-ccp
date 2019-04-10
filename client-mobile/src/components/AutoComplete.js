@@ -60,6 +60,7 @@ class AutoComplete extends Component {
           autoCorrect={false}
           onFocus={onFocus}
           autoCapitalize={autoCapitalize}
+          editable={editable}
           style={[styles.placeholder, placeholderStyle]}
         />
         {data && data.length > 0 && !hideResults ? (

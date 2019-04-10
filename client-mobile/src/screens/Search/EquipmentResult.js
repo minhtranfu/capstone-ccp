@@ -63,24 +63,19 @@ class EquipmentResult extends Component {
   }
 
   componentDidMount() {
-    const {
-      query,
-      lat,
-      long,
-      beginDate,
-      endDate,
-      equipmentTypeId
-    } = this.props.navigation.state.params;
-    console.log(beginDate, endDate);
+    const { equipment } = this.props.navigation.state.params;
+    //console.log(beginDate, endDate);
     //const fullAddress = query.main_text.concat(", ", query.secondary_text);
 
     this.props.fetchSearchEquipment(
-      query.main_text,
-      lat,
-      long,
-      moment(beginDate).format("YYYY-MM-DD"),
-      moment(endDate).format("YYYY-MM-DD"),
-      equipmentTypeId
+      equipment
+      // query.main_text,
+      // lat,
+      // long,
+      // moment(beginDate).format("YYYY-MM-DD"),
+      // moment(endDate).format("YYYY-MM-DD"),
+      // equipmentTypeId,
+      // keyword
     );
   }
 
@@ -132,18 +127,18 @@ class EquipmentResult extends Component {
     );
   };
 
-  renderAddSubscription = () => {
-    const { query, equipmentTypeId } = this.props.navigation.state.params;
-    const { beginDate, endDate } = this.state;
-    const subscriptionInfo = {
-      beginDate: moment(beginDate).format("MM/YY"),
-      endDate: moment(endDate).format("MM/YY"),
-      equipmentType: {
-        id: equipmentTypeId
-      },
-      latitude: query.lat,
-      longitude: query.lng
-    };
+  _renderAddSubscription = () => {
+    const { equipment } = this.props.navigation.state.params;
+    // const { beginDate, endDate } = this.state;
+    // const subscriptionInfo = {
+    //   beginDate: moment(beginDate).format("MM/YY"),
+    //   endDate: moment(endDate).format("MM/YY"),
+    //   equipmentType: {
+    //     id: equipmentTypeId
+    //   },
+    //   latitude: 0,
+    //   longitude: 0
+    // };
 
     return (
       <View
@@ -153,63 +148,24 @@ class EquipmentResult extends Component {
           justifyContent: "center"
         }}
       >
-        <Text style={{ textAlign: "center", marginBottom: 5 }}>
+        <Text
+          style={{
+            textAlign: "center",
+            marginBottom: 5,
+            fontSize: fontSize.secondaryText,
+            fontWeight: "500"
+          }}
+        >
           Not Available Equipment. Please subscribe and we will notify to you
           when it is available
         </Text>
-
-        <View style={{ alignItems: "center", marginBottom: 10 }}>
-          <Text>Location: {query.main_text}</Text>
-          <Text>
-            (lat: {subscriptionInfo.latitude} / lng:{" "}
-            {subscriptionInfo.longitude})
-          </Text>
-          <Text>beginDate: {subscriptionInfo.beginDate}</Text>
-          <Text>endDate: {subscriptionInfo.endDate}</Text>
-          <TextInput
-            placeholder={"max distance"}
-            keyboardType="numeric"
-            style={{
-              width: 200,
-              padding: 5,
-              borderWidth: 0.5,
-              marginBottom: 5
-            }}
-            ref={node => (this.maxDistance = node)}
-          />
-          <TextInput
-            placeholder={"max price"}
-            keyboardType="numeric"
-            style={{
-              width: 200,
-              padding: 5,
-              borderWidth: 0.5,
-              marginBottom: 5
-            }}
-            ref={node => (this.maxPrice = node)}
-          />
-
-          <TouchableOpacity
-            style={{
-              backgroundColor: "green",
-              alignItems: "center",
-              width: 200,
-              padding: 10
-            }}
-            onPress={() => {
-              const info = {
-                ...subscriptionInfo,
-                maxDistance: parseInt(this.maxDistance._lastNativeText),
-                maxPrice: parseInt(this.maxPrice._lastNativeText)
-              };
-              addSubscription(info).then(() => {
-                this.props.navigation.navigate("Account");
-              });
-            }}
-          >
-            <Text style={{ color: "#ffffff" }}>Subscribed</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          onPress={() =>
+            this.props.navigation.navigate("AddSubscription", { equipment })
+          }
+        >
+          <Text>Add subscription</Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -217,11 +173,12 @@ class EquipmentResult extends Component {
   render() {
     const { listSearch, loading } = this.props;
     const {
-      query,
-      beginDate,
-      endDate,
-      equipmentCat,
-      equipmentType
+      equipment
+      // keyword,
+      // beginDate,
+      // endDate,
+      // equipmentCat,
+      // equipmentType
     } = this.props.navigation.state.params;
     //const result = this._findResultByAddress(equipment);
 
@@ -236,20 +193,6 @@ class EquipmentResult extends Component {
             >
               <Feather name="arrow-left" size={24} />
             </TouchableOpacity>
-          )}
-          renderRightButton={() => (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("Cart")}
-              >
-                <Feather
-                  name="shopping-cart"
-                  size={20}
-                  color={colors.secondaryColor}
-                  style={{ marginRight: 5 }}
-                />
-              </TouchableOpacity>
-            </View>
           )}
         />
 
@@ -280,16 +223,15 @@ class EquipmentResult extends Component {
                     >
                       <View style={{ flex: 1 }}>
                         <Text style={styles.text} numberOfLines={1}>
-                          {`${query.main_text}`}
+                          {`${equipment.q}`}
                         </Text>
                         <Text style={styles.caption}>
-                          {moment(beginDate).format("DD MMM, YYYY") +
-                            " - " +
-                            moment(endDate).format("DD MMM, YYYY")}
+                          {equipment.beginDate + " - " + equipment.endDate}
                         </Text>
                         <Text style={styles.caption}>
-                          {`${equipmentCat ||
-                            "Any caterogy"} ▶ ${equipmentType || "Any type"}`}
+                          {`${equipment.equipmentCat ||
+                            "Any caterogy"} ▶ ${equipment.equipmentType ||
+                            "Any type"}`}
                         </Text>
                       </View>
                       <TouchableOpacity
@@ -322,7 +264,8 @@ class EquipmentResult extends Component {
                 keyExtractor={(item, index) => index.toString()}
               />
             ) : (
-              this.renderAddSubscription()
+              // <Text>Add Subscription</Text>
+              this._renderAddSubscription()
             )}
           </View>
         ) : (

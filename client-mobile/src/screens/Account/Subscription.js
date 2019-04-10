@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
-  Image
+  Image,
+  Alert
 } from "react-native";
 import {
   getSubscriptions,
@@ -31,7 +32,8 @@ import fontSize from "../../config/fontSize";
 
 @connect(
   state => ({
-    subscription: state.subscription
+    subscription: state.subscription,
+    user: state.auth.data
   }),
   dispatch => ({
     getSubscriptions: () => dispatch(getSubscriptions()),
@@ -47,8 +49,27 @@ class Subscription extends PureComponent {
     this.props.navigation.goBack();
   };
 
+  _showAlert = (title, msg) => {
+    Alert.alert(title, msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
+
+  _handleAddNewSubscription = () => {
+    const { user } = this.props;
+    if (user.contractor.status !== "NOT_VERIFIED") {
+      this.props.navigation.navigate("AddSubscription");
+    } else {
+      this._showAlert(
+        "Nani kore...",
+        `Your account is not verified to access this action`
+      );
+    }
+  };
+
   _renderScrollViewItem = () => {
     const { listSubscription } = this.props.subscription;
+    console.log(listSubscription);
     return (
       <View>
         {listSubscription.length > 0 ? (
@@ -71,14 +92,15 @@ class Subscription extends PureComponent {
                   style={{
                     backgroundColor: "white",
                     flexDirection: "row",
-                    justifyContent: "space-around",
+                    justifyContent: "space-between",
                     alignItems: "center",
-                    padding: 10,
+                    paddingVertical: 10,
+                    paddingHorizontal: 10,
                     borderRadius: 10
                   }}
                 >
-                  <View>
-                    <Text style={styles.title}>ID: {item.id}</Text>
+                  <View style={{ flex: 4 }}>
+                    <Text style={styles.text}>ID: {item.id}</Text>
                     <Text style={styles.text}>Max price: {item.maxPrice}</Text>
                     <Text style={styles.text}>
                       Max distance: {item.maxDistance}
@@ -98,6 +120,7 @@ class Subscription extends PureComponent {
                     <Text style={styles.address}>{item.address}</Text>
                   </View>
                   <TouchableOpacity
+                    style={{ flex: 1 }}
                     onPress={() => this.props.deleteSubscription(item.id)}
                   >
                     <Feather
@@ -120,6 +143,7 @@ class Subscription extends PureComponent {
   };
 
   render() {
+    const { user } = this.props;
     const { listSubscription } = this.props.subscription;
     if (!listSubscription) return <Loading />;
 
@@ -134,7 +158,7 @@ class Subscription extends PureComponent {
             hasLeft={true}
             hasCart={false}
             hasAdd={true}
-            onAddPress={() => this.props.navigation.navigate("AddSubscription")}
+            onAddPress={this._handleAddNewSubscription}
             scrollElement={<Animated.ScrollView />}
             renderScrollItem={this._renderScrollViewItem}
           />

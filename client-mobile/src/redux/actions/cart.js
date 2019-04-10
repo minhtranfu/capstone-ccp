@@ -71,10 +71,10 @@ export function addMaterialItemToCart(supplierId, item) {
   };
 }
 
-export function updateMaterialItemToCart(supplierId, itemId, item) {
+export function updateMaterialItemToCart(supplierId, itemId, quantity) {
   return {
     type: Actions.UPDATE_MATERIAL_ITEM_TO_CART.SUCCESS,
-    payload: { data: item, id: supplierId, itemId: itemId }
+    payload: { quantity, supplierId, itemId }
   };
 }
 

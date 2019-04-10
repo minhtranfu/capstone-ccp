@@ -96,10 +96,10 @@ class Bidder extends Component {
                     fontSize: fontSize.secondaryText
                   }}
                 >
-                  {rating.toFixed(2)}
+                  {rating}
                 </Text>
               </View>
-              <Text style={styles.text}>{feedbackCount}</Text>
+              <Text style={styles.text}>{feedbackCount} reviews</Text>
             </View>
             {phone ? <Text style={styles.text}>Phone: {phone}</Text> : null}
             {price ? <Text style={styles.text}>Bid: {price}</Text> : null}

@@ -12,15 +12,16 @@ import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "react-native-expo-image-cache";
 import {
-  getCartList,
-  removeItemCart,
-  cartCheckout,
   clearMaterialCart,
-  listMaterialCartItem
+  listMaterialCartItem,
+  updateMaterialItemToCart
 } from "../../redux/actions/cart";
 import { requestMaterialTransaction } from "../../redux/actions/transaction";
 import Swipeable from "react-native-swipeable";
+import { bindActionCreators } from "redux";
 
+import InputField from "../../components/InputField";
+import Button from "../../components/Button";
 import Title from "../../components/Title";
 import MaterialItem from "./components/MaterialItem";
 import TransactionItem from "../../components/TransactionItem";
@@ -38,126 +39,105 @@ import { ScrollView } from "react-native-gesture-handler";
     loading: state.cart.loading,
     user: state.auth.data
   }),
-  dispatch => ({
-    fetchGetCartList: contractorId => {
-      dispatch(getCartList(contractorId));
-    },
-    fetchRemoveItemCart: (contractorId, cartId) => {
-      dispatch(removeItemCart(contractorId, cartId));
-    },
-    fetchCheckOut: contractorId => {
-      dispatch(cartCheckout(contractorId));
-    },
-    fetchClearMaterial: () => {
-      dispatch(clearMaterialCart());
-    },
-    fetchListMaterialCart: () => {
-      dispatch(listMaterialCartItem());
-    },
-    fetchSendMaterialRequest: material => {
-      dispatch(requestMaterialTransaction(material));
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      {
+        fetchClearMaterial: clearMaterialCart,
+        fetchListMaterialCart: listMaterialCartItem,
+        fetchSendMaterialRequest: requestMaterialTransaction,
+        fetchUpdateMaterialItem: updateMaterialItemToCart
+      },
+      dispatch
+    )
 )
 class Cart extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      cart: {}
+    };
   }
 
   componentDidMount() {
-    this.props.fetchGetCartList(12);
+    //this.props.fetchGetCartList(12);
     this.props.fetchListMaterialCart();
   }
 
-  _handleRemoveItem = (contractorId, cartId) => {
-    this.props.fetchRemoveItemCart(contractorId, cartId);
+  static getDerivedStateFromProps(nextProps, prevState) {
+    //Check data is update
+    if (
+      Object.keys(prevState.cart).length === 0 &&
+      nextProps.materialCart !== prevState.cart
+    ) {
+      return {
+        cart: nextProps.materialCart
+      };
+    }
+  }
+
+  _handleQuantityChanged = (supplierId, id, value) => {
+    const { cart } = this.state;
+    this.setState({
+      cart: cart.map(supplier =>
+        supplier.id === supplierId
+          ? {
+              ...supplier,
+              items: supplier.items.map(item =>
+                item.id === id ? { ...item, quantity: parseInt(value) } : item
+              )
+            }
+          : supplier
+      )
+    });
   };
 
-  _renderItem = item => {
-    const { user } = this.props;
-    return (
-      <TransactionItem
-        id={item.id}
-        name={item.equipment.name}
-        imageURL={
-          item.equipment.thumbnailImage ||
-          "https://images1.houstonpress.com/imager/u/745xauto/9832653/dump_edit_resize.jpg"
-        }
-        contractor={item.equipment.contractor.name}
-        phone={item.equipment.contractor.phoneNumber}
-        beginDate={item.beginDate}
-        endDate={item.endDate}
-        avatarURL={item.equipment.contractor.thumbnailImage}
-        price={item.equipment.dailyPrice}
-        containerStyle={{
-          backgroundColor: "white",
-          borderRadius: 10,
-          padding: 10
-        }}
-      />
-    );
-  };
-
-  _renderCartItem = item => {
-    console.log(item);
-    return (
-      <View>
-        <Text>{item.contractor.name}</Text>
-        <Text>{item.manufacturer}</Text>
-        <Text>{item.price}</Text>
-        <Text>Input your quantity</Text>
-      </View>
-    );
-  };
-
-  _handleCheckOut = () => {
-    const { user } = this.props;
-    this.props.fetchCheckOut(user.contractor.id);
-  };
-
-  _renderFlatList = () => {
-    const { cart, materialCart } = this.props;
-    console.log(materialCart);
-    return (
-      <View style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-          <Text>Equipment</Text>
-          {cart.map(item => this._renderItem(item))}
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text>Material</Text>
-            <TouchableOpacity onPress={() => this.props.fetchClearMaterial()}>
-              <Text>Clear material</Text>
-            </TouchableOpacity>
-          </View>
-          {materialCart.map(item => this._renderCartItem(item))}
-        </ScrollView>
-        <TouchableOpacity
-          style={{ paddingHorizontal: 15 }}
-          onPress={this._handleCheckOut}
-        >
-          <Text style={styles.text}>Check out</Text>
-        </TouchableOpacity>
-      </View>
-    );
+  _handleUpdateItemQuantity = (supplierId, itemId) => {
+    const { cart } = this.state;
+    const supplier = cart.find(item => item.id === supplierId);
+    const item = supplier.items.find(item => item.id === itemId);
+    this.props.fetchUpdateMaterialItem(supplierId, itemId, item.quantity);
   };
 
   _renderScrollViewContent = () => {
     const { materialCart } = this.props;
-
+    const { cart } = this.state;
+    console.log(cart);
     return (
       <View>
         <Title title={"Material"} />
-        {materialCart.map(supplierItems => (
-          <MaterialItem
-            id={supplierItems.id}
-            items={supplierItems.items}
-            onPress={() =>
-              this.props.navigation.navigate("MaterialCartDetail", {
-                id: supplierItems.id
-              })
-            }
-          />
+        {cart.map(supplierItems => (
+          <View key={supplierItems.id}>
+            <Text>Supplier: {supplierItems.items[0].contractor.name}</Text>
+            <Text>Total items: {supplierItems.items.length}</Text>
+            {supplierItems.items.map(item => (
+              <View key={item.id}>
+                <Text style={styles.text}>{item.name}</Text>
+                <Text style={styles.text}>{item.price}</Text>
+                <InputField
+                  label={"Quantity"}
+                  placeholder={"Input your quantity"}
+                  customWrapperStyle={{ marginBottom: 20 }}
+                  inputType="text"
+                  onBlur={() =>
+                    this._handleUpdateItemQuantity(item.contractor.id, item.id)
+                  }
+                  onChangeText={value =>
+                    this._handleQuantityChanged(
+                      item.contractor.id,
+                      item.id,
+                      value
+                    )
+                  }
+                  value={item.quantity.toString()}
+                  keyboardType={"numeric"}
+                  returnKeyType={"next"}
+                />
+                <Text style={styles.text}>
+                  Total price: {item.price * item.quantity}VND
+                </Text>
+              </View>
+            ))}
+          </View>
         ))}
       </View>
     );
@@ -165,12 +145,10 @@ class Cart extends Component {
 
   render() {
     const { loading, navigation, materialCart } = this.props;
+    const { cart } = this.state;
     console.log(materialCart);
     return (
-      <SafeAreaView
-        forceInset={{ bottom: "always", top: "always" }}
-        style={styles.container}
-      >
+      <SafeAreaView forceInset={{ top: "always" }} style={styles.container}>
         <Header
           renderLeftButton={() => (
             <TouchableOpacity>
@@ -187,7 +165,14 @@ class Cart extends Component {
         <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
           {this._renderScrollViewContent()}
         </ScrollView>
-        {/* {!loading ? this._renderFlatList() : <Loading />} */}
+        <SafeAreaView forceInset={{ bottom: "always" }}>
+          <Button
+            text={"Place order"}
+            onPress={() =>
+              this.props.navigation.navigate("ConfirmCart", { cart })
+            }
+          />
+        </SafeAreaView>
       </SafeAreaView>
     );
   }

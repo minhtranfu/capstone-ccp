@@ -74,34 +74,6 @@ class SearchDetail extends Component {
     });
   }
 
-  _confirmDate = ({ startDate, endDate }) => {
-    const {
-      id,
-      dailyPrice,
-      deliveryPrice,
-      name
-    } = this.props.detail.equipmentEntity;
-    const { query } = this.props.navigation.state.params;
-    this.setState({
-      startDate,
-      endDate
-    });
-    const newEquipment = {
-      beginDate: this._handleFormatDate(startDate),
-      endDate: this._handleFormatDate(endDate),
-      requesterAddress: "Phu Nhuan",
-      requesterLatitude: 60,
-      requesterLongitude: 128,
-      equipmentId: id
-      //requesterId: 12
-    };
-    this.props.navigation.navigate("ConfirmTransaction", {
-      equipment: newEquipment,
-      name: name,
-      query: query
-    });
-  };
-
   _handleFormatDate = date => {
     year = date.getFullYear();
     month = date.getMonth() + 1;
@@ -143,9 +115,6 @@ class SearchDetail extends Component {
       ? selectedDate.endDate
       : this._handleAddMoreMonth(selectedDate.startDate, 3);
     const equipment = {
-      // requesterAddress: "Phu Nhuan",
-      // requesterLatitude: 60,
-      // requesterLongitude: 128,
       equipmentId: id,
       beginDate: selectedDate.beginDate,
       endDate: newToDate
@@ -258,21 +227,22 @@ class SearchDetail extends Component {
           paddingTop: 15
         }}
       >
-        <View style={styles.textWrapper}>
+        <View style={{ justifyContent: "center" }}>
           <Text style={styles.title}>{name}</Text>
-          <Text
-            style={{
-              color: colors.secondaryColorOpacity,
-              fontSize: fontSize.bodyText,
-              fontWeight: "500"
-            }}
-          >
-            {status}
-          </Text>
         </View>
         <View style={styles.textWrapper}>
           <View style={{ flexDirection: "column", justifyContent: "center" }}>
-            <Text style={[styles.text, { fontWeight: "600" }]}>
+            <Text
+              style={{
+                color: colors.secondaryColorOpacity,
+                fontSize: fontSize.bodyText,
+                fontWeight: "500",
+                marginBottom: 5
+              }}
+            >
+              {status}
+            </Text>
+            <Text style={[styles.text, { fontWeight: "600", marginBottom: 5 }]}>
               {contractor.name}
             </Text>
             <Text style={styles.text}>Phone: {contractor.phoneNumber}</Text>
@@ -298,11 +268,6 @@ class SearchDetail extends Component {
           <Text style={styles.text}>Daily price</Text>
           <Text style={styles.text}>{dailyPrice}K/day</Text>
         </View>
-        {/* <View style={styles.rowWrapper}>
-          <Text style={styles.text}>Delivery price</Text>
-          <Text style={styles.text}>{deliveryPrice}K/day</Text>
-        </View> */}
-
         <Title title={"Description"} />
         <Text style={styles.description}>{description}</Text>
 
@@ -369,7 +334,6 @@ class SearchDetail extends Component {
               : "null"
           }
           hasLeft={true}
-          hasCart={true}
           scrollElement={<Animated.ScrollView />}
           renderScrollItem={this._renderScrollItem}
         />
@@ -419,8 +383,9 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.primaryColor,
-    fontSize: fontSize.h2,
-    fontWeight: "700"
+    fontSize: fontSize.h3,
+    fontWeight: "700",
+    marginBottom: 5
   },
   text: {
     color: colors.text,
@@ -430,7 +395,8 @@ const styles = StyleSheet.create({
   price: {
     fontSize: fontSize.h3,
     fontWeight: "600",
-    color: colors.secondaryColor
+    color: colors.secondaryColor,
+    marginBottom: 5
   },
   description: {
     color: colors.text50,

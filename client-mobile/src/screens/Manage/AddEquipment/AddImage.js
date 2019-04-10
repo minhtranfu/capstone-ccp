@@ -68,7 +68,7 @@ class AddImage extends Component {
   };
 
   _handleAddEquipment = async () => {
-    const { images } = this.state;
+    const { images, imageIndex } = this.state;
     const { data } = this.props.navigation.state.params;
     this.setState({ loading: true });
     const form = new FormData();
@@ -90,7 +90,7 @@ class AddImage extends Component {
           };
         }),
         thumbnailImage: {
-          id: res.data[0].id
+          id: res.data[imageIndex].id
         }
       };
       const newEquipment = Object.assign({}, data, image);

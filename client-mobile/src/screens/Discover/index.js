@@ -47,7 +47,8 @@ const RADIO_BUTON_DATA = [
 ];
 
 @connect(state => ({
-  status: state.transaction.status
+  status: state.transaction.status,
+  user: state.auth.data
 }))
 class Discover extends Component {
   constructor(props) {
@@ -84,9 +85,7 @@ class Discover extends Component {
     const { checked } = this.state;
     return (
       <View style={{ paddingHorizontal: 15 }}>
-        <Title
-          title={"Categories"}
-        />
+        <Title title={"Categories"} />
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -118,38 +117,48 @@ class Discover extends Component {
         <Title title={"Near you"} />
         <CustomFlatList
           style={{ marginHorizontal: -15, flex: 1 }}
-          contentContainerStyle={{ paddingHorizontal: 15, paddingVertical: 5, }}
+          contentContainerStyle={{ paddingHorizontal: 15, paddingVertical: 5 }}
           data={discoverData}
           renderItem={this._renderTopRate}
           numColumns={2}
-          ItemSeparatorComponent={() => <View style={{height: 10}}/>}
+          ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
         />
-        <Button
-          text={"Show more"}
-          wrapperStyle={{ marginBottom: 10 }}
-        />
+        <Button text={"Show more"} wrapperStyle={{ marginBottom: 10 }} />
       </View>
     );
   };
 
   _showAlert = (title, msg) => {
-    Alert.alert(title, msg, [{ text: "OK" }], {
+    Alert.alert(title, msg, [{ text: "Ời" }], {
       cancelable: true
     });
+  };
+
+  _handleShowCart = () => {
+    const { user } = this.props;
+    if (Object.keys(user).length !== 0) {
+      if (user.contractor.status === "NOT_VERIFIED") {
+        this._showAlert(
+          "Ẹc, sad :(",
+          "Your account is not verified to access this action"
+        );
+      } else {
+        this.props.navigation.navigate("Cart");
+      }
+    } else {
+      this._showAlert("Ẹc, sad :(", "You must login to access this action");
+    }
   };
 
   render() {
     const { status } = this.props;
     return (
-      <SafeAreaView
-        style={styles.container}
-        forceInset={{ top: "always" }}
-      >
+      <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
         <ParallaxList
           title={"Discover"}
           hasLeft={false}
           hasCart={true}
-          onCartPress={() => this.props.navigation.navigate("Cart")}
+          onCartPress={this._handleShowCart}
           scrollElement={<Animated.ScrollView />}
           renderScrollItem={this._renderItem}
         />

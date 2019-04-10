@@ -129,23 +129,28 @@ export default function cartReducer(state = INITIAL_STATE, action) {
       //   }
       // }
     }
-    // case Actions.UPDATE_MATERIAL_ITEM_TO_CART.SUCCESS: {
-    //   return {
-    //     ...state,
-    //     listMaterial: state.listMaterial.map(supplier =>
-    //       supplier.id === payload.id
-    //         ? supplier.items.map(item =>
-    //             item.id === payload.item.id
-    //               ? { ...item, quantity: payload.quantity }
-    //               : item
-    //           )
-    //         : supplier
-    //     )
-    //     // listMaterial: state.listMaterial.map(item =>
-    //     //   item.id === payload.id ? (item = payload.data) : item
-    //     // )
-    //   };
-    // }
+
+    case Actions.UPDATE_MATERIAL_ITEM_TO_CART.SUCCESS: {
+      return {
+        ...state,
+        listMaterial: state.listMaterial.map(supplier =>
+          supplier.id === payload.supplierId
+            ? {
+                ...supplier,
+                items: supplier.items.map(item =>
+                  item.id === payload.itemId
+                    ? { ...item, quantity: payload.quantity }
+                    : item
+                )
+              }
+            : supplier
+        )
+        // listMaterial: state.listMaterial.map(item =>
+        //   item.id === payload.id ? (item = payload.data) : item
+        // )
+      };
+    }
+
     case Actions.REMOVE_MATERIAL_ITEM_FROM_CART: {
       return {
         ...state,
@@ -154,6 +159,7 @@ export default function cartReducer(state = INITIAL_STATE, action) {
         )
       };
     }
+
     case Actions.CLEAR_MATERIAL_CART.SUCCESS: {
       return {
         ...state,

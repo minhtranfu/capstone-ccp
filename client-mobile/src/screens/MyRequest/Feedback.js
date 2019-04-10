@@ -34,8 +34,8 @@ import fontSize from "../../config/fontSize";
     fetchSendDebrisFeedback: (id, contractor) => {
       dispatch(sendDebrisFeedback(id, contractor));
     },
-    fetchSendMaterialFeedback: (id, contractor) => {
-      dispatch(sendMaterialFeedback(id, contractor));
+    fetchSendMaterialFeedback: (id, materialId, contractor) => {
+      dispatch(sendMaterialFeedback(id, materialId, contractor));
     },
     fetchSendEquipmentFeedback: (id, contractor) => {
       dispatch(sendEquipmentFeedback(id, contractor));
@@ -58,7 +58,11 @@ class Feedback extends Component {
 
   _handleSubmitFeedback = () => {
     const { rating, content } = this.state;
-    const { transactionId, type } = this.props.navigation.state.params;
+    const {
+      transactionId,
+      type,
+      materialId
+    } = this.props.navigation.state.params;
     const feedback = {
       rating,
       content
@@ -71,9 +75,9 @@ class Feedback extends Component {
           debrisTransaction: { id: transactionId }
         });
       case "Material":
-        this.props.fetchSendMaterialFeedback(transactionId, {
+        this.props.fetchSendMaterialFeedback(transactionId, materialId, {
           ...feedback,
-          materialTransactionDetail: { id: transactionId }
+          materialTransactionDetail: { id: materialId }
         });
       default:
         this.props.fetchSendEquipmentFeedback(transactionId, {

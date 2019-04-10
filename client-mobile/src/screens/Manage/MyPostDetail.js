@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView
 } from "react-native";
+import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
 import moment from "moment";
 import {
@@ -15,7 +16,10 @@ import {
   clearTypeServices,
   editArticle
 } from "../../redux/actions/debris";
+import { sendRequestDebrisTransaction } from "../../redux/actions/transaction";
 import Feather from "@expo/vector-icons/Feather";
+import { ImagePicker, Permissions } from "expo";
+import axios from "axios";
 
 import AutoComplete from "../../components/AutoComplete";
 import Button from "../../components/Button";
@@ -26,7 +30,7 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import Title from "../../components/Title";
 
-const Bid = ({ bid }) => {
+const Bid = ({ bid, onPress }) => {
   const { createdTime, description, price, status, supplier } = bid;
   return (
     <View
@@ -52,6 +56,7 @@ const Bid = ({ bid }) => {
       </View>
       <Text style={styles.bidDescription}>{description}</Text>
       <TouchableOpacity
+        onPress={onPress}
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -105,6 +110,9 @@ const Bid = ({ bid }) => {
     },
     fetchEditArticle: (articleId, article) => {
       dispatch(editArticle(articleId, article));
+    },
+    fetchAcceptRequest: debris => {
+      dispatch(sendRequestDebrisTransaction(debris));
     }
   })
 )
@@ -116,7 +124,13 @@ class MyPostDetail extends Component {
       postDetail: {},
       title: "",
       address: "",
-      debrisServiceTypes: []
+      lat: null,
+      lng: null,
+      hideResults: false,
+      location: {},
+      debrisServiceTypes: [],
+      images: [],
+      imageIndex: 0
     };
   }
 
@@ -147,10 +161,28 @@ class MyPostDetail extends Component {
 
   _handleInputChanged = (field, value) => {
     this.setState({
-      data: {
+      postDetail: {
         ...this.state.postDetail,
         [field]: value
       }
+    });
+  };
+
+  _handleAddImage = async () => {
+    const { status } = await Permissions.getAsync(Permissions.CAMERA_ROLL);
+    if (status === "granted") {
+      let result = await ImagePicker.launchImageLibraryAsync();
+      if (!result.cancelled) {
+        this.setState({
+          images: [...this.state.images, result.uri]
+        });
+      }
+    }
+  };
+
+  _handleAddressChange = async address => {
+    this.setState({
+      location: await autoCompleteSearch(address, null, null)
     });
   };
 
@@ -170,14 +202,95 @@ class MyPostDetail extends Component {
     this.props.navigation.goBack();
   };
 
-  _renderContent = () => {
-    const { postDetail, editMode } = this.state;
-    const bids = postDetail.debrisBids;
+  _handleAcceptRequest = async bidId => {
+    const { postDetail } = this.state;
+    const request = {
+      debrisPost: {
+        id: postDetail.id
+      },
+      debrisBid: {
+        id: bidId
+      }
+    };
+    await this.props.fetchAcceptRequest(request);
+    this.props.navigation.goBack();
+  };
 
+  _handleRemove = rowIndex => {
+    this.setState({
+      images: this.state.images.filter((item, index) => index !== rowIndex)
+    });
+  };
+
+  _renderRowImageUpdate = (image, key, imageIndex) => {
+    return (
+      <TouchableOpacity
+        key={key}
+        style={[
+          { marginVertical: 10, marginRight: 10 },
+          imageIndex === key
+            ? {
+                borderWidth: 1,
+                borderColor: colors.secondaryColor,
+                borderRadius: 10
+              }
+            : null
+        ]}
+        onPress={() => this.setState({ imageIndex: key })}
+      >
+        <Image uri={image} style={styles.smallImage} resizeMode={"cover"} />
+
+        <TouchableOpacity
+          style={styles.iconDelete}
+          onPress={() => this._handleRemove(key)}
+        >
+          <Feather name={"x"} size={20} color={colors.secondaryColor} />
+        </TouchableOpacity>
+      </TouchableOpacity>
+    );
+  };
+
+  _renderAutoCompleteItem = item => (
+    <TouchableOpacity
+      style={styles.autocompleteWrapper}
+      onPress={() => {
+        this.setState({
+          address: item.main_text + ", " + item.secondary_text,
+          lat: item.lat,
+          lng: item.lng,
+          hideResults: true
+        });
+      }}
+    >
+      <Text style={styles.addressMainText}>{item.main_text}</Text>
+      <Text style={styles.caption}>{item.secondary_text}</Text>
+    </TouchableOpacity>
+  );
+
+  _renderContent = () => {
+    const {
+      postDetail,
+      editMode,
+      hideResults,
+      location,
+      images,
+      imageIndex
+    } = this.state;
+    const bids = postDetail.debrisBids;
+    console.log(postDetail);
     const { typeServices } = this.props;
     return (
       <View>
         <Title title={"Information"} />
+        <Image
+          uri={
+            postDetail.thumbnailImage
+              ? postDetail.thumbnailImage.url
+              : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg"
+          }
+          resizeMode={"cover"}
+          style={{ height: 150 }}
+        />
         <InputField
           label={"Tittle"}
           placeholder={"Input your title"}
@@ -189,16 +302,19 @@ class MyPostDetail extends Component {
           returnKeyType={"next"}
           editable={editMode}
         />
-        <InputField
+        <AutoComplete
           label={"Address"}
-          placeholder={"Input your address"}
-          placeholderTextColor={colors.text68}
-          customWrapperStyle={{ marginBottom: 15 }}
-          inputType="text"
-          onChangeText={value => this._handleInputChanged("address", value)}
-          value={postDetail.address}
-          returnKeyType={"next"}
           editable={editMode}
+          placeholder={"Input your address"}
+          onFocus={() => this.setState({ hideResults: false })}
+          hideResults={hideResults}
+          data={location}
+          value={postDetail.address}
+          onChangeText={value => {
+            this._handleInputChanged("address", value);
+            this._handleAddressChange(value);
+          }}
+          renderItem={item => this._renderAutoCompleteItem(item)}
         />
         <View
           style={{ flexDirection: "row", alignItems: "center", marginTop: -10 }}
@@ -235,9 +351,45 @@ class MyPostDetail extends Component {
               No service information provided
             </Text>
           )}
+          {editMode && (
+            <View>
+              <Title text={"Insert your image"} />
+              {images.length > 0 ? (
+                <View style={{ flex: 1 }}>
+                  <Image
+                    uri={images[imageIndex]}
+                    style={styles.landscapeImg}
+                    resizeMode={"cover"}
+                  />
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      flexWrap: "wrap"
+                    }}
+                  >
+                    {images.map((item, index) =>
+                      this._renderRowImageUpdate(item, index, imageIndex)
+                    )}
+                  </View>
+                </View>
+              ) : null}
+              <Button
+                text={"Add Image"}
+                onPress={this._handleAddImage}
+                wrapperStyle={{ marginBottom: 15 }}
+              />
+            </View>
+          )}
           {!editMode && <Title title={`Bids (${bids.length})`} />}
           {!editMode &&
-            bids.map(bid => <Bid key={bid.id.toString()} bid={bid} />)}
+            bids.map(bid => (
+              <Bid
+                key={bid.id.toString()}
+                bid={bid}
+                onPress={() => this._handleAcceptRequest(bid.id)}
+              />
+            ))}
         </View>
       </View>
     );

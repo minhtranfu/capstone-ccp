@@ -268,6 +268,7 @@ class MyMaterialDetail extends Component {
           returnKeyType={"next"}
         />
         <Dropdown
+          style={{ marginBottom: 20 }}
           label={"General Material Type"}
           defaultText={"Select your general material type"}
           onSelectValue={(value, index) =>
@@ -276,6 +277,7 @@ class MyMaterialDetail extends Component {
           options={this._handleGeneralMaterialTypeDropdown()}
         />
         <Dropdown
+          style={{ marginBottom: 20 }}
           label={"Type"}
           defaultText={"Select your type"}
           onSelectValue={(value, index) =>
@@ -284,6 +286,7 @@ class MyMaterialDetail extends Component {
           options={this._handleMaterialTypeDropdown()}
         />
         <Dropdown
+          style={{ marginBottom: 20 }}
           label={"Construction"}
           defaultText={"Select your construction"}
           onSelectValue={(value, index) => {

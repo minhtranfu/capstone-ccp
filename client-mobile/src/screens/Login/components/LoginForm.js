@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   wrapperStyle: {
-    marginTop: 35,
-    marginBottom: 10
+    marginTop: 20,
+    marginBottom: 15
   },
   text: {
     fontSize: fontSize.caption,

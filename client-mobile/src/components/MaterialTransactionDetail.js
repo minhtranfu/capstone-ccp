@@ -116,9 +116,9 @@ const styles = StyleSheet.create({
     marginVertical: 5
   },
   description: {
-    fontSize: fontSize.caption,
-    color: colors.text68,
-    fontWeight: "600",
+    fontSize: fontSize.secondaryText,
+    color: colors.text50,
+    fontWeight: "500",
     marginVertical: 5
   },
   avatar: {

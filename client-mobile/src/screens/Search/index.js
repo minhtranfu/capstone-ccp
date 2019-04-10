@@ -19,6 +19,7 @@ import { searchEquipment } from "../../redux/actions/equipment";
 import { MaterialIcons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { getGeneralEquipmentType } from "../../redux/actions/type";
+import moment from "moment";
 
 import Loading from "../../components/Loading";
 import InputField from "../../components/InputField";
@@ -31,7 +32,6 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import ParallaxList from "../../components/ParallaxList";
 import Title from "../../components/Title";
-import moment from "moment";
 import Calendar from "../../components/Calendar";
 
 const DROPDOWN_GENERAL_TYPES_OPTIONS = [
@@ -162,24 +162,34 @@ class Search extends Component {
       lat,
       lng,
       beginDate,
-      endDate
+      endDate,
+      keyword
     } = this.state;
     const newTypeOptions = this._handleEquipmentType(generalTypeIndex);
     let id = newTypeOptions[typeIndex].id;
-    if (address) {
-      this.props.navigation.navigate("Result", {
-        query: query,
-        lat: lat,
-        long: lng,
-        beginDate,
-        endDate,
-        equipmentCat: this.state.generalType,
-        equipmentTypeId: id,
-        equipmentType: this.state.type
-      });
-    } else {
-      this._showAlert("Please input address");
-    }
+
+    const location = {
+      query,
+      lquery: address,
+      lat: lat,
+      long: lng
+    };
+
+    //q: keyword
+    const equipment = {
+      beginDate: moment(beginDate).format("YYYY-MM-DD"),
+      endDate: moment(endDate).format("YYYY-MM-DD"),
+      equipmentCat: this.state.generalType,
+      equipmentCatIndex: this.state.generalTypeIndex,
+      equipmentTypeId: id,
+      equipmentTypeIndex: this.state.typeIndex,
+      equipmentType: this.state.type,
+      q: keyword,
+      location: address ? location : {}
+    };
+    this.props.navigation.navigate("Result", {
+      equipment
+    });
   };
 
   _setCalendarVisible = visible => {

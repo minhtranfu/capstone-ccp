@@ -32,7 +32,7 @@ export default function debrisReducer(state = INITIAL_STATE, action) {
     case Actions.GET_DEBRIS_ARTICLE_BY_REQUESTER.SUCCESS: {
       return {
         ...state,
-        debrisArticles: payload.data
+        debrisArticles: payload.data.items
       };
     }
     case Actions.POST_DEBRIS_ARTICLE.SUCCESS: {
@@ -52,7 +52,7 @@ export default function debrisReducer(state = INITIAL_STATE, action) {
     case Actions.GET_DEBRIS_BIDS_BY_SUPPLIER.SUCCESS: {
       return {
         ...state,
-        debrisBids: payload.data
+        debrisBids: payload.data.items
       };
     }
     case Actions.GET_DEBRIS_DETAIL_BY_SUPPLIER.REQUEST: {

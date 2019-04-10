@@ -224,7 +224,15 @@ class MyEquipment extends PureComponent {
   };
 
   _handleAddButton = () => {
-    this.setState({ addModalVisible: true });
+    const { user } = this.props;
+    if (user.contractor.status !== "NOT_VERIFIED") {
+      this.setState({ addModalVisible: true });
+    } else {
+      this._showAlert(
+        "Nani kore....",
+        `Your account is not verified to access this action`
+      );
+    }
     // this.props.navigation.navigate("AddDetail");
   };
 
@@ -336,18 +344,16 @@ class MyEquipment extends PureComponent {
       status,
       isLoggedIn,
       navigation,
-      materialList
+      materialList,
+      user
     } = this.props;
     const { activeTab } = this.state;
     if (isLoggedIn) {
       return (
-        <SafeAreaView
-          style={styles.container}
-          forceInset={{ top: "always" }}
-        >
+        <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
           <Header
             renderRightButton={() => (
-              <TouchableOpacity onPress={() => this._handleAddButton()}>
+              <TouchableOpacity onPress={this._handleAddButton}>
                 <Feather name="plus" size={22} />
               </TouchableOpacity>
             )}
@@ -437,7 +443,7 @@ const styles = StyleSheet.create({
     marginBottom: 15
   },
   scrollContent: {
-    paddingHorizontal: 15,
+    paddingHorizontal: 15
   },
   equipmentItemContainer: {
     paddingVertical: 8

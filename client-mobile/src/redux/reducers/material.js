@@ -78,7 +78,7 @@ export default function materialReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         loading: false,
-        materialList: payload.data
+        materialList: payload.data.items
       };
     }
     case Actions.SEND_MATERIAL_FEEDBACK.REQUEST: {

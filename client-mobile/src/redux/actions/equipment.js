@@ -8,7 +8,7 @@ export function getContractorEquipmentList(contractorId) {
   return async dispatch => {
     dispatch({ type: Actions.LIST_CONTRACTOR_EQUIPMENT.REQUEST });
     try {
-      const res = await axios.get(`contractors/${contractorId}/equipments`);
+      const res = await axios.get(`equipments/supplier`);
       dispatch({
         type: Actions.LIST_CONTRACTOR_EQUIPMENT.SUCCESS,
         payload: res
@@ -31,6 +31,7 @@ export function addEquipment(equipment) {
         type: Actions.ADD_EQUIPMENT.SUCCESS,
         payload: res
       });
+      dispatch(StatusAction.success("Add success"));
     } catch (error) {
       dispatch({ type: Actions.ADD_EQUIPMENT.ERROR });
     }
@@ -78,29 +79,20 @@ export function removeEquipment(id) {
   };
 }
 
-export function searchEquipment(
-  address,
-  long,
-  lat,
-  beginDate,
-  endDate,
-  equipmentTypeId,
-  pageNo
-) {
-  console.log("date action", beginDate, endDate, address, long, lat);
-  const page = pageNo > 0 ? pageNo : 0;
-  let url = `equipments?begin_date=${beginDate}&end_date=${endDate}&long=${long}&lad=${lat}&lquery=${address}&equipmentTypeId=${equipmentTypeId}&offset=${page}&limit=100`;
+export function searchEquipment(equipment) {
+  //const page = pageNo > 0 ? pageNo : 0;
+  const params = Object.keys(equipment).map(
+    value => `${value}=${equipment[value]}`
+  );
+  const queryString = params.join("&");
+  let url = `equipments?${queryString}&limit=100`;
   console.log(url);
   return async dispatch => {
     try {
       dispatch({
         type: Actions.SEARCH_EQUIPMENT.REQUEST
       });
-      const res = await axios.get(url, {
-        headers: {
-          Authorization: undefined
-        }
-      });
+      const res = await axios.get(url);
       dispatch({
         type: Actions.SEARCH_EQUIPMENT.SUCCESS,
         payload: res
@@ -189,13 +181,13 @@ export function getEquipmentImage(equipmentId) {
 //   return axios.post('subscriptions', image)
 // }
 
-export function insertImageToEquipmentList(equipmentId, image) {
+export function insertImageToEquipmentList(equipmentId, imageId) {
   return async dispatch => {
     try {
       dispatch({
         type: Actions.INSERT_NEW_EQUIPMENT_IMAGE.REQUEST
       });
-      const res = await axios.post(`equipments/${equipmentId}/images`, image);
+      const res = await axios.post(`equipments/${equipmentId}/images`, imageId);
       dispatch({
         type: Actions.INSERT_NEW_EQUIPMENT_IMAGE.SUCCESS,
         payload: res
@@ -219,7 +211,7 @@ export function deleteEquipmentImage(equipmentId, imageId) {
       );
       dispatch({
         type: Actions.DELETE_EQUIPMENT_IMAGE.SUCCESS,
-        payload: res
+        payload: { id: imageId }
       });
     } catch (error) {
       console.log(error);
@@ -227,5 +219,13 @@ export function deleteEquipmentImage(equipmentId, imageId) {
         type: Actions.DELETE_EQUIPMENT_IMAGE.ERROR
       });
     }
+  };
+}
+
+export function resetEquipmentImage() {
+  return dispatch => {
+    dispatch({
+      type: Actions.RESET_EQUIPMENT_IMAGE
+    });
   };
 }

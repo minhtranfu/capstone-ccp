@@ -30,7 +30,7 @@ export function getSubscriptions() {
       const res = await axios.get("subscriptions");
       dispatch({
         type: GET_SUBSCRIPTIONS.SUCCESS,
-        payload: res.data
+        payload: res
       });
     } catch (err) {
       dispatch({
@@ -47,7 +47,7 @@ export function editSubscription(id, subscription) {
       const res = await axios.put(`subscriptions/${id}`, subscription);
       dispatch({
         type: EDIT_SUBSCRIPTION.SUCCESS,
-        payload: { id, data: subscription }
+        payload: { id, data: res }
       });
     } catch (error) {
       dispatch({

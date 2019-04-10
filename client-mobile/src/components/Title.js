@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   hasMoreText: {
     color: colors.secondaryColor,
-    fontSize: fontSize.caption,
+    fontSize: fontSize.secondaryText,
     fontWeight: "500"
   }
 });

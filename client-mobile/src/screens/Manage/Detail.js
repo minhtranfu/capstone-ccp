@@ -7,16 +7,21 @@ import {
   Switch,
   ScrollView,
   TouchableOpacity,
-  Image,
   Modal,
   Dimensions
 } from "react-native";
+import { Image } from "react-native-expo-image-cache";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { Feather } from "@expo/vector-icons";
 import { ImagePicker, Permissions } from "expo";
 import { updateEquipment } from "../../redux/actions/equipment";
 import { getGeneralEquipmentType } from "../../redux/actions/type";
+import {
+  getEquipmentImage,
+  resetEquipmentImage
+} from "../../redux/actions/equipment";
 import axios from "axios";
 
 import Calendar from "../../components/Calendar";
@@ -66,18 +71,21 @@ const COLORS = {
         item => item.id === id
       ),
       generalType: state.type.listGeneralEquipmentType,
-      loading: state.type.loading,
-      user: state.auth.data
+      user: state.auth.data,
+      loading: state.equipment.imageLoading,
+      imageList: state.equipment.imageList
     };
   },
-  dispatch => ({
-    fetchUpdateEquipment: (equipmentId, equipment) => {
-      dispatch(updateEquipment(equipmentId, equipment));
-    },
-    fetchGeneralType: () => {
-      dispatch(getGeneralEquipmentType());
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      {
+        fetchUpdateEquipment: updateEquipment,
+        fetchGeneralType: getGeneralEquipmentType,
+        fetchGetEquipmentImages: getEquipmentImage,
+        fetchResetEquipmentImage: resetEquipmentImage
+      },
+      dispatch
+    )
 )
 class MyEquipmentDetail extends Component {
   constructor(props) {
@@ -90,10 +98,18 @@ class MyEquipmentDetail extends Component {
       type: null,
       typeIdDefault: 0,
       isModalOpen: false,
-      image: null,
-      loading: null,
+      images: [],
       additionalSpecsFields: []
     };
+  }
+
+  componentDidMount() {
+    const { id } = this.props.navigation.state.params;
+    this.props.fetchGetEquipmentImages(id);
+  }
+
+  componentWillUnmount() {
+    this.props.fetchResetEquipmentImage();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -109,7 +125,13 @@ class MyEquipmentDetail extends Component {
         type: nextProps.equipmentDetail.equipmentType.name,
         typeIdDefault: nextProps.equipmentDetail.equipmentType.id
       };
-    } else return null;
+    }
+    if (nextProps.imageList !== prevState.images) {
+      return {
+        images: nextProps.imageList
+      };
+    }
+    return null;
   }
 
   _capitalizeLetter = string => {
@@ -145,70 +167,38 @@ class MyEquipmentDetail extends Component {
     return DROPDOWN_TYPES_OPTIONS;
   };
 
-  _handleChangeBackgroundImage = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    if (status === "granted") {
-      let result = await ImagePicker.launchImageLibraryAsync();
-      if (!result.cancelled) {
-        console.log(result);
-        this.setState({
-          image: result.uri
-        });
-      }
-    }
-  };
-
   _handleSubmitEdit = async () => {
     const { id } = this.props.navigation.state.params;
+    const { user } = this.props;
     const {
       data,
       typeIndex,
       generalTypeIndex,
       typeIdDefault,
-      image
+      images
     } = this.state;
 
     //need to optimize
     const newTypeOptions = this._handleEquipmentType(generalTypeIndex);
     let equipmentTypeId = { id: newTypeOptions[typeIndex].id };
     if (equipmentTypeId.id === 0) equipmentTypeId.id = typeIdDefault;
-    this.setState({ loading: true });
-    const form = new FormData();
-    form.append("image", {
-      uri: image,
-      type: "image/jpg",
-      name: "image.jpg"
-    });
-    try {
-      const res = await axios.post(`storage/equipmentImages`, form, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-      const newEquipmentDetail = {
-        name: data.name,
-        dailyPrice: data.dailyPrice,
-        description: data.description,
-        thumbnailImage: { id: res.data[0].id },
-        address: "Phú Nhuận",
-        latitude: 10.806488,
-        longitude: 106.676364,
-        equipmentType: { id: equipmentTypeId.id },
-        contractor: { id: user.contractor.id },
-        construction: null,
-        availableTimeRanges: data.availableTimeRanges,
-        descriptionImages: [
-          ...data.descriptionImages,
-          {
-            id: res.data[0].id
-          }
-        ]
-      };
+    const newEquipmentDetail = {
+      name: data.name,
+      dailyPrice: data.dailyPrice,
+      description: data.description,
+      thumbnailImage: { id: data.thumbnailImage.id },
+      address: "Phú Nhuận",
+      latitude: 10.806488,
+      longitude: 106.676364,
+      equipmentType: { id: equipmentTypeId.id },
+      contractor: { id: user.contractor.id },
+      construction: null,
+      availableTimeRanges: data.availableTimeRanges,
+      descriptionImages: images
+    };
 
-      this.props.fetchUpdateEquipment(id, newEquipmentDetail);
-      this.props.navigation.goBack();
-    } catch (error) {
-      this.setState({ loading: false });
-      this.props.navigation.goBack();
-    }
+    this.props.fetchUpdateEquipment(id, newEquipmentDetail);
+    this.props.navigation.goBack();
   };
 
   _renderAvailableBottom = id => (
@@ -248,7 +238,6 @@ class MyEquipmentDetail extends Component {
   };
 
   _handleInputSpecsField = (specId, index, value) => {
-    const { data } = this.state;
     // data.additionalSpecsFields[index] = {
     //   value: value,
     //   ...data.additionalSpecsFields[index]
@@ -259,7 +248,7 @@ class MyEquipmentDetail extends Component {
     );
     this.setState({
       data: {
-        ...data,
+        ...this.state.data,
         additionalSpecsValues: newSpecsValue
       }
     });
@@ -283,6 +272,15 @@ class MyEquipmentDetail extends Component {
         </View>
       </Modal>
     );
+  };
+
+  _handleChangeThumbnail = image => {
+    this.setState({
+      data: {
+        ...this.state.data,
+        thumbnailImage: image
+      }
+    });
   };
 
   _renderDateRange = (item, index) => (
@@ -317,7 +315,8 @@ class MyEquipmentDetail extends Component {
 
   _renderScrollItem = () => {
     const { id } = this.props.navigation.state.params;
-    const { data, typeIndex, generalTypeIndex, image } = this.state;
+    const { data, typeIndex, generalTypeIndex, images } = this.state;
+    console.log(images);
     const NEW_DROPDOWN_GENERAL_TYPES_OPTIONS = this._handleGeneralEquipmentType();
     const NEW_DROPDOWN_TYPES_OPTIONS = this._handleEquipmentType(
       generalTypeIndex
@@ -327,13 +326,11 @@ class MyEquipmentDetail extends Component {
       <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.landscapeImgWrapper}>
           <Image
-            source={{
-              uri: image
-                ? image
-                : data.thumbnailImage
+            uri={
+              data.thumbnailImage
                 ? data.thumbnailImage.url
                 : "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-            }}
+            }
             style={styles.landscapeImg}
             resizeMode={"cover"}
           />
@@ -347,6 +344,43 @@ class MyEquipmentDetail extends Component {
             <Feather name="camera" size={18} color={"white"} />
           </TouchableOpacity>
         </View>
+        <Title title={"Select your thumbnail"} hasMore={"Add more images"} />
+        {images && images.length > 0 ? (
+          <ScrollView
+            showsHorizontalScrollIndicator={false}
+            horizontal={true}
+            style={{
+              marginHorizontal: -15,
+              marginTop: 15,
+              paddingHorizontal: 15
+            }}
+          >
+            {images.map(image => (
+              <TouchableOpacity
+                key={image.id}
+                style={[
+                  { marginRight: 15 },
+                  image.id === data.thumbnailImage.id
+                    ? styles.imageSelected
+                    : null
+                ]}
+                onPress={() => this._handleChangeThumbnail(image)}
+              >
+                <Image
+                  uri={image.url}
+                  resizeMode={"cover"}
+                  style={{
+                    height: 100,
+                    width: 100,
+                    borderRadius: 10
+                  }}
+                />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        ) : (
+          <Text style={styles.text}>There is no image</Text>
+        )}
         <Title title={"Equipment Information"} />
         <InputField
           label={"Name"}
@@ -456,8 +490,7 @@ class MyEquipmentDetail extends Component {
   };
 
   render() {
-    const { equipmentDetail } = this.props;
-    const { loading } = this.state;
+    const { equipmentDetail, loading } = this.props;
     const { id } = this.props.navigation.state.params;
     return (
       <SafeAreaView
@@ -477,19 +510,7 @@ class MyEquipmentDetail extends Component {
         >
           <Text style={styles.header}>Equipment Detail</Text>
         </Header>
-        {loading ? (
-          <View
-            style={{
-              position: "absolute",
-              backgroundColor: "white",
-              width: width,
-              height: height
-            }}
-          >
-            <Loading />
-          </View>
-        ) : null}
-        {Object.keys(equipmentDetail).length !== 0 ? (
+        {Object.keys(equipmentDetail).length !== 0 && !loading ? (
           <ScrollView>{this._renderScrollItem()}</ScrollView>
         ) : (
           <Loading />
@@ -541,6 +562,11 @@ const styles = StyleSheet.create({
     fontSize: fontSize.bodyText,
     fontWeight: "500",
     color: colors.text
+  },
+  imageSelected: {
+    borderWidth: 1,
+    borderColor: colors.secondaryColor,
+    borderRadius: 10
   }
 });
 

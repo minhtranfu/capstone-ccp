@@ -109,7 +109,7 @@ class MaterialSupplierDetail extends Component {
           wrapperStyle={{ marginBottom: 15 }}
         />
         <Button
-          text={"Deny"}
+          text={"Cancel order"}
           onPress={() => {
             this._handleChangeTransaction(
               id,
@@ -194,7 +194,7 @@ class MaterialSupplierDetail extends Component {
             </TouchableOpacity>
           )}
         >
-          <Text>Material Detail</Text>
+          <Text style={styles.text}>Material Detail</Text>
         </Header>
         {Object.keys(materialDetail).length > 0 ? (
           this._renderDetail(materialDetail)
@@ -225,24 +225,26 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   header: {
-    fontSize: fontSize.h4,
-    fontWeight: "500"
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: colors.text
   },
   title: {
-    fontSize: fontSize.h4,
-    fontWeight: "400",
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
     color: colors.text,
     marginBottom: 10
   },
   text: {
-    fontSize: fontSize.bodyText,
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
     color: colors.text,
     paddingBottom: 5
   },
   caption: {
     fontSize: fontSize.secondaryText,
     color: colors.text50,
-    fontWeight: "600",
+    fontWeight: "500",
     paddingBottom: 5
   },
   description: {

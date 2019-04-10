@@ -13,6 +13,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { register } from "../../redux/actions/auth";
 
+import Logo from "../../components/Logo";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 
@@ -47,7 +48,7 @@ class Register extends Component {
     });
   };
 
-  _handleSubmit = async () => {
+  _handleSubmit = () => {
     const {
       confirmPassword,
       password,
@@ -72,8 +73,10 @@ class Register extends Component {
           thumbnailImageUrl: null
         }
       };
-      await this.props.fetchRegister(user);
-      this.props.navigation.goBack();
+      this.props.navigation.navigate("UploadImage", { user });
+      // this.props.fetchRegister(user);
+      // console.log(res);
+      // this.props.navigation.goBack();
     }
   };
 
@@ -95,37 +98,8 @@ class Register extends Component {
             paddingBottom: 50
           }}
         >
-          <View
-            style={{
-              padding: 0,
-              alignItems: "centers",
-              justifyContent: "center",
-              flexDirection: "row"
-            }}
-          >
-            <View
-              style={{
-                borderRadius: 3,
-                borderWidth: 3,
-                borderColor: colors.text68,
-                width: 88,
-                height: 52,
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <Text
-                style={{
-                  color: colors.text68,
-                  fontWeight: "700",
-                  fontSize: 30
-                }}
-              >
-                C<Text style={{ color: colors.secondaryColor }}>C</Text>P
-              </Text>
-            </View>
-          </View>
-          <KeyboardAvoidingView style={styles.formWrapper}>
+          <KeyboardAvoidingView style={styles.formWrapper} behavior="padding">
+            <Logo />
             <InputField
               label={"Username"}
               labelStyle={{ color: colors.text50 }}
@@ -212,24 +186,24 @@ class Register extends Component {
               value={phoneNumber}
               returnKeyType={"next"}
             />
-          </KeyboardAvoidingView>
-          <Button
-            text={"Sign Up"}
-            wrapperStyle={styles.wrapperStyle}
-            buttonStyle={styles.buttonStyle}
-            textStyle={styles.textStyle}
-            onPress={this._handleSubmit}
-          />
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text style={[styles.forgotPassword]}>
-              Already have an account? |
-            </Text>
-            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-              <Text style={{ color: colors.text68, fontWeight: "600" }}>
-                Sign In
+            <Button
+              text={"Sign Up"}
+              wrapperStyle={styles.wrapperStyle}
+              buttonStyle={styles.buttonStyle}
+              textStyle={styles.textStyle}
+              onPress={this._handleSubmit}
+            />
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={[styles.forgotPassword]}>
+                Already have an account? |
               </Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                <Text style={{ color: colors.text68, fontWeight: "600" }}>
+                  Sign In
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
         </ScrollView>
       </SafeAreaView>
     );

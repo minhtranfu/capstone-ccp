@@ -311,3 +311,31 @@ disableText: {
               //   status={item.status}
 
               // />
+
+              _confirmDate = ({ startDate, endDate }) => {
+                const {
+                  id,
+                  dailyPrice,
+                  deliveryPrice,
+                  name
+                } = this.props.detail.equipmentEntity;
+                const { query } = this.props.navigation.state.params;
+                this.setState({
+                  startDate,
+                  endDate
+                });
+                const newEquipment = {
+                  beginDate: this._handleFormatDate(startDate),
+                  endDate: this._handleFormatDate(endDate),
+                  requesterAddress: "Phu Nhuan",
+                  requesterLatitude: 60,
+                  requesterLongitude: 128,
+                  equipmentId: id
+                  //requesterId: 12
+                };
+                this.props.navigation.navigate("ConfirmTransaction", {
+                  equipment: newEquipment,
+                  name: name,
+                  query: query
+                });
+              };

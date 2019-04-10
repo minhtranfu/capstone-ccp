@@ -68,6 +68,16 @@ class DebrisDetail extends Component {
 
   _renderBottomButton = (transactionId, status, isFeedback) => {
     switch (status) {
+      case "ACCEPTED":
+        return (
+          <Button
+            text={"Cancel request"}
+            onPress={() =>
+              this.props.navigation.navigate("CancelBid", { transactionId })
+            }
+            wrapperStyle={{ marginTop: 15 }}
+          />
+        );
       case "WORKING":
         return (
           <Button

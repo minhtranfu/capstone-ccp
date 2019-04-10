@@ -233,7 +233,7 @@ class EditSubscription extends Component {
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this._handleInputChanged("maxPrice", value)}
-          value={this._formatNumber(subscription.maxPrice.toString())}
+          value={subscription.maxPrice ? subscription.maxPrice.toString() : ""}
           keyboardType={"numeric"}
           returnKeyType={"next"}
         />
@@ -243,7 +243,10 @@ class EditSubscription extends Component {
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
           onChangeText={value => this._handleInputChanged("maxDistance", value)}
-          value={subscription.maxDistance.toString()}
+          value={
+            subscription.maxDistance ? subscription.maxDistance.toString() : ""
+          }
+          keyboardType={"numeric"}
           returnKeyType={"next"}
         />
         <AutoComplete

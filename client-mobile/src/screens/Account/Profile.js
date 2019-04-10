@@ -1,14 +1,16 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { Image } from "react-native-expo-image-cache";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image,
   ScrollView,
   Alert,
-  Animated
+  Animated,
+  ActionSheetIOS,
+  Modal
 } from "react-native";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
@@ -17,7 +19,10 @@ import {
   getContractorDetail,
   updateContractorDetail
 } from "../../redux/actions/contractor";
+import { ImagePicker, Permissions } from "expo";
+import axios from "axios";
 
+import CameraView from "./components/Camera";
 import Button from "../../components/Button";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
@@ -49,7 +54,11 @@ class Profile extends Component {
       phone: "",
       thumbnailImage: "",
       data: {},
-      dataChanged: false
+      dataChanged: false,
+      clicked: null,
+      image: null,
+      progress: 0,
+      modalVisible: false
     };
   }
 
@@ -67,13 +76,34 @@ class Profile extends Component {
       return {
         data: nextProps.contractor
       };
-    } else return null;
+    }
+    return null;
   }
 
   _handleInputChange = (field, value) => {
     let newData = { ...this.state.data };
     newData[field] = value;
     this.setState({ data: newData, dataChanged: true });
+  };
+
+  _setModalVisible = visible => {
+    this.setState({ modalVisible: visible });
+  };
+
+  _showActionSheet = () => {
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: ["Cancel", "Take photo", "Choose from your library"],
+        cancelButtonIndex: 0
+      },
+      buttonIndex => {
+        if (buttonIndex === 1) {
+          this.setState({ modalVisible: true });
+        } else if (buttonIndex === 2) {
+          this._handleAddImage();
+        }
+      }
+    );
   };
 
   _handleSave = () => {
@@ -93,10 +123,114 @@ class Profile extends Component {
     });
   };
 
+  _handleAddImage = async () => {
+    const { contractor } = this.props;
+    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    if (status === "granted") {
+      let result = await ImagePicker.launchImageLibraryAsync();
+      if (!result.cancelled) {
+        const form = new FormData();
+        this.setState({ submitLoading: true });
+        form.append("image", {
+          uri: result.uri,
+          type: "image/jpg",
+          name: "image.jpg"
+        });
+        const res = await axios.post(
+          `storage/contractorVerifyingImages`,
+          form,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+            onUploadProgress: progressEvent => {
+              console.log(
+                "Upload progress: " +
+                  Math.round(
+                    (progressEvent.loaded / progressEvent.total) * 100
+                  ) +
+                  "%"
+              );
+              this.setState({
+                progress: Math.round(
+                  (progressEvent.loaded / progressEvent.total) * 100
+                )
+              });
+            }
+          }
+        );
+        if (res) {
+          console.log(res);
+          this.setState({
+            data: {
+              ...this.state.data,
+              thumbnailImageUrl: res.data[0].url
+            },
+            progress: 0,
+            dataChanged: true
+          });
+        }
+      }
+    }
+  };
+
+  _handleShowCamera = () => {
+    const { modalVisible } = this.state;
+    return (
+      <Modal animationType="slide" transparent={false} visible={modalVisible}>
+        <SafeAreaView
+          style={styles.containter}
+          forceInset={{ bottom: "always", top: "always" }}
+        >
+          <Header
+            renderLeftButton={() => (
+              <TouchableOpacity onPress={() => this._setModalVisible(false)}>
+                <Feather name="x" size={24} />
+              </TouchableOpacity>
+            )}
+          />
+          <CameraView />
+        </SafeAreaView>
+      </Modal>
+    );
+  };
+
   _renderScrollViewItem = () => {
-    const { data } = this.state;
+    const { data, progress } = this.state;
     return (
       <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
+        {this._handleShowCamera()}
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <Image
+            uri={data.thumbnailImageUrl}
+            resizeMode={"cover"}
+            style={{ width: 80, height: 80, borderRadius: 40 }}
+          />
+          {progress !== 0 ? (
+            <View
+              style={{
+                position: "absolute",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "rgba(0,0,0,0.5)"
+              }}
+            >
+              <Loading />
+            </View>
+          ) : null}
+
+          <TouchableOpacity onPress={this._showActionSheet}>
+            <Text
+              style={{
+                fontSize: fontSize.secondaryText,
+                fontWeight: "500",
+                marginTop: 5
+              }}
+            >
+              Change profile photo
+            </Text>
+          </TouchableOpacity>
+        </View>
         <InputField
           label={"Name"}
           placeholder={"Input your equipment name"}

@@ -26,7 +26,7 @@ export default function transactionReducer(state = initialState, action) {
       return {
         ...state,
         loading: false,
-        listSupplierTransaction: payload.data
+        listSupplierTransaction: payload.data.items
       };
     }
     case Actions.LIST_SUPPLIER_TRANSACTION.REQUEST: {
@@ -42,7 +42,7 @@ export default function transactionReducer(state = initialState, action) {
       return {
         ...state,
         loading: false,
-        listRequesterTransaction: payload.data
+        listRequesterTransaction: payload.data.items
       };
     }
     case Actions.LIST_REQUESTER_TRANSACTION.ERROR: {
@@ -180,7 +180,7 @@ export default function transactionReducer(state = initialState, action) {
     case Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.SUCCESS:
       return {
         ...state,
-        listSupplierMaterial: payload.data
+        listSupplierMaterial: payload.data.items
       };
     case Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.ERROR:
       return {
@@ -194,7 +194,7 @@ export default function transactionReducer(state = initialState, action) {
     case Actions.LIST_REQUESTER_MATERIAL_TRANSACTION.SUCCESS:
       return {
         ...state,
-        listRequesterMaterial: payload.data
+        listRequesterMaterial: payload.data.items
       };
     case Actions.LIST_REQUESTER_MATERIAL_TRANSACTION.ERROR:
       return {
@@ -234,7 +234,7 @@ export default function transactionReducer(state = initialState, action) {
       return {
         ...state,
         debrisLoading: false,
-        listSupplierDebris: payload.data
+        listSupplierDebris: payload.data.items
       };
     case Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.ERROR:
       return {
@@ -244,7 +244,7 @@ export default function transactionReducer(state = initialState, action) {
     case Actions.GET_DEBRIS_TRANSACTION_BY_REQUESTER.SUCCESS:
       return {
         ...state,
-        listRequesterDebris: payload.data
+        listRequesterDebris: payload.data.items
       };
     //New request will add to requester screen
     case Actions.SEND_REQUEST_DEBRIS_TRANSACTION.SUCCESS:
@@ -328,8 +328,16 @@ export default function transactionReducer(state = initialState, action) {
       return {
         ...state,
         listRequesterMaterial: state.listRequesterMaterial.map(item =>
-          item.id === hiringTransaction.id
-            ? { ...item, feedbacked: hiringTransaction.feedbacked }
+          item.id === payload.transactionId
+            ? {
+                ...item,
+                materialTransactionDetails: materialTransactionDetails.map(
+                  item =>
+                    item.id === payload.materialId
+                      ? { ...item, feedbacked: true }
+                      : item
+                )
+              }
             : item
         ),
         feedbackLoading: false

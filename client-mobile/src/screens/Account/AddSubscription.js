@@ -48,21 +48,28 @@ import colors from "../../config/colors";
 class AddSubscription extends Component {
   constructor(props) {
     super(props);
+    let equipment = {};
+    let location = {};
+    if (props.navigation.state.params) {
+      equipment = props.navigation.state.params.equipment;
+      location = equipment.location;
+    }
+    console.log("check", equipment);
     this.state = {
       subscription: {
-        price: null,
-        distance: null,
-        beginDate: null,
-        endDate: null,
-        address: null,
-        latitude: 0,
-        longitude: 0
+        maxPrice: null,
+        maxDistance: null,
+        beginDate: equipment.beginDate || null,
+        endDate: equipment.endDate || null,
+        address: location.lquery || null,
+        latitude: location.lat || 0,
+        longitude: location.long || 0
       },
       isModalOpen: false,
-      generalType: null,
-      generalTypeIndex: 0,
-      type: null,
-      typeIndex: 0,
+      generalType: equipment.equipmentCat || null,
+      generalTypeIndex: equipment.equipmentCatIndex || 0,
+      type: equipment.equipmentType || null,
+      typeIndex: equipment.equipmentTypeIndex || 0,
       location: [],
       hideResults: false
     };
@@ -93,13 +100,13 @@ class AddSubscription extends Component {
 
   _validateData = () => {
     const {
-      price,
-      distance,
+      maxPrice,
+      maxDistance,
       address,
       beginDate,
       endDate
     } = this.state.subscription;
-    if (price && distance && address && beginDate && endDate) {
+    if (maxPrice && maxDistance && address && beginDate && endDate) {
       return true;
     }
     return false;
@@ -209,6 +216,7 @@ class AddSubscription extends Component {
     const result = this._findEquipmentTypeByCategoryId();
     const newSubscription = {
       ...subscription,
+
       equipmentType: {
         id: result.equipmentTypes[typeIndex - 1].id
       }
@@ -218,27 +226,28 @@ class AddSubscription extends Component {
   };
 
   _renderContent = () => {
-    const { subscription, location } = this.state;
+    const { subscription, location, generalType, type } = this.state;
     const { construction } = this.props;
     return (
       <View>
         <InputField
-          label={"Price"}
+          label={"Price (K VND)"}
           placeholder={"Input your max price"}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          onChangeText={value => this._handleInputChanged("price", value)}
+          onChangeText={value => this._handleInputChanged("maxPrice", value)}
           value={this._formatNumber(subscription.price)}
           keyboardType={"numeric"}
           returnKeyType={"next"}
         />
         <InputField
-          label={"Equipment Name"}
-          placeholder={"Input your equipment name"}
+          label={"Distance (km)"}
+          placeholder={"Input your max distance"}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"
-          onChangeText={value => this._handleInputChanged("distance", value)}
-          value={subscription.distance}
+          onChangeText={value => this._handleInputChanged("maxDistance", value)}
+          value={this._formatNumber(subscription.distance)}
+          keyboardType={"numeric"}
           returnKeyType={"next"}
         />
         <AutoComplete
@@ -259,7 +268,7 @@ class AddSubscription extends Component {
         />
         <Dropdown
           label={"Equipment category: "}
-          defaultText={"Select your category"}
+          defaultText={generalType || "Select your category"}
           onSelectValue={(value, index) =>
             this.setState({ generalTypeIndex: index, generalType: value })
           }
@@ -268,7 +277,7 @@ class AddSubscription extends Component {
         />
         <Dropdown
           label={"Equipment type: "}
-          defaultText={"Select your type"}
+          defaultText={type || "Select your type"}
           onSelectValue={(value, index) =>
             this.setState({ type: value, typeIndex: index })
           }

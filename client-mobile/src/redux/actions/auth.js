@@ -36,7 +36,14 @@ export function logOut() {
 }
 
 export function register(user) {
-  return axios.post("authen/register", user);
+  return async dispatch => {
+    const res = await axios.post("authen/register", user);
+
+    dispatch({
+      type: Actions.REGISTER.SUCCESS,
+      payload: res
+    });
+  };
 }
 
 export function isSignedIn() {

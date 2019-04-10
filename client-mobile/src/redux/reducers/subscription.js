@@ -37,7 +37,7 @@ export default function subscriptionReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         loading: false,
-        listSubscription: payload
+        listSubscription: payload.data
       };
     }
     case Actions.GET_SUBSCRIPTIONS.ERROR: {

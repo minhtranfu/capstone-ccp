@@ -16,7 +16,8 @@ import { bindActionCreators } from "redux";
 import {
   getEquipmentImage,
   deleteEquipmentImage,
-  insertImageToEquipmentList
+  insertImageToEquipmentList,
+  resetEquipmentImage
 } from "../../../redux/actions/equipment";
 import axios from "axios";
 import { ImagePicker, Permissions } from "expo";
@@ -41,7 +42,8 @@ import fontSize from "../../../config/fontSize";
       {
         fetchGetEquipmentImages: getEquipmentImage,
         fetchDeteleEquipmentImage: deleteEquipmentImage,
-        fetchInsertImage: insertImageToEquipmentList
+        fetchInsertImage: insertImageToEquipmentList,
+        fetchResetEquipmentImage: resetEquipmentImage
       },
       dispatch
     )
@@ -58,17 +60,59 @@ class ManageImages extends Component {
     };
   }
 
-  componentDidMount() {
-    const { id } = this.props.navigation.state.params;
-    this.props.fetchGetEquipmentImages(id);
+  // componentDidMount() {
+  //   const { id } = this.props.navigation.state.params;
+  //   this.props.fetchGetEquipmentImages(id);
+  // }
+
+  // componentWillUnmount() {
+  //   this.props.fetchResetEquipmentImage();
+  // }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    //Check data is update
+    if (nextProps.imageList !== prevState.images) {
+      return {
+        images: nextProps.imageList
+      };
+    }
+    return null;
   }
 
   _handleAddImage = async () => {
+    const { id } = this.props.navigation.state.params;
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
     if (status === "granted") {
       let result = await ImagePicker.launchImageLibraryAsync();
       if (!result.cancelled) {
-        this.setState({ images: [...this.state.images, result.uri] });
+        // this.setState({ images: [...this.state.images, result.uri] });
+        const form = new FormData();
+        this.setState({ submitLoading: true });
+        form.append("image", {
+          uri: result.uri,
+          type: "image/jpg",
+          name: "image.jpg"
+        });
+        const res = await axios.post(`storage/equipmentImages`, form, {
+          headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: progressEvent => {
+            console.log(
+              "Upload progress: " +
+                Math.round((progressEvent.loaded / progressEvent.total) * 100) +
+                "%"
+            );
+            this.setState({
+              progress: Math.round(
+                (progressEvent.loaded / progressEvent.total) * 100
+              )
+            });
+          }
+        });
+        if (res) {
+          const newImage = res.data.map(item => ({ id: item.id }));
+          await this.props.fetchInsertImage(id, newImage);
+          this.setState({ images: [...this.state.images, res.data[0]] });
+        }
       }
     }
   };
@@ -139,7 +183,7 @@ class ManageImages extends Component {
       <View
         style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap" }}
       >
-        {imageList.length > 0
+        {/* {imageList.length > 0
           ? imageList.map(item => (
               <View style={{ flex: 1, height: 120 }}>
                 <Image
@@ -158,19 +202,21 @@ class ManageImages extends Component {
                 </TouchableOpacity>
               </View>
             ))
-          : null}
+          : null} */}
         {images.length > 0
           ? images.map((item, index) => (
               <View style={{ flex: 1, height: 120 }}>
-                <RNImage
-                  key={index}
-                  source={{ uri: item }}
+                <Image
+                  key={item.id}
+                  uri={item.url}
                   resizeMode={"cover"}
                   style={{ flex: 1, height: 120 }}
                 />
                 <TouchableOpacity
                   style={styles.iconDelete}
-                  onPress={() => this._handleRemove(index)}
+                  onPress={() =>
+                    this.props.fetchDeteleEquipmentImage(id, item.id)
+                  }
                 >
                   <Feather name={"x"} size={20} color={colors.secondaryColor} />
                 </TouchableOpacity>
@@ -208,7 +254,7 @@ class ManageImages extends Component {
           <View style={{ flex: 1 }}>
             {this._renderHeader()}
             <ScrollView>{this._renderScrollViewContent()}</ScrollView>
-            <SafeAreaView
+            {/* <SafeAreaView
               forceInset={{ bottom: "always" }}
               style={{
                 backgroundColor: dataChanged ? colors.secondaryColor : "#a5acb8"
@@ -224,7 +270,7 @@ class ManageImages extends Component {
                     : styles.buttonDisable
                 }
               />
-            </SafeAreaView>
+            </SafeAreaView> */}
           </View>
         ) : (
           <Loading />

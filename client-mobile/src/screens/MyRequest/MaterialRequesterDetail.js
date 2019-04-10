@@ -116,7 +116,7 @@ class MaterialRequesterDetail extends Component {
     return (
       <View style={styles.bottomWrapper}>
         <Button
-          text={"Deny"}
+          text={"Cancel order"}
           onPress={() => {
             this._handleChangeTransaction(
               id,
@@ -136,24 +136,45 @@ class MaterialRequesterDetail extends Component {
         return this._renderDelivering(id);
       case "PENDING":
         return this._renderCancel(id);
-      case "FINISHED":
-        return isFeedback ? (
-          <Text style={styles.text}>You've been feedbacked</Text>
-        ) : (
-          <Button
-            text={"Feedback"}
-            style={{ opacity: this.props.feedbackLoading ? 0.5 : 1 }}
-            onPress={() =>
-              this.props.navigation.navigate("Feedback", {
-                transactionId: id,
-                type: "Material"
-              })
-            }
-            wrapperStyle={{ marginVertical: 15 }}
-          />
-        );
+      // case "FINISHED":
+      //   return isFeedback ? (
+      //     <Text style={styles.text}>You've been feedbacked</Text>
+      //   ) : (
+      //     <Button
+      //       text={"Feedback"}
+      //       style={{ opacity: this.props.feedbackLoading ? 0.5 : 1 }}
+      //       onPress={() =>
+      //         this.props.navigation.navigate("Feedback", {
+      //           transactionId: id,
+      //           type: "Material"
+      //         })
+      //       }
+      //       wrapperStyle={{ marginVertical: 15 }}
+      //     />
+      //   );
       default:
         return null;
+    }
+  };
+
+  _renderFeedbackButton = (status, transactionId, isFeedback, materialId) => {
+    if (status === "FINISHED") {
+      return isFeedback ? (
+        <Text style={styles.text}>You've been feedbacked for this item</Text>
+      ) : (
+        <Button
+          text={"Feedback"}
+          style={{ opacity: this.props.feedbackLoading ? 0.5 : 1 }}
+          onPress={() =>
+            this.props.navigation.navigate("Feedback", {
+              transactionId: transactionId,
+              materialId: materialId,
+              type: "Material"
+            })
+          }
+          wrapperStyle={{ marginVertical: 15 }}
+        />
+      );
     }
   };
 
@@ -203,15 +224,23 @@ class MaterialRequesterDetail extends Component {
         />
         {detail.materialTransactionDetails.length > 0 ? (
           detail.materialTransactionDetails.map(item => (
-            <MaterialTransactionDetail
-              imageUrl={item.material.thumbnailImageUrl}
-              name={item.material.name}
-              manufacturer={item.material.manufacturer}
-              price={item.price}
-              unit={item.unit}
-              quantity={item.quantity}
-              description={item.material.description}
-            />
+            <View key={item.id}>
+              <MaterialTransactionDetail
+                imageUrl={item.material.thumbnailImageUrl}
+                name={item.material.name}
+                manufacturer={item.material.manufacturer}
+                price={item.price}
+                unit={item.unit}
+                quantity={item.quantity}
+                description={item.material.description}
+              />
+              {this._renderFeedbackButton(
+                detail.status,
+                detail.id,
+                item.feedbacked,
+                item.id
+              )}
+            </View>
           ))
         ) : (
           <Text style={styles.text}>No item/ {detail.totalPrice}K VND</Text>
@@ -263,7 +292,7 @@ const styles = StyleSheet.create({
     fontWeight: "500"
   },
   title: {
-    fontSize: fontSize.body,
+    fontSize: fontSize.bodyText,
     fontWeight: "500",
     color: colors.text,
     marginBottom: 10

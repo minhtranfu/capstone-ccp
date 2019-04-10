@@ -82,6 +82,8 @@ class Calendar extends PureComponent {
       if (range == 0) {
         markedDates = {
           [toDate]: {
+            startingDay: true,
+            endingDay: true,
             color: colors.secondaryColor,
             textColor: "white"
           }

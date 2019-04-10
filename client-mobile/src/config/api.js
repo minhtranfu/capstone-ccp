@@ -38,7 +38,7 @@ export default async function configAPI(config) {
         switch (error.response.status) {
           case 401:
             config.store.dispatch(
-              StatusAction.error(401, "Your session has expired", Date.now())
+              StatusAction.error(401, error.response.data.message, Date.now())
             );
             config.store.dispatch(logOut());
             //goToLogin();

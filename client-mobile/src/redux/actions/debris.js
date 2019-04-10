@@ -1,4 +1,5 @@
 import * as Actions from "../types";
+import StatusAction from "./status";
 import axios from "axios";
 
 export function getAllDebrisServiceTypes() {
@@ -31,6 +32,7 @@ export function createNewArticle(article) {
       type: Actions.POST_DEBRIS_ARTICLE.SUCCESS,
       payload: res
     });
+    dispatch(StatusAction.success("Add success"));
   };
 }
 

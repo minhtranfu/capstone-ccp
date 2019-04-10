@@ -23,7 +23,7 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         loading: false,
-        contractorEquipment: payload.data
+        contractorEquipment: payload.data.items
       };
     }
     case Actions.LIST_CONTRACTOR_EQUIPMENT.ERROR: {
@@ -148,15 +148,15 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
     }
     case Actions.INSERT_NEW_EQUIPMENT_IMAGE.REQUEST: {
       return {
-        ...state,
-        imageLoading: true
+        ...state
+        // imageLoading: true
       };
     }
     case Actions.INSERT_NEW_EQUIPMENT_IMAGE.SUCCESS: {
       return {
         ...state,
-        imageLoading: false,
-        imageList: [...state.imageList, payload.data]
+        //imageLoading: false,
+        imageList: payload.data.equipmentImages
       };
     }
     case Actions.INSERT_NEW_EQUIPMENT_IMAGE.ERROR: {
@@ -182,6 +182,12 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         imageLoading: false
+      };
+    }
+    case Actions.RESET_EQUIPMENT_IMAGE: {
+      return {
+        ...state,
+        imageList: []
       };
     }
     default:

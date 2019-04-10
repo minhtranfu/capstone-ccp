@@ -270,6 +270,7 @@ export function sendRequestDebrisTransaction(transaction) {
       type: Actions.SEND_REQUEST_DEBRIS_TRANSACTION.SUCCESS,
       payload: res
     });
+    dispatch(StatusAction.success("Success"));
   };
 }
 
@@ -280,6 +281,7 @@ export function updateDebrisTransactionStatus(transactionId, status) {
       type: Actions.UPDATE_DEBRIS_TRANSACTION_STATUS.SUCCESS,
       payload: { data: res, id: transactionId }
     });
+    dispatch(StatusAction.success("Cancel success"));
   };
 }
 
@@ -304,8 +306,9 @@ export function sendEquipmentFeedback(transactionId, feedback) {
   };
 }
 
-export function sendMaterialFeedback(transactionId, feedback) {
+export function sendMaterialFeedback(transactionId, materialId, feedback) {
   return async dispatch => {
+    console.log(transactionId, materialId, feedback);
     try {
       dispatch({
         type: Actions.SEND_MATERIAL_FEEDBACK.REQUEST,
@@ -314,7 +317,7 @@ export function sendMaterialFeedback(transactionId, feedback) {
       const res = await axios.post(`materialFeedbacks`, feedback);
       dispatch({
         type: Actions.SEND_MATERIAL_FEEDBACK.SUCCESS,
-        payload: res
+        payload: { transactionId, materialId, data: res }
       });
     } catch (error) {
       dispatch({
