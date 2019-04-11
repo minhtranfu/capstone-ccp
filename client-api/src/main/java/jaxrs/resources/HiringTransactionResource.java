@@ -230,12 +230,13 @@ public class HiringTransactionResource {
 				break;
 			case CANCELED:
 				//validate
-				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PROCESSING
-						&& foundTransaction.getStatus() != HiringTransactionEntity.Status.ACCEPTED
+				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.ACCEPTED
 						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), transactionEntity.getStatus()));
 				}
+
+
 				break;
 			case FINISHED:
 				//validate

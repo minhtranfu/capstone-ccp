@@ -53,8 +53,7 @@ public abstract class EquipmentRequest {
 //	public IdOnly contractor;
 
 
-	//not crud construction anymore
-//	public IdOnly construction;
+	public IdOnly construction;
 
 
 
