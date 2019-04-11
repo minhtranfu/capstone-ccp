@@ -237,7 +237,7 @@ class SubscriptionCardAdd extends Component {
       }
 
       return (<option key={category.id} value={category.id}>{category.name}</option>);
-    });    
+    });
 
     return (
       <div className="subscription-card bg-white shadow p-3 my-2 position-relative">

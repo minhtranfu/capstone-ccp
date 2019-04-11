@@ -219,11 +219,28 @@ class SubscriptionCardEditing extends Component {
   };
 
   render() {
-    const { isFetching, subscription, selectedCategoryId } = this.state;
+    const { isFetching, subscription } = this.state;
+    let { selectedCategoryId } = this.state;
     const { equipmentTypeCategories } = this.props;
     
     const typeCategories = equipmentTypeCategories.data || [];
     let equipmentTypes = [];
+    const categoryOptions = typeCategories.map(category => {
+      if (!selectedCategoryId) {
+        category.equipmentTypes.forEach(equipmentType => {
+          equipmentTypes.push(equipmentType);
+
+          if (subscription.equipmentType && equipmentType.id === +subscription.equipmentType.id) {
+            selectedCategoryId = category.id;
+          }
+        });
+        
+      } else if (selectedCategoryId === category.id) {
+        equipmentTypes = category.equipmentTypes;
+      }
+
+      return (<option key={category.id} value={category.id}>{category.name}</option>);
+    });
 
     return (
       <div className="subscription-card bg-white shadow p-3 my-2 position-relative">
@@ -237,18 +254,7 @@ class SubscriptionCardEditing extends Component {
             <div className="col-md-9">
               <select name="equipmentType" value={selectedCategoryId} onChange={this._handleSelectCategory} id={`equipment_type_category_${subscription.id}`} className="form-control">
                 <option value="0">Choose a type category...</option>
-                {typeCategories.map(category => {
-                  if (!selectedCategoryId) {
-                    equipmentTypes = [
-                      ...equipmentTypes,
-                      ...category.equipmentTypes
-                    ];
-                  } else if (selectedCategoryId === category.id) {
-                    equipmentTypes = category.equipmentTypes;
-                  }
-
-                  return (<option key={category.id} value={category.id}>{category.name}</option>);
-                })}
+                {categoryOptions}
               </select>
             </div>
           </div>
