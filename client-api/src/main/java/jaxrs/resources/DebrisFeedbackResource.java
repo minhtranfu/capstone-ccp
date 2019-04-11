@@ -78,12 +78,16 @@ public class DebrisFeedbackResource {
 	public Response getFeedbacksBySupplier(
 			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
 			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
 
 	) {
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 		//no need to validate contractor because it will return empty list instead
 		return Response.ok(debrisFeedbackDAO.getFeedbacksBySupplier(
 				getClaimContractorId()
-				, limit, offset)).build();
+				, limit, offset, orderBy)).build();
 	}
 
 }

@@ -8,6 +8,7 @@ import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import org.hibernate.annotations.GeneratorType;
 import utils.Constants;
 import utils.ModelConverter;
 
@@ -94,6 +95,7 @@ public class ContractorResource {
 	}
 
 
+
 	@Path("{id:\\d+}/constructions")
 	public ConstructionResource toConstructionResource(
 			@PathParam("id") long contractorId
@@ -103,7 +105,6 @@ public class ContractorResource {
 		constructionResource.setContractorEntity(foundContractor);
 		return constructionResource;
 	}
-
 
 	private ContractorEntity validateContractorId(long contractorId) {
 		return contractorDao.findByIdWithValidation(contractorId);

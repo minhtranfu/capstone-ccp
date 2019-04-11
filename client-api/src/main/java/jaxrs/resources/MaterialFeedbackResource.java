@@ -75,8 +75,12 @@ public class MaterialFeedbackResource {
 	public Response getFeedbacksBySupplier(
 			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit,
 			@QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
 	) {
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 		//no need to validate contractor because it will return empty list
-		return Response.ok(materialFeedbackDAO.getFeedbacksBySupplier(getClaimContractorId(),limit,offset)).build();
+		return Response.ok(materialFeedbackDAO.getFeedbacksBySupplier(getClaimContractorId(),limit,offset,orderBy)).build();
 	}
 }

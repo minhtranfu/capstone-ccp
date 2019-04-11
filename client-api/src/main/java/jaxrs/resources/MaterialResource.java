@@ -66,9 +66,15 @@ public class MaterialResource {
 	@Path("{id:\\d+}/feedbacks")
 	public Response getFeedbacksByMaterial(@PathParam("id") long id,
 										   @QueryParam("limit") @DefaultValue(DEFAULT_RESULT_LIMIT) int limit,
-										   @QueryParam("offset") @DefaultValue("0") int offset) {
+										   @QueryParam("offset") @DefaultValue("0") int offset
+										   , @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
+	) {
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+
 		materialDAO.findByIdWithValidation(id);
-		return Response.ok(materialFeedbackDAO.getFeedbacksByMaterial(id, limit, offset)).build();
+		return Response.ok(materialFeedbackDAO.getFeedbacksByMaterial(id, limit, offset,orderBy)).build();
 	}
 
 
