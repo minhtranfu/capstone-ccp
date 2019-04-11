@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import Helmet from "react-helmet-async";
 import Image from "../../common/Image";
@@ -10,6 +10,8 @@ import ccpApiService from "../../../services/domain/ccp-api-service";
 import RequestCard from "./RequestCard";
 import { formatPrice, formatDate } from "Utils/format.utils";
 import { StarRatings } from "Components/common";
+import { getRoutePath } from "Utils/common.utils";
+import { routeConsts } from "Common/consts";
 
 class MaterialDetail extends Component {
   state = {
@@ -65,7 +67,9 @@ class MaterialDetail extends Component {
             alt=""
           />
           <h5>
-            {material.contractor ? material.contractor.name : <Skeleton />}
+            {material.contractor ?
+              <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: material.contractor.id })}>{material.contractor.name}</Link>
+              : <Skeleton />}
           </h5>
           {!material.id ? <Skeleton /> :
             <StarRatings

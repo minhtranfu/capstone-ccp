@@ -92,7 +92,7 @@ class Header extends Component {
     const { authentication } = this.props;
 
     return menus.map(menu => {
-                
+
       if (menu.requiredAuth && !authentication.isAuthenticated) {
         return null;
       }
@@ -124,7 +124,7 @@ class Header extends Component {
     if (this.noticationComponent && this.noticationComponent.contains(e.target)) {
       return;
     }
-    
+
     this._toggleNotifications();
   }
 
@@ -157,7 +157,7 @@ class Header extends Component {
                     <i className="fal fa-bell"></i>
                     <span className="badge badge-pill badge-danger">{user.contractor.totalUnreadNotifications}</span>
                   </span>
-                  <Notifications isShow={isShowNotifications} toggle={this._toggleNotifications}/>
+                  <Notifications isShow={isShowNotifications} toggle={this._toggleNotifications} />
                 </li>
                 <li className="nav-item dropdown">
                   <a className="dropdown-toggle text-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -165,8 +165,8 @@ class Header extends Component {
                     {authentication.user.contractor.name}
                   </a>
                   <div className="dropdown-menu shadow mt-2 rounded-top-0">
-                    <Link className="dropdown-item" to={getRoutePath(routeConsts.PROFILE)}><i className="fal fa-user-circle"></i> Profile</Link>
-                    <a className="dropdown-item" href="#"><i className="fal fa-cogs"></i> Settings</a>
+                    <Link className="dropdown-item" to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: user.contractor.id })}><i className="fal fa-user-circle"></i> Profile</Link>
+                    <Link className="dropdown-item" to={getRoutePath(routeConsts.PROFILE)}><i className="fal fa-cogs"></i> Settings</Link>
                     <div className="dropdown-divider"></div>
                     <a className="dropdown-item" href="#" onClick={this._logout}><i className="fal fa-sign-out"></i> Logout</a>
                   </div>

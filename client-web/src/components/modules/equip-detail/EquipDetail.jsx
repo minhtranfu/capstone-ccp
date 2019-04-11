@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withRouter, Redirect } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
@@ -13,6 +13,8 @@ import ccpApiService from "../../../services/domain/ccp-api-service";
 import RequestCard from "./RequestCard";
 import { formatPrice, formatDate } from "Utils/format.utils";
 import { StarRatings } from "Components/common";
+import { getRoutePath } from "Utils/common.utils";
+import { routeConsts } from "Common/consts";
 
 class EquipDetail extends Component {
   state = {
@@ -84,7 +86,9 @@ class EquipDetail extends Component {
             alt=""
           />
           <h5>
-            {!isFetching ? equip.contractor.name : <Skeleton />}
+            {!isFetching ?
+              <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: equip.contractor.id })}>{equip.contractor.name}</Link>
+              : <Skeleton />}
           </h5>
           {isFetching ? <Skeleton /> :
             <StarRatings

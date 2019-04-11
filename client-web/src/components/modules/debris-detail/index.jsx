@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import Helmet from "react-helmet-async";
 import { Alert } from "reactstrap";
@@ -12,10 +12,10 @@ import SweetAlert from "react-bootstrap-sweetalert/lib/dist/SweetAlert";
 import { authActions } from 'Redux/actions';
 import { debrisServices, debrisTransactionServices } from 'Services/domain/ccp';
 import BidForm from './BidForm';
-import { getErrorMessage } from 'Utils/common.utils';
+import { getErrorMessage, getRoutePath } from 'Utils/common.utils';
 import { formatPrice, formatDate } from 'Utils/format.utils';
 import { Image, ComponentBlocking, StarRatings } from 'Components/common';
-import { DEBRIS_POST_STATUSES, DEBRIS_BID_STATUSES } from 'Common/consts';
+import { DEBRIS_POST_STATUSES, DEBRIS_BID_STATUSES, routeConsts } from 'Common/consts';
 
 class DebrisDetail extends Component {
   state = {
@@ -130,7 +130,9 @@ class DebrisDetail extends Component {
                 />
               </div>
               <div className="flex-fill">
-                <h5 className="mb-0">{bid.supplier.name}</h5>
+                <h5 className="mb-0">
+                  <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: bid.supplier.id })}>{bid.supplier.name}</Link>
+                </h5>
                 <div>
                   <StarRatings
                     rating={bid.supplier.averageDebrisRating}
@@ -245,7 +247,7 @@ class DebrisDetail extends Component {
     const { debris } = this.state;
     const { authentication } = this.props;
     const { user } = authentication;
-    
+
     return (
       <div className="sticky-top sticky-sidebar pt-2">
         <div className="constructor-card text-center">
@@ -260,7 +262,9 @@ class DebrisDetail extends Component {
             alt="Avatar"
           />
           <h5>
-            {debris.requester ? debris.requester.name : <Skeleton />}
+            {debris.requester ?
+              <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: debris.requester.id })}>{debris.requester.name}</Link>
+              : <Skeleton />}
           </h5>
           {!debris.id ? <Skeleton /> :
             <StarRatings
