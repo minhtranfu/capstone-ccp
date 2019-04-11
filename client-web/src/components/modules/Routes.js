@@ -197,6 +197,11 @@ export const modules = [
     path: '/debrises/:id',
     modulePath: './debris-detail'
   },
+  {
+    name: routeConsts.PROFILE_CONTRACTOR,
+    path: '/contractors/:id',
+    modulePath: './profile/view/index'
+  },
 ];
 
 const routes = modules.map(module => {

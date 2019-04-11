@@ -70,3 +70,18 @@ export const CONTRACTOR_STATUSES = {
   ACTIVATED: "ACTIVATED",
   DEACTIVATED: "DEACTIVATED",
 };
+
+export const CONTRACTOR_STATUS_INFOS = {
+  [CONTRACTOR_STATUSES.NOT_VERIFIED]: {
+    name: 'Not verified',
+    bsColor: 'info',
+  },
+  [CONTRACTOR_STATUSES.ACTIVATED]: {
+    name: 'Activated',
+    bsColor: 'success',
+  },
+  [CONTRACTOR_STATUSES.DEACTIVATED]: {
+    name: 'Deactivated',
+    bsColor: 'danger',
+  },
+};

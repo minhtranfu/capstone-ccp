@@ -10,7 +10,8 @@
       "Redux/*": ["redux/*"],
       "Services/*": ["services/*"],
       "Components/*": ["components/*"],
-      "Utils/*": ["utils/*"]
+      "Utils/*": ["utils/*"],
+      "Assets/*": ["assets/*"],
     }
   }
 }

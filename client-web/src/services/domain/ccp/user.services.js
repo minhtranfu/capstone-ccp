@@ -45,3 +45,7 @@ export const uploadAvatar = formData => {
 export const updateContractorById = (id, data) => {
   return DataAccessService.put(`/contractors/${id}`, data);
 };
+
+export const getUserInfoById = id => {
+  return DataAccessService.get(`/contractors/${id}`);
+};

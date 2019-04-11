@@ -176,7 +176,7 @@ class PostDebrisRequest extends Component {
     }
 
     return (
-      <div className="container pb-5">
+      <div className="container pb-5 wizard">
         <div className="row">
           <div className="col-12">
             <h2 className="my-4 text-center">

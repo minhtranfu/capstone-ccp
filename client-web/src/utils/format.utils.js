@@ -41,3 +41,13 @@ export const formatPrice = (price, decimalCount = 2, decimal = ".", thousands = 
 
   return `${currencyConfig.unit}${price}`;
 };
+
+export const formatFloat = (value, num = 1) => {
+  if (!value || isNaN(value)) {
+    return 0;
+  }
+
+  let number = +value;
+
+  return number.toFixed(num);
+};

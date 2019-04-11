@@ -33,7 +33,8 @@ const config = {
       Redux: path.resolve(__dirname, 'src', 'redux'),
       Services: path.resolve(__dirname, 'src', 'services'),
       Components: path.resolve(__dirname, 'src', 'components'),
-      Utils: path.resolve(__dirname, 'src', 'utils')
+      Utils: path.resolve(__dirname, 'src', 'utils'),
+      Assets: path.resolve(__dirname, 'src', 'assets'),
     },
     modules: [path.resolve(__dirname, 'src'), 'node_modules']
   },

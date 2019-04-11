@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
 import {
   CSSTransition
@@ -160,7 +160,7 @@ class AddMaterial extends Component {
     }
 
     return (
-      <div className="container pb-5">
+      <div className="container pb-5 wizard">
         <div className="row">
           <div className="col-12">
             <h2 className="my-4 text-center"><Link to="/dashboard/supplier/materials" className="btn btn-outline-primary float-left"><i className="fal fa-chevron-left"></i> Back to list</Link> Post material</h2>

@@ -187,7 +187,7 @@ class AddEquipment extends Component {
     }
 
     return (
-      <div className="container pb-5">
+      <div className="container pb-5 wizard">
         {isFetching &&
           <ComponentBlocking/>
         }

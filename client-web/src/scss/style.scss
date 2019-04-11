@@ -330,70 +330,72 @@ nav.navbar {
 
 /* Style for wizard post equipment page */
 
-.nav-tabs {
-  border-bottom-width: 8px;
-}
-
-.nav-tabs .nav-link {
-  position: relative;
-  border: 0;
-  padding-bottom: 20px;
-  font-size: 1.2rem;
-}
-
-.nav-tabs .nav-link.active,
-.nav-tabs .nav-item.show .nav-link {
-  background-color: transparent !important;
-  border-color: transparent !important;
-  border: 0;
-}
-
-.nav-tabs .nav-link::after {
-  content: "";
-  width: 30px;
-  height: 30px;
-  border-radius: 100%;
-  background: #dee2e6;
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translate(-50%, 50%);
-  transition: all .5s ease;
-}
-
-.nav-tabs .nav-link.active::after,
-.nav-tabs .nav-link.pass::after {
-  background: orange;
-  transition-delay: 1s;
-  background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
-  background-size: 1rem 1rem;
-  -webkit-animation: progress-bar-stripes 1s linear infinite;
-  animation: progress-bar-stripes 1s linear infinite;
-}
-
-.nav-tabs .nav-link::before {
-  content: "";
-  width: 0;
-  height: 8px;
-  position: absolute;
-  left: 0;
-  bottom: -8px;
-  background: orange;
-  transition: all .5s linear;
-  background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
-  background-size: 1rem 1rem;
-  -webkit-animation: progress-bar-stripes 1s linear infinite;
-  animation: progress-bar-stripes 1s linear infinite;
-}
-
-.nav-tabs .nav-link.active::before {
-  transition-delay: .5s;
-  width: 50%;
-}
-
-.nav-tabs .nav-link.pass::before {
-  transition-delay: 0;
-  width: 100%;
+.wizard {
+  .nav-tabs {
+    border-bottom-width: 8px;
+  }
+  
+  .nav-tabs .nav-link {
+    position: relative;
+    border: 0;
+    padding-bottom: 20px;
+    font-size: 1.2rem;
+  }
+  
+  .nav-tabs .nav-link.active,
+  .nav-tabs .nav-item.show .nav-link {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    border: 0;
+  }
+  
+  .nav-tabs .nav-link::after {
+    content: "";
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    background: #dee2e6;
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    transition: all .5s ease;
+  }
+  
+  .nav-tabs .nav-link.active::after,
+  .nav-tabs .nav-link.pass::after {
+    background: orange;
+    transition-delay: 1s;
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+    background-size: 1rem 1rem;
+    -webkit-animation: progress-bar-stripes 1s linear infinite;
+    animation: progress-bar-stripes 1s linear infinite;
+  }
+  
+  .nav-tabs .nav-link::before {
+    content: "";
+    width: 0;
+    height: 8px;
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    background: orange;
+    transition: all .5s linear;
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+    background-size: 1rem 1rem;
+    -webkit-animation: progress-bar-stripes 1s linear infinite;
+    animation: progress-bar-stripes 1s linear infinite;
+  }
+  
+  .nav-tabs .nav-link.active::before {
+    transition-delay: .5s;
+    width: 50%;
+  }
+  
+  .nav-tabs .nav-link.pass::before {
+    transition-delay: 0;
+    width: 100%;
+  }
 }
 
 .image-dropzone {
