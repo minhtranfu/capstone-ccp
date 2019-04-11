@@ -38,6 +38,7 @@
     "normalize.css": "^8.0.1",
     "popper.js": "^1.14.6",
     "prop-types": "^15.6.2",
+    "query-string": "^6.4.2",
     "react": "^16.6.3",
     "react-bootstrap-daterangepicker": "^4.1.0",
     "react-bootstrap-select": "^0.14.0",

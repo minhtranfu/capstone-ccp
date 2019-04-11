@@ -1,3 +1,5 @@
+import qs from 'query-string';
+
 import DataAccessService from '../../data/data-access-service';
 
 export const getEquipmentTypes = () => {
@@ -20,8 +22,9 @@ export const getEquipmentById = id => {
   return DataAccessService.get(`/equipments/${id}`);
 };
 
-export const getEquipmentsByContractorId = ({ offset, limit }) => {
-  return DataAccessService.get(`/equipments/supplier?offset=${offset}&limit=${limit}`);
+export const getEquipmentsByContractorId = (params) => {
+  const queryString = qs.stringify(params);
+  return DataAccessService.get(`/equipments/supplier?${queryString}`);
 };
 
 export const searchEquipments = criteria => {
