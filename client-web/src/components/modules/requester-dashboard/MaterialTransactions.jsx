@@ -164,9 +164,9 @@ class MaterialTransactions extends Component {
   };
 
   _getUpdatedTransactionsList = updatedTransaction => {
-    let { transactions } = this.state;
+    const { transactions } = this.state;
 
-    return transactions.map(transaction => {
+    const items =  transactions.items.map(transaction => {
       if (transaction.id !== updatedTransaction.id) {
         return transaction;
       }
@@ -179,6 +179,11 @@ class MaterialTransactions extends Component {
 
       return transaction;
     });
+
+    return {
+      ...transactions,
+      items,
+    };
   };
 
   _removeAlert = () => {

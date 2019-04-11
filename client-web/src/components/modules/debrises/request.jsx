@@ -82,11 +82,6 @@ class DebriseTransactionsRequest extends Component {
 
   // Render placeholder with skeleton while fetching data
   _renderLoading = () => {
-    const { isFetching } = this.state;
-
-    if (!isFetching) {
-      return null;
-    }
 
     const numOfPlaceholder = 6;
     const placholders = [];
@@ -164,8 +159,16 @@ class DebriseTransactionsRequest extends Component {
    * for navs filter
    */
   _renderTransactions = () => {
-    const { transactions, status } = this.state;
+    const { transactions, status, isFetching } = this.state;
     this.needActionCounters = {};
+
+    if (isFetching) {
+      return this._renderLoading();
+    }
+
+    if (!transactions || !transactions.item || transactions.items.length === 0) {
+      return this._renderNoResult();
+    }
 
     return transactions.items.map(transaction => {
       if (this.needActionStatuses.includes(transaction.status)) {
@@ -208,11 +211,6 @@ class DebriseTransactionsRequest extends Component {
    * Return no result info alert
    */
   _renderNoResult = () => {
-    const { transactions, isFetching } = this.state;
-
-    if (isFetching || transactions.length > 0) {
-      return null;
-    }
 
     return (
       <div className="alert alert-info text-center mt-5">
@@ -294,13 +292,18 @@ class DebriseTransactionsRequest extends Component {
   _getUpdatedList = (transactionId, status) => {
     const { transactions } = this.state;
 
-    return transactions.map(transaction => {
+    const items = transactions.items.map(transaction => {
       if (transaction.id === transactionId) {
         transaction.status = status;
       }
 
       return transaction
     });
+
+    return {
+      ...transactions,
+      items,
+    };
   };
 
   /**
@@ -366,7 +369,7 @@ class DebriseTransactionsRequest extends Component {
 
     if (feedback && feedback.id) {
       const { feedbackingTransaction, transactions } = this.state;
-      newState.transactions = transactions.map(transaction => {
+      newState.transactions.items = transactions.items.map(transaction => {
         if (transaction.id !== feedbackingTransaction.id) {
           return transaction;
         }
@@ -420,7 +423,6 @@ class DebriseTransactionsRequest extends Component {
             </div>
           </div>
           <div className="col-md-9">
-            {this._renderLoading()}
             {transactionCards}
           </div>
         </div>

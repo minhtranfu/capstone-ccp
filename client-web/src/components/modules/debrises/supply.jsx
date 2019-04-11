@@ -315,13 +315,18 @@ class DebriseTransactionsSupply extends Component {
   _getUpdatedList = (transactionId, status) => {
     const { transactions } = this.state;
 
-    return transactions.map(transaction => {
+    const items = transactions.items.map(transaction => {
       if (transaction.id === transactionId) {
         transaction.status = status;
       }
 
       return transaction
     });
+
+    return {
+      ...transactions,
+      items,
+    };
   };
 
   /**
