@@ -13,7 +13,12 @@ import java.util.List;
 
 @Table(name = "contractor", schema = "capstone_ccp")
 @Where(clause = "is_deleted=0")
-
+@NamedQueries({
+		@NamedQuery(name = "ContractorEntity.finishedHiringTransactionRateBySupplierId", query = "select COUNT(e) from HiringTransactionEntity e where e.equipment.contractor.id = :supplierId and e.status = 'FINISHED'")
+		, @NamedQuery(name = "ContractorEntity.finishedMaterialTransactionRateBySupplierId", query = "select COUNT(e) from MaterialTransactionEntity e where e.supplier.id  = :supplierId and e.status = 'FINISHED'")
+		, @NamedQuery(name = "ContractorEntity.finishedDebrisTransactionRateBySupplierId", query = "select COUNT(e) from DebrisTransactionEntity e where e.supplier.id = :supplierId and e.status = 'FINISHED'")
+}
+)
 public class ContractorEntity {
 	private long id;
 
@@ -259,7 +264,6 @@ public class ContractorEntity {
 	}
 
 
-
 	@JsonbTransient
 	@OneToMany(mappedBy = "contractor", cascade = {})
 	public Collection<ContractorVerifyingImageEntity> getContractorVerifyingImages() {
@@ -269,10 +273,12 @@ public class ContractorEntity {
 	public void setContractorVerifyingImages(Collection<ContractorVerifyingImageEntity> contractorVerifyingImages) {
 		this.contractorVerifyingImages = contractorVerifyingImages;
 	}
+
 	public void addContractorVerifyingImage(ContractorVerifyingImageEntity contractorVerifyingImageEntity) {
 		this.contractorVerifyingImages.add(contractorVerifyingImageEntity);
 		contractorVerifyingImageEntity.setContractor(this);
 	}
+
 	public void removeContractorVerifyingImage(ContractorVerifyingImageEntity contractorVerifyingImageEntity) {
 		this.contractorVerifyingImages.remove(contractorVerifyingImageEntity);
 		contractorVerifyingImageEntity.setContractor(null);
@@ -362,7 +368,6 @@ public class ContractorEntity {
 		this.averageEquipmentRating = getEquipmentFeedbacks().stream()
 				.mapToDouble(EquipmentFeedbackEntity::getRating).average().orElse(0);
 	}
-
 
 
 	public enum Status {

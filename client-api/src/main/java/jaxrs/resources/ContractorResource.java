@@ -4,12 +4,10 @@ import daos.ConstructionDAO;
 import daos.ContractorDAO;
 import daos.EquipmentDAO;
 import dtos.requests.ContractorRequest;
+import dtos.responses.ContractorResponse;
 import entities.ContractorEntity;
-import entities.EquipmentEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
-import org.hibernate.annotations.GeneratorType;
-import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -59,7 +57,11 @@ public class ContractorResource {
 
 
 		ContractorEntity foundContractor = validateContractorId(id);
-		return Response.ok(modelConverter.toResponse(foundContractor)).build();
+		ContractorResponse contractorResponse = modelConverter.toResponse(foundContractor);
+		contractorResponse.setFinishedDebrisTransactionCount(contractorDao.countFinishedDebrisTransactionRateBySupplierId(id));
+		contractorResponse.setFinishedMaterialTransactionCount(contractorDao.countFinishedMaterialTransactionRateBySupplierId(id));
+		contractorResponse.setFinishedHiringTransactionCount(contractorDao.countFinishedHiringTransactionRateBySupplierId(id));
+		return Response.ok(contractorResponse).build();
 	}
 
 

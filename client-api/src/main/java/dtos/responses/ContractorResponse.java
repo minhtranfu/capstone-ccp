@@ -3,7 +3,6 @@ package dtos.responses;
 import entities.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class ContractorResponse {
 
@@ -25,7 +24,7 @@ public class ContractorResponse {
 
 //	private List<EquipmentEntity> equipments;
 //	private List<MaterialEntity> materials;
-	private List<ConstructionEntity> constructions;
+//	private List<ConstructionEntity> constructions;
 
 //	private List<FeedbackEntity> sentFeedback;
 //	private List<FeedbackEntity> receivedFeedback;
@@ -34,18 +33,23 @@ public class ContractorResponse {
 
 //	private List<NotificationEntity> notifications;
 
-	private List<DebrisFeedbackEntity> debrisFeedbacks;
+//	private List<DebrisFeedbackEntity> debrisFeedbacks;
 	private int debrisFeedbacksCount;
 	private double averageDebrisRating;
 
-	private List<MaterialFeedbackEntity> materialFeedbacks;
+//	private List<MaterialFeedbackEntity> materialFeedbacks;
 	private int materialFeedbacksCount;
 	private double averageMaterialRating;
 
 
-	private List<EquipmentFeedbackEntity> equipmentFeedbacks;
+//	private List<EquipmentFeedbackEntity> equipmentFeedbacks;
 	private double averageEquipmentRating;
 	private int equipmentFeedbacksCount;
+
+
+	private long finishedHiringTransactionCount;
+	private long finishedMaterialTransactionCount;
+	private long finishedDebrisTransactionCount;
 
 
 
@@ -116,28 +120,12 @@ public class ContractorResponse {
 		this.updatedTime = updatedTime;
 	}
 
-	public List<DebrisFeedbackEntity> getDebrisFeedbacks() {
-		return debrisFeedbacks;
-	}
-
-	public void setDebrisFeedbacks(List<DebrisFeedbackEntity> debrisFeedbacks) {
-		this.debrisFeedbacks = debrisFeedbacks;
-	}
-
 	public int getDebrisFeedbacksCount() {
 		return debrisFeedbacksCount;
 	}
 
 	public void setDebrisFeedbacksCount(int debrisFeedbacksCount) {
 		this.debrisFeedbacksCount = debrisFeedbacksCount;
-	}
-
-	public List<ConstructionEntity> getConstructions() {
-		return constructions;
-	}
-
-	public void setConstructions(List<ConstructionEntity> constructions) {
-		this.constructions = constructions;
 	}
 
 	public double getAverageDebrisRating() {
@@ -148,13 +136,6 @@ public class ContractorResponse {
 		this.averageDebrisRating = averageDebrisRating;
 	}
 
-	public List<MaterialFeedbackEntity> getMaterialFeedbacks() { 
-		return materialFeedbacks;
-	}
-
-	public void setMaterialFeedbacks(List<MaterialFeedbackEntity> materialFeedbacks) {
-		this.materialFeedbacks = materialFeedbacks;
-	}
 
 	public int getMaterialFeedbacksCount() {
 		return materialFeedbacksCount;
@@ -172,14 +153,6 @@ public class ContractorResponse {
 		this.averageMaterialRating = averageMaterialRating;
 	}
 
-	public List<EquipmentFeedbackEntity> getEquipmentFeedbacks() {
-		return equipmentFeedbacks;
-	}
-
-	public void setEquipmentFeedbacks(List<EquipmentFeedbackEntity> equipmentFeedbacks) {
-		this.equipmentFeedbacks = equipmentFeedbacks;
-	}
-
 	public double getAverageEquipmentRating() {
 		return averageEquipmentRating;
 	}
@@ -193,6 +166,31 @@ public class ContractorResponse {
 	}
 
 	public void setEquipmentFeedbacksCount(int equipmentFeedbacksCount) {
+
 		this.equipmentFeedbacksCount = equipmentFeedbacksCount;
+	}
+
+	public long getFinishedHiringTransactionCount() {
+		return finishedHiringTransactionCount;
+	}
+
+	public void setFinishedHiringTransactionCount(long finishedHiringTransactionCount) {
+		this.finishedHiringTransactionCount = finishedHiringTransactionCount;
+	}
+
+	public long getFinishedMaterialTransactionCount() {
+		return finishedMaterialTransactionCount;
+	}
+
+	public void setFinishedMaterialTransactionCount(long finishedMaterialTransactionCount) {
+		this.finishedMaterialTransactionCount = finishedMaterialTransactionCount;
+	}
+
+	public long getFinishedDebrisTransactionCount() {
+		return finishedDebrisTransactionCount;
+	}
+
+	public void setFinishedDebrisTransactionCount(long finishedDebrisTransactionCount) {
+		this.finishedDebrisTransactionCount = finishedDebrisTransactionCount;
 	}
 }

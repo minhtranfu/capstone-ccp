@@ -23,4 +23,20 @@ public class ContractorDAO extends BaseDAO<ContractorEntity, Long> {
 	}
 
 
+	public long countFinishedDebrisTransactionRateBySupplierId(long supplierId) {
+		return entityManager.createNamedQuery("ContractorEntity.finishedDebrisTransactionRateBySupplierId", Long.class)
+				.setParameter("supplierId", supplierId)
+				.getSingleResult();
+	}
+	public long countFinishedMaterialTransactionRateBySupplierId(long supplierId) {
+		return entityManager.createNamedQuery("ContractorEntity.finishedMaterialTransactionRateBySupplierId", Long.class)
+				.setParameter("supplierId", supplierId)
+				.getSingleResult();
+	}
+	public long countFinishedHiringTransactionRateBySupplierId(long supplierId) {
+		return entityManager.createNamedQuery("ContractorEntity.finishedHiringTransactionRateBySupplierId", Long.class)
+				.setParameter("supplierId", supplierId)
+				.getSingleResult();
+	}
+
 }
