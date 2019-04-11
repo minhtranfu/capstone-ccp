@@ -21,7 +21,7 @@ class AddEquipmentStep1 extends Step {
     this.state = {
       constructions: [],
       categories: [],
-      availableTimeRanges: [],
+      availableTimeRanges: [{}],
       validateResult: {}
     };
   }
@@ -167,14 +167,31 @@ class AddEquipmentStep1 extends Step {
 
   // Validate and call back step done
   _handleSubmitForm = () => {
+    const { availableTimeRanges } = this.state;
     const data = {
       ...this.state,
+      availableTimeRanges: availableTimeRanges.filter(range => !!range.beginDate),
       constructions: undefined,
       validateResult: undefined
     };
     
     // Validate form
-    const validateResult = validate(data, this.validateRules);
+    let validateResult = validate(data, this.validateRules);
+    
+    // Validate timerange
+    let isSelectATimeRange = false;
+    availableTimeRanges.forEach(range => {
+      if (range.beginDate) {
+        isSelectATimeRange = false;
+      }
+    });
+    if (!isSelectATimeRange && (!validateResult || !validateResult.availableTimeRanges)) {
+      if (!validateResult) {
+        validateResult = {};
+      }
+      validateResult.availableTimeRanges = 'Please select at least time range!';
+    }
+
     if (validateResult) {
       this.setState({
         validateResult
@@ -191,34 +208,27 @@ class AddEquipmentStep1 extends Step {
 
   // render list date range picker with remove option
   _renderDateRangePickers = () => {
-    let { availableTimeRanges, validateResult } = this.state;
-    if (!availableTimeRanges || availableTimeRanges.length === 0) {
-      availableTimeRanges = [{}];
-    }
-    const numOfRange = 1;
+    let { availableTimeRanges } = this.state;
+    const numOfRange = availableTimeRanges.length;
 
     return availableTimeRanges.map((range, i) => {
       return (
-        <div className="form-group" key={i}>
-          <label htmlFor="">Available time:</label>
-          <div className="input-group date-range-picker">
-            <DateRangePicker minDate={moment()} onApply={(e, picker) => this._onChangeDateRanage(picker, i)} containerClass="custom-file" autoApply alwaysShowCalendars>
-            {/* <input type="text" className="form-control" readOnly value={this._getLabelOfRange(i) || ''} /> */}
-              <input type="text" className="custom-file-input" id={`inputDate${i}`} />
-              <label className="custom-file-label" htmlFor={`inputDate${i}`} aria-describedby={`inputDate${i}`}>{this._getLabelOfRange(i) || 'Select time range'}</label>
-            </DateRangePicker>
-            {numOfRange > 1 &&
-              <div className="input-group-append">
-                <button className="btn btn-outline-danger" onClick={e => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  this._removeTimeRangePicker(i);
-                  return false;
-                }}><i className="fal fa-trash"></i></button>
-              </div>
-            }
-          </div>
-          {getValidateFeedback('availableTimeRanges', validateResult)}
+        <div key={i} className="input-group date-range-picker mb-4">
+          <DateRangePicker minDate={moment()} onApply={(e, picker) => this._onChangeDateRanage(picker, i)} containerClass="custom-file" autoApply alwaysShowCalendars>
+          {/* <input type="text" className="form-control" readOnly value={this._getLabelOfRange(i) || ''} /> */}
+            <input type="text" className="custom-file-input" id={`inputDate${i}`} />
+            <label className="custom-file-label" htmlFor={`inputDate${i}`} aria-describedby={`inputDate${i}`}>{this._getLabelOfRange(i) || 'Select time range'}</label>
+          </DateRangePicker>
+          {numOfRange > 1 &&
+            <div className="input-group-append">
+              <button className="btn btn-outline-danger" onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                this._removeTimeRangePicker(i);
+                return false;
+              }}><i className="fal fa-trash"></i></button>
+            </div>
+          }
         </div>
       );
     });
@@ -259,29 +269,6 @@ class AddEquipmentStep1 extends Step {
       address: selectedContruction.address
     });
   };
-
-  // Format price
-  // _getShowablePrice = (amount, decimalCount = 2, decimal = ".", thousands = ",") => {
-
-  //   if (!amount) {
-  //     return '';
-  //   }
-
-  //   try {
-  //     decimalCount = Math.abs(decimalCount);
-  //     decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
-
-  //     const negativeSign = amount < 0 ? "-" : "";
-
-  //     let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
-  //     let j = (i.length > 3) ? i.length % 3 : 0;
-
-  //     let result = negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
-  //     return result.replace(/\.00$/, '');
-  //   } catch (e) {
-  //     return '';
-  //   }
-  // };
 
   render() {
     const { entities } = this.props;
@@ -345,7 +332,11 @@ class AddEquipmentStep1 extends Step {
               <input type="string" name="dailyPrice" onChange={this._handleFieldChange} value={this.state.showableDailyPrice} className="form-control text-right" id="daily_price" />
               {getValidateFeedback('dailyPrice', validateResult)}
             </div>
-            {this._renderDateRangePickers()}
+            <div className="form-group">
+              <label htmlFor="">Available time:</label>
+              {this._renderDateRangePickers()}
+              {getValidateFeedback('availableTimeRanges', validateResult)}
+            </div>
             <div className="form-group text-center">
               <button className="btn btn-outline-primary mt-4" onClick={this._addTimeRangePicker}><i className="fal fa-plus"></i> Add more time range</button>
             </div>
