@@ -55,7 +55,7 @@ class DebriseTransactionsRequest extends Component {
 
     try {
       const transactions = await debrisTransactionServices.getRequestTransactions();
-      if (Array.isArray(transactions)) {
+      if (transactions && Array.isArray(transactions.items)) {
         this.setState({
           transactions,
           isFetching: false
@@ -162,11 +162,13 @@ class DebriseTransactionsRequest extends Component {
     const { transactions, status, isFetching } = this.state;
     this.needActionCounters = {};
 
+    console.log(transactions);
+
     if (isFetching) {
       return this._renderLoading();
     }
 
-    if (!transactions || !transactions.item || transactions.items.length === 0) {
+    if (!transactions || !transactions.items || transactions.items.length === 0) {
       return this._renderNoResult();
     }
 
