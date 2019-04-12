@@ -182,6 +182,9 @@ class Register extends Component {
         </div>
         <h1 className="text-success">Register successfully!</h1>
         <p>Your account is being verified.</p>
+        <div className="text-center">
+          <Link to={getRoutePath(routeConsts.LOGIN)}>Login</Link>
+        </div>
       </div>
     );
   };

@@ -49,3 +49,19 @@ export const updateContractorById = (id, data) => {
 export const getUserInfoById = id => {
   return DataAccessService.get(`/contractors/${id}`);
 };
+
+export const getVerifyingImages = contractorId => {
+  return DataAccessService.get(`/contractors/${contractorId}/contractorVerifyingImages`);
+};
+
+export const uploadVerifyingImages = formData => {
+  return DataAccessService.post(`/storage/contractorVerifyingImages`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};
+
+export const addVerifyingImages = ({ contractorId, data }) => {
+  return DataAccessService.post(`/contractors/${contractorId}/contractorVerifyingImages`, data);
+};

@@ -3,9 +3,9 @@ import { connect } from "react-redux";
 import PropTypes from 'prop-types';
 import { Fade } from 'reactstrap';
 import validate from 'validate.js';
+import Skeleton from 'react-loading-skeleton';
 
-import { DropzoneUploadImage } from 'Components/common';
-import ComponentBlocking from 'Components/common/component-blocking';
+import { DropzoneUploadImage, Image, ComponentBlocking } from 'Components/common';
 import { userServices } from 'Services/domain/ccp';
 import { getErrorMessage } from 'Utils/common.utils';
 import { authActions } from 'Redux/actions';
@@ -15,7 +15,8 @@ class Profile extends Component {
 
   state = {
     editedData: {},
-    validateResult: {}
+    validateResult: {},
+    isUploadingVerifyingImages: false,
   };
 
   // Validate rules for contact info form
@@ -43,12 +44,26 @@ class Profile extends Component {
     }
   };
 
+  _loadVerifyingImages = async () => {
+    const { contractor, verifyingImages, loadVerifyingImages } = this.props;
+
+    if (verifyingImages.isFetching || !!verifyingImages.errorMessage || !!verifyingImages.items.length) {
+      return;
+    }
+
+    loadVerifyingImages(contractor.id);
+  };
+
+  componentDidMount() {
+    this._loadVerifyingImages();
+  }
+
   // Handle submit form update info
   _handleSubmitForm = async e => {
     e.preventDefault();
     const { isFetching, editedData } = this.state;
     const { contractor, updateUserInfo } = this.props;
-    
+
     if (isFetching) {
       return;
     }
@@ -167,6 +182,51 @@ class Profile extends Component {
     }
   };
 
+  _handleSelectVerifyingImages = async files => {
+    const { contractor, setVerifyingImageItems } = this.props;
+    if (files.length === 0) {
+      return;
+    }
+
+    this.setState({
+      isUploadingVerifyingImages: true
+    });
+    try {
+      // Upload avatar
+      const formData = new FormData();
+      files.forEach(file => {
+        formData.append('file', file);
+      });
+
+      const uploadResult = await userServices.uploadVerifyingImages(formData);
+      if (!Array.isArray(uploadResult)) {
+        this.setState({
+          errorMessage: 'Can not upload, please try again!',
+          isFetching: false
+        });
+        return;
+      }
+
+      // Update avatar to current user
+      const images = uploadResult.map(image => ({ id: image.id }));
+      const items = await userServices.addVerifyingImages({ contractorId: contractor.id, data: images });
+
+      // Update verifyingImages info to redux to make change globally
+      setVerifyingImageItems(items);
+
+      this.setState({
+        isUploadingVerifyingImages: false
+      });
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+
+      this.setState({
+        errorMessage,
+        isUploadingVerifyingImages: false
+      });
+    }
+  };
+
   // Discard all changes
   _resetData = () => {
     this.setState({
@@ -211,7 +271,7 @@ class Profile extends Component {
             />
           }
           {!isChangingAvatar &&
-            <img src={currentData.thumbnailImageUrl} alt="Avatar" className="rounded-circle" width="280" height="280"/>
+            <img src={currentData.thumbnailImageUrl} alt="Avatar" className="rounded-circle" width="280" height="280" />
           }
           <div>
             <button className="btn btn-outline-primary btn-sm mt-2"
@@ -233,7 +293,7 @@ class Profile extends Component {
     };
 
     return (
-      <div className="bg-white p-3">
+      <div className="bg-white p-3 mb-3">
         <form onSubmit={this._handleSubmitForm}>
           <div className="form-group">
             <label htmlFor="profile_name">Name: <i className="text-danger">*</i></label>
@@ -297,7 +357,7 @@ class Profile extends Component {
         {errorMessage &&
           <Fade in={true}>
             <div className="alert alert-warning shadow-sm">
-            <i className="fal fa-info-circle"></i> {errorMessage}
+              <i className="fal fa-info-circle"></i> {errorMessage}
             </div>
           </Fade>
         }
@@ -306,20 +366,56 @@ class Profile extends Component {
   };
 
   _renderVerifySection = () => {
-    const { contractor } = this.props;
+    const { isUploadingVerifyingImages } = this.state;
+    const { contractor, verifyingImages } = this.props;
 
     const statusBsColor = contractor.status ? CONTRACTOR_STATUS_INFOS[contractor.status].bsColor : '';
     const statusName = contractor.status ? CONTRACTOR_STATUS_INFOS[contractor.status].name : '';
 
     return (
       <div>
-        <h5 className="mt-3 mb-2">Account verifying</h5>
-        <div className="bg-white p-3">
+        <h5 className="mb-2">Account verifying</h5>
+        <div className="bg-white p-3 mb-3 position-relative">
+          {isUploadingVerifyingImages &&
+            <ComponentBlocking message="Uploading..." />
+          }
           <div className="mb-2">
             Account status: <span className={`badge badge-pill badge-${statusBsColor}`}>{statusName}</span>
           </div>
-          <div>
-            
+          <div className="mb-3">
+            <DropzoneUploadImage
+              onChange={this._handleSelectVerifyingImages}
+              height={100}
+            />
+          </div>
+          <div className="row">
+            {verifyingImages.isFetching &&
+              <div className="col-md-12">
+                <Skeleton height={200} />
+              </div>
+            }
+            {verifyingImages.items.map(item => {
+              return (
+                <div key={item.id} className="col-md-6 my-1">
+                  <div className="image-with-times image-169 border rounded">
+                    <Image src={item.url} className="w-100" />
+                    {item.verified &&
+                      <span className="badge badge-primary badge-pill"><i className="fal fa-check-circle"></i> Verified</span>
+                    }
+                    {!item.verified &&
+                      <span className="infos">
+                        <span className="badge badge-info badge-pill"><i className="fal fa-info-circle"></i> Not virified</span>
+                      </span>
+                    }
+                    {/* <span className="actions">
+                      <button onClick={() => console.log('asdasd')} className="btn btn-sm bg-light btn-outline-danger shadow">
+                        <i className="fas fa-times"></i>
+                      </button>
+                    </span> */}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -352,20 +448,24 @@ class Profile extends Component {
 
 Profile.props = {
   contractor: PropTypes.object.isRequired,
-  updateUserInfo: PropTypes.func.isRequired
+  updateUserInfo: PropTypes.func.isRequired,
+  setVerifyingImageItems: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   const { authentication } = state;
-  const { contractor } = authentication;
+  const { contractor, verifyingImages } = authentication;
 
   return {
-    contractor
+    contractor,
+    verifyingImages,
   };
 };
 
 const mapDispatchToProps = {
-  updateUserInfo: authActions.loginSuccess
+  updateUserInfo: authActions.loginSuccess,
+  setVerifyingImageItems: authActions.setVerifyingImageItems,
+  loadVerifyingImages: authActions.loadVerifyingImages,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

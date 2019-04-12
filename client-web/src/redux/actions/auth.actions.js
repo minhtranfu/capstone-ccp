@@ -1,8 +1,9 @@
 import { authActionTypes } from 'Redux/_types';
 import { appConsts } from 'Common/app-const';
 
-import ccpServices from 'Services/domain/ccp-api-service';
 import { askForPermissioToReceiveNotifications } from "../../push-notification";
+import { userServices } from 'Services/domain/ccp';
+import { getErrorMessage } from 'Utils/common.utils';
 
 /**
  * Decide what to export here
@@ -17,7 +18,9 @@ export const authActions = {
   toggleLoginModal,
   addNotificationsCount,
   minusNotificationsCount,
-  setUnreadNotificationsCount
+  setUnreadNotificationsCount,
+  setVerifyingImageItems,
+  loadVerifyingImages,
 };
 
 /**
@@ -34,7 +37,7 @@ function login(username, password) {
     dispatch({ type: authActionTypes.LOGIN_REQUEST });
 
     try {
-      const user = await ccpServices.userServices.login(username, password);
+      const user = await userServices.login(username, password);
       localStorage.setItem(appConsts.JWT_KEY, user.tokenWrapper.accessToken);
 
       dispatch(loginSuccess(user.contractor));
@@ -54,7 +57,7 @@ function logout() {
     // unsubcribe notification
     const token = localStorage.getItem(appConsts.NOTI_TOKEN);
     if (token) {
-      await ccpServices.userServices.unsubcribeNotification(token);
+      await userServices.unsubcribeNotification(token);
     }
 
     localStorage.removeItem(appConsts.JWT_KEY);
@@ -71,7 +74,7 @@ function loadUserFromToken() {
     }
 
     try {
-      const contractor = await ccpServices.userServices.getUserInfo();
+      const contractor = await userServices.getUserInfo();
 
       dispatch({
         type: authActionTypes.LOAD_USER_SUCCESS,
@@ -135,4 +138,35 @@ function setUnreadNotificationsCount({ totalUnreadNotifications, readNotificatio
     readNotificationIds,
     unreadNotificationIds
   }
+}
+
+function setVerifyingImageItems(items) {
+  return {
+    type: authActionTypes.VERIFYING_IMAGES_SET,
+    items
+  }
+}
+
+function loadVerifyingImages(contractorId) {
+  return async dispatch => {
+    dispatch({
+      type: authActionTypes.VERIFYING_IMAGES_REQUEST,
+    });
+
+    try {
+      const items = await userServices.getVerifyingImages(contractorId);
+
+      dispatch({
+        type: authActionTypes.VERIFYING_IMAGES_SUCCESS,
+        items,
+      });
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+
+      dispatch({
+        type: authActionTypes.VERIFYING_IMAGES_FAILURE,
+        errorMessage,
+      });
+    }
+  };
 }

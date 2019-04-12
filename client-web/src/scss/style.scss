@@ -400,7 +400,6 @@ nav.navbar {
 
 .image-dropzone {
   cursor: pointer;
-  height: 200px;
   border: 2px dashed #888;
 }
 
@@ -687,7 +686,7 @@ nav.navbar {
     border: 5px solid #007bff;
     box-sizing: content-box;
   }
-  .badge.badge-primary {
+  .badge.badge-primary, .infos {
     position: absolute;
     top: 10px;
     left: 10px;

@@ -88,6 +88,48 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
         readNotificationIds: action.readNotificationIds
       };
 
+    case authActionTypes.VERIFYING_IMAGES_SET: {
+      return {
+        ...state,
+        verifyingImages: {
+          ...state.verifyingImages,
+          items: action.items
+        },
+      };
+    }
+    
+    case authActionTypes.VERIFYING_IMAGES_REQUEST: {
+      return {
+        ...state,
+        verifyingImages: {
+          ...state.verifyingImages,
+          isFetching: true
+        },
+      };
+    }
+    
+    case authActionTypes.VERIFYING_IMAGES_SUCCESS: {
+      return {
+        ...state,
+        verifyingImages: {
+          ...state.verifyingImages,
+          isFetching: false,
+          items: action.items,
+        },
+      };
+    }
+
+    case authActionTypes.VERIFYING_IMAGES_FAILURE: {
+      return {
+        ...state,
+        verifyingImages: {
+          ...state.verifyingImages,
+          isFetching: false,
+          errorMessage: action.errorMessage,
+        },
+      };
+    }
+
     default:
       return state;
   }

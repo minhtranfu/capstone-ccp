@@ -18,13 +18,16 @@ class DropzoneUploadImage extends Component {
   }
 
   render() {
-    const { multiple } = this.props;
+    const { multiple, height } = this.props;
 
     return (
       <section>
         <DropZone accept="image/*" onDrop={this._onDrop} multiple={multiple}>
           {({ getRootProps, getInputProps }) => (
             <div
+              style={{
+                height
+              }}
               {...getRootProps()}
               className="image-dropzone d-flex align-items-center justify-content-center rounded"
             >
@@ -40,11 +43,13 @@ class DropzoneUploadImage extends Component {
 
 DropzoneUploadImage.props = {
   onChange: PropTypes.func.isRequired,
-  multiple: PropTypes.bool
+  multiple: PropTypes.bool,
+  height: PropTypes.number,
 };
 
 DropzoneUploadImage.defaultProps = {
-  multiple: true
+  multiple: true,
+  height: 200,
 };
 
 export default DropzoneUploadImage;
