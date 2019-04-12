@@ -71,7 +71,7 @@ class EquipDetail extends Component {
   _renderRightSidebar = () => {
     const { equip, isFetching } = this.state;
     const { authentication } = this.props;
-    const { user } = authentication;
+    const { contractor } = authentication;
 
     return (
       <div className="sticky-top sticky-sidebar">
@@ -114,12 +114,12 @@ class EquipDetail extends Component {
         </div>
         {!isFetching &&
           (!authentication.isAuthenticated ||
-            equip.contractor.id !== user.contractor.id) && (
+            equip.contractor.id !== contractor.id) && (
             <RequestCard equip={equip} />
           )}
         {!isFetching &&
           authentication.isAuthenticated &&
-          equip.contractor.id == user.contractor.id && (
+          equip.contractor.id == contractor.id && (
             <div className="shadow bg-white rounded p-2">
               <h5>Current transactions</h5>
               <p>&nbsp;</p>

@@ -104,11 +104,11 @@ class BidForm extends Component {
         isFetching: false,
         isShowBidForm: false,
       }, () => {
-        const { onSuccess, user } = this.props;
+        const { onSuccess, contractor } = this.props;
 
         onSuccess && onSuccess({
           ...bid,
-          supplier: user.contractor
+          supplier: contractor
         });
       });
     } catch (error) {
@@ -131,24 +131,24 @@ class BidForm extends Component {
 
   render() {
     const { isShowBidForm, message, isFetching, validateResult } = this.state;
-    const { user, toggleLoginModal } = this.props;
+    const { contractor, toggleLoginModal } = this.props;
 
     return (
       <div className="position-relative">
         {isFetching &&
           <ComponentBlocking/>
         }
-        {user && !isShowBidForm &&
+        {contractor && !isShowBidForm &&
           <button onClick={this._toggleBidForm} className="btn btn-lg btn-primary btn-block my-2">
             <i className="fal fa-gavel"></i> Bid this request
           </button>
         }
-        {user && isShowBidForm &&
+        {contractor && isShowBidForm &&
           <button onClick={this._toggleBidForm} className="btn btn-lg btn-outline-primary btn-block my-2">
             <i className="fal fa-times"></i> Close bid form
           </button>
         }
-        {user &&
+        {contractor &&
           <Collapse isOpen={isShowBidForm}>
             {isShowBidForm &&
             <form className="bg-white p-3 shadow-sm" onSubmit={this._handleSubmitBid}>
@@ -181,7 +181,7 @@ class BidForm extends Component {
             }
           </Collapse>
         }
-        {!user &&
+        {!contractor &&
           <button className="btn btn-lg btn-primary btn-block my-2" onClick={toggleLoginModal}><i className="fal fa-sign-in"></i> Login to bid</button>
         }
       </div>
@@ -193,14 +193,15 @@ BidForm.props = {
   debrisId: PropTypes.number.isRequired,
   onSuccess: PropTypes.func,
   toggleLoginModal: PropTypes.func,
+  contractor: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
   const { authentication } = state;
-  const { user } = authentication;
+  const { contractor } = authentication;
 
   return {
-    user
+    contractor
   };
 };
 

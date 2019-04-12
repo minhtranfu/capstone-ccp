@@ -131,7 +131,7 @@ class Header extends Component {
   render() {
     const { showOffCanvas, isShowNotifications } = this.state;
     const { authentication } = this.props;
-    const { user } = authentication;
+    const { contractor } = authentication;
 
     return (
       <nav className="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
@@ -155,17 +155,17 @@ class Header extends Component {
                 <li className="nav-item dropdown notifications mr-2" ref={noticationComponent => { this.noticationComponent = noticationComponent; }}>
                   <span className="cursor-pointer text-light d-flex h-100 align-items-center px-3" href="#" onClick={this._toggleNotifications}>
                     <i className="fal fa-bell"></i>
-                    <span className="badge badge-pill badge-danger">{user.contractor.totalUnreadNotifications}</span>
+                    <span className="badge badge-pill badge-danger">{contractor.totalUnreadNotifications}</span>
                   </span>
                   <Notifications isShow={isShowNotifications} toggle={this._toggleNotifications} />
                 </li>
                 <li className="nav-item dropdown">
                   <a className="dropdown-toggle text-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    <img src={user.contractor.thumbnailImageUrl} className="rounded-circle mr-2" width={40} height={40} />
-                    {authentication.user.contractor.name}
+                    <img src={contractor.thumbnailImageUrl} className="rounded-circle mr-2" width={40} height={40} />
+                    {contractor.name}
                   </a>
                   <div className="dropdown-menu shadow mt-2 rounded-top-0">
-                    <Link className="dropdown-item" to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: user.contractor.id })}><i className="fal fa-user-circle"></i> Profile</Link>
+                    <Link className="dropdown-item" to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: contractor.id })}><i className="fal fa-user-circle"></i> Profile</Link>
                     <Link className="dropdown-item" to={getRoutePath(routeConsts.PROFILE)}><i className="fal fa-cogs"></i> Settings</Link>
                     <div className="dropdown-divider"></div>
                     <a className="dropdown-item" href="#" onClick={this._logout}><i className="fal fa-sign-out"></i> Logout</a>

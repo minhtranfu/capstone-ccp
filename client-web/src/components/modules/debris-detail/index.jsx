@@ -99,7 +99,7 @@ class DebrisDetail extends Component {
    */
   _renderBids = () => {
     const { authentication } = this.props;
-    const { user } = authentication;
+    const { contractor } = authentication;
     const { debris } = this.state;
     const { debrisBids } = debris;
     const isRequester = this._isRequester();
@@ -110,7 +110,7 @@ class DebrisDetail extends Component {
     }
 
     return debrisBids.map(bid => {
-      if (authentication.isAuthenticated && user.contractor && bid.supplier.id === user.contractor.id) {
+      if (authentication.isAuthenticated && bid.supplier.id === contractor.id) {
         this.isHadBid = true;
       }
 
@@ -199,18 +199,18 @@ class DebrisDetail extends Component {
    */
   _isRequester = () => {
     const { authentication } = this.props;
-    const { user } = authentication;
+    const { contractor } = authentication;
     const { debris } = this.state;
 
     if (!debris || !debris.id) {
       return false;
     }
 
-    if (!user || !user.contractor) {
+    if (!contractor) {
       return false;
     }
 
-    return debris.requester.id === user.contractor.id;
+    return debris.requester.id === contractor.id;
   }
 
   _renderAlert = () => {
@@ -246,7 +246,7 @@ class DebrisDetail extends Component {
   _renderRightSidebar = () => {
     const { debris } = this.state;
     const { authentication } = this.props;
-    const { user } = authentication;
+    const { contractor } = authentication;
 
     return (
       <div className="sticky-top sticky-sidebar pt-2">
@@ -290,7 +290,7 @@ class DebrisDetail extends Component {
         </div>
         {debris.id &&
           authentication.isAuthenticated &&
-          debris.requester.id == user.contractor.id && (
+          debris.requester.id == contractor.id && (
             <div className="shadow bg-white rounded p-2">
               <h5>Current transactions</h5>
               <p>&nbsp;</p>
@@ -307,8 +307,6 @@ class DebrisDetail extends Component {
   render() {
     const { debris, isFetching, message } = this.state;
     const { debrisBids } = debris;
-    const { authentication } = this.props;
-    const { user } = authentication;
     const { debrisServiceTypes } = debris;
     const services = !debrisServiceTypes ? '' : debrisServiceTypes.map(type => type.name).join(', ');
     const isRequester = this._isRequester();

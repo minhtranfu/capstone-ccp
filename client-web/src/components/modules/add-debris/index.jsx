@@ -197,8 +197,7 @@ class PostDebrisRequest extends Component {
 
 const mapStateToProps = state => {
   const { authentication } = state;
-  const { user } = authentication;
-  const { contractor } = user;
+  const { contractor } = authentication;
 
   return {
     contractor

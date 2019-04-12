@@ -359,8 +359,7 @@ AddEquipmentStep1.propTypes = {
 
 const mapStateToProps = state => {
   const { authentication, entities } = state;
-  const { user } = authentication;
-  const { contractor } = user;
+  const { contractor } = authentication;
 
   return {
     contractor,

@@ -35,10 +35,9 @@ function login(username, password) {
 
     try {
       const user = await ccpServices.userServices.login(username, password);
-      console.log(user);
       localStorage.setItem(appConsts.JWT_KEY, user.tokenWrapper.accessToken);
 
-      dispatch(loginSuccess(user));
+      dispatch(loginSuccess(user.contractor));
       askForPermissioToReceiveNotifications();
 
     } catch (error) {
@@ -76,9 +75,7 @@ function loadUserFromToken() {
 
       dispatch({
         type: authActionTypes.LOAD_USER_SUCCESS,
-        user: {
-          contractor
-        }
+        contractor
       });
 
       askForPermissioToReceiveNotifications();
@@ -90,10 +87,10 @@ function loadUserFromToken() {
   };
 }
 
-function loginSuccess(user) {
+function loginSuccess(contractor) {
   return {
     type: authActionTypes.LOGIN_SUCCESS,
-    user
+    contractor
   }
 }
 

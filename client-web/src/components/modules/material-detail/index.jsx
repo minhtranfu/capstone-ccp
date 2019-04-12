@@ -52,7 +52,7 @@ class MaterialDetail extends Component {
   _renderRightSidebar = () => {
     const { material } = this.state;
     const { authentication } = this.props;
-    const { user } = authentication;
+    const { contractor } = authentication;
 
     return (
       <div className="sticky-top sticky-sidebar">
@@ -95,12 +95,12 @@ class MaterialDetail extends Component {
         </div>
         {material.id &&
           (!authentication.isAuthenticated ||
-            material.contractor.id !== user.contractor.id) && (
+            material.contractor.id !== contractor.id) && (
             <RequestCard material={material} />
           )}
         {material.id &&
           authentication.isAuthenticated &&
-          material.contractor.id == user.contractor.id && (
+          material.contractor.id == contractor.id && (
             <div className="shadow bg-white rounded p-2">
               <h5>Current transactions</h5>
               <p>&nbsp;</p>

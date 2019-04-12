@@ -7,21 +7,19 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
       return {
         ...state,
         isAuthenticated: true,
-        user: action.user
+        contractor: action.contractor
       };
 
     case authActionTypes.LOGIN_REQUEST:
       return {
         ...state,
         loggingIn: true,
-        user: {}
       };
 
     case authActionTypes.LOGIN_FAILURE:
       return {
         ...state,
         loggingIn: false,
-        user: {},
         error: action.error
       };
 
@@ -36,7 +34,7 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
         ...state,
         authenticating: false,
         isAuthenticated: true,
-        user: action.user
+        contractor: action.contractor
       };
 
     case authActionTypes.LOAD_USER_FAILURE:
@@ -64,7 +62,7 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
       };
 
     case authActionTypes.ADD_NOTIFICATIONS_COUNT:
-      state.user.contractor.totalUnreadNotifications++;
+      state.contractor.totalUnreadNotifications++;
 
       return {
         ...state,
@@ -73,7 +71,7 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
       };
 
     case authActionTypes.MIN_NOTIFICATIONS_COUNT:
-      state.user.contractor.totalUnreadNotifications--;
+      state.contractor.totalUnreadNotifications--;
 
       return {
         ...state,
@@ -82,7 +80,7 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
       };
 
     case authActionTypes.SET_NOTIFICATIONS_COUNT:
-      state.user.contractor.totalUnreadNotifications = action.totalUnreadNotifications;
+      state.contractor.totalUnreadNotifications = action.totalUnreadNotifications;
 
       return {
         ...state,

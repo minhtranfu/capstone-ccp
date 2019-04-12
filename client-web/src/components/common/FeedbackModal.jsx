@@ -353,8 +353,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = state => {
   const { entities, authentication } = state;
-  const { user } = authentication;
-  const { contractor } = user;
+  const { contractor } = authentication;
 
   return {
     feedbackTypeEntity: entities[ENTITY_KEY.FEEDBACK_TYPES],

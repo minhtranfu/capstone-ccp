@@ -9,6 +9,7 @@ import ComponentBlocking from 'Components/common/component-blocking';
 import { userServices } from 'Services/domain/ccp';
 import { getErrorMessage } from 'Utils/common.utils';
 import { authActions } from 'Redux/actions';
+import { CONTRACTOR_STATUS_INFOS } from 'Common/consts';
 
 class Profile extends Component {
 
@@ -304,6 +305,27 @@ class Profile extends Component {
     );
   };
 
+  _renderVerifySection = () => {
+    const { contractor } = this.props;
+
+    const statusBsColor = contractor.status ? CONTRACTOR_STATUS_INFOS[contractor.status].bsColor : '';
+    const statusName = contractor.status ? CONTRACTOR_STATUS_INFOS[contractor.status].name : '';
+
+    return (
+      <div>
+        <h5 className="mt-3 mb-2">Account verifying</h5>
+        <div className="bg-white p-3">
+          <div className="mb-2">
+            Account status: <span className={`badge badge-pill badge-${statusBsColor}`}>{statusName}</span>
+          </div>
+          <div>
+            
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   render() {
     const { isFetching } = this.state;
 
@@ -320,6 +342,7 @@ class Profile extends Component {
           </div>
           <div className="col-md-8">
             {this._renderFormSection()}
+            {this._renderVerifySection()}
           </div>
         </div>
       </div>
@@ -334,8 +357,7 @@ Profile.props = {
 
 const mapStateToProps = state => {
   const { authentication } = state;
-  const { user } = authentication;
-  const { contractor } = user;
+  const { contractor } = authentication;
 
   return {
     contractor
