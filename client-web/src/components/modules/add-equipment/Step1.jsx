@@ -182,7 +182,7 @@ class AddEquipmentStep1 extends Step {
     let isSelectATimeRange = false;
     availableTimeRanges.forEach(range => {
       if (range.beginDate) {
-        isSelectATimeRange = false;
+        isSelectATimeRange = true;
       }
     });
     if (!isSelectATimeRange && (!validateResult || !validateResult.availableTimeRanges)) {
