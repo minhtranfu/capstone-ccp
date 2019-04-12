@@ -289,6 +289,8 @@ public class MaterialTransactionResource {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), transactionEntity.getStatus()));
 				}
+				foundTransaction.setCancelReason(transactionEntity.getCancelReason());
+
 				break;
 			case FINISHED:
 				if (getClaimContractorId() != requesterId) {

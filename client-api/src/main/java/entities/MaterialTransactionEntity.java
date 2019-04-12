@@ -38,6 +38,8 @@ public class MaterialTransactionEntity {
 	@Max(180)
 	private Double requesterLong;
 
+	private String cancelReason;
+
 	@NotNull
 	private Status status;
 	private LocalDateTime createdTime;
@@ -104,6 +106,16 @@ public class MaterialTransactionEntity {
 		this.requesterLong = requesterLong;
 	}
 
+
+	@Basic
+	@Column(name = "cancel_reason")
+	public String getCancelReason() {
+		return cancelReason;
+	}
+
+	public void setCancelReason(String cancelReason) {
+		this.cancelReason = cancelReason;
+	}
 
 	@Basic
 	@Column(name = "status", nullable = true, length = 256)

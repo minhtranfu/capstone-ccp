@@ -236,6 +236,8 @@ public class HiringTransactionResource {
 							foundTransaction.getStatus(), transactionEntity.getStatus()));
 				}
 
+				foundTransaction.setCancelReason(transactionEntity.getCancelReason());
+
 
 				break;
 			case FINISHED:

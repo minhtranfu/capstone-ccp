@@ -5,7 +5,6 @@ import dtos.requests.HiringTransactionRequest;
 import listeners.entityListenters.HiringTransactionEntityListener;
 import org.hibernate.annotations.Where;
 
-import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -33,6 +32,8 @@ public class HiringTransactionEntity {
 
 	private LocalDate beginDate;
 	private LocalDate endDate;
+
+	private String cancelReason;
 
 	private String equipmentAddress;
 	private double equipmentLatitude;
@@ -153,6 +154,17 @@ public class HiringTransactionEntity {
 
 	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
+	}
+
+
+	@Basic
+	@Column(name = "cancel_reason")
+	public String getCancelReason() {
+		return cancelReason;
+	}
+
+	public void setCancelReason(String cancelReason) {
+		this.cancelReason = cancelReason;
 	}
 
 	@NotNull
