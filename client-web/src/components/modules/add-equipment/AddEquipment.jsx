@@ -78,8 +78,6 @@ class AddEquipment extends Component {
     this.data.construction = {
       id: +constructionId
     };
-    this.data.latitude = '10.12313';
-    this.data.longitude = '10.12313';
     this.data.equipmentTypeId = undefined;
     this.data.constructionId = undefined;
     this.data.categoryId = undefined;
