@@ -417,12 +417,12 @@ class MaterialTransactions extends Component {
 }
 
 MaterialTransactions.props = {
-  user: PropTypes.object.isRequired
+  contractor: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
   const { authentication } = state;
-  const { contractor } = authentication.user;
+  const { contractor } = authentication;
 
   return {
     contractor
