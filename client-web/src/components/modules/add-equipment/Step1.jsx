@@ -13,6 +13,8 @@ import { ENTITY_KEY } from '../../../common/app-const';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
 import { getValidateFeedback } from 'Utils/common.utils';
+import { AddressInput } from 'Components/common';
+import { formatPrice } from 'Utils/format.utils';
 
 class AddEquipmentStep1 extends Step {
   constructor(props) {
@@ -40,7 +42,8 @@ class AddEquipmentStep1 extends Step {
     },
     address: {
       presence: {
-        allowEmpty: false
+        allowEmpty: false,
+        message: '^Please select an address'
       }
     },
     equipmentTypeId: {
@@ -149,14 +152,15 @@ class AddEquipmentStep1 extends Step {
       this._handleSelectConstruction(value);
     }
 
-    if (name === 'address') {
-      newState.isAddressEditted = true;
-    } else if (name === 'dailyPrice') {
-      value = value.replace(/[^0-9\.]+/g, '');
-      newState.showableDailyPrice = value;
-    }
+    if (name === 'constructionId' || name === 'equipmentTypeId') {
 
-    if (!isNaN(value)) {
+      if (+value === 0) {
+        value = '';
+      }
+    } else if (name === 'dailyPrice') {
+      value = +value.replace(/[^0-9\.]+/g, '');
+      newState.showableDailyPrice = formatPrice(`${value}`);
+    } else if (!isNaN(value)) {
       value = +value;
     }
 
@@ -174,10 +178,10 @@ class AddEquipmentStep1 extends Step {
       constructions: undefined,
       validateResult: undefined
     };
-    
+
     // Validate form
     let validateResult = validate(data, this.validateRules);
-    
+
     // Validate timerange
     let isSelectATimeRange = false;
     availableTimeRanges.forEach(range => {
@@ -215,7 +219,7 @@ class AddEquipmentStep1 extends Step {
       return (
         <div key={i} className="input-group date-range-picker mb-4">
           <DateRangePicker minDate={moment()} onApply={(e, picker) => this._onChangeDateRanage(picker, i)} containerClass="custom-file" autoApply alwaysShowCalendars>
-          {/* <input type="text" className="form-control" readOnly value={this._getLabelOfRange(i) || ''} /> */}
+            {/* <input type="text" className="form-control" readOnly value={this._getLabelOfRange(i) || ''} /> */}
             <input type="text" className="custom-file-input" id={`inputDate${i}`} />
             <label className="custom-file-label" htmlFor={`inputDate${i}`} aria-describedby={`inputDate${i}`}>{this._getLabelOfRange(i) || 'Select time range'}</label>
           </DateRangePicker>
@@ -258,16 +262,58 @@ class AddEquipmentStep1 extends Step {
 
   // When select construction, change address of equipment too
   _handleSelectConstruction = constructionId => {
-    const { isAddressEditted, constructions } = this.state;
+    const { isAddressEditted, address, constructions } = this.state;
 
-    if (isAddressEditted) {
+    if (isAddressEditted && address.trim().length > 0) {
       return;
     }
 
     const selectedContruction = constructions.find(construction => +construction.id === +constructionId);
+
+    if (!selectedContruction) {
+      this.setState({
+        address: '',
+        longitude: undefined,
+        latitude: undefined,
+      });
+
+      return;
+    }
+
     this.setState({
-      address: selectedContruction.address
+      address: selectedContruction.address,
+      latitude: selectedContruction.latitude,
+      longitude: selectedContruction.longitude,
     });
+  };
+
+  _handleSelectAddress = addressResult => {
+    this.setState({
+      ...addressResult,
+      isAddressEditted: true
+    });
+  };
+
+  _handleBlurAddressInput = () => {
+    const { longitude } = this.state;
+
+    if (longitude) {
+      return;
+    }
+
+    this.setState({
+      address: '',
+      isAddressEditted: false,
+    });
+  };
+
+  _handleAddressChanged = address => {
+    this.setState({
+      address,
+      longitude: undefined,
+      latitude: undefined,
+      isAddressEditted: false
+    })
   };
 
   render() {
@@ -289,15 +335,23 @@ class AddEquipmentStep1 extends Step {
             </div>
             <div className="form-group">
               <label htmlFor="">Construction: <i className="text-danger">*</i></label>
-              <select name="constructionId" onChange={this._handleFieldChange} value={this.state.constructionId || ''} id="construction_id" className="form-control" required>
-                <option value="">Choose...</option>
+              <select name="constructionId" onChange={this._handleFieldChange} value={this.state.constructionId || '0'} id="construction_id" className="form-control" required>
+                <option value="0">Choose...</option>
                 {constructions.map(construction => <option key={construction.id} value={construction.id}>{construction.name}</option>)}
               </select>
               {getValidateFeedback('constructionId', validateResult)}
             </div>
             <div className="form-group">
               <label htmlFor="">Address: <i className="text-danger">*</i></label>
-              <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" />
+              {/* <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" /> */}
+              <AddressInput
+                inputProps={{
+                  value: this.state.address,
+                  onBlur: this._handleBlurAddressInput
+                }}
+                onChange={this._handleAddressChanged}
+                onSelect={this._handleSelectAddress}
+                />
               {getValidateFeedback('address', validateResult)}
             </div>
             <div className="form-group">
@@ -312,8 +366,8 @@ class AddEquipmentStep1 extends Step {
             </div>
             <div className="form-group">
               <label htmlFor="">Equipment type: <i className="text-danger">*</i></label>
-              <select name="equipmentTypeId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.equipmentTypeId || ''} id="equip_type_id" className="form-control selectpicker">
-                <option value="">Choose...</option>
+              <select name="equipmentTypeId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.equipmentTypeId || '0'} id="equip_type_id" className="form-control selectpicker">
+                <option value="0">Choose...</option>
                 {equipmentTypes && equipmentTypes.data && equipmentTypes.data.map(type => {
 
                   if (!!categoryId && type.generalEquipment.id !== categoryId) {

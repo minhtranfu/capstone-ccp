@@ -258,7 +258,7 @@ class Register extends Component {
           <div className="col-md-6">
             <h5>Contact information</h5>
             <div className="form-group">
-              <label htmlFor="register_name">Name: <i className="text-danger">*</i></label>
+              <label htmlFor="register_name">Full name: <i className="text-danger">*</i></label>
               <input type="text" className="form-control" id="register_name" name="name"
                 onChange={this._handleFieldChanged}
               />

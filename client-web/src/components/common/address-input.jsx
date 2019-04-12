@@ -98,6 +98,15 @@ export class AddressInput extends Component {
             placeholder: 'Search Places ...',
             className: 'form-control location-search-input',
           });
+
+          if (inputProps.onBlur) {
+            const customOnBlur = inputProps.onBlur;
+            inputProps.onBlur = e => {
+              customOnBlur(e);
+              componentInputProps.onBlur(e);
+            };
+          }
+
           return (
             <div {...wrapperProps} onFocus={() => this.setState({isFocus: true})} onBlur={() => this.setState({isFocus: false})}>
               <input

@@ -162,8 +162,6 @@ class DebriseTransactionsRequest extends Component {
     const { transactions, status, isFetching } = this.state;
     this.needActionCounters = {};
 
-    console.log(transactions);
-
     if (isFetching) {
       return this._renderLoading();
     }
