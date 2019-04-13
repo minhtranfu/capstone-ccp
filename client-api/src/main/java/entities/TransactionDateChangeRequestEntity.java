@@ -1,7 +1,9 @@
 package entities;
 
+import listeners.entityListenters.TransactionDateChangeRequestEntityListener;
 import org.hibernate.annotations.Where;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,9 +16,9 @@ import java.time.LocalDateTime;
 		, @NamedQuery(name = "TransactionDateChangeRequestEntity.getRequestsByTransactionId", query = "select e from TransactionDateChangeRequestEntity e where e.hiringTransactionEntity.id=:transactionId")
 		, @NamedQuery(name = "TransactionDateChangeRequestEntity.getPendingRequestByTransactionId", query = "select e from TransactionDateChangeRequestEntity e where e.hiringTransactionEntity.id=:transactionId and e.status='PENDING'")
 })
+@EntityListeners(TransactionDateChangeRequestEntityListener.class)
 public class TransactionDateChangeRequestEntity {
 	private long id;
-	private LocalDate requestedBeginDate;
 	private LocalDate requestedEndDate;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
@@ -35,15 +37,6 @@ public class TransactionDateChangeRequestEntity {
 		this.id = id;
 	}
 
-	@Basic
-	@Column(name = "requested_begin_date", nullable = true)
-	public LocalDate getRequestedBeginDate() {
-		return requestedBeginDate;
-	}
-
-	public void setRequestedBeginDate(LocalDate requestedBeginDate) {
-		this.requestedBeginDate = requestedBeginDate;
-	}
 
 	@Basic
 	@Column(name = "requested_end_date", nullable = true)
@@ -97,6 +90,7 @@ public class TransactionDateChangeRequestEntity {
 	}
 
 	@OneToOne
+	@JsonbTransient
 	@JoinColumn(name = "transaction_id", nullable = true)
 	public HiringTransactionEntity getHiringTransactionEntity() {
 		return hiringTransactionEntity;
@@ -110,6 +104,7 @@ public class TransactionDateChangeRequestEntity {
 	public enum Status {
 		PENDING,
 		ACCEPTED,
-		DENIED
+		DENIED,
+		CANCELED
 	}
 }

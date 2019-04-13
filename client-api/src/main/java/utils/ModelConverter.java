@@ -2,10 +2,7 @@ package utils;
 
 import dtos.Credentials;
 import dtos.requests.*;
-import dtos.responses.ContractorResponse;
-import dtos.responses.DebrisBidResponse;
-import dtos.responses.GeneralMaterialTypeResponse;
-import dtos.responses.TokenContractorResponse;
+import dtos.responses.*;
 import entities.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -191,6 +188,11 @@ public class ModelConverter {
 	public List<MaterialTransactionDetailEntity> toEntityList(List<MaterialTransactionDetailRequest> materialTransactionDetails) {
 		Type listType = new TypeToken<List<MaterialTransactionDetailEntity>>(){}.getType();
 		return modelMapper.map(materialTransactionDetails, listType);
+	}
+
+	public TransactionDateChangeRequestResponse toResponse(TransactionDateChangeRequestEntity entity) {
+		return modelMapper.map(entity, TransactionDateChangeRequestResponse.class);
+
 	}
 }
 

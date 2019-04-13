@@ -184,7 +184,7 @@ public class DebrisTransactionResource {
 
 				String cancelReason = statusRequest.getCancelReason();
 				foundTransaction.setCancelReason(cancelReason);
-				
+
 				//canceledBy
 				ContractorEntity canceledBy = new ContractorEntity();
 				canceledBy.setId(getClaimContractorId());

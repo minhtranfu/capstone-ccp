@@ -326,15 +326,15 @@ public class HiringTransactionResource {
 	}
 
 
-	@Path("{id:\\d+}/adjustDateRequests")
-	public TransactionDateChangeResource toTransactionDateChangeResource(@PathParam("id") long transactionId) {
-
-
-		HiringTransactionEntity transactionEntity = validateHiringTransactionEntity(transactionId);
-
-		transactionDateChangeResource.setHiringTransactionEntity(transactionEntity);
-		return transactionDateChangeResource;
-	}
+//	@Path("{id:\\d+}/transactionDateChangeRequests")
+//	public TransactionDateChangeResource toTransactionDateChangeResource(@PathParam("id") long transactionId) {
+//
+//
+//		HiringTransactionEntity transactionEntity = validateHiringTransactionEntity(transactionId);
+//
+//		transactionDateChangeResource.setHiringTransactionEntity(transactionEntity);
+//		return transactionDateChangeResource;
+//	}
 
 	private HiringTransactionEntity validateHiringTransactionEntity(long transactionId) {
 		HiringTransactionEntity transactionEntity = hiringTransactionDAO.findByID(transactionId);
