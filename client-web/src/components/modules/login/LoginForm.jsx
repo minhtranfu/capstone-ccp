@@ -130,7 +130,7 @@ class LoginForm extends Component {
         </div>
         <div className="col-md-6">
           <h6 className="mt-3 text-muted">Do not have an account?</h6>
-          <Link className="btn btn-block btn-outline-primary" to={getRoutePath(routeConsts.SIGNUP)}><i className="fal fa-user-circle"></i> Đăng ký</Link>
+          <Link className="btn btn-block btn-outline-primary" to={getRoutePath(routeConsts.SIGNUP)}><i className="fal fa-user-circle"></i> Sign Up</Link>
         </div>
       </div>
     );
