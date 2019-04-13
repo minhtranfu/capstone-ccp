@@ -48,6 +48,14 @@ export const INITIAL_STATE = {
     items: [],
     itemIds: []
   },
+  construction: {
+    isFetching: false,
+    items: [],
+  },
+  equipmentTypeCategories: {
+    isFetching: false,
+    items: [],
+  },
 };
 
 export const ROUTES = [

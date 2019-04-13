@@ -6,6 +6,7 @@ import {
   TransitionGroup,
 } from 'react-transition-group';
 import classnames from 'classnames';
+import { UncontrolledTooltip } from 'reactstrap';
 
 import { equipmentServices } from 'Src/services/domain/ccp';
 import { Image } from 'Src/components/common';
@@ -13,6 +14,8 @@ import Skeleton from 'react-loading-skeleton';
 import { getRoutePath, getErrorMessage } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
 import { ComponentBlocking, DropzoneUploadImage } from 'Components/common';
+import { constructionActions, equipmentTypeCategoryActions } from "Redux/actions";
+import { getEquipmentTypeCategories } from 'Services/domain/ccp/equipment.services';
 
 class EditEquipment extends Component {
 
@@ -35,16 +38,44 @@ class EditEquipment extends Component {
     });
   };
 
+  _loadConstructions = () => {
+    const { loadAllConstructions, construction, contractor } = this.props;
+
+    if (construction.items.length > 0) {
+      return;
+    }
+
+    loadAllConstructions(contractor.id);
+  };
+
+  _loadEquipmentTypeCategory = () => {
+    const { loadEquipmentTypeCategories, equipmentTypeCategory } = this.props;
+
+    if (equipmentTypeCategory.length > 0) {
+      return;
+    }
+
+    loadEquipmentTypeCategories();
+  };
+
   componentDidMount() {
     this._loadData();
+    this._loadConstructions();
+    this._loadEquipmentTypeCategory();
   }
-  
+
   /**
    * Handle on field change
    */
   _handleFieldChange = e => {
     let { name, value } = e.target;
+    const { construction } = this.props;
     const { editedData } = this.state;
+
+    if (name === 'constructionId') {
+      name = 'construction';
+      value = construction.items.find(item => item.id === +value);
+    }
 
     this.setState({
       editedData: {
@@ -59,12 +90,12 @@ class EditEquipment extends Component {
    */
   _handleResetForm = e => {
     e.preventDefault();
-    
+
     this.setState({
       editedData: {}
     });
   };
-  
+
   /**
    * Handle submit form
    */
@@ -78,7 +109,7 @@ class EditEquipment extends Component {
 
     let result;
     try {
-      this.setState({isFetching: true});
+      this.setState({ isFetching: true });
       result = await equipmentServices.updateEquipment(equipment.id, data);
 
       if (!result.id) {
@@ -89,7 +120,7 @@ class EditEquipment extends Component {
           }
         });
       }
-      
+
       this.setState({
         isFetching: false,
         isSuccess: true,
@@ -125,7 +156,7 @@ class EditEquipment extends Component {
         id
       }
     };
-    
+
     this.setState({
       isChangingImage: true
     });
@@ -165,9 +196,9 @@ class EditEquipment extends Component {
   _confirmDeleteImage = async id => {
     const { equipment } = this.state;
     let { equipmentImages } = equipment;
-    
+
     equipmentImages = equipmentImages.filter(image => image.id !== id);
-    
+
     this.setState({
       isChangingImage: true
     });
@@ -210,34 +241,52 @@ class EditEquipment extends Component {
     if (!Array.isArray(equipmentImages)) {
       return null;
     }
-    
+
     return equipmentImages.map(image => {
       return (
         <CSSTransition
-              key={image.id}
-              timeout={500}
-              classNames="item"
-              className="col-md-6 my-2"
-            >
+          key={image.id}
+          timeout={500}
+          classNames="item"
+          className="col-md-6 my-2"
+        >
           <div>
-            <div className={classnames("image-with-times", {thumbnail: image.id === thumbnailImage.id})}>
+            <div className={classnames("image-with-times", { thumbnail: image.id === thumbnailImage.id })}>
               <Image
                 className="w-100"
                 src={image.url}
                 alt={`${equipment.name} thumbnail image`}
-                />
+              />
               {image.id === thumbnailImage.id &&
                 <span className="badge badge-primary badge-pill">Thumbnail</span>
               }
               <span className="actions">
                 {image.id !== thumbnailImage.id &&
-                  <button onClick={() => this._handleSetImageAsThumbnail(image.id)} className="btn btn-sm btn-primary shadow mr-2">
+                  <button
+                    id={`set_as_thumnail_${image.id}`}
+                    className="btn btn-sm btn-primary shadow mr-2"
+                    onClick={() => this._handleSetImageAsThumbnail(image.id)}
+                    >
                     <i className="fas fa-thumbtack"></i>
+                    <UncontrolledTooltip
+                      target={`set_as_thumnail_${image.id}`}
+                    >
+                      Set as thumbnail
+                    </UncontrolledTooltip>
                   </button>
                 }
                 {image.id !== thumbnailImage.id &&
-                  <button onClick={() => this._showConfirmDeleteImage(image.id)} className="btn btn-sm btn-outline-danger shadow">
+                  <button
+                    className="btn btn-sm btn-outline-danger shadow bg-white text-danger"
+                    id={`delete_image_${image.id}`}
+                    onClick={() => this._showConfirmDeleteImage(image.id)}
+                  >
                     <i className="fas fa-times"></i>
+                    <UncontrolledTooltip
+                      target={`delete_image_${image.id}`}
+                    >
+                      Delete this image
+                    </UncontrolledTooltip>
                   </button>
                 }
               </span>
@@ -264,7 +313,7 @@ class EditEquipment extends Component {
     files.forEach(file => {
       formData.append("file", file);
     });
-    
+
     this.setState({
       isChangingImage: true
     });
@@ -272,7 +321,7 @@ class EditEquipment extends Component {
     // Upload images
     try {
       const images = await equipmentServices.uploadEquipmentImage(formData);
-      const imageIds = images.map(image => ({id: image.id}));
+      const imageIds = images.map(image => ({ id: image.id }));
       const { equipment } = this.state;
       await equipmentServices.addImagesIntoEquipment(imageIds, equipment.id);
       equipment.equipmentImages = [
@@ -293,18 +342,86 @@ class EditEquipment extends Component {
     }
   };
 
-  render() {
-    const { equipment, editedData, isSuccess, isFetching, error, isChangingImage, message } = this.state;
+  _renderDetailForm = () => {
+    const { equipment, editedData, isSuccess, isFetching, error } = this.state;
+    const { construction } = this.props;
 
     const data = {
       ...equipment,
       ...editedData
     };
 
+    return (
+      <div className="bg-white px-2 py-3 sticky-top sticky-sidebar">
+        {/* TODO: Add back to list link */}
+        <h4>Information: <Link to={getRoutePath(routeConsts.EQUIPMENT_MY)} className="btn btn-sm btn-outline-info float-right"><i className="fal fa-chevron-left"></i> Back to list</Link></h4>
+        {isSuccess &&
+          <div className="alert alert-success">Save successfully!</div>
+        }
+        {error &&
+          <div className="alert alert-warning">{error.message}</div>
+        }
+        <form onSubmit={this._handleFormSubmit}>
+          <div className="form-group">
+            <label htmlFor="equipment_name">Name:</label>
+            <input type="text" id="equipment_name" name="name" className="form-control"
+              value={data.name}
+              onChange={this._handleFieldChange}
+              autoFocus
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="equipment_dailyPrice">Daily price:</label>
+            <input type="text" id="equipment_dailyPrice" name="dailyPrice" className="form-control"
+              value={data.dailyPrice}
+              onChange={this._handleFieldChange}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="equipment_description">Description:</label>
+            <textarea type="text"
+              className="form-control"
+              rows={4}
+              id="equipment_description"
+              name="description"
+              value={data.description}
+              onChange={this._handleFieldChange}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="equipment_construction">Construction:</label>
+            <select
+              className="form-control"
+              id="equipment_construction"
+              name="constructionId"
+              value={data.construction.id}
+              onChange={this._handleFieldChange}
+            >
+              {construction.items.map(construction => {
+                return (<option key={construction.id} value={construction.id}>{construction.name}</option>);
+              })}
+            </select>
+            <div className="mt-2">Address:</div>
+            <p className="text-muted"> {data.construction.address}</p>
+          </div>
+          <div className="form-group">
+            <button className="btn btn-primary" disabled={Object.keys(editedData).length === 0 || isFetching}>
+              {isFetching ? <span class="spinner-border spinner-border-sm"></span> : <i className="fas fa-save"></i>} Save
+            </button>
+            <button className="btn btn-outline-primary ml-2" onClick={this._handleResetForm}><i className="fas fa-undo"></i> Reset</button>
+          </div>
+        </form>
+      </div>
+    );
+  };
+
+  render() {
+    const { equipment, isChangingImage, message } = this.state;
+
     if (!equipment.id) {
       return (
         <div className="container py-3">
-          <Skeleton height={500}/>
+          <Skeleton height={500} />
         </div>
       );
     }
@@ -317,53 +434,7 @@ class EditEquipment extends Component {
         }
         <div className="row">
           <div className="col-md-4">
-            <div className="bg-white px-2 py-3 sticky-top sticky-sidebar">
-              {/* TODO: Add back to list link */}
-              <h4>Information: <Link to={getRoutePath(routeConsts.EQUIPMENT_MY)} className="btn btn-sm btn-outline-info float-right"><i className="fal fa-chevron-left"></i> Back to list</Link></h4>
-              {isSuccess &&
-                <div className="alert alert-success">Save successfully!</div>
-              }
-              {error &&
-                <div className="alert alert-warning">{error.message}</div>
-              }
-              <form onSubmit={this._handleFormSubmit}>
-                <div className="form-group">
-                  <label htmlFor="equipment_name">Name:</label>
-                  <input type="text" id="equipment_name" name="name" className="form-control"
-                    value={data.name}
-                    onChange={this._handleFieldChange}
-                    autoFocus
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="equipment_dailyPrice">Daily price:</label>
-                  <input type="text" id="equipment_dailyPrice" name="dailyPrice" className="form-control"
-                    value={data.dailyPrice}
-                    onChange={this._handleFieldChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="equipment_description">Description:</label>
-                  <textarea type="text" id="equipment_description" name="description" className="form-control"
-                    value={data.description}
-                    onChange={this._handleFieldChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="equipment_address">Address:</label>
-                  <input type="text" id="equipment_address" name="address" className="form-control"
-                    value={data.address}
-                    onChange={this._handleFieldChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <button className="btn btn-primary" disabled={Object.keys(editedData).length === 0 || isFetching}>
-                    {isFetching ? <span class="spinner-border spinner-border-sm"></span> : <i className="fas fa-save"></i>} Save
-                  </button>
-                  <button className="btn btn-outline-primary ml-2" onClick={this._handleResetForm}><i className="fas fa-undo"></i> Reset</button>
-                </div>
-              </form>
-            </div>
+            {this._renderDetailForm()}
           </div>
           <div className="col-md-8">
             <div className="bg-white px-2 py-3 position-relative">
@@ -384,12 +455,19 @@ class EditEquipment extends Component {
 }
 
 const mapStateToProps = state => {
-  const { authentication } = state;
-  const { user } = authentication;
+  const { authentication, construction, equipmentTypeCategory } = state;
+  const { contractor } = authentication;
 
   return {
-    user
+    contractor,
+    construction,
+    equipmentTypeCategory,
   };
 };
 
-export default connect(mapStateToProps)(EditEquipment);
+const mapDispatchToProps = {
+  loadAllConstructions: constructionActions.loadAllConstructions,
+  loadEquipmentTypeCategories: equipmentTypeCategoryActions.loadAllCategories,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditEquipment);

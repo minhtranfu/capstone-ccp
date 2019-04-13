@@ -319,6 +319,7 @@ class MyRequests extends Component {
 
   /**
    * Start change status when user confirmed
+   * BUG HEREEEEE
    */
   _handleChangeStatusConfirm = async () => {
     const { confirm } = this.state;
