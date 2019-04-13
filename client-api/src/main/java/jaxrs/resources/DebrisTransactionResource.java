@@ -184,6 +184,12 @@ public class DebrisTransactionResource {
 
 				String cancelReason = statusRequest.getCancelReason();
 				foundTransaction.setCancelReason(cancelReason);
+				
+				//canceledBy
+				ContractorEntity canceledBy = new ContractorEntity();
+				canceledBy.setId(getClaimContractorId());
+				foundTransaction.setCanceledBy(canceledBy);
+
 				if (cancelReason == null || cancelReason.isEmpty()) {
 					throw new BadRequestException("You must have cancel reason");
 				}
@@ -199,6 +205,7 @@ public class DebrisTransactionResource {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), statusRequest.getStatus()));
 				}
+
 
 				// 3/21/19 roll back to PENDING both bid and post
 				foundTransaction.getDebrisBid().setStatus(DebrisBidEntity.Status.PENDING);

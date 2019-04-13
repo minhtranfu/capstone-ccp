@@ -279,17 +279,24 @@ public class MaterialTransactionResource {
 				}
 				break;
 			case CANCELED:
-				if (getClaimContractorId() != requesterId) {
-					throw new BadRequestException("Only requester can change this status!");
+				//
+				if (getClaimContractorId() != requesterId && getClaimContractorId() != supplierId) {
+					throw new BadRequestException("Only requester or supplier can cancel material transaction!");
 				}
 				//validate
-				if (foundTransaction.getStatus() != MaterialTransactionEntity.Status.DELIVERING
+				if ( foundTransaction.getStatus() != MaterialTransactionEntity.Status.PENDING
+						&& foundTransaction.getStatus() != MaterialTransactionEntity.Status.DELIVERING
 						&& foundTransaction.getStatus() != MaterialTransactionEntity.Status.ACCEPTED
 						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), transactionEntity.getStatus()));
 				}
 				foundTransaction.setCancelReason(transactionEntity.getCancelReason());
+
+				//canceledBy
+				ContractorEntity canceledBy = new ContractorEntity();
+				canceledBy.setId(getClaimContractorId());
+				foundTransaction.setCanceledBy(canceledBy);
 
 				break;
 			case FINISHED:

@@ -231,13 +231,17 @@ public class HiringTransactionResource {
 			case CANCELED:
 				//validate
 				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.ACCEPTED
+				&& foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING
 						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), transactionEntity.getStatus()));
 				}
 
 				foundTransaction.setCancelReason(transactionEntity.getCancelReason());
-
+				//canceledBy
+				ContractorEntity canceledBy = new ContractorEntity();
+				canceledBy.setId(getClaimContractorId());
+				foundTransaction.setCanceledBy(canceledBy);
 
 				break;
 			case FINISHED:

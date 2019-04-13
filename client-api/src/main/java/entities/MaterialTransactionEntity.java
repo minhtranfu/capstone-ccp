@@ -39,6 +39,8 @@ public class MaterialTransactionEntity {
 	private Double requesterLong;
 
 	private String cancelReason;
+	private ContractorEntity canceledBy;
+
 
 	@NotNull
 	private Status status;
@@ -115,6 +117,16 @@ public class MaterialTransactionEntity {
 
 	public void setCancelReason(String cancelReason) {
 		this.cancelReason = cancelReason;
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "canceled_by")
+	public ContractorEntity getCanceledBy() {
+		return canceledBy;
+	}
+
+	public void setCanceledBy(ContractorEntity canceledBy) {
+		this.canceledBy = canceledBy;
 	}
 
 	@Basic

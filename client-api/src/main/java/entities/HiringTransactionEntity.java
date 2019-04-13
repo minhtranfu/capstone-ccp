@@ -34,6 +34,7 @@ public class HiringTransactionEntity {
 	private LocalDate endDate;
 
 	private String cancelReason;
+	private ContractorEntity canceledBy;
 
 	private String equipmentAddress;
 	private double equipmentLatitude;
@@ -165,6 +166,17 @@ public class HiringTransactionEntity {
 
 	public void setCancelReason(String cancelReason) {
 		this.cancelReason = cancelReason;
+	}
+
+
+	@ManyToOne
+	@JoinColumn(name = "canceled_by")
+	public ContractorEntity getCanceledBy() {
+		return canceledBy;
+	}
+
+	public void setCanceledBy(ContractorEntity canceledBy) {
+		this.canceledBy = canceledBy;
 	}
 
 	@NotNull
