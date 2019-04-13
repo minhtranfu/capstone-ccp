@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArquillianContainersManager">
+    <container containerId="container.arquillian.embedded.tom-ee" name="TomEE Embedded">
+      <maven-library groupId="org.apache.tomee" artifactId="arquillian-tomee-embedded" version="RELEASE" />
+    </container>
+    <container containerId="container.arquillian.manual" name="Manual container configuration" />
+  </component>
+</project>

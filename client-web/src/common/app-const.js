@@ -1,12 +1,22 @@
 import { increment, decrement, reset } from '../redux/actions/action-creators';
 
+export const appConsts = {
+  JWT_KEY: 'JWT_TOKEN',
+  NOTI_TOKEN: 'NOTI_TOKEN'
+};
+
 export const ENTITY_KEY = {
   FOO: 'foo',
   BAR: 'bar',
   BAZ: 'baz',
   EQUIPMENT_TYPES: 'equipment_types',
   EQUIPMENT_TYPE_INFOS: 'equipment_type_infos',
+  FEEDBACK_TYPES: 'feedbackTypes',
+  MATERIAL_TYPES: 'materialTypes',
+  DEBRIS_SERVICE_TYPES: 'debrisServiceTypes',
 };
+
+const jwt = localStorage.getItem(appConsts.JWT_KEY);
 
 export const INITIAL_STATE = {
   entities: {
@@ -15,8 +25,15 @@ export const INITIAL_STATE = {
     [ENTITY_KEY.BAZ]: {},
     [ENTITY_KEY.EQUIPMENT_TYPES]: {},
     [ENTITY_KEY.EQUIPMENT_TYPE_INFOS]: {},
+    [ENTITY_KEY.FEEDBACK_TYPES]: {},
+    [ENTITY_KEY.MATERIAL_TYPES]: {},
+    [ENTITY_KEY.DEBRIS_SERVICE_TYPES]: {},
   },
-  counter: 0
+  counter: 0,
+  authentication: {
+    authenticating: !!jwt,
+    isShowLoginModal: false
+  },
 };
 
 export const ROUTES = [

@@ -5,7 +5,13 @@ const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const MinifyPlugin = require("babel-minify-webpack-plugin");
+
+// Plugin for service worker
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+// const MinifyPlugin = require("babel-minify-webpack-plugin");
+// const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const CleanPlugin = require('./utils/clean-plugin');
 const NodeUtils = require('./src/services/common/node-service');
@@ -15,17 +21,27 @@ const appConfig = require('./config/config');
 const config = {
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: '[name].bundle.js',
-    chunkFilename: '[name].bundle.js',
+    filename: '[name].bundle.[hash].js',
+    chunkFilename: '[name].bundle.[hash].js',
     publicPath: '/',
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.json']
+    extensions: ['.js', '.jsx', '.json'],
+    alias: {
+      Src: path.resolve(__dirname, 'src'),
+      Common: path.resolve(__dirname, 'src', 'common'),
+      Redux: path.resolve(__dirname, 'src', 'redux'),
+      Services: path.resolve(__dirname, 'src', 'services'),
+      Components: path.resolve(__dirname, 'src', 'components'),
+      Utils: path.resolve(__dirname, 'src', 'utils')
+    },
+    modules: [path.resolve(__dirname, 'src'), 'node_modules']
   },
   plugins: [
     new webpack.ProvidePlugin({
       $: "jquery",
-      jQuery: "jquery"
+      jQuery: "jquery",
+      "window.jQuery": "jquery"
     }),
     new CleanPlugin({
       files: ['dist/*']
@@ -37,7 +53,8 @@ const config = {
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
-      inject: 'body'
+      inject: 'body',
+      chunksSortMode: 'none',
     }),
     new webpack.DefinePlugin({
       'process.env': {
@@ -48,7 +65,14 @@ const config = {
           appConfig
         )
       }
-    })
+    }),
+    // For service worker
+    new ServiceWorkerWebpackPlugin({
+      entry: path.join(__dirname, './src/firebase-messaging-sw.js'),
+    }),
+    new CopyWebpackPlugin([
+      'src/firebase-messaging-sw.js',
+    ])
   ],
   module: {
     exprContextCritical: false, // Suppress "The request of a dependency is an expression"
@@ -63,16 +87,16 @@ const config = {
         use:
           NodeUtils.isProduction()
             ? [MiniCssExtractPlugin.loader, 'css-loader',
-              {
-                loader: 'postcss-loader',
-                options: {
-                  plugins: () => [
-                    autoprefixer({
-                      browsers: ['last 2 version']
-                    })
-                  ]
-                }
-              }, 'sass-loader']
+            {
+              loader: 'postcss-loader',
+              options: {
+                plugins: () => [
+                  autoprefixer({
+                    browsers: ['last 2 version']
+                  })
+                ]
+              }
+            }, 'sass-loader']
             : ['style-loader', 'css-loader', 'sass-loader'],
         include: [
           path.join(__dirname, 'src'),
@@ -83,7 +107,7 @@ const config = {
         test: /\.(eot|woff|woff2|ttf|svg|png|jpg)$/,
         loader: 'url-loader?limit=10000&name=[name]-[hash].[ext]',
         include: [
-          path.join(__dirname, 'src'),path.join(__dirname, 'node_modules')
+          path.join(__dirname, 'src'), path.join(__dirname, 'node_modules')
         ]
       },
       {
@@ -102,7 +126,13 @@ const config = {
 if (NodeUtils.isProduction()) {
   config.entry = './src/Bootstrap';
   config.mode = 'production';
-  config.plugins.push(new MinifyPlugin());
+  // config.optimization.push(new MinifyPlugin());
+  // Copy firebase message worker to dist folder
+  // config.plugins.push(
+  //   new CopyWebpackPlugin([
+  //     'src/firebase-messaging-sw.js',
+  //   ])
+  // );
 } else {
   config.devtool = 'eval';
   config.mode = 'development';

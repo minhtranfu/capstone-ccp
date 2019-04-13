@@ -9,14 +9,23 @@ const _request = (method, url, data, options) => {
   const defaultOptions = {
     method: method,
     url: url,
-    responseType: 'json'
+    responseType: 'json',
+    headers: {}
   };
 
   if (data) {
-    defaultOptions.data = JSON.stringify(data);
-    defaultOptions.headers = {
-      'Content-Type': 'application/json'
-    };
+    if (!options || !options.headers || !options.headers['Content-Type']) {
+      defaultOptions.data = JSON.stringify(data);
+      defaultOptions.headers = {
+        'Content-Type': 'application/json'
+      };
+    } else {
+      defaultOptions.data = data;
+    }
+  }
+  const token = localStorage.getItem('JWT_TOKEN');
+  if (token) {
+    defaultOptions.headers.Authorization = `Bearer ${token}`;
   }
 
   let requestOptions = defaultOptions;
@@ -45,12 +54,18 @@ const _request = (method, url, data, options) => {
   });
 };
 
-const DataAccessService = {
+export const DataAccessService = {
   get (url, options) {
     return _request('GET', url, null, options);
   },
   post (url, data, options) {
     return _request('POST', url, data, options);
+  },
+  put (url, data, options) {
+    return _request('PUT', url, data, options);
+  },
+  delete (url, data, options) {
+    return _request('DELETE', url, data, options);
   }
 };
 

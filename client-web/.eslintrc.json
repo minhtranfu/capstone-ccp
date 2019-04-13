@@ -17,7 +17,7 @@
     }
   },
   "plugins": ["react"],
-  "extends": [ "eslint:recommended", "standard", "plugin:react/recommended" ],
+  "extends": [ "eslint:recommended", "plugin:react/recommended" ],
   "settings": {
     "react": {
       "pragma": "React",
