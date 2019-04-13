@@ -1,40 +1,92 @@
 import React, { Component } from "react";
-import { Image, StyleSheet } from "react-native";
+import { Image } from "react-native";
 import {
   createBottomTabNavigator,
   createStackNavigator,
   createSwitchNavigator,
   createAppContainer
 } from "react-navigation";
+import DismissableStackNav from "../Utils/DismissableStackNav";
 import colors from "./colors";
 
 import Discover from "../screens/Discover";
-import Settings from "../screens/Settings";
+import Account from "../screens/Account";
+import Profile from "../screens/Account/Profile";
+import Construction from "../screens/Account/Construction";
+import ConstructionDetail from "../screens/Account/Detail";
+import CallOrTextUs from "../screens/Account/CallOrTextUs";
+import AboutUs from "../screens/Account/AboutUs";
 import Search from "../screens/Search";
-import Profile from "../screens/Profile";
-import Equipment from "../screens/Equipment";
-import EquipmentDetail from "../screens/EquipmentDetail";
-import Requester from "../screens/Equipment/Requester";
-import RequesterPost from "../screens/Equipment/RequesterPost";
-import AddEquipment from "../screens/Equipment/AddEquipment";
-import Notification from "../screens/Notification";
-import RequireLogin from "../screens/RequireLogin";
+import EquipmentResult from "../screens/Search/EquipmentResult";
+import SearchDetail from "../screens/Search/Detail";
+import MyTransaction from "../screens/MyTransaction";
+import MyTransactionDetail from "../screens/MyTransaction/Detail";
+import ConfirmTransaction from "../screens/Transaction/ConfirmTransaction";
+import MyRequest from "../screens/MyRequest";
+import EquipmentDetail from "../screens/MyRequest/Detail";
+import Notification from "../screens/MyRequest/Notification";
+import MyEquipment from "../screens/Manage";
+import MyEquipmentDetail from "../screens/Manage/Detail";
+import AddDetail from "../screens/Manage/AddEquipment/AddDetail";
+import AddDuration from "../screens/Manage/AddEquipment/AddDuration";
+import AddImage from "../screens/Manage/AddEquipment/AddImage";
+import RequireLogin from "../screens/Login/RequireLogin";
+import ConfirmAdjustDate from "../screens/MyRequest/ConfirmAdjustDate";
+import Cart from "../screens/Cart";
+import ConfirmCart from "../screens/Cart/ConfirmCart";
+import ContractorProfile from "../screens/Account/ContractorProfile";
 import Login from "../screens/Login";
-import ButtonWithIcon from "../components/ButtonWithIcon";
-
-const EquipmentDetailStack = createStackNavigator(
-  {
-    EquipmentDetail: EquipmentDetail
-  },
-  {
-    headerMode: "none"
-  }
-);
+import AuthLoading from "../screens/Login/AuthLoading";
+import MaterialSearch from "../screens/Search/MaterialSearch";
+import AddMaterialDetail from "../screens/Manage/AddMaterial/AddMaterialDetail";
+import MaterialResult from "../screens/Search/MaterialResult";
+import MaterialDetail from "../screens/Search/MaterialDetail";
+import MaterialTransaction from "../screens/Transaction/MaterialTransaction";
+import MaterialTab from "../screens/MyTransaction/MaterialTab";
+import MaterialSupplierDetail from "../screens/MyTransaction/MaterialSupplierDetail";
+import MaterialRequesterDetail from "../screens/MyRequest/MaterialRequesterDetail";
+import MyMaterialDetail from "../screens/Manage/MaterialDetail";
+import AddDebrisPost from "../screens/Manage/AddDebrisPost";
+import MyPostDetail from "../screens/Manage/MyPostDetail";
+import AddServicesTypes from "../screens/Manage/AddServicesTypes";
+import BidSearch from "../screens/Search/BidSearch";
+import BidResult from "../screens/Search/BidResult";
+import MyBidsDetail from "../screens/Manage/MyBidsDetail";
+import BidDetail from "../screens/Search/BidDetail";
+import ConfirmBid from "../screens/Transaction/ConfirmBid";
+import Subscription from "../screens/Account/Subscription";
+import DebrisDetail from "../screens/MyRequest/DebrisDetail";
+import SupplierDebrisDetail from "../screens/MyTransaction/SupplierDebrisDetail";
+import Feedback from "../screens/MyRequest/Feedback";
+import AddSubscription from "../screens/Account/AddSubscription";
+import CancelBid from "../screens/MyTransaction/components/CancelBid";
+import EditSubscription from "../screens/Account/EditSubscription";
+import Register from "../screens/Login/Register";
+import ManageImages from "../screens/Manage/components/ManageImages";
+import MaterialCartDetail from "../screens/Cart/Detail";
+import UploadImage from "../screens/Login/UploadImage";
+import VerifyAccount from "../screens/Account/VerifyAccount";
+// import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
   {
     Discover: Discover,
-    Detail: EquipmentDetail
+    ConfirmTransaction: ConfirmTransaction,
+    Search: Search,
+    Result: EquipmentResult,
+    SearchDetail: SearchDetail,
+    Cart: Cart,
+    MaterialCartDetail: MaterialCartDetail,
+    ConfirmCart: ConfirmCart,
+    MaterialSearch: MaterialSearch,
+    MaterialResult: MaterialResult,
+    MaterialDetail: MaterialDetail,
+    BidSearch: BidSearch,
+    BidResult: BidResult,
+    BidDetail: BidDetail,
+    ConfirmBid: ConfirmBid,
+    ConfirmMaterial: MaterialTransaction,
+    AddSubscription: AddSubscription
   },
   {
     headerMode: "none"
@@ -46,7 +98,12 @@ DiscoverStack.navigationOptions = ({ navigation }) => {
 
   let routeName = navigation.state.routes[navigation.state.index].routeName;
 
-  if (routeName == "Detail") {
+  if (
+    routeName == "SearchDetail" ||
+    routeName == "MaterialDetail" ||
+    routeName == "BidDetail" ||
+    routeName == "ConfirmBid"
+  ) {
     tabBarVisible = false;
   }
 
@@ -55,221 +112,205 @@ DiscoverStack.navigationOptions = ({ navigation }) => {
   };
 };
 
-const SettingStack = createStackNavigator(
+const AuthStack = createStackNavigator(
   {
-    Settings: Settings
+    Login: Login
   },
   {
     headerMode: "none"
   }
 );
 
-const SearchStack = createStackNavigator(
+const AccountStack = createStackNavigator(
   {
-    Search: Search
+    Account: Account,
+    Profile: Profile,
+    CallOrTextUs: CallOrTextUs,
+    AboutUs: AboutUs,
+    Construction: Construction,
+    ConstructionDetail: ConstructionDetail,
+    Subcription: Subscription,
+    AddSubscription: AddSubscription,
+    EditSubscription: EditSubscription,
+    Register: Register,
+    UploadImage: UploadImage,
+    VerifyAccount: VerifyAccount
+    // AuthLoading: AuthLoading,
+    // Auth: AuthStack
   },
   {
+    initialRouteName: "Account",
     headerMode: "none"
   }
 );
 
-const RequesterStack = createStackNavigator(
+AccountStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = true;
+
+  let routeName = navigation.state.routes[navigation.state.index].routeName;
+
+  if (routeName == "AddSubscription") {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarVisible
+  };
+};
+
+const AddNewEquipmentStack = DismissableStackNav(
   {
-    Request: Requester,
-    Post: RequesterPost,
-    AddEquipment: AddEquipment
+    AddDetail: AddDetail,
+    AddDuration: AddDuration,
+    AddImage: AddImage,
+    AddMaterialDetail: AddMaterialDetail
   },
   {
-    headerMode: "none"
+    headerMode: "none",
+    initialRouteName: "AddDetail"
   }
 );
 
-const EquipmentStack = createStackNavigator(
+const MyEquipmentStack = createStackNavigator(
   {
-    Equipment: Equipment,
-    Requests: RequesterStack
+    MyEquipment: MyEquipment,
+    MyEquipmentDetail: MyEquipmentDetail,
+    AddNewEquipment: AddNewEquipmentStack,
+    MyMaterialDetail: MyMaterialDetail,
+    MyPostDetail: MyPostDetail,
+    MyBidsDetail: MyBidsDetail,
+    AddDebrisPost: AddDebrisPost,
+    AddServicesTypes: AddServicesTypes,
+    ManageImages: ManageImages,
+    Login
   },
   {
-    mode: "modal",
-    headerMode: "none"
+    headerMode: "none",
+    initialRouteName: "MyEquipment"
   }
 );
 
-const NotificationStack = createStackNavigator(
+MyEquipmentStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = true;
+
+  let routeName = navigation.state.routes[navigation.state.index].routeName;
+
+  if (routeName == "AddNewEquipment" || routeName == "MyPostDetail") {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarVisible
+  };
+};
+
+const MyTransactionStack = createStackNavigator(
   {
-    Notification: Notification
+    MyTransaction: MyTransaction,
+    MyTransactionDetail: MyTransactionDetail,
+    MaterialSupplierDetail: MaterialSupplierDetail,
+    ContractorProfile: ContractorProfile,
+    SupplierDebrisDetail: SupplierDebrisDetail,
+    Login,
+    Feedback: Feedback,
+    CancelBid: CancelBid
   },
   {
-    headerMode: "none"
+    headerMode: "none",
+    initialRouteName: "MyTransaction"
+  }
+);
+
+const MyRequestStack = createStackNavigator(
+  {
+    MyRequest: MyRequest,
+    Notification: Notification,
+    Detail: EquipmentDetail,
+    ConfirmAdjustDate: ConfirmAdjustDate,
+    ContractorProfile: ContractorProfile,
+    MaterialRequesterDetail: MaterialRequesterDetail,
+    DebrisDetail: DebrisDetail,
+    LoginModal: Login,
+    Feedback: Feedback,
+    CancelBid: CancelBid
+  },
+  {
+    headerMode: "none",
+    initialRouteName: "MyRequest"
   }
 );
 
 const TabNavigator = createBottomTabNavigator(
   {
     Discover: DiscoverStack,
-    Notification: NotificationStack,
-    Call: {
-      screen: () => null, // Empty screen
-      navigationOptions: () => ({
-        title: "",
-        tabBarIcon: <ButtonWithIcon /> // Plus button component
-      })
-    },
-    Equipment: EquipmentStack,
-    Settings: SettingStack
+    MyRequest: MyRequestStack,
+    Equipment: MyEquipmentStack,
+    Transaction: MyTransactionStack,
+    Account: AccountStack
   },
   {
     initialRouteName: "Discover",
-    defaultNavigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused }) => {
-        const { routeName } = navigation.state;
-        let icon;
-        if (routeName === "Discover") {
-          icon = focused
-            ? require("../../assets/icons/discover_ic_active.png")
-            : require("../../assets/icons/discover_ic.png");
-        } else if (routeName === "Notification") {
-          icon = focused
-            ? require("../../assets/icons/search_ic_active.png")
-            : require("../../assets/icons/search_ic.png");
-        } else if (routeName === "Equipment") {
-          icon = focused
-            ? require("../../assets/icons/plus_ic_active.png")
-            : require("../../assets/icons/plus_ic.png");
-        } else if (routeName === "Settings") {
-          icon = focused
-            ? require("../../assets/icons/profile_ic_active.png")
-            : require("../../assets/icons/profile_ic.png");
-        }
+    defaultNavigationOptions: ({ navigation }) => {
+      const { routeName, index, routes } = navigation.state;
+      let tabBarVisible = true;
 
-        return (
-          <Image
-            source={icon}
-            style={{
-              width: 26,
-              height: 26,
-              marginTop: 2
-            }}
-            resizeMode={"contain"}
-          />
-        );
+      if (
+        routes &&
+        (routes[index].routeName === "Profile" ||
+          routes[index].routeName === "LoginModal" ||
+          routes[index].routeName === "Feedback")
+      ) {
+        tabBarVisible = false;
       }
-    }),
+      return {
+        tabBarVisible,
+        tabBarIcon: ({ focused, horizontal, tintColor }) => {
+          const { routeName } = navigation.state;
+          let icon;
+          if (routeName === "Discover") {
+            icon = require("../../assets/icons/icons8-compass.png");
+          } else if (routeName === "MyRequest") {
+            icon = require("../../assets/icons/icons8-activity.png");
+          } else if (routeName === "Equipment") {
+            icon = require("../../assets/icons/icons8-garage.png");
+          } else if (routeName === "Transaction") {
+            icon = require("../../assets/icons/icons8-transaction.png");
+          } else if (routeName === "Account") {
+            icon = require("../../assets/icons/icons8-settings.png");
+          }
+
+          return (
+            <Image
+              source={icon}
+              style={{
+                height: 28,
+                aspectRatio: 1,
+                marginTop: 2,
+                tintColor: focused ? colors.secondaryColor : "#a5acb8"
+              }}
+            />
+          );
+        }
+      };
+    },
     tabBarOptions: {
-      activeTintColor: colors.primaryColor,
-      inactiveTintColor: colors.secondaryColor,
+      showLabel: true,
+      activeTintColor: colors.secondaryColor,
+      // inactiveTintColor: colors.white,
       style: {
-        backgroundColor: colors.white,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 0.5,
-        borderTopWidth: 0
+        backgroundColor: "#fcfcfc"
       }
     }
   }
 );
 
-// const TabNavigator = createBottomTabNavigator({
-//   Discover: {
-//     screen: DiscoverStack,
-//     navigationOptions: {
-//       title: "Discover",
-//       tabBarIcon: ({ focused }) =>
-//         focused ? (
-//           <Image
-//             source={require("../../assets/icons/discover_ic_active.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         ) : (
-//           <Image
-//             source={require("../../assets/icons/discover_ic.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         )
-//     }
-//   },
-//   Notification: {
-//     screen: NotificationStack,
-//     navigationOptions: {
-//       title: "Notification",
-//       tabBarIcon: ({ focused }) =>
-//         focused ? (
-//           <Image
-//             source={require("../../assets/icons/search_ic_active.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         ) : (
-//           <Image
-//             source={require("../../assets/icons/search_ic.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         )
-//     }
-//   },
-//   Call: {
-//     screen: () => null, // Empty screen
-//     navigationOptions: () => ({
-//       title: "",
-//       tabBarIcon: <ButtonWithIcon /> // Plus button component
-//     })
-//   },
-//   Equipment: {
-//     screen: EquipmentStack,
-//     navigationOptions: {
-//       title: "Equipment",
-//       tabBarIcon: ({ focused }) =>
-//         focused ? (
-//           <Image
-//             source={require("../../assets/icons/plus_ic_active.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         ) : (
-//           <Image
-//             source={require("../../assets/icons/plus_ic.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         )
-//     }
-//   },
-//   Settings: {
-//     screen: SettingStack,
-//     navigationOptions: {
-//       title: "Profile",
-//       tabBarIcon: ({ focused }) =>
-//         focused ? (
-//           <Image
-//             source={require("../../assets/icons/profile_ic_active.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         ) : (
-//           <Image
-//             source={require("../../assets/icons/profile_ic.png")}
-//             style={styles.image}
-//             resizeMode={"contain"}
-//           />
-//         )
-//     }
-//   }
-// });
-
-const AppNavigator = createSwitchNavigator({
-  App: TabNavigator
-});
-
-const styles = StyleSheet.create({
-  image: {
-    width: 26,
-    height: 26,
-    marginTop: 2
-  }
-});
+const AppNavigator = createSwitchNavigator(
+  {
+    // Auth: AuthStack,
+    // AuthLoading: AuthLoading,
+    App: TabNavigator
+  },
+  { initialRouteName: "App" }
+);
 
 export default createAppContainer(AppNavigator);

@@ -1,16 +1,10 @@
 import React, { Component } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   TouchableOpacity,
-  TouchableNativeFeedback,
-  Image,
-  Platform,
   ActionSheetIOS,
   Alert
 } from "react-native";
-import { TabBarBottom } from "react-navigation";
+import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../config/colors";
 
 const ButtonWithIcon = () => {
@@ -52,10 +46,10 @@ const ButtonWithIcon = () => {
 
   return (
     <TouchableOpacity style={styles.actionButton} onPress={this.showAction}>
-      <Image
-        source={require("../../assets/icons/phone_ic.png")}
-        style={styles.image}
-        resizeMode={"contain"}
+      <MaterialIcons
+        name="phone"
+        size={26}
+        color={colors.text}
       />
     </TouchableOpacity>
   );
@@ -67,17 +61,17 @@ const styles = {
     height: 28
   },
   actionButton: {
-    backgroundColor: "#6200EE",
-    width: 55,
-    height: 55,
-    borderRadius: 55 / 2,
+    backgroundColor: colors.secondaryColor,
+    width: 60,
+    height: 60,
+    borderRadius: 60 / 2,
     alignItems: "center",
     justifyContent: "center",
     borderColor: colors.secondaryColor,
     borderBottomWidth: 1,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
+    shadowOpacity: 0.3,
     shadowRadius: 3
   }
 };

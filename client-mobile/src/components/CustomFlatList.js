@@ -13,7 +13,15 @@ import colors from "../config/colors";
 
 class CustomFlatList extends PureComponent {
   render() {
-    const { data, renderItem, isHorizontal, numColumns, style } = this.props;
+    const {
+      data,
+      renderItem,
+      isHorizontal,
+      numColumns,
+      style,
+      contentContainerStyle,
+      ItemSeparatorComponent
+    } = this.props;
     return (
       <View style={[styles.container, style]}>
         <FlatList
@@ -23,7 +31,8 @@ class CustomFlatList extends PureComponent {
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
           numColumns={numColumns}
-          contentContainerStyle={this.props.contentContainerStyle}
+          contentContainerStyle={contentContainerStyle}
+          ItemSeparatorComponent={ItemSeparatorComponent}
         />
       </View>
     );

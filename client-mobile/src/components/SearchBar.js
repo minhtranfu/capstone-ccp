@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   Image
 } from "react-native";
+import { Feather } from "@expo/vector-icons";
+
 import colors from "../config/colors";
+import fontSize from "../config/fontSize";
 
 class SearchBar extends Component {
   constructor() {
     super();
-
     this.state = {
       keyword: ""
     };
@@ -19,67 +21,75 @@ class SearchBar extends Component {
 
   render() {
     const { keyword } = this.state;
-    const { anonymous } = this.props;
+    const {
+      onPress,
+      renderRightButton,
+      renderLeftButton,
+      clearButtonMode,
+      onSubmitEditing,
+      handleOnChangeText,
+      icon,
+      placeholder,
+      style
+    } = this.props;
 
     return (
-      <View style={[styles.searchWrapper, this.props.style]}>
-        <TouchableOpacity style={styles.buttonWrapper}>
-          <Image
-            source={{ uri: "https://i.imgur.com/MMJSDpJ.png" }}
-            style={styles.image}
-          />
+      <View style={[styles.container, style]}>
+        {renderLeftButton ? renderLeftButton() : null}
+        <View
+          style={[
+            styles.buttonWrapper,
+            renderLeftButton ? { marginLeft: 5 } : null,
+            renderRightButton ? { marginRight: 5 } : null
+          ]}
+        >
+          <Feather name={icon || "search"} size={16} />
           <TextInput
             style={styles.input}
-            onChangeText={text => this.setState({ keyword: text })}
-            placeholder="Search"
-            placeholderTextColor={"#FFFFFF4D"}
+            onChangeText={text => {
+              this.setState({ keyword: text });
+              handleOnChangeText(text);
+            }}
+            placeholder={placeholder || "Search"}
+            placeholderTextColor={colors.text50}
             autoCorrect={false}
             returnKeyType="search"
-            onSubmitEditing={() =>
-              anonymous
-                ? navigationService.navigate("SearchResultScreenWithSignIn", {
-                    keyword
-                  })
-                : navigationService.navigate("SearchResultScreen", { keyword })
+            clearButtonMode={
+              clearButtonMode ? clearButtonMode : "while-editing"
             }
+            onSubmitEditing={onSubmitEditing}
           />
-        </TouchableOpacity>
+        </View>
+        {renderRightButton ? renderRightButton() : null}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  icon: {
-    paddingTop: 3
-  },
-  searchWrapper: {
-    flexDirection: "row",
-    backgroundColor: "#00000023",
-    borderRadius: 8,
+  container: {
+    height: 44,
     flex: 1,
-    height: 32,
-    marginHorizontal: 15,
-    paddingHorizontal: 5,
-    alignItems: "center"
+    flexDirection: 'row',
+    alignItems: "center",
+    paddingVertical: 5
   },
   buttonWrapper: {
+    alignSelf: 'stretch',
+    flex: 1,
+    backgroundColor: colors.gray,
+    borderRadius: 5,
+    paddingHorizontal: 10,
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    justifyContent: "center",
   },
   input: {
     flex: 1,
-    height: 32,
+    paddingLeft: 10,
     backgroundColor: "transparent",
-    color: colors.white,
-    fontSize: 15,
-    lineHeight: 32
-  },
-  image: {
-    width: 24,
-    height: 16,
-    marginRight: 10,
-    marginLeft: 5
+    fontSize: fontSize.secondaryText + 1,
+    lineHeight: fontSize.secondaryText + 1,
   }
 });
 

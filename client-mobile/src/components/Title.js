@@ -1,18 +1,25 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import PropTypes from "prop-types";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
 
 class Title extends Component {
+  static propTypes = {
+    title: PropTypes.string,
+    hasMore: PropTypes.string
+  };
   render() {
-    const { title, hasMore, titleStyle } = this.props;
+    const { title, hasMore, titleStyle, style, onPress } = this.props;
     return (
-      <View style={styles.container}>
-        <Text style={[styles.text, titleStyle]}>{title.toUpperCase()}</Text>
-        <Text style={styles.hasMoreText}>
-          {hasMore ? hasMore || "More" : null}
-        </Text>
+      <View style={[styles.container, style]}>
+        <Text style={[styles.text, titleStyle]}>{title}</Text>
+        <TouchableOpacity onPress={onPress}>
+          <Text style={styles.hasMoreText}>
+            {hasMore ? hasMore || "More" : null}
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -23,18 +30,19 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 5
+    justifyContent: "space-between"
   },
   text: {
-    color: colors.secondaryColor,
+    color: colors.primaryColor,
     fontSize: fontSize.bodyText,
     fontWeight: "500",
-    paddingLeft: 15
+    paddingTop: 15,
+    paddingBottom: 10
   },
   hasMoreText: {
-    color: colors.primaryColor,
-    fontSize: fontSize.caption
+    color: colors.secondaryColor,
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500"
   }
 });
 
