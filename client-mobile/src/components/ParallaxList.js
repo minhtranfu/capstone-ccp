@@ -24,10 +24,6 @@ class ParallaxList extends Component {
     inputRange: [0, 40, 50],
     outputRange: [0, 0.7, 1]
   });
-  headerOpacity = this.nativeScroll.interpolate({
-    inputRange: [0, 35, 50],
-    outputRange: [1, 0.3, 0]
-  });
   constructor(props) {
     super(props);
     this.nativeScroll.addListener(
@@ -36,11 +32,7 @@ class ParallaxList extends Component {
   }
 
   renderHeader = () => (
-    <Animated.View
-      style={{
-        opacity: this.titleOpacity
-      }}
-    >
+    <Animated.View>
       <Text style={styles.title}>{this.props.title}</Text>
     </Animated.View>
   );
@@ -113,9 +105,6 @@ class ParallaxList extends Component {
               { useNativeDriver: true }
             ),
             scrollEventThrottle: 1
-            // ListHeaderComponent: this.props.removeTitle
-            //   ? null
-            //   : this.renderHeader()
           },
           [
             this.props.removeTitle ? null : (

@@ -22,8 +22,8 @@ import SearchDetail from "../screens/Search/Detail";
 import MyTransaction from "../screens/MyTransaction";
 import MyTransactionDetail from "../screens/MyTransaction/Detail";
 import ConfirmTransaction from "../screens/Transaction/ConfirmTransaction";
-import Activity from "../screens/MyRequest";
-import ActivityDetail from "../screens/MyRequest/Detail";
+import MyRequest from "../screens/MyRequest";
+import EquipmentDetail from "../screens/MyRequest/Detail";
 import Notification from "../screens/MyRequest/Notification";
 import MyEquipment from "../screens/Manage";
 import MyEquipmentDetail from "../screens/Manage/Detail";
@@ -65,6 +65,7 @@ import Register from "../screens/Login/Register";
 import ManageImages from "../screens/Manage/components/ManageImages";
 import MaterialCartDetail from "../screens/Cart/Detail";
 import UploadImage from "../screens/Login/UploadImage";
+import VerifyAccount from "../screens/Account/VerifyAccount";
 // import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
@@ -132,7 +133,8 @@ const AccountStack = createStackNavigator(
     AddSubscription: AddSubscription,
     EditSubscription: EditSubscription,
     Register: Register,
-    UploadImage: UploadImage
+    UploadImage: UploadImage,
+    VerifyAccount: VerifyAccount
     // AuthLoading: AuthLoading,
     // Auth: AuthStack
   },
@@ -219,11 +221,11 @@ const MyTransactionStack = createStackNavigator(
   }
 );
 
-const ActivityStack = createStackNavigator(
+const MyRequestStack = createStackNavigator(
   {
-    Activity: Activity,
+    MyRequest: MyRequest,
     Notification: Notification,
-    Detail: ActivityDetail,
+    Detail: EquipmentDetail,
     ConfirmAdjustDate: ConfirmAdjustDate,
     ContractorProfile: ContractorProfile,
     MaterialRequesterDetail: MaterialRequesterDetail,
@@ -234,14 +236,14 @@ const ActivityStack = createStackNavigator(
   },
   {
     headerMode: "none",
-    initialRouteName: "Activity"
+    initialRouteName: "MyRequest"
   }
 );
 
 const TabNavigator = createBottomTabNavigator(
   {
     Discover: DiscoverStack,
-    Activity: ActivityStack,
+    MyRequest: MyRequestStack,
     Equipment: MyEquipmentStack,
     Transaction: MyTransactionStack,
     Account: AccountStack
@@ -267,7 +269,7 @@ const TabNavigator = createBottomTabNavigator(
           let icon;
           if (routeName === "Discover") {
             icon = require("../../assets/icons/icons8-compass.png");
-          } else if (routeName === "Activity") {
+          } else if (routeName === "MyRequest") {
             icon = require("../../assets/icons/icons8-activity.png");
           } else if (routeName === "Equipment") {
             icon = require("../../assets/icons/icons8-garage.png");
@@ -292,9 +294,9 @@ const TabNavigator = createBottomTabNavigator(
       };
     },
     tabBarOptions: {
-      showLabel: false,
+      showLabel: true,
       activeTintColor: colors.secondaryColor,
-      inactiveTintColor: colors.white,
+      // inactiveTintColor: colors.white,
       style: {
         backgroundColor: "#fcfcfc"
       }

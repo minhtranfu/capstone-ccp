@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { changeMaterialTransactionRequest } from "../../redux/actions/transaction";
+import { bindActionCreators } from "redux";
 import { Image } from "react-native-expo-image-cache";
 import Feather from "@expo/vector-icons/Feather";
 
@@ -32,11 +33,11 @@ import fontSize from "../../config/fontSize";
       loading: state.material.loading
     };
   },
-  dispatch => ({
-    fetchChangeTransactionStatus: (requestId, request) => {
-      dispatch(changeMaterialTransactionRequest(requestId, request));
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      { fetchChangeTransactionStatus: changeMaterialTransactionRequest },
+      dispatch
+    )
 )
 class MaterialSupplierDetail extends Component {
   constructor(props) {
@@ -64,9 +65,13 @@ class MaterialSupplierDetail extends Component {
       {
         text: "OK",
         onPress: () => {
-          this.props.fetchChangeTransactionStatus(transactionId, {
-            status: transactionStatus
-          });
+          this.props.fetchChangeTransactionStatus(
+            transactionId,
+            {
+              status: transactionStatus
+            },
+            "Supplier"
+          );
           this.props.navigation.goBack();
         }
       }

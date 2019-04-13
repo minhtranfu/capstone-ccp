@@ -74,7 +74,7 @@ export default async function configAPI(config) {
       } else if (error.request) {
         console.log("Network timeout");
         config.store.dispatch(
-          StatusAction.error("Eror", "Network timeout", Date.now())
+          StatusAction.error("Error", "Network timeout", Date.now())
         );
       } else {
         console.log("Error", error.message);

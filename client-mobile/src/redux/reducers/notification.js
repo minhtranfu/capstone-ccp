@@ -29,11 +29,19 @@ export default function notificationReducer(state = INITIAL_STATE, action) {
       };
     }
     case Actions.GET_ALL_NOTIFICATION.SUCCESS: {
-      return {
-        ...state,
-        loading: false,
-        listNotification: payload.data
-      };
+      if (action.offset <= 0) {
+        return {
+          ...state,
+          loading: false,
+          listNotification: payload.data
+        };
+      } else {
+        return {
+          ...state,
+          loading: false,
+          listNotification: state.listNotification.concat(payload.data)
+        };
+      }
     }
     case Actions.READ_NOTIFICATION.REQUEST: {
       return {

@@ -108,7 +108,7 @@ class BidSearch extends Component {
 
     this.props.navigation.navigate("BidResult", {
       keyword: keyword,
-      typeId: debrisTypeIndex > 0 ? debrisTypes[debrisTypeIndex - 1].id : 0
+      typeId: debrisTypeIndex > 0 ? debrisTypes[debrisTypeIndex - 1].id : ""
     });
   };
 
@@ -147,7 +147,7 @@ class BidSearch extends Component {
     return (
       <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
         <ParallaxList
-          title={"Search debris bid"}
+          title={"Search debris post"}
           hasLeft={true}
           scrollElement={<Animated.ScrollView />}
           renderScrollItem={this._renderScrollContent}

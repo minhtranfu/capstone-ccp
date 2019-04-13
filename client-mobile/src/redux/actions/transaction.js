@@ -217,10 +217,11 @@ export function requestMaterialTransaction(material) {
       type: Actions.SEND_MATERIAL_TRANSACTION_REQUEST.SUCCESS,
       payload: res
     });
+    dispatch(StatusAction.success("Success"));
   };
 }
 
-export function changeMaterialTransactionRequest(requestId, request) {
+export function changeMaterialTransactionRequest(requestId, request, role) {
   return async dispatch => {
     dispatch({
       type: Actions.CHANGE_MATERIAL_TRANSACTION_REQUEST.REQUEST
@@ -228,7 +229,7 @@ export function changeMaterialTransactionRequest(requestId, request) {
     const res = await axios.put(`materialTransactions/${requestId}`, request);
     dispatch({
       type: Actions.CHANGE_MATERIAL_TRANSACTION_REQUEST.SUCCESS,
-      payload: { data: res, id: requestId }
+      payload: { data: res, id: requestId, role }
     });
   };
 }
@@ -328,6 +329,7 @@ export function sendMaterialFeedback(transactionId, materialId, feedback) {
 }
 
 export function sendDebrisFeedback(transactionId, feedback) {
+  console.log(feedback);
   return async dispatch => {
     try {
       dispatch({

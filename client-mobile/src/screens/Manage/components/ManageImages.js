@@ -7,7 +7,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Image as RNImage,
-  Alert
+  Alert,
+  FlatList
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { SafeAreaView } from "react-navigation";
@@ -59,15 +60,6 @@ class ManageImages extends Component {
       loading: null
     };
   }
-
-  // componentDidMount() {
-  //   const { id } = this.props.navigation.state.params;
-  //   this.props.fetchGetEquipmentImages(id);
-  // }
-
-  // componentWillUnmount() {
-  //   this.props.fetchResetEquipmentImage();
-  // }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     //Check data is update
@@ -175,54 +167,33 @@ class ManageImages extends Component {
     });
   };
 
-  _renderScrollViewContent = () => {
+  _formatData = () => {
     const { imageList } = this.props;
-    const { images } = this.state;
-    const { id } = this.props.navigation.state.params;
+    if (imageList.length % 2 === 1) {
+      imageList.push({ id: "blank", url: null });
+    }
+    return imageList;
+  };
+
+  _renderItem = ({ item, index }) => {
     return (
       <View
-        style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap" }}
+        style={{ flex: 1, height: 120, marginRight: index % 2 === 0 ? 15 : 0 }}
       >
-        {/* {imageList.length > 0
-          ? imageList.map(item => (
-              <View style={{ flex: 1, height: 120 }}>
-                <Image
-                  key={item.id}
-                  uri={item.url}
-                  resizeMode={"contain"}
-                  style={{ flex: 1, height: 120 }}
-                />
-                <TouchableOpacity
-                  style={styles.iconDelete}
-                  onPress={() =>
-                    this.props.fetchDeteleEquipmentImage(id, item.id)
-                  }
-                >
-                  <Feather name={"x"} size={20} color={colors.secondaryColor} />
-                </TouchableOpacity>
-              </View>
-            ))
-          : null} */}
-        {images.length > 0
-          ? images.map((item, index) => (
-              <View style={{ flex: 1, height: 120 }}>
-                <Image
-                  key={item.id}
-                  uri={item.url}
-                  resizeMode={"cover"}
-                  style={{ flex: 1, height: 120 }}
-                />
-                <TouchableOpacity
-                  style={styles.iconDelete}
-                  onPress={() =>
-                    this.props.fetchDeteleEquipmentImage(id, item.id)
-                  }
-                >
-                  <Feather name={"x"} size={20} color={colors.secondaryColor} />
-                </TouchableOpacity>
-              </View>
-            ))
-          : null}
+        <Image
+          key={item.id}
+          uri={item.url}
+          resizeMode={"cover"}
+          style={{ flex: 1, height: 120 }}
+        />
+        {item.id === "blank" ? null : (
+          <TouchableOpacity
+            style={styles.iconDelete}
+            onPress={() => this.props.fetchDeteleEquipmentImage(id, item.id)}
+          >
+            <Feather name={"x"} size={20} color={colors.secondaryColor} />
+          </TouchableOpacity>
+        )}
       </View>
     );
   };
@@ -253,24 +224,19 @@ class ManageImages extends Component {
         {!loading ? (
           <View style={{ flex: 1 }}>
             {this._renderHeader()}
-            <ScrollView>{this._renderScrollViewContent()}</ScrollView>
-            {/* <SafeAreaView
-              forceInset={{ bottom: "always" }}
-              style={{
-                backgroundColor: dataChanged ? colors.secondaryColor : "#a5acb8"
+            <FlatList
+              style={{ flex: 1 }}
+              contentContainerStyle={{
+                paddingHorizontal: 15,
+                paddingVertical: 5
               }}
-            >
-              <Button
-                text={"Save"}
-                disabled={!this._checkImageIsNull()}
-                onPress={this._handleSave}
-                buttonStyle={
-                  this._checkImageIsNull()
-                    ? styles.buttonEnable
-                    : styles.buttonDisable
-                }
-              />
-            </SafeAreaView> */}
+              data={this._formatData(imageList)}
+              renderItem={this._renderItem}
+              numColumns={2}
+              ListEmptyComponent={() => <Text>No data</Text>}
+              ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+              keyExtractor={(item, index) => index.toString()}
+            />
           </View>
         ) : (
           <Loading />

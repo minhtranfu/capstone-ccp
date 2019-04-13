@@ -8,6 +8,7 @@ import {
   Animated
 } from "react-native";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { SafeAreaView } from "react-navigation";
 import { Feather } from "@expo/vector-icons";
 import {
@@ -30,23 +31,21 @@ import fontSize from "../../config/fontSize";
   state => ({
     contractor: state.contractor.detail
   }),
-  dispatch => ({
-    fetchSendDebrisFeedback: (id, contractor) => {
-      dispatch(sendDebrisFeedback(id, contractor));
-    },
-    fetchSendMaterialFeedback: (id, materialId, contractor) => {
-      dispatch(sendMaterialFeedback(id, materialId, contractor));
-    },
-    fetchSendEquipmentFeedback: (id, contractor) => {
-      dispatch(sendEquipmentFeedback(id, contractor));
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      {
+        fetchSendDebrisFeedback: sendDebrisFeedback,
+        fetchSendMaterialFeedback: sendMaterialFeedback,
+        fetchSendEquipmentFeedback: sendEquipmentFeedback
+      },
+      dispatch
+    )
 )
 class Feedback extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      rating: 0,
+      rating: 3,
       content: "",
       dataChanged: false
     };
@@ -70,22 +69,32 @@ class Feedback extends Component {
     console.log(transactionId);
     switch (type) {
       case "Debris":
-        this.props.fetchSendDebrisFeedback(transactionId, {
-          ...feedback,
-          debrisTransaction: { id: transactionId }
-        });
+        return (
+          this.props.fetchSendDebrisFeedback(transactionId, {
+            ...feedback,
+            debrisTransaction: { id: transactionId }
+          }),
+          this.props.navigation.goBack()
+        );
       case "Material":
-        this.props.fetchSendMaterialFeedback(transactionId, materialId, {
-          ...feedback,
-          materialTransactionDetail: { id: materialId }
-        });
+        return (
+          this.props.fetchSendMaterialFeedback(transactionId, materialId, {
+            ...feedback,
+            materialTransactionDetail: { id: materialId }
+          }),
+          this.props.navigation.goBack()
+        );
+      case "Equipment":
+        return (
+          this.props.fetchSendEquipmentFeedback(transactionId, {
+            ...feedback,
+            hiringTransaction: { id: transactionId }
+          }),
+          this.props.navigation.goBack()
+        );
       default:
-        this.props.fetchSendEquipmentFeedback(transactionId, {
-          ...feedback,
-          hiringTransaction: { id: transactionId }
-        });
+        return null;
     }
-    this.props.navigation.goBack();
   };
 
   _renderScrollViewItem = () => {

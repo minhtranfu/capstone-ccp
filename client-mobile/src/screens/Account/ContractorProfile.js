@@ -39,7 +39,7 @@ const DROPDOWN_FEEDBACK_OPTIONS = [
 
 @connect(
   state => ({
-    contractor: state.contractor.info,
+    contractor: state.contractor.detail,
     loading: state.contractor.loading,
     types: state.contractor.feedbackTypes,
     user: state.auth.data
@@ -80,7 +80,7 @@ class ContractorProfile extends Component {
 
   _handleOnSubmit = () => {
     const { id } = this.props.navigation.state.params;
-    const { text, checked, feedbackIndex } = this.state;
+    const { text, checked, feedbackIndex, feedback } = this.state;
     const { user } = this.props;
     const feedBackList = this._handleFeedbackDropdown();
     if (!feedback) {
@@ -129,7 +129,7 @@ class ContractorProfile extends Component {
           <Header
             renderLeftButton={() => (
               <TouchableOpacity onPress={() => this._setModalVisible(false)}>
-                <Feather name={"x"} size={24} />
+                <Feather name={"chevron-left"} size={24} />
               </TouchableOpacity>
             )}
           >
@@ -224,7 +224,8 @@ class ContractorProfile extends Component {
   };
 
   render() {
-    const { loading, navigation } = this.props;
+    const { loading, navigation, types } = this.props;
+    console.log(this.props.types);
     return (
       <SafeAreaView
         forceInset={{ bottom: "never", top: "always" }}
@@ -239,7 +240,7 @@ class ContractorProfile extends Component {
         >
           <Text style={styles.header}>Profile</Text>
         </Header>
-        {!loading ? this._renderListItem() : <Loading />}
+        {!loading && types.length > 0 ? this._renderListItem() : <Loading />}
       </SafeAreaView>
     );
   }

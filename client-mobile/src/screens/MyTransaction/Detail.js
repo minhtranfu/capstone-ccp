@@ -390,7 +390,7 @@ class MyTransactionDetail extends Component {
                 this.props.navigation.goBack();
               }}
             >
-              <Feather name="x" size={26} />
+              <Feather name="chevron-left" size={26} />
             </TouchableOpacity>
           )}
         >

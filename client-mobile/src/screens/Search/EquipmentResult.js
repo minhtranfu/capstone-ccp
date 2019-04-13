@@ -45,7 +45,9 @@ class EquipmentResult extends Component {
       filterModalVisible: false,
       calendarVisible: false,
       beginDate: null,
-      endDate: null
+      endDate: null,
+      offset: 0,
+      loadMore: false
     };
   }
 
@@ -59,24 +61,15 @@ class EquipmentResult extends Component {
         beginDate: nextParams.beginDate,
         endDate: nextParams.endDate
       };
-    } else return null;
+    }
+    return null;
   }
 
   componentDidMount() {
     const { equipment } = this.props.navigation.state.params;
-    //console.log(beginDate, endDate);
-    //const fullAddress = query.main_text.concat(", ", query.secondary_text);
+    const { offset } = this.state;
 
-    this.props.fetchSearchEquipment(
-      equipment
-      // query.main_text,
-      // lat,
-      // long,
-      // moment(beginDate).format("YYYY-MM-DD"),
-      // moment(endDate).format("YYYY-MM-DD"),
-      // equipmentTypeId,
-      // keyword
-    );
+    this.props.fetchSearchEquipment(equipment, offset);
   }
 
   _showAlert = (title, msg) => {
@@ -99,6 +92,37 @@ class EquipmentResult extends Component {
       calendarVisible: visible,
       modalVisible: !visible
     });
+  };
+
+  _handleSearchMore = async () => {
+    const { equipment } = this.props.navigation.state.params;
+    const { offset } = this.state;
+    await this.props.fetchSearchEquipment(equipment, offset);
+    this.setState({ loadMore: false });
+  };
+
+  _handleLoadMore = async () => {
+    const { listSearch } = this.props;
+    const { offset, loadMore } = this.state;
+    if (listSearch.length >= offset) {
+      this.setState(
+        (prevState, nextProps) => ({
+          offset: prevState.offset + 10,
+          loadMore: true
+        }),
+        () => {
+          this._handleSearchMore();
+        }
+      );
+    }
+    // if (!loadMore) {
+
+    // }
+  };
+
+  _renderFooter = () => {
+    if (!this.state.loadMore) return null;
+    return <Loading />;
   };
 
   _renderItem = ({ item }) => {
@@ -255,6 +279,7 @@ class EquipmentResult extends Component {
                 stickyHeaderIndices={[0]}
                 contentContainerStyle={{ paddingHorizontal: 15 }}
                 data={listSearch}
+                extraData={this.state}
                 renderItem={this._renderItem}
                 getItemLayout={(data, index) => ({
                   length: ITEM_HEIGHT,
@@ -262,9 +287,11 @@ class EquipmentResult extends Component {
                   index
                 })}
                 keyExtractor={(item, index) => index.toString()}
+                ListFooterComponent={this._renderFooter}
+                onEndReachedThreshold={0.5}
+                onEndReached={this._handleLoadMore}
               />
             ) : (
-              // <Text>Add Subscription</Text>
               this._renderAddSubscription()
             )}
           </View>

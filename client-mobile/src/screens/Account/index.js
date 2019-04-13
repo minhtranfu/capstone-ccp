@@ -16,6 +16,7 @@ import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import axios from "axios";
 import { Notifications, Permissions, Camera } from "expo";
+import { Ionicons } from "@expo/vector-icons";
 
 import {
   getConstructionList,
@@ -54,18 +55,23 @@ const SETTING_ITEMS_VALUE = [
     value: "Change password",
     code: "ChangePassword"
   },
+  // {
+  //   id: 3,
+  //   value: "NOT_VERIFIED",
+  //   code: "Verify"
+  // },
   {
-    id: 3,
+    id: 4,
     value: "My constructions",
     code: "Construction"
   },
   {
-    id: 4,
+    id: 5,
     value: "My subscription",
     code: "Subcription"
   },
   {
-    id: 5,
+    id: 6,
     value: "Push notifications",
     code: "Notifications"
   }
@@ -301,14 +307,36 @@ class Account extends Component {
                 {this._renderImageProfile(contractor.thumbnailImageUrl)}
                 <View style={styles.nameWrapper}>
                   <Text style={styles.name}>{contractor.name}</Text>
+                  {contractor.status !== "ACTIVATED" ? (
+                    <Text style={styles.text}>WAITING_FOR_VERIFFY</Text>
+                  ) : null}
                   <Text style={styles.text}>
                     Joined {this._dateConverter(contractor.createdTime)}
                   </Text>
                 </View>
                 <View style={styles.contentWrapper}>
+                  {contractor.status === "NOT_VERIFIED" ? (
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={() =>
+                        this.props.navigation.navigate("VerifyAccount", {
+                          contractorId: contractor.id
+                        })
+                      }
+                    >
+                      <Text style={styles.verifyText}>Verify your account</Text>
+                      <Ionicons name="ios-arrow-forward" size={20} />
+                    </TouchableOpacity>
+                  ) : null}
                   {SETTING_ITEMS_VALUE.map(item => (
                     <SettingItem
                       key={item.id}
+                      status={contractor.status}
+                      // onVerifyPress={() =>
+                      //   this.props.navigation.navigate("Verify", {
+                      //     contractorId: contractor.id
+                      //   })
+                      // }
                       value={item.value}
                       onSwitchValue={this.state.switchValue}
                       onSwitchChange={this._handleOnSwitchChange}
@@ -336,6 +364,14 @@ class Account extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  button: {
+    height: 54,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.text25
   },
   contentWrapper: {
     paddingHorizontal: 15
@@ -374,6 +410,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: fontSize.caption,
     color: colors.text50,
+    fontWeight: "400"
+  },
+  verifyText: {
+    fontSize: fontSize.secondaryText,
     fontWeight: "400"
   }
 });

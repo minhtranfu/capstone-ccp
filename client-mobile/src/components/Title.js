@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
@@ -11,13 +11,15 @@ class Title extends Component {
     hasMore: PropTypes.string
   };
   render() {
-    const { title, hasMore, titleStyle, style } = this.props;
+    const { title, hasMore, titleStyle, style, onPress } = this.props;
     return (
       <View style={[styles.container, style]}>
         <Text style={[styles.text, titleStyle]}>{title}</Text>
-        <Text style={styles.hasMoreText}>
-          {hasMore ? hasMore || "More" : null}
-        </Text>
+        <TouchableOpacity onPress={onPress}>
+          <Text style={styles.hasMoreText}>
+            {hasMore ? hasMore || "More" : null}
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }

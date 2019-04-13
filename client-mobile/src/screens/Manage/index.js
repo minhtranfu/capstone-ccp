@@ -225,7 +225,7 @@ class MyEquipment extends PureComponent {
 
   _handleAddButton = () => {
     const { user } = this.props;
-    if (user.contractor.status !== "NOT_VERIFIED") {
+    if (user.contractor.status === "ACTIVATED") {
       this.setState({ addModalVisible: true });
     } else {
       this._showAlert(

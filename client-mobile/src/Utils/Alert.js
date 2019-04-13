@@ -22,11 +22,9 @@ class ShowAlert extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
+    // (this.diff_sec(status.time, prevProps.status.time) > 3 ||
     const { listEquipment, status, navigation, token } = this.props;
-    if (
-      status.type === "error" &&
-      this.diff_sec(status.time, prevProps.status.time) > 3
-    ) {
+    if (status.type === "error" && status.time !== prevProps.status.time) {
       console.log("Equipment renderrr");
       this._showAlert("Error", status.message);
     }

@@ -28,8 +28,8 @@ import fontSize from "../../config/fontSize";
     listNotification: state.notification.listNotification
   }),
   dispatch => ({
-    fetchGetNotification: () => {
-      dispatch(getAllNotification());
+    fetchGetNotification: offset => {
+      dispatch(getAllNotification(offset));
     },
     fetchReadNotifiction: (notificationId, content) => {
       dispatch(readNotification(notificationId, content));
@@ -43,12 +43,14 @@ class Notification extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      readAllLoading: null
+      readAllLoading: null,
+      loadMore: false,
+      offset: 0
     };
   }
 
   componentDidMount() {
-    this.props.fetchGetNotification();
+    this.props.fetchGetNotification(this.state.offset);
   }
 
   _handleClickAction = async (notificaitonId, string, read) => {
@@ -73,19 +75,6 @@ class Notification extends Component {
       default:
         return null;
     }
-    // if (string.includes("equipments")) {
-    //   this.props.navigation.navigate("MyEquipmentDetail", { id: 37 });
-    //   this.props.fetchReadNotifiction(notificaitonId, { read: isRead });
-    // } else if (string.includes("transactions")) {
-    //   const res = await axios.get("transactions/14");
-    //   this.props.fetchReadNotifiction(notificaitonId, { read: isRead });
-    //   //If contractor.id === requester.id => user is requester else user is supplier
-    //   if (res.data.equipment.contractor.id === res.data.requester.id) {
-    //     this.props.navigation.navigate("Detail", { id: 14 });
-    //   } else {
-    //     this.props.navigation.navigate("MyTransactionDetail", { id: 14 });
-    //   }
-    // }
   };
 
   _handleReadNotification = (id, isRead) => {
@@ -115,6 +104,34 @@ class Notification extends Component {
       this.setState({ readAllLoading: false });
     } catch (error) {
       this.setState({ readAllLoading: false });
+    }
+  };
+
+  _handleGetMore = async () => {
+    //const { equipment } = this.props.navigation.state.params;
+    const { offset } = this.state;
+    await this.props.fetchGetNotification(offset);
+    this.setState({ loadMore: false });
+  };
+
+  _renderFooter = () => {
+    if (!this.state.loadMore) return null;
+    return <Loading />;
+  };
+
+  _handleLoadMore = async () => {
+    const { listNotification } = this.props;
+    const { offset, loadMore } = this.state;
+    if (listNotification.length >= offset) {
+      this.setState(
+        (prevState, nextProps) => ({
+          offset: prevState.offset + 10,
+          loadMore: true
+        }),
+        () => {
+          this._handleGetMore();
+        }
+      );
     }
   };
 
@@ -155,6 +172,7 @@ class Notification extends Component {
   render() {
     const { loading, listNotification } = this.props;
     const { readAllLoading } = this.state;
+    console.log(listNotification);
     return (
       <SafeAreaView
         style={styles.container}
@@ -167,11 +185,7 @@ class Notification extends Component {
             </TouchableOpacity>
           )}
           renderRightButton={() => (
-            <TouchableOpacity
-              onPress={() => {
-                this.props.fetchReadAllNotifcation();
-              }}
-            >
+            <TouchableOpacity onPress={() => this._handleReadAll()}>
               <Text>Mark all as read</Text>
             </TouchableOpacity>
           )}
@@ -184,6 +198,9 @@ class Notification extends Component {
             data={listNotification}
             renderItem={this._renderItem}
             keyExtractor={(item, index) => index.toString()}
+            ListFooterComponent={this._renderFooter}
+            onEndReachedThreshold={0.5}
+            onEndReached={this._handleLoadMore}
           />
         ) : (
           <Loading />

@@ -255,9 +255,6 @@ class AddSubscription extends Component {
           placeholder={"Input your address"}
           onFocus={() => this.setState({ hideResults: false })}
           hideResults={this.state.hideResults}
-          editable={
-            !construction || construction === "Select your construction"
-          }
           data={location}
           value={subscription.address}
           onChangeText={value => {
@@ -299,7 +296,7 @@ class AddSubscription extends Component {
       <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
         <Header
           renderLeftButton={() => (
-            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+            <TouchableOpacity onPress={() => this.props.navigation.popToTop()}>
               <Feather name="chevron-left" size={24} />
             </TouchableOpacity>
           )}

@@ -17,7 +17,9 @@ import {
   createConstruction,
   deleteConstruction
 } from "../../redux/actions/contractor";
+import { autoCompleteSearch } from "../../redux/actions/location";
 
+import AutoComplete from "../../components/AutoComplete";
 import InputField from "../../components/InputField";
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -26,7 +28,7 @@ import ConstructionItem from "./components/ConstructionItem";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
-import ParallaxList from '../../components/ParallaxList';
+import ParallaxList from "../../components/ParallaxList";
 
 @connect(
   state => ({
@@ -53,7 +55,9 @@ class Construction extends Component {
       modalConfirmVisible: false,
       address: "",
       name: "",
-      action: null
+      action: null,
+      location: null,
+      hideResults: false
     };
   }
 
@@ -112,6 +116,29 @@ class Construction extends Component {
     this._setModalVisible(!modalVisible);
   };
 
+  _renderAutoCompleteItem = item => (
+    <TouchableOpacity
+      style={styles.autocompleteWrapper}
+      onPress={() => {
+        this.setState({
+          address: item.main_text + ", " + item.secondary_text,
+          lat: item.lat,
+          lng: item.lng,
+          hideResults: true
+        });
+      }}
+    >
+      <Text style={styles.addressMainText}>{item.main_text}</Text>
+      <Text style={styles.caption}>{item.secondary_text}</Text>
+    </TouchableOpacity>
+  );
+
+  _handleAddressChange = async address => {
+    this.setState({
+      location: await autoCompleteSearch(address, null, null)
+    });
+  };
+
   //Display modal view
   _displayModalView = () => (
     <Modal
@@ -154,15 +181,18 @@ class Construction extends Component {
           value={name}
           returnKeyType={"next"}
         />
-        <InputField
+        <AutoComplete
           label={"Address"}
           placeholder={"Input your address"}
-          placeholderTextColor={colors.text68}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          onChangeText={value => this._handleInputChange("address", value)}
+          onFocus={() => this.setState({ hideResults: false })}
+          hideResults={this.state.hideResults}
+          data={location}
           value={address}
-          returnKeyType={"next"}
+          onChangeText={value => {
+            this.setState({ address: value });
+            this._handleAddressChange(value);
+          }}
+          renderItem={item => this._renderAutoCompleteItem(item)}
         />
         <Button text={"Submit"} onPress={this._handleSubmitButton} />
       </View>
@@ -173,7 +203,7 @@ class Construction extends Component {
     const { list } = this.props;
     const { contractorId } = this.props.navigation.state.params;
     return (
-      <View style={{ paddingHorizontal: 15, paddingTop: 15, }}>
+      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
         {list.length > 0 ? (
           <View>
             {list
@@ -217,7 +247,7 @@ class Construction extends Component {
         forceInset={{ bottom: "never", top: "always" }}
       >
         {list ? (
-          <View style={{flex: 1, flexDirection: 'column'}}>
+          <View style={{ flex: 1, flexDirection: "column" }}>
             {this._displayModalView()}
             <ParallaxList
               title={"My Constructions"}

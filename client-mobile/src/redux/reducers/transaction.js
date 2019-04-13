@@ -217,12 +217,21 @@ export default function transactionReducer(state = initialState, action) {
         ...state
       };
     case Actions.CHANGE_MATERIAL_TRANSACTION_REQUEST.SUCCESS:
-      return {
-        ...state,
-        listSupplierMaterial: state.listSupplierMaterial.map(item =>
-          item.id === payload.id ? (item = payload.data.data) : item
-        )
-      };
+      if (payload.role === "Requester") {
+        return {
+          ...state,
+          listRequesterMaterial: state.listRequesterMaterial.map(item =>
+            item.id === payload.id ? (item = payload.data.data) : item
+          )
+        };
+      } else {
+        return {
+          ...state,
+          listSupplierMaterial: state.listSupplierMaterial.map(item =>
+            item.id === payload.id ? (item = payload.data.data) : item
+          )
+        };
+      }
 
     //DEBRIS
     case Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.REQUEST:
@@ -331,7 +340,7 @@ export default function transactionReducer(state = initialState, action) {
           item.id === payload.transactionId
             ? {
                 ...item,
-                materialTransactionDetails: materialTransactionDetails.map(
+                materialTransactionDetails: item.materialTransactionDetails.map(
                   item =>
                     item.id === payload.materialId
                       ? { ...item, feedbacked: true }

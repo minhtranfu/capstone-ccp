@@ -83,7 +83,7 @@ class Cart extends Component {
           ? {
               ...supplier,
               items: supplier.items.map(item =>
-                item.id === id ? { ...item, quantity: parseInt(value) } : item
+                item.id === id ? { ...item, quantity: value } : item
               )
             }
           : supplier
@@ -96,6 +96,19 @@ class Cart extends Component {
     const supplier = cart.find(item => item.id === supplierId);
     const item = supplier.items.find(item => item.id === itemId);
     this.props.fetchUpdateMaterialItem(supplierId, itemId, item.quantity);
+  };
+
+  _renderEmptyView = () => {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Text style={styles.header}>There is no items</Text>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate("MaterialSearch")}
+        >
+          <Text style={styles.text}>Search material</Text>
+        </TouchableOpacity>
+      </View>
+    );
   };
 
   _renderScrollViewContent = () => {
@@ -151,26 +164,38 @@ class Cart extends Component {
       <SafeAreaView forceInset={{ top: "always" }} style={styles.container}>
         <Header
           renderLeftButton={() => (
-            <TouchableOpacity>
-              <Feather
-                name={"arrow-left"}
-                size={24}
-                onPress={() => navigation.goBack()}
-              />
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Feather name={"arrow-left"} size={24} />
+            </TouchableOpacity>
+          )}
+          renderRightButton={() => (
+            <TouchableOpacity onPress={() => this.props.fetchClearMaterial()}>
+              <Text>Clear</Text>
             </TouchableOpacity>
           )}
         >
           <Text style={styles.header}>My Orders</Text>
         </Header>
         <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-          {this._renderScrollViewContent()}
+          {materialCart.length > 0
+            ? this._renderScrollViewContent()
+            : this._renderEmptyView()}
         </ScrollView>
-        <SafeAreaView forceInset={{ bottom: "always" }}>
+        <SafeAreaView
+          forceInset={{ bottom: "always" }}
+          style={{
+            backgroundColor:
+              materialCart.length > 0 ? colors.secondaryColor : "#a5acb8"
+          }}
+        >
           <Button
             text={"Place order"}
+            disabled={materialCart.length > 0 ? false : true}
             onPress={() =>
               this.props.navigation.navigate("ConfirmCart", { cart })
             }
+            buttonStyle={{ backgroundColor: "transparent" }}
+            bordered={false}
           />
         </SafeAreaView>
       </SafeAreaView>
@@ -184,10 +209,11 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontWeight: "500",
+    color: colors.text
   },
   text: {
-    fontSize: fontSize.bodyText,
+    fontSize: fontSize.secondaryText,
     fontWeight: "500"
   }
 });

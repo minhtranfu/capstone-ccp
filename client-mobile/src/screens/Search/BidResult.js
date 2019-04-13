@@ -48,7 +48,7 @@ class BidResult extends Component {
         {results.map(item => (
           <DebrisSearchItem
             key={item.id}
-            imageUrl={item.debrisImages[0]}
+            imageUrl={item.debrisImages[0].url}
             address={item.address}
             debrisServiceTypes={item.debrisServiceTypes}
             debrisBids={item.debrisBids}
@@ -62,7 +62,8 @@ class BidResult extends Component {
   };
 
   render() {
-    const { loading } = this.props;
+    const { loading, results } = this.props;
+    console.log(results);
     return (
       <SafeAreaView
         style={styles.container}
@@ -79,7 +80,7 @@ class BidResult extends Component {
         </Header>
         {!loading ? (
           <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-            {this._renderContent()}
+            {results.length > 0 ? this._renderContent() : <Text>No data</Text>}
           </ScrollView>
         ) : (
           <Loading />

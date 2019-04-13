@@ -32,7 +32,8 @@ const { width } = Dimensions.get("window");
   (state, ownProps) => {
     const { id } = ownProps.navigation.state.params;
     return {
-      detail: state.material.listSearch.find(item => item.id === id)
+      detail: state.material.listSearch.find(item => item.id === id),
+      user: state.auth.data
     };
   },
   dispatch =>
@@ -41,6 +42,28 @@ const { width } = Dimensions.get("window");
 class MaterialDetail extends PureComponent {
   _capitalizeLetter = string => {
     return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  _showAlert = (title, msg) => {
+    Alert.alert(title, msg, [{ text: "Ờ" }], {
+      cancelable: true
+    });
+  };
+
+  _handleShowCart = () => {
+    const { user } = this.props;
+    if (Object.keys(user).length !== 0) {
+      if (user.contractor.status === "NOT_VERIFIED") {
+        this._showAlert(
+          "Sad :(",
+          "Your account is not verified to access this action"
+        );
+      } else {
+        this.props.navigation.navigate("Cart");
+      }
+    } else {
+      this._showAlert("Sad :(", "You must login to access this action");
+    }
   };
 
   _renderScrollItem = () => {
@@ -56,8 +79,10 @@ class MaterialDetail extends PureComponent {
         }}
       >
         <View style={{ flexDirection: "column", justifyContent: "center" }}>
-          <Text style={styles.title}>{detail.name}</Text>
-          <Text style={styles.name}>{detail.manufacturer}</Text>
+          <Text style={styles.title}>
+            {this._capitalizeLetter(detail.name)}
+          </Text>
+          <Text style={styles.name}>Manufacturer: {detail.manufacturer}</Text>
           <Text
             style={{
               marginBottom: 0,
@@ -127,6 +152,7 @@ class MaterialDetail extends PureComponent {
           }
           hasLeft={true}
           hasCart={true}
+          onCartPress={this._handleShowCart}
           scrollElement={<Animated.ScrollView />}
           renderScrollItem={this._renderScrollItem}
         />
@@ -146,9 +172,10 @@ class MaterialDetail extends PureComponent {
           />
           <Button
             text={"Add to cart"}
-            onPress={() =>
-              this.props.fetchAddItemToCart(detail.contractor.id, detail)
-            }
+            onPress={() => {
+              this.props.fetchAddItemToCart(detail.contractor.id, detail);
+              this._showAlert("Success", "Add to cart success");
+            }}
             buttonStyle={{ backgroundColor: colors.lightGreen }}
             wrapperStyle={{ flex: 1 }}
             bordered={false}

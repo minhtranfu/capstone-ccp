@@ -14,6 +14,9 @@ import { bindActionCreators } from "redux";
 import { autoCompleteSearch } from "../../redux/actions/location";
 import { requestMaterialTransaction } from "../../redux/actions/transaction";
 import { Feather } from "@expo/vector-icons";
+import {
+  clearMaterialCart,
+} from "../../redux/actions/cart";
 
 import Loading from "../../components/Loading";
 import AutoComplete from "../../components/AutoComplete";
@@ -30,7 +33,9 @@ import colors from "../../config/colors";
   }),
   dispatch =>
     bindActionCreators(
-      { fetchSendMaterialRequest: requestMaterialTransaction },
+      { fetchSendMaterialRequest: requestMaterialTransaction,
+        fetchClearMaterial: clearMaterialCart
+       },
       dispatch
     )
 )
@@ -58,7 +63,7 @@ class ConfirmCart extends Component {
     });
   };
 
-  _handlePlaceOrder = () => {
+  _handlePlaceOrder = async() => {
     const { cart } = this.props.navigation.state.params;
     const { address, lat, lng } = this.state;
     const orders = cart.map(supplier => {
@@ -68,7 +73,7 @@ class ConfirmCart extends Component {
         },
         materialTransactionDetails: supplier.items.map(item => {
           return {
-            quantity: item.quantity,
+            quantity: parseFloat(item.quantity),
             material: {
               id: item.id
             }
@@ -88,6 +93,8 @@ class ConfirmCart extends Component {
           requesterLong: lng
         })
       );
+      await this.props.fetchClearMaterial();
+      this.props.navigation.popToTop();
     }
   };
 

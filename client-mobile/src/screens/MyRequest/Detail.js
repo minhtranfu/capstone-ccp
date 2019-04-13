@@ -80,7 +80,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     }
   })
 )
-class ActivityDetail extends Component {
+class EquipmentDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -373,7 +373,7 @@ class ActivityDetail extends Component {
                 this.props.navigation.goBack();
               }}
             >
-              <Feather name="x" size={26} />
+              <Feather name="chevron-left" size={24} />
             </TouchableOpacity>
           )}
         >
@@ -454,4 +454,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ActivityDetail;
+export default EquipmentDetail;

@@ -130,7 +130,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     }
   })
 )
-class Activity extends Component {
+class MyRequest extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -422,4 +422,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Activity;
+export default MyRequest;

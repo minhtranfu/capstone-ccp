@@ -23,15 +23,17 @@ export function readAllNotification() {
 //   }
 // }
 
-export function getAllNotification() {
+export function getAllNotification(offset) {
+  console.log(offset);
   return async dispatch => {
-    dispatch({
-      type: Actions.GET_ALL_NOTIFICATION.REQUEST
-    });
-    const res = await axios.get(`notifications?limit=10&offset=0`);
+    // dispatch({
+    //   type: Actions.GET_ALL_NOTIFICATION.REQUEST
+    // });
+    const res = await axios.get(`notifications?limit=10&offset=${offset}`);
     dispatch({
       type: Actions.GET_ALL_NOTIFICATION.SUCCESS,
-      payload: res
+      payload: res,
+      offset: offset
     });
   };
 }

@@ -87,7 +87,6 @@ class AddDetail extends Component {
       type: null,
       construction: "",
       constructionIndex: 0,
-      deliveryPrice: null,
       description: "",
       additionalSpecsFields: [],
       location: [],
@@ -117,15 +116,8 @@ class AddDetail extends Component {
 
   //All data must be fill before move to next screen
   _validateEnableButton = () => {
-    const {
-      name,
-      dailyPrice,
-      type,
-      generalType,
-      deliveryPrice,
-      address
-    } = this.state;
-    if (name && dailyPrice && type && generalType && deliveryPrice && address) {
+    const { name, dailyPrice, type, generalType, address } = this.state;
+    if (name && dailyPrice && type && generalType && address) {
       return false;
     }
     return true;
@@ -239,7 +231,6 @@ class AddDetail extends Component {
       dailyPrice,
       typeIndex,
       generalTypeIndex,
-      deliveryPrice,
       description,
       construction,
       additionalSpecsFields,
@@ -258,7 +249,6 @@ class AddDetail extends Component {
       const equipment = {
         name: name,
         dailyPrice: parseInt(dailyPrice),
-        deliveryPrice: parseInt(deliveryPrice),
         description: description,
         equipmentType: type,
         address: address,
@@ -304,7 +294,6 @@ class AddDetail extends Component {
       dailyPrice,
       typeIndex,
       generalTypeIndex,
-      deliveryPrice,
       description,
       construction,
       address,
@@ -337,15 +326,6 @@ class AddDetail extends Component {
           keyboardType={"numeric"}
           returnKeyType={"next"}
         />
-        <InputField
-          label={"Delivery price"}
-          placeholder={"VND"}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          onChangeText={value => this.setState({ deliveryPrice: value })}
-          keyboardType={"numeric"}
-          value={this._formatNumber(deliveryPrice)}
-        />
         <Dropdown
           label={"General Equipment Type"}
           defaultText={NEW_DROPDOWN_GENERAL_TYPES_OPTIONS[0].name}
@@ -365,6 +345,9 @@ class AddDetail extends Component {
           style={{ marginBottom: 20 }}
         />
         {this._handleAdditionalSpecsField()}
+        <TouchableOpacity onPress={() => this.props.navigation.navigate("")}>
+          <Text>Add new construction</Text>
+        </TouchableOpacity>
         <Dropdown
           label={"Construction"}
           defaultText={"Select your construction"}
@@ -380,7 +363,8 @@ class AddDetail extends Component {
           onFocus={() => this.setState({ hideResults: false })}
           hideResults={this.state.hideResults}
           editable={
-            !construction || construction === "Select your construction"
+            false
+            // !construction || construction === "Select your construction"
           }
           data={location}
           value={address}

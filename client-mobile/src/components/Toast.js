@@ -33,7 +33,7 @@ class ShowToast extends Component {
         this.setState({
           visible: true
         }),
-      2000
+      1000
     ); // show toast after 1s
 
     setTimeout(
@@ -41,8 +41,8 @@ class ShowToast extends Component {
         this.setState({
           visible: false
         }),
-      3000
-    ); // hide toast after 3s
+      5000
+    ); // hide toast after 5s
   }
 
   componentDidUpdate(prevProp) {
@@ -52,7 +52,7 @@ class ShowToast extends Component {
           this.setState({
             visible: true
           }),
-        2000
+        1000
       ); // show toast after 1s
 
       setTimeout(
@@ -61,7 +61,7 @@ class ShowToast extends Component {
             visible: false
           }),
         5000
-      ); // hide toast after 3s
+      ); // hide toast after 5s
     }
   }
 
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   wrapper: {
     marginTop: 15,
     marginHorizontal: 15,
-    width: 300,
+    width: width,
     height: 100,
     backgroundColor: "#DDDDDD",
     alignItems: "center",

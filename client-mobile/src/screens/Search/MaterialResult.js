@@ -77,8 +77,17 @@ class MaterialResult extends Component {
     </TouchableOpacity>
   );
 
+  _renderEmpty = () => {
+    return (
+      <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
+        <Text style={styles.text}>No data</Text>
+      </View>
+    );
+  };
+
   render() {
     const { loading, listMaterial } = this.props;
+    console.log(listMaterial);
     return (
       <SafeAreaView
         style={styles.container}
@@ -103,6 +112,7 @@ class MaterialResult extends Component {
         {!loading ? (
           <FlatList
             data={listMaterial}
+            ListEmptyComponent={this._renderEmpty}
             renderItem={this._renderItem}
             keyExtractor={(item, index) => item.id.toString()}
           />

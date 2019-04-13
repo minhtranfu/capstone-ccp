@@ -92,12 +92,24 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       };
     }
     case Actions.SEARCH_EQUIPMENT.SUCCESS:
-      return {
-        ...state,
-        searchLoading: false,
-        listSearch: payload.data
-        // listSearch: []
-      };
+      if (action.offset <= 0) {
+        return {
+          ...state,
+          searchLoading: false,
+          listSearch: payload.data
+        };
+      } else {
+        return {
+          ...state,
+          searchLoading: false,
+          listSearch: state.listSearch.concat(payload.data)
+        };
+      }
+    // return {
+    //   ...state,
+    //   searchLoading: false,
+    //   listSearch: payload.data
+    // };
     case Actions.SEARCH_EQUIPMENT.ERROR:
       return {
         ...state,

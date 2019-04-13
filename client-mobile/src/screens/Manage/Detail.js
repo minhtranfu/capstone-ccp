@@ -54,6 +54,14 @@ const DROPDOWN_TYPES_OPTIONS = [
   }
 ];
 
+const DROPDOWN_CONSTRUCTION_OPTIONS = [
+  {
+    id: 0,
+    name: "Select your construction",
+    value: "Select your construction"
+  }
+];
+
 const COLORS = {
   AVAILABLE: "#4DB781", //green
   DENIED: "#FF5C5C", //red
@@ -73,7 +81,8 @@ const COLORS = {
       generalType: state.type.listGeneralEquipmentType,
       user: state.auth.data,
       loading: state.equipment.imageLoading,
-      imageList: state.equipment.imageList
+      imageList: state.equipment.imageList,
+      construction: state.contractor.constructionList
     };
   },
   dispatch =>
@@ -92,6 +101,8 @@ class MyEquipmentDetail extends Component {
     super(props);
     this.state = {
       data: {},
+      construction: null,
+      constructionIndex: 0,
       generalTypeIndex: 0,
       generalType: null,
       typeIndex: 0,
@@ -124,6 +135,7 @@ class MyEquipmentDetail extends Component {
           nextProps.equipmentDetail.equipmentType.generalEquipment.name,
         type: nextProps.equipmentDetail.equipmentType.name,
         typeIdDefault: nextProps.equipmentDetail.equipmentType.id
+        //construction: nextProps.equipmentDetail.construction
       };
     }
     if (nextProps.imageList !== prevState.images) {
@@ -167,15 +179,26 @@ class MyEquipmentDetail extends Component {
     return DROPDOWN_TYPES_OPTIONS;
   };
 
+  _handleConstructionDropdown = () => {
+    const { construction } = this.props;
+    const newConstructionDropdown = construction.map(item => ({
+      id: item.id,
+      name: item.name,
+      value: item.name
+    }));
+    return [...DROPDOWN_CONSTRUCTION_OPTIONS, ...newConstructionDropdown];
+  };
+
   _handleSubmitEdit = async () => {
     const { id } = this.props.navigation.state.params;
-    const { user } = this.props;
+    const { user, construction } = this.props;
     const {
       data,
       typeIndex,
       generalTypeIndex,
       typeIdDefault,
-      images
+      images,
+      constructionIndex
     } = this.state;
 
     //need to optimize
@@ -187,14 +210,17 @@ class MyEquipmentDetail extends Component {
       dailyPrice: data.dailyPrice,
       description: data.description,
       thumbnailImage: { id: data.thumbnailImage.id },
-      address: "Phú Nhuận",
-      latitude: 10.806488,
-      longitude: 106.676364,
+      address: construction[constructionIndex - 1].address,
+      latitude: construction[constructionIndex - 1].latitude,
+      longitude: construction[constructionIndex - 1].longitude,
       equipmentType: { id: equipmentTypeId.id },
       contractor: { id: user.contractor.id },
-      construction: null,
+      construction: {
+        id: construction[constructionIndex - 1].id
+      },
       availableTimeRanges: data.availableTimeRanges,
-      descriptionImages: images
+      descriptionImages: images,
+      additionalSpecsValues: data.additionalSpecsValues
     };
 
     this.props.fetchUpdateEquipment(id, newEquipmentDetail);
@@ -238,6 +264,7 @@ class MyEquipmentDetail extends Component {
   };
 
   _handleInputSpecsField = (specId, index, value) => {
+    const { data } = this.state;
     // data.additionalSpecsFields[index] = {
     //   value: value,
     //   ...data.additionalSpecsFields[index]
@@ -315,8 +342,14 @@ class MyEquipmentDetail extends Component {
 
   _renderScrollItem = () => {
     const { id } = this.props.navigation.state.params;
-    const { data, typeIndex, generalTypeIndex, images } = this.state;
-    console.log(images);
+    const {
+      data,
+      typeIndex,
+      generalTypeIndex,
+      images,
+      construction,
+      constructionIndex
+    } = this.state;
     const NEW_DROPDOWN_GENERAL_TYPES_OPTIONS = this._handleGeneralEquipmentType();
     const NEW_DROPDOWN_TYPES_OPTIONS = this._handleEquipmentType(
       generalTypeIndex
@@ -344,14 +377,19 @@ class MyEquipmentDetail extends Component {
             <Feather name="camera" size={18} color={"white"} />
           </TouchableOpacity>
         </View>
-        <Title title={"Select your thumbnail"} hasMore={"Add more images"} />
+        <Title
+          title={"Select your thumbnail"}
+          hasMore={"Add more images"}
+          onPress={() =>
+            this.props.navigation.navigate("ManageImages", { id: data.id })
+          }
+        />
         {images && images.length > 0 ? (
           <ScrollView
             showsHorizontalScrollIndicator={false}
             horizontal={true}
             style={{
               marginHorizontal: -15,
-              marginTop: 15,
               paddingHorizontal: 15
             }}
           >
@@ -453,7 +491,15 @@ class MyEquipmentDetail extends Component {
             )}
           </View>
         ) : null}
-
+        <Dropdown
+          label={"Construction"}
+          defaultText={"Select your construction"}
+          onSelectValue={(value, index) => {
+            this.setState({ construction: value, constructionIndex: index });
+          }}
+          options={this._handleConstructionDropdown()}
+          style={{ marginBottom: 20 }}
+        />
         <InputField
           label={"Description"}
           placeholder={"Input your description"}
@@ -490,8 +536,9 @@ class MyEquipmentDetail extends Component {
   };
 
   render() {
-    const { equipmentDetail, loading } = this.props;
+    const { equipmentDetail, loading, construction } = this.props;
     const { id } = this.props.navigation.state.params;
+    console.log(construction);
     return (
       <SafeAreaView
         style={styles.container}

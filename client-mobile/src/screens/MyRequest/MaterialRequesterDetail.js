@@ -9,6 +9,7 @@ import {
   Alert
 } from "react-native";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { changeMaterialTransactionRequest } from "../../redux/actions/transaction";
 import { Image } from "react-native-expo-image-cache";
 import Feather from "@expo/vector-icons/Feather";
@@ -34,11 +35,11 @@ import fontSize from "../../config/fontSize";
       user: state.auth.data
     };
   },
-  dispatch => ({
-    fetchChangeTransactionStatus: (requestId, request) => {
-      dispatch(changeMaterialTransactionRequest(requestId, request));
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      { fetchChangeTransactionStatus: changeMaterialTransactionRequest },
+      dispatch
+    )
 )
 class MaterialRequesterDetail extends Component {
   constructor(props) {
@@ -66,26 +67,18 @@ class MaterialRequesterDetail extends Component {
       {
         text: "OK",
         onPress: () => {
-          this.props.fetchChangeTransactionStatus(transactionId, {
-            status: transactionStatus
-          });
+          this.props.fetchChangeTransactionStatus(
+            transactionId,
+            {
+              status: transactionStatus
+            },
+            "Requester"
+          );
           this.props.navigation.goBack();
         }
       }
     ]);
   };
-
-  // _handleFinished = (transactionId, transactionStatus, transactionTitle) => {
-  //   Alert.alert(transactionTitle, undefined, [
-  //     {
-  //       text: "OK",
-  //       onPress: () =>
-  //         this.props.fetchChangeTransactionStatus(transactionId, {
-  //           status: transactionStatus
-  //         })
-  //     }
-  //   ]);
-  // };
 
   _renderDelivering = id => {
     return (
@@ -93,7 +86,11 @@ class MaterialRequesterDetail extends Component {
         <Button
           text={"Receive"}
           onPress={() => {
-            this._handleChangeTransaction(id, "FINISHED", "Delivery success!");
+            this._handleChangeTransaction(
+              id,
+              "FINISHED",
+              "Are you sure to receive?"
+            );
           }}
           wrapperStyle={{ marginVertical: 15 }}
         />
@@ -158,6 +155,7 @@ class MaterialRequesterDetail extends Component {
   };
 
   _renderFeedbackButton = (status, transactionId, isFeedback, materialId) => {
+    console.log(status);
     if (status === "FINISHED") {
       return isFeedback ? (
         <Text style={styles.text}>You've been feedbacked for this item</Text>
