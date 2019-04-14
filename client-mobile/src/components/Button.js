@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
 import {
   StyleSheet,
   View,
@@ -7,6 +8,7 @@ import {
   TouchableNativeFeedback,
   Text
 } from "react-native";
+import { withNavigation } from "react-navigation";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
@@ -15,11 +17,43 @@ const Touchable =
   Platform.OS === "ios" ? TouchableOpacity : TouchableNativeFeedback;
 
 class Button extends PureComponent {
+  static propTypes = {
+    text: PropTypes.string,
+    disabled: PropTypes.bool,
+    bordered: PropTypes.bool,
+    disabledOpacity: PropTypes.number
+  };
+
+  static defaultProps = {
+    bordered: true,
+    disabledOpacity: 0.3
+  };
+
   render() {
-    const { onPress, buttonStyle, text, wrapperStyle, textStyle } = this.props;
+    const {
+      onPress,
+      buttonStyle,
+      text,
+      wrapperStyle,
+      textStyle,
+      disabled,
+      bordered,
+      disabledOpacity
+    } = this.props;
     return (
       <View style={[styles.btnWrapper, wrapperStyle]}>
-        <Touchable onPress={onPress} style={[styles.button, buttonStyle]}>
+        <Touchable
+          onPress={onPress}
+          style={[
+            styles.button,
+            buttonStyle,
+            {
+              opacity: disabled ? disabledOpacity : 1,
+              borderRadius: bordered ? 10 : 0
+            }
+          ]}
+          disabled={disabled}
+        >
           <View style={styles.textWrapper}>
             <Text style={[styles.buttonText, textStyle]}>{text}</Text>
           </View>
@@ -30,15 +64,11 @@ class Button extends PureComponent {
 }
 
 const styles = StyleSheet.create({
-  btnWrapper: {
-    marginHorizontal: 15,
-    marginTop: 20
-  },
+  btnWrapper: {},
   button: {
     backgroundColor: colors.primaryColor,
     borderRadius: 10,
-    height: 44,
-    flex: 1
+    height: 44
   },
   textWrapper: {
     flex: 1,
@@ -52,4 +82,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Button;
+export default withNavigation(Button);

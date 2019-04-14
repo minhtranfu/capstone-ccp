@@ -1,27 +1,28 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, Animated, Image } from "react-native";
-import { SafeAreaView } from "react-navigation";
 import PropTypes from "prop-types";
-import { Header, Left, Right, Button, Body } from "./Header";
+import { Header, Left, Right, Button, Body } from "./AnimatedHeader";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
 
+const NO_IMAGE_URL =
+  "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg";
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 const AnimatedBody = Animated.createAnimatedComponent(Body);
 const AnimatedHeader = Animated.createAnimatedComponent(Header);
-const HEADER_HEIGHT = 44;
 
 class ParallaxList extends Component {
+  state = {
+    imageFailed: false
+  };
   nativeScroll = new Animated.Value(0);
+
+  //default value scroll animated
   scroll = new Animated.Value(0);
   navOpacity = this.nativeScroll.interpolate({
     inputRange: [0, 40, 50],
-    outputRange: [0, 1, 1]
-  });
-  headerOpacity = this.nativeScroll.interpolate({
-    inputRange: [0, 35, 50],
-    outputRange: [1, 0, 0]
+    outputRange: [0, 0.7, 1]
   });
   constructor(props) {
     super(props);
@@ -31,12 +32,7 @@ class ParallaxList extends Component {
   }
 
   renderHeader = () => (
-    <Animated.View
-      style={{
-        height: 52,
-        opacity: this.titleOpacity
-      }}
-    >
+    <Animated.View>
       <Text style={styles.title}>{this.props.title}</Text>
     </Animated.View>
   );
@@ -45,14 +41,19 @@ class ParallaxList extends Component {
     <AnimatedHeader>
       <Left back={this.props.hasLeft} />
       <AnimatedBody
-        title={this.props.title.toUpperCase()}
+        title={this.props.title}
         style={{ opacity: this.props.opacity || this.navOpacity }}
       />
       <Right
         hasRight={this.props.hasRight}
+        hasSearch={this.props.hasSearch}
         hasFavorite={this.props.hasFavorite}
         hasAdd={this.props.hasAdd}
-        onPress={this.props.onPress}
+        onAddPress={this.props.onAddPress}
+        hasClose={this.props.hasClose}
+        onPress={this.props.onRightPress}
+        onCartPress={this.props.onCartPress}
+        hasCart={this.props.hasCart}
       />
     </AnimatedHeader>
   );
@@ -60,14 +61,13 @@ class ParallaxList extends Component {
   renderBackground = () => (
     <AnimatedImage
       style={{
-        marginBottom: 20,
         height: 300,
-        width: "100%",
+        backgroundColor: "#e9e9e9",
         opacity: 1,
         transform: [
           {
             translateY: this.nativeScroll.interpolate({
-              inputRange: [0, 200, 300],
+              inputRange: [0, 100, 200],
               outputRange: [0, 1, 1],
               extrapolateRight: "extend",
               extrapolateLeft: "clamp"
@@ -82,38 +82,39 @@ class ParallaxList extends Component {
           }
         ]
       }}
-      source={require("../../assets/images/forklift1.png")}
-      resizeMode={"cover"}
+      source={{
+        uri: !this.state.imageFailed ? this.props.imageURL : NO_IMAGE_URL
+      }}
+      onError={() => {
+        this.setState({ imageFailed: true });
+      }}
+      resizeMode={this.state.imageFailed ? "contain" : "cover"}
     />
   );
 
   render() {
-    console.log(this.props.renderScrollItem);
     return (
       <View style={styles.container}>
         {this.renderNavigation()}
         {React.cloneElement(
           this.props.scrollElement,
           {
-            style: { marginTop: 50, backgroundColor: "transparent" },
+            style: { marginTop: 44, backgroundColor: "transparent", flex: 1 },
             onScroll: Animated.event(
               [{ nativeEvent: { contentOffset: { y: this.nativeScroll } } }],
               { useNativeDriver: true }
             ),
-            scrollEventThrottle: 1,
-            ListHeaderComponent: this.props.removeTitle
-              ? null
-              : this.renderHeader()
+            scrollEventThrottle: 1
           },
           [
             this.props.removeTitle ? null : (
-              <View key={Math.random()}>{this.renderHeader()}</View>
+              <View key="title">{this.renderHeader()}</View>
             ),
-            this.props.background ? (
-              <View key={Math.random()}>{this.renderBackground()}</View>
+            this.props.hasThumbnail ? (
+              <View key="thumbnail">{this.renderBackground()}</View>
             ) : null,
             this.props.renderScrollItem ? (
-              <View key={Math.random()}>{this.props.renderScrollItem()}</View>
+              <View key="scroll">{this.props.renderScrollItem()}</View>
             ) : null
           ]
         )}
@@ -124,21 +125,14 @@ class ParallaxList extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "transparent"
+    flex: 1
   },
   title: {
     alignItems: "center",
     color: colors.primaryColor,
-    fontSize: fontSize.h1,
+    fontSize: fontSize.h2,
     marginLeft: 15,
-    fontWeight: "500"
-  },
-  titleFade: {
-    color: colors.secondaryColor,
-    fontSize: fontSize.bodyText,
-    textAlign: "center",
-    width: 300
+    fontWeight: "700"
   }
 });
 

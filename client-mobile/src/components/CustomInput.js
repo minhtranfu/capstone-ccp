@@ -23,7 +23,7 @@ class CustomInput extends Component {
           placeholderTextColor={"white"}
           returnKeyType={"next"}
           onSubmitEditing={onSubmitEditing}
-          autoCapitalize={false}
+          autoCapitalize={"none"}
           autoCorrect={false}
           {...others}
         />
