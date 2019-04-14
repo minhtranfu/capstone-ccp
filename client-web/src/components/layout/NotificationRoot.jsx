@@ -25,7 +25,9 @@ class NotificationRoot extends Component {
   };
 
   componentDidMount() {
-    firebase.messaging().onMessage(this._handleReceivedNewNotification);
+    if (firebase.messaging.isSupported()) {
+      firebase.messaging().onMessage(this._handleReceivedNewNotification);
+    }
   }
 
   _removeNotificationByIndex = id => {
