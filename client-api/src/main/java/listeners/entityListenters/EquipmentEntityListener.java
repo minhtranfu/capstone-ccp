@@ -35,22 +35,17 @@ public class EquipmentEntityListener {
 		}
 
 		ConstructionEntity managedConstruction = constructionDAO.findByID(construction.getId());
-		equipmentEntity.setAddress(managedConstruction.getAddress());
-		equipmentEntity.setLongitude(managedConstruction.getLongitude());
-		equipmentEntity.setLatitude(managedConstruction.getLatitude());
 	}
 
 
 	@PrePersist
 	void prePersist(EquipmentEntity equipmentEntity) {
-		// TODO: 3/10/19 set locaiton data based on construction
 		updateLoactionDataBasedOnConstruction(equipmentEntity);
 	}
 
 	@PreUpdate
 
 	void preUpdate(EquipmentEntity equipmentEntity) {
-		// TODO: 3/10/19 set locaiton data based on construction
 		updateLoactionDataBasedOnConstruction(equipmentEntity);
 	}
 
@@ -62,6 +57,7 @@ public class EquipmentEntityListener {
 	void postUpdate(EquipmentEntity equipmentEntity) {
 		notifyEquipmentChanged(equipmentEntity);
 		// TODO: 3/29/19 send notifications for realted sides
+
 
 	}
 

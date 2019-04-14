@@ -60,12 +60,11 @@ public class NotificationDTO {
 	public enum ClickActionDestination {
 
 		EQUIPMENTS("equipments"),
-		TRANSACTIONS("transactions"),
+		HIRING_TRANSACTIONS("hiringTransactions"),
 		TRANSACTION_DATE_CHANGE_REQUESTS("transactionDateChangeRequests"),
 		DEBRIS_TRANSACTIONS("debrisTransactions"),
 		DEBRIS_FEEDBACK("debrisFeedbacks"),
-		MATERIAL_TRANSACTIONS("materialTransactions"),
-		HIRING_TRANSACTIONS("hiringTransactions")
+		MATERIAL_TRANSACTIONS("materialTransactions")
 		;
 
 		String destination;

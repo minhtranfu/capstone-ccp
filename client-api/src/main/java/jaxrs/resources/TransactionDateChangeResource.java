@@ -3,6 +3,7 @@ package jaxrs.resources;
 import daos.EquipmentDAO;
 import daos.HiringTransactionDAO;
 import daos.TransactionDateChangeRequestDAO;
+import dtos.notifications.NotificationDTO;
 import dtos.requests.TransactionDateChangeRequestRequest;
 import dtos.responses.GETListResponse;
 import dtos.responses.MessageResponse;
@@ -209,7 +210,7 @@ public class TransactionDateChangeResource {
 
 				// TODO: 4/13/19 deny all intersected pending transaction
 
-				List<HiringTransactionEntity> pendingTransactionIntersectingWith = hiringTransactionDAO.getPendingTransactionIntersectingWith(
+					List<HiringTransactionEntity> pendingTransactionIntersectingWith = hiringTransactionDAO.getPendingTransactionIntersectingWith(
 						equipment.getId(),
 						hiringTransactionEntity.getEndDate().plusDays(1),
 						foundAdjustDateRequest.getRequestedEndDate());
@@ -224,6 +225,7 @@ public class TransactionDateChangeResource {
 				if (managedEquipment.getStatus() == EquipmentEntity.Status.WAITING_FOR_RETURNING) {
 					managedEquipment.setStatus(EquipmentEntity.Status.RENTING);
 					equipmentDAO.merge(managedEquipment);
+					break;
 				}
 				hiringTransactionEntity.setEndDate(foundAdjustDateRequest.getRequestedEndDate());
 				hiringTransactionDAO.merge(hiringTransactionEntity);

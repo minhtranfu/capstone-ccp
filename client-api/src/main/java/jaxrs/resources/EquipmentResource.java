@@ -262,7 +262,10 @@ public class EquipmentResource {
 
 		} else {
 			//validate long lat address
-			LocationValidator locationValidator = new LocationValidator(equipmentEntity.getAddress(), equipmentEntity.getLongitude(), equipmentEntity.getLatitude());
+			LocationValidator locationValidator = new LocationValidator(
+					equipmentEntity.getConstruction().getAddress()
+					, equipmentEntity.getConstruction().getLongitude()
+					, equipmentEntity.getConstruction().getLatitude());
 			Set<ConstraintViolation<LocationValidator>> validationResult = validator.validate(locationValidator);
 			if (!validationResult.isEmpty()) {
 				throw new ConstraintViolationException(validationResult);
@@ -448,17 +451,13 @@ public class EquipmentResource {
 				break;
 
 			case DELIVERING:
-				firebaseMessagingManager.sendMessage(new NotificationDTO("Equipment Delivering!",
-						String.format("equipment \"%s\" is delivering to you by %s", managedEquipment.getName(), supplier.getName())
-						, requester.getId()
-						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, hiringTransaction.getId())));
-
+				//already done  in status change
 				break;
 			case RENTING:
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Equipment Receiving confirmed",
 						String.format("%s confirmed having received your equipment \"%s\"", requester.getName(), managedEquipment.getName())
 						, supplier.getId()
-						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, hiringTransaction.getId())));
+						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, hiringTransaction.getId())));
 
 				break;
 
@@ -466,7 +465,7 @@ public class EquipmentResource {
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Renting transaction ended",
 						String.format("%s has finished renting transaction early and want to return the equipment \"%s\"", requester.getName(), managedEquipment.getName())
 						, supplier.getId()
-						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, hiringTransaction.getId())));
+						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, hiringTransaction.getId())));
 
 				break;
 		}

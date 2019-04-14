@@ -14,6 +14,7 @@ import dtos.requests.EquipmentRequest;
 import entities.ContractorAccountEntity;
 import entities.EquipmentEntity;
 import entities.EquipmentTypeEntity;
+import managers.EmailManager;
 import managers.FirebaseMessagingManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,7 @@ import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.mail.MessagingException;
 import javax.validation.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -75,6 +77,9 @@ public class TestResource  {
 
 	@Inject
 	FirebaseMessagingManager messagingManager;
+
+	@Inject
+	EmailManager emailManager;
 
 	@GET
 	public String doGet() {
@@ -284,5 +289,11 @@ public class TestResource  {
 	}
 
 
+	@POST
+	@Path("email/test")
+	public Response sendTestingEmail() throws IOException, MessagingException {
+		emailManager.sendmail("Testing from nghia","Testing content from nghia\nTesting content from nghia\nTesting content from nghia\n","luuquangnghia97@gmail.com");
+		return Response.ok().build();
+	}
 
 }

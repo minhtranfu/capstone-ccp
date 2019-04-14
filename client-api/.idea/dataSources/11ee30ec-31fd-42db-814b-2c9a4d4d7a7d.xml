@@ -1571,21 +1571,25 @@
     <column id="386" parent="284" name="name">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="387" parent="284" name="address">
       <Position>3</Position>
       <DataType>varchar(255)|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="388" parent="284" name="long">
       <Position>4</Position>
       <DataType>double|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="389" parent="284" name="lat">
       <Position>5</Position>
       <DataType>double|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="390" parent="284" name="is_deleted">

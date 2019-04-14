@@ -45,7 +45,7 @@ import java.util.Objects;
 		"\n" +
 		"-- check equipment renting time not contain the subscribed time range \n" +
 		"and not exists (select * from hiring_transaction h where h.equipment_id = e.id and (h.status = 'ACCEPTED' or h.status = 'PROCESSING') and not (h.end_date > s.end_date or h.end_date< s.begin_date))\n"
-		,resultSetMapping = "MatchedSubscriptionResult"
+		, resultSetMapping = "MatchedSubscriptionResult"
 )
 @SqlResultSetMapping(
 		name = "MatchedSubscriptionResult",
@@ -61,7 +61,7 @@ import java.util.Objects;
 @EntityListeners(EquipmentEntityListener.class)
 //for serializing null values ( not hide it)
 @JsonbNillable
-public class EquipmentEntity  {
+public class EquipmentEntity {
 	private long id;
 	@NotNull
 	@NotEmpty
@@ -77,17 +77,6 @@ public class EquipmentEntity  {
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 
-
-	private String address;
-	@NotNull
-	@Min(-90)
-	@Max(90)
-	private Double latitude;
-
-	@NotNull
-	@Min(-180)
-	@Max(180)
-	private Double longitude;
 
 	private EquipmentTypeEntity equipmentType;
 
@@ -277,55 +266,25 @@ public class EquipmentEntity  {
 		this.updatedTime = updatedTime;
 	}
 
-	@Basic
-	@Column(name = "address")
-	public String getAddress() {
-		return this.address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
 
 	@JsonbTransient
 	@Transient
 	public String getFinalAddress() {
-		return this.getConstruction() != null ? this.getConstruction().getAddress() : address;
+		return this.getConstruction().getAddress();
 	}
 
 	@JsonbTransient
 	@Transient
 	public Double getFinalLongitude() {
-		return this.getConstruction() != null ? this.getConstruction().getLongitude() : longitude;
+		return this.getConstruction().getLongitude();
 	}
 
 	@JsonbTransient
 	@Transient
 	public Double getFinalLatitude() {
-		return this.getConstruction() != null ? this.getConstruction().getLatitude() : latitude;
+		return this.getConstruction().getLatitude();
 	}
 
-
-	@Basic
-	@Column(name = "lat")
-	public Double getLatitude() {
-		return this.latitude;
-	}
-
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
-	}
-
-	@Basic
-	@Column(name = "`long`")
-	public Double getLongitude() {
-		return this.longitude;
-	}
-
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
-	}
 
 	@OneToMany(mappedBy = "equipment", orphanRemoval = false)
 	public Collection<EquipmentImageEntity> getEquipmentImages() {
@@ -449,22 +408,6 @@ public class EquipmentEntity  {
 		return Objects.hash(id);
 	}
 
-
-	@PrePersist
-	void prePersist() {
-
-	}
-
-	@PreUpdate
-	void preUpdate() {
-		setAddress(getFinalAddress());
-		setLongitude(getFinalLongitude());
-		setLatitude(getFinalLatitude());
-	}
-
-	@PreRemove
-	void preRemove() {
-	}
 
 	public enum Status {
 		AVAILABLE,

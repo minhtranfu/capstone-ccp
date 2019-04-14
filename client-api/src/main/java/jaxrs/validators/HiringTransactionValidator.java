@@ -48,17 +48,6 @@ public class HiringTransactionValidator {
 		//  1/30/19 check requester activation
 		contractorDAO.validateContractorActivated(foundRequester);
 
-		//  1/30/19 set equipment location from equipment id
-
-		if (
-				foundEquipment.getAddress() == null
-						||
-						foundEquipment.getAddress().isEmpty()
-						||
-						foundEquipment.getLongitude() == null
-						|| foundEquipment.getLatitude() == null) {
-			throw new InternalServerErrorException(String.format("equipment id=%d location data not completed", foundEquipment.getId()));
-		}
 
 
 

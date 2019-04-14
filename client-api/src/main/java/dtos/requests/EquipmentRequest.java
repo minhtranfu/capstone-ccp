@@ -53,6 +53,8 @@ public abstract class EquipmentRequest {
 //	public IdOnly contractor;
 
 
+	@NotNull
+	@Valid
 	public IdOnly construction;
 
 

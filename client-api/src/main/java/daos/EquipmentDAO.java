@@ -224,13 +224,13 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 							, managedEquipment.getName()
 							, requester.getName())
 					, supplier.getId()
-					, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, processingHiringTransaction.getId())));
+					, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, processingHiringTransaction.getId())));
 
 			//to requester
 			firebaseMessagingManager.sendMessage(new NotificationDTO("Renting time ended",
 					String.format("Your renting time for \"%s\" has finished. It's time to return it to %s", managedEquipment.getName(), supplier.getName())
 					, supplier.getId()
-					, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, processingHiringTransaction.getId())));
+					, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, processingHiringTransaction.getId())));
 
 		}
 	}
