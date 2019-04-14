@@ -16,6 +16,11 @@ export const initializeFirebase = () => {
 }
 
 export const askForPermissioToReceiveNotifications = async () => {
+
+  if (!firebase.messaging.isSupported()) {
+    return;
+  }
+  
   try {
     const messaging = firebase.messaging();
     await messaging.requestPermission();
