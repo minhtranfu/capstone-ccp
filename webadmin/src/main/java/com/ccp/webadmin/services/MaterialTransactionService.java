@@ -25,4 +25,6 @@ public interface MaterialTransactionService {
     List<LineChartStatisticDTO> statisticTotalMaterialTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate);
 
     List<LineChartStatisticDTO> statisticTotalMaterialPrice(String byType, LocalDateTime beginDate, LocalDateTime endDate);
+
+    Integer countMaterialTransactionIncome();
 }

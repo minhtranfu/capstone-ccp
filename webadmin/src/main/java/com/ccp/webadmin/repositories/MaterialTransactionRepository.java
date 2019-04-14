@@ -90,4 +90,11 @@ public interface MaterialTransactionRepository extends JpaRepository<MaterialTra
             "GROUP BY FUNCTION('week',(e.createdTime))" +
             "ORDER BY FUNCTION('week',(e.createdTime)) asc")
     List<LineChartStatisticDTO> countTotalPriceTransactionByWeek(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query("select sum(e.totalPrice) " +
+            "from MaterialTransactionEntity e " +
+            "where function('month',(e.updatedTime))  = function('month',CURRENT_DATE) " +
+            "and e.status = 'FINISHED' " +
+            "GROUP BY FUNCTION('month',(e.updatedTime))")
+    Integer countMaterialTransactionIncome();
 }

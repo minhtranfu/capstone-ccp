@@ -25,4 +25,5 @@ public interface HiringTransactionService {
 
     List<LineChartStatisticDTO> statisticTotalPrice(String byType, LocalDateTime beginDate, LocalDateTime endDate);
 
+    Integer countHiringTransactionIncome();
 }

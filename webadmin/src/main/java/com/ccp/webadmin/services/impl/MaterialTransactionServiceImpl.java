@@ -104,4 +104,9 @@ public class MaterialTransactionServiceImpl implements MaterialTransactionServic
         }
         return lineChartStatisticDTOS;
     }
+
+    @Override
+    public Integer countMaterialTransactionIncome() {
+        return materialTransactionRepository.countMaterialTransactionIncome();
+    }
 }

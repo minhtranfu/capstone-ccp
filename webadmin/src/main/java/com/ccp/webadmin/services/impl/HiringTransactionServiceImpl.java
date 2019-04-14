@@ -101,4 +101,9 @@ public class HiringTransactionServiceImpl implements HiringTransactionService {
         }
         return lineChartStatisticDTOS;
     }
+
+    @Override
+    public Integer countHiringTransactionIncome() {
+        return hiringTransactionRepository.countHiringTransactionIncome();
+    }
 }

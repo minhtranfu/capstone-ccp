@@ -66,4 +66,10 @@ public interface DebrisTransactionRepository extends JpaRepository<DebrisTransac
             "ORDER BY FUNCTION('week',(e.createdTime)) asc")
     List<LineChartStatisticDTO> countTotalTransactionByWeek(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
 
+    @Query("select sum(e.price) " +
+            "from DebrisTransactionEntity e " +
+            "where function('month',(e.updatedTime))  = function('month',CURRENT_DATE) " +
+            "and e.status = 'FINISHED' " +
+            "GROUP BY FUNCTION('month',(e.updatedTime))")
+    Integer countDebrisTransactionIncome();
 }

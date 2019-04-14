@@ -29,7 +29,7 @@ public class ContractorEntity implements Serializable {
     @Column(name = "email")
     private String email;
 
-    @Pattern(regexp = "^0(\\d{9})$", message = "Invalid Phone Number")
+    @Pattern(regexp = "^0(\\d{8,9})$", message = "Invalid Phone Number")
     @Column(name = "phone_number")
     private String phone;
 

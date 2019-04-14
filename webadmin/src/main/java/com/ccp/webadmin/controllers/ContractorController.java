@@ -28,7 +28,7 @@ public class ContractorController {
     }
 
     @GetMapping({"", "/", "/index"})
-    public String getcontractor(Model model) {
+    public String getContractor(Model model) {
         model.addAttribute("contractors", contractorService.findAll());
         return "contractor/index";
     }

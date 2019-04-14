@@ -73,7 +73,7 @@ public interface HiringTransactionRepository extends JpaRepository<HiringTransac
     List<LineChartStatisticDTO> countTotalHiringTransactionByWeek(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
 
     @Query("select new com.ccp.webadmin.dtos.LineChartStatisticDTO(FUNCTION('year',(e.createdTime))," +
-            "sum (e.dailyPrice * abs(FUNCTION('datediff', e.beginDate, e.endDate)))) " +
+            "sum (e.dailyPrice * abs(FUNCTION('datediff', e.beginDate, e.endDate)) + 1)) " +
             "from HiringTransactionEntity e " +
             "where e.createdTime >= :beginDate and e.createdTime <= :endDate " +
             "GROUP BY FUNCTION('year',(e.createdTime))" +
@@ -81,7 +81,7 @@ public interface HiringTransactionRepository extends JpaRepository<HiringTransac
     List<LineChartStatisticDTO> countTotalPriceHiringTransactionByYear(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
 
     @Query("select new com.ccp.webadmin.dtos.LineChartStatisticDTO(FUNCTION('month',(e.createdTime))," +
-            "sum (e.dailyPrice * abs(FUNCTION('datediff', e.beginDate, e.endDate)))) " +
+            "sum (e.dailyPrice * abs(FUNCTION('datediff', e.beginDate, e.endDate)) + 1)) " +
             "from HiringTransactionEntity e " +
             "where e.createdTime >= :beginDate and e.createdTime <= :endDate " +
             "GROUP BY FUNCTION('month',(e.createdTime))" +
@@ -89,10 +89,17 @@ public interface HiringTransactionRepository extends JpaRepository<HiringTransac
     List<LineChartStatisticDTO> countTotalPriceHiringTransactionByMonth(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
 
     @Query("select new com.ccp.webadmin.dtos.LineChartStatisticDTO(FUNCTION('week',(e.createdTime))," +
-            "sum (e.dailyPrice * abs(FUNCTION('datediff', e.beginDate, e.endDate)))) " +
+            "sum (e.dailyPrice * abs(FUNCTION('datediff', e.beginDate, e.endDate)) + 1)) " +
             "from HiringTransactionEntity e " +
             "where e.createdTime >= :beginDate and e.createdTime <= :endDate " +
             "GROUP BY FUNCTION('week',(e.createdTime))" +
             "ORDER BY FUNCTION('week',(e.createdTime)) asc")
     List<LineChartStatisticDTO> countTotalPriceHiringTransactionByWeek(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query("select sum(e.dailyPrice * abs(FUNCTION('datediff', e.beginDate, e.endDate)) + 1) " +
+            "from HiringTransactionEntity e " +
+            "where function('month',(e.updatedTime))  = function('month',CURRENT_DATE) " +
+            "and e.status = 'FINISHED' " +
+            "GROUP BY FUNCTION('month',(e.updatedTime))")
+    Integer countHiringTransactionIncome();
 }

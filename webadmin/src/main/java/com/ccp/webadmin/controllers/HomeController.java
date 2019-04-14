@@ -32,14 +32,20 @@ public class HomeController {
 
     private final AdminAccountService adminAccountService;
     private final ContractorService contractorService;
+    private final HiringTransactionService hiringTransactionService;
+    private final MaterialTransactionService materialTransactionService;
+    private final DebrisTransactionService debrisTransactionService;
     private final ReportService reportService;
     private final PasswordAutoGenerator passwordAutoGenerator;
     private final SendEmailService sendEmailService;
 
     @Autowired
-    public HomeController(AdminAccountService adminAccountService, ContractorService contractorService, ReportService reportService, PasswordAutoGenerator passwordAutoGenerator, SendEmailService sendEmailService) {
+    public HomeController(AdminAccountService adminAccountService, ContractorService contractorService, HiringTransactionService hiringTransactionService, MaterialTransactionService materialTransactionService, DebrisTransactionService debrisTransactionService, ReportService reportService, PasswordAutoGenerator passwordAutoGenerator, SendEmailService sendEmailService) {
         this.adminAccountService = adminAccountService;
         this.contractorService = contractorService;
+        this.hiringTransactionService = hiringTransactionService;
+        this.materialTransactionService = materialTransactionService;
+        this.debrisTransactionService = debrisTransactionService;
         this.reportService = reportService;
         this.passwordAutoGenerator = passwordAutoGenerator;
         this.sendEmailService = sendEmailService;
@@ -49,13 +55,18 @@ public class HomeController {
     public String home(Model model) {
         model.addAttribute("newContractor", contractorService.countNewContractor());
         model.addAttribute("newFeedback", reportService.countNewReport());
+        model.addAttribute("hiringTransactionStatistic", hiringTransactionService.countHiringTransactionIncome());
+        model.addAttribute("materialTransactionStatistic", materialTransactionService.countMaterialTransactionIncome());
+        System.out.println("bbbb" + materialTransactionService.countMaterialTransactionIncome());
+        model.addAttribute("debrisTransactionStatistic", debrisTransactionService.countDebrisTransactionIncome());
+        System.out.println("ccc" + debrisTransactionService.countDebrisTransactionIncome());
         return "home/index";
     }
 
-    @GetMapping("/userdetail/{id}")
+    @GetMapping("/userDetail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("staff", adminAccountService.findById(id));
-        return "home/userdetail";
+        return "home/userDetail";
     }
 
     @GetMapping("/changePassword/{id}")
@@ -75,7 +86,7 @@ public class HomeController {
                 AdminAccountEntity foundAdminAccount = adminAccountService.findById(adminAccountEntity.getId());
                 adminAccountEntity.setUsername(foundAdminAccount.getUsername());
                 adminAccountEntity.getAdminUserEntity().setRole(foundAdminAccount.getAdminUserEntity().getRole());
-                return "home/userdetail";
+                return "home/userDetail";
             }
         }
         String imageUrl = updateImageFile(file);
@@ -86,7 +97,7 @@ public class HomeController {
             if ( adminAccountService.existsByEmail(adminAccountEntity.getAdminUserEntity().getEmail())) {
 
                 model.addAttribute("errorMessageEmail", "Exitsted Email");
-                return "home/userdetail";
+                return "home/userDetail";
             }
         }
         if (!file.isEmpty()) {
@@ -98,7 +109,7 @@ public class HomeController {
         foundAdminAccount.getAdminUserEntity().setEmail(adminAccountEntity.getAdminUserEntity().getEmail());
         adminAccountService.save(foundAdminAccount);
         Integer id = adminAccountEntity.getId();
-        return "redirect:userdetail/" + id;
+        return "redirect:userDetail/" + id;
     }
 
     @PostMapping("/savePassword")
@@ -121,7 +132,7 @@ public class HomeController {
         adminAccountEntity.setPassword(encodedNewPassword);
         adminAccountService.save(adminAccountEntity);
         Integer id = adminAccountEntity.getId();
-        return "redirect:userdetail/" + id;
+        return "redirect:userDetail/" + id;
     }
 
     private String updateImageFile(MultipartFile file) {

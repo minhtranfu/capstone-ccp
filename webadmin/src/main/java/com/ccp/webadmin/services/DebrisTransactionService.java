@@ -23,4 +23,5 @@ public interface DebrisTransactionService {
 
     List<LineChartStatisticDTO> statisticTotalDebrisTransaction(String byType, LocalDateTime beginDate, LocalDateTime endDate);
 
+    Integer countDebrisTransactionIncome();
 }

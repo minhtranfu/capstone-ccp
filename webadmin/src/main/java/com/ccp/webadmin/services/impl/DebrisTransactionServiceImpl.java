@@ -82,4 +82,9 @@ public class DebrisTransactionServiceImpl implements DebrisTransactionService {
         return lineChartStatisticDTOS;
 
     }
+
+    @Override
+    public Integer countDebrisTransactionIncome() {
+        return debrisTransactionRepository.countDebrisTransactionIncome();
+    }
 }
