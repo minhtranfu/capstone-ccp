@@ -12,6 +12,8 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 import { authActions } from '../../../redux/actions';
 import ccpApiService from '../../../services/domain/ccp-api-service';
 import { formatPrice } from 'Utils/format.utils';
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 class RequestCard extends Component {
 
@@ -234,7 +236,7 @@ class RequestCard extends Component {
         }
         {/* Redirect if user click button view sent transaction */}
         {redirectToTransaction &&
-          <Redirect to={`/dashboard/transaction/${transactionId}`} />
+          <Redirect to={getRoutePath(routeConsts.EQUIPMENT_TRANSACTION_DETAIL, { id: transactionId })} />
         }
       </div>
     )
@@ -307,7 +309,15 @@ class RequestCard extends Component {
 
         <div className="form-group">
           <label htmlFor="timeRange"><strong>Time:</strong></label>
-          <DateRangePicker isInvalidDate={this._isInvalidDate} minDate={moment()} onApply={this._onChangeDateRanage} containerClass="w-100" data-range-id="1" startDate="1/1/2014" endDate="3/1/2014">
+          <DateRangePicker
+            isInvalidDate={this._isInvalidDate}
+            minDate={moment()}
+            onApply={this._onChangeDateRanage}
+            containerClass="w-100"
+            data-range-id="1"
+            opens="left"
+            startDate="1/1/2014"
+            endDate="3/1/2014">
             <div className="input-group date-range-picker">
               <input type="text" id="timeRange" className="form-control" readOnly value={this._getLabelOfRange() || ''} />
               <div className="input-group-append">

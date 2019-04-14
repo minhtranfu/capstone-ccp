@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
+import { Link } from "react-router-dom";
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
 import { RatingEquipmentTransaction } from "../../common";
-import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES } from '../../../common/consts';
+import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES, routeConsts } from '../../../common/consts';
+import { getRoutePath } from 'Utils/common.utils';
 
 class MyRequests extends Component {
   state = {
@@ -368,7 +370,9 @@ class MyRequests extends Component {
             <img src={thumbnail} className="rounded-left" />
           </div>
           <div className="detail flex-fill p-2">
-            <h6><span className={statusClasses}>{transaction.status}</span> {equipment.name}</h6>
+            <Link to={getRoutePath(routeConsts.EQUIPMENT_TRANSACTION_DETAIL, { id: transaction.id })}>
+              <h6><span className={statusClasses}>{transaction.status}</span> {equipment.name}</h6>
+            </Link>
             <div>
               <span>Days: {days}</span>
               <span className="ml-2 text-muted">({transaction.beginDate} to {transaction.endDate})</span>

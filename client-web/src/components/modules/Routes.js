@@ -77,9 +77,9 @@ export const modules = [
     isPrivate: true
   },
   {
-    name: routeConsts.EQUIPMENT_SUPPLY_DETAIL,
-    path: '/equipments/supply/:id',
-    modulePath: './transaction-detail',
+    name: routeConsts.EQUIPMENT_TRANSACTION_DETAIL,
+    path: '/equipments/transactions/:id',
+    modulePath: './equipment/transaction-detail',
     isPrivate: true
   },
   {
