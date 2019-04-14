@@ -3,15 +3,18 @@
     "target": "ES6",
     "module": "commonjs",
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "/src/",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "jsx": "react",
+    "baseUrl": ".",
     "paths": {
       // "Src/*": ["*"],
-      "Common/*": ["common/*"],
-      "Redux/*": ["redux/*"],
-      "Services/*": ["services/*"],
-      "Components/*": ["components/*"],
-      "Utils/*": ["utils/*"],
-      "Assets/*": ["assets/*"],
+      "Common/*": ["./src/common/*"],
+      "Redux/*": ["./src/redux/*"],
+      "Services/*": ["./src/services/*"],
+      "Components/*": ["./src/components/*"],
+      "Utils/*": ["./src/utils/*"],
+      "Assets/*": ["./src/assets/*"],
     }
   }
 }
