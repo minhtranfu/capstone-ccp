@@ -1,0 +1,194 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <div th:replace="fragments/header :: header"></div>
+    <title>CCP Admin</title>
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- Navigation -->
+    <div th:replace="fragments/navigation :: navigation"></div>
+
+
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Material Transaction Detail Information</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <form th:action="@{/material_transaction_detail/saveProcess}" method="post"
+                                      th:object="${transaction}" enctype="multipart/form-data">
+                                    <input type="hidden" th:field="*{id}">
+                                    <!--<div class="form-group">-->
+                                        <!--<label>Material Transaction Status</label>-->
+                                        <!--<select th:field="*{status}" class="form-control">-->
+                                            <!--<option th:each="status : ${transactionStatus}"-->
+                                                    <!--th:value="${status}"-->
+                                                    <!--th:text="${status.getValue()}">-->
+                                            <!--</option>-->
+                                        <!--</select>-->
+                                    <!--</div>-->
+
+                                    <!--<div class="form-group">-->
+                                        <!--<span th:if="${errorMessage}" th:text="${errorMessage}" style="color: red"></span>-->
+                                    <!--</div>-->
+                                    <div class="form-group">
+                                        <label>Material Transaction Detail:</label>
+                                            <p th:text="*{id}" class="link form-control-static"
+                                               placeholder="Material Transaction Detail" style="color: #1ab7ea;"></p>
+                                        </a>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Material Transaction:</label>
+                                        <a th:href="@{/material_transaction/detail/{id}(id = *{materialTransactionEntity.id})}">
+                                            <p th:text="*{materialTransactionEntity.id}" class="link form-control-static"
+                                               placeholder="Material Transaction" style="color: #1ab7ea;"></p>
+                                        </a>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Material:</label>
+                                        <a th:href="@{/material/detail/{id}(id = *{materialEntity.id})}">
+                                            <p th:text="*{materialEntity.name}" class="link form-control-static"
+                                               placeholder="Material" style="color: #1ab7ea;"></p>
+                                        </a>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Unit:</label>
+                                        <p th:text="*{unit}" class="form-control-static"
+                                           placeholder="Unit"></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Price:</label>
+                                        <p th:text="*{price}" class="form-control-static"
+                                           placeholder="Price"></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Quantity:</label>
+                                        <p th:text="*{quantity}" class="form-control-static"
+                                           placeholder="Quantity"></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Total Price:</label>
+                                        <p th:text="*{price * quantity}" class="form-control-static"
+                                           placeholder="Total Price:"></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Supplier:</label>
+                                        <a th:href="@{/contractor/detail/{id}(id = *{materialTransactionEntity.supplier.id})}">
+                                            <p th:text="*{materialTransactionEntity.supplier.name}" class="link form-control-static"
+                                               placeholder="Supplier" style="color: #1ab7ea;"></p>
+                                        </a>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Requester:</label>
+                                        <a th:href="@{/contractor/detail/{id}(id = *{materialTransactionEntity.requester.id})}">
+                                            <p th:text="*{materialTransactionEntity.requester.name}" class="link form-control-static"
+                                               placeholder="Requester" style="color: #1ab7ea;"></p>
+                                        </a>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label>Created Time:</label>
+                                        <p th:text="*{{createdTime}}" class="form-control-static"
+                                           placeholder="Created Time"></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Updated Time:</label>
+                                        <p th:text="*{{updatedTime}}" class="form-control-static"
+                                           placeholder="Updated Time"></p>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <input type="submit" class="btn btn-success" value="Save">
+
+                                        <a href="#" class="btn btn-default" data-toggle="modal"
+                                           data-target="#smallModal">Cancel</a>
+
+                                        <div class="modal fade" id="smallModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="smallModal" aria-hidden="true">
+                                            <div class="modal-dialog modal-sm">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-hidden="true">&times;
+                                                        </button>
+                                                        <h4 class="modal-title" id="myModalLabel">Confirm</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <h4>Do you want to cancel?</h4>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default"
+                                                                data-dismiss="modal">
+                                                            No
+                                                        </button>
+                                                        <a th:href="@{/material_transaction_detail/index}"
+                                                           class="link btn btn-danger">Yes</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
+
+                            <div class="col-lg-6">
+                                <!--/.table-responsive -->
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<div th:replace="fragments/footer_javascript :: footer_javascript"></div>
+
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script>
+
+    var statusSelectBox = document.getElementById('myChange');
+    var currentStatus = statusSelectBox.value;
+
+    $(document).ready(function () {
+        $('#dataTables-example').DataTable({
+            responsive: true
+        });
+
+    });
+
+
+</script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</body>
+
+</html>

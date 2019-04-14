@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="fragments/header :: header"></div>
+    <title>Login</title>
+</head>
+
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="login-panel panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Please Sign In</h3>
+                </div>
+                <div class="panel-body">
+                    <form th:action="@{/login}" method="post">
+                        <fieldset>
+                            <div th:if="${param.error}">
+                                <div class="alert alert-danger">
+                                    Invalid username and password.
+                                </div>
+                            </div>
+                            <div th:if="${param.logout}">
+                                <div class="alert alert-info">
+                                    You have been logged out.
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                    <input class="form-control" placeholder="Username" id="username" name="username" type="username" autofocus="true" required="true">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="Password" name="password" type="password"
+                                       required="true">
+                            </div>
+                            <!--<div class="checkbox">-->
+                                <!--<label>-->
+                                    <!--<input name="remember" type="checkbox" value="Remember Me">Remember Me-->
+                                <!--</label>-->
+                            <!--</div>-->
+                            <!-- Change this to a button or input when using this as a form -->
+                            <input type="submit" class="btn btn-lg btn-success btn-block" value="Login"/>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+            <div style="text-align: center">
+            <a th:href="@{/forgotPassword}" class="">Forgot Your Password</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer_javascript :: footer_javascript"></div>
+</body>
+
+</html>

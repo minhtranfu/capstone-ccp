@@ -1,0 +1,161 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div th:fragment="navigation">
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" th:href="@{/home/index}">CCP Admin</a>
+
+        </div>
+        <!-- /.navbar-header -->
+
+        <ul class="nav navbar-top-links navbar-right">
+            <li>
+                <h5 sec:authorize="isAuthenticated()">Welcome, <span style="color: #1ab7ea"
+                                                                     th:text="${#authentication.principal.adminUserEntity.name}"></span></h5>
+            </li>
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li><a th:href="@{/home/userDetail/{username}(username = ${#authentication.principal.id})}"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                    </li>
+                    <!--<li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>-->
+                    <!--</li>-->
+                    <li class="divider"></li>
+                    <li><a th:href="@{/logout}"><i
+                            class="fa fa-sign-out fa-fw"></i>Logout</a>
+
+                    </li>
+                </ul>
+                <!-- /.dropdown-user -->
+            </li>
+            <!-- /.dropdown -->
+        </ul>
+        <!-- /.navbar-top-links -->
+
+        <div class="navbar-default sidebar" role="navigation">
+            <div class="sidebar-nav navbar-collapse">
+                <ul class="nav" id="side-menu">
+                    <!--<li class="sidebar-search">-->
+                        <!--<div class="input-group custom-search-form">-->
+
+                        <!--</div>-->
+                        <!--&lt;!&ndash; /input-group &ndash;&gt;-->
+                    <!--</li>-->
+                    <li>
+                        <a th:href="@{/home/index}"><i
+                                class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                    </li>
+                    <li sec:authorize="hasRole('ROLE_ADMIN')">
+                        <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/staff/index}"><i
+                                class="fa fa-user-plus fa-fw"></i> Manage Staff</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/contractor/index}"><i
+                                class="fa fa-user fa-fw"></i> Manage Contractor</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-truck"></i> Manage Equipment<span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a th:href="@{/equipment/index}"><i
+                                        class="glyphicon glyphicon-wrench"></i> Equipment</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/hiring_transaction/index}"><i
+                                        class="glyphicon glyphicon-transfer"></i> Hiring Transaction</a>
+                            </li>
+                            <li sec:authorize="hasRole('ROLE_ADMIN')">
+                                <a href="#"><i class="fa fa-sitemap fa-fw"></i> Manage Equipment Type<span
+                                        class="fa arrow"></span></a>
+                                <ul class="nav nav-third-level">
+                                    <li>
+                                        <a th:href="@{/general_equipment_type/index}"><i class="fa fa-table fa-fw"></i>
+                                            Equipment Category</a>
+                                    </li>
+                                    <li>
+                                        <a th:href="@{/equipment_type/index}"><i class="fa fa-table fa-fw"></i>Equipment
+                                            Type</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-cubes"></i> Manage Material<span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+
+
+                            <li>
+                                <a th:href="@{/material/index}"><i
+                                        class="glyphicon glyphicon-wrench"></i> Material</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/material_transaction/index}"><i
+                                        class="glyphicon glyphicon-transfer"></i> Material Transaction</a>
+                            </li>
+                            <li sec:authorize="hasRole('ROLE_ADMIN')">
+                                <a href="#" ><i class="fa fa-sitemap fa-fw"></i> Manage Material Type<span
+                                        class="fa arrow"></span></a>
+                                <ul class="nav nav-third-level">
+                                    <li>
+                                        <a th:href="@{/general_material_type/index}"><i class="fa fa-table fa-fw"></i>
+                                            Material Category</a>
+                                    </li>
+                                    <li>
+                                        <a th:href="@{/material_type/index}"><i class="fa fa-table fa-fw"></i>Material
+                                            Type</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="#"><i class="fa fa-gavel"></i> Manage Debris<span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li sec:authorize="hasRole('ROLE_ADMIN')">
+                                <a th:href="@{/debris_service_type/index}"><i
+                                        class="glyphicon glyphicon-wrench"></i> Debris Service Type</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/debris_transaction/index}"><i
+                                        class="glyphicon glyphicon-transfer"></i> Debris Transaction</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-envelope-o"></i> Manage Report<span
+                                class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a th:href="@{/report/index}"><i class="fa fa-table fa-fw"></i>Report
+                                </a>
+                            </li>
+                            <li>
+                                <a th:href="@{/report_type/index}"><i class="fa fa-table fa-fw"></i>Report Type
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.sidebar-collapse -->
+        </div>
+        <!-- /.navbar-static-side -->
+    </nav>
+    <!-- /#page-wrapper -->
+</div>
+</html>

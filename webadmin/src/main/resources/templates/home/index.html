@@ -1,0 +1,1041 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <div th:replace="fragments/header :: header"></div>
+    <title>CCP Admin</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- Navigation -->
+    <div th:replace="fragments/navigation :: navigation"></div>
+
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Dashboard</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-user fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"><p th:text="${newContractor}"></p></div>
+                                <div>New Contractors</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a th:href="@{/contractor/index}">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-tasks fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"><p th:text="${newFeedback}"></p></div>
+                                <div>New Reports</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a th:href="@{/report/index}">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+        <!-- /.row -->
+        <!--<div class="row">-->
+            <!--<div class="col-lg-12 col-md-6">-->
+                <!--<div class="panel panel-primary">-->
+                    <!--<div class="panel-heading">-->
+                        <!--<div class="row">-->
+                            <!--<div class="col-xs-3">-->
+                                <!--<i class="fa fa-user fa-5x"></i>-->
+                            <!--</div>-->
+                            <!--<div class="col-xs-9 text-right">-->
+                                <!--<div class="huge"><p th:text="${hiringTransactionStatistic + materialTransactionStatistic + debrisTransactionStatistic} + K "></p></div>-->
+                                <!--<div>Total Income</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+
+        <!--</div>-->
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-4 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <img src="/images/equipment.svg" height="80" width="80">
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"><p th:text="${hiringTransactionStatistic} +  K"></p></div>
+                                <div>Hiring Transaction Income</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="panel panel-yellow">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <img src="/images/materials.svg" height="80" width="80">
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"><p th:text="${materialTransactionStatistic} + K"></p></div>
+                                <div>Material Transaction Income</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="panel panel-red">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <img src="/images/debris.svg" height="80" width="80">
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"><p th:text="${debrisTransactionStatistic} + K"></p></div>
+                                <div>Debris Transaction Income</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.row -->
+
+        <!-- /Equipment -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Equipment
+
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+
+                            <div class="col-lg-3">
+                                <input type="text" id="daterange" class="form-control" width="50px"/>
+                            </div>
+                            <div class="col-lg-3">
+                                <select name="selectType" id="selectTimeUnit" class="form-control">
+                                    <option value="week">Week</option>
+                                    <option value="month">Month</option>
+                                    <option value="year">Year</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div id="columnchart_hiring_transaction" class="col-lg-6" style="height: 500px"></div>
+                            <div id="columnchart_equipment_type" class="col-lg-6" style="height: 500px"></div>
+                            <div id="columnchart_equipment" class="col-lg-4" style="height: 500px"></div>
+                            <div id="columnchart_equipment_total_transaction" class="col-lg-4"
+                                 style="height: 500px"></div>
+                            <div id="columnchart_equipment_total_transaction_price" class="col-lg-4"
+                                 style="height: 500px"></div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- /.panel-body -->
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+
+        </div>
+        <!-- /Material -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Material
+
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <input type="text" id="daterangeMaterial" class="form-control"/>
+                            </div>
+                            <div class="col-lg-3">
+                                <select name="selectType" id="selectTimeUnitMaterial" class="form-control">
+                                    <option value="week">Week</option>
+                                    <option value="month">Month</option>
+                                    <option value="year">Year</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6">
+                            </div>
+                        </div>
+                        <div id="columnchart_material_transaction" class="col-lg-6" style="height: 500px"></div>
+                        <div id="columnchart_material_type" class="col-lg-6" style="height: 500px"></div>
+                        <div id="columnchart_material" class="col-lg-4" style="height: 500px"></div>
+                        <div id="columnchart_material_total_transaction" class="col-lg-4"
+                             style="height: 500px"></div>
+                        <div id="columnchart_material_total_transaction_price" class="col-lg-4"
+                             style="height: 500px"></div>
+
+                    </div>
+
+                    <!-- /.panel-body -->
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+
+        </div>
+        <!-- /Debris -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Debris
+
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <input type="text" id="daterangeDebris" class="form-control"/>
+                            </div>
+                            <div class="col-lg-3">
+                                <select name="selectType" id="selectTimeUnitDebris" class="form-control">
+                                    <option value="week">Week</option>
+                                    <option value="month">Month</option>
+                                    <option value="year">Year</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6">
+                            </div>
+                        </div>
+                        <div id="columnchart_debris_transaction" class="col-lg-6 chart-div" style="height: 500px"></div>
+                        <div id="columnchart_debris_type" class="col-lg-6 chart-div" style="height: 500px"></div>
+                        <div id="columnchart_debris_post" class="col-lg-4" style="height: 500px"></div>
+                        <div id="columnchart_debris_bid" class="col-lg-4"
+                             style="height: 500px"></div>
+                        <div id="columnchart_debris_total_transaction" class="col-lg-4"
+                             style="height: 500px"></div>
+
+                    </div>
+
+                    <!-- /.panel-body -->
+                </div>
+
+            </div>
+            <!-- /.col-lg-12 -->
+
+        </div>
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<div th:replace="fragments/footer_javascript :: footer_javascript"></div>
+<script>
+    google.charts.load('current', {'packages': ['corechart', 'bar', 'line']});
+    google.charts.setOnLoadCallback(function () {
+        callAnalystEquipment();
+        callAnalystMaterial();
+        callAnalystDebris();
+    });
+    var filters = {
+        start: moment().subtract(3, 'months'),
+        end: moment()
+    };
+    // equipment data
+    var hiringTransactionData = [];
+    var equipmentTypeData = [];
+    var equipmentData = [];
+    var equipmentTotalTransactionData = [];
+    var equipmentTotalPriceTransactionData = [];
+    var timeUnitElement = $('#selectTimeUnit');
+
+    // material data
+    var materialTransactionData = [];
+    var materialTypeData = [];
+    var materialData = [];
+    var materialTotalTransactionData = [];
+    var materialTotalPriceTransactionData = [];
+    var timeUnitMaterialElement = $('#selectTimeUnitMaterial');
+
+    // debris data
+    var debrisTransactionData = [];
+    var debrisTypeData = [];
+    var debrisPostData = [];
+    var debrisBidData = [];
+    var debrisTotalTransactionData = [];
+    var timeUnitDebrisElement = $('#selectTimeUnitDebris');
+
+    function uppercaseFirstChar(text) {
+        return text.charAt(0).toUpperCase() + text.substr(1);
+    }
+
+    $(document).ready(function () {
+
+        //  equipment draw chart
+        // Init date range picker
+        $('input[id="daterange"]').daterangepicker({
+            startDate: window.filters.start,
+            endDate: window.filters.end,
+            opens: 'left',
+            locale: {
+                format: 'DD/MM/YYYY'
+            },
+            maxDate: moment(),
+
+        }, function (start, end) {
+            window.filters.start = start;
+            window.filters.end = end;
+
+            callAnalystEquipment();
+        });
+
+        // Add listener onChange selectType
+        $('#selectTimeUnit').on('change', callAnalystEquipment);
+
+        // Material draw chart
+        // Init date range picker
+        $('input[id="daterangeMaterial"]').daterangepicker({
+            startDate: window.filters.start,
+            endDate: window.filters.end,
+            opens: 'left',
+            locale: {
+                format: 'DD/MM/YYYY'
+            },
+            maxDate: moment(),
+
+        }, function (start, end) {
+            window.filters.start = start;
+            window.filters.end = end;
+
+            callAnalystMaterial();
+        });
+
+        // Add listener onChange selectType
+        $('#selectTimeUnitMaterial').on('change', callAnalystMaterial);
+
+        // Debris draw chart
+        // Init date range picker
+        $('input[id="daterangeDebris"]').daterangepicker({
+            startDate: window.filters.start,
+            endDate: window.filters.end,
+            opens: 'left',
+            locale: {
+                format: 'DD/MM/YYYY'
+            },
+            maxDate: moment(),
+
+        }, function (start, end) {
+            window.filters.start = start;
+            window.filters.end = end;
+
+            callAnalystDebris();
+        });
+
+        // Add listener onChange selectType
+        $('#selectTimeUnitDebris').on('change', callAnalystDebris);
+
+    })
+
+    function callAnalystEquipment() {
+        var start = window.filters.start;
+        var end = window.filters.end;
+        var selectType = $('#selectTimeUnit').val();
+
+        $.ajax({
+            url: "/report/hiringTransacton",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY'),
+                selectType: selectType
+            },
+            success: function (response) {
+
+                hiringTransactionData = response;
+                drawHiringTransactionChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+
+        $.ajax({
+            url: "/report/equipmentType",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY')
+            },
+            success: function (response) {
+
+                equipmentTypeData = response;
+                drawEquipmentTypeChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+        $.ajax({
+            url: "/report/equipment",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY'),
+                selectType: selectType
+            },
+            success: function (response) {
+
+                equipmentData = response;
+                drawEquipmentChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+        $.ajax({
+            url: "/report/equipmentTotalTransaction",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY'),
+                selectType: selectType
+            },
+            success: function (response) {
+
+                equipmentTotalTransactionData = response;
+                drawEquipmentTransationChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+        $.ajax({
+            url: "/report/equipmentTotalPriceTransaction",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY'),
+                selectType: selectType
+            },
+            success: function (response) {
+
+                equipmentTotalPriceTransactionData = response;
+                drawEquipmentTransationPriceChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+    }
+
+    function callAnalystMaterial() {
+        var start = window.filters.start;
+        var end = window.filters.end;
+        var selectType = $('#selectTimeUnitMaterial').val();
+
+        $.ajax({
+            url: "/report/materialTransacton",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY'),
+                selectType: selectType
+            },
+            success: function (response) {
+                materialTransactionData = response;
+                drawMaterialTransactionChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+
+        $.ajax({
+            url: "/report/materialType",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY')
+            },
+            success: function (response) {
+                materialTypeData = response;
+                drawMaterialTypeChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+
+        $.ajax({
+            url: "/report/material",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY'),
+                selectType: selectType
+            },
+            success: function (response) {
+
+                materialData = response;
+                drawMaterialChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+        $.ajax({
+            url: "/report/materialTotalTransaction",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY'),
+                selectType: selectType
+            },
+            success: function (response) {
+
+                materialTotalTransactionData = response;
+                drawTotalMaterialTransationChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+        $.ajax({
+            url: "/report/materialTotalPriceTransaction",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY'),
+                selectType: selectType
+            },
+            success: function (response) {
+                materialTotalPriceTransactionData = response;
+                drawTotalMaterialTransationPriceChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+    }
+
+    function callAnalystDebris() {
+        var start = window.filters.start;
+        var end = window.filters.end;
+        var selectType = $('#selectTimeUnitDebris').val();
+        $.ajax({
+            url: "/report/debrisTransacton",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY'),
+                selectType: selectType
+            },
+            success: function (response) {
+                debrisTransactionData = response;
+                drawDebrisTransactionChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+
+        $.ajax({
+            url: "/report/debrisType",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY')
+            },
+            success: function (response) {
+                debrisTypeData = response;
+                drawDebrisServiceTypeChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+
+        $.ajax({
+            url: "/report/debrisPost",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY'),
+                selectType: selectType
+            },
+            success: function (response) {
+
+                debrisPostData = response;
+                drawDebrisPostChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+        $.ajax({
+            url: "/report/debrisBid",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY'),
+                selectType: selectType
+            },
+            success: function (response) {
+                debrisBidData = response;
+                drawDebrisBidChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+        $.ajax({
+            url: "/report/debrisTotalTransaction",
+            type: "GET",
+            data: {
+                beginDate: start.format('DD-MM-YYYY'),
+                endDate: end.format('DD-MM-YYYY'),
+                selectType: selectType
+            },
+            success: function (response) {
+                console.log('total Price', response);
+                debrisTotalTransactionData = response;
+                drawTotalDebrisTransationChart();
+            },
+            error: function (xhr) {
+                //Do Something to handle error
+            }
+        });
+    }
+
+    function drawHiringTransactionChart() {
+
+
+        var reportsData = [
+            [uppercaseFirstChar(timeUnitElement.val()), 'Processing', 'Finished', 'Canceled']
+        ];
+        Object.keys(hiringTransactionData).forEach(function (key) {
+
+            var timeUnit = hiringTransactionData[key].timeUnit + '';
+            var totalProcessing = hiringTransactionData[key].totalProcessing;
+            var totalFinished = hiringTransactionData[key].totalFinished;
+            var totalCanceled = hiringTransactionData[key].totalCanceled;
+
+            reportsData.push([timeUnit, totalProcessing, totalFinished, totalCanceled])
+        });
+
+        var data = google.visualization.arrayToDataTable(reportsData);
+
+
+        var options = {
+            chart: {
+                title: 'Hiring Transaction Analyist By ' + uppercaseFirstChar(timeUnitElement.val()),
+                subtitle: 'Transaction Status',
+            },
+            tooltip:
+                {textStyle: {color: '#FF0000'}, showColorCode: true, ignoreBounds: true}
+            ,
+            colors: ['#f4b400', '#0f9d58', '#db4437'],
+            bars: 'vertical' // Required for Material Bar Charts.
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('columnchart_hiring_transaction'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
+
+    function drawEquipmentTypeChart() {
+
+        var reportsData = [
+            ['Equipment Type', 'Quantity']
+        ];
+        Object.keys(equipmentTypeData).forEach(function (key) {
+
+            var value1 = equipmentTypeData[key].type;
+            var value2 = equipmentTypeData[key].quantity;
+            reportsData.push([value1, value2]);
+        });
+        var data = google.visualization.arrayToDataTable(reportsData);
+        var options = {
+            title: 'Equipment Type',
+            is3D: true,
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('columnchart_equipment_type'));
+
+        chart.draw(data, options);
+    }
+
+    function drawEquipmentChart() {
+        var reportsData = [];
+
+        Object.keys(equipmentData).forEach(function (key) {
+            var value1 = equipmentData[key].timeUnit + '';
+            var value2 = equipmentData[key].quantity;
+            reportsData.push([value1, value2]);
+        });
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', uppercaseFirstChar(timeUnitElement.val()));
+        data.addColumn('number', 'Quantity');
+        data.addRows(reportsData);
+        var options = {
+            title: 'Equipment Posted',
+            pieHole: 1
+        };
+
+
+        var chart = new google.charts.Line(document.getElementById('columnchart_equipment'));
+
+        chart.draw(data, google.charts.Line.convertOptions(options));
+    }
+
+    function drawEquipmentTransationChart() {
+        var reportsData = [];
+
+        Object.keys(equipmentTotalTransactionData).forEach(function (key) {
+            var value1 = equipmentTotalTransactionData[key].timeUnit + '';
+            var value2 = equipmentTotalTransactionData[key].quantity;
+            reportsData.push([value1, value2]);
+        });
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', uppercaseFirstChar(timeUnitElement.val()));
+        data.addColumn('number', 'Quantity');
+        data.addRows(reportsData);
+        var options = {
+            title: 'Total Hiring Transaction Created',
+            pieHole: 1
+        };
+
+
+        var chart = new google.charts.Line(document.getElementById('columnchart_equipment_total_transaction'));
+
+        chart.draw(data, google.charts.Line.convertOptions(options));
+    }
+
+    function drawEquipmentTransationPriceChart() {
+        var reportsData = [];
+
+        Object.keys(equipmentTotalPriceTransactionData).forEach(function (key) {
+            var value1 = equipmentTotalPriceTransactionData[key].timeUnit + '';
+            var value2 = equipmentTotalPriceTransactionData[key].price;
+            reportsData.push([value1, value2]);
+        });
+        var data = new google.visualization.DataTable();
+
+        data.addColumn('string', uppercaseFirstChar(timeUnitElement.val()));
+        data.addColumn('number', 'Price');
+        data.addRows(reportsData);
+        var options = {
+            title: 'Total Price Hiring Transaction Created',
+            pieHole: 1,
+        };
+
+
+        var chart = new google.charts.Line(document.getElementById('columnchart_equipment_total_transaction_price'));
+
+        chart.draw(data, google.charts.Line.convertOptions(options));
+    }
+
+    function drawMaterialTransactionChart() {
+
+
+        var reportsData = [
+            [uppercaseFirstChar(timeUnitMaterialElement.val()), 'Processing', 'Finished', 'Canceled']
+        ];
+        Object.keys(materialTransactionData).forEach(function (key) {
+
+            var timeUnit = materialTransactionData[key].timeUnit + '';
+            var totalProcessing = materialTransactionData[key].totalProcessing;
+            var totalFinished = materialTransactionData[key].totalFinished;
+            var totalCanceled = materialTransactionData[key].totalCanceled;
+
+            reportsData.push([timeUnit, totalProcessing, totalFinished, totalCanceled])
+        });
+
+        var data = google.visualization.arrayToDataTable(reportsData);
+
+
+        var options = {
+            chart: {
+                title: 'Material Transaction Analyist By ' + uppercaseFirstChar(timeUnitMaterialElement.val()),
+                subtitle: 'Transaction Status',
+            },
+            colors: ['#f4b400', '#0f9d58', '#db4437'],
+            bars: 'vertical' // Required for Material Bar Charts.
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('columnchart_material_transaction'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
+
+    function drawMaterialTypeChart() {
+
+        var reportsData = [
+            ['Material Type', 'Quantity']
+        ];
+        Object.keys(materialTypeData).forEach(function (key) {
+
+            var value1 = materialTypeData[key].type;
+            var value2 = materialTypeData[key].quantity;
+            reportsData.push([value1, value2]);
+        });
+        var data = google.visualization.arrayToDataTable(reportsData);
+        var options = {
+            title: 'Material Type',
+            is3D: true,
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('columnchart_material_type'));
+
+        chart.draw(data, options);
+    }
+
+    function drawMaterialChart() {
+        var reportsData = [];
+
+        Object.keys(materialData).forEach(function (key) {
+            var value1 = materialData[key].timeUnit + '';
+            var value2 = materialData[key].quantity;
+            reportsData.push([value1, value2]);
+        });
+        var data = new google.visualization.DataTable();
+
+        data.addColumn('string', uppercaseFirstChar(timeUnitMaterialElement.val()));
+        data.addColumn('number', 'Quantity');
+        data.addRows(reportsData);
+        var options = {
+            title: 'Material Posted',
+            pieHole: 1
+        };
+
+
+        var chart = new google.charts.Line(document.getElementById('columnchart_material'));
+
+        chart.draw(data, google.charts.Line.convertOptions(options));
+    }
+
+    function drawTotalMaterialTransationChart() {
+        var reportsData = [];
+
+        Object.keys(materialTotalTransactionData).forEach(function (key) {
+            var value1 = materialTotalTransactionData[key].timeUnit + '';
+            var value2 = materialTotalTransactionData[key].quantity;
+            reportsData.push([value1, value2]);
+        });
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', uppercaseFirstChar(timeUnitMaterialElement.val()));
+        data.addColumn('number', 'Quantity');
+        data.addRows(reportsData);
+        var options = {
+            title: 'Total Material Transaction Created',
+            pieHole: 1
+        };
+
+
+        var chart = new google.charts.Line(document.getElementById('columnchart_material_total_transaction'));
+
+        chart.draw(data, google.charts.Line.convertOptions(options));
+    }
+
+    function drawTotalMaterialTransationPriceChart() {
+        var reportsData = [];
+
+        Object.keys(materialTotalPriceTransactionData).forEach(function (key) {
+            var value1 = materialTotalPriceTransactionData[key].timeUnit + '';
+            var value2 = materialTotalPriceTransactionData[key].price;
+            reportsData.push([value1, value2]);
+        });
+        var data = new google.visualization.DataTable();
+
+        data.addColumn('string', uppercaseFirstChar(timeUnitMaterialElement.val()));
+        data.addColumn('number', 'Price');
+        data.addRows(reportsData);
+        var options = {
+            title: 'Total Price Material Transaction Created',
+            pieHole: 1,
+        };
+
+
+        var chart = new google.charts.Line(document.getElementById('columnchart_material_total_transaction_price'));
+
+        chart.draw(data, google.charts.Line.convertOptions(options));
+    }
+
+    function drawDebrisTransactionChart() {
+
+
+        var reportsData = [
+            [uppercaseFirstChar(timeUnitMaterialElement.val()), 'Processing', 'Finished', 'Canceled']
+        ];
+        Object.keys(debrisTransactionData).forEach(function (key) {
+
+            var timeUnit = debrisTransactionData[key].timeUnit + '';
+            var totalProcessing = debrisTransactionData[key].totalProcessing;
+            var totalFinished = debrisTransactionData[key].totalFinished;
+            var totalCanceled = debrisTransactionData[key].totalCanceled;
+
+            reportsData.push([timeUnit, totalProcessing, totalFinished, totalCanceled])
+        });
+
+        var data = google.visualization.arrayToDataTable(reportsData);
+
+
+        var options = {
+            chart: {
+                title: 'Debris Transaction Analyist By ' + uppercaseFirstChar(timeUnitDebrisElement.val()),
+                subtitle: 'Transaction Status',
+            },
+            colors: ['#f4b400', '#0f9d58', '#db4437'],
+            bars: 'vertical' // Required for Material Bar Charts.
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('columnchart_debris_transaction'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+    }
+
+    function drawDebrisServiceTypeChart() {
+
+        var reportsData = [
+            ['Debris Type', 'Quantity']
+        ];
+        Object.keys(debrisTypeData).forEach(function (key) {
+
+            var value1 = debrisTypeData[key].type;
+            var value2 = debrisTypeData[key].size;
+            reportsData.push([value1, value2]);
+        });
+        var data = google.visualization.arrayToDataTable(reportsData);
+        var options = {
+            title: 'Debris Type',
+            is3D: true,
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('columnchart_debris_type'));
+
+        chart.draw(data, options);
+    }
+
+    function drawTotalDebrisTransationChart() {
+        var reportsData = [];
+
+        Object.keys(debrisTotalTransactionData).forEach(function (key) {
+            var value1 = debrisTotalTransactionData[key].timeUnit + '';
+            var value2 = debrisTotalTransactionData[key].quantity;
+            reportsData.push([value1, value2]);
+        });
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', uppercaseFirstChar(timeUnitDebrisElement.val()));
+        data.addColumn('number', 'Quantity');
+        data.addRows(reportsData);
+        var options = {
+            title: 'Total Debris Transaction Created',
+            pieHole: 1
+        };
+
+
+        var chart = new google.charts.Line(document.getElementById('columnchart_debris_total_transaction'));
+
+        chart.draw(data, google.charts.Line.convertOptions(options));
+    }
+
+    function drawDebrisPostChart() {
+        var reportsData = [];
+
+        Object.keys(debrisPostData).forEach(function (key) {
+            var value1 = debrisPostData[key].timeUnit + '';
+            var value2 = debrisPostData[key].quantity;
+            reportsData.push([value1, value2]);
+        });
+        var data = new google.visualization.DataTable();
+
+        data.addColumn('string', uppercaseFirstChar(timeUnitDebrisElement.val()));
+        data.addColumn('number', 'Quantity');
+        data.addRows(reportsData);
+        var options = {
+            title: 'Debris Post Posted',
+            pieHole: 1
+        };
+
+
+        var chart = new google.charts.Line(document.getElementById('columnchart_debris_post'));
+
+        chart.draw(data, google.charts.Line.convertOptions(options));
+    }
+
+    function drawDebrisBidChart() {
+        var reportsData = [];
+
+        Object.keys(debrisBidData).forEach(function (key) {
+            var value1 = debrisBidData[key].timeUnit + '';
+            var value2 = debrisBidData[key].quantity;
+            reportsData.push([value1, value2]);
+        });
+        var data = new google.visualization.DataTable();
+
+        data.addColumn('string', uppercaseFirstChar(timeUnitMaterialElement.val()));
+        data.addColumn('number', 'Quantity');
+        data.addRows(reportsData);
+        var options = {
+            title: 'Debris Bid Posted',
+            pieHole: 1
+        };
+
+
+        var chart = new google.charts.Line(document.getElementById('columnchart_debris_bid'));
+
+        chart.draw(data, google.charts.Line.convertOptions(options));
+    }
+</script>
+
+</body>
+
+</html>

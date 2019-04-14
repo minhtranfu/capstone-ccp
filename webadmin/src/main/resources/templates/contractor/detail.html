@@ -1,0 +1,184 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <div th:replace="fragments/header :: header"></div>
+    <title>CCP Admin</title>
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- Navigation -->
+    <div th:replace="fragments/navigation :: navigation"></div>
+
+
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Contractor Information</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <form th:action="@{/contractor/saveProcess}" method="post"
+                                      th:object="${contractor}" enctype="multipart/form-data">
+                                    <input type="hidden" th:field="*{id}">
+                                    <input type="hidden" th:field="*{status}">
+                                    <div class="form-group">
+                                        <label>Name:</label>
+                                        <input th:field="*{name}" class="form-control" placeholder="Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
+                                              style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status:</label><br/>
+                                        <span th:switch="${contractor.status.toString()}">
+                                            <span th:case="NOT_VERIFIED" class="form-control-static"
+                                                  style="color: #1ab7ea">Not Verified</span>
+                                            <span th:case="ACTIVATED" class="form-control-static" style="color: green">Activated</span>
+                                            <span th:case="DEACTIVATED" class="form-control-static" style="color: red">Deactivated</span>
+                                        </span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email:</label>
+                                        <input th:field="*{email}" class="form-control" placeholder="Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                                              style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Phone Number:</label>
+                                        <input th:field="*{phone}" class="form-control" placeholder="Phone Number">
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"
+                                              style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Avatar:</label>
+                                        <img th:src="*{thumbnail}" style="width: 100px; height: 100px"/>
+                                        <input type="hidden" th:field="*{thumbnail}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Verify Picture:</label>
+                                        <div class="col-lg-12">
+                                            <div th:each="item: ${verifyImages}" class="col-lg-3">
+                                                <img th:src="${item.url}" style="width: 100px; height: 100px"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Created Time:</label>
+                                        <p th:text="*{{createdTime}}" class="form-control-static"
+                                           placeholder="Created Time"></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Updated Time:</label>
+                                        <p th:text="*{{updatedTime}}" class="form-control-static"
+                                           placeholder="Updated Time"></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Reports Received</label>
+                                        <p th:text="*{countReceivedFeedbackEntity()}" class="form-control-static"
+                                           placeholder="Reports Received"></p>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-lg-4">
+                                            <input type="Submit" value="Save" class="btn btn-success">
+                                            <a href="#" class="btn btn-default" data-toggle="modal"
+                                               data-target="#smallModal">Cancel</a>
+                                            <div class="modal fade" id="smallModal" tabindex="-1" role="dialog"
+                                                 aria-labelledby="smallModal" aria-hidden="true">
+                                                <div class="modal-dialog modal-sm">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-hidden="true">&times;
+                                                            </button>
+                                                            <h4 class="modal-title" id="myModalLabel">Confirm</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <h4>Do you want to cancel?</h4>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default"
+                                                                    data-dismiss="modal">
+                                                                No
+                                                            </button>
+                                                            <a th:href="@{/contractor/index}"
+                                                               class="link btn btn-danger">Yes</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-8" style="text-align: right">
+                                            <a th:switch="${contractor.status.toString()}">
+                                                <a th:case="NOT_VERIFIED"
+                                                   th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
+                                                   class="link btn btn-primary">Verify Contractor</a>
+                                                <a th:case="ACTIVATED"
+                                                   th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
+                                                   class="link btn btn-danger">Deactive Contractor</a>
+                                                <a th:case="DEACTIVATED"
+                                                   th:href="@{/contractor/updateStatus(id = ${contractor.id})}"
+                                                   class="link btn btn-success">Active Contractor</a>
+                                            </a>
+                                            <a th:href="@{/notification/create/{id}(id = *{id})}"
+                                               class="link btn btn-primary">Create Notification</a>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
+                            <div class="col-lg-6">
+
+                                <!--/.table-responsive -->
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<div th:replace="fragments/footer_javascript :: footer_javascript"></div>
+
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script>
+    $(document).ready(function () {
+        $('#dataTables-example').DataTable({
+            responsive: true
+        });
+    });
+</script>
+</body>
+
+</html>
