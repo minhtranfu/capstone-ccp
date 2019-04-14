@@ -74,18 +74,24 @@ class EquipDetail extends Component {
     const { contractor } = authentication;
 
     return (
-      <div className="sticky-top sticky-sidebar">
+      <div className="sticky-top sticky-sidebar mb-2">
         <div className="constructor-card text-center">
-          <Image
-            src={
-              equip.contractor && equip.contractor.thumbnailImageUrl
-                ? equip.contractor.thumbnailImageUrl
-                : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"
-            }
-            className="rounded-circle w-50"
-            alt=""
-          />
-          <h5>
+          {equip.contractor && equip.contractor.thumbnailImageUrl
+            ? <Image
+              circle
+              src={equip.contractor.thumbnailImageUrl}
+              width={125}
+              height={125}
+              className="rounded-circle"
+              alt="Avatar"
+            />
+            : <Skeleton
+              circle
+              width={125}
+              height={125}
+            />
+          }
+          <h5 className="mb-0">
             {!isFetching ?
               <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: equip.contractor.id })}>{equip.contractor.name}</Link>
               : <Skeleton />}
@@ -102,7 +108,7 @@ class EquipDetail extends Component {
             </div>
           }
           <p className="mt-0 text-muted">
-            Join at:{" "}
+            Joined:{" "}
             {!isFetching ? (
               formatDate(equip.contractor.createdTime)
             ) : (
@@ -183,23 +189,25 @@ class EquipDetail extends Component {
                 ))}
               </OwlCarousel>
             )) || <Skeleton height={65} />}
-            <div className="py-2 px-3 shadow-sm bg-white">
+            <div className="my-2 py-2 px-3 shadow-sm bg-white">
               <h1 className="">{equip.name || <Skeleton />}</h1>
               <div className="row">
                 <div className="col-md-6">
                   <h6><i className="fal fa-tags"></i> Type: {equip.equipmentType && equip.equipmentType.name}</h6>
                 </div>
                 <div className="col-md-6">
-                  <h6><i className="fal fa-dollar-sign"></i> Daily price: {formatPrice(equip.dailyPrice)}</h6>
+                  <h6><i className="fal fa-money-bill"></i> Daily price: {formatPrice(equip.dailyPrice)}</h6>
                 </div>
                 <div className="col-md-12">
                   <h6><i className="fal fa-map-marker"></i> Address: {equip.address}</h6>
                 </div>
               </div>
               <h5 className="mt-3">Description:</h5>
-              <div className="description">{equip.description}</div>
+              <div className="description">
+                {equip.description}
+                {!equip.id && <Skeleton count={5} />}
+              </div>
             </div>
-            {!equip.id && <Skeleton count={10} />}
           </div>
           {/* Right Sidebar */}
           <div className="col-md-3">

@@ -9,7 +9,7 @@ const actionMapper = {
 };
 
 // ====== Common reducer
-export default (state = INITIAL_STATE.equipmentTypeCategories, action) => {
+export default (state = INITIAL_STATE.equipmentTypeCategory, action) => {
   if (actionMapper[action.type]) {
     const actionHandler = actionMapper[action.type];
     return actionHandler(state, action);

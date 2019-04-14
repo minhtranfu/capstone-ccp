@@ -7,10 +7,13 @@ import {
 } from 'react-transition-group';
 import classnames from 'classnames';
 import { UncontrolledTooltip } from 'reactstrap';
+import DateRangePicker from 'react-bootstrap-daterangepicker';
+import Skeleton from 'react-loading-skeleton';
+import moment from 'moment';
+import 'bootstrap-daterangepicker/daterangepicker.css';
 
 import { equipmentServices } from 'Src/services/domain/ccp';
 import { Image } from 'Src/components/common';
-import Skeleton from 'react-loading-skeleton';
 import { getRoutePath, getErrorMessage } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
 import { ComponentBlocking, DropzoneUploadImage } from 'Components/common';
@@ -69,18 +72,39 @@ class EditEquipment extends Component {
    */
   _handleFieldChange = e => {
     let { name, value } = e.target;
-    const { construction } = this.props;
+    const { construction, equipmentTypeCategory } = this.props;
     const { editedData } = this.state;
 
+    let changed = {};
     if (name === 'constructionId') {
       name = 'construction';
       value = construction.items.find(item => item.id === +value);
+
+    } else if (name === 'equipmentTypeCategoryId') {
+      changed = {
+        equipmentType: {
+          id: 0
+        },
+      };
+    } else if (name === 'equipmentTypeId') {
+      name = 'equipmentType';
+      value = +value;
+      equipmentTypeCategory.items.forEach(category => {
+        if (category.equipmentTypes) {
+          category.equipmentTypes.forEach(type => {
+            if (type.id === value) {
+              value = type;
+            }
+          });
+        }
+      });
     }
+    changed[name] = value;
 
     this.setState({
       editedData: {
         ...editedData,
-        [name]: value
+        ...changed
       }
     });
   };
@@ -342,17 +366,110 @@ class EditEquipment extends Component {
     }
   };
 
+  // Get date range in string by range id
+  _getLabelOfRange = (rangeId) => {
+    let { equipment, editedData } = this.state;
+
+    const data = {
+      ...equipment,
+      ...editedData
+    };
+    const availableTimeRanges = data.availableTimeRanges;
+    if (availableTimeRanges == undefined || availableTimeRanges.length == 0) {
+      return '';
+    }
+
+    const range = availableTimeRanges[rangeId];
+    if (range == undefined || !range.beginDate) {
+      return '';
+    }
+
+    const { beginDate, endDate } = range;
+
+    return `${beginDate} - ${endDate}`;
+  }
+
+  _renderDateRangePickers = () => {
+    let { equipment, editedData } = this.state;
+
+    const data = {
+      ...equipment,
+      ...editedData
+    };
+    const numOfRange = data.availableTimeRanges.length;
+
+    return data.availableTimeRanges.map((range, i) => {
+      return (
+        <div key={i} className="input-group date-range-picker mb-4">
+          <DateRangePicker
+            containerClass="custom-file"
+            autoApply
+            alwaysShowCalendars
+            minDate={moment()}
+            onApply={(e, picker) => this._onChangeDateRanage(picker, i)}
+            startDate={range.beginDate.format ? range.beginDate : moment(range.beginDate)}
+            endDate={range.endDate.format ? range.endDate : moment(range.endDate)}
+            >
+            <input type="text" className="custom-file-input" id={`inputDate${i}`} />
+            <label className="custom-file-label" htmlFor={`inputDate${i}`} aria-describedby={`inputDate${i}`}>{this._getLabelOfRange(i) || 'Select time range'}</label>
+          </DateRangePicker>
+          {numOfRange > 1 &&
+            <div className="input-group-append">
+              <button className="btn btn-outline-danger" onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                this._removeTimeRangePicker(i);
+                return false;
+              }}><i className="fal fa-trash"></i></button>
+            </div>
+          }
+        </div>
+      );
+    });
+  };
+
   _renderDetailForm = () => {
     const { equipment, editedData, isSuccess, isFetching, error } = this.state;
-    const { construction } = this.props;
+    const { construction, equipmentTypeCategory } = this.props;
 
     const data = {
       ...equipment,
       ...editedData
     };
 
+    let equipmentTypes = [];
+    let selectedCategoryId = data.equipmentTypeCategoryId || 0;
+    const categoryOptions = equipmentTypeCategory.items.map(category => {
+      if (!selectedCategoryId) {
+        if (category.equipmentTypes) {
+          equipmentTypes = [
+            ...equipmentTypes,
+            ...category.equipmentTypes,
+          ];
+          
+          if (data.equipmentType.id !== 0) {
+            const selectedType = category.equipmentTypes.find(type => type.id === data.equipmentType.id);
+            if (selectedType) {
+              selectedCategoryId = category.id;
+              equipmentTypes = [
+                ...category.equipmentTypes,
+              ];
+            }
+          }
+        }
+      } else {
+        if (+selectedCategoryId === category.id) {
+          equipmentTypes = [
+            ...category.equipmentTypes
+          ];
+        }
+      }
+
+      return (<option key={category.id} value={category.id}>{category.name}</option>);
+    });
+
     return (
-      <div className="bg-white px-2 py-3 sticky-top sticky-sidebar">
+      <div className="bg-white px-2 pt-3 pb-1 sticky-top sticky-sidebar mb-3">
         {/* TODO: Add back to list link */}
         <h4>Information: <Link to={getRoutePath(routeConsts.EQUIPMENT_MY)} className="btn btn-sm btn-outline-info float-right"><i className="fal fa-chevron-left"></i> Back to list</Link></h4>
         {isSuccess &&
@@ -363,7 +480,7 @@ class EditEquipment extends Component {
         }
         <form onSubmit={this._handleFormSubmit}>
           <div className="form-group">
-            <label htmlFor="equipment_name">Name:</label>
+            <label htmlFor="equipment_name">Name: <i className="text-danger">*</i></label>
             <input type="text" id="equipment_name" name="name" className="form-control"
               value={data.name}
               onChange={this._handleFieldChange}
@@ -371,14 +488,14 @@ class EditEquipment extends Component {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="equipment_dailyPrice">Daily price:</label>
+            <label htmlFor="equipment_dailyPrice">Daily price: <i className="text-danger">*</i></label>
             <input type="text" id="equipment_dailyPrice" name="dailyPrice" className="form-control"
               value={data.dailyPrice}
               onChange={this._handleFieldChange}
             />
           </div>
           <div className="form-group">
-            <label htmlFor="equipment_description">Description:</label>
+            <label htmlFor="equipment_description">Description: <i className="text-danger">*</i></label>
             <textarea type="text"
               className="form-control"
               rows={4}
@@ -389,7 +506,7 @@ class EditEquipment extends Component {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="equipment_construction">Construction:</label>
+            <label htmlFor="equipment_construction">Construction: <i className="text-danger">*</i></label>
             <select
               className="form-control"
               id="equipment_construction"
@@ -405,8 +522,35 @@ class EditEquipment extends Component {
             <p className="text-muted"> {data.construction.address}</p>
           </div>
           <div className="form-group">
+            <label htmlFor="equipment_type_category">Equipment type category:</label>
+            <select
+              className="form-control"
+              id="equipment_construction"
+              name="equipmentTypeCategoryId"
+              value={selectedCategoryId}
+              onChange={this._handleFieldChange}
+            >
+              <option value="0">Choose to filter equipment type...</option>
+              {categoryOptions}
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="equipment_type_category">Equipment type: <i className="text-danger">*</i></label>
+            <select
+              className="form-control"
+              id="equipment_type_id"
+              name="equipmentTypeId"
+              value={data.equipmentType.id}
+              onChange={this._handleFieldChange}
+            >
+              <option value="0">Choose one...</option>
+              {equipmentTypes.map(type => <option key={type.id} value={type.id}>{type.name}</option>)}
+            </select>
+          </div>
+          {this._renderDateRangePickers()}
+          <div className="form-group">
             <button className="btn btn-primary" disabled={Object.keys(editedData).length === 0 || isFetching}>
-              {isFetching ? <span class="spinner-border spinner-border-sm"></span> : <i className="fas fa-save"></i>} Save
+              {isFetching ? <span className="spinner-border spinner-border-sm"></span> : <i className="fas fa-save"></i>} Save
             </button>
             <button className="btn btn-outline-primary ml-2" onClick={this._handleResetForm}><i className="fas fa-undo"></i> Reset</button>
           </div>
@@ -433,10 +577,10 @@ class EditEquipment extends Component {
           <div className="alert alert-warning">{message}</div>
         }
         <div className="row">
-          <div className="col-md-4">
+          <div className="col-md-5">
             {this._renderDetailForm()}
           </div>
-          <div className="col-md-8">
+          <div className="col-md-7">
             <div className="bg-white px-2 py-3 position-relative">
               {isChangingImage &&
                 <ComponentBlocking />

@@ -63,8 +63,8 @@ class MaterialDetail extends Component {
                 ? material.contractor.thumbnailImageUrl
                 : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"
             }
-            className="rounded-circle w-50"
-            alt=""
+            className="rounded-circle"
+            alt="Avatar"
           />
           <h5>
             {material.contractor ?

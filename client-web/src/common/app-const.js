@@ -52,7 +52,7 @@ export const INITIAL_STATE = {
     isFetching: false,
     items: [],
   },
-  equipmentTypeCategories: {
+  equipmentTypeCategory: {
     isFetching: false,
     items: [],
   },
