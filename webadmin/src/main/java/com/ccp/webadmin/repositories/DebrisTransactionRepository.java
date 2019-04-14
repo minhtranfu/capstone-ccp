@@ -72,4 +72,10 @@ public interface DebrisTransactionRepository extends JpaRepository<DebrisTransac
             "and e.status = 'FINISHED' " +
             "GROUP BY FUNCTION('month',(e.updatedTime))")
     Integer countDebrisTransactionIncome();
+
+    @Query("select e.id " +
+            "from DebrisTransactionEntity e " +
+            "where e.debrisPostId = :debrisPostId "+
+            "and e.status <> 'CANCELED'")
+    Integer findByDebrisPostIdAndStatusEquals(@Param("debrisPostId") Integer debrisPostId);
 }
