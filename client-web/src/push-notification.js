@@ -4,6 +4,11 @@ import ccpServices from './services/domain/ccp-api-service';
 import { appConsts } from "./common/app-const";
 
 export const initializeFirebase = () => {
+
+  if (!firebase.messaging.isSupported()) {
+    return;
+  }
+  
   firebase.initializeApp({
     messagingSenderId: "479160953028"
   });
