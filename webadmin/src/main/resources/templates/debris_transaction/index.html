@@ -49,6 +49,7 @@
                                 <th>No</th>
                                 <th>Id</th>
                                 <th>Status</th>
+                                <th>Debris Post Title</th>
                                 <th>Price</th>
                                 <th>Supplier</th>
                                 <th>Requester</th>
@@ -60,6 +61,7 @@
                                 <td><a th:href="@{/debris_transaction/detail/{id}(id = ${item.id})}">
                                     <span th:text="${item.id}" class="link"></span></a>
                                 </td>
+
                                 <td th:switch="${item.status.toString()}">
                                     <span th:case="ACCEPTED" class="" style="color: green">Accepted</span>
                                     <span th:case="DELIVERING" class="">Delivering</span>
@@ -67,6 +69,7 @@
                                     <span th:case="FINISHED" class="" style="color: green">Finished</span>
                                     <span th:case="CANCELED" class="" style="color: red">Canceled</span>
                                 </td>
+                                <td th:text="${item.debrisBidEntity.debrisPostEntity.title}"></td>
                                 <td th:text="${item.price}"></td>
                                 <td><a th:href="@{/contractor/detail/{id}(id = ${item.debrisBidEntity.supplier.id})}">
                                     <span th:text="${item.debrisBidEntity.supplier.name}" class="link"></span></a>

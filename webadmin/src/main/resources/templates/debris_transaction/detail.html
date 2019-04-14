@@ -46,37 +46,6 @@
                                             </option>
                                         </select>
                                     </div>
-
-
-                                    <div class="form-group">
-                                        <span th:if="${errorMessage}" th:text="${errorMessage}"
-                                              style="color: red"></span>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Requester:</label>
-                                        <a th:href="@{/contractor/detail/{id}(id = *{debrisBidEntity.debrisPostEntity.requester.id})}">
-                                            <p th:text="*{debrisBidEntity.debrisPostEntity.requester.name}"
-                                               class="link form-control-static"
-                                               placeholder="Requester" style="color: #1ab7ea;"></p>
-                                        </a>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Post Title:</label>
-                                        <p th:text="*{debrisBidEntity.debrisPostEntity.title}"
-                                           class="form-control-static"
-                                           placeholder="Requester Address"></p>
-                                    </div>
-
-                                    <!--<div class="form-group">-->
-                                        <!--<label>Debris Service Type:</label>-->
-                                        <!--<div th:each="item: *{debrisBidEntity.debrisPostEntity.debrisServiceTypes}">-->
-                                            <!--<p th:field="*{item.name}" class="form-control-static"-->
-                                               <!--placeholder="Debris Service Type"></p>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-
                                     <div class="form-group">
                                         <label>Post Status:</label>
                                         <select th:field="*{debrisBidEntity.debrisPostEntity.status}"
@@ -86,21 +55,6 @@
                                                     th:text="${status.getValue()}">
                                             </option>
                                         </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Requester Address:</label>
-                                        <p th:text="*{debrisBidEntity.debrisPostEntity.address}"
-                                           class="form-control-static"
-                                           placeholder="Requester Address"></p>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Supplier:</label>
-                                        <a th:href="@{/contractor/detail/{id}(id = *{debrisBidEntity.supplier.id})}">
-                                            <p th:text="*{debrisBidEntity.supplier.name}"
-                                               class="link form-control-static"
-                                               placeholder="Supplier" style="color: #1ab7ea;"></p>
-                                        </a>
                                     </div>
                                     <div class="form-group">
                                         <label>Bid Status:</label>
@@ -114,12 +68,54 @@
                                     </div>
 
                                     <div class="form-group">
+                                        <span th:if="${errorMessage}" th:text="${errorMessage}"
+                                              style="color: red"></span>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Post Title:</label>
+                                        <a th:href="@{/debris_post/detail/{id}/transactionId/{transactionId}(id = *{debrisBidEntity.debrisPostEntity.id},transactionId = *{id})}">
+                                            <p th:text="*{debrisBidEntity.debrisPostEntity.title}"
+                                               class="link form-control-static"
+                                               placeholder="Post Title" style="color: #1ab7ea;"></p>
+                                        </a>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Requester:</label>
+                                        <a th:href="@{/contractor/detail/{id}(id = *{debrisBidEntity.debrisPostEntity.requester.id})}">
+                                            <p th:text="*{debrisBidEntity.debrisPostEntity.requester.name}"
+                                               class="link form-control-static"
+                                               placeholder="Requester" style="color: #1ab7ea;"></p>
+                                        </a>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Requester Address:</label>
+                                        <p th:text="*{debrisBidEntity.debrisPostEntity.address}"
+                                           class="form-control-static"
+                                           placeholder="Requester Address"></p>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Debris Bid:</label>
+                                        <a th:href="@{/debris_bid/detail/{id}/transactionId/{transactionId}(id = *{debrisBidEntity.id},transactionId = *{id})}">
+                                            <p th:text="*{debrisBidEntity.id}"y
+                                               class="link form-control-static"
+                                               placeholder="Debris Bid" style="color: #1ab7ea;"></p>
+                                        </a>
+                                    </div>
+                                    <div class="form-group">
                                         <label>Debris Bid Description:</label>
                                         <p th:text="*{debrisBidEntity.description}" class="form-control-static"
                                            placeholder="Debris Bid Description"></p>
                                     </div>
-
-
+                                    <div class="form-group">
+                                        <label>Supplier:</label>
+                                        <a th:href="@{/contractor/detail/{id}(id = *{debrisBidEntity.supplier.id})}">
+                                            <p th:text="*{debrisBidEntity.supplier.name}"
+                                               class="link form-control-static"
+                                               placeholder="Supplier" style="color: #1ab7ea;"></p>
+                                        </a>
+                                    </div>
                                     <div class="form-group">
                                         <label>Created Time:</label>
                                         <p th:text="*{{createdTime}}" class="form-control-static"

@@ -4,6 +4,7 @@ import com.ccp.webadmin.dtos.LineChartStatisticDTO;
 import com.ccp.webadmin.dtos.PieChartStatisticDTO;
 import com.ccp.webadmin.entities.DebrisBidEntity;
 import com.ccp.webadmin.entities.DebrisPostEntity;
+import com.ccp.webadmin.entities.DebrisTransactionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -35,6 +36,7 @@ public interface DebrisPostRepository extends JpaRepository<DebrisPostEntity, In
             "GROUP BY FUNCTION('week',(e.createdTime))" +
             "ORDER BY FUNCTION('week',(e.createdTime)) asc")
     List<LineChartStatisticDTO> countDebrisPostByWeek(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
+
 
 
 }
