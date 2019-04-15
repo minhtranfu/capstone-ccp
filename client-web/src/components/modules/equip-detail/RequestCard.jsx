@@ -8,6 +8,7 @@ import moment from 'moment';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { Redirect } from "react-router-dom";
 
 import { authActions } from '../../../redux/actions';
 import ccpApiService from '../../../services/domain/ccp-api-service';

@@ -66,6 +66,29 @@ class ViewProfile extends PureComponent {
     this._loadData();
   }
 
+  componentDidUpdate(prevProps) {
+    this._checkForUpdateContractor(prevProps);
+  }
+
+  /**
+   * Check for update contractor to load new contractor information
+   */
+  _checkForUpdateContractor = prevProps => {
+    const { params } = this.props.match;
+    const { id } = params;
+
+    const { params: prevParams } = prevProps.match;
+    const { id: prevId } = prevParams;
+
+    if (prevId !== id) {
+      this.setState({
+        isFeching: true,
+      }, () => {
+        this._loadData();
+      });
+    }
+  };
+
   _renderContractorCard = () => {
     const { contractor } = this.state;
 
@@ -127,7 +150,7 @@ class ViewProfile extends PureComponent {
               }
               return (
                 <li key={index} className="nav-item">
-                  <span className={classnames('nav-link', {'active': isTabActive, 'cursor-poiner': !isTabActive })}
+                  <span className={classnames('nav-link', { 'active': isTabActive, 'cursor-poiner': !isTabActive })}
                     onClick={() => this._setActiveFeedbackTab(index)}
                   >
                     {tab.name}
@@ -150,35 +173,82 @@ class ViewProfile extends PureComponent {
     const { contractor } = this.state;
 
     return (
-      <div>
+      <div className="mb-3">
         <div className="bg-white py-4 mt-4 shadow-sm">
           <div className="row">
+            {/* Equipment */}
             <div className="col-md-4 text-center">
-              <Image src={IconEquipments} width={80} height={80} />
-              <div className="my-2">
+              <div className="d-flex justify-content-center">
+                <Image src={IconEquipments} width={80} height={80} />
+                <div className="pl-2 text-tight">
+                  <div className="text-xx-large">
+                    {contractor.finishedHiringTransactionCount}
+                  </div>
+                  <div className="lh-1 text-muted"><small>Finished <br /> transactions</small></div>
+                </div>
+              </div>
+              <hr className="w-50"/>
+              <h6 className="mt-2 mb-1">Equipment</h6>
+              <div className="mb-1">
                 <StarRatings
                   rating={contractor.averageEquipmentRating}
                 />
               </div>
-              <div>{formatFloat(contractor.averageEquipmentRating)}/{contractor.equipmentFeedbacksCount} feedbacks</div>
+              <div>
+                <span className="badge badge-pill badge-warning mr-1">
+                  {formatFloat(contractor.averageEquipmentRating)}
+                </span> {contractor.equipmentFeedbacksCount} feedbacks
+              </div>
+              <hr className="d-md-none my-4"/>
             </div>
+            {/* Material */}
             <div className="col-md-4 text-center">
-              <Image src={IconMaterials} width={80} height={80} />
-              <div className="my-2">
+              <div className="d-flex justify-content-center">
+                <Image src={IconMaterials} width={80} height={80} />
+                <div className="pl-2 text-tight">
+                  <div className="text-xx-large">
+                    {contractor.finishedMaterialTransactionCount}
+                  </div>
+                  <div className="lh-1 text-muted"><small>Finished <br /> transactions</small></div>
+                </div>
+              </div>
+              <hr className="w-50"/>
+              <h6 className="mt-2 mb-1">Material</h6>
+              <div className="mb-1">
                 <StarRatings
                   rating={contractor.averageMaterialRating}
                 />
               </div>
-              <div>{formatFloat(contractor.averageMaterialRating)}/{contractor.materialFeedbacksCount} feedbacks</div>
+              <div>
+                <span className="badge badge-pill badge-warning mr-1">
+                  {formatFloat(contractor.averageMaterialRating)}
+                </span> {contractor.materialFeedbacksCount} feedbacks
+              </div>
+              <hr className="d-md-none my-4"/>
             </div>
+            {/* Debris */}
             <div className="col-md-4 text-center">
-              <Image src={IconDebris} width={80} height={80} />
-              <div className="my-2">
+              <div className="d-flex justify-content-center">
+                <Image src={IconDebris} width={80} height={80} />
+                <div className="pl-2 text-tight">
+                  <div className="text-xx-large">
+                    {contractor.finishedDebrisTransactionCount}
+                  </div>
+                  <div className="lh-1 text-muted"><small>Finished <br /> transactions</small></div>
+                </div>
+              </div>
+              <hr className="w-50"/>
+              <h6 className="mt-2 mb-1">Debris</h6>
+              <div className="mb-1">
                 <StarRatings
                   rating={contractor.averageDebrisRating}
                 />
               </div>
-              <div>{formatFloat(contractor.averageDebrisRating)}/{contractor.debrisFeedbacksCount} feedbacks</div>
+              <div>
+                <span className="badge badge-pill badge-warning mr-1">
+                  {formatFloat(contractor.averageDebrisRating)}
+                </span> {contractor.debrisFeedbacksCount} feedbacks
+              </div>
             </div>
           </div>
         </div>
@@ -192,10 +262,10 @@ class ViewProfile extends PureComponent {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-md-3">
+          <div className="col-lg-3">
             {this._renderContractorCard()}
           </div>
-          <div className="col-md-9">
+          <div className="col-lg-9">
             {this._renderProfile()}
           </div>
         </div>

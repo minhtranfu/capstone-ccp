@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { withRouter } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
+import PropTypes from 'prop-types';
 
 import { getErrorMessage } from 'Utils/common.utils';
 import { equipmentTransactionServices } from 'Services/domain/ccp';
@@ -137,5 +138,10 @@ class EquipmentTransactionDetail extends PureComponent {
     );
   }
 }
+
+EquipmentTransactionDetail.props = {
+  history: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
+};
 
 export default withRouter(EquipmentTransactionDetail);

@@ -8,10 +8,10 @@ import 'bootstrap-daterangepicker/daterangepicker.css';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 
 import Step from './Step';
-import { fetchEquipmentTypes } from '../../../redux/actions/thunks';
-import { ENTITY_KEY } from '../../../common/app-const';
+import { fetchEquipmentTypes } from 'Redux/actions/thunks';
+import { ENTITY_KEY } from 'Common/app-const';
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
+import ccpApiService from 'Services/domain/ccp-api-service';
 import { getValidateFeedback } from 'Utils/common.utils';
 import { AddressInput } from 'Components/common';
 import { formatPrice } from 'Utils/format.utils';
@@ -37,7 +37,7 @@ class AddEquipmentStep1 extends Step {
     constructionId: {
       presence: {
         allowEmpty: false,
-        message: 'is required'
+        message: '^Please select a construction'
       }
     },
     address: {
@@ -49,7 +49,7 @@ class AddEquipmentStep1 extends Step {
     equipmentTypeId: {
       presence: {
         allowEmpty: false,
-        message: 'is required'
+        message: '^Please select an equipment type'
       }
     },
     dailyPrice: {
@@ -159,7 +159,9 @@ class AddEquipmentStep1 extends Step {
       }
     } else if (name === 'dailyPrice') {
       value = +value.replace(/[^0-9\.]+/g, '');
-      newState.showableDailyPrice = formatPrice(`${value}`);
+      // TODO: Format price
+      // newState.showableDailyPrice = formatPrice(`${value}`);
+      newState.showableDailyPrice = +value;
     } else if (!isNaN(value)) {
       value = +value;
     }
@@ -341,9 +343,11 @@ class AddEquipmentStep1 extends Step {
               {getValidateFeedback('constructionId', validateResult)}
             </div>
             <div className="form-group">
-              <label htmlFor="">Address: <i className="text-danger">*</i></label>
-              {/* <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" /> */}
-              <AddressInput
+              <label htmlFor="">Address:</label>
+              <div>
+                {this.state.address || 'Select a construction...'}
+              </div>
+              {/* <AddressInput
                 inputProps={{
                   value: this.state.address,
                   onBlur: this._handleBlurAddressInput
@@ -351,7 +355,7 @@ class AddEquipmentStep1 extends Step {
                 onChange={this._handleAddressChanged}
                 onSelect={this._handleSelectAddress}
                 />
-              {getValidateFeedback('address', validateResult)}
+              {getValidateFeedback('address', validateResult)} */}
             </div>
             <div className="form-group">
               <label htmlFor="">Equipment Category: </label>
@@ -382,7 +386,7 @@ class AddEquipmentStep1 extends Step {
           <div className="col-md-6">
             <div className="form-group">
               <label htmlFor="daily_price">Price per day (K): <i className="text-danger">*</i></label>
-              <input type="string" name="dailyPrice" onChange={this._handleFieldChange} value={this.state.showableDailyPrice} className="form-control text-right" id="daily_price" />
+              <input type="string" name="dailyPrice" onChange={this._handleFieldChange} value={this.state.showableDailyPrice} className="form-control" id="daily_price" />
               {getValidateFeedback('dailyPrice', validateResult)}
             </div>
             <div className="form-group">
