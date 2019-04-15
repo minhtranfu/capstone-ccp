@@ -67,12 +67,13 @@ class RatingModal extends Component {
       id: transaction.id
     }
     try {
-      await feedbackServices.feedbackDebris(this.data);
+      const feebback = await feedbackServices.feedbackDebris(this.data);
 
       // Submit success, close modal
       this.setState({
         isSending: false,
-        isSubmitSuccess: true
+        isSubmitSuccess: true,
+        feebback
       });
     } catch (error) {
       this.setState({
@@ -177,7 +178,7 @@ class RatingModal extends Component {
   //       <div className="col-md-6">
   //         <div className="d-flex">
   //           <div className="mr-2">
-  //             <img src={partner.thumbnailImage} alt={`${partner.name}'s avatar`} style={{width: '50px', height: '50px'}}/>
+  //             <img src={partner.thumbnailImageUrl} alt={`${partner.name}'s avatar`} style={{width: '50px', height: '50px'}}/>
   //           </div>
   //           <div className="flex-fill">
   //             <div><strong>{partner.name}</strong></div>
@@ -193,12 +194,12 @@ class RatingModal extends Component {
    * Render form fields
    */
   _renderForm = () => {
-    const { transaction, feedbackTypeEntity } = this.props;
+    const { transaction } = this.props;
     const { validateResult } = this.state;
 
-    // if (!transaction) {
-    //   return null;
-    // }
+    if (!transaction) {
+      return null;
+    }
 
     return (
       <div>
@@ -258,6 +259,7 @@ class RatingModal extends Component {
    * Reset modal data and call close modal
    */
   _handleCloseModal = () => {
+    const { feebback } = this.state;
     const { onClose } = this.props;
     // Reset form
     this.data = {};
@@ -265,7 +267,7 @@ class RatingModal extends Component {
       validateResult: {}
     });
 
-    onClose && onClose();
+    onClose && onClose(feebback);
   };
 
   /**
@@ -296,6 +298,7 @@ class RatingModal extends Component {
    * Close success alert
    */
   _closeSuccessAlert = () => {
+
     this.setState({
       isSubmitSuccess: undefined
     }, () => {
@@ -346,8 +349,7 @@ RatingModal.props = {
 
 // const mapStateToProps = state => {
 //   const { entities, authentication } = state;
-//   const { user } = authentication;
-//   const { contractor } = user;
+//   const { contractor } = authentication;
 
 //   return {
 //     feedbackTypeEntity: entities[ENTITY_KEY.FEEDBACK_TYPES],

@@ -10,10 +10,12 @@ export const ENTITY_KEY = {
   BAR: 'bar',
   BAZ: 'baz',
   EQUIPMENT_TYPES: 'equipment_types',
+  EQUIPMENT_TYPE_CATEGORIES: 'equipmentTypeCategories',
   EQUIPMENT_TYPE_INFOS: 'equipment_type_infos',
   FEEDBACK_TYPES: 'feedbackTypes',
   MATERIAL_TYPES: 'materialTypes',
   DEBRIS_SERVICE_TYPES: 'debrisServiceTypes',
+  NOTIFICATIONS: 'notifications'
 };
 
 const jwt = localStorage.getItem(appConsts.JWT_KEY);
@@ -24,15 +26,35 @@ export const INITIAL_STATE = {
     [ENTITY_KEY.BAR]: {},
     [ENTITY_KEY.BAZ]: {},
     [ENTITY_KEY.EQUIPMENT_TYPES]: {},
+    [ENTITY_KEY.EQUIPMENT_TYPE_CATEGORIES]: {},
     [ENTITY_KEY.EQUIPMENT_TYPE_INFOS]: {},
     [ENTITY_KEY.FEEDBACK_TYPES]: {},
     [ENTITY_KEY.MATERIAL_TYPES]: {},
     [ENTITY_KEY.DEBRIS_SERVICE_TYPES]: {},
+    [ENTITY_KEY.NOTIFICATIONS]: {}
   },
   counter: 0,
   authentication: {
     authenticating: !!jwt,
-    isShowLoginModal: false
+    isShowLoginModal: false,
+    unreadNotificationIds: [],
+    readNotificationIds: [],
+    verifyingImages: {
+      items: []
+    },
+  },
+  materialCart: {
+    count: 0,
+    items: [],
+    itemIds: []
+  },
+  construction: {
+    isFetching: false,
+    items: [],
+  },
+  equipmentTypeCategory: {
+    isFetching: false,
+    items: [],
   },
 };
 

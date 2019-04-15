@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+
 import { getRoutePath } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
+import MaterialCart from './material-cart';
 
 class SubHeader extends Component {
 
@@ -23,6 +25,10 @@ class SubHeader extends Component {
       to: getRoutePath(routeConsts.EQUIPMENT_REQUEST),
       name: 'Equipment requests'
     },
+    {
+      to: getRoutePath(routeConsts.SUBSCRIPTION_REQUEST),
+      name: 'Subscriptions'
+    },
   ];
 
   materialMenu = [
@@ -37,11 +43,11 @@ class SubHeader extends Component {
     },
     {
       to: getRoutePath(routeConsts.MATERIAL_SUPPLY),
-      name: 'Material supply'
+      name: 'Transaction as supplier'
     },
     {
       to: getRoutePath(routeConsts.MATERIAL_REQUEST),
-      name: 'Material requests'
+      name: 'Transaction as requester'
     },
   ];
 
@@ -115,6 +121,9 @@ class SubHeader extends Component {
               </li>
             );
           })}
+          {menus === this.materialMenu &&
+            <MaterialCart/>
+          }
         </nav>
       </div>
     );

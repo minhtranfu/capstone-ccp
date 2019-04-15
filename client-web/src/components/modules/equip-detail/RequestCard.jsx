@@ -11,6 +11,9 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 
 import { authActions } from '../../../redux/actions';
 import ccpApiService from '../../../services/domain/ccp-api-service';
+import { formatPrice } from 'Utils/format.utils';
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 class RequestCard extends Component {
 
@@ -135,11 +138,10 @@ class RequestCard extends Component {
         data = error.response.data;
       }
     }
-    this.setState({
-      isFetching: false
-    });
 
-    const newState = {};
+    const newState = {
+      isFetching: false
+    };
     newState.error = {};
     if (!data) {
       newState.error.message = 'An unknown error, please try again!';
@@ -234,7 +236,7 @@ class RequestCard extends Component {
         }
         {/* Redirect if user click button view sent transaction */}
         {redirectToTransaction &&
-          <Redirect to={`/dashboard/transaction/${transactionId}`} />
+          <Redirect to={getRoutePath(routeConsts.EQUIPMENT_TRANSACTION_DETAIL, { id: transactionId })} />
         }
       </div>
     )
@@ -252,9 +254,7 @@ class RequestCard extends Component {
     return (
       <div className="request-card bg-white shadow">
         {this._renderAlert()}
-        <div className="my-2">Daily price: <span className="float-right">{equip.dailyPrice}K</span></div>
-        <div className="my-2 pb-2 border-bottom">Delivery price: <span className="float-right">{equip.deliveryPrice}K</span></div>
-
+        <div className="my-2 pb-2 border-bottom">Daily price: <span className="float-right text-x-large">{formatPrice(equip.dailyPrice)}</span></div>
         <div className="form-group">
           <label htmlFor="requesterAddress"><strong>Receive address:</strong></label>
           <PlacesAutocomplete
@@ -309,7 +309,15 @@ class RequestCard extends Component {
 
         <div className="form-group">
           <label htmlFor="timeRange"><strong>Time:</strong></label>
-          <DateRangePicker isInvalidDate={this._isInvalidDate} minDate={moment()} onApply={this._onChangeDateRanage} containerClass="w-100" data-range-id="1" startDate="1/1/2014" endDate="3/1/2014">
+          <DateRangePicker
+            isInvalidDate={this._isInvalidDate}
+            minDate={moment()}
+            onApply={this._onChangeDateRanage}
+            containerClass="w-100"
+            data-range-id="1"
+            opens="left"
+            startDate="1/1/2014"
+            endDate="3/1/2014">
             <div className="input-group date-range-picker">
               <input type="text" id="timeRange" className="form-control" readOnly value={this._getLabelOfRange() || ''} />
               <div className="input-group-append">
@@ -325,7 +333,7 @@ class RequestCard extends Component {
           {transaction.beginDate &&
             <div>
               <div className="text-left">Days: <span className="float-right">{numOfDays}</span></div>
-              <div className="text-left">Fee: <span className="float-right">{numOfDays * equip.dailyPrice}K</span></div>
+              <div className="text-left">Fee: <span className="float-right text-x-large">{formatPrice(numOfDays * equip.dailyPrice)}</span></div>
             </div>
           }
         </div>

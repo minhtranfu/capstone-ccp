@@ -23,3 +23,11 @@ export const postFeedback = ({toContractorId, feedbackTypeId, content}) => {
 export const feedbackDebris = data => {
   return DataAccessService.post('/debrisFeedbacks', data);
 };
+
+export const feedbackEquipmentTransaction = data => {
+  return DataAccessService.post(`/equipmentFeedbacks`, data);
+};
+
+export const feedbackMaterialTransaction = data => {
+  return DataAccessService.post(`/materialFeedbacks`, data);
+};

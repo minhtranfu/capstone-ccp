@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { authActions } from '../../redux/actions';
+import { authActions } from 'Redux/actions';
 
 import LoginModal from '../modules/login/LoginModal';
-import { authConstants } from '../../redux/_constants';
 import { getRoutePath } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
+import Notifications from './notifications';
 
 class Header extends Component {
 
@@ -92,7 +92,7 @@ class Header extends Component {
     const { authentication } = this.props;
 
     return menus.map(menu => {
-                
+
       if (menu.requiredAuth && !authentication.isAuthenticated) {
         return null;
       }
@@ -105,9 +105,33 @@ class Header extends Component {
     });
   };
 
+  _toggleNotifications = () => {
+    const { isShowNotifications } = this.state;
+    if (!isShowNotifications) {
+      // attach/remove event handler
+      document.addEventListener('click', this._handleOutsideClick, false);
+    } else {
+      document.removeEventListener('click', this._handleOutsideClick, false);
+    }
+
+    this.setState({
+      isShowNotifications: !isShowNotifications
+    });
+  };
+
+  _handleOutsideClick = e => {
+    // ignore clicks on the component itself
+    if (this.noticationComponent && this.noticationComponent.contains(e.target)) {
+      return;
+    }
+
+    this._toggleNotifications();
+  }
+
   render() {
-    const { showOffCanvas } = this.state;
+    const { showOffCanvas, isShowNotifications } = this.state;
     const { authentication } = this.props;
+    const { contractor } = authentication;
 
     return (
       <nav className="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
@@ -128,50 +152,21 @@ class Header extends Component {
             </ul>
             {authentication.isAuthenticated &&
               <ul className="navbar-nav">
-                <li className="nav-item dropdown notifications mr-2">
-                  <a className="text-light d-flex h-100 align-items-center px-3" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                <li className="nav-item dropdown notifications mr-2" ref={noticationComponent => { this.noticationComponent = noticationComponent; }}>
+                  <span className="cursor-pointer text-light d-flex h-100 align-items-center px-3" href="#" onClick={this._toggleNotifications}>
                     <i className="fal fa-bell"></i>
-                    <span className="badge badge-pill badge-danger">10</span>
-                  </a>
-                  <div className="dropdown-menu shadow mt-2 rounded-top-0">
-                    <div className="list-notifications custom-scrollbar">
-                      <a className="dropdown-item" href="#">
-                        <div>Profile</div>
-                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        <div>Profile</div>
-                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        <div>Profile</div>
-                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        <div>Profile</div>
-                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        <div>Profile</div>
-                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        <div>Profile</div>
-                        <p className="text-muted mb-0">Ahihi đồ ngốc</p>
-                      </a>
-                    </div>
-                    <div className="dropdown-divider"></div>
-                    <a className="dropdown-item text-center" href="#">View all <i className="fal fa-chevron-right"></i></a>
-                  </div>
+                    <span className="badge badge-pill badge-danger">{contractor.totalUnreadNotifications}</span>
+                  </span>
+                  <Notifications isShow={isShowNotifications} toggle={this._toggleNotifications} />
                 </li>
                 <li className="nav-item dropdown">
                   <a className="dropdown-toggle text-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    <img src={authentication.user.contractor.thumbnailImage} className="rounded-circle mr-2" width={40} height={40} />
-                    {authentication.user.contractor.name}
+                    <img src={contractor.thumbnailImageUrl} className="rounded-circle mr-2" width={40} height={40} />
+                    {contractor.name}
                   </a>
                   <div className="dropdown-menu shadow mt-2 rounded-top-0">
-                    <a className="dropdown-item" href="#"><i className="fal fa-user-circle"></i> Profile</a>
-                    <a className="dropdown-item" href="#"><i className="fal fa-cogs"></i> Settings</a>
+                    <Link className="dropdown-item" to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: contractor.id })}><i className="fal fa-user-circle"></i> Profile</Link>
+                    <Link className="dropdown-item" to={getRoutePath(routeConsts.PROFILE)}><i className="fal fa-cogs"></i> Settings</Link>
                     <div className="dropdown-divider"></div>
                     <a className="dropdown-item" href="#" onClick={this._logout}><i className="fal fa-sign-out"></i> Logout</a>
                   </div>

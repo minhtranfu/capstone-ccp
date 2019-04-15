@@ -7,23 +7,35 @@ import Skeleton from 'react-loading-skeleton';
 import { routeConsts } from 'Common/consts';
 import { getRoutePath } from 'Utils/common.utils';
 import { materialServices } from 'Services/domain/ccp';
+import { Pagination } from 'Components/common';
 
 class MyMaterials extends PureComponent {
   state = {
-    filterStatus: 'all'
+    filterStatus: 'all',
+    activePage: 1,
+    isFetching: false
   };
+  pageSize = 6;
 
-  _loadData = async () => {
-    const { user } = this.props;
-    const { contractor } = user;
-    const equipments = await materialServices.getMaterialsBySupplierId(contractor.id);
+  _loadData = async activePage => {
     this.setState({
-      equipments
+      isFetching: true
+    });
+    
+    const materials = await materialServices.getMaterialsBySupplierId({
+      offset: (activePage - 1) * this.pageSize,
+      limit: this.pageSize,
+    });
+    this.setState({
+      activePage,
+      materials,
+      isFetching: false
     });
   };
 
   componentDidMount() {
-    this._loadData();
+    const { activePage } = this.state;
+    this._loadData(activePage);
   }
 
   // Render loading placeholder
@@ -60,7 +72,7 @@ class MyMaterials extends PureComponent {
     return (
       <div className="py-5 text-center">
         <h2>You have no material!</h2>
-        <Link to={getRoutePath(routeConsts.MATERIAL_ADD)} className="float-right">
+        <Link to={getRoutePath(routeConsts.MATERIAL_ADD)}>
           <button className="btn btn-success btn-lg">
             <i className="fal fa-plus"></i> Add new material now
           </button>
@@ -69,20 +81,20 @@ class MyMaterials extends PureComponent {
     );
   };
 
-  // Render list equipments
-  _renderListEquipments = () => {
-    const { equipments } = this.state;
+  // Render list materials
+  _renderListMaterials = () => {
+    const { materials, isFetching } = this.state;
 
-    if (!equipments) {
+    if (isFetching) {
       return this._renderListPlaceholders();
     }
 
-    if (equipments.length === 0) {
+    if (!materials || materials.items.length === 0) {
       return this._renderNoEquipment();
     }
 
     return (
-      equipments.map(equipment => {
+      materials.items.map(equipment => {
         const thumbnail = equipment.thumbnailImageUrl || '/public/upload/product-images/unnamed-19-jpg.jpg';
         return (
           <div key={equipment.id} className="d-flex transaction my-3 rounded shadow-sm">
@@ -109,6 +121,7 @@ class MyMaterials extends PureComponent {
   };
 
   render() {
+    const { materials, activePage } = this.state;
 
     return (
       <div className="container py-4">
@@ -122,7 +135,18 @@ class MyMaterials extends PureComponent {
                 </button>
               </Link>
             </h4>
-            {this._renderListEquipments()}
+            {this._renderListMaterials()}
+            {materials && materials.totalItems > this.pageSize &&
+              <div className="text-center">
+                <Pagination
+                  activePage={activePage}
+                  itemsCountPerPage={this.pageSize}
+                  totalItemsCount={materials.totalItems}
+                  pageRangeDisplayed={5}
+                  onChange={this._loadData}
+                />
+              </div>
+            }
           </div>
           <div className="col-md-3">
             <div className="bg-dark text-light sticky-top sticky-sidebar py-5 text-center">USER MENU PLACEHOLDER</div>

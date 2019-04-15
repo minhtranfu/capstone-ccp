@@ -6,10 +6,13 @@ import PlacesAutocomplete, {
 } from 'react-places-autocomplete';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { Redirect } from 'react-router-dom';
 
-import { authActions } from '../../../redux/actions';
+import { authActions, materialCartActions } from 'Redux/actions';
 import { formatPrice } from 'Src/utils/format.utils';
 import { materialTransactionServices } from 'Src/services/domain/ccp';
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 class RequestCard extends Component {
 
@@ -23,6 +26,9 @@ class RequestCard extends Component {
       transaction: {
         material: {
           id: material.id
+        },
+        supplier: {
+          id: material.contractor.id
         }
       },
       error: {},
@@ -104,11 +110,31 @@ class RequestCard extends Component {
     });
   };
 
+  _addToCart = () => {
+    const { material, transaction } = this.state;
+    const { addItem } = this.props;
+
+    const item = {
+      ...material,
+      quantity: transaction.quantity
+    };
+    addItem(item);
+  };
+
   /**
    * Submit a request for hiring device
    */
   _postTransaction = async () => {
     let { transaction } = this.state;
+
+    transaction.materialTransactionDetails = [{
+      quantity: transaction.quantity,
+      material: {
+        ...transaction.material
+      }
+    }];
+    transaction.quantity = undefined;
+    transaction.material = undefined;
 
     this.setState({
       isFetching: true
@@ -177,7 +203,7 @@ class RequestCard extends Component {
         }
         {/* Redirect if user click button view sent transaction */}
         {redirectToTransaction &&
-          <Redirect to={`/dashboard/transaction/${transactionId}`} />
+          <Redirect to={getRoutePath(routeConsts.MATERIAL_REQUEST_DETAIL, { id: transactionId })} />
         }
       </div>
     )
@@ -195,7 +221,7 @@ class RequestCard extends Component {
           <span className="float-right text-x-large">
             {formatPrice(material.price)}
             <small>
-              <small className="text-muted">/{material.unit}</small>
+              <small className="text-muted">/{material.materialType.unit}</small>
             </small>
           </span>
         </div>
@@ -254,7 +280,7 @@ class RequestCard extends Component {
         </div>
         <div className="form-group">
           <label htmlFor="transaction_quantity">Quantity:<i className="text-danger">*</i></label>
-          <input type="number" name="quantity" id="transaction_quantity" className="form-control" onChange={this._handleFieldChange} min="1"/>
+          <input type="number" name="quantity" id="transaction_quantity" className="form-control" onChange={this._handleFieldChange} min="1" />
         </div>
         <div className="text-center border-top border-bottom my-3 py-2">
           {!transaction.quantity &&
@@ -267,12 +293,20 @@ class RequestCard extends Component {
           }
         </div>
         {authentication.isAuthenticated &&
-          <button className="btn btn-success btn-block mt-2" disabled={isFetching || !transaction.quantity || !transaction.requesterAddress} onClick={this._postTransaction}>
-            {isFetching &&
-              <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
-            }
-            Request
-          </button>
+          <div>
+            <button className="btn btn-primary btn-block mt-2" disabled={isFetching || !transaction.quantity || !transaction.requesterAddress} onClick={this._postTransaction}>
+              {isFetching &&
+                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+              }
+              Request Now
+            </button>
+            <button className="btn btn-outline-primary btn-block mt-2" disabled={isFetching || !transaction.quantity || !transaction.requesterAddress} onClick={this._addToCart}>
+              {isFetching &&
+                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+              }
+              Add to card
+            </button>
+          </div>
         }
         {!authentication.isAuthenticated &&
           <button className="btn btn-success btn-block mt-2" onClick={toggleLoginModal}>
@@ -293,7 +327,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  toggleLoginModal: authActions.toggleLoginModal
+  toggleLoginModal: authActions.toggleLoginModal,
+  addItem: materialCartActions.addItem
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RequestCard);

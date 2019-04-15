@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
 import {
   CSSTransition
 } from 'react-transition-group';
 import { Redirect, Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
 import Step1 from './Step1';
-import Step2 from './Step2';
 import Step3 from './Step3';
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
 import { materialServices } from "Services/domain/ccp";
+import { CONTRACTOR_STATUSES } from 'Common/consts';
 
 class AddMaterial extends Component {
   constructor(props) {
@@ -149,8 +148,19 @@ class AddMaterial extends Component {
   };
 
   render() {
+    
+    const { contractor } = this.props;
+
+    if (contractor.status !== CONTRACTOR_STATUSES.ACTIVATED) {
+      return (
+        <div className="container">
+          <h1 className="text-center my-3 alert alert-warning">Your account must be activated to post new equipment!</h1>
+        </div>
+      );
+    }
+
     return (
-      <div className="container pb-5">
+      <div className="container pb-5 wizard">
         <div className="row">
           <div className="col-12">
             <h2 className="my-4 text-center"><Link to="/dashboard/supplier/materials" className="btn btn-outline-primary float-left"><i className="fal fa-chevron-left"></i> Back to list</Link> Post material</h2>
@@ -163,4 +173,13 @@ class AddMaterial extends Component {
   }
 }
 
-export default AddMaterial;
+const mapStateToProps = state => {
+  const { authentication } = state;
+  const { contractor } = authentication;
+
+  return {
+    contractor
+  };
+};
+
+export default connect(mapStateToProps)(AddMaterial);

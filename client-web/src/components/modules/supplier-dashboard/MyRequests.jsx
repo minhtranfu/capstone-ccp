@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
+import { Link } from "react-router-dom";
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
-import { FeedbackModal } from "../../common";
-import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES } from '../../../common/consts';
+import { RatingEquipmentTransaction } from "../../common";
+import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES, routeConsts } from '../../../common/consts';
+import { getRoutePath } from 'Utils/common.utils';
 
 class MyRequests extends Component {
   state = {
@@ -162,9 +164,9 @@ class MyRequests extends Component {
   };
 
   _getUpdatedTransactionsList = updatedTransaction => {
-    let { transactions } = this.state;
+    const { transactions } = this.state;
 
-    return transactions.map(transaction => {
+    const items = transactions.items.map(transaction => {
       if (transaction.id !== updatedTransaction.id) {
         return transaction;
       }
@@ -177,6 +179,11 @@ class MyRequests extends Component {
 
       return transaction;
     });
+
+    return {
+      ...transactions,
+      items,
+    };
   };
 
   _removeAlert = () => {
@@ -252,7 +259,7 @@ class MyRequests extends Component {
       return;
     }
 
-    transactions.map(transaction => {
+    transactions.items.map(transaction => {
       const transactionItem = this._renderTransaction(transaction);
       if (!this.tabContents[transaction.status]) {
         this.tabContents[transaction.status] = [];
@@ -272,10 +279,10 @@ class MyRequests extends Component {
   /**
    * Show feedback modal
    */
-  _toggleFeedbackModal = (feedbackTransaction) => {
-    const { isShowFeedbackModal } = this.state;
+  _toggleRatingEquipmentTransaction = (feedbackTransaction) => {
+    const { isShowRatingEquipmentTransaction } = this.state;
     this.setState({
-      isShowFeedbackModal: !isShowFeedbackModal,
+      isShowRatingEquipmentTransaction: !isShowRatingEquipmentTransaction,
       feedbackTransaction
     });
   };
@@ -341,11 +348,12 @@ class MyRequests extends Component {
 
       case TRANSACTION_STATUSES.FINISHED:
         statusClasses += 'badge-success';
-        changeStatusButtons = (
-          <div className="mt-2">
-            <button className="btn btn-sm btn-success" onClick={() => this._toggleFeedbackModal(transaction)}>Feedback</button>
-          </div>
-        );
+        // TODO: use or remove comment
+        // changeStatusButtons = (
+        //   <div className="mt-2">
+        //     <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingEquipmentTransaction(transaction)}>Feedback</button>
+        //   </div>
+        // );
         break;
     }
 
@@ -362,7 +370,9 @@ class MyRequests extends Component {
             <img src={thumbnail} className="rounded-left" />
           </div>
           <div className="detail flex-fill p-2">
-            <h6><span className={statusClasses}>{transaction.status}</span> {equipment.name}</h6>
+            <Link to={getRoutePath(routeConsts.EQUIPMENT_TRANSACTION_DETAIL, { id: transaction.id })}>
+              <h6><span className={statusClasses}>{transaction.status}</span> {equipment.name}</h6>
+            </Link>
             <div>
               <span>Days: {days}</span>
               <span className="ml-2 text-muted">({transaction.beginDate} to {transaction.endDate})</span>
@@ -388,22 +398,28 @@ class MyRequests extends Component {
   };
 
   render() {
-    const { isShowFeedbackModal, feedbackTransaction } = this.state;
+    const { isShowRatingEquipmentTransaction, feedbackTransaction } = this.state;
     this._renderTabContents();
 
     return (
-      <div className="container py-5 user-dashboard">
+      <div className="container py-3 user-dashboard">
         {this._renderAlert()}
-        <FeedbackModal
-          isOpen={isShowFeedbackModal}
-          onClose={() => this._toggleFeedbackModal()}
+        <RatingEquipmentTransaction
+          isOpen={isShowRatingEquipmentTransaction}
+          onClose={() => this._toggleRatingEquipmentTransaction()}
           transaction={feedbackTransaction}
         />
         <div className="row">
+          <div className="col-md-12">
+            <h4>
+              My transactions
+              <button className="btn btn-outline-primary float-right" onClick={this._loadData}><i className="fal fa-sync"></i></button>
+            </h4>
+          </div>
           <div className="col-md-3">
             <div className="border-right border-primary h-100">
               <div className="sticky-top sticky-sidebar nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <h4>Status</h4>
+                <h5>Status</h5>
                 {Object.keys(this.showableStatuses).map(status => {
                   return (
                     <a key={status} className={`nav-link ${status == TRANSACTION_STATUSES.PENDING ? 'active' : ''}`} id={`v-pills-${status}-tab`} data-toggle="pill" href={`#v-pills-${status}`} role="tab" aria-controls={`v-pills-${status}`} aria-selected={status == TRANSACTION_STATUSES.PENDING}>
@@ -436,12 +452,12 @@ class MyRequests extends Component {
 }
 
 MyRequests.props = {
-  user: PropTypes.object.isRequired
+  contractor: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
   const { authentication } = state;
-  const { contractor } = authentication.user;
+  const { contractor } = authentication;
 
   return {
     contractor

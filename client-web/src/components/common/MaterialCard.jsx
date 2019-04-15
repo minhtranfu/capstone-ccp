@@ -14,14 +14,17 @@ class MaterialCard extends PureComponent {
       <div className={`equip-card my-2 ${className}`}>
         <Link to={getRoutePath(routeConsts.MATERIAL_DETAIL, {id: product.id})}>
           <div className="card">
-            <div className="image-169">
-              <Image src={thumbnail} className="card-img-top" alt="" />
+            <div className="image-169 lh-1">
+              <Image src={thumbnail} height={210} className="card-img-top" alt={product.name} />
             </div>
             <div className="card-body">
-              <h6 className="card-title">{product.name} <span className="float-right">{formatPrice(product.price)}<small className="text-muted">/{product.unit}</small></span>
+              <h6 className="card-title">{product.name} <span className="float-right">{formatPrice(product.price)}<small className="text-muted">/{product.materialType.unit}</small></span>
                 <span className="clearfix"></span>
               </h6>
               {/* <div className="text-muted"><i className="fal fa-map-marker"></i> {product.address}</div> */}
+              <div className="text-muted">
+                <i className="fal fa-calendar"></i> {product.materialType.name}
+              </div>
               <div className="text-muted">
                 <i className="fal fa-user-circle"></i> {product.manufacturer}
               </div>

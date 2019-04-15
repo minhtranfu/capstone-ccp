@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Redirect, withRouter } from 'react-router-dom';
+import { Link, Redirect, withRouter } from 'react-router-dom';
 import classnames from 'classnames';
 
 import { authActions } from '../../../redux/actions/';
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
 
 class LoginForm extends Component {
 
@@ -54,10 +56,10 @@ class LoginForm extends Component {
     e.preventDefault();
 
     const validateResult = this._validate(this.data, this.validateOptions);
+    this.setState({
+      validateResult
+    });
     if (validateResult.isInvalid) {
-      this.setState({
-        validateResult
-      });
       
       return;
     }
@@ -114,7 +116,7 @@ class LoginForm extends Component {
               {this._getValidateMessage('password')}
             </div>
             <div className="form-group text-center">
-              <button className="btn btn-success" type="submit" disabled={authentication.loggingIn}>
+              <button className="btn btn-primary" type="submit" disabled={authentication.loggingIn}>
                 {authentication.loggingIn &&
                   <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
                 }
@@ -127,11 +129,8 @@ class LoginForm extends Component {
           </form>
         </div>
         <div className="col-md-6">
-          <h6 className="text-muted">Login with</h6>
-          <button className="btn btn-block btn-danger"><i className="fab fa-google"></i> Google</button>
-          <button className="btn btn-block btn-primary"><i className="fab fa-facebook"></i> Facebook</button>
           <h6 className="mt-3 text-muted">Do not have an account?</h6>
-          <button className="btn btn-block btn-success"><i className="fal fa-user-circle"></i> Đăng ký</button>
+          <Link className="btn btn-block btn-outline-primary" to={getRoutePath(routeConsts.SIGNUP)}><i className="fal fa-user-circle"></i> Sign Up</Link>
         </div>
       </div>
     );

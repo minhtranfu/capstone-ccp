@@ -59,7 +59,7 @@ const CcpApiService = {
     return DataAccessService.put(`/contractors/${constractorId}/constructions/${constructionId}`, data);
   },
   uploadEquipmentImage(formData) {
-    return DataAccessService.post('/equipmentImages', formData, {
+    return DataAccessService.post('/storage/equipmentImages', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

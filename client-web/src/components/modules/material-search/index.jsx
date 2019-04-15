@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import MaterialSearchBox from '../../common/MaterialSearchBox';
 import MaterialCard from '../../common/MaterialCard';
 import Helmet from 'react-helmet-async';
-import moment from 'moment';
 import Skeleton from 'react-loading-skeleton';
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
 import { materialServices } from "Services/domain/ccp";
 
 class MaterialSearch extends Component {
@@ -21,10 +19,6 @@ class MaterialSearch extends Component {
   _loadData = async () => {
     const products = await materialServices.searchMaterials({});
 
-    if (products.length === 0) {
-      alert('Data is empty!');
-    }
-
     this.setState({
       products,
       isFetching: false
@@ -32,7 +26,6 @@ class MaterialSearch extends Component {
   };
 
   _handleSearch = async (criteria) => {
-    console.log(criteria);
 
     this.setState({
       isFetching: true

@@ -12,8 +12,8 @@ export const getDebrisById = id => {
   return DataAccessService.get(`/debrisPosts/${id}`);
 };
 
-export const getMyDebrises = () => {
-  return DataAccessService.get('/debrisPosts/requester');
+export const getMyDebrises = ({ limit, offset }) => {
+  return DataAccessService.get(`/debrisPosts/requester?limit=${limit}&offset=${offset}`);
 };
 
 export const getDebrisServiceTypes = () => {
@@ -36,4 +36,12 @@ export const getDebrisesByCriteria = criteria => {
   .join('&');
 
   return DataAccessService.get(`/debrisPosts?${queryString}`);
+};
+
+export const uploadImages = formData => {
+  return DataAccessService.post('/storage/debrisImages', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
 };

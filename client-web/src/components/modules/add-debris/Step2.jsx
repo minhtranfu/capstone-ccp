@@ -10,7 +10,7 @@ import {
   fetchEquipmentTypeSpecs
 } from "../../../redux/actions/thunks";
 import { connect } from "react-redux";
-import ccpApiService from "../../../services/domain/ccp-api-service";
+import { equipmentServices, debrisBidServices, debrisServices } from "Services/domain/ccp";
 
 const thumbsContainer = {
   display: "flex",
@@ -84,7 +84,7 @@ class DropzoneWithPreview extends React.Component {
 
     return (
       <section>
-        <DropZone accept="image/*" onDrop={this.onDrop.bind(this)} multiple={false}>
+        <DropZone accept="image/*" onDrop={this.onDrop.bind(this)}>
           {({ getRootProps, getInputProps }) => (
             <div
               {...getRootProps()}
@@ -142,11 +142,13 @@ class RequestDebrisStep2 extends Step {
         formData.append("file", file);
       });
 
-      const images = await ccpApiService.uploadEquipmentImage(formData);
+      const images = await debrisServices.uploadImages(formData);
       data = {
         ...data,
-        equipmentImages: images.map(image => ({id: image.id})),
-        thumbnailImageUrl: images[0].url
+        debrisImages: images.map(image => ({id: image.id})),
+        thumbnailImage: {
+          id: images[0].id
+        }
       };
     }
     
@@ -177,7 +179,7 @@ class RequestDebrisStep2 extends Step {
             <h4 className="my-3">More information</h4>
           </div>
           <div className="col-md-6">
-            <label htmlFor="">Upload a photo for material</label>
+            <label htmlFor="">Upload some photos</label>
             <DropzoneWithPreview onChange={this._handleSelectFiles} />
           </div>
           <div className="col-md-6">

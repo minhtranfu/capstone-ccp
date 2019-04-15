@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
+import { Link } from "react-router-dom";
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
-import { FeedbackModal } from "../../common";
-import { MATERIAL_TRANSACTION_STATUSES, EQUIPMENT_STATUSES } from '../../../common/consts';
+import { FeedbackModal, Image } from "../../common";
+import { MATERIAL_TRANSACTION_STATUSES, EQUIPMENT_STATUSES, routeConsts } from '../../../common/consts';
 import { materialTransactionServices } from 'Src/services/domain/ccp';
-import { formatPrice } from 'Src/utils/format.utils';
+import { formatDate, formatPrice } from 'Utils/format.utils';
+import { getRoutePath } from 'Utils/common.utils';
 
 class MaterialTransactions extends Component {
   state = {
@@ -164,9 +164,9 @@ class MaterialTransactions extends Component {
   };
 
   _getUpdatedTransactionsList = updatedTransaction => {
-    let { transactions } = this.state;
+    const { transactions } = this.state;
 
-    return transactions.map(transaction => {
+    const items = transactions.items.map(transaction => {
       if (transaction.id !== updatedTransaction.id) {
         return transaction;
       }
@@ -179,6 +179,11 @@ class MaterialTransactions extends Component {
 
       return transaction;
     });
+
+    return {
+      ...transactions,
+      items,
+    };
   };
 
   _removeAlert = () => {
@@ -254,7 +259,7 @@ class MaterialTransactions extends Component {
       return;
     }
 
-    transactions.map(transaction => {
+    transactions.items.map(transaction => {
       const transactionItem = this._renderTransaction(transaction);
       if (!this.tabContents[transaction.status]) {
         this.tabContents[transaction.status] = [];
@@ -284,7 +289,7 @@ class MaterialTransactions extends Component {
 
   _renderTransaction = transaction => {
     const { filterStatus } = this.state;
-    const { material } = transaction;
+    const { requester } = transaction;
 
     if (filterStatus !== 'all' && transaction.status !== filterStatus) {
       return null;
@@ -297,7 +302,7 @@ class MaterialTransactions extends Component {
         this._countNeedActionForStatus(MATERIAL_TRANSACTION_STATUSES.PENDING);
         statusClasses += ' badge-info';
         changeStatusButtons = (
-          <div className="mt-2">
+          <div className="mb-2">
             <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.ACCEPTED)}>Accept</button>
             <button className="btn btn-sm btn-outline-danger ml-2" onClick={() => this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.DENIED)}>Deny</button>
           </div>
@@ -308,7 +313,7 @@ class MaterialTransactions extends Component {
         this._countNeedActionForStatus(MATERIAL_TRANSACTION_STATUSES.ACCEPTED);
         statusClasses += ' badge-success';
         changeStatusButtons = (
-          <div className="mt-2">
+          <div className="mb-2">
             <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.DELIVERING)}>Deliver</button>
           </div>
         );
@@ -336,7 +341,7 @@ class MaterialTransactions extends Component {
         break;
     }
 
-    const thumbnail = transaction.material.thumbnailImageUrl || '/public/upload/product-images/unnamed-19-jpg.jpg';
+    // const thumbnail = transaction.material.thumbnailImageUrl || '/public/upload/product-images/unnamed-19-jpg.jpg';
 
     return (
       <CSSTransition
@@ -344,28 +349,34 @@ class MaterialTransactions extends Component {
         classNames="fade"
         timeout={500}
       >
-        <div className="d-flex transaction my-3 rounded shadow-sm flex-column flex-sm-row">
-          <div className="image flex-fill">
-            <img src={thumbnail} className="rounded-left" />
-          </div>
-          <div className="detail flex-fill p-2">
-            <h6><span className={statusClasses}>{transaction.status}</span> {material.name}</h6>
+        <div className="transaction my-3 rounded shadow-sm row">
+          <div className="detail col-md-3 py-2">
+            <h5><span className={statusClasses}>{transaction.status}</span> #{transaction.id}</h5>
             <div>
-              <span>Price: {formatPrice(transaction.price)}</span>
+              <i className="fal fa-calendar"></i> {formatDate(transaction.createdTime)}
             </div>
-            <div>
-              <span className="">Quantity: {transaction.quantity}</span>
-              <span className="ml-2 pl-2 border-left">Total fee: {formatPrice(transaction.price * transaction.quantity)}</span>
+            <div className="text-large">
+              <i className="fal fa-money-bill"></i> {formatPrice(transaction.totalPrice)}
             </div>
-            {changeStatusButtons}
           </div>
-          <div className="contractor-detail flex-fill p-2 text-center">
-            <img
+          <div className="col-md-2 text-center d-flex flex-column align-items-center justify-content-center lh-1">
+            <Image
+              circle
               className="rounded-circle"
-              style={{width: '50px', height: '50px'}}
-              src={transaction.requester.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
+              width={50}
+              height={50}
+              src={transaction.requester.thumbnailImageUrl}
             />
-            <p>{transaction.requester.name}</p>
+            <div>{transaction.requester.name}</div>
+          </div>
+          <div className="col-md-5 py-2 d-flex align-items-center text-muted border-left">
+            {transaction.materialTransactionDetails.map(detail => {
+              return detail.material.name;
+            }).join(', ')}
+          </div>
+          <div className="col-md-2 py-2 d-flex flex-column justify-content-center">
+            {changeStatusButtons}
+            <Link to={getRoutePath(routeConsts.MATERIAL_SUPPLY_DETAIL, { id: transaction.id })} className="btn btn-sm btn-outline-primary">View detail</Link>
           </div>
         </div>
       </CSSTransition>
@@ -377,7 +388,7 @@ class MaterialTransactions extends Component {
     this._renderTabContents();
 
     return (
-      <div className="container py-5 user-dashboard">
+      <div className="container py-3 user-dashboard">
         {this._renderAlert()}
         <FeedbackModal
           isOpen={isShowFeedbackModal}
@@ -385,10 +396,16 @@ class MaterialTransactions extends Component {
           transaction={feedbackTransaction}
         />
         <div className="row">
+          <div className="col-md-12">
+            <h4>
+              My transactions
+              <button className="btn btn-outline-primary float-right" onClick={this._loadData}><i className="fal fa-sync"></i></button>
+            </h4>
+          </div>
           <div className="col-md-3">
             <div className="border-right border-primary h-100">
               <div className="sticky-top sticky-sidebar nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <h4>Status</h4>
+                <h5>Status</h5>
                 {Object.keys(this.showableStatuses).map(status => {
                   return (
                     <a key={status} className={`nav-link ${status == MATERIAL_TRANSACTION_STATUSES.PENDING ? 'active' : ''}`} id={`v-pills-${status}-tab`} data-toggle="pill" href={`#v-pills-${status}`} role="tab" aria-controls={`v-pills-${status}`} aria-selected={status == MATERIAL_TRANSACTION_STATUSES.PENDING}>
@@ -426,7 +443,7 @@ MaterialTransactions.props = {
 
 const mapStateToProps = state => {
   const { authentication } = state;
-  const { contractor } = authentication.user;
+  const { contractor } = authentication;
 
   return {
     contractor

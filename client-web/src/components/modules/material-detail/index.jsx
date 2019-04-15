@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import Helmet from "react-helmet-async";
 import Image from "../../common/Image";
@@ -9,6 +9,9 @@ import { authActions } from "../../../redux/actions";
 import ccpApiService from "../../../services/domain/ccp-api-service";
 import RequestCard from "./RequestCard";
 import { formatPrice, formatDate } from "Utils/format.utils";
+import { StarRatings } from "Components/common";
+import { getRoutePath } from "Utils/common.utils";
+import { routeConsts } from "Common/consts";
 
 class MaterialDetail extends Component {
   state = {
@@ -46,10 +49,73 @@ class MaterialDetail extends Component {
     // this._getCurrentLocation();
   }
 
-  render() {
+  _renderRightSidebar = () => {
     const { material } = this.state;
     const { authentication } = this.props;
-    const { user } = authentication;
+    const { contractor } = authentication;
+
+    return (
+      <div className="sticky-top sticky-sidebar">
+        <div className="constructor-card text-center">
+          <Image
+            src={
+              material.contractor && material.contractor.thumbnailImageUrl
+                ? material.contractor.thumbnailImageUrl
+                : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"
+            }
+            className="rounded-circle"
+            alt="Avatar"
+          />
+          <h5>
+            {material.contractor ?
+              <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: material.contractor.id })}>{material.contractor.name}</Link>
+              : <Skeleton />}
+          </h5>
+          {!material.id ? <Skeleton /> :
+            <StarRatings
+              rating={material.contractor.averageMaterialRating}
+            />
+          }
+          {!material.id ? <Skeleton /> :
+            <div>
+              <span className="badge badge-pill badge-warning mr-1">{material.contractor.averageMaterialRating.toFixed(1)}</span>
+              {material.contractor.materialFeedbacksCount} reviews
+            </div>
+          }
+          <p className="mt-0 text-muted">
+            Join at:{" "}
+            {material.contractor ? (
+              formatDate(material.contractor.createdTime)
+            ) : (
+              <span className="d-inline">
+                <Skeleton width={100} />
+              </span>
+            )}
+          </p>
+        </div>
+        {material.id &&
+          (!authentication.isAuthenticated ||
+            material.contractor.id !== contractor.id) && (
+            <RequestCard material={material} />
+          )}
+        {material.id &&
+          authentication.isAuthenticated &&
+          material.contractor.id == contractor.id && (
+            <div className="shadow bg-white rounded p-2">
+              <h5>Current transactions</h5>
+              <p>&nbsp;</p>
+              <p>&nbsp;</p>
+              <p>&nbsp;</p>
+              <p>&nbsp;</p>
+              <p />
+            </div>
+          )}
+      </div>
+    );
+  };
+
+  render() {
+    const { material } = this.state;
 
     return (
       <div className="container">
@@ -70,7 +136,7 @@ class MaterialDetail extends Component {
               <div className="row">
                 <div className="col-md-6 py-2">
                   <h6>
-                    <span className="text-muted"><i class="fal fa-calendar"></i> Posted: </span>
+                    <span className="text-muted"><i className="fal fa-calendar"></i> Posted: </span>
                     {formatDate(material.createdTime) || <Skeleton width={100}/>}
                   </h6>
                 </div>
@@ -89,7 +155,7 @@ class MaterialDetail extends Component {
                 <div className="col-md-6 py-2">
                   <h6>
                     <span className="text-muted"><i className="fal fa-money-bill"></i> Price: </span>
-                    {material.price ? <span>{formatPrice(material.price)}<i className="text-muted">/{material.unit}</i></span> : <Skeleton width={75}/>}
+                    {material.price ? <span>{formatPrice(material.price)}<i className="text-muted">/{material.materialType.unit}</i></span> : <Skeleton width={75}/>}
                   </h6>
                 </div>
                 <div className="col-md-12 py-2">
@@ -109,49 +175,7 @@ class MaterialDetail extends Component {
           </div>
           {/* Right Sidebar */}
           <div className="col-md-3">
-            <div className="sticky-top sticky-sidebar">
-              <div className="constructor-card text-center">
-                <Image
-                  src={
-                    material.contractor && material.contractor.thumbnailImage
-                      ? material.contractor.thumbnailImage
-                      : "https://www.shareicon.net/download/2016/04/10/747369_man.svg"
-                  }
-                  className="rounded-circle w-50"
-                  alt=""
-                />
-                <h5>
-                  {material.contractor ? material.contractor.name : <Skeleton />}
-                </h5>
-                <p className="mt-0">
-                  Join at:{" "}
-                  {material.contractor ? (
-                    formatDate(material.contractor.createdTime)
-                  ) : (
-                    <span className="d-inline">
-                      <Skeleton width={100} />
-                    </span>
-                  )}
-                </p>
-              </div>
-              {material.id &&
-                (!authentication.isAuthenticated ||
-                  material.contractor.id !== user.contractor.id) && (
-                  <RequestCard material={material} />
-                )}
-              {material.id &&
-                authentication.isAuthenticated &&
-                material.contractor.id == user.contractor.id && (
-                  <div className="shadow bg-white rounded p-2">
-                    <h5>Current transactions</h5>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p />
-                  </div>
-                )}
-            </div>
+            {this._renderRightSidebar()}
           </div>
         </div>
       </div>

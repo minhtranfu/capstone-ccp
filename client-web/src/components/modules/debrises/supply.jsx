@@ -58,7 +58,7 @@ class DebriseTransactionsSupply extends Component {
 
     try {
       const transactions = await debrisTransactionServices.getSupllyTransactions();
-      if (Array.isArray(transactions)) {
+      if (transactions && Array.isArray(transactions.items)) {
         this.setState({
           transactions,
           isFetching: false
@@ -182,10 +182,18 @@ class DebriseTransactionsSupply extends Component {
    * for navs filter
    */
   _renderTransactions = () => {
-    const { transactions, status } = this.state;
+    const { transactions, status, isFetching } = this.state;
     this.needActionCounters = {};
 
-    return transactions.map(transaction => {
+    if (isFetching) {
+      return this._renderLoading();
+    }
+
+    if (!transactions || !transactions.items || transactions.items.length === 0) {
+      return this._renderNoResult();
+    }
+
+    return transactions.items.map(transaction => {
       if (this.needActionStatuses.includes(transaction.status)) {
         this.needActionCounters[transaction.status] = this.needActionCounters[transaction.status]
           ? ++this.needActionCounters[transaction.status] : 1;
@@ -226,11 +234,6 @@ class DebriseTransactionsSupply extends Component {
    * Return no result info alert
    */
   _renderNoResult = () => {
-    const { transactions, isFetching } = this.state;
-
-    if (isFetching || transactions.length > 0) {
-      return null;
-    }
 
     return (
       <div className="alert alert-info text-center mt-5">
@@ -312,13 +315,18 @@ class DebriseTransactionsSupply extends Component {
   _getUpdatedList = (transactionId, status) => {
     const { transactions } = this.state;
 
-    return transactions.map(transaction => {
+    const items = transactions.items.map(transaction => {
       if (transaction.id === transactionId) {
         transaction.status = status;
       }
 
       return transaction
     });
+
+    return {
+      ...transactions,
+      items,
+    };
   };
 
   /**
@@ -388,7 +396,10 @@ class DebriseTransactionsSupply extends Component {
         {isChangingStatus &&
           <ComponentBlocking/>
         }
-        <h1 className="my-3">Debris transactions are supplied by me</h1>
+        <h1 className="my-3">
+          Debris transactions are supplied by me
+          <button className="btn btn-outline-primary float-right" onClick={this._loadData}><i className="fal fa-sync"></i></button>
+        </h1>
         <div className="row">
           <div className="col-md-3">
             <div className="border-right border-primary h-100">
@@ -413,7 +424,6 @@ class DebriseTransactionsSupply extends Component {
             </div>
           </div>
           <div className="col-md-9">
-            {this._renderLoading()}
             {transactionCards}
           </div>
         </div>

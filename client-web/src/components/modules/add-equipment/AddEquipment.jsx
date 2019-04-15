@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
 import {
   CSSTransition
 } from 'react-transition-group';
 import { Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
 import Step1 from './Step1';
 import Step2 from './Step2';
 import Step3 from './Step3';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
+import { getRoutePath, getErrorMessage } from 'Utils/common.utils';
+import { routeConsts, CONTRACTOR_STATUSES } from 'Common/consts';
+import ComponentBlocking from 'Components/common/component-blocking';
 
 class AddEquipment extends Component {
   constructor(props) {
@@ -75,19 +78,34 @@ class AddEquipment extends Component {
     this.data.construction = {
       id: +constructionId
     };
-    this.data.latitude = '10.12313';
-    this.data.longitude = '10.12313';
     this.data.equipmentTypeId = undefined;
     this.data.constructionId = undefined;
+    this.data.categoryId = undefined;
+    this.data.categories = undefined;
 
     this.setState({
-      isPosting: true
+      isFetching: true
     });
-    const data = await ccpApiService.postEquipment(this.data);
-    if (data && data.id) {
+    try {
+      const data = await ccpApiService.postEquipment(this.data);
+      if (data && data.id) {
+        this.setState({
+          equipmentId: data.id,
+          isFetching: false
+        });
+
+        return;
+      }
+
       this.setState({
-        equipmentId: data.id,
-        isPosting: false
+        errorMessage: 'An unknown error occured!',
+        isFetching: false
+      });
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      this.setState({
+        errorMessage,
+        isFetching: false
       });
     }
   };
@@ -141,7 +159,7 @@ class AddEquipment extends Component {
     return (
       <div>
         {this.state.equipmentId &&
-          <Redirect to={`/equip-detail/${this.state.equipmentId}`} />
+          <Redirect to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, {id: this.state.equipmentId})} />
         }
         <Nav tabs>
           {tabs}
@@ -154,11 +172,31 @@ class AddEquipment extends Component {
   };
 
   render() {
+    
+    const { isFetching, errorMessage } = this.state;
+    const { contractor } = this.props;
+
+    if (contractor.status !== CONTRACTOR_STATUSES.ACTIVATED) {
+      return (
+        <div className="container">
+          <h1 className="text-center my-3 alert alert-warning">Your account must be activated to post new equipment!</h1>
+        </div>
+      );
+    }
+
     return (
-      <div className="container pb-5">
+      <div className="container pb-5 wizard">
+        {isFetching &&
+          <ComponentBlocking/>
+        }
         <div className="row">
           <div className="col-12">
             <h2 className="my-4 text-center">Post equipment</h2>
+            {errorMessage &&
+              <div className="alert alert-warning shadown-sm">
+                <i className="fal fa-info-circle"></i> {errorMessage}
+              </div>
+            }
             <hr />
           </div>
         </div>
@@ -168,4 +206,13 @@ class AddEquipment extends Component {
   }
 }
 
-export default AddEquipment;
+const mapStateToProps = state => {
+  const { authentication } = state;
+  const { contractor } = authentication;
+
+  return {
+    contractor
+  };
+};
+
+export default connect(mapStateToProps)(AddEquipment);

@@ -14,6 +14,18 @@ export const modules = [
     modulePath: './home'
   },
   {
+    name: routeConsts.PROFILE,
+    path: '/me',
+    modulePath: './profile',
+    isPrivate: true
+  },
+  {
+    name: routeConsts.NOTIFICATIONS,
+    path: '/notifications',
+    modulePath: './notifications',
+    isPrivate: true
+  },
+  {
     name: routeConsts.CONSTRUCTIONS,
     path: '/constructions',
     modulePath: './supplier-dashboard/MyConstructions',
@@ -28,6 +40,11 @@ export const modules = [
     name: routeConsts.LOGIN,
     path: '/login',
     modulePath: './login/Login'
+  },
+  {
+    name: routeConsts.SIGNUP,
+    path: '/signup',
+    modulePath: './register'
   },
   {
     name: routeConsts.EQUIPMENT_ADD,
@@ -60,10 +77,16 @@ export const modules = [
     isPrivate: true
   },
   {
-    name: routeConsts.EQUIPMENT_SUPPLY_DETAIL,
-    path: '/equipments/supply/:id',
-    modulePath: './transaction-detail',
+    name: routeConsts.EQUIPMENT_TRANSACTION_DETAIL,
+    path: '/equipments/transactions/:id',
+    modulePath: './equipment/transaction-detail',
     isPrivate: true
+  },
+  {
+    name: routeConsts.SUBSCRIPTION_REQUEST,
+    path: '/equipments/subscriptions',
+    modulePath: './subscription/requested',
+    isPrivate: true,
   },
   {
     name: routeConsts.EQUIPMENT_DETAIL,
@@ -109,6 +132,18 @@ export const modules = [
     name: routeConsts.MATERIAL_REQUEST,
     path: '/materials/request',
     modulePath: './requester-dashboard/MaterialTransactions',
+    isPrivate: true
+  },
+  {
+    name: routeConsts.MATERIAL_REQUEST_DETAIL,
+    path: '/materials/request/:id',
+    modulePath: './material/request-detail',
+    isPrivate: true
+  },
+  {
+    name: routeConsts.MATERIAL_CART,
+    path: '/materials/cart',
+    modulePath: './material/cart',
     isPrivate: true
   },
   {
@@ -161,6 +196,11 @@ export const modules = [
     name: routeConsts.DEBRIS_DETAIL,
     path: '/debrises/:id',
     modulePath: './debris-detail'
+  },
+  {
+    name: routeConsts.PROFILE_CONTRACTOR,
+    path: '/contractors/:id',
+    modulePath: './profile/view/index'
   },
 ];
 

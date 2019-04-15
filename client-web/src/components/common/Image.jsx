@@ -4,15 +4,15 @@ import Skeleton from 'react-loading-skeleton';
 
 class Image extends PureComponent {
   render () {
-    const {circle, ...props} = this.props;
+    const {circle, width, height, ...props} = this.props;
     return (
       <LazyLoad
         scroll
         throttle={500}
-        minHeight="210px"
-        placeholder={<Skeleton height={210} circle={circle}/>}
+        height={height}
+        placeholder={<Skeleton height={height} width={width} circle={circle}/>}
       >
-        <img {...props}/>
+        <img {...props} height={height} width={width}/>
       </LazyLoad>
     );
   }

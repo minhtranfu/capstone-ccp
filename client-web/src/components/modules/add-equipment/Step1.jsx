@@ -2,20 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
-// Require Editor JS files.
-import 'froala-editor/js/froala_editor.pkgd.min.js';
-// Require Editor CSS files.
-import 'froala-editor/css/froala_style.min.css';
-import 'froala-editor/css/froala_editor.pkgd.min.css';
+import validate from 'validate.js';
 
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 
 import Step from './Step';
-import { fetchEquipmentTypes, fetchEquipmentTypeSpecs } from '../../../redux/actions/thunks';
+import { fetchEquipmentTypes } from '../../../redux/actions/thunks';
 import { ENTITY_KEY } from '../../../common/app-const';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
+import { getValidateFeedback } from 'Utils/common.utils';
+import { AddressInput } from 'Components/common';
+import { formatPrice } from 'Utils/format.utils';
 
 class AddEquipmentStep1 extends Step {
   constructor(props) {
@@ -24,11 +23,51 @@ class AddEquipmentStep1 extends Step {
     this.state = {
       constructions: [],
       categories: [],
-      availableTimeRanges: [
-        {}
-      ]
+      availableTimeRanges: [{}],
+      validateResult: {}
     };
   }
+
+  validateRules = {
+    name: {
+      presence: {
+        allowEmpty: false
+      }
+    },
+    constructionId: {
+      presence: {
+        allowEmpty: false,
+        message: 'is required'
+      }
+    },
+    address: {
+      presence: {
+        allowEmpty: false,
+        message: '^Please select an address'
+      }
+    },
+    equipmentTypeId: {
+      presence: {
+        allowEmpty: false,
+        message: 'is required'
+      }
+    },
+    dailyPrice: {
+      presence: {
+        allowEmpty: false,
+        message: 'is required'
+      },
+      numericality: {
+        greaterThan: 0
+      }
+    },
+    availableTimeRanges: {
+      presence: {
+        allowEmpty: false,
+        message: 'is required'
+      },
+    }
+  };
 
   componentDidMount() {
     this._loadEquipmentTypes();
@@ -49,6 +88,7 @@ class AddEquipmentStep1 extends Step {
     }
   };
 
+  // Load equipment type categories
   _loadEquipmentTypeCategories = async () => {
 
     try {
@@ -61,16 +101,14 @@ class AddEquipmentStep1 extends Step {
     }
   };
 
+  // Load equipment
   _loadEquipmentTypes = () => {
     const { fetchEquipmentTypes } = this.props;
 
     fetchEquipmentTypes();
   };
 
-  _onChangeDescription = (description) => {
-    this.setState({ description });
-  };
-
+  // Handle select date range
   _onChangeDateRanage = (picker, rangeId) => {
     let { availableTimeRanges } = this.state;
     if (!availableTimeRanges) {
@@ -87,6 +125,7 @@ class AddEquipmentStep1 extends Step {
     });
   };
 
+  // Get date range in string by range id
   _getLabelOfRange = (rangeId) => {
     const { availableTimeRanges } = this.state;
     if (availableTimeRanges == undefined || availableTimeRanges.length == 0) {
@@ -103,70 +142,102 @@ class AddEquipmentStep1 extends Step {
     return `${beginDate} - ${endDate}`;
   }
 
+  // Change value of field in state
   _handleFieldChange = e => {
     const name = e.target.name;
     let value = e.target.value;
+    const newState = {};
 
     if (name === 'constructionId') {
       this._handleSelectConstruction(value);
     }
 
-    if (!isNaN(value)) {
+    if (name === 'constructionId' || name === 'equipmentTypeId') {
+
+      if (+value === 0) {
+        value = '';
+      }
+    } else if (name === 'dailyPrice') {
+      value = +value.replace(/[^0-9\.]+/g, '');
+      newState.showableDailyPrice = formatPrice(`${value}`);
+    } else if (!isNaN(value)) {
       value = +value;
     }
 
-    const newState = {
-      [name]: value
-    };
-
-    if (name === 'address') {
-      newState.isAddressEditted = true;
-    }
+    newState[name] = value;
 
     this.setState(newState);
   };
 
+  // Validate and call back step done
   _handleSubmitForm = () => {
-    // Todo: Validate form
+    const { availableTimeRanges } = this.state;
+    const data = {
+      ...this.state,
+      availableTimeRanges: availableTimeRanges.filter(range => !!range.beginDate),
+      constructions: undefined,
+      validateResult: undefined
+    };
 
-    this._handleStepDone({
-      data: {
-        ...this.state,
-        constructions: undefined
+    // Validate form
+    let validateResult = validate(data, this.validateRules);
+
+    // Validate timerange
+    let isSelectATimeRange = false;
+    availableTimeRanges.forEach(range => {
+      if (range.beginDate) {
+        isSelectATimeRange = true;
       }
+    });
+    if (!isSelectATimeRange && (!validateResult || !validateResult.availableTimeRanges)) {
+      if (!validateResult) {
+        validateResult = {};
+      }
+      validateResult.availableTimeRanges = 'Please select at least time range!';
+    }
+
+    if (validateResult) {
+      this.setState({
+        validateResult
+      });
+      return;
+    }
+
+    this.setState({
+      validateResult
+    }, () => {
+      this._handleStepDone({ data });
     });
   };
 
+  // render list date range picker with remove option
   _renderDateRangePickers = () => {
-    const { availableTimeRanges } = this.state;
+    let { availableTimeRanges } = this.state;
     const numOfRange = availableTimeRanges.length;
 
     return availableTimeRanges.map((range, i) => {
       return (
-        <div className="form-group" key={i}>
-          <label htmlFor="">Available time:</label>
-          <div className="input-group date-range-picker">
-            <DateRangePicker minDate={moment()} onApply={(e, picker) => this._onChangeDateRanage(picker, i)} containerClass="custom-file" autoApply alwaysShowCalendars>
-            {/* <input type="text" className="form-control" readOnly value={this._getLabelOfRange(i) || ''} /> */}
-              <input type="text" className="custom-file-input" id={`inputDate${i}`} />
-              <label className="custom-file-label" htmlFor={`inputDate${i}`} aria-describedby={`inputDate${i}`}>{this._getLabelOfRange(i) || 'Select time range'}</label>
-            </DateRangePicker>
-            {numOfRange > 1 &&
-              <div className="input-group-append">
-                <button className="btn btn-outline-danger" onClick={e => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  this._removeTimeRangePicker(i);
-                  return false;
-                }}><i className="fal fa-trash"></i></button>
-              </div>
-            }
-          </div>
+        <div key={i} className="input-group date-range-picker mb-4">
+          <DateRangePicker minDate={moment()} onApply={(e, picker) => this._onChangeDateRanage(picker, i)} containerClass="custom-file" autoApply alwaysShowCalendars>
+            <input type="text" className="custom-file-input" id={`inputDate${i}`} />
+            <label className="custom-file-label" htmlFor={`inputDate${i}`} aria-describedby={`inputDate${i}`}>{this._getLabelOfRange(i) || 'Select time range'}</label>
+          </DateRangePicker>
+          {numOfRange > 1 &&
+            <div className="input-group-append">
+              <button className="btn btn-outline-danger" onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                this._removeTimeRangePicker(i);
+                return false;
+              }}><i className="fal fa-trash"></i></button>
+            </div>
+          }
         </div>
       );
     });
   };
 
+  // Add one date range
   _addTimeRangePicker = () => {
     const { availableTimeRanges } = this.state;
 
@@ -178,6 +249,7 @@ class AddEquipmentStep1 extends Step {
     });
   };
 
+  // Remove one date range by id
   _removeTimeRangePicker = rangeId => {
     let { availableTimeRanges } = this.state;
     availableTimeRanges = availableTimeRanges.filter((range, id) => id !== rangeId);
@@ -189,43 +261,64 @@ class AddEquipmentStep1 extends Step {
 
   // When select construction, change address of equipment too
   _handleSelectConstruction = constructionId => {
-    const { isAddressEditted, constructions } = this.state;
+    const { isAddressEditted, address, constructions } = this.state;
 
-    if (isAddressEditted) {
+    if (isAddressEditted && address.trim().length > 0) {
       return;
     }
 
     const selectedContruction = constructions.find(construction => +construction.id === +constructionId);
+
+    if (!selectedContruction) {
+      this.setState({
+        address: '',
+        longitude: undefined,
+        latitude: undefined,
+      });
+
+      return;
+    }
+
     this.setState({
-      address: selectedContruction.address
+      address: selectedContruction.address,
+      latitude: selectedContruction.latitude,
+      longitude: selectedContruction.longitude,
     });
   };
 
-  _getShowablePrice = (amount, decimalCount = 2, decimal = ".", thousands = ",") => {
+  _handleSelectAddress = addressResult => {
+    this.setState({
+      ...addressResult,
+      isAddressEditted: true
+    });
+  };
 
-    if (!amount) {
-      return '';
+  _handleBlurAddressInput = () => {
+    const { longitude } = this.state;
+
+    if (longitude) {
+      return;
     }
 
-    try {
-      decimalCount = Math.abs(decimalCount);
-      decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+    this.setState({
+      address: '',
+      isAddressEditted: false,
+    });
+  };
 
-      const negativeSign = amount < 0 ? "-" : "";
-
-      let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
-      let j = (i.length > 3) ? i.length % 3 : 0;
-
-      return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
-    } catch (e) {
-      return '';
-    }
+  _handleAddressChanged = address => {
+    this.setState({
+      address,
+      longitude: undefined,
+      latitude: undefined,
+      isAddressEditted: false
+    })
   };
 
   render() {
     const { entities } = this.props;
     const equipmentTypes = entities[ENTITY_KEY.EQUIPMENT_TYPES];
-    const { constructions, categories, categoryId } = this.state;
+    const { constructions, categories, categoryId, validateResult } = this.state;
 
     return (
       <div className="container">
@@ -237,31 +330,43 @@ class AddEquipmentStep1 extends Step {
             <div className="form-group">
               <label htmlFor="">Equipment name: <i className="text-danger">*</i></label>
               <input type="text" name="name" onChange={this._handleFieldChange} value={this.state.name || ''} className="form-control" maxLength="80" required />
+              {getValidateFeedback('name', validateResult)}
             </div>
             <div className="form-group">
               <label htmlFor="">Construction: <i className="text-danger">*</i></label>
-              <select name="constructionId" onChange={this._handleFieldChange} value={this.state.constructionId || ''} id="construction_id" className="form-control" required>
-                <option value="">Choose...</option>
+              <select name="constructionId" onChange={this._handleFieldChange} value={this.state.constructionId || '0'} id="construction_id" className="form-control" required>
+                <option value="0">Choose...</option>
                 {constructions.map(construction => <option key={construction.id} value={construction.id}>{construction.name}</option>)}
               </select>
+              {getValidateFeedback('constructionId', validateResult)}
             </div>
             <div className="form-group">
               <label htmlFor="">Address: <i className="text-danger">*</i></label>
-              <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" />
+              {/* <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" /> */}
+              <AddressInput
+                inputProps={{
+                  value: this.state.address,
+                  onBlur: this._handleBlurAddressInput
+                }}
+                onChange={this._handleAddressChanged}
+                onSelect={this._handleSelectAddress}
+                />
+              {getValidateFeedback('address', validateResult)}
             </div>
             <div className="form-group">
-              <label htmlFor="">Equipment Category: <i className="text-danger">*</i></label>
+              <label htmlFor="">Equipment Category: </label>
               <select name="categoryId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.categoryId || ''} id="equip_type_id" className="form-control selectpicker">
                 <option value="0">Choose...</option>
                 {categories && categories.map(cat => {
                   return (<option value={cat.id} key={cat.id}>{cat.name}</option>);
                 })}
               </select>
+              {getValidateFeedback('categoryId', validateResult)}
             </div>
             <div className="form-group">
               <label htmlFor="">Equipment type: <i className="text-danger">*</i></label>
-              <select name="equipmentTypeId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.equipmentTypeId || ''} id="equip_type_id" className="form-control selectpicker">
-                <option value="">Choose...</option>
+              <select name="equipmentTypeId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.equipmentTypeId || '0'} id="equip_type_id" className="form-control selectpicker">
+                <option value="0">Choose...</option>
                 {equipmentTypes && equipmentTypes.data && equipmentTypes.data.map(type => {
 
                   if (!!categoryId && type.generalEquipment.id !== categoryId) {
@@ -271,25 +376,27 @@ class AddEquipmentStep1 extends Step {
                   return (<option value={type.id} key={type.id}>{type.name}</option>);
                 })}
               </select>
+              {getValidateFeedback('equipmentTypeId', validateResult)}
             </div>
           </div>
           <div className="col-md-6">
             <div className="form-group">
               <label htmlFor="daily_price">Price per day (K): <i className="text-danger">*</i></label>
-              <input type="number" name="dailyPrice" onChange={this._handleFieldChange} defaultValue={this._getShowablePrice(this.state.showableDailyPrice)} className="form-control" id="daily_price" required />
+              <input type="string" name="dailyPrice" onChange={this._handleFieldChange} value={this.state.showableDailyPrice} className="form-control text-right" id="daily_price" />
+              {getValidateFeedback('dailyPrice', validateResult)}
             </div>
             <div className="form-group">
-              <label htmlFor="delivery_price">Delivery price per km (K): <i className="text-danger">*</i></label>
-              <input type="number" name="deliveryPrice" onChange={this._handleFieldChange} defaultValue={this._getShowablePrice(this.state.showableDeliveryPrice)} className="form-control" id="delivery_price" required />
+              <label htmlFor="">Available time:</label>
+              {this._renderDateRangePickers()}
+              {getValidateFeedback('availableTimeRanges', validateResult)}
             </div>
-            {this._renderDateRangePickers()}
             <div className="form-group text-center">
               <button className="btn btn-outline-primary mt-4" onClick={this._addTimeRangePicker}><i className="fal fa-plus"></i> Add more time range</button>
             </div>
           </div>
           <div className="col-12 text-center">
             <div className="form-group">
-              <button className="btn btn-success" onClick={this._handleSubmitForm}>NEXT STEP <i className="fal fa-chevron-right"></i></button>
+              <button className="btn btn-primary" onClick={this._handleSubmitForm}>NEXT STEP <i className="fal fa-chevron-right"></i></button>
             </div>
           </div>
         </div>
@@ -300,14 +407,12 @@ class AddEquipmentStep1 extends Step {
 
 AddEquipmentStep1.propTypes = {
   entities: PropTypes.object.isRequired,
-  fetchEquipmentTypes: PropTypes.func.isRequired,
-  fetchEquipmentTypeSpecs: PropTypes.func.isRequired
+  fetchEquipmentTypes: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
   const { authentication, entities } = state;
-  const { user } = authentication;
-  const { contractor } = user;
+  const { contractor } = authentication;
 
   return {
     contractor,
@@ -316,6 +421,5 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, {
-  fetchEquipmentTypes,
-  fetchEquipmentTypeSpecs
+  fetchEquipmentTypes
 })(AddEquipmentStep1);

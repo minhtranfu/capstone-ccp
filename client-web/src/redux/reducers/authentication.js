@@ -1,59 +1,134 @@
 import { INITIAL_STATE } from '../../common/app-const';
-import { authConstants } from '../_constants';
+import { authActionTypes } from '../_types';
 
 const authentication = (state = INITIAL_STATE.authentication, action) => {
   switch (action.type) {
-    case authConstants.LOGIN_SUCCESS:
+    case authActionTypes.LOGIN_SUCCESS:
       return {
+        ...state,
         isAuthenticated: true,
-        user: action.user
+        contractor: action.contractor
       };
 
-    case authConstants.LOGIN_REQUEST:
-      console.log('Fetching.....');
+    case authActionTypes.LOGIN_REQUEST:
       return {
         ...state,
         loggingIn: true,
-        user: {}
       };
 
-    case authConstants.LOGIN_FAILURE:
+    case authActionTypes.LOGIN_FAILURE:
       return {
         ...state,
         loggingIn: false,
-        user: {},
         error: action.error
       };
 
-    case authConstants.LOGOUT:
-      return {};
-
-    case authConstants.LOAD_USER_SUCCESS:
+    case authActionTypes.LOGOUT:
       return {
-        isAuthenticated: true,
-        user: action.user
+        ...INITIAL_STATE.authentication,
+        authenticating: false
       };
 
-    case authConstants.LOAD_USER_FAILURE:
-      return {};
+    case authActionTypes.LOAD_USER_SUCCESS:
+      return {
+        ...state,
+        authenticating: false,
+        isAuthenticated: true,
+        contractor: action.contractor
+      };
 
-    case authConstants.LOGIN_MODAL_SHOW:
+    case authActionTypes.LOAD_USER_FAILURE:
+      return {
+        ...state,
+        authenticating: false
+      };
+
+    case authActionTypes.LOGIN_MODAL_SHOW:
       return {
         ...state,
         isShowLoginModal: true
       }
 
-    case authConstants.LOGIN_MODAL_HIDE:
+    case authActionTypes.LOGIN_MODAL_HIDE:
       return {
         ...state,
         isShowLoginModal: false
       };
 
-    case authConstants.LOGIN_MODAL_TOGGLE:
+    case authActionTypes.LOGIN_MODAL_TOGGLE:
       return {
         ...state,
         isShowLoginModal: !state.isShowLoginModal
       };
+
+    case authActionTypes.ADD_NOTIFICATIONS_COUNT:
+      state.contractor.totalUnreadNotifications++;
+
+      return {
+        ...state,
+        unreadNotificationIds: action.unreadNotificationIds,
+        readNotificationIds: action.readNotificationIds
+      };
+
+    case authActionTypes.MIN_NOTIFICATIONS_COUNT:
+      state.contractor.totalUnreadNotifications--;
+
+      return {
+        ...state,
+        unreadNotificationIds: action.unreadNotificationIds,
+        readNotificationIds: action.readNotificationIds
+      };
+
+    case authActionTypes.SET_NOTIFICATIONS_COUNT:
+      state.contractor.totalUnreadNotifications = action.totalUnreadNotifications;
+
+      return {
+        ...state,
+        unreadNotificationIds: action.unreadNotificationIds,
+        readNotificationIds: action.readNotificationIds
+      };
+
+    case authActionTypes.VERIFYING_IMAGES_SET: {
+      return {
+        ...state,
+        verifyingImages: {
+          ...state.verifyingImages,
+          items: action.items
+        },
+      };
+    }
+    
+    case authActionTypes.VERIFYING_IMAGES_REQUEST: {
+      return {
+        ...state,
+        verifyingImages: {
+          ...state.verifyingImages,
+          isFetching: true
+        },
+      };
+    }
+    
+    case authActionTypes.VERIFYING_IMAGES_SUCCESS: {
+      return {
+        ...state,
+        verifyingImages: {
+          ...state.verifyingImages,
+          isFetching: false,
+          items: action.items,
+        },
+      };
+    }
+
+    case authActionTypes.VERIFYING_IMAGES_FAILURE: {
+      return {
+        ...state,
+        verifyingImages: {
+          ...state.verifyingImages,
+          isFetching: false,
+          errorMessage: action.errorMessage,
+        },
+      };
+    }
 
     default:
       return state;

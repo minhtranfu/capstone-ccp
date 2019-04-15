@@ -1,20 +1,26 @@
-import { authConstants } from '../_constants';
-import { appConsts } from '../../common/app-const';
+import { authActionTypes } from 'Redux/_types';
+import { appConsts } from 'Common/app-const';
 
-import ccpServices from '../../services/domain/ccp-api-service';
-import { makeActionCreator } from './action-creators';
 import { askForPermissioToReceiveNotifications } from "../../push-notification";
+import { userServices } from 'Services/domain/ccp';
+import { getErrorMessage } from 'Utils/common.utils';
 
 /**
  * Decide what to export here
  */
 export const authActions = {
   login,
+  loginSuccess,
   logout,
   loadUserFromToken,
   showLoginModal,
   hideLoginModal,
-  toggleLoginModal  
+  toggleLoginModal,
+  addNotificationsCount,
+  minusNotificationsCount,
+  setUnreadNotificationsCount,
+  setVerifyingImageItems,
+  loadVerifyingImages,
 };
 
 /**
@@ -28,22 +34,18 @@ export const authActions = {
  */
 function login(username, password) {
   return async dispatch => {
-    dispatch({ type: authConstants.LOGIN_REQUEST });
+    dispatch({ type: authActionTypes.LOGIN_REQUEST });
 
     try {
-      const user = await ccpServices.userServices.login(username, password);
-      console.log(user);
+      const user = await userServices.login(username, password);
       localStorage.setItem(appConsts.JWT_KEY, user.tokenWrapper.accessToken);
 
-      dispatch({
-        type: authConstants.LOGIN_SUCCESS,
-        user
-      });
+      dispatch(loginSuccess(user.contractor));
       askForPermissioToReceiveNotifications();
 
     } catch (error) {
       dispatch({
-        type: authConstants.LOGIN_FAILURE,
+        type: authActionTypes.LOGIN_FAILURE,
         error
       });
     }
@@ -55,11 +57,11 @@ function logout() {
     // unsubcribe notification
     const token = localStorage.getItem(appConsts.NOTI_TOKEN);
     if (token) {
-      await ccpServices.userServices.unsubcribeNotification(token);
+      await userServices.unsubcribeNotification(token);
     }
 
     localStorage.removeItem(appConsts.JWT_KEY);
-    dispatch({ type: authConstants.LOGOUT });
+    dispatch({ type: authActionTypes.LOGOUT });
   };
 }
 
@@ -72,38 +74,99 @@ function loadUserFromToken() {
     }
 
     try {
-      const contractor = await ccpServices.userServices.getUserInfo();
+      const contractor = await userServices.getUserInfo();
 
       dispatch({
-        type: authConstants.LOAD_USER_SUCCESS,
-        user: {
-          contractor
-        }
+        type: authActionTypes.LOAD_USER_SUCCESS,
+        contractor
       });
 
       askForPermissioToReceiveNotifications();
     } catch (error) {
       console.log('Error!', error);
       localStorage.removeItem(appConsts.JWT_KEY);
-      dispatch({ type: authConstants.LOAD_USER_FAILURE });
+      dispatch({ type: authActionTypes.LOAD_USER_FAILURE });
     }
   };
 }
 
+function loginSuccess(contractor) {
+  return {
+    type: authActionTypes.LOGIN_SUCCESS,
+    contractor
+  }
+}
+
 function showLoginModal() {
   return {
-    type: authConstants.LOGIN_MODAL_SHOW
+    type: authActionTypes.LOGIN_MODAL_SHOW
   };
 }
 
 function hideLoginModal() {
   return {
-    type: authConstants.LOGIN_MODAL_HIDE
+    type: authActionTypes.LOGIN_MODAL_HIDE
   };
 }
 
 function toggleLoginModal() {
   return {
-    type: authConstants.LOGIN_MODAL_TOGGLE
+    type: authActionTypes.LOGIN_MODAL_TOGGLE
+  };
+}
+
+function minusNotificationsCount({ unreadNotificationIds, readNotificationIds }) {
+  return {
+    type: authActionTypes.MIN_NOTIFICATIONS_COUNT,
+    unreadNotificationIds,
+    readNotificationIds,
+  }
+}
+
+function addNotificationsCount({ unreadNotificationIds, readNotificationIds }) {
+  return {
+    type: authActionTypes.ADD_NOTIFICATIONS_COUNT,
+    unreadNotificationIds,
+    readNotificationIds,
+  }
+}
+
+function setUnreadNotificationsCount({ totalUnreadNotifications, readNotificationIds, unreadNotificationIds }) {
+  return {
+    type: authActionTypes.SET_NOTIFICATIONS_COUNT,
+    totalUnreadNotifications,
+    readNotificationIds,
+    unreadNotificationIds
+  }
+}
+
+function setVerifyingImageItems(items) {
+  return {
+    type: authActionTypes.VERIFYING_IMAGES_SET,
+    items
+  }
+}
+
+function loadVerifyingImages(contractorId) {
+  return async dispatch => {
+    dispatch({
+      type: authActionTypes.VERIFYING_IMAGES_REQUEST,
+    });
+
+    try {
+      const items = await userServices.getVerifyingImages(contractorId);
+
+      dispatch({
+        type: authActionTypes.VERIFYING_IMAGES_SUCCESS,
+        items,
+      });
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+
+      dispatch({
+        type: authActionTypes.VERIFYING_IMAGES_FAILURE,
+        errorMessage,
+      });
+    }
   };
 }

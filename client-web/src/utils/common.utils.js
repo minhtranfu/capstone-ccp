@@ -1,3 +1,4 @@
+import React from 'react';
 import { modules } from "Src/components/modules/Routes";
 
 export const getRoutePath = (name, data) => {
@@ -38,4 +39,33 @@ export const getErrorMessage = error => {
   }
 
   return 'Unknown error occurr!';
+};
+
+export const toQueryString = data => {
+  if (typeof data !== 'object' || data === null) {
+    return '';
+  }
+
+  const params = Object.keys(data).map(key => {
+    return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
+  });
+
+  return params.join('&');
+};
+
+/**
+ * Get feedback for field from validate result of validaejs
+ * @param {string} fieldName field name
+ * @param {object} validateResult validate result from validatejs
+ */
+export const getValidateFeedback = (fieldName, validateResult) => {
+  if (!validateResult || !validateResult[fieldName]) {
+    return null;
+  }
+
+  return (
+    <div className="invalid-feedback d-block">
+      {validateResult[fieldName]}
+    </div>
+  );
 };

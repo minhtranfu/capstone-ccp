@@ -4,8 +4,16 @@ import EquipmentCard from '../../common/EquipmentCard';
 import Helmet from 'react-helmet-async';
 import moment from 'moment';
 import Skeleton from 'react-loading-skeleton';
+import { Collapse, Fade } from "reactstrap";
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
+import SubscriptionCardAdd from '../subscription/subscription-card-add';
+import { getRoutePath } from 'Utils/common.utils';
+import { routeConsts } from 'Common/consts';
+import { authActions } from 'Redux/actions';
 
 class Home extends Component {
   constructor(props) {
@@ -13,27 +21,27 @@ class Home extends Component {
 
     this.state = {
       products: [],
-      isFetching: true
+      isFetching: false
     };
   }
 
+  // Load search data on didmount
   _loadData = async () => {
     const products = await ccpApiService.searchEquipment({
       beginDate: moment().format('YYYY-MM-DD')
     });
 
-    if (products.length === 0) {
-      alert('Data is empty!');
-    }
-
     this.setState({
       products,
-      isFetching: false
+      isFetching: false,
+      criteria: {
+        beginDate: moment().format('YYYY-MM-DD')
+      }
     });
   };
 
+  // Handle criteria change from search box
   _handleSearch = async (criteria) => {
-    console.log(criteria);
 
     this.setState({
       isFetching: true
@@ -42,16 +50,32 @@ class Home extends Component {
 
     this.setState({
       products,
-      isFetching: false
+      criteria,
+      isFetching: false,
+      subcription: undefined,
+      isShowSubcribeBox: false
     });
   };
 
-  componentDidMount() {
-    this._loadData();
-  }
+  // show or hide subcribe box
+  _toggleSubcribeBox = () => {
+    const { isShowSubcribeBox } = this.state;
+    this.setState({
+      isShowSubcribeBox: !isShowSubcribeBox
+    });
+  };
+
+  // Handle when subcription was created by subcrib box
+  _handleSubcribed = subcription => {
+    this.setState({
+      subcription,
+      isShowSubcribeBox: false
+    });
+  };
 
   render() {
-    const { products, isFetching } = this.state;
+    const { products, isFetching, isShowSubcribeBox, subcription, criteria } = this.state;
+    const { authentication, toggleLoginModal } = this.props;
 
     return (
       <div>
@@ -69,8 +93,46 @@ class Home extends Component {
               <h3>Result</h3>
             </div>
             {(!products || products.length === 0) && !isFetching &&
-              <div className="col-md-12 text-center py-4 alert alert-info">
-                <h2>No equipment found, please try again with another criteria!</h2>
+              <div className="col-md-12 py-4">
+                {!isShowSubcribeBox && !subcription &&
+                  <Fade in={!isShowSubcribeBox && !subcription} className="text-center">
+                    <div className="alert alert-info w-100 text-center">
+                      <h2>No equipment found, please try again with another criteria!</h2>
+                    </div>
+                    <h2 className="text-center">OR</h2>
+                    {authentication.isAuthenticated &&
+                      <button className="btn btn-primary" onClick={this._toggleSubcribeBox}>
+                        <i className="fal fa-binoculars"></i> Subcribe this criteria
+                      </button>
+                    }
+                    {!authentication.isAuthenticated &&
+                      <button className="btn btn-primary" onClick={toggleLoginModal}>
+                        <i className="fal fa-binoculars"></i> Login to subcribe this criteria
+                      </button>
+                    }
+                  </Fade>
+                }
+                <Collapse isOpen={isShowSubcribeBox}>
+                  <h3 className="text-center">Subcribe to this criteria</h3>
+                  {isShowSubcribeBox &&
+                    <SubscriptionCardAdd
+                      subscription={{
+                        ...criteria,
+                        equipmentType: !criteria.equipmentTypeId ? undefined : { id: +criteria.equipmentTypeId }
+                      }}
+                      onCancelEdit={this._toggleSubcribeBox}
+                      onCreated={this._handleSubcribed}
+                    />
+                  }
+                </Collapse>
+                <Collapse isOpen={subcription}>
+                  <h1 className="text-center text-success mt-3">
+                    <i className="fal fa-check-circle"></i> Subcribed
+                  </h1>
+                  <div className="mt-2 mb-3 text-center">
+                    <Link className="btn btn-outline-primary" to={getRoutePath(routeConsts.SUBSCRIPTION_REQUEST)}>View my subscriptions</Link>
+                  </div>
+                </Collapse>
               </div>
             }
             {isFetching &&
@@ -86,4 +148,20 @@ class Home extends Component {
   }
 }
 
-export default Home;
+Home.props = {
+  authentication: PropTypes.object
+};
+
+const mapStateToProps = state => {
+  const { authentication } = state;
+
+  return {
+    authentication
+  };
+};
+
+const mapDispatchToProps = {
+  toggleLoginModal: authActions.toggleLoginModal
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "jsx": "react",
+    "baseUrl": ".",
+    "paths": {
+      // "Src/*": ["*"],
+      "Common/*": ["./src/common/*"],
+      "Redux/*": ["./src/redux/*"],
+      "Services/*": ["./src/services/*"],
+      "Components/*": ["./src/components/*"],
+      "Utils/*": ["./src/utils/*"],
+      "Assets/*": ["./src/assets/*"],
+    }
+  }
+}

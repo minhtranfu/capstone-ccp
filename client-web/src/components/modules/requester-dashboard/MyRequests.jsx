@@ -11,7 +11,7 @@ import {
   EQUIPMENT_STATUSES,
   EQUIPMENT_SHOWABLE_STATUSES
 } from '../../../common/consts';
-import { FeedbackModal } from "../../common";
+import { RatingEquipmentTransaction } from "../../common";
 import ccpApiService from '../../../services/domain/ccp-api-service';
 
 class MyRequests extends Component {
@@ -138,7 +138,7 @@ class MyRequests extends Component {
       return;
     }
 
-    transactions.map(transaction => {
+    transactions.items.map(transaction => {
       const transactionItem = this._renderTransaction(transaction);
       if (!this.tabContents[transaction.status]) {
         this.tabContents[transaction.status] = [];
@@ -161,10 +161,10 @@ class MyRequests extends Component {
   /**
    * Show feedback modal
    */
-  _toggleFeedbackModal = (feedbackTransaction) => {
-    const { isShowFeedbackModal } = this.state;
+  _toggleRatingEquipmentTransaction = (feedbackTransaction) => {
+    const { isShowRatingEquipmentTransaction } = this.state;
     this.setState({
-      isShowFeedbackModal: !isShowFeedbackModal,
+      isShowRatingEquipmentTransaction: !isShowRatingEquipmentTransaction,
       feedbackTransaction
     });
   };
@@ -234,7 +234,7 @@ class MyRequests extends Component {
         // TODO: Feedback function
         changeStatusButtons = (
           <div className="mt-2">
-            <button className="btn btn-sm btn-success" onClick={() => this._toggleFeedbackModal(transaction)}>Feedback</button>
+            <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingEquipmentTransaction(transaction)}>Feedback</button>
           </div>
         );
         break;
@@ -268,7 +268,7 @@ class MyRequests extends Component {
             <img
               className="rounded-circle"
               style={{width: '50px', height: '50px'}}
-              src={transaction.equipment.contractor.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
+              src={transaction.equipment.contractor.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
             />
             <p>{transaction.equipment.contractor.name}</p>
           </div>
@@ -319,6 +319,7 @@ class MyRequests extends Component {
 
   /**
    * Start change status when user confirmed
+   * BUG HEREEEEE
    */
   _handleChangeStatusConfirm = async () => {
     const { confirm } = this.state;
@@ -395,9 +396,9 @@ class MyRequests extends Component {
   };
 
   _getUpdatedTransactionsList = updatedTransaction => {
-    let { transactions } = this.state;
+    const { transactions } = this.state;
 
-    return transactions.map(transaction => {
+    const items = transactions.items.map(transaction => {
       if (transaction.id !== updatedTransaction.id) {
         return transaction;
       }
@@ -410,6 +411,11 @@ class MyRequests extends Component {
 
       return transaction;
     });
+
+    return {
+      ...transactions,
+      items,
+    };
   };
 
   _removeAlert = () => {
@@ -525,22 +531,28 @@ class MyRequests extends Component {
   };
 
   render() {
-    const { isShowFeedbackModal, feedbackTransaction } = this.state;
+    const { isShowRatingEquipmentTransaction, feedbackTransaction } = this.state;
     this._renderTabContents();
 
     return (
-      <div className="container py-5 user-dashboard">
+      <div className="container py-3 user-dashboard">
         {this._renderAlert()}
-        <FeedbackModal
-          isOpen={isShowFeedbackModal}
-          onClose={() => this._toggleFeedbackModal()}
+        <RatingEquipmentTransaction
+          isOpen={isShowRatingEquipmentTransaction}
+          onClose={() => this._toggleRatingEquipmentTransaction()}
           transaction={feedbackTransaction}
         />
         <div className="row">
+          <div className="col-md-12">
+            <h4>
+              Requested transaction
+              <button className="btn btn-outline-primary float-right" onClick={this._loadTransactions}><i className="fal fa-sync"></i></button>
+            </h4>
+          </div>
           <div className="col-md-3">
             <div className="border-right border-primary h-100">
               <div className="sticky-top sticky-sidebar nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <h4>Status</h4>
+                <h5>Status</h5>
                 {this._renderTabNavs()}
               </div>
             </div>
@@ -562,8 +574,7 @@ MyRequests.props = {
 
 const mapStateToProps = state => {
   const { authentication } = state;
-  const { user } = authentication;
-  const { contractor } = user;
+  const { contractor } = authentication;
 
   return {
     contractor

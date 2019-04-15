@@ -7,9 +7,13 @@ import PropTypes from 'prop-types';
 
 export class AddressInput extends Component {
 
-  state = {
-    address: ''
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      address: props.address || ''
+    };
+  }
 
   /**
    * Handle user input to address field
@@ -94,6 +98,15 @@ export class AddressInput extends Component {
             placeholder: 'Search Places ...',
             className: 'form-control location-search-input',
           });
+
+          if (inputProps.onBlur) {
+            const customOnBlur = inputProps.onBlur;
+            inputProps.onBlur = e => {
+              customOnBlur(e);
+              componentInputProps.onBlur(e);
+            };
+          }
+
           return (
             <div {...wrapperProps} onFocus={() => this.setState({isFocus: true})} onBlur={() => this.setState({isFocus: false})}>
               <input
@@ -143,7 +156,9 @@ export class AddressInput extends Component {
 
 AddressInput.props = {
   wrapperProps: PropTypes.object,
-  inputProps: PropTypes.object
+  inputProps: PropTypes.object,
+  onChange: PropTypes.func,
+  onSelect: PropTypes.func
 };
 
 AddressInput.defaultProps = {

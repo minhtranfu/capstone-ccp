@@ -5,12 +5,14 @@ import {
   CSSTransition
 } from 'react-transition-group';
 import { Redirect, Link } from 'react-router-dom';
+import { connect } from "react-redux";
 
 import Step1 from './Step1';
 import Step2 from './Step2';
 
 import { debrisServices } from 'Services/domain/ccp';
 import { getErrorMessage } from 'Utils/common.utils';
+import { CONTRACTOR_STATUSES } from 'Common/consts';
 
 class PostDebrisRequest extends Component {
   constructor(props) {
@@ -163,9 +165,18 @@ class PostDebrisRequest extends Component {
 
   render() {
     const { message } = this.state;
+    const { contractor } = this.props;
+
+    if (contractor.status !== CONTRACTOR_STATUSES.ACTIVATED) {
+      return (
+        <div className="container">
+          <h1 className="text-center my-3 alert alert-warning">Your account must be activated to post new equipment!</h1>
+        </div>
+      );
+    }
 
     return (
-      <div className="container pb-5">
+      <div className="container pb-5 wizard">
         <div className="row">
           <div className="col-12">
             <h2 className="my-4 text-center">
@@ -184,4 +195,13 @@ class PostDebrisRequest extends Component {
   }
 }
 
-export default PostDebrisRequest;
+const mapStateToProps = state => {
+  const { authentication } = state;
+  const { contractor } = authentication;
+
+  return {
+    contractor
+  };
+};
+
+export default connect(mapStateToProps)(PostDebrisRequest);
