@@ -5,6 +5,7 @@ import {
   View,
   Image,
   TouchableOpacity,
+  TouchableNativeFeedback,
   Platform
 } from "react-native";
 import { withNavigation } from "react-navigation";

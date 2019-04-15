@@ -24,6 +24,8 @@ class Calendar extends PureComponent {
 
   constructor(props) {
     super(props);
+    const availableDateRange = this.props.availableDateRange;
+    const notAvailableDateRange = this.props.notAvailableDateRange;
     this.state = {
       isFromDatePicked: false,
       isToDatePicked: false,
@@ -32,7 +34,91 @@ class Calendar extends PureComponent {
       fromDate: this._handleDateFormat(props.fromDate) || "",
       endDate: this._handleDateFormat(props.endDate) || ""
     };
+
+    // if (availableDateRange) {
+    //   const availableDate = availableDateRange.reduce((acc, cur) => {
+    //     const dateList = this.getDaysArray(
+    //       new Date(cur.beginDate),
+    //       new Date(cur.endDate)
+    //     );
+    //     return acc.concat(dateList);
+    //   }, []);
+
+    //   availableDate.sort((a, b) => compareAsc(new Date(a), new Date(b)));
+    //   //remove duplicate date if has
+    //   this.uniqueAvailableDate = [...new Set(availableDate)];
+    //   const firstAvailableDate = this.uniqueAvailableDate[0];
+    //   const lastAvailableDate = this.uniqueAvailableDate[
+    //     this.uniqueAvailableDate.length - 1
+    //   ];
+    //   const allDateList = this.getDaysArray(
+    //     new Date(firstAvailableDate),
+    //     new Date(lastAvailableDate)
+    //   );
+
+    //   this.notAvailableDate = allDateList.filter(
+    //     date => !this.uniqueAvailableDate.includes(date)
+    //   );
+
+    //   this.notAvailableDateStyle = this.notAvailableDate.reduce(
+    //     (acc, cur) => ({
+    //       ...acc,
+    //       [cur]: {
+    //         selected: false,
+    //         selectedColor: "#9b9b9b",
+    //         disabled: true,
+    //         disableTouchEvent: true
+    //       }
+    //     }),
+    //     {}
+    //   );
+    // }
+    if (notAvailableDateRange) {
+      const notAvailableDate = notAvailableDateRange.reduce((acc, cur) => {
+        const dateList = this.getDaysArray(
+          new Date(cur.beginDate),
+          new Date(cur.endDate)
+        );
+        return acc.concat(dateList);
+      }, []);
+      console.log(notAvailableDate);
+      // availableDate.sort((a, b) => compareAsc(new Date(a), new Date(b)));
+      // //remove duplicate date if has
+      // this.uniqueAvailableDate = [...new Set(availableDate)];
+      // const firstAvailableDate = this.uniqueAvailableDate[0];
+      // const lastAvailableDate = this.uniqueAvailableDate[
+      //   this.uniqueAvailableDate.length - 1
+      // ];
+      // const allDateList = this.getDaysArray(
+      //   new Date(firstAvailableDate),
+      //   new Date(lastAvailableDate)
+      // );
+
+      // this.notAvailableDate = allDateList.filter(
+      //   date => !this.uniqueAvailableDate.includes(date)
+      // );
+
+      this.notAvailableDateStyle = notAvailableDate.reduce(
+        (acc, cur) => ({
+          ...acc,
+          [cur]: {
+            selected: false,
+            selectedColor: "#9b9b9b",
+            disabled: true,
+            disableTouchEvent: true
+          }
+        }),
+        {}
+      );
+    }
   }
+
+  getDaysArray = (start, end) => {
+    for (var arr = [], dt = start; dt <= end; dt.setDate(dt.getDate() + 1)) {
+      arr.push(new Date(dt));
+    }
+    return arr.map(v => v.toISOString().slice(0, 10));
+  };
 
   componentWillUnmount() {
     this._handleClearDate();
@@ -219,7 +305,8 @@ class Calendar extends PureComponent {
               textDayHeaderFontWeight: "600"
             }}
             markedDates={{
-              ...this.state.markedDates
+              ...this.state.markedDates,
+              ...this.notAvailableDateStyle
             }}
             {...this.props}
           />

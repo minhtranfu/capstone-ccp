@@ -2,6 +2,10 @@ import React from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { Camera, Permissions } from "expo";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+
+import fontSize from "../../../config/fontSize";
+import colors from "../../../config/colors";
 
 class CameraView extends React.Component {
   state = {
@@ -24,6 +28,7 @@ class CameraView extends React.Component {
 
   render() {
     const { hasCameraPermission, capturedPhoto } = this.state;
+    const { onPressBack, onSelectedPhoto } = this.props;
     console.log("permission", capturedPhoto);
     if (hasCameraPermission === null) {
       return <View />;
@@ -33,11 +38,34 @@ class CameraView extends React.Component {
       return (
         <View style={{ flex: 1 }}>
           {capturedPhoto ? (
-            <Image
-              uri={capturedPhoto}
-              resizeMode={"cover"}
-              style={{ flex: 1 }}
-            />
+            <View style={{ flex: 1, backgroundColor: "transparent" }}>
+              <Image
+                uri={capturedPhoto}
+                resizeMode={"cover"}
+                style={{ flex: 1 }}
+              />
+              <View
+                style={{
+                  backgroundColor: "black",
+                  height: 40,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingHorizontal: 15
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => this.setState({ capturedPhoto: null })}
+                >
+                  <Text style={styles.text}>Retake</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => onSelectedPhoto(this.state.capturedPhoto)}
+                >
+                  <Text style={styles.text}>Use photo</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           ) : (
             <Camera
               style={{ flex: 1 }}
@@ -51,15 +79,28 @@ class CameraView extends React.Component {
                 style={{
                   flex: 1,
                   backgroundColor: "transparent",
-                  flexDirection: "row"
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                  justifyContent: "space-between",
+                  marginHorizontal: 15
                 }}
               >
                 <TouchableOpacity
-                  style={{
-                    flex: 0.1,
-                    alignSelf: "flex-end",
-                    alignItems: "center"
-                  }}
+                  onPress={onPressBack}
+                  style={{ alignItems: "center" }}
+                >
+                  <Text style={[styles.text, { marginBottom: 20 }]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.snap}>
+                  <MaterialCommunityIcons
+                    name="circle-slice-8"
+                    size={55}
+                    color={"white"}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
                   onPress={() => {
                     this.setState({
                       type:
@@ -69,15 +110,11 @@ class CameraView extends React.Component {
                     });
                   }}
                 >
-                  <Text
-                    style={{ fontSize: 18, marginBottom: 10, color: "white" }}
-                  >
-                    {" "}
-                    Flip{" "}
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={this.snap}>
-                  <Text>Take a picture</Text>
+                  <Ionicons
+                    name="ios-reverse-camera"
+                    size={40}
+                    color={"white"}
+                  />
                 </TouchableOpacity>
               </View>
             </Camera>
@@ -91,6 +128,11 @@ class CameraView extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  text: {
+    fontSize: fontSize.bodyText,
+    color: "white",
+    fontWeight: "500"
   }
 });
 

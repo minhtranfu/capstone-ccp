@@ -45,11 +45,19 @@ export default function materialReducer(state = INITIAL_STATE, action) {
       };
     }
     case Actions.SEARCH_MATERIAL.SUCCESS: {
-      return {
-        ...state,
-        loading: false,
-        listSearch: payload.data
-      };
+      if (action.offset <= 0) {
+        return {
+          ...state,
+          loading: false,
+          listSearch: payload.data
+        };
+      } else {
+        return {
+          ...state,
+          loading: false,
+          listSearch: state.listSearch.concat(payload.data)
+        };
+      }
     }
     case Actions.SEARCH_MATERIAL.ERROR: {
       return {

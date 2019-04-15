@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList
 } from "react-native";
+import { bindActionCreators } from "redux";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { searchMaterial } from "../../redux/actions/material";
@@ -25,21 +26,22 @@ import fontSize from "../../config/fontSize";
     loading: state.material.loading,
     listMaterial: state.material.listSearch
   }),
-  dispatch => ({
-    fetchSearchMaterial: (keyword, id) => {
-      dispatch(searchMaterial(keyword, id));
-    }
-  })
+  dispatch =>
+    bindActionCreators({ fetchSearchMaterial: searchMaterial }, dispatch)
 )
 class MaterialResult extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      offset: 0,
+      loadMore: false
+    };
   }
 
   componentDidMount() {
     const { keyword, id } = this.props.navigation.state.params;
-    this.props.fetchSearchMaterial(keyword, id);
+    const { offset } = this.state;
+    this.props.fetchSearchMaterial(keyword, id, offset);
   }
 
   _renderItem = ({ item }) => (
@@ -77,12 +79,40 @@ class MaterialResult extends Component {
     </TouchableOpacity>
   );
 
+  _handleSearchMore = async () => {
+    const { keyword, id } = this.props.navigation.state.params;
+    const { offset } = this.state;
+    await this.props.fetchSearchMaterial(keyword, id, offset);
+    this.setState({ loadMore: false });
+  };
+
+  _handleLoadMore = async () => {
+    const { listMaterial } = this.props;
+    const { offset, loadMore } = this.state;
+    if (listMaterial.length >= offset) {
+      this.setState(
+        (prevState, nextProps) => ({
+          offset: prevState.offset + 10,
+          loadMore: true
+        }),
+        () => {
+          this._handleSearchMore();
+        }
+      );
+    }
+  };
+
   _renderEmpty = () => {
     return (
       <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
         <Text style={styles.text}>No data</Text>
       </View>
     );
+  };
+
+  _renderFooter = () => {
+    if (!this.state.loadMore) return null;
+    return <Loading />;
   };
 
   render() {
@@ -112,9 +142,13 @@ class MaterialResult extends Component {
         {!loading ? (
           <FlatList
             data={listMaterial}
+            extraData={this.state}
             ListEmptyComponent={this._renderEmpty}
             renderItem={this._renderItem}
             keyExtractor={(item, index) => item.id.toString()}
+            ListFooterComponent={this._renderFooter}
+            onEndReachedThreshold={0.5}
+            onEndReached={this._handleLoadMore}
           />
         ) : (
           <Loading />

@@ -1,20 +1,20 @@
 import * as Actions from "../types";
 import axios from "axios";
 
-export function searchMaterial(text, id) {
-  console.log(id);
+export function searchMaterial(text, id, offset) {
   return async dispatch => {
     try {
-      dispatch({
-        type: Actions.SEARCH_MATERIAL.REQUEST
-      });
-      const url = `materials?q=${text}&limit=10&orderBy=createdTime.desc&materialTypeId=${id}`;
-      console.log(url);
+      if (offset <= 0) {
+        dispatch({
+          type: Actions.SEARCH_MATERIAL.REQUEST
+        });
+      }
+      const url = `materials?q=${text}&limit=10&orderBy=createdTime.desc&materialTypeId=${id}&offset=${offset}`;
       const res = await axios.get(url);
-      console.log(res);
       dispatch({
         type: Actions.SEARCH_MATERIAL.SUCCESS,
-        payload: res
+        payload: res,
+        offset: offset
       });
     } catch (error) {
       dispatch({

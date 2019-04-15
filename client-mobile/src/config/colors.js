@@ -15,6 +15,7 @@ export default {
   description: "#939393",
   text50: "#1b2b4b7F",
   text25: "#1b2b4b3F",
+  notValidate: "#a5acb8",
   shadow: {
     shadowColor: "#1b2b4b",
     shadowOffset: { width: 0, height: 2 },

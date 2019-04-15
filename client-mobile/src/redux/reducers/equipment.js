@@ -66,6 +66,12 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
         )
       };
     }
+    case Actions.UPDATE_EQUIPMENT.ERROR: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
     case Actions.UPDATE_EQUIPMENT_STATUS.REQUEST: {
       return {
         ...state,

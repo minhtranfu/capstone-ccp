@@ -1,7 +1,13 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { View, Text, StyleSheet, ScrollView, TextInput } from "react-native";
-import Autocomplete from "react-native-autocomplete-input";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  TouchableOpacity
+} from "react-native";
 
 import fontSize from "../config/fontSize";
 import colors from "../config/colors";
@@ -13,25 +19,20 @@ class AutoComplete extends Component {
     data: PropTypes.array
   };
 
-  // _renderItem=(item)=>{
-  //   const {hasCaption} = this.props;
-  //   return(
+  // _renderItem = item => {
+  //   const { handleOnPressItem } = this.props;
+  //   return (
   //     <TouchableOpacity
-  //     style={styles.autocompleteWrapper}
-  //     onPress={() => {
-  //       this.setState({
-  //         address: item.main_text + ", " + item.secondary_text,
-  //         lat: item.lat,
-  //         lng: item.lng,
-  //         hideResults: true
-  //       });
-  //     }}
-  //   >
-  //     <Text style={styles.addressMainText}>{item.main_text}</Text>
-  //     {hasCaption?<Text style={styles.caption}>{item.secondary_text}</Text>:null}
-  //   </TouchableOpacity>
-  //   )
-  // }
+  //       style={styles.autocompleteWrapper}
+  //       onPress={handleOnPressItem}
+  //     >
+  //       <Text style={styles.addressMainText}>{item.main_text}</Text>
+  //       {item.secondary_text ? (
+  //         <Text style={styles.caption}>{item.secondary_text}</Text>
+  //       ) : null}
+  //     </TouchableOpacity>
+  //   );
+  // };
 
   render() {
     const {
@@ -73,7 +74,7 @@ class AutoComplete extends Component {
               justifyContent: "center"
             }}
           >
-            {data.slice(0, 5).map(item => renderItem(item))}
+            {data.map(item => renderItem(item))}
           </View>
         ) : null}
       </View>

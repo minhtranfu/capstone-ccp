@@ -80,10 +80,7 @@ class PlaceBid extends Component {
     const { price, description } = this.state;
     return (
       <Modal animationType={"slide"} visible={visible}>
-        <SafeAreaView
-          forceInset={{ bottom: "always", top: "always" }}
-          style={styles.container}
-        >
+        <SafeAreaView forceInset={{ top: "always" }} style={styles.container}>
           <Header
             renderLeftButton={() => (
               <TouchableOpacity
@@ -114,12 +111,24 @@ class PlaceBid extends Component {
               onChangeText={value => this.setState({ description: value })}
               value={description}
             />
-            {isEdited ? (
-              <Button text={"Edit bid"} onPress={this._handleEditBid} />
-            ) : (
-              <Button text={"Place bid"} onPress={this._handlePlaceBid} />
-            )}
           </ScrollView>
+          <SafeAreaView forceInset={{ bottom: "always" }}>
+            {isEdited ? (
+              <Button
+                bordered={false}
+                text={"Edit bid"}
+                onPress={this._handleEditBid}
+                buttonStyle={{ backgroundColor: colors.secondaryColor }}
+              />
+            ) : (
+              <Button
+                bordered={false}
+                text={"Place bid"}
+                onPress={this._handlePlaceBid}
+                buttonStyle={{ backgroundColor: colors.secondaryColor }}
+              />
+            )}
+          </SafeAreaView>
         </SafeAreaView>
       </Modal>
     );

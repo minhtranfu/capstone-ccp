@@ -316,10 +316,10 @@ class MyRequest extends Component {
                       hasEquipmentStatus={true}
                       hasStatus={true}
                     />
-                    {this._renderBottomStatus(
+                    {/* {this._renderBottomStatus(
                       item.status,
                       item.equipment.status
-                    )}
+                    )} */}
                   </View>
                 ))}
               </View>

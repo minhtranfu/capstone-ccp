@@ -81,6 +81,13 @@ class Notification extends Component {
     this.props.fetchReadNotifiction(id, { read: isRead });
   };
 
+  _handleReadAllNotification = async () => {
+    const res = await readAllNotification();
+    if (res) {
+      this.props.fetchGetNotification(0);
+    }
+  };
+
   _findDiffDayFromToday = date => {
     let firstDate = new Date(date);
     let secondDate = new Date(Date.now());
@@ -94,16 +101,6 @@ class Notification extends Component {
       return "Less than 1 days";
     } else {
       return `${dayDuration} days ago`;
-    }
-  };
-
-  _handleReadAll = async () => {
-    try {
-      this.setState({ readAllLoading: true });
-      await this.props.fetchReadAllNotifcation();
-      this.setState({ readAllLoading: false });
-    } catch (error) {
-      this.setState({ readAllLoading: false });
     }
   };
 
@@ -135,44 +132,52 @@ class Notification extends Component {
     }
   };
 
-  _renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={[
-        styles.notificationWrapper,
-        item.read
-          ? { backgroundColor: "white" }
-          : { backgroundColor: "#DDDDDD" }
-      ]}
-      onPress={() => this._handleClickAction(item.id, item.clickAction, true)}
-    >
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.text}>{item.content}</Text>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between"
-        }}
+  _capitializeLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  _renderItem = ({ item }) => {
+    let parts = item.clickAction.split("/");
+    return (
+      <TouchableOpacity
+        style={[
+          styles.notificationWrapper,
+          item.read
+            ? { backgroundColor: "white" }
+            : { backgroundColor: "#DDDDDD" }
+        ]}
+        onPress={() => this._handleClickAction(item.id, item.clickAction, true)}
       >
-        <Text style={styles.caption}>
-          {this._findDiffDayFromToday(item.createdTime)}
+        <Text style={styles.title}>
+          {this._capitializeLetter(parts[0])} #{parts[1]}
         </Text>
-        <TouchableOpacity
-          onPress={() => this._handleReadNotification(item.id, true)}
-          style={item.read ? { backgroundColor: "blue" } : null}
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.text}>{item.content}</Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between"
+          }}
         >
-          <Text style={[styles.caption, { color: colors.text }]}>
-            Mark as read
+          <Text style={styles.caption}>
+            {this._findDiffDayFromToday(item.createdTime)}
           </Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  );
+          <TouchableOpacity
+            onPress={() => this._handleReadNotification(item.id, true)}
+          >
+            <Text style={[styles.caption, { color: colors.text }]}>
+              {item.read ? "Read" : "Mark as read"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   render() {
     const { loading, listNotification } = this.props;
     const { readAllLoading } = this.state;
-    console.log(listNotification);
     return (
       <SafeAreaView
         style={styles.container}
@@ -185,14 +190,13 @@ class Notification extends Component {
             </TouchableOpacity>
           )}
           renderRightButton={() => (
-            <TouchableOpacity onPress={() => this._handleReadAll()}>
+            <TouchableOpacity onPress={this._handleReadAllNotification}>
               <Text>Mark all as read</Text>
             </TouchableOpacity>
           )}
         >
           <Text style={styles.header}>Notification</Text>
         </Header>
-        {readAllLoading ? <Loading /> : null}
         {!loading ? (
           <FlatList
             data={listNotification}

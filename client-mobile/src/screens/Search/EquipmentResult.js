@@ -115,9 +115,6 @@ class EquipmentResult extends Component {
         }
       );
     }
-    // if (!loadMore) {
-
-    // }
   };
 
   _renderFooter = () => {
@@ -194,6 +191,60 @@ class EquipmentResult extends Component {
     );
   };
 
+  _renderHeader = () => {
+    return (
+      <View
+        style={{
+          backgroundColor: "white",
+          marginHorizontal: -15,
+          paddingHorizontal: 15,
+          paddingTop: 0,
+          paddingBottom: 10
+        }}
+      >
+        <Text style={styles.largeTitle}>{`${listSearch.length ||
+          0} Results`}</Text>
+        <View
+          style={{
+            flexDirection: "row",
+            backgroundColor: colors.gray,
+            borderRadius: 10,
+            padding: 15,
+            alignItems: "center"
+          }}
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={styles.text} numberOfLines={1}>
+              {`${equipment.q}`}
+            </Text>
+            <Text style={styles.caption}>
+              {equipment.beginDate + " - " + equipment.endDate}
+            </Text>
+            <Text style={styles.caption}>
+              {`${equipment.equipmentCat ||
+                "Any caterogy"} ▶ ${equipment.equipmentType || "Any type"}`}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              this.props.navigation.goBack();
+            }}
+          >
+            <Text
+              style={{
+                color: colors.secondaryColor,
+                fontWeight: "600",
+                marginLeft: 8
+              }}
+            >
+              Refine
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
   render() {
     const { listSearch, loading } = this.props;
     const {
@@ -224,58 +275,7 @@ class EquipmentResult extends Component {
           <View style={{ flex: 1 }}>
             {listSearch.length > 0 ? (
               <FlatList
-                ListHeaderComponent={() => (
-                  <View
-                    style={{
-                      backgroundColor: "white",
-                      marginHorizontal: -15,
-                      paddingHorizontal: 15,
-                      paddingTop: 0,
-                      paddingBottom: 10
-                    }}
-                  >
-                    <Text style={styles.largeTitle}>{`${listSearch.length ||
-                      0} Results`}</Text>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        backgroundColor: colors.gray,
-                        borderRadius: 10,
-                        padding: 15,
-                        alignItems: "center"
-                      }}
-                    >
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.text} numberOfLines={1}>
-                          {`${equipment.q}`}
-                        </Text>
-                        <Text style={styles.caption}>
-                          {equipment.beginDate + " - " + equipment.endDate}
-                        </Text>
-                        <Text style={styles.caption}>
-                          {`${equipment.equipmentCat ||
-                            "Any caterogy"} ▶ ${equipment.equipmentType ||
-                            "Any type"}`}
-                        </Text>
-                      </View>
-                      <TouchableOpacity
-                        onPress={() => {
-                          this.props.navigation.goBack();
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: colors.secondaryColor,
-                            fontWeight: "600",
-                            marginLeft: 8
-                          }}
-                        >
-                          Refine
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                )}
+                ListHeaderComponent={this._renderHeader}
                 stickyHeaderIndices={[0]}
                 contentContainerStyle={{ paddingHorizontal: 15 }}
                 data={listSearch}

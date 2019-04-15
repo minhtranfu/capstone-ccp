@@ -91,7 +91,7 @@ class Login extends Component {
           <View
             style={{
               padding: 0,
-              alignItems: "centers",
+              alignItems: "center",
               justifyContent: "center",
               flexDirection: "row"
             }}
