@@ -13,5 +13,9 @@ public interface ContractorVerifyingImageService {
 
     List<ContractorVerifyingImageEntity> findAll();
 
+    ContractorVerifyingImageEntity findById(Integer id);
+
     List<ContractorVerifyingImageEntity> findByContractor(ContractorEntity contractorEntity);
+
+    void save(ContractorVerifyingImageEntity contractorVerifyingImageEntity);
 }

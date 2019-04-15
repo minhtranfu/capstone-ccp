@@ -67,28 +67,31 @@ public interface MaterialTransactionRepository extends JpaRepository<MaterialTra
             "ORDER BY FUNCTION('week',(e.createdTime)) asc")
     List<LineChartStatisticDTO> countTotalTransactionByWeek(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query("select new com.ccp.webadmin.dtos.LineChartStatisticDTO(FUNCTION('year',(e.createdTime))," +
+    @Query("select new com.ccp.webadmin.dtos.LineChartStatisticDTO(FUNCTION('year',(e.updatedTime))," +
             "sum (e.totalPrice)) " +
             "from MaterialTransactionEntity e " +
-            "where e.createdTime >= :beginDate and e.createdTime <= :endDate " +
-            "GROUP BY FUNCTION('year',(e.createdTime))" +
-            "ORDER BY FUNCTION('year',(e.createdTime)) asc")
+            "where e.updatedTime >= :beginDate and e.updatedTime <= :endDate " +
+            "and e.status = 'FINISHED' " +
+            "GROUP BY FUNCTION('year',(e.updatedTime))" +
+            "ORDER BY FUNCTION('year',(e.updatedTime)) asc")
     List<LineChartStatisticDTO> countTotalPriceTransactionByYear(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query("select new com.ccp.webadmin.dtos.LineChartStatisticDTO(FUNCTION('month',(e.createdTime))," +
+    @Query("select new com.ccp.webadmin.dtos.LineChartStatisticDTO(FUNCTION('month',(e.updatedTime))," +
             "sum (e.totalPrice)) " +
             "from MaterialTransactionEntity e " +
-            "where e.createdTime >= :beginDate and e.createdTime <= :endDate " +
-            "GROUP BY FUNCTION('month',(e.createdTime))" +
-            "ORDER BY FUNCTION('month',(e.createdTime)) asc")
+            "where e.updatedTime >= :beginDate and e.updatedTime <= :endDate " +
+            "and e.status = 'FINISHED' " +
+            "GROUP BY FUNCTION('month',(e.updatedTime))" +
+            "ORDER BY FUNCTION('month',(e.updatedTime)) asc")
     List<LineChartStatisticDTO> countTotalPriceTransactionByMonth(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query("select new com.ccp.webadmin.dtos.LineChartStatisticDTO(FUNCTION('week',(e.createdTime))," +
+    @Query("select new com.ccp.webadmin.dtos.LineChartStatisticDTO(FUNCTION('week',(e.updatedTime))," +
             "sum (e.totalPrice)) " +
             "from MaterialTransactionEntity e " +
-            "where e.createdTime >= :beginDate and e.createdTime <= :endDate " +
-            "GROUP BY FUNCTION('week',(e.createdTime))" +
-            "ORDER BY FUNCTION('week',(e.createdTime)) asc")
+            "where e.updatedTime >= :beginDate and e.updatedTime <= :endDate " +
+            "and e.status = 'FINISHED' " +
+            "GROUP BY FUNCTION('week',(e.updatedTime))" +
+            "ORDER BY FUNCTION('week',(e.updatedTime)) asc")
     List<LineChartStatisticDTO> countTotalPriceTransactionByWeek(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
 
     @Query("select sum(e.totalPrice) " +

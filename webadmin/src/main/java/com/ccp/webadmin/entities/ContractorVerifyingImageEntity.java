@@ -19,6 +19,9 @@ public class ContractorVerifyingImageEntity implements Serializable {
     @Column(name = "url")
     private String url;
 
+    @Column(name = "is_verified")
+    private boolean isVerified;
+
     @ManyToOne
     @JoinColumn(name = "contractor_id")
     private ContractorEntity contractorEntity;
@@ -41,6 +44,14 @@ public class ContractorVerifyingImageEntity implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 
     public ContractorEntity getContractorEntity() {

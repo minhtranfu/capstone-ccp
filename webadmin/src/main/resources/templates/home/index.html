@@ -103,7 +103,7 @@
                             </div>
                             <div class="col-xs-9 text-right">
                                 <div class="huge"><p th:text="${hiringTransactionStatistic} +  K"></p></div>
-                                <div>Hiring Transaction Income</div>
+                                <div>Hiring Transaction Cashflow</div>
                             </div>
                         </div>
                     </div>
@@ -119,7 +119,7 @@
                             </div>
                             <div class="col-xs-9 text-right">
                                 <div class="huge"><p th:text="${materialTransactionStatistic} + K"></p></div>
-                                <div>Material Transaction Income</div>
+                                <div>Material Transaction Cashflow</div>
                             </div>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
                             </div>
                             <div class="col-xs-9 text-right">
                                 <div class="huge"><p th:text="${debrisTransactionStatistic} + K"></p></div>
-                                <div>Debris Transaction Income</div>
+                                <div>Debris Transaction Cashflow</div>
                             </div>
                         </div>
                     </div>
@@ -676,7 +676,7 @@
 
         var options = {
             chart: {
-                title: 'Hiring Transaction Analyist By ' + uppercaseFirstChar(timeUnitElement.val()),
+                title: 'Hiring Transaction Analysis By ' + uppercaseFirstChar(timeUnitElement.val()),
                 subtitle: 'Transaction Status',
             },
             tooltip:
@@ -773,7 +773,7 @@
         data.addColumn('number', 'Price');
         data.addRows(reportsData);
         var options = {
-            title: 'Total Price Hiring Transaction Created',
+            title: 'Hiring Transaction Cashflow',
             pieHole: 1,
         };
 
@@ -804,8 +804,8 @@
 
         var options = {
             chart: {
-                title: 'Material Transaction Analyist By ' + uppercaseFirstChar(timeUnitMaterialElement.val()),
-                subtitle: 'Transaction Status',
+                title: 'Material Transaction Analysis By ' + uppercaseFirstChar(timeUnitMaterialElement.val()),
+                subtitle: 'Material Transaction Status',
             },
             colors: ['#f4b400', '#0f9d58', '#db4437'],
             bars: 'vertical' // Required for Material Bar Charts.
@@ -875,7 +875,7 @@
         data.addColumn('number', 'Quantity');
         data.addRows(reportsData);
         var options = {
-            title: 'Total Material Transaction Created',
+            title: 'Material Transaction Created',
             pieHole: 1
         };
 
@@ -899,7 +899,7 @@
         data.addColumn('number', 'Price');
         data.addRows(reportsData);
         var options = {
-            title: 'Total Price Material Transaction Created',
+            title: 'Material Transaction Cashflow',
             pieHole: 1,
         };
 
@@ -930,8 +930,8 @@
 
         var options = {
             chart: {
-                title: 'Debris Transaction Analyist By ' + uppercaseFirstChar(timeUnitDebrisElement.val()),
-                subtitle: 'Transaction Status',
+                title: 'Debris Transaction Analysis By ' + uppercaseFirstChar(timeUnitDebrisElement.val()),
+                subtitle: 'Debris Transaction Status',
             },
             colors: ['#f4b400', '#0f9d58', '#db4437'],
             bars: 'vertical' // Required for Material Bar Charts.
@@ -977,7 +977,7 @@
         data.addColumn('number', 'Quantity');
         data.addRows(reportsData);
         var options = {
-            title: 'Total Debris Transaction Created',
+            title: 'Debris Transaction Created',
             pieHole: 1
         };
 

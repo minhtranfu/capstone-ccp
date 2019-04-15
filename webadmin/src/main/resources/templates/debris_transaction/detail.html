@@ -190,6 +190,8 @@
 
     var statusSelectBox = document.getElementById('myChangePost');
     var currentStatus = statusSelectBox.value;
+    var statusSelectBoxBid = document.getElementById('myChangeBid');
+    var currentStatusBid = statusSelectBoxBid.value;
 
     $(document).ready(function () {
         $('#dataTables-example').DataTable({
@@ -232,11 +234,18 @@
     }
 
     function changeEquipmentStatusOptions(options) {
-        var selectBox = $('#myChange');
+        var selectBox = $('#myChangePost');
+        var selectBoxBid = $('#myChangeBid');
         selectBox.html('');
-        options.forEach(option = > {
+        options.forEach(option => {
             selectBox
             .append(`<option value="${option.value}" ${option.value == currentStatus ? 'selected' : ''}>${option.name}</option>`);
+    })
+        ;
+        selectBoxBid.html('');
+        options.forEach(option => {
+            selectBoxBid
+            .append(`<option value="${option.value}" ${option.value == currentStatusBid ? 'selected' : ''}>${option.name}</option>`);
     })
         ;
     }

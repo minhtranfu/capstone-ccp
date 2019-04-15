@@ -1,6 +1,7 @@
 package com.ccp.webadmin.controllers;
 
 import com.ccp.webadmin.entities.ContractorEntity;
+import com.ccp.webadmin.entities.ContractorVerifyingImageEntity;
 import com.ccp.webadmin.services.ContractorService;
 import com.ccp.webadmin.services.ContractorVerifyingImageService;
 import com.ccp.webadmin.services.ReportService;
@@ -37,7 +38,7 @@ public class ContractorController {
     public String detail(@PathVariable("id") Integer id, Model model) {
         ContractorEntity contractorEntity = contractorService.findById(id);
         model.addAttribute("contractor", contractorEntity);
-        model.addAttribute("verifyImages",contractorVerifyingImageService.findByContractor(contractorEntity));
+        model.addAttribute("verifyImages", contractorVerifyingImageService.findByContractor(contractorEntity));
 
         return "contractor/detail";
     }
@@ -53,7 +54,7 @@ public class ContractorController {
             contractorEntity.setCreatedTime(foundContractor.getCreatedTime());
             contractorEntity.setUpdatedTime(foundContractor.getUpdatedTime());
             contractorEntity.setReceivedFeedbackEntities(foundContractor.getReceivedFeedbackEntities());
-            model.addAttribute("verifyImages",contractorVerifyingImageService.findByContractor(contractorEntity));
+            model.addAttribute("verifyImages", contractorVerifyingImageService.findByContractor(contractorEntity));
             return "contractor/detail";
         }
 
@@ -77,6 +78,7 @@ public class ContractorController {
         //change contractor status Not Verify into Active
         switch (contractorEntity.getStatus()) {
             case NOT_VERIFIED:
+
                 contractorEntity.setStatus(ContractorEntity.Status.ACTIVATED);
                 break;
             case ACTIVATED:
@@ -87,6 +89,19 @@ public class ContractorController {
                 break;
         }
         contractorService.save(contractorEntity);
+
+        return "redirect:detail/" + id;
+    }
+
+    @GetMapping("/verifyContractorPicture")
+    public String verifyContractorPicture(@RequestParam("id") Integer id, @RequestParam("imageId") Integer imageId) {
+        ContractorVerifyingImageEntity contractorVerifyingImageEntity = contractorVerifyingImageService.findById(imageId);
+        if (contractorVerifyingImageEntity.isVerified() == false) {
+            contractorVerifyingImageEntity.setVerified(true);
+        } else {
+            contractorVerifyingImageEntity.setVerified(false);
+        }
+        contractorVerifyingImageService.save(contractorVerifyingImageEntity);
 
         return "redirect:detail/" + id;
     }

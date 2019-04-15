@@ -103,12 +103,6 @@ public class AdminAccountEntity implements UserDetails {
                 this.adminUserEntity.setAdminAccountEntity(null);
             }
         } else {
-//            RoleEntity role = new RoleEntity();
-//            role.setId(2);
-//            if(adminUserEntity.getRole() == null){
-//                adminUserEntity.setRole(role);
-//            }
-
             adminUserEntity.setAdminAccountEntity(this);
         }
         this.adminUserEntity = adminUserEntity;

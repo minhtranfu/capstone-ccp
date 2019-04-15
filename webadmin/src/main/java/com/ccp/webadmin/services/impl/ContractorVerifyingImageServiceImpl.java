@@ -28,7 +28,17 @@ public class ContractorVerifyingImageServiceImpl implements ContractorVerifyingI
     }
 
     @Override
+    public ContractorVerifyingImageEntity findById(Integer id) {
+        return contractorVerifyingImageRepository.findById(id).get();
+    }
+
+    @Override
     public List<ContractorVerifyingImageEntity> findByContractor(ContractorEntity contractorEntity) {
         return contractorVerifyingImageRepository.findAllByContractorEntity(contractorEntity);
+    }
+
+    @Override
+    public void save(ContractorVerifyingImageEntity contractorVerifyingImageEntity) {
+        contractorVerifyingImageRepository.save(contractorVerifyingImageEntity);
     }
 }

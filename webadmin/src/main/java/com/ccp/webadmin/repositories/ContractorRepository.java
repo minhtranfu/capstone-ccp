@@ -10,5 +10,4 @@ public interface ContractorRepository extends JpaRepository<ContractorEntity, In
 {
     @Query("select count(c) from ContractorEntity c where c.status = 'NOT_VERIFIED'")
     Integer countNewContractor();
-//    Integer countContractorEntityByStatus_NotVerifiedByStatus_NotVerified();
 }
