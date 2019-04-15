@@ -168,7 +168,11 @@ class EquipDetail extends Component {
                   </div>
                 ))}
               </OwlCarousel>
-            )) || <Skeleton height={410} />}
+            ))
+            || <div className="image-169">
+                <Skeleton height={480} />
+              </div>
+            }
             {(equip.equipmentImages && (
               <OwlCarousel
                 items={5}
@@ -188,18 +192,27 @@ class EquipDetail extends Component {
                   </div>
                 ))}
               </OwlCarousel>
-            )) || <Skeleton height={65} />}
+            )) || <Skeleton height={88} />}
             <div className="my-2 py-2 px-3 shadow-sm bg-white">
               <h1 className="">{equip.name || <Skeleton />}</h1>
               <div className="row">
                 <div className="col-md-6">
-                  <h6><i className="fal fa-tags"></i> Type: {equip.equipmentType && equip.equipmentType.name}</h6>
+                  {equip.equipmentType ?
+                    <h6><i className="fal fa-tags"></i> Type: {equip.equipmentType && equip.equipmentType.name}</h6>
+                    : <Skeleton width={200} />
+                  }
                 </div>
                 <div className="col-md-6">
-                  <h6><i className="fal fa-money-bill"></i> Daily price: {formatPrice(equip.dailyPrice)}</h6>
+                  {equip.dailyPrice ?
+                    <h6><i className="fal fa-money-bill"></i> Daily price: {formatPrice(equip.dailyPrice)}</h6>
+                    : <Skeleton width={200} />
+                  }
                 </div>
                 <div className="col-md-12">
-                  <h6><i className="fal fa-map-marker"></i> Address: {equip.address}</h6>
+                  {equip.construction ?
+                    <h6><i className="fal fa-map-marker"></i> Address: {equip.construction.address}</h6>
+                    : <Skeleton width={400} />
+                  }
                 </div>
               </div>
               <h5 className="mt-3">Description:</h5>
