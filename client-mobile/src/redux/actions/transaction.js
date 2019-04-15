@@ -90,7 +90,7 @@ export function getAdjustTransaction(transactionId) {
       type: Actions.GET_ADJUST_TRANSACTION.REQUEST
     });
     const res = await axios.get(
-      `transactions/${transactionId}/adjustDateRequests`
+      `transactionDateChangeRequests?transactionId=${transactionId}`
     );
     dispatch({
       type: Actions.GET_ADJUST_TRANSACTION.SUCCESS,
