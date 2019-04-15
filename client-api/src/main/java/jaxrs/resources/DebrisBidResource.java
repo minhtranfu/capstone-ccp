@@ -76,6 +76,11 @@ public class DebrisBidResource {
 
 		//3/21/19 validate cannot post his own post
 		DebrisPostEntity managedPost = debrisPostDAO.findByIdWithValidation(debrisBidEntity.getDebrisPost().getId());
+
+		// TODO: 4/14/19 validate debris post status is pending
+		if (managedPost.getStatus() != DebrisPostEntity.Status.PENDING) {
+			throw new BadRequestException("Debris Post status must be PENDING");
+		}
 		if (managedPost.getRequester().getId() == supplierId) {
 			throw new BadRequestException("You cannot bid on your own post");
 		}

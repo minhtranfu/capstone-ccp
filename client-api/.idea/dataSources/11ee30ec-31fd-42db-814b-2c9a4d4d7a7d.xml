@@ -2364,6 +2364,7 @@
     <column id="527" parent="295" name="construction_id">
       <Position>12</Position>
       <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
     <column id="528" parent="295" name="address">

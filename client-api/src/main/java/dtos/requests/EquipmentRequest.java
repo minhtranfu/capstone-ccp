@@ -26,16 +26,6 @@ public abstract class EquipmentRequest {
 	@Valid
 	public IdOnly thumbnailImage;
 
-	public String address;
-	@NotNull
-	@Min(-90)
-	@Max(90)
-	public Double latitude;
-	@NotNull
-	@Min(-180)
-	@Max(180)
-	public Double longitude;
-
 	@NotNull
 	@Valid
 	public IdOnly equipmentType;
