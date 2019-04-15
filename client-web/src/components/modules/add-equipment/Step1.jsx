@@ -37,7 +37,7 @@ class AddEquipmentStep1 extends Step {
     constructionId: {
       presence: {
         allowEmpty: false,
-        message: 'is required'
+        message: '^Please select a construction'
       }
     },
     address: {
@@ -49,7 +49,7 @@ class AddEquipmentStep1 extends Step {
     equipmentTypeId: {
       presence: {
         allowEmpty: false,
-        message: 'is required'
+        message: '^Please select an equipment type'
       }
     },
     dailyPrice: {
@@ -159,7 +159,9 @@ class AddEquipmentStep1 extends Step {
       }
     } else if (name === 'dailyPrice') {
       value = +value.replace(/[^0-9\.]+/g, '');
-      newState.showableDailyPrice = formatPrice(`${value}`);
+      // TODO: Format price
+      // newState.showableDailyPrice = formatPrice(`${value}`);
+      newState.showableDailyPrice = +value;
     } else if (!isNaN(value)) {
       value = +value;
     }
@@ -384,7 +386,7 @@ class AddEquipmentStep1 extends Step {
           <div className="col-md-6">
             <div className="form-group">
               <label htmlFor="daily_price">Price per day (K): <i className="text-danger">*</i></label>
-              <input type="string" name="dailyPrice" onChange={this._handleFieldChange} value={this.state.showableDailyPrice} className="form-control text-right" id="daily_price" />
+              <input type="string" name="dailyPrice" onChange={this._handleFieldChange} value={this.state.showableDailyPrice} className="form-control" id="daily_price" />
               {getValidateFeedback('dailyPrice', validateResult)}
             </div>
             <div className="form-group">
