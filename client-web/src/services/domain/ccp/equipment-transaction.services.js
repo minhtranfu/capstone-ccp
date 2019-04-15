@@ -23,3 +23,7 @@ export const getTransactionsByRequesterId = requesterId => {
 export const updateTransactionById = (transactionId, data) => {
   return DataAccessService.put(`/transactions/${transactionId}`, data);
 };
+
+export const extendHiringTime = data => {
+  return DataAccessService.post('/transactionDateChangeRequests', data);
+};

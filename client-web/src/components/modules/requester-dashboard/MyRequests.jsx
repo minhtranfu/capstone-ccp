@@ -5,14 +5,19 @@ import moment from 'moment';
 import { CSSTransition } from 'react-transition-group';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Skeleton from 'react-loading-skeleton';
+import { Link } from "react-router-dom";
 
 import {
   TRANSACTION_STATUSES,
   EQUIPMENT_STATUSES,
-  EQUIPMENT_SHOWABLE_STATUSES
-} from '../../../common/consts';
-import { RatingEquipmentTransaction } from "../../common";
-import ccpApiService from '../../../services/domain/ccp-api-service';
+  EQUIPMENT_SHOWABLE_STATUSES,
+  routeConsts
+} from 'Common/consts';
+import { RatingEquipmentTransaction, Image } from "Components/common";
+import ccpApiService from 'Services/domain/ccp-api-service';
+import { getRoutePath } from 'Utils/common.utils';
+import { formatPrice } from 'Utils/format.utils';
+import ExtendTimeModal from './extend-time-modal';
 
 class MyRequests extends Component {
 
@@ -21,7 +26,9 @@ class MyRequests extends Component {
     transactions: [],
     confirm: {},
     alert: {},
-    filterStatus: 'all'
+    filterStatus: 'all',
+    isOpenExtendTimeModal: false,
+    transactionToExtend: {}
   };
 
   // Message to show when user want to change status of a transaction
@@ -169,6 +176,13 @@ class MyRequests extends Component {
     });
   };
 
+  _handleAdjustTime = transactionToExtend => {
+    this.setState({
+      transactionToExtend,
+      isOpenExtendTimeModal: true,
+    });
+  };
+
   /**
    * Render a transaction element
    */
@@ -195,6 +209,7 @@ class MyRequests extends Component {
         changeStatusButtons = (
           <div className="mt-2">
             <button className="btn btn-sm btn-outline-danger" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.CANCELED)}>Cancel</button>
+            <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction)}>Extend hiring time</button>
           </div>
         );
         break;
@@ -213,12 +228,14 @@ class MyRequests extends Component {
           changeStatusButtons = (
             <div className="mt-2">
               <button className="btn btn-sm btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction, EQUIPMENT_STATUSES.RENTING)}>Receive</button>
+              <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction)}>Extend hiring time</button>
             </div>
           );
         } else if (transaction.equipment.status === EQUIPMENT_STATUSES.RENTING) {
           changeStatusButtons = (
             <div className="mt-2">
               <button className="btn btn-sm btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction, EQUIPMENT_STATUSES.WAITING_FOR_RETURNING)}>Return equipment</button>
+              <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction)}>Extend hiring time</button>
             </div>
           );
         }
@@ -248,29 +265,35 @@ class MyRequests extends Component {
         classNames="fade"
         timeout={500}
       >
-        <div className="d-flex transaction my-3 rounded shadow-sm flex-column flex-sm-row">
-          <div className="image flex-fill">
-            <img src={thumbnail} className="rounded-left" />
+        <div className="row no-gutters d-flex transaction my-3 rounded shadow-sm flex-column flex-sm-row">
+          <div className="image flex-fill col-md-4">
+            <Image src={thumbnail} className="rounded-left" />
           </div>
           <div className="detail flex-fill p-2">
-            <h6><span className={statusClasses}>{transaction.status}</span> {equipment.name}</h6>
+            <Link to={getRoutePath(routeConsts.EQUIPMENT_TRANSACTION_DETAIL, { id: transaction.id })}>
+              <h6><span className={statusClasses}>{transaction.status}</span> {equipment.name}</h6>
+            </Link>
             <div>
               <span>Days: {days}</span>
               <span className="ml-2 text-muted">({transaction.beginDate} to {transaction.endDate})</span>
             </div>
             <div>
-              <span className="">Daily Price: ${equipment.dailyPrice}</span>
-              <span className="ml-2 pl-2 border-left">Total fee: ${equipment.dailyPrice * days}</span>
+              <span className="">Daily Price: {formatPrice(equipment.dailyPrice)}</span>
+              <span className="ml-2 pl-2 border-left">Total fee: <strong>{formatPrice(equipment.dailyPrice * days)}</strong></span>
             </div>
             {changeStatusButtons}
           </div>
           <div className="contractor-detail flex-fill p-2 text-center">
-            <img
-              className="rounded-circle"
-              style={{width: '50px', height: '50px'}}
-              src={transaction.equipment.contractor.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
-            />
-            <p>{transaction.equipment.contractor.name}</p>
+            <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: transaction.equipment.contractor.id })} >
+              <img
+                className="rounded-circle"
+                style={{width: '50px', height: '50px'}}
+                src={transaction.equipment.contractor.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
+              />
+            </Link>
+            <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: transaction.equipment.contractor.id })} >
+              <p>{transaction.equipment.contractor.name}</p>
+            </Link>
           </div>
         </div>
       </CSSTransition>
@@ -530,13 +553,46 @@ class MyRequests extends Component {
     );
   };
 
+  /**
+   * Handle close extend time modal
+   * Set state to close modal
+   * Update transaction in current list
+   */
+  _handleCloseExtendTimeModal = (transaction, isChanged) => {
+    const { transactions } = this.state;
+
+    const newState = {
+      isOpenExtendTimeModal: false,
+      transaction: {},
+    };
+
+    // update transaction in list
+    if (isChanged) {
+      const items = transactions.items.map(item => {
+        if (item.id !== transaction.id) {
+          return item;
+        }
+
+        return transaction;
+      });
+
+      newState.transactions = {
+        ...transactions,
+        items,
+      };
+    }
+
+    this.setState(newState);
+  };
+
   render() {
-    const { isShowRatingEquipmentTransaction, feedbackTransaction } = this.state;
+    const { isShowRatingEquipmentTransaction, feedbackTransaction, isOpenExtendTimeModal, transactionToExtend } = this.state;
     this._renderTabContents();
 
     return (
       <div className="container py-3 user-dashboard">
         {this._renderAlert()}
+        <ExtendTimeModal isOpen={isOpenExtendTimeModal} transaction={transactionToExtend} onClose={this._handleCloseExtendTimeModal}/>
         <RatingEquipmentTransaction
           isOpen={isShowRatingEquipmentTransaction}
           onClose={() => this._toggleRatingEquipmentTransaction()}
