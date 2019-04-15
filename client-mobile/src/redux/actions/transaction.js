@@ -90,7 +90,7 @@ export function getAdjustTransaction(transactionId) {
       type: Actions.GET_ADJUST_TRANSACTION.REQUEST
     });
     const res = await axios.get(
-      `transactions/${transactionId}/adjustDateRequests`
+      `transactionDateChangeRequests?transactionId=${transactionId}`
     );
     dispatch({
       type: Actions.GET_ADJUST_TRANSACTION.SUCCESS,
@@ -115,17 +115,31 @@ export function sendAdjustTransaction(transactionId, date) {
   };
 }
 
-export function requestAdjustTransaction(transactionId, status) {
+export function requestAdjustTransaction(date) {
   return async dispatch => {
+    console.log(date);
     dispatch({
       type: Actions.REQUEST_ADJUST_TRANSACTION.REQUEST
+    });
+    const res = await axios.post(`transactionDateChangeRequests`, date);
+    dispatch({
+      type: Actions.REQUEST_ADJUST_TRANSACTION.SUCCESS,
+      payload: { data: res, id: transactionId }
+    });
+  };
+}
+
+export function responseAdjustTransaction(transactionId, status) {
+  return async dispatch => {
+    dispatch({
+      type: Actions.RESPONSE_ADJUST_TRANSACTION.REQUEST
     });
     const res = await axios.put(
       `transactions/${transactionId}/adjustDateRequests`,
       status
     );
     dispatch({
-      type: Actions.REQUEST_ADJUST_TRANSACTION.SUCCESS,
+      type: Actions.RESPONSE_ADJUST_TRANSACTION.SUCCESS,
       payload: { data: res, id: transactionId }
     });
   };

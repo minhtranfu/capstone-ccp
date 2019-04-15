@@ -6,7 +6,8 @@ import {
   Modal,
   TouchableOpacity,
   StyleSheet,
-  Dimensions
+  Dimensions,
+  Animated
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { goToNotification } from "../Utils/Helpers";
@@ -23,93 +24,114 @@ class ShowToast extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false
+      visible: false,
+      y: new Animated.Value(-100)
     };
   }
 
-  componentDidMount() {
-    setTimeout(
-      () =>
-        this.setState({
-          visible: true
-        }),
-      1000
-    ); // show toast after 1s
+  show = () => {
+    Animated.spring(this.state.y, {
+      tension: 10,
+      toValue: 5
+    }).start();
+    this.setState({
+      visible: true
+    });
+  };
 
-    setTimeout(
-      () =>
-        this.setState({
-          visible: false
-        }),
-      5000
-    ); // hide toast after 5s
+  hide = () => {
+    Animated.timing(this.state.y, {
+      duration: 1000,
+      toValue: -100
+    }).start();
+    // this.setState({
+    //   visible: false
+    // });
+  };
+
+  componentDidMount() {
+    setTimeout(() => this.show(), 1000); // show toast after 1s
+
+    setTimeout(() => this.hide(), 4000); // hide toast after 4s
   }
 
   componentDidUpdate(prevProp) {
     if (prevProp.message !== this.props.message) {
-      setTimeout(
-        () =>
-          this.setState({
-            visible: true
-          }),
-        1000
-      ); // show toast after 1s
+      setTimeout(() => this.show(), 1000); // show toast after 1s
 
-      setTimeout(
-        () =>
-          this.setState({
-            visible: false
-          }),
-        5000
-      ); // hide toast after 5s
+      setTimeout(() => this.hide(), 4000); // hide toast after 4s
     }
   }
 
+  _capitializeLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   render() {
     const { message } = this.props;
+    let parts = message.clickAction.split("/");
     return (
       <Modal transparent={true} visible={this.state.visible}>
-        <View style={styles.wrapper}>
+        <Animated.View
+          style={[
+            styles.container,
+            {
+              transform: [
+                {
+                  translateY: this.state.y
+                }
+              ]
+            }
+          ]}
+        >
           <TouchableOpacity
-            style={{ flexDirection: "row", alignItems: "center" }}
+            style={{
+              flexDirection: "row",
+              alignItems: "center"
+            }}
             onPress={() => goToNotification()}
           >
             <View>
-              <Text style={styles.title}>{message.title}</Text>
-              <Text style={styles.text}>{message.body}</Text>
+              <Text style={styles.title}>
+                {this._capitializeLetter(parts[0])} #{parts[1]}
+              </Text>
+              <Text style={styles.text}>{message.title}</Text>
+              <Text style={styles.content}>{message.body}</Text>
             </View>
-            <TouchableOpacity
-              onPress={() => {
-                this.setModalVisible(!this.state.modalVisible);
-              }}
-            >
-              <Feather name={"x"} size={24} />
-            </TouchableOpacity>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       </Modal>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    marginTop: 15,
-    marginHorizontal: 15,
-    width: width,
-    height: 100,
-    backgroundColor: "#DDDDDD",
-    alignItems: "center",
+  container: {
+    width: width - 6,
+    height: 80,
+    backgroundColor: "#c8e6c9",
+    borderRadius: 8,
+    marginHorizontal: 3,
+    paddingTop: 20,
+    paddingHorizontal: 15,
+    ...colors.shadow,
     justifyContent: "center",
-    borderRadius: 5
+    paddingBottom: 10
   },
   title: {
-    fontSize: fontSize.h4,
-    fontWeight: "500"
+    fontSize: fontSize.bodyText,
+    fontWeight: "600",
+    color: colors.text
   },
   text: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
+    color: colors.text
+  },
+  content: {
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
+    color: colors.text68
   }
 });
 

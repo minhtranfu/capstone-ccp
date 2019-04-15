@@ -66,6 +66,7 @@ import ManageImages from "../screens/Manage/components/ManageImages";
 import MaterialCartDetail from "../screens/Cart/Detail";
 import UploadImage from "../screens/Login/UploadImage";
 import VerifyAccount from "../screens/Account/VerifyAccount";
+import AddConstruction from "../screens/Account/AddConstruction";
 // import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
@@ -134,7 +135,8 @@ const AccountStack = createStackNavigator(
     EditSubscription: EditSubscription,
     Register: Register,
     UploadImage: UploadImage,
-    VerifyAccount: VerifyAccount
+    VerifyAccount: VerifyAccount,
+    AddConstruction: AddConstruction
     // AuthLoading: AuthLoading,
     // Auth: AuthStack
   },
@@ -163,7 +165,8 @@ const AddNewEquipmentStack = DismissableStackNav(
     AddDetail: AddDetail,
     AddDuration: AddDuration,
     AddImage: AddImage,
-    AddMaterialDetail: AddMaterialDetail
+    AddMaterialDetail: AddMaterialDetail,
+    AddConstruction: AddConstruction
   },
   {
     headerMode: "none",

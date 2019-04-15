@@ -442,8 +442,9 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   header: {
-    fontSize: fontSize.h4,
-    fontWeight: "500"
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: colors.text
   },
   title: {
     fontSize: fontSize.h4,

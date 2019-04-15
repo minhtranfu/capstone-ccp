@@ -271,23 +271,6 @@ class AddDetail extends Component {
     });
   };
 
-  _renderAutoCompleteItem = item => (
-    <TouchableOpacity
-      style={styles.autocompleteWrapper}
-      onPress={() => {
-        this.setState({
-          address: item.main_text + ", " + item.secondary_text,
-          lat: item.lat,
-          lng: item.lng,
-          hideResults: true
-        });
-      }}
-    >
-      <Text style={styles.addressMainText}>{item.main_text}</Text>
-      <Text style={styles.caption}>{item.secondary_text}</Text>
-    </TouchableOpacity>
-  );
-
   _renderScrollViewItem = () => {
     const {
       name,
@@ -345,8 +328,10 @@ class AddDetail extends Component {
           style={{ marginBottom: 20 }}
         />
         {this._handleAdditionalSpecsField()}
-        <TouchableOpacity onPress={() => this.props.navigation.navigate("")}>
-          <Text>Add new construction</Text>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate("AddConstruction")}
+        >
+          <Text style={styles.text}>Do you want to build a snow man? </Text>
         </TouchableOpacity>
         <Dropdown
           label={"Construction"}
@@ -357,23 +342,12 @@ class AddDetail extends Component {
           options={this._handleConstructionDropdown()}
           style={{ marginBottom: 20 }}
         />
-        <AutoComplete
-          label={"Address"}
-          placeholder={"Input your address"}
-          onFocus={() => this.setState({ hideResults: false })}
-          hideResults={this.state.hideResults}
-          editable={
-            false
-            // !construction || construction === "Select your construction"
-          }
-          data={location}
-          value={address}
-          onChangeText={value => {
-            this.setState({ address: value });
-            this._handleAddressChange(value);
-          }}
-          renderItem={item => this._renderAutoCompleteItem(item)}
-        />
+        {address ? (
+          <View style={{ marginBottom: 15 }}>
+            <Text style={styles.label}>Address</Text>
+            <Text style={styles.address}>{address}</Text>
+          </View>
+        ) : null}
         <InputField
           label={"Description"}
           placeholder={"Input your description"}
@@ -420,7 +394,7 @@ class AddDetail extends Component {
                 this.props.navigation.dispatch(NavigationActions.back())
               }
             >
-              <Feather name="x" size={24} />
+              <Feather name="chevron-left" size={24} />
             </TouchableOpacity>
           )}
         >
@@ -512,6 +486,18 @@ const styles = StyleSheet.create({
     fontSize: fontSize.caption,
     color: colors.text50,
     fontWeight: "600"
+  },
+  label: {
+    fontSize: fontSize.caption,
+    color: colors.text50,
+    fontWeight: "500",
+    marginBottom: 8
+  },
+  address: {
+    fontSize: fontSize.bodyText,
+    color: colors.text,
+    fontWeight: "500",
+    marginBottom: 5
   }
 });
 

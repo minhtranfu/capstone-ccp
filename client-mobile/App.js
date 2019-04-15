@@ -86,8 +86,8 @@ export default class App extends React.Component {
   };
 
   render() {
-    console.log(this.state.notification.origin);
-    console.log(JSON.stringify(this.state.notification.data));
+    // console.log(this.state.notification.origin);
+    // console.log(JSON.stringify(this.state.notification.data));
 
     return (
       <Provider store={config.store}>

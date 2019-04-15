@@ -85,8 +85,8 @@ class EquipmentDetail extends Component {
     super(props);
     this.state = {
       calendarVisible: false,
-      fromDate: "",
-      toDate: ""
+      beginDate: null,
+      endDate: null
     };
   }
 
@@ -132,24 +132,33 @@ class EquipmentDetail extends Component {
     this.setState({ calendarVisible: visible });
   };
 
-  _renderCalendar = (minDate, maxDate) => (
+  _handleSelectDate = (beginDate, endDate, visible) => {
+    this.setState({
+      beginDate,
+      endDate: newToDate,
+      calendarVisible: visible
+    });
+  };
+
+  _renderCalendar = dateRange => (
     <Calendar
       animationType={"slide"}
       transparent={false}
-      minDate={minDate}
-      maxDate={maxDate}
+      minDate={moment(Date.now()).format("YYYY-MM-DD")}
       visible={this.state.calendarVisible}
-      onLeftButtonPres={() => this._setCalendarVisible(false)}
+      onLeftButtonPress={() => this._setCalendarVisible(false)}
       onSelectDate={this._handleSelectDate}
+      notAvailableDateRange={dateRange}
     />
   );
 
-  _handleSelectDate = (fromDate, toDate, visible) => {
+  _handleSelectDate = (beginDate, endDate, visible) => {
     const { id } = this.props.navigation.state.params;
     this.setState({ calendarVisible: visible });
+    const newEndDate = endDate ? endDate : moment(beginDate).add(30, "days");
     this.props.navigation.navigate("ConfirmAdjustDate", {
-      fromDate,
-      toDate,
+      beginDate,
+      endDate: newEndDate,
       id
     });
   };
@@ -217,8 +226,24 @@ class EquipmentDetail extends Component {
             />
           </View>
         );
+      case "ACCEPTED":
+        return (
+          <View style={styles.columnWrapper}>
+            <Button
+              text={"Extend Time Range"}
+              onPress={() => this._setCalendarVisible(true)}
+              wrapperStyle={{ marginTop: 15, marginBottom: 15 }}
+            />
+          </View>
+        );
       case "PROCESSING":
-        return equipmentStatus === "WAITING_FOR_RETURNING" ? null : (
+        return equipmentStatus === "WAITING_FOR_RETURNING" ? (
+          <Button
+            text={"Extend Time Range"}
+            onPress={() => this._setCalendarVisible(true)}
+            wrapperStyle={{ marginTop: 15, marginBottom: 15 }}
+          />
+        ) : (
           <View style={styles.columnWrapper}>
             {equipmentStatus === "RENTING" ? (
               <View>
@@ -236,21 +261,28 @@ class EquipmentDetail extends Component {
                       "WAITING_FOR_RETURNING"
                     )
                   }
-                  wrapperStyle={{ marginTop: 15 }}
+                  wrapperStyle={{ marginTop: 15, marginBottom: 15 }}
                 />
               </View>
             ) : (
-              <Button
-                text={"Receive"}
-                onPress={() =>
-                  this._handleUpdateEquipmentStatus(
-                    transactionId,
-                    equipmentId,
-                    "RENTING"
-                  )
-                }
-                wrapperStyle={{ marginTop: 15 }}
-              />
+              <View>
+                <Button
+                  text={"Extend Time Range"}
+                  onPress={() => this._setCalendarVisible(true)}
+                  wrapperStyle={{ marginTop: 15 }}
+                />
+                <Button
+                  text={"Receive"}
+                  onPress={() =>
+                    this._handleUpdateEquipmentStatus(
+                      transactionId,
+                      equipmentId,
+                      "RENTING"
+                    )
+                  }
+                  wrapperStyle={{ marginTop: 15, marginBottom: 15 }}
+                />
+              </View>
             )}
           </View>
         );
@@ -267,6 +299,10 @@ class EquipmentDetail extends Component {
     const duration = moment.duration(end.diff(begin));
     const days = duration.asDays() + 1;
     const totalPrice = days * detail.dailyPrice;
+    const dateRange = detail.equipment.activeHiringTransactions.map(item => ({
+      beginDate: item.beginDate,
+      endDate: item.endDate
+    }));
     console.log(detail);
     return (
       <View style={{ paddingHorizontal: 15 }}>
@@ -346,7 +382,7 @@ class EquipmentDetail extends Component {
             </View>
           </TouchableOpacity>
         </View>
-        {this._renderCalendar(this._handleAddDay(detail.endDate, 1))}
+        {this._renderCalendar(dateRange)}
         {this._renderStepProgress(detail.status, detail.equipment.status)}
         {this._renderBottomButton(
           detail.equipment.id,

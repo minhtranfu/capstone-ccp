@@ -41,14 +41,20 @@ export function addEquipment(equipment) {
 export function updateEquipment(equipmentId, equipment) {
   console.log("edit", JSON.stringify(equipment));
   return async dispatch => {
-    dispatch({
-      type: Actions.UPDATE_EQUIPMENT.REQUEST
-    });
-    const res = await axios.put(`equipments/${equipmentId}`, equipment);
-    dispatch({
-      type: Actions.UPDATE_EQUIPMENT.SUCCESS,
-      payload: { data: res, id: equipmentId }
-    });
+    try {
+      dispatch({
+        type: Actions.UPDATE_EQUIPMENT.REQUEST
+      });
+      const res = await axios.put(`equipments/${equipmentId}`, equipment);
+      dispatch({
+        type: Actions.UPDATE_EQUIPMENT.SUCCESS,
+        payload: { data: res, id: equipmentId }
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.UPDATE_EQUIPMENT.ERROR
+      });
+    }
   };
 }
 

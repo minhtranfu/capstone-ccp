@@ -13,22 +13,34 @@ export function allowPushNotification() {
 export function readAllNotification() {
   return axios.post("notifications/readAll");
 }
-// export function readAllNotification(){
-//   return async dispatch=>{
-//     const res = await axios.post(`notifications/readAll`);
-//     dispatch({
-//       type: Actions.GET_ALL_NOTIFICATION.SUCCESS,
-//       payload: res
-//     });
-//   }
+
+// export function readAllNotification() {
+//   return async dispatch => {
+//     try {
+//       dispatch({
+//         type: Actions.READ_ALL_NOTIFICATION.REQUEST,
+//         payload: res
+//       });
+//       const res = await axios.post(`notifications/readAll`);
+//       dispatch({
+//         type: Actions.READ_ALL_NOTIFICATION.SUCCESS,
+//         payload: res
+//       });
+//     } catch (error) {
+//       dispatch({
+//         type: Actions.READ_ALL_NOTIFICATION.ERROR
+//       });
+//     }
+//   };
 // }
 
 export function getAllNotification(offset) {
-  console.log(offset);
   return async dispatch => {
-    // dispatch({
-    //   type: Actions.GET_ALL_NOTIFICATION.REQUEST
-    // });
+    if (offset <= 0) {
+      dispatch({
+        type: Actions.GET_ALL_NOTIFICATION.REQUEST
+      });
+    }
     const res = await axios.get(`notifications?limit=10&offset=${offset}`);
     dispatch({
       type: Actions.GET_ALL_NOTIFICATION.SUCCESS,

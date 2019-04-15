@@ -8,7 +8,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
-  Dimensions
+  Dimensions,
+  KeyboardAvoidingView
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { SafeAreaView } from "react-navigation";
@@ -110,7 +111,8 @@ class MyEquipmentDetail extends Component {
       typeIdDefault: 0,
       isModalOpen: false,
       images: [],
-      additionalSpecsFields: []
+      additionalSpecsFields: [],
+      address: null
     };
   }
 
@@ -134,14 +136,25 @@ class MyEquipmentDetail extends Component {
         generalType:
           nextProps.equipmentDetail.equipmentType.generalEquipment.name,
         type: nextProps.equipmentDetail.equipmentType.name,
-        typeIdDefault: nextProps.equipmentDetail.equipmentType.id
-        //construction: nextProps.equipmentDetail.construction
+        typeIdDefault: nextProps.equipmentDetail.equipmentType.id,
+        construction: nextProps.equipmentDetail.construction,
+        address: nextProps.equipmentDetail.construction.address
       };
     }
     if (nextProps.imageList !== prevState.images) {
       return {
         images: nextProps.imageList
       };
+    }
+    if (prevState.construction.name !== "Select your construction") {
+      const getConstructionByAddress = nextProps.construction.find(
+        item => item.name === prevState.construction.name
+      );
+      if (getConstructionByAddress) {
+        return {
+          address: getConstructionByAddress.address
+        };
+      }
     }
     return null;
   }
@@ -210,13 +223,16 @@ class MyEquipmentDetail extends Component {
       dailyPrice: data.dailyPrice,
       description: data.description,
       thumbnailImage: { id: data.thumbnailImage.id },
-      address: construction[constructionIndex - 1].address,
-      latitude: construction[constructionIndex - 1].latitude,
-      longitude: construction[constructionIndex - 1].longitude,
+      // address: address,
+      // latitude: construction[constructionIndex - 1].latitude,
+      // longitude: construction[constructionIndex - 1].longitude,
       equipmentType: { id: equipmentTypeId.id },
       contractor: { id: user.contractor.id },
       construction: {
-        id: construction[constructionIndex - 1].id
+        id:
+          constructionIndex !== 0
+            ? construction[constructionIndex - 1].id
+            : construction.id
       },
       availableTimeRanges: data.availableTimeRanges,
       descriptionImages: images,
@@ -265,11 +281,6 @@ class MyEquipmentDetail extends Component {
 
   _handleInputSpecsField = (specId, index, value) => {
     const { data } = this.state;
-    // data.additionalSpecsFields[index] = {
-    //   value: value,
-    //   ...data.additionalSpecsFields[index]
-    // };
-    // console.log(...data, data.additionalSpecsValues[index]);
     const newSpecsValue = data.additionalSpecsValues.map(item =>
       item.id === specId ? { ...item, value: value } : item
     );
@@ -347,6 +358,7 @@ class MyEquipmentDetail extends Component {
       typeIndex,
       generalTypeIndex,
       images,
+      address,
       construction,
       constructionIndex
     } = this.state;
@@ -356,7 +368,7 @@ class MyEquipmentDetail extends Component {
     );
     console.log(data);
     return (
-      <View style={{ paddingHorizontal: 15 }}>
+      <KeyboardAvoidingView style={{ paddingHorizontal: 15 }} enabled>
         <View style={styles.landscapeImgWrapper}>
           <Image
             uri={
@@ -438,7 +450,7 @@ class MyEquipmentDetail extends Component {
             customWrapperStyle={{ marginBottom: 20, marginRight: 15 }}
             inputType="text"
             onChangeText={value =>
-              this._handleInputChanged("dailyPrice", parseInt(value))
+              this._handleInputChanged("dailyPrice", value)
             }
             editable={data.status === "AVAILABLE" ? true : false}
             value={data.dailyPrice.toLocaleString("en")}
@@ -493,13 +505,15 @@ class MyEquipmentDetail extends Component {
         ) : null}
         <Dropdown
           label={"Construction"}
-          defaultText={"Select your construction"}
+          defaultText={construction.name}
           onSelectValue={(value, index) => {
             this.setState({ construction: value, constructionIndex: index });
           }}
           options={this._handleConstructionDropdown()}
           style={{ marginBottom: 20 }}
         />
+        <Text>Address</Text>
+        <Text>{address}</Text>
         <InputField
           label={"Description"}
           placeholder={"Input your description"}
@@ -531,7 +545,7 @@ class MyEquipmentDetail extends Component {
           </Text>
         </View>
         {this._renderBottomButton(data.status, id)}
-      </View>
+      </KeyboardAvoidingView>
     );
   };
 

@@ -10,7 +10,8 @@ import {
   Alert,
   Animated,
   ActionSheetIOS,
-  Modal
+  Modal,
+  StatusBar
 } from "react-native";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
@@ -123,51 +124,52 @@ class Profile extends Component {
     });
   };
 
+  _handleUploadImage = async () => {
+    const { image } = this.state;
+    const form = new FormData();
+    this.setState({ submitLoading: true });
+    form.append("image", {
+      uri: image,
+      type: "image/jpg",
+      name: "image.jpg"
+    });
+    const res = await axios.post(`storage/contractorVerifyingImages`, form, {
+      headers: { "Content-Type": "multipart/form-data" },
+      onUploadProgress: progressEvent => {
+        console.log(
+          "Upload progress: " +
+            Math.round((progressEvent.loaded / progressEvent.total) * 100) +
+            "%"
+        );
+        this.setState({
+          progress: Math.round(
+            (progressEvent.loaded / progressEvent.total) * 100
+          )
+        });
+      }
+    });
+    if (res) {
+      console.log(res);
+      this.setState({
+        data: {
+          ...this.state.data,
+          thumbnailImageUrl: res.data[0].url
+        },
+        image: null,
+        progress: 0,
+        dataChanged: true
+      });
+    }
+  };
+
   _handleAddImage = async () => {
     const { contractor } = this.props;
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
     if (status === "granted") {
       let result = await ImagePicker.launchImageLibraryAsync();
       if (!result.cancelled) {
-        const form = new FormData();
-        this.setState({ submitLoading: true });
-        form.append("image", {
-          uri: result.uri,
-          type: "image/jpg",
-          name: "image.jpg"
-        });
-        const res = await axios.post(
-          `storage/contractorVerifyingImages`,
-          form,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-            onUploadProgress: progressEvent => {
-              console.log(
-                "Upload progress: " +
-                  Math.round(
-                    (progressEvent.loaded / progressEvent.total) * 100
-                  ) +
-                  "%"
-              );
-              this.setState({
-                progress: Math.round(
-                  (progressEvent.loaded / progressEvent.total) * 100
-                )
-              });
-            }
-          }
-        );
-        if (res) {
-          console.log(res);
-          this.setState({
-            data: {
-              ...this.state.data,
-              thumbnailImageUrl: res.data[0].url
-            },
-            progress: 0,
-            dataChanged: true
-          });
-        }
+        this.setState({ image: result.uri });
+        this._handleUploadImage();
       }
     }
   };
@@ -180,14 +182,16 @@ class Profile extends Component {
           style={styles.containter}
           forceInset={{ bottom: "always", top: "always" }}
         >
-          <Header
-            renderLeftButton={() => (
-              <TouchableOpacity onPress={() => this._setModalVisible(false)}>
-                <Feather name="x" size={24} />
-              </TouchableOpacity>
-            )}
+          <CameraView
+            onPressBack={() => this._setModalVisible(false)}
+            onSelectedPhoto={async value => {
+              await this.setState({ image: value });
+              this._setModalVisible(false);
+              if (this.state.image) {
+                this._handleUploadImage();
+              }
+            }}
           />
-          <CameraView />
         </SafeAreaView>
       </Modal>
     );

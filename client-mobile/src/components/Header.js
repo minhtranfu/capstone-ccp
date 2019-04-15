@@ -8,6 +8,7 @@ const { width } = Dimensions.get("window");
 class Header extends React.PureComponent {
   render() {
     const {
+      containerStyle,
       onPress,
       renderLeftButton,
       renderRightButton,
@@ -17,7 +18,7 @@ class Header extends React.PureComponent {
     } = this.props;
 
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, containerStyle]}>
         <View style={{ flex: 1, alignItems: "flex-start", marginLeft: 15 }}>
           {renderLeftButton ? renderLeftButton() : null}
         </View>

@@ -13,7 +13,7 @@ import { withNavigation } from "react-navigation";
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
 
-const Touchable =
+let Touchable =
   Platform.OS === "ios" ? TouchableOpacity : TouchableNativeFeedback;
 
 class Button extends PureComponent {

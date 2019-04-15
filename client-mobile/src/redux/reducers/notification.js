@@ -69,6 +69,24 @@ export default function notificationReducer(state = INITIAL_STATE, action) {
         ...state
       };
     }
+    case Actions.READ_ALL_NOTIFICATION.REQUEST: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+    case Actions.READ_ALL_NOTIFICATION.SUCCESS: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+    case Actions.READ_ALL_NOTIFICATION.ERROR: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
     default:
       return state;
   }

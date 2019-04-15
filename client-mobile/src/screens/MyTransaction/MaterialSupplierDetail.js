@@ -195,7 +195,7 @@ class MaterialSupplierDetail extends Component {
         <Header
           renderLeftButton={() => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Feather name="x" size={24} />
+              <Feather name="chevron-left" size={24} />
             </TouchableOpacity>
           )}
         >
