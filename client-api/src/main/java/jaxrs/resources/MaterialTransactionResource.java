@@ -10,17 +10,20 @@ import entities.*;
 import jaxrs.validators.HiringTransactionValidator;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
-import javax.security.auth.callback.TextOutputCallback;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("materialTransactions")
 @RolesAllowed("contractor")
@@ -78,25 +81,71 @@ public class MaterialTransactionResource {
 		materialTransactionRequest.setRequester(new IdOnly(claimContractorId.getValue().longValue()));
 
 		validateTransactionRequest(materialTransactionRequest);
-		MaterialTransactionEntity materialTransactionEntity = modelConverter.toEntity(materialTransactionRequest);
 
-		double totalPrice = 0;
-		for (MaterialTransactionDetailEntity materialTransactionDetail : materialTransactionEntity.getMaterialTransactionDetails()) {
-			MaterialEntity foundMaterial = materialDAO.findByIdWithValidation(materialTransactionDetail.getMaterial().getId());
-			materialTransactionDetail.setMaterialTransaction(materialTransactionEntity);
-			materialTransactionDetail.setPrice(foundMaterial.getPrice());
+		// TODO: 4/8/19 separate into multiple transaction details by supplier id
 
-			totalPrice += materialTransactionDetail.getPrice()*materialTransactionDetail.getQuantity();
+		List<MaterialTransactionDetailEntity> materialTransactionDetailEntities =
+				modelConverter.toEntityList(materialTransactionRequest.getMaterialTransactionDetails());
+		for (MaterialTransactionDetailEntity detailEntity : materialTransactionDetailEntities) {
+			detailEntity.setMaterial(materialDAO.findByIdWithValidation(detailEntity.getMaterial().getId()));
+			// TODO: 4/8/19 validate can not request his own equipment
+			if (detailEntity.getMaterial().getContractor().getId() == getClaimContractorId()) {
+				throw new BadRequestException("You cannot request your own material!");
+			}
 		}
 
-		// TODO: 3/25/19 do this after insert all the details
-		materialTransactionEntity.setTotalPrice(totalPrice);
-		//  1/30/19 set status to pending
-		materialTransactionEntity.setStatus(MaterialTransactionEntity.Status.PENDING);
+		List<MaterialTransactionEntity> separatedList = new ArrayList<>();
+		HashMap<Long, Boolean> supplierIdBundle = new HashMap<>();
+		for (MaterialTransactionDetailEntity detailEntity : materialTransactionDetailEntities) {
 
-		materialTransactionDAO.persist(materialTransactionEntity);
+			long supplierId = detailEntity.getMaterial().getContractor().getId();
+			if (supplierIdBundle.get(supplierId) == null || supplierIdBundle.get(supplierId) == false) {
+				//not containt
+				//continue
+				supplierIdBundle.put(supplierId, true);
+
+				// TODO: 4/8/19 new transaction
+				MaterialTransactionEntity materialTransactionEntity = modelConverter.toEntity(materialTransactionRequest);
+
+				// set supplier
+				ContractorEntity tempSupplier = new ContractorEntity();
+				tempSupplier.setId(supplierId);
+				materialTransactionEntity.setSupplier(tempSupplier);
+
+				materialTransactionEntity.getMaterialTransactionDetails().clear();
+				List<MaterialTransactionDetailEntity> foundList = materialTransactionDetailEntities.stream().filter(materialTransactionDetailEntity ->
+						materialTransactionDetailEntity.getMaterial().getContractor().getId() == supplierId)
+						.collect(Collectors.toList());
+
+				materialTransactionEntity.getMaterialTransactionDetails().addAll(foundList);
+				separatedList.add(materialTransactionEntity);
+			}
+
+		}
+
+
+		// TODO: 4/8/19 for each transaction entity
+		for (MaterialTransactionEntity materialTransactionEntity : separatedList) {
+
+			double totalPrice = 0;
+			for (MaterialTransactionDetailEntity materialTransactionDetail : materialTransactionEntity.getMaterialTransactionDetails()) {
+				MaterialEntity managedMaterial = materialTransactionDetail.getMaterial();
+				materialTransactionDetail.setMaterialTransaction(materialTransactionEntity);
+				materialTransactionDetail.setPrice(managedMaterial.getPrice());
+				totalPrice += materialTransactionDetail.getPrice() * materialTransactionDetail.getQuantity();
+			}
+
+			// TODO: 3/25/19 do this after insert all the details
+			materialTransactionEntity.setTotalPrice(totalPrice);
+			//  1/30/19 set status to pending
+			materialTransactionEntity.setStatus(MaterialTransactionEntity.Status.PENDING);
+			materialTransactionDAO.persist(materialTransactionEntity);
+		}
+
 		return Response.status(Response.Status.CREATED).entity(
-				materialTransactionDAO.findByID(materialTransactionEntity.getId())
+				separatedList.stream()
+						.map(materialTransactionEntity -> materialTransactionDAO.findByID(materialTransactionEntity.getId()))
+						.collect(Collectors.toList())
 		).build();
 	}
 
@@ -109,7 +158,7 @@ public class MaterialTransactionResource {
 //
 //		validateTransactionRequest(materialTransactionRequest);
 //
-//		MaterialTransactionEntity materialTransactionEntity = modelConverter.toEntity(materialTransactionRequest);
+//		MaterialTransactionEntity materialTransactionEntity = modelConverter.toEntityList(materialTransactionRequest);
 //
 //
 //		MaterialEntity foundMaterial = materialDAO.findByIdWithValidation(materialTransactionEntity.getMaterial().getId());
@@ -165,14 +214,11 @@ public class MaterialTransactionResource {
 	@Path("{id:\\d+}")
 	public Response updateTransactionStatus(@PathParam("id") long id, MaterialTransactionEntity transactionEntity) {
 
-		// TODO: 3/10/19 validate authority
-
-
-
 		MaterialTransactionEntity foundTransaction = materialTransactionDAO.findByIdWithValidation(id);
 		if (transactionEntity.getStatus() == null) {
 			throw new BadRequestException("Status is null!");
 		}
+
 
 		long supplierId = foundTransaction.getSupplier().getId();
 		long requesterId = foundTransaction.getRequester().getId();
@@ -180,17 +226,21 @@ public class MaterialTransactionResource {
 		switch (transactionEntity.getStatus()) {
 			case PENDING:
 				//validate
-
 				if (foundTransaction.getStatus() != transactionEntity.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), transactionEntity.getStatus()));
-
 				}
 				break;
 			case ACCEPTED:
 				//validate
-				if (getClaimContractorId() != supplierId ) {
+				if (getClaimContractorId() != supplierId) {
 					throw new BadRequestException("Only supplier can change this status!");
+				}
+				// TODO: 3/10/19 validate status
+				//  4/3/19 validate if active
+				if (!foundTransaction.getSupplier().isActivated()) {
+					throw new BadRequestException(String.format("Supplier %s is %s",
+							foundTransaction.getSupplier().getName(), foundTransaction.getSupplier().getStatus().getBeautifiedName()));
 				}
 
 				if (foundTransaction.getStatus() != MaterialTransactionEntity.Status.PENDING
@@ -204,7 +254,7 @@ public class MaterialTransactionResource {
 			case DENIED:
 				//validate
 
-				if (getClaimContractorId() != supplierId ) {
+				if (getClaimContractorId() != supplierId) {
 					throw new BadRequestException("Only supplier can change this status!");
 				}
 
@@ -216,7 +266,7 @@ public class MaterialTransactionResource {
 				break;
 			case DELIVERING:
 				//validate
-				if (getClaimContractorId() != supplierId ) {
+				if (getClaimContractorId() != supplierId) {
 					throw new BadRequestException("Only supplier can change this status!");
 				}
 
@@ -229,19 +279,28 @@ public class MaterialTransactionResource {
 				}
 				break;
 			case CANCELED:
-				if (getClaimContractorId() != requesterId ) {
-					throw new BadRequestException("Only requester can change this status!");
+				//
+				if (getClaimContractorId() != requesterId && getClaimContractorId() != supplierId) {
+					throw new BadRequestException("Only requester or supplier can cancel material transaction!");
 				}
 				//validate
-				if (foundTransaction.getStatus() != MaterialTransactionEntity.Status.DELIVERING
+				if ( foundTransaction.getStatus() != MaterialTransactionEntity.Status.PENDING
+						&& foundTransaction.getStatus() != MaterialTransactionEntity.Status.DELIVERING
 						&& foundTransaction.getStatus() != MaterialTransactionEntity.Status.ACCEPTED
 						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), transactionEntity.getStatus()));
 				}
+				foundTransaction.setCancelReason(transactionEntity.getCancelReason());
+
+				//canceledBy
+				ContractorEntity canceledBy = new ContractorEntity();
+				canceledBy.setId(getClaimContractorId());
+				foundTransaction.setCanceledBy(canceledBy);
+
 				break;
 			case FINISHED:
-				if (getClaimContractorId() != requesterId ) {
+				if (getClaimContractorId() != requesterId) {
 					throw new BadRequestException("Only requester can change this status!");
 				}
 
@@ -263,8 +322,17 @@ public class MaterialTransactionResource {
 
 	@GET
 	@Path("supplier/{id:\\d+}")
-	public Response getReceivedTransactionAsSupplier(@PathParam("id") long supplierId) {
+	public Response getReceivedTransactionAsSupplier(
+			@PathParam("id") long supplierId
+			, @QueryParam("status") MaterialTransactionEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
 
+
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 
 		if (supplierId != claimContractorId.getValue().longValue()) {
 			throw new BadRequestException("You cannot view other people's transaction");
@@ -277,17 +345,26 @@ public class MaterialTransactionResource {
 			throw new BadRequestException(String.format("Supplier id=%d not found", supplierId));
 		}
 
-		List<MaterialTransactionEntity> materialTransactionsBySupplierId =
-				materialTransactionDAO.getMaterialTransactionsBySupplierId(supplierId);
+		;
 
-		return Response.ok(materialTransactionsBySupplierId).build();
+		return Response.ok(materialTransactionDAO.getMaterialTransactionsBySupplierId(supplierId, status, limit, offset, orderBy)).build();
 
 	}
 
 
 	@GET
 	@Path("requester/{id:\\d+}")
-	public Response getSentTransactionsAsRequester(@PathParam("id") long requesterId) {
+	public Response getSentTransactionsAsRequester(
+			@PathParam("id") long requesterId
+			, @QueryParam("status") MaterialTransactionEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
+
+
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 
 		if (requesterId != claimContractorId.getValue().longValue()) {
 			throw new BadRequestException("You cannot view other people's transaction");
@@ -299,9 +376,9 @@ public class MaterialTransactionResource {
 			throw new BadRequestException(String.format("requester id=%s not found!", requesterId));
 		}
 
-		List<MaterialTransactionEntity> transactionsByRequesterId = materialTransactionDAO.getMaterialTransactionsByRequeseterId(requesterId);
 
-		return Response.ok(transactionsByRequesterId).build();
+		return Response.ok(materialTransactionDAO
+				.getMaterialTransactionsByRequesterId(requesterId, status, limit, offset, orderBy)).build();
 	}
 
 

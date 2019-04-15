@@ -2,17 +2,16 @@ package jaxrs.resources;
 
 import daos.ConstructionDAO;
 import daos.ContractorDAO;
+import daos.EquipmentDAO;
 import dtos.requests.ContractorRequest;
+import dtos.responses.ContractorResponse;
 import entities.ContractorEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import utils.ModelConverter;
 
-import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.json.JsonNumber;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -23,6 +22,10 @@ import javax.ws.rs.core.Response;
 @Path("contractors")
 @Produces(MediaType.APPLICATION_JSON)
 public class ContractorResource {
+
+
+	@Inject
+	EquipmentDAO equipmentDAO;
 
 	@Inject
 	ContractorDAO contractorDao;
@@ -40,6 +43,9 @@ public class ContractorResource {
 	@Inject
 	ModelConverter modelConverter;
 
+	@Inject
+	ContractorVerifyingImageResource contractorVerifyingImageResource;
+
 
 	@Inject
 	@Claim("contractorId")
@@ -51,7 +57,11 @@ public class ContractorResource {
 
 
 		ContractorEntity foundContractor = validateContractorId(id);
-		return Response.ok(modelConverter.toResponse(foundContractor)).build();
+		ContractorResponse contractorResponse = modelConverter.toResponse(foundContractor);
+		contractorResponse.setFinishedDebrisTransactionCount(contractorDao.countFinishedDebrisTransactionRateBySupplierId(id));
+		contractorResponse.setFinishedMaterialTransactionCount(contractorDao.countFinishedMaterialTransactionRateBySupplierId(id));
+		contractorResponse.setFinishedHiringTransactionCount(contractorDao.countFinishedHiringTransactionRateBySupplierId(id));
+		return Response.ok(contractorResponse).build();
 	}
 
 
@@ -87,6 +97,7 @@ public class ContractorResource {
 	}
 
 
+
 	@Path("{id:\\d+}/constructions")
 	public ConstructionResource toConstructionResource(
 			@PathParam("id") long contractorId
@@ -97,27 +108,12 @@ public class ContractorResource {
 		return constructionResource;
 	}
 
-
 	private ContractorEntity validateContractorId(long contractorId) {
 		return contractorDao.findByIdWithValidation(contractorId);
 	}
 
-	@GET
-	@RolesAllowed("contractor")
-	@Path("{id:\\d+}/equipments")
-	public Response getEquipmentsBySupplierId(@PathParam("id") long id) {
 
-		ContractorEntity foundContractor = validateContractorId(id);
-		return Response.ok(foundContractor.getEquipments()).build();
-	}
 
-	@GET
-	@RolesAllowed("contractor")
-	@Path("{id:\\d+}/materials")
-	public Response getMaterialsBySupplierId(@PathParam("id") long id) {
-		ContractorEntity foundContractor = validateContractorId(id);
-		return Response.ok(foundContractor.getMaterials()).build();
-	}
 
 
 	@Path("{id:\\d+}/cart")
@@ -126,6 +122,13 @@ public class ContractorResource {
 		cartRequestResource.setContractorEntity(foundContractor);
 		return cartRequestResource;
 
+	}
+
+	@Path("{id:\\d+}/contractorVerifyingImages")
+	public ContractorVerifyingImageResource toContractorVerifyingImageEntity(@PathParam("id") long contractorId) {
+		ContractorEntity foundContractor = validateContractorId(contractorId);
+		contractorVerifyingImageResource.setContractorEntity(foundContractor);
+		return contractorVerifyingImageResource;
 	}
 
 //	@Path("{id:\\d+}/notifications")

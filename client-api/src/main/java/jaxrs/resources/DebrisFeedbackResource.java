@@ -9,6 +9,7 @@ import entities.DebrisFeedbackEntity;
 import entities.DebrisTransactionEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -49,9 +50,8 @@ public class DebrisFeedbackResource {
 		// TODO: 3/21/19 validate transction status must be FINISHED or CANCELED
 
 		DebrisTransactionEntity managedTransaction = debrisTransactionDAO.findByIdWithValidation(debrisFeedbackEntity.getDebrisTransaction().getId());
-		if (managedTransaction.getStatus() != DebrisTransactionEntity.Status.FINISHED
-				&& managedTransaction.getStatus() != DebrisTransactionEntity.Status.CANCELED) {
-			throw new BadRequestException("You can only feedback on FINISHED or CANCELED status");
+		if (managedTransaction.getStatus() != DebrisTransactionEntity.Status.FINISHED) {
+			throw new BadRequestException("You can only feedback on FINISHED status");
 		}
 
 		if (managedTransaction.getRequester().getId() != getClaimContractorId()) {
@@ -75,9 +75,19 @@ public class DebrisFeedbackResource {
 	@GET
 	@Path("supplier")
 	@RolesAllowed("contractor")
-	public Response getFeedbacksBySupplier() {
-		//no need to validate contractor because it will return empty list
-		return Response.ok(debrisFeedbackDAO.getFeedbacksBySupplier(getClaimContractorId())).build();
+	public Response getFeedbacksBySupplier(
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
+
+	) {
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+		//no need to validate contractor because it will return empty list instead
+		return Response.ok(debrisFeedbackDAO.getFeedbacksBySupplier(
+				getClaimContractorId()
+				, limit, offset, orderBy)).build();
 	}
 
 }

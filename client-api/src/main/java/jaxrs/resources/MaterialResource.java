@@ -1,12 +1,7 @@
 package jaxrs.resources;
 
-import daos.ConstructionDAO;
-import daos.ContractorDAO;
-import daos.MaterialDAO;
-import daos.MaterialTypeDAO;
+import daos.*;
 import dtos.requests.MaterialRequest;
-import dtos.responses.EquipmentResponse;
-import dtos.wrappers.LocationWrapper;
 import entities.*;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
@@ -14,6 +9,7 @@ import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
 import javax.validation.Valid;
@@ -23,10 +19,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("materials")
@@ -50,6 +42,9 @@ public class MaterialResource {
 	ConstructionDAO constructionDAO;
 
 	@Inject
+	MaterialFeedbackDAO materialFeedbackDAO;
+
+	@Inject
 	@Claim("contractorId")
 	ClaimValue<JsonNumber> claimId;
 
@@ -67,6 +62,21 @@ public class MaterialResource {
 		return Response.ok(materialDAO.findByIdWithValidation(id)).build();
 	}
 
+	@GET
+	@Path("{id:\\d+}/feedbacks")
+	public Response getFeedbacksByMaterial(@PathParam("id") long id,
+										   @QueryParam("limit") @DefaultValue(DEFAULT_RESULT_LIMIT) int limit,
+										   @QueryParam("offset") @DefaultValue("0") int offset
+										   , @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
+	) {
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+
+		materialDAO.findByIdWithValidation(id);
+		return Response.ok(materialFeedbackDAO.getFeedbacksByMaterial(id, limit, offset,orderBy)).build();
+	}
+
 
 	@POST
 	@RolesAllowed("contractor")
@@ -79,6 +89,11 @@ public class MaterialResource {
 		ContractorEntity foundContractor = contractorDAO.findByIdWithValidation(claimId.getValue().longValue());
 		materialEntity.setContractor(foundContractor);
 
+		// 4/3/19 validate contractor activated
+		if (!foundContractor.isActivated()) {
+			throw new BadRequestException(String.format("Supplier %s is %s",
+					foundContractor.getName(), foundContractor.getStatus().getBeautifiedName()));
+		}
 
 		validatePostPutMaterial(materialEntity);
 		materialDAO.persist(materialEntity);
@@ -88,6 +103,7 @@ public class MaterialResource {
 		).build();
 
 	}
+
 
 	private void validatePostPutMaterial(MaterialEntity materialEntity) {
 		//check for constructor id
@@ -143,9 +159,10 @@ public class MaterialResource {
 
 	@Context
 	HttpHeaders httpHeaders;
+
 	@GET
 	public Response searchMaterial(
-			@QueryParam("q")  @DefaultValue("") String query,
+			@QueryParam("q") @DefaultValue("") String query,
 			@QueryParam("lat") @DefaultValue(DEFAULT_LAT) double latitude,
 			@QueryParam("long") @DefaultValue(DEFAULT_LONG) double longitude,
 			@QueryParam("materialTypeId") @DefaultValue("0") long materialTypeId,
@@ -186,6 +203,21 @@ public class MaterialResource {
 		return Response.ok(materialEntities).build();
 	}
 
+	@GET
+	@RolesAllowed("contractor")
+	@Path("supplier")
+	public Response getMaterialsBySupplierId(
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
+
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+
+		long supplierId = getClaimContractorId();
+		return Response.ok(materialDAO.getBySupplierId(supplierId, limit, offset, orderBy)).build();
+	}
 
 
 }

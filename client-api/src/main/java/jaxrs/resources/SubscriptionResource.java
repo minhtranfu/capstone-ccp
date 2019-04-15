@@ -1,26 +1,23 @@
 package jaxrs.resources;
 
 import daos.ContractorDAO;
-import daos.FeedbackDAO;
+import daos.ReportDAO;
 import daos.SubscriptionDAO;
 import dtos.requests.SubscriptionRequest;
 import entities.ContractorEntity;
 import entities.SubscriptionEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.Remove;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 @Path("subscriptions")
 @Produces(MediaType.APPLICATION_JSON)
@@ -31,7 +28,7 @@ public class SubscriptionResource {
 	SubscriptionDAO subscriptionDAO;
 
 	@Inject
-	FeedbackDAO feedbackDAO;
+	ReportDAO reportDAO;
 
 	@Inject
 	ContractorDAO contractorDAO;
@@ -44,11 +41,9 @@ public class SubscriptionResource {
 	ClaimValue<JsonNumber> claimContractorId;
 
 
-
 	private long getClaimContractorId() {
 		return claimContractorId.getValue().longValue();
 	}
-
 
 
 	@GET
@@ -60,10 +55,11 @@ public class SubscriptionResource {
 
 	@GET
 	@RolesAllowed("contractor")
-	public Response getAllSubscriptionFromContractor() {
+	public Response getAllSubscriptionFromContractor(
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit,
+			@QueryParam("offset") @DefaultValue("0") int offset) {
 		ContractorEntity managedContractor = contractorDAO.findByIdWithValidation(getClaimContractorId());
-//		List<SubscriptionEntity> resultList = entityManager.createQuery("select e from SubscriptionEntity  e", SubscriptionEntity.class)
-//				.getResultList();
+		subscriptionDAO.getSubscriptionsByContractorId(getClaimContractorId(), limit, offset);
 		return Response.ok(managedContractor.getSubscriptionEntities()).build();
 	}
 

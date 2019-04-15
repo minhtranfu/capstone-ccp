@@ -104,7 +104,7 @@ public class FirebaseMessagingManager {
 	}
 
 	public void sendMessage(NotificationDTO notificationDTO) {
-		LOGGER.info("Sending message: "+notificationDTO);
+		LOGGER.info("Sending message: " + notificationDTO);
 		long receiverId = notificationDTO.getContractorId();
 		ContractorEntity managedContractor = contractorDAO.findByIdWithValidation(receiverId);
 
@@ -125,7 +125,7 @@ public class FirebaseMessagingManager {
 			case EXPO:
 				try {
 
-					
+
 					LOGGER.info("Sent expo:" + sendExpo(notificationDTO, regisToken));
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -157,12 +157,12 @@ public class FirebaseMessagingManager {
 		ApiFutures.addCallback(stringApiFuture, new ApiFutureCallback<String>() {
 			@Override
 			public void onFailure(Throwable throwable) {
-				System.out.println("Failed to send message to token " + regisToken);
+				LOGGER.info("Failed to send message to token " + regisToken);
 			}
 
 			@Override
 			public void onSuccess(String s) {
-				System.out.println("Successfully sent message: " + s);
+				LOGGER.info("Successfully sent message: " + s);
 			}
 		}, MoreExecutors.directExecutor());
 

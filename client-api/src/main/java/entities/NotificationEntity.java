@@ -9,7 +9,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notification", schema = "capstone_ccp")
+@NamedQueries({
 @NamedQuery(name = "NotificationEntity.getByContractorId", query = "select e from NotificationEntity e where e.contractor.id =:contractorId order by e.createdTime desc ")
+,@NamedQuery(name = "NotificationEntity.countUnreadByContractorId", query = "select count(e.id) from NotificationEntity e where e.contractor.id = :contractorId and e.read = false")
+})
+@NamedNativeQuery(name = "NotificationEntity.markAllAsRead", query = "UPDATE capstone_ccp.notification set capstone_ccp.notification.is_read = true where notification.is_read = false and capstone_ccp.notification.contractor_id = :contractorId")
 public class NotificationEntity {
 	private long id;
 	private String title;

@@ -12,6 +12,7 @@ import entities.HiringTransactionEntity;
 import jaxrs.validators.HiringTransactionValidator;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -75,12 +76,10 @@ public class HiringTransactionResource {
 		hiringTransactionEntity.setEquipmentLongitude(foundEquipment.getFinalLongitude());
 		hiringTransactionEntity.setEquipmentLatitude(foundEquipment.getFinalLatitude());
 
-		hiringTransactionEntity.setDeliveryPrice(foundEquipment.getDeliveryPrice());
 		hiringTransactionEntity.setDailyPrice(foundEquipment.getDailyPrice());
 
 		//  1/30/19 set status to pending
 		hiringTransactionEntity.setStatus(HiringTransactionEntity.Status.PENDING);
-
 
 		hiringTransactionDAO.persist(hiringTransactionEntity);
 		return Response.status(Response.Status.CREATED).entity(
@@ -134,8 +133,15 @@ public class HiringTransactionResource {
 		}
 
 		EquipmentEntity foundEquipment = foundTransaction.getEquipment();
+		ContractorEntity foundContractor = foundEquipment.getContractor();
 		switch (transactionEntity.getStatus()) {
 			case PENDING:
+				//  4/3/19 validate if active
+				if (!foundContractor.isActivated()) {
+					throw new BadRequestException(String.format("Supplier %s is %s",
+							foundContractor.getName(), foundContractor.getStatus().getBeautifiedName()));
+				}
+
 				//validate
 				if (foundTransaction.getStatus() != transactionEntity.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
@@ -145,6 +151,12 @@ public class HiringTransactionResource {
 				break;
 			case ACCEPTED:
 				//validate
+
+				//  4/3/19 validate if active
+				if (!foundContractor.isActivated()) {
+					throw new BadRequestException(String.format("Supplier %s is %s",
+							foundContractor.getName(), foundContractor.getStatus().getBeautifiedName()));
+				}
 
 				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING
 						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
@@ -191,7 +203,7 @@ public class HiringTransactionResource {
 				}
 
 
-				// TODO: 2/18/19 validate there'are no processing transaction related to equipment
+				//  2/18/19 validate there'are no processing transaction related to equipment
 				List<HiringTransactionEntity> processingTransactionsByEquipmentId = hiringTransactionDAO.getProcessingTransactionsByEquipmentId(foundEquipment.getId());
 				if (processingTransactionsByEquipmentId.size() > 0) {
 					if (processingTransactionsByEquipmentId.size() == 1) {
@@ -205,7 +217,7 @@ public class HiringTransactionResource {
 					}
 				}
 
-				// TODO: 2/18/19 validate equipment status must be available
+				// 2/18/19 validate equipment status must be available
 				if (foundEquipment.getStatus() != EquipmentEntity.Status.AVAILABLE) {
 					throw new BadRequestException(String.format("Equipment id=%d status must be AVAILABLE to process transaction", foundEquipment.getId()));
 				}
@@ -218,12 +230,19 @@ public class HiringTransactionResource {
 				break;
 			case CANCELED:
 				//validate
-				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PROCESSING
-						&& foundTransaction.getStatus() != HiringTransactionEntity.Status.ACCEPTED
+				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.ACCEPTED
+				&& foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING
 						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), transactionEntity.getStatus()));
 				}
+
+				foundTransaction.setCancelReason(transactionEntity.getCancelReason());
+				//canceledBy
+				ContractorEntity canceledBy = new ContractorEntity();
+				canceledBy.setId(getClaimContractorId());
+				foundTransaction.setCanceledBy(canceledBy);
+
 				break;
 			case FINISHED:
 				//validate
@@ -254,30 +273,44 @@ public class HiringTransactionResource {
 
 	@GET
 	@Path("supplier/{id:\\d+}")
-	public Response getReceivedTransactionAsSupplier(@PathParam("id") long supplierId) {
+	public Response getReceivedTransactionAsSupplier(
+			@PathParam("id") long supplierId
+			, @QueryParam("status") HiringTransactionEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
 
+		//2/14/19 validate orderBy pattern
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 
 		if (supplierId != claimContractorId.getValue().longValue()) {
 			throw new BadRequestException("You cannot view other people's transaction");
 		}
 
+
 		//validate supplierId
-		ContractorEntity foundContractor = contractorDAO.findByID(supplierId);
-		if (foundContractor == null) {
-			//custom message for supplier not contractor
-			throw new BadRequestException(String.format("Supplier id=%d not found", supplierId));
-		}
+		contractorDAO.findByIdWithValidation(supplierId);
 
-		List<HiringTransactionEntity> hiringTransactionsBySupplierId = hiringTransactionDAO.getHiringTransactionsBySupplierId(supplierId);
-
-		return Response.ok(hiringTransactionsBySupplierId).build();
+		return Response.ok(hiringTransactionDAO.getHiringTransactionsBySupplierId(supplierId, status, limit, offset, orderBy)).build();
 
 	}
 
 
 	@GET
 	@Path("requester/{id:\\d+}")
-	public Response getSentTransactionsAsRequester(@PathParam("id") long requesterId) {
+	public Response getSentTransactionsAsRequester(
+			@PathParam("id") long requesterId
+			, @QueryParam("status") HiringTransactionEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
+
+		//2/14/19 validate orderBy pattern
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 
 		if (requesterId != claimContractorId.getValue().longValue()) {
 			throw new BadRequestException("You cannot view other people's transaction");
@@ -288,22 +321,20 @@ public class HiringTransactionResource {
 			//custom message for requester not contractor
 			throw new BadRequestException(String.format("requester id=%s not found!", requesterId));
 		}
-
-		List<HiringTransactionEntity> transactionsByRequesterId = hiringTransactionDAO.getHiringTransactionsByRequesterId(requesterId);
-
-		return Response.ok(transactionsByRequesterId).build();
+		return Response.ok(hiringTransactionDAO.getHiringTransactionsByRequesterId
+				(requesterId, status, limit, offset, orderBy)).build();
 	}
 
 
-	@Path("{id:\\d+}/adjustDateRequests")
-	public TransactionDateChangeResource toTransactionDateChangeResource(@PathParam("id") long transactionId) {
-
-
-		HiringTransactionEntity transactionEntity = validateHiringTransactionEntity(transactionId);
-
-		transactionDateChangeResource.setHiringTransactionEntity(transactionEntity);
-		return transactionDateChangeResource;
-	}
+//	@Path("{id:\\d+}/transactionDateChangeRequests")
+//	public TransactionDateChangeResource toTransactionDateChangeResource(@PathParam("id") long transactionId) {
+//
+//
+//		HiringTransactionEntity transactionEntity = validateHiringTransactionEntity(transactionId);
+//
+//		transactionDateChangeResource.setHiringTransactionEntity(transactionEntity);
+//		return transactionDateChangeResource;
+//	}
 
 	private HiringTransactionEntity validateHiringTransactionEntity(long transactionId) {
 		HiringTransactionEntity transactionEntity = hiringTransactionDAO.findByID(transactionId);

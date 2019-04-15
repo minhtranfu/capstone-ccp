@@ -13,7 +13,10 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "material_feedback", schema = "capstone_ccp")
-@NamedQuery(name = "MaterialFeedbackEntity.bySupplier", query = "select e from MaterialFeedbackEntity e where e.supplier.id = :supplierId")
+@NamedQueries({
+		@NamedQuery(name = "MaterialFeedbackEntity.bySupplier", query = "select e from MaterialFeedbackEntity e where e.supplier.id = :supplierId")
+		, @NamedQuery(name = "MaterialFeedbackEntity.byMaterial", query = "select e from MaterialFeedbackEntity e where e.materialTransactionDetail.material.id = :materialId order by createdTime desc ")
+})
 @EntityListeners(MaterialFeedbackEntityListener.class)
 public class MaterialFeedbackEntity {
 	private long id;

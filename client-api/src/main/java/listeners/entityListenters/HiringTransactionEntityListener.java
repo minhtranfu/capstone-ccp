@@ -7,7 +7,6 @@ import entities.ContractorEntity;
 import entities.EquipmentEntity;
 import entities.HiringTransactionEntity;
 import managers.FirebaseMessagingManager;
-import org.apache.openejb.core.webservices.HandlerResolverImpl;
 
 import javax.inject.Inject;
 import javax.persistence.PostPersist;
@@ -36,18 +35,23 @@ public class HiringTransactionEntityListener {
 		EquipmentEntity equipment = entity.getEquipment();
 		switch (entity.getStatus()) {
 			case PROCESSING:
+				firebaseMessagingManager.sendMessage(new NotificationDTO("Equipment Delivering!",
+						String.format("Equipment \"%s\" is delivering to you by %s", equipment.getName(), supplier.getName())
+						, requester.getId()
+						,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, entity.getId())));
+
 				break;
 			case ACCEPTED:
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Request accepted",
 						String.format("Your request for equipment %s have been accepted", entity.getEquipment().getName())
 						, requester.getId()
-				,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
+				,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, entity.getId())));
 				break;
 			case FINISHED:
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Request finished",
 						String.format("You have returned equipment %s to %s", equipment.getName(), supplier.getName())
 						, requester.getId()
-						,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
+						,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, entity.getId())));
 
 				break;
 			case PENDING:
@@ -57,18 +61,18 @@ public class HiringTransactionEntityListener {
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Transaction canceled",
 						String.format("Transaction from %s for equipment %s have been canceled", requester.getName(), equipment.getName())
 						, supplier.getId()
-						,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
+						,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, entity.getId())));
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Transaction canceled",
 						String.format("Transaction from %s for equipment %s have been canceled", requester.getName(), equipment.getName())
 						, requester.getId()
-						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
+						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, entity.getId())));
 
 				break;
 			case DENIED:
 				firebaseMessagingManager.sendMessage(new NotificationDTO("Request denied",
 						String.format("Your request for equipment %s have been denied", entity.getEquipment().getName())
 						, requester.getId()
-						,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
+						,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, entity.getId())));
 
 				break;
 		}
@@ -85,7 +89,7 @@ public class HiringTransactionEntityListener {
 		firebaseMessagingManager.sendMessage(new NotificationDTO("New request",
 				String.format("You have new request for equipment %s", entity.getEquipment().getName())
 				, entity.getEquipment().getContractor().getId()
-				,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.TRANSACTIONS, entity.getId())));
+				,NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, entity.getId())));
 
 	}
 }

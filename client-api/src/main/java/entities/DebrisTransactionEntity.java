@@ -24,6 +24,8 @@ public class DebrisTransactionEntity {
 	private Status status;
 
 	private String cancelReason;
+	private ContractorEntity canceledBy;
+
 
 	private ContractorEntity requester;
 	private ContractorEntity supplier;
@@ -75,6 +77,17 @@ public class DebrisTransactionEntity {
 		this.cancelReason = cancelReason;
 	}
 
+
+
+	@ManyToOne
+	@JoinColumn(name = "canceled_by")
+	public ContractorEntity getCanceledBy() {
+		return canceledBy;
+	}
+
+	public void setCanceledBy(ContractorEntity canceledBy) {
+		this.canceledBy = canceledBy;
+	}
 
 	@ManyToOne
 	@JoinColumn(name = "requester_id", referencedColumnName = "id")

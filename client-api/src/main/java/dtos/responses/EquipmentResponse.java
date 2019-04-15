@@ -25,7 +25,7 @@ public class EquipmentResponse {
 
 	public double getDistance() {
 		return calculateDistance(this.currentLocation,
-				new LocationWrapper(equipmentEntity.getAddress(), equipmentEntity.getLatitude(), equipmentEntity.getLongitude()));
+				new LocationWrapper(equipmentEntity.getFinalAddress(), equipmentEntity.getFinalLatitude(), equipmentEntity.getFinalLongitude()));
 	}
 
 
@@ -37,7 +37,7 @@ public class EquipmentResponse {
 		this.currentLocation = currentLocation;
 	}
 
-	public  double calculateDistance(LocationWrapper location1, LocationWrapper location2) {
+	public double calculateDistance(LocationWrapper location1, LocationWrapper location2) {
 		// TODO: 1/24/19 calculate distance
 
 

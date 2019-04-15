@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "material_transaction_detail", schema = "capstone_ccp", catalog = "")
+@Table(name = "material_transaction_detail", schema = "capstone_ccp")
 @Where(clause = "is_deleted=0")
 @EntityListeners(MaterialTransactionDetailEntityListener.class)
 public class MaterialTransactionDetailEntity {
@@ -64,7 +64,7 @@ public class MaterialTransactionDetailEntity {
 	}
 
 	@Basic
-	@Column(name = "quantity", nullable = false, precision = 0)
+	@Column(name = "quantity", nullable = false)
 	public double getQuantity() {
 		return quantity;
 	}
@@ -84,7 +84,7 @@ public class MaterialTransactionDetailEntity {
 	}
 
 	@Basic
-	@Column(name = "price", nullable = false, precision = 0)
+	@Column(name = "price", nullable = false)
 	public double getPrice() {
 		return price;
 	}
@@ -104,7 +104,7 @@ public class MaterialTransactionDetailEntity {
 	}
 
 	@Basic
-	@Column(name = "material_long", nullable = false, precision = 0)
+	@Column(name = "material_long", nullable = false)
 	public @NotNull @Min(-180) @Max(180) Double getMaterialLong() {
 		return materialLong;
 	}
@@ -124,7 +124,7 @@ public class MaterialTransactionDetailEntity {
 	}
 
 	@Basic
-	@Column(name = "created_time", nullable = true, insertable = false, updatable = false)
+	@Column(name = "created_time", insertable = false, updatable = false)
 	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
@@ -134,7 +134,7 @@ public class MaterialTransactionDetailEntity {
 	}
 
 	@Basic
-	@Column(name = "updated_time", nullable = true, insertable = false, updatable = false)
+	@Column(name = "updated_time", insertable = false, updatable = false)
 	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
@@ -144,7 +144,7 @@ public class MaterialTransactionDetailEntity {
 	}
 
 	@Basic
-	@Column(name = "is_deleted", nullable = true)
+	@Column(name = "is_deleted", nullable = true, insertable = false)
 	public boolean isDeleted() {
 		return isDeleted;
 	}

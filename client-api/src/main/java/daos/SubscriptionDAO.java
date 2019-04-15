@@ -32,5 +32,11 @@ public class SubscriptionDAO extends BaseDAO<SubscriptionEntity, Long> {
 	}
 
 
-
+	public List<SubscriptionEntity> getSubscriptionsByContractorId(long contractorId, int limit, int offset) {
+		return entityManager.createNamedQuery("SubscriptionEntity.byContractor", SubscriptionEntity.class)
+				.setParameter("contractorId", contractorId)
+				.setFirstResult(offset)
+				.setMaxResults(limit)
+				.getResultList();
+	}
 }

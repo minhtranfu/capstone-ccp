@@ -16,11 +16,27 @@ public class ContractorDAO extends BaseDAO<ContractorEntity, Long> {
 	}
 
 	public void validateContractorActivated(ContractorEntity managedContractorEntity) {
-		if (managedContractorEntity.getStatus() == ContractorEntity.Status.DEACTIVATED) {
+		if (managedContractorEntity.getStatus() != ContractorEntity.Status.ACTIVATED) {
 			throw new BadRequestException(String.format("Contractor id=%d must be activated"
 					, managedContractorEntity.getId()));
 		}
 	}
 
+
+	public long countFinishedDebrisTransactionRateBySupplierId(long supplierId) {
+		return entityManager.createNamedQuery("ContractorEntity.finishedDebrisTransactionRateBySupplierId", Long.class)
+				.setParameter("supplierId", supplierId)
+				.getSingleResult();
+	}
+	public long countFinishedMaterialTransactionRateBySupplierId(long supplierId) {
+		return entityManager.createNamedQuery("ContractorEntity.finishedMaterialTransactionRateBySupplierId", Long.class)
+				.setParameter("supplierId", supplierId)
+				.getSingleResult();
+	}
+	public long countFinishedHiringTransactionRateBySupplierId(long supplierId) {
+		return entityManager.createNamedQuery("ContractorEntity.finishedHiringTransactionRateBySupplierId", Long.class)
+				.setParameter("supplierId", supplierId)
+				.getSingleResult();
+	}
 
 }

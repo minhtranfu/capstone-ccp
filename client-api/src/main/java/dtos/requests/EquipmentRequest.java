@@ -15,11 +15,8 @@ public abstract class EquipmentRequest {
 	public String name;
 
 	@NotNull
-
 	public Integer dailyPrice;
 
-	@NotNull
-	public Integer deliveryPrice;
 
 	// TODO: 3/4/19 validate ths ?
 	public String description;
@@ -29,19 +26,16 @@ public abstract class EquipmentRequest {
 	@Valid
 	public IdOnly thumbnailImage;
 
-	public String address;
-	@NotNull
-	@Min(-90)
-	@Max(90)
-	public Double latitude;
-	@NotNull
-	@Min(-180)
-	@Max(180)
-	public Double longitude;
-
 	@NotNull
 	@Valid
 	public IdOnly equipmentType;
+	@Valid
+	@NotNull
+	public List<AvailableTimeRangeRequest> availableTimeRanges;
+
+
+	public EquipmentRequest() {
+	}
 
 	//take this information from token
 //	@NotNull
@@ -49,13 +43,11 @@ public abstract class EquipmentRequest {
 //	public IdOnly contractor;
 
 
-	//not crud construction anymore
-//	public IdOnly construction;
-
-
-	@Valid
 	@NotNull
-	public List<AvailableTimeRangeRequest> availableTimeRanges;
+	@Valid
+	public IdOnly construction;
+
+
 
 
 

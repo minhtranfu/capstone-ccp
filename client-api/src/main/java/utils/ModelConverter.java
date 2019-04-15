@@ -2,9 +2,7 @@ package utils;
 
 import dtos.Credentials;
 import dtos.requests.*;
-import dtos.responses.ContractorResponse;
-import dtos.responses.DebrisBidResponse;
-import dtos.responses.GeneralMaterialTypeResponse;
+import dtos.responses.*;
 import entities.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -89,8 +87,8 @@ public class ModelConverter {
 	}
 
 
-	public ReportEntity toEntity(FeedbackRequest feedbackRequest) {
-		return modelMapper.map(feedbackRequest, ReportEntity.class);
+	public ReportEntity toEntity(ReportRequest reportRequest) {
+		return modelMapper.map(reportRequest, ReportEntity.class);
 	}
 
 	public HiringTransactionEntity toEntity(HiringTransactionRequest hiringTransactionRequest) {
@@ -176,6 +174,25 @@ public class ModelConverter {
 
 	public MaterialFeedbackEntity toEntity(MaterialFeedbackRequest materialFeedbackRequest) {
 		return modelMapper.map(materialFeedbackRequest, MaterialFeedbackEntity.class);
+	}
+
+	public EquipmentFeedbackEntity toEntity(EquipmentFeedbackRequest equipmentFeedbackRequest) {
+		return modelMapper.map(equipmentFeedbackRequest, EquipmentFeedbackEntity.class);
+	}
+
+	public TokenContractorResponse toTokenContractorResponse(ContractorEntity contractorEntity) {
+		return modelMapper.map(contractorEntity, TokenContractorResponse.class);
+
+	}
+
+	public List<MaterialTransactionDetailEntity> toEntityList(List<MaterialTransactionDetailRequest> materialTransactionDetails) {
+		Type listType = new TypeToken<List<MaterialTransactionDetailEntity>>(){}.getType();
+		return modelMapper.map(materialTransactionDetails, listType);
+	}
+
+	public TransactionDateChangeRequestResponse toResponse(TransactionDateChangeRequestEntity entity) {
+		return modelMapper.map(entity, TransactionDateChangeRequestResponse.class);
+
 	}
 }
 

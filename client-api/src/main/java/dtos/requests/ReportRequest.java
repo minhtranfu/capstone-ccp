@@ -5,7 +5,7 @@ import dtos.IdOnly;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-public class FeedbackRequest {
+public class ReportRequest {
 
 	@NotNull
 	public String content;

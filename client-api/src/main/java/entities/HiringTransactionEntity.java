@@ -5,7 +5,7 @@ import dtos.requests.HiringTransactionRequest;
 import listeners.entityListenters.HiringTransactionEntityListener;
 import org.hibernate.annotations.Where;
 
-import javax.json.bind.annotation.JsonbDateFormat;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -27,12 +27,14 @@ public class HiringTransactionEntity {
 	private long id;
 	private Status status;
 	private Integer dailyPrice;
-	private Integer deliveryPrice;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 
 	private LocalDate beginDate;
 	private LocalDate endDate;
+
+	private String cancelReason;
+	private ContractorEntity canceledBy;
 
 	private String equipmentAddress;
 	private double equipmentLatitude;
@@ -47,6 +49,7 @@ public class HiringTransactionEntity {
 
 	private EquipmentEntity equipment;
 	private ContractorEntity requester;
+	private EquipmentFeedbackEntity equipmentFeedback;
 
 
 	public HiringTransactionEntity() {
@@ -68,7 +71,6 @@ public class HiringTransactionEntity {
 		this.requester = requester;
 
 		this.dailyPrice = equipment.getDailyPrice();
-		this.deliveryPrice = equipment.getDeliveryPrice();
 	}
 	@Id
 	@GeneratedValue
@@ -100,16 +102,6 @@ public class HiringTransactionEntity {
 
 	public void setDailyPrice(Integer dailyPrice) {
 		this.dailyPrice = dailyPrice;
-	}
-
-	@Basic
-	@Column(name = "delivery_price", nullable = true)
-	public Integer getDeliveryPrice() {
-		return deliveryPrice;
-	}
-
-	public void setDeliveryPrice(Integer deliveryPrice) {
-		this.deliveryPrice = deliveryPrice;
 	}
 
 
@@ -163,6 +155,28 @@ public class HiringTransactionEntity {
 
 	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
+	}
+
+
+	@Basic
+	@Column(name = "cancel_reason")
+	public String getCancelReason() {
+		return cancelReason;
+	}
+
+	public void setCancelReason(String cancelReason) {
+		this.cancelReason = cancelReason;
+	}
+
+
+	@ManyToOne
+	@JoinColumn(name = "canceled_by")
+	public ContractorEntity getCanceledBy() {
+		return canceledBy;
+	}
+
+	public void setCanceledBy(ContractorEntity canceledBy) {
+		this.canceledBy = canceledBy;
 	}
 
 	@NotNull
@@ -263,13 +277,28 @@ public class HiringTransactionEntity {
 		this.equipment = equipment;
 	}
 
+	@OneToOne(mappedBy = "hiringTransaction")
+	@JsonbTransient
+	public EquipmentFeedbackEntity getEquipmentFeedback() {
+		return equipmentFeedback;
+	}
+
+	public void setEquipmentFeedback(EquipmentFeedbackEntity equipmentFeedback) {
+		this.equipmentFeedback = equipmentFeedback;
+	}
+
+
+	@Transient
+	public boolean isFeedbacked() {
+		return this.getEquipmentFeedback() != null;
+	}
+
 	@Override
 	public String toString() {
 		return "HiringTransactionEntity{" +
 				"id=" + id +
 				", status=" + status +
 				", dailyPrice=" + dailyPrice +
-				", deliveryPrice=" + deliveryPrice +
 				", createdTime=" + createdTime +
 				", updatedTime=" + updatedTime +
 				", beginDate=" + beginDate +

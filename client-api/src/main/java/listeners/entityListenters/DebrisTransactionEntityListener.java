@@ -98,11 +98,11 @@ public class DebrisTransactionEntityListener {
 								entity.getDebrisPost().getTitle())
 						, supplier.getId()
 						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.DEBRIS_TRANSACTIONS, entity.getId())));
-				firebaseMessagingManager.sendMessage(new NotificationDTO("Debris service Finished!",
-						String.format("\"%s\" have been confirmed FINISHED ",
-								entity.getDebrisPost().getTitle())
-						, requester.getId()
-						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.DEBRIS_TRANSACTIONS, entity.getId())));
+//				firebaseMessagingManager.sendMessage(new NotificationDTO("Debris service Finished!",
+//						String.format("\"%s\" have been confirmed FINISHED ",
+//								entity.getDebrisPost().getTitle())
+//						, requester.getId()
+//						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.DEBRIS_TRANSACTIONS, entity.getId())));
 
 				break;
 			case CANCELED:

@@ -29,6 +29,11 @@ public class HiringTransactionValidator {
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(hiringTransactionRequest.getEquipmentId());
 		ContractorEntity foundRequester = contractorDAO.findByIdWithValidation(hiringTransactionRequest.getRequesterId());
 
+		//  4/3/19 validate if active
+		if (!foundRequester.isActivated()) {
+			throw new BadRequestException(String.format("Requester %s is %s",
+					foundRequester.getName(), foundRequester.getStatus().getBeautifiedName()));
+		}
 
 		//todo validate supplier cannot request his own equipment
 		if (foundEquipment.getContractor().getId() == foundRequester.getId()) {
@@ -43,17 +48,6 @@ public class HiringTransactionValidator {
 		//  1/30/19 check requester activation
 		contractorDAO.validateContractorActivated(foundRequester);
 
-		//  1/30/19 set equipment location from equipment id
-
-		if (
-				foundEquipment.getAddress() == null
-						||
-						foundEquipment.getAddress().isEmpty()
-						||
-						foundEquipment.getLongitude() == null
-						|| foundEquipment.getLatitude() == null) {
-			throw new InternalServerErrorException(String.format("equipment id=%d location data not completed", foundEquipment.getId()));
-		}
 
 
 

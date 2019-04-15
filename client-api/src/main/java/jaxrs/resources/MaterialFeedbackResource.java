@@ -8,6 +8,7 @@ import entities.MaterialTransactionDetailEntity;
 import entities.MaterialTransactionEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -46,9 +47,8 @@ public class MaterialFeedbackResource {
 
 		MaterialTransactionDetailEntity managedTransaction = materialTransactionDetailDAO.findByIdWithValidation
 				(materialFeedbackEntity.getMaterialTransactionDetail().getId());
-		if (managedTransaction.getMaterialTransaction().getStatus() != MaterialTransactionEntity.Status.FINISHED
-				&& managedTransaction.getMaterialTransaction().getStatus() != MaterialTransactionEntity.Status.CANCELED) {
-			throw new BadRequestException("You can only feedback on FINISHED or CANCELED status");
+		if (managedTransaction.getMaterialTransaction().getStatus() != MaterialTransactionEntity.Status.FINISHED) {
+			throw new BadRequestException("You can only feedback on FINISHED status");
 		}
 
 		if (managedTransaction.getMaterialTransaction().getRequester().getId() != getClaimContractorId()) {
@@ -72,8 +72,15 @@ public class MaterialFeedbackResource {
 	@GET
 	@Path("supplier")
 	@RolesAllowed("contractor")
-	public Response getFeedbacksBySupplier() {
+	public Response getFeedbacksBySupplier(
+			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit,
+			@QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
+	) {
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 		//no need to validate contractor because it will return empty list
-		return Response.ok(materialFeedbackDAO.getFeedbacksBySupplier(getClaimContractorId())).build();
+		return Response.ok(materialFeedbackDAO.getFeedbacksBySupplier(getClaimContractorId(),limit,offset,orderBy)).build();
 	}
 }

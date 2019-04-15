@@ -2,6 +2,7 @@ package entities;
 
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 //@Where(clause = "is_deleted=0")
@@ -42,5 +43,18 @@ public class EquipmentImageEntity {
 
 	public void setEquipment(EquipmentEntity equipment) {
 		this.equipment = equipment;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof EquipmentImageEntity)) return false;
+		EquipmentImageEntity that = (EquipmentImageEntity) o;
+		return id == that.id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

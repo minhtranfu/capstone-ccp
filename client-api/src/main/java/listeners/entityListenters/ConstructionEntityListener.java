@@ -17,12 +17,6 @@ public class ConstructionEntityListener {
 	@PostUpdate
 	void postUpdate(ConstructionEntity constructionEntity) {
 
-		for (EquipmentEntity equipmentEntity : constructionEntity.getEquipmentEntities()) {
-			equipmentEntity.setLatitude(constructionEntity.getLatitude());
-			equipmentEntity.setLongitude(constructionEntity.getLongitude());
-			equipmentEntity.setAddress(constructionEntity.getAddress());
-			equipmentDAO.merge(equipmentEntity);
-		}
 	}
 
 	@PostRemove

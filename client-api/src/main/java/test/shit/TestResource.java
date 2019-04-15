@@ -2,15 +2,19 @@ package test.shit;
 
 
 import com.google.firebase.messaging.FirebaseMessagingException;
+import daos.ContractorAccountDAO;
 import daos.EquipmentDAO;
 import daos.SubscriptionDAO;
+import dtos.Credentials;
 import dtos.notifications.NotificationDTO;
 import dtos.requests.EquipmentPutRequest;
 import dtos.validationObjects.LocationValidator;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentRequest;
+import entities.ContractorAccountEntity;
 import entities.EquipmentEntity;
 import entities.EquipmentTypeEntity;
+import managers.EmailManager;
 import managers.FirebaseMessagingManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +23,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.mindrot.jbcrypt.BCrypt;
 import org.omg.CORBA.PUBLIC_MEMBER;
 import utils.ModelConverter;
 import utils.NotificationHelper;
@@ -28,6 +33,7 @@ import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.mail.MessagingException;
 import javax.validation.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -41,6 +47,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.sql.Wrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -66,7 +73,13 @@ public class TestResource  {
 	ModelConverter modelConverter;
 
 	@Inject
+	ContractorAccountDAO contractorAccountDAO;
+
+	@Inject
 	FirebaseMessagingManager messagingManager;
+
+	@Inject
+	EmailManager emailManager;
 
 	@GET
 	public String doGet() {
@@ -262,6 +275,25 @@ public class TestResource  {
 		return Response.ok().build();
 	}
 
+	@POST
+	@Path("hashing/changeAll")
+	public Response changeAllPassword(Credentials credentials) {
+		String password = credentials.getPassword();
+		List<ContractorAccountEntity> all = contractorAccountDAO.findAll();
+		for (ContractorAccountEntity contractorAccountEntity : all) {
+			String hashpw = BCrypt.hashpw(password, BCrypt.gensalt());
+			contractorAccountEntity.setPassword(hashpw);
+			contractorAccountDAO.merge(contractorAccountEntity);
+		}
+		return Response.ok(all).build();
+	}
 
+
+	@POST
+	@Path("email/test")
+	public Response sendTestingEmail() throws IOException, MessagingException {
+		emailManager.sendmail("Testing from nghia","Testing content from nghia\nTesting content from nghia\nTesting content from nghia\n","luuquangnghia97@gmail.com");
+		return Response.ok().build();
+	}
 
 }

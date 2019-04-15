@@ -1,12 +1,15 @@
 package daos;
 
+import dtos.notifications.NotificationDTO;
 import dtos.queryResults.MatchedSubscriptionResult;
-import entities.AvailableTimeRangeEntity;
-import entities.EquipmentEntity;
-import entities.HiringTransactionEntity;
-import utils.Constants;
+import dtos.responses.GETListResponse;
+import dtos.wrappers.OrderByWrapper;
+import entities.*;
+import managers.FirebaseMessagingManager;
+import utils.CommonUtils;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -14,8 +17,6 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Stateless
 public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
@@ -24,6 +25,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	@PersistenceContext
 	EntityManager entityManager;
 
+	@Inject
+	FirebaseMessagingManager firebaseMessagingManager;
 
 	public List<EquipmentEntity> searchEquipment(String query, LocalDate beginDate, LocalDate endDate,
 												 Long contractorId, long equipmentTypeId,
@@ -54,7 +57,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		ParameterExpression<LocalDate> beginDateParam = criteriaBuilder.parameter(LocalDate.class);
 		ParameterExpression<LocalDate> endDateParam = criteriaBuilder.parameter(LocalDate.class);
 		ParameterExpression<Long> equipmentTypeIdParam = criteriaBuilder.parameter(Long.class);
-
 
 
 //		select equipment available in current timerange
@@ -97,32 +99,19 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 		if (!orderBy.isEmpty()) {
 			List<Order> orderList = new ArrayList<>();
-			// TODO: 2/14/19 string split to orderBy list
-			Pattern pattern = Pattern.compile(Constants.RESOURCE_REGEX_ORDERBY_SINGLEITEM);
-
-			Matcher matcher = pattern.matcher(orderBy);
-			while (matcher.find()) {
-				String orderBySingleItem = orderBy.substring(matcher.start(), matcher.end());
-
-
-				String columnName = matcher.group(1);
-				String orderKeyword = matcher.group(2);
-
-				if (orderKeyword.equals("desc")) {
-					orderList.add(criteriaBuilder.desc(e.get(columnName)));
+			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+				if (orderByWrapper.isAscending()) {
+					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
 				} else {
-					orderList.add(criteriaBuilder.asc(e.get(columnName)));
-
+					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
 				}
 			}
-
-
 			criteriaQuery.orderBy(orderList);
 		}
 
 		TypedQuery<EquipmentEntity> typeQuery = entityManager.createQuery(criteriaQuery);
 
-		typeQuery.setParameter(queryParam, "%"+query+"%");
+		typeQuery.setParameter(queryParam, "%" + query + "%");
 		if (contractorId != null) {
 			typeQuery.setParameter(contractorParam, contractorId);
 		}
@@ -143,11 +132,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		typeQuery.setMaxResults(limit);
 
 
-//		List<EquipmentEntity> resultList = entityManager
-//				.createNamedQuery("EquipmentEntity.searchEquipment", EquipmentEntity.class)
-//				.setParameter("curBeginDate", beginDate)
-//				.setParameter("curEndDate", endDate)
-//				.getResultList();
 
 		return typeQuery.getResultList();
 
@@ -224,20 +208,93 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	}
 
 	public void changeAllStatusToWaitingForReturning(List<EquipmentEntity> overdateRentingEquipments) {
+
 		for (EquipmentEntity equipmentEntity : overdateRentingEquipments) {
 			equipmentEntity.setStatus(EquipmentEntity.Status.WAITING_FOR_RETURNING);
-			entityManager.merge(equipmentEntity);
+			EquipmentEntity managedEquipment = entityManager.merge(equipmentEntity);
+
+			HiringTransactionEntity processingHiringTransaction = managedEquipment.getProcessingHiringTransactions().get(0);
+			ContractorEntity requester = processingHiringTransaction.getRequester();
+			ContractorEntity supplier = equipmentEntity.getContractor();
+
+			//notify status changed to WAITING_FOR_RETURNING
+			//to supplier
+			firebaseMessagingManager.sendMessage(new NotificationDTO("Renting time ended",
+					String.format("Renting session of \"%s\" has finished. It's time to receive your equipment from %s"
+							, managedEquipment.getName()
+							, requester.getName())
+					, supplier.getId()
+					, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, processingHiringTransaction.getId())));
+
+			//to requester
+			firebaseMessagingManager.sendMessage(new NotificationDTO("Renting time ended",
+					String.format("Your renting time for \"%s\" has finished. It's time to return it to %s", managedEquipment.getName(), supplier.getName())
+					, supplier.getId()
+					, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.HIRING_TRANSACTIONS, processingHiringTransaction.getId())));
+
 		}
 	}
 
 	public List<MatchedSubscriptionResult> getMatchedEquipmentForSubscription(int timeOffset) {
-		return entityManager.createNamedQuery("EquipmentEntity.getMatchedEquipmentForSubscriptions",MatchedSubscriptionResult.class)
+		return entityManager.createNamedQuery("EquipmentEntity.getMatchedEquipmentForSubscriptions", MatchedSubscriptionResult.class)
 				.setParameter("timeOffset", timeOffset)
 				.getResultList();
 
 	}
 
+	public GETListResponse<EquipmentEntity> getEquipmentsBySupplierId(long supplierId, EquipmentEntity.Status status, int limit, int offset, String orderBy) {
+		//select  e from EquipmentEntity  e where e.contractor.id = :supplierId
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+		CriteriaQuery<EquipmentEntity> criteriaQuery = criteriaBuilder.createQuery(EquipmentEntity.class);
+
+		Root<EquipmentEntity> e = countQuery.from(EquipmentEntity.class);
+		criteriaQuery.from(EquipmentEntity.class);
+
+
+		ParameterExpression<Long> supplierIdParam = criteriaBuilder.parameter(Long.class);
+		ParameterExpression<EquipmentEntity.Status> statusParam = criteriaBuilder.parameter(EquipmentEntity.Status.class);
+
+		Predicate whereClause = criteriaBuilder.and(
+				criteriaBuilder.equal(e.get("contractor").get("id"), supplierIdParam)
+				, status != null ? criteriaBuilder.equal(e.get("status"), statusParam) : criteriaBuilder.conjunction());
+
+		countQuery.select(criteriaBuilder.count(e.get("id"))).where(whereClause);
+		criteriaQuery.select(e).where(whereClause);
+		TypedQuery<Long> countTypedQuery = entityManager.createQuery(countQuery)
+				.setParameter(supplierIdParam, supplierId);
+
+
+		if (!orderBy.isEmpty()) {
+			List<Order> orderList = new ArrayList<>();
+			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+				if (orderByWrapper.isAscending()) {
+					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
+				} else {
+					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
+				}
+			}
+			criteriaQuery.orderBy(orderList);
+		}
+
+		TypedQuery<EquipmentEntity> listTypedQuery = entityManager.createQuery(criteriaQuery)
+				.setParameter(supplierIdParam, supplierId)
+				.setMaxResults(limit)
+				.setFirstResult(offset);
+
+
+		if (status != null) {
+			countTypedQuery.setParameter(statusParam, status);
+			listTypedQuery.setParameter(statusParam, status);
+		}
+
+		Long itemCount = countTypedQuery.getSingleResult();
+		List<EquipmentEntity> equipmentEntities = listTypedQuery.getResultList();
+
+		return new GETListResponse<EquipmentEntity>(itemCount, limit, offset, orderBy, equipmentEntities);
+
+	}
 }
 
-// TODO: 2/22/19 make the dao singleton for a publisher pattern !
 

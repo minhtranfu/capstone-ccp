@@ -1,7 +1,11 @@
 package entities;
 
+import listeners.entityListenters.MaterialTransactionEntityListener;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.Where;
 
+import javax.enterprise.inject.Default;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -15,6 +19,8 @@ import java.util.List;
 		, @NamedQuery(name = "MaterialTransactionEntity.ByRequesterId", query = "select e from MaterialTransactionEntity  e where e.requester.id = :requesterId")
 
 })
+@EntityListeners({MaterialTransactionEntityListener.class})
+@DynamicInsert
 public class MaterialTransactionEntity {
 	private long id;
 
@@ -31,6 +37,10 @@ public class MaterialTransactionEntity {
 	@Min(-180)
 	@Max(180)
 	private Double requesterLong;
+
+	private String cancelReason;
+	private ContractorEntity canceledBy;
+
 
 	@NotNull
 	private Status status;
@@ -100,7 +110,27 @@ public class MaterialTransactionEntity {
 
 
 	@Basic
-	@Column(name = "status", nullable = true, length = 256, insertable = false)
+	@Column(name = "cancel_reason")
+	public String getCancelReason() {
+		return cancelReason;
+	}
+
+	public void setCancelReason(String cancelReason) {
+		this.cancelReason = cancelReason;
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "canceled_by")
+	public ContractorEntity getCanceledBy() {
+		return canceledBy;
+	}
+
+	public void setCanceledBy(ContractorEntity canceledBy) {
+		this.canceledBy = canceledBy;
+	}
+
+	@Basic
+	@Column(name = "status", nullable = true, length = 256)
 	@Enumerated(EnumType.STRING)
 	public Status getStatus() {
 		return status;
@@ -131,7 +161,7 @@ public class MaterialTransactionEntity {
 	}
 
 	@Basic
-	@Column(name = "is_deleted", nullable = true)
+	@Column(name = "is_deleted", nullable = true, insertable = false)
 	public boolean isDeleted() {
 		return isDeleted;
 	}

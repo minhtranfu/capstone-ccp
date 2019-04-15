@@ -5,12 +5,10 @@ import daos.DebrisBidDAO;
 import daos.DebrisPostDAO;
 import daos.DebrisTransactionDAO;
 import dtos.requests.DebrisTransactionRequest;
-import entities.ContractorEntity;
-import entities.DebrisBidEntity;
-import entities.DebrisPostEntity;
-import entities.DebrisTransactionEntity;
+import entities.*;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -34,7 +32,6 @@ public class DebrisTransactionResource {
 	DebrisPostDAO debrisPostDAO;
 	@Inject
 	DebrisBidDAO debrisBidDAO;
-
 
 
 	@Inject
@@ -68,10 +65,13 @@ public class DebrisTransactionResource {
 		debrisTransactionEntity.setDebrisBid(managedBid);
 
 
-
 		if (requesterId != managedPost.getRequester().getId()) {
 			throw new BadRequestException("Only Post Requester can make debris transaction!");
 		}
+
+		// 4/3/19 validate reqquester must be activated
+		contractorDAO.validateContractorActivated(requesterId);
+
 
 		// 3/21/19 validate status of post and bid
 		if (managedBid.getStatus() != DebrisBidEntity.Status.PENDING) {
@@ -117,14 +117,18 @@ public class DebrisTransactionResource {
 			throw new BadRequestException("Status is null!");
 		}
 
+
 		switch (statusRequest.getStatus()) {
 			case ACCEPTED:
 				//validate
+
 				if (foundTransaction.getStatus() != DebrisTransactionEntity.Status.ACCEPTED) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), statusRequest.getStatus()));
 
 				}
+				contractorDAO.validateContractorActivated(foundTransaction.getRequester());
+				contractorDAO.validateContractorActivated(foundTransaction.getSupplier());
 				break;
 			case DELIVERING:
 
@@ -180,13 +184,19 @@ public class DebrisTransactionResource {
 
 				String cancelReason = statusRequest.getCancelReason();
 				foundTransaction.setCancelReason(cancelReason);
+
+				//canceledBy
+				ContractorEntity canceledBy = new ContractorEntity();
+				canceledBy.setId(getClaimContractorId());
+				foundTransaction.setCanceledBy(canceledBy);
+
 				if (cancelReason == null || cancelReason.isEmpty()) {
 					throw new BadRequestException("You must have cancel reason");
 				}
 
 				// 3/21/19 only requester or supplier can do this
 				if (foundTransaction.getRequester().getId() != getClaimContractorId()
-				&& foundTransaction.getSupplier().getId() != getClaimContractorId()) {
+						&& foundTransaction.getSupplier().getId() != getClaimContractorId()) {
 					throw new BadRequestException("Only requester or supplier can change this status");
 				}
 
@@ -195,6 +205,7 @@ public class DebrisTransactionResource {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), statusRequest.getStatus()));
 				}
+
 
 				// 3/21/19 roll back to PENDING both bid and post
 				foundTransaction.getDebrisBid().setStatus(DebrisBidEntity.Status.PENDING);
@@ -211,36 +222,43 @@ public class DebrisTransactionResource {
 	@GET
 	@Path("supplier")
 	@RolesAllowed("contractor")
-	public Response getDebrisTransactionsBySupplierId() {
+	public Response getDebrisTransactionsBySupplierId(
+			@QueryParam("status") DebrisTransactionEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
 
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 
 		long supplierId = getClaimContractorId();
-
-		List<DebrisTransactionEntity> debrisTransactionsBySupplierId = debrisTransactionDAO.getDebrisTransactionsBySupplierId(supplierId);
-
-		return Response.ok(debrisTransactionsBySupplierId).build();
+		return Response.ok(debrisTransactionDAO.getDebrisTransactionsBySupplierId
+				(supplierId, status, limit, offset, orderBy)).build();
 
 	}
-
 
 
 	@GET
 	@Path("requester")
 	@RolesAllowed("contractor")
-	public Response getDebrisTransactionsAsRequester() {
+	public Response getDebrisTransactionsAsRequester(
+			@QueryParam("status") DebrisTransactionEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
+
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
 		long requesterId = getClaimContractorId();
 //		//validate claim contractor
 //		if (requesterId != claimContractorId.getValue().longValue()) {
 //			throw new BadRequestException("You cannot view other people's transaction");
 //		}
-
-		List<DebrisTransactionEntity> transactionsByRequesterId = debrisTransactionDAO.getDebrisTransactionsByRequesterId(requesterId);
-
-		return Response.ok(transactionsByRequesterId).build();
+		return Response.ok(debrisTransactionDAO.
+				getDebrisTransactionsByRequesterId(requesterId, status, limit, offset, orderBy)).build();
 	}
-
-
-
 
 
 }

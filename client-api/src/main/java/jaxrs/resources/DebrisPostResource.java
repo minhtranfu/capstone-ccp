@@ -12,6 +12,7 @@ import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
 import javax.validation.Valid;
@@ -62,7 +63,7 @@ public class DebrisPostResource {
 
 	@GET
 	public Response searchdebris(
-			@QueryParam("q")  @DefaultValue("") String query,
+			@QueryParam("q") @DefaultValue("") String query,
 			@QueryParam("lat") Double latitude,
 			@QueryParam("long") Double longitude,
 			@QueryParam("maxDistance") Double maxDistance,
@@ -113,11 +114,11 @@ public class DebrisPostResource {
 				"thumbnail id=%d not included in image list", debrisPostEntity.getThumbnailImage().getId())));
 
 	}
+
 	@POST
 	@RolesAllowed("contractor")
 	public Response insertDebrisPost(@Valid DebrisPostPostRequest debrisPostRequest) {
 		DebrisPostEntity debrisPostEntity = modelConverter.toEntity(debrisPostRequest);
-
 
 
 		long requesterId = getClaimContractorId();
@@ -125,10 +126,12 @@ public class DebrisPostResource {
 		requester.setId(requesterId);
 		debrisPostEntity.setRequester(requester);
 
+		contractorDAO.validateContractorActivated(requesterId);
 		validatePutPost(debrisPostEntity);
 
 		debrisPostDAO.persist(debrisPostEntity);
 
+		// TODO: 3/29/19 check bug image thumbnail id not references
 
 		// TODO: 3/23/19 check if image already belongs to another post
 		//only add this in post, every edit in future related to image, we use image sub resource
@@ -137,8 +140,8 @@ public class DebrisPostResource {
 			managedImage.setDebrisPost(debrisPostEntity);
 			debrisImageDAO.merge(managedImage);
 		}
-
-		return Response.status(Response.Status.CREATED).entity(debrisPostDAO.findByID(debrisPostEntity.getId())).build();
+		DebrisPostEntity byID = debrisPostDAO.findByID(debrisPostEntity.getId());
+		return Response.status(Response.Status.CREATED).entity(byID).build();
 	}
 
 
@@ -214,9 +217,40 @@ public class DebrisPostResource {
 	@GET
 	@Path("requester")
 	@RolesAllowed("contractor")
-	public Response getAllByRequester() {
-		contractorDAO.findByIdWithValidation(getClaimContractorId());
-		return Response.ok(debrisPostDAO.getByRequester(getClaimContractorId())).build();
+	public Response getAllByRequester(
+			@QueryParam("status") DebrisPostEntity.Status status
+			,@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
+	) {
+		//noneed to validate this because we trust the token
+
+
+//		contractorDAO.findByIdWithValidation(getClaimContractorId());
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+
+		return Response.ok(debrisPostDAO.getByRequester(getClaimContractorId(),status, limit, offset, orderBy)).build();
+	}
+	@GET
+	@Path("supplier")
+	@RolesAllowed("contractor")
+	public Response getAllBySupplier(
+			@QueryParam("status") DebrisPostEntity.Status status
+			,@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
+	) {
+		//noneed to validate this because we trust the token
+
+
+//		contractorDAO.findByIdWithValidation(getClaimContractorId());
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+
+		return Response.ok(debrisPostDAO.getByBidedSupplier(getClaimContractorId(),status, limit, offset, orderBy)).build();
 	}
 
 	@Path("{id:\\d+}/images")

@@ -9,13 +9,30 @@ import java.util.Collection;
 import java.util.List;
 
 public class EquipmentPostRequest extends EquipmentRequest {
-	// TODO: 3/4/19 chekc this when do description image upload
-	@Valid
+	// TODO: 3/4/19 check this when do description image upload
 	@NotNull
-	public Collection<IdOnly> equipmentImages;
+	private List<@Valid IdOnly> equipmentImages;
 
-	@Valid
 	@NotNull
-	public List<AdditionalSpecsValueRequest> additionalSpecsValues;
+	private List<@Valid AdditionalSpecsValueRequest> additionalSpecsValues;
 
+	public EquipmentPostRequest() {
+		super();
+	}
+
+	public List<IdOnly> getEquipmentImages() {
+		return equipmentImages;
+	}
+
+	public void setEquipmentImages(List<IdOnly> equipmentImages) {
+		this.equipmentImages = equipmentImages;
+	}
+
+	public List<AdditionalSpecsValueRequest> getAdditionalSpecsValues() {
+		return additionalSpecsValues;
+	}
+
+	public void setAdditionalSpecsValues(List<AdditionalSpecsValueRequest> additionalSpecsValues) {
+		this.additionalSpecsValues = additionalSpecsValues;
+	}
 }

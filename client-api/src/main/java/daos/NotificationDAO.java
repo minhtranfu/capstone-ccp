@@ -31,4 +31,17 @@ public class NotificationDAO extends BaseDAO<NotificationEntity,Long> {
 				.setMaxResults(limit)
 				.getResultList();
 	}
+
+	public Long getTotalUnreadNotification(long contractorId) {
+		return entityManager.createNamedQuery("NotificationEntity.countUnreadByContractorId", Long.class)
+				.setParameter("contractorId", contractorId)
+				.getSingleResult();
+
+	}
+
+	public int markAllAsRead(long contractorId) {
+		return entityManager.createNamedQuery("NotificationEntity.markAllAsRead")
+				.setParameter("contractorId", contractorId)
+				.executeUpdate();
+	}
 }

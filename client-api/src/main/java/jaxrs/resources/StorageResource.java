@@ -3,9 +3,11 @@ package jaxrs.resources;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
+import daos.ContractorVerifyingImageDAO;
 import daos.DebrisImageDAO;
 import daos.EquipmentImageDAO;
 import dtos.responses.MessageResponse;
+import entities.ContractorVerifyingImageEntity;
 import entities.DebrisImageEntity;
 import entities.EquipmentImageEntity;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -50,6 +52,9 @@ public class StorageResource {
 
 	@Inject
 	EquipmentImageDAO equipmentImageDAO;
+
+	@Inject
+	ContractorVerifyingImageDAO contractorVerifyingImageDAO;
 
 	@GET
 	public Response getFiles() throws IOException {
@@ -131,6 +136,23 @@ public class StorageResource {
 			equipmentImageEntity.setUrl(url);
 			equipmentImageDAO.persist(equipmentImageEntity);
 			resultList.add(equipmentImageEntity);
+		}
+		return Response.status(Response.Status.CREATED).entity(resultList).build();
+	}
+
+	@POST
+	@Path("contractorVerifyingImages")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response uploadTempContractorVerifyingImages(List<Attachment> attachmentList) throws IOException {
+		String credentialPath = servletContext.getRealPath("/WEB-INF/" + Constants.CREDENTIAL_JSON_FILENAME);
+		List<String> urlList = ImageUtil.uploadImages(credentialPath, attachmentList);
+		List<ContractorVerifyingImageEntity> resultList = new ArrayList<>();
+
+		for (String url : urlList) {
+			ContractorVerifyingImageEntity contractorVerifyingImageEntity = new ContractorVerifyingImageEntity();
+			contractorVerifyingImageEntity.setUrl(url);
+			contractorVerifyingImageDAO.persist(contractorVerifyingImageEntity);
+			resultList.add(contractorVerifyingImageEntity);
 		}
 		return Response.status(Response.Status.CREATED).entity(resultList).build();
 	}

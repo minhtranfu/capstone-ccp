@@ -32,6 +32,7 @@ import java.time.LocalDate;
 
 		"and not exists (select * from hiring_transaction h where h.equipment_id = :equipmentId and (h.status = 'ACCEPTED' or h.status = 'PROCESSING') and not (h.end_date > s.end_date or h.end_date< s.begin_date))")
 })
+@NamedQuery(name = "SubscriptionEntity.byContractor", query = "select e from SubscriptionEntity e where e.contractor.id = :contractorId ")
 public class SubscriptionEntity {
 	private long id;
 
@@ -64,6 +65,8 @@ public class SubscriptionEntity {
 	@Min(-180)
 	@Max(180)
 	private Double longitude;
+
+	private String address;
 
 	@Id
 	@GeneratedValue
@@ -185,5 +188,16 @@ public class SubscriptionEntity {
 
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
+	}
+
+
+	@Basic
+	@Column(name = "address")
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 }

@@ -1,9 +1,10 @@
 package daos;
 
-import entities.AvailableTimeRangeEntity;
+import dtos.responses.GETListResponse;
+import dtos.wrappers.OrderByWrapper;
+import entities.*;
 import entities.MaterialEntity;
-import entities.HiringTransactionEntity;
-import entities.MaterialEntity;
+import utils.CommonUtils;
 import utils.Constants;
 
 import javax.ejb.Stateless;
@@ -37,7 +38,7 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 //		merge 3 main where clauses
 		criteriaQuery.select(e).where(
 				materialTypeId != 0 ? criteriaBuilder.equal(materialTypeIdParam, e.get("materialType").get("id")) : criteriaBuilder.conjunction()
-				, contractorId !=null ? criteriaBuilder.notEqual(e.get("contractor").get("id"),contractorIdParam) : criteriaBuilder.conjunction()
+				, contractorId != null ? criteriaBuilder.notEqual(e.get("contractor").get("id"), contractorIdParam) : criteriaBuilder.conjunction()
 				, criteriaBuilder.like(e.get("name"), queryParam)
 				, criteriaBuilder.equal(e.get("hidden"), false)
 		);
@@ -79,4 +80,50 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 		return typeQuery.getResultList();
 	}
 
+	public Object getBySupplierId(long supplierId, int limit, int offset, String orderBy) {
+
+		//select  e from MaterialEntity  e where e.contractor.id = :supplierId
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+		CriteriaQuery<MaterialEntity> criteriaQuery = criteriaBuilder.createQuery(MaterialEntity.class);
+
+		Root<MaterialEntity> e = countQuery.from(MaterialEntity.class);
+		criteriaQuery.from(MaterialEntity.class);
+
+
+		ParameterExpression<Long> supplierIdParam = criteriaBuilder.parameter(Long.class);
+
+		Predicate whereClause = criteriaBuilder.equal(e.get("contractor").get("id"), supplierIdParam);
+
+		countQuery.select(criteriaBuilder.count(e.get("id"))).where(whereClause);
+		criteriaQuery.select(e).where(whereClause);
+		TypedQuery<Long> countTypedQuery = entityManager.createQuery(countQuery)
+				.setParameter(supplierIdParam, supplierId);
+
+
+		if (!orderBy.isEmpty()) {
+			List<Order> orderList = new ArrayList<>();
+			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+				if (orderByWrapper.isAscending()) {
+					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
+				} else {
+					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
+				}
+			}
+			criteriaQuery.orderBy(orderList);
+		}
+
+		TypedQuery<MaterialEntity> listTypedQuery = entityManager.createQuery(criteriaQuery)
+				.setParameter(supplierIdParam, supplierId)
+				.setMaxResults(limit)
+				.setFirstResult(offset);
+
+
+		Long itemCount = countTypedQuery.getSingleResult();
+		List<MaterialEntity> materialEntities = listTypedQuery.getResultList();
+
+		return new GETListResponse<MaterialEntity>(itemCount, limit, offset, orderBy, materialEntities);
+
+	}
 }

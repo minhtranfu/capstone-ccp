@@ -2,18 +2,23 @@ package entities;
 
 import org.hibernate.annotations.Where;
 
-import javax.enterprise.inject.TransientReference;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.xml.bind.annotation.XmlTransient;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
 
 @Table(name = "contractor", schema = "capstone_ccp")
 @Where(clause = "is_deleted=0")
-
+@NamedQueries({
+		@NamedQuery(name = "ContractorEntity.finishedHiringTransactionRateBySupplierId", query = "select COUNT(e) from HiringTransactionEntity e where e.equipment.contractor.id = :supplierId and e.status = 'FINISHED'")
+		, @NamedQuery(name = "ContractorEntity.finishedMaterialTransactionRateBySupplierId", query = "select COUNT(e) from MaterialTransactionEntity e where e.supplier.id  = :supplierId and e.status = 'FINISHED'")
+		, @NamedQuery(name = "ContractorEntity.finishedDebrisTransactionRateBySupplierId", query = "select COUNT(e) from DebrisTransactionEntity e where e.supplier.id = :supplierId and e.status = 'FINISHED'")
+}
+)
 public class ContractorEntity {
 	private long id;
 
@@ -22,13 +27,12 @@ public class ContractorEntity {
 	private String email;
 
 	private String phoneNumber;
-	private String thumbnailImage;
+	private String thumbnailImageUrl;
 
 	private Status status;
 
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
-
 
 
 	private List<EquipmentEntity> equipments;
@@ -41,12 +45,20 @@ public class ContractorEntity {
 	private List<SubscriptionEntity> subscriptionEntities;
 
 	private List<NotificationEntity> notifications;
+	private List<NotificationEntity> unreadNotification;
+
+	private Collection<ContractorVerifyingImageEntity> contractorVerifyingImages;
+
 
 	private List<DebrisFeedbackEntity> debrisFeedbacks;
-	private List<MaterialFeedbackEntity> materialFeedbacks;
-
 	private double averageDebrisRating;
+
+	private List<MaterialFeedbackEntity> materialFeedbacks;
 	private double averageMaterialRating;
+
+	private List<EquipmentFeedbackEntity> equipmentFeedbacks;
+	private double averageEquipmentRating;
+
 
 	public ContractorEntity() {
 	}
@@ -122,12 +134,12 @@ public class ContractorEntity {
 
 	@Basic
 	@Column(name = "thumbnail_image_url", nullable = true, length = 255)
-	public String getThumbnailImage() {
-		return thumbnailImage;
+	public String getThumbnailImageUrl() {
+		return thumbnailImageUrl;
 	}
 
-	public void setThumbnailImage(String thumbnailImage) {
-		this.thumbnailImage = thumbnailImage;
+	public void setThumbnailImageUrl(String thumbnailImage) {
+		this.thumbnailImageUrl = thumbnailImage;
 	}
 
 	@Basic
@@ -253,6 +265,27 @@ public class ContractorEntity {
 
 
 	@JsonbTransient
+	@OneToMany(mappedBy = "contractor", cascade = {})
+	public Collection<ContractorVerifyingImageEntity> getContractorVerifyingImages() {
+		return contractorVerifyingImages;
+	}
+
+	public void setContractorVerifyingImages(Collection<ContractorVerifyingImageEntity> contractorVerifyingImages) {
+		this.contractorVerifyingImages = contractorVerifyingImages;
+	}
+
+	public void addContractorVerifyingImage(ContractorVerifyingImageEntity contractorVerifyingImageEntity) {
+		this.contractorVerifyingImages.add(contractorVerifyingImageEntity);
+		contractorVerifyingImageEntity.setContractor(this);
+	}
+
+	public void removeContractorVerifyingImage(ContractorVerifyingImageEntity contractorVerifyingImageEntity) {
+		this.contractorVerifyingImages.remove(contractorVerifyingImageEntity);
+		contractorVerifyingImageEntity.setContractor(null);
+	}
+
+
+	@JsonbTransient
 	@OneToMany(mappedBy = "supplier")
 	public List<DebrisFeedbackEntity> getDebrisFeedbacks() {
 		return debrisFeedbacks;
@@ -264,7 +297,7 @@ public class ContractorEntity {
 
 	@Transient
 	public int getDebrisFeedbacksCount() {
-		return getDebrisFeedbacks().size();
+		return getDebrisFeedbacks() != null ? getDebrisFeedbacks().size() : 0;
 	}
 
 	@Transient
@@ -287,8 +320,8 @@ public class ContractorEntity {
 	}
 
 	@Transient
-	public int getMaterialFeedbacksCount(){
-		return materialFeedbacks.size();
+	public int getMaterialFeedbacksCount() {
+		return getMaterialFeedbacks() != null ? getMaterialFeedbacks().size() : 0;
 	}
 
 	@Transient
@@ -300,17 +333,58 @@ public class ContractorEntity {
 		this.averageMaterialRating = averageMaterialRating;
 	}
 
+
+	@JsonbTransient
+	@OneToMany(mappedBy = "supplier")
+	public List<EquipmentFeedbackEntity> getEquipmentFeedbacks() {
+		return equipmentFeedbacks;
+	}
+
+	public void setEquipmentFeedbacks(List<EquipmentFeedbackEntity> equipmentFeedbacks) {
+		this.equipmentFeedbacks = equipmentFeedbacks;
+	}
+
+	@Transient
+	public int getEquipmentFeedbacksCount() {
+		return getEquipmentFeedbacks() != null ? getEquipmentFeedbacks().size() : 0;
+	}
+
+	@Transient
+	public double getAverageEquipmentRating() {
+		return averageEquipmentRating;
+	}
+
+
+	public void setAverageEquipmentRating(double averageEquipmentRating) {
+		this.averageEquipmentRating = averageEquipmentRating;
+	}
+
 	@PostLoad
 	void postLoad() {
 		this.averageDebrisRating = getDebrisFeedbacks().stream()
 				.mapToDouble(DebrisFeedbackEntity::getRating).average().orElse(0);
 		this.averageMaterialRating = getMaterialFeedbacks().stream()
 				.mapToDouble(MaterialFeedbackEntity::getRating).average().orElse(0);
+		this.averageEquipmentRating = getEquipmentFeedbacks().stream()
+				.mapToDouble(EquipmentFeedbackEntity::getRating).average().orElse(0);
 	}
 
-	public enum Status{
-		NOT_VERIFIED,
-		ACTIVATED,
-		DEACTIVATED
+
+	public enum Status {
+		NOT_VERIFIED("not verified"),
+		ACTIVATED("activated"),
+		DEACTIVATED("deactivated");
+
+		private String beautifiedName;
+
+		Status(String beautifiedName) {
+
+			this.beautifiedName = beautifiedName;
+		}
+
+		public String getBeautifiedName() {
+			return beautifiedName;
+		}
+
 	}
 }

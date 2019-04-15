@@ -13,8 +13,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class SubscriptionRequest {
-	private long id;
-
 	//can be null
 	@Valid
 	private IdOnly equipmentType;
@@ -41,13 +39,8 @@ public class SubscriptionRequest {
 	@Max(180)
 	private Double longitude;
 
-	public long getId() {
-		return id;
-	}
+	private String address;
 
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public IdOnly getEquipmentType() {
 		return equipmentType;
@@ -105,5 +98,13 @@ public class SubscriptionRequest {
 
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 }

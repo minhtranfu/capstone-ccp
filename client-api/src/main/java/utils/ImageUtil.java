@@ -19,8 +19,10 @@ import java.util.*;
 import static utils.Constants.BUCKET_NAME;
 
 public class ImageUtil {
+	private static final List<String> allowedExt = Arrays.asList("jpg", "jpeg", "png", "gif", "jfif", "exif", "tiff", "bmp", "ppm", "pgm", "pbm", "pnm", "bat", "heif", "bpg");
 
-	public static List<String> uploadImages(String credentialPath,List<Attachment> attachmentList) throws IOException {
+
+	public static List<String> uploadImages(String credentialPath, List<Attachment> attachmentList) throws IOException {
 		ArrayList<String> urlList = new ArrayList<>();
 		for (Attachment attachment : attachmentList) {
 			ContentDisposition fileDetail = attachment.getContentDisposition();
@@ -30,10 +32,9 @@ public class ImageUtil {
 			// Check extension of file
 			if (fileName != null && !fileName.isEmpty() && fileName.contains(".")) {
 				final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
-				List<String> allowedExt = Arrays.asList("jpg", "jpeg", "png", "gif");
 
 				if (allowedExt.contains(extension)) {
-					urlList.add(ImageUtil.uploadFile(credentialPath,uploadedInputStream, fileDetail));
+					urlList.add(ImageUtil.uploadFile(credentialPath, uploadedInputStream, fileDetail));
 
 				} else {
 					throw new BadRequestException("file must be an image");

@@ -6,11 +6,13 @@ import daos.DebrisPostDAO;
 import daos.DebrisServiceTypeDAO;
 import dtos.requests.DebrisBidRequest;
 import dtos.responses.DebrisBidResponse;
+import dtos.responses.GETListResponse;
 import entities.ContractorEntity;
 import entities.DebrisBidEntity;
 import entities.DebrisPostEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import utils.Constants;
 import utils.ModelConverter;
 
 import javax.annotation.security.RolesAllowed;
@@ -70,9 +72,15 @@ public class DebrisBidResource {
 
 		long supplierId = getClaimContractorId();
 
+		contractorDAO.validateContractorActivated(supplierId);
 
 		//3/21/19 validate cannot post his own post
 		DebrisPostEntity managedPost = debrisPostDAO.findByIdWithValidation(debrisBidEntity.getDebrisPost().getId());
+
+		// TODO: 4/14/19 validate debris post status is pending
+		if (managedPost.getStatus() != DebrisPostEntity.Status.PENDING) {
+			throw new BadRequestException("Debris Post status must be PENDING");
+		}
 		if (managedPost.getRequester().getId() == supplierId) {
 			throw new BadRequestException("You cannot bid on your own post");
 		}
@@ -105,6 +113,8 @@ public class DebrisBidResource {
 			throw new BadRequestException("You cannot edit other people's debris post");
 		}
 
+		// TODO: 4/5/19 khong cho sua price
+		// TODO: 4/5/19 check status la Pending thi moi cho sua
 		modelConverter.toEntity(putRequest, managedDebrisBidEntity);
 		return Response.ok(modelConverter.toResponse(debrisBidDAO.merge(managedDebrisBidEntity))).build();
 	}
@@ -139,8 +149,7 @@ public class DebrisBidResource {
 				throw new BadRequestException("Not allowed to change to " + request.getStatus());
 			case ACCEPTED:
 				//  3/20/19 check pending
-				// TODO: 3/21/19 let debrisTransaction handle this
-
+				//let debrisTransaction handle this
 				throw new BadRequestException("Not allowed to change to " + request.getStatus());
 //				if (managedDebrisBidEntity.getStatus() != DebrisBidEntity.Status.PENDING) {
 //					throw new BadRequestException(String.format("Cannot change from %s to %s",
@@ -166,13 +175,30 @@ public class DebrisBidResource {
 	@GET
 	@Path("supplier")
 	@RolesAllowed("contractor")
-	public Response getAllBySupplier() {
-		contractorDAO.findByIdWithValidation(getClaimContractorId());
-		List<DebrisBidEntity> bySupplier = debrisBidDAO.getBySupplier(
-				getClaimContractorId());
-		List<DebrisBidResponse> debrisBidResponses = modelConverter.toResponse(bySupplier);
+	public Response getAllBySupplier(
+			@QueryParam("status") DebrisBidEntity.Status status
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
 
-		return Response.ok(debrisBidResponses).build();
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+
+		GETListResponse<DebrisBidEntity> bySupplier = debrisBidDAO.getBySupplier(
+				getClaimContractorId(), status, limit, offset, orderBy);
+	
+		List<DebrisBidResponse> debrisBidResponses = modelConverter.toResponse(bySupplier.getItems());
+
+		GETListResponse<DebrisBidResponse> response = new GETListResponse<>(
+				bySupplier.getTotalItems()
+				, bySupplier.getLimit()
+				, bySupplier.getOffset()
+				, bySupplier.getOrderBy()
+				, debrisBidResponses
+		);
+
+		return Response.ok(response).build();
 	}
 
 

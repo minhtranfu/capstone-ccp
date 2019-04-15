@@ -45,7 +45,8 @@ public class DebrisImageSubResource {
 
 	private DebrisImageEntity validateImage(long imageId) {
 		DebrisImageEntity foundImage = debrisImageDAO.findByIdWithValidation(imageId);
-		if (foundImage.getDebrisPost().getId() != debrisPostEntity.getId()) {
+		if (foundImage.getDebrisPost() != null &&
+				foundImage.getDebrisPost().getId() != debrisPostEntity.getId()) {
 			throw new BadRequestException(String.format("Debris id=%d not contain DebrisImage id=%d",
 					debrisPostEntity.getId(), imageId));
 		}

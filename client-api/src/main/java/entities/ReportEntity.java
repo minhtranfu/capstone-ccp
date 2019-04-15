@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 @Entity
 @Where(clause = "is_deleted=0")
 @NamedQueries({
-		@NamedQuery(name = "FeedbackEntity.getByToContractorId", query = "select  e from ReportEntity  e where e.toContractor.id = :toContractorId")
-		, @NamedQuery(name = "FeedbackEntity.getByFromContractorId", query = "select  e from ReportEntity  e where e.fromContractor.id =:fromContractorId")
-		, @NamedQuery(name = "FeedbackEntity.getBy", query = "select  e from ReportEntity  e where e.fromContractor.id =:fromContractorId and e.toContractor.id=:toContractorId")
+		@NamedQuery(name = "ReportEntity.getByToContractorId", query = "select  e from ReportEntity  e where e.toContractor.id = :toContractorId")
+		, @NamedQuery(name = "ReportEntity.getByFromContractorId", query = "select  e from ReportEntity  e where e.fromContractor.id =:fromContractorId")
+		, @NamedQuery(name = "ReportEntity.getBy", query = "select  e from ReportEntity  e where e.fromContractor.id =:fromContractorId and e.toContractor.id=:toContractorId")
 })
 
-@Table(name = "report", schema = "capstone_ccp", catalog = "")
+@Table(name = "report", schema = "capstone_ccp")
 public class ReportEntity {
 	private long id;
 	private String content;
@@ -99,8 +99,8 @@ public class ReportEntity {
 		return reportType;
 	}
 
-	public void setReportType(ReportTypeEntity feedbackType) {
-		this.reportType = feedbackType;
+	public void setReportType(ReportTypeEntity reportType) {
+		this.reportType = reportType;
 	}
 
 	@Basic
