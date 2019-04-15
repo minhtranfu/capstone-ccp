@@ -8,10 +8,10 @@ import 'bootstrap-daterangepicker/daterangepicker.css';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 
 import Step from './Step';
-import { fetchEquipmentTypes } from '../../../redux/actions/thunks';
-import { ENTITY_KEY } from '../../../common/app-const';
+import { fetchEquipmentTypes } from 'Redux/actions/thunks';
+import { ENTITY_KEY } from 'Common/app-const';
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
+import ccpApiService from 'Services/domain/ccp-api-service';
 import { getValidateFeedback } from 'Utils/common.utils';
 import { AddressInput } from 'Components/common';
 import { formatPrice } from 'Utils/format.utils';
@@ -342,7 +342,9 @@ class AddEquipmentStep1 extends Step {
             </div>
             <div className="form-group">
               <label htmlFor="">Address:</label>
-              {this.state.address || 'Select a construction...'}
+              <div>
+                {this.state.address || 'Select a construction...'}
+              </div>
               {/* <AddressInput
                 inputProps={{
                   value: this.state.address,
