@@ -341,9 +341,9 @@ class AddEquipmentStep1 extends Step {
               {getValidateFeedback('constructionId', validateResult)}
             </div>
             <div className="form-group">
-              <label htmlFor="">Address: <i className="text-danger">*</i></label>
-              {/* <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" /> */}
-              <AddressInput
+              <label htmlFor="">Address:</label>
+              {this.state.address || 'Select a construction...'}
+              {/* <AddressInput
                 inputProps={{
                   value: this.state.address,
                   onBlur: this._handleBlurAddressInput
@@ -351,7 +351,7 @@ class AddEquipmentStep1 extends Step {
                 onChange={this._handleAddressChanged}
                 onSelect={this._handleSelectAddress}
                 />
-              {getValidateFeedback('address', validateResult)}
+              {getValidateFeedback('address', validateResult)} */}
             </div>
             <div className="form-group">
               <label htmlFor="">Equipment Category: </label>
