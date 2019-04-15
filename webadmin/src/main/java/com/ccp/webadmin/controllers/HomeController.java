@@ -22,9 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("home")
@@ -55,10 +57,11 @@ public class HomeController {
     public String home(Model model) {
         model.addAttribute("newContractor", contractorService.countNewContractor());
         model.addAttribute("newFeedback", reportService.countNewReport());
-        model.addAttribute("hiringTransactionStatistic", hiringTransactionService.countHiringTransactionIncome());
-        model.addAttribute("materialTransactionStatistic", materialTransactionService.countMaterialTransactionIncome());
+        model.addAttribute("hiringTransactionStatistic", NumberFormat.getNumberInstance(Locale.US).format(hiringTransactionService.countHiringTransactionIncome()));
+
+        model.addAttribute("materialTransactionStatistic", NumberFormat.getNumberInstance(Locale.US).format(materialTransactionService.countMaterialTransactionIncome()));
         System.out.println("bbbb" + materialTransactionService.countMaterialTransactionIncome());
-        model.addAttribute("debrisTransactionStatistic", debrisTransactionService.countDebrisTransactionIncome());
+        model.addAttribute("debrisTransactionStatistic", NumberFormat.getNumberInstance(Locale.US).format(debrisTransactionService.countDebrisTransactionIncome()));
         System.out.println("ccc" + debrisTransactionService.countDebrisTransactionIncome());
         return "home/index";
     }
