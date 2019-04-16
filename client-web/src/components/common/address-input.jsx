@@ -4,6 +4,7 @@ import PlacesAutocomplete, {
   getLatLng,
 } from 'react-places-autocomplete';
 import PropTypes from 'prop-types';
+import { placesServices } from 'Services/domain/google';
 
 export class AddressInput extends Component {
 
@@ -60,22 +61,34 @@ export class AddressInput extends Component {
     const { onSelect } = this.props;
 
     const location = window.navigator.geolocation;
-    location.getCurrentPosition(result => {
+    location.getCurrentPosition(async result => {
       const { coords } = result;
       const { latitude, longitude } = coords;
-      const newState = {
-        address: 'Current location',
-        latitude,
-        longitude,
-      };
 
-      this.setState(newState, () => {
-        onSelect && onSelect(newState);
-      });
+      try {
+        const addressResult = await placesServices.getAddressByLatLong(latitude, longitude);
+        if (addressResult.status === 'OK' & addressResult.results.length > 0) {
+          const address = addressResult.results[0].formatted_address;
+          const newState = {
+            address,
+            latitude,
+            longitude,
+          };
+  
+          this.setState(newState, () => {
+            onSelect && onSelect(newState);
+          });
+        } else {
+          window.alert('Can not get your location, please try again!');
+        }
+      } catch (error) {
+        console.log(error);
+        window.alert('Can not get your location, please try again!');
+      }
     },
-    () => {
-      window.alert('Can not get your location, please allow!');
-    });
+      () => {
+        window.alert('Can not get your location, please allow!');
+      });
   };
 
   render() {
@@ -108,7 +121,7 @@ export class AddressInput extends Component {
           }
 
           return (
-            <div {...wrapperProps} onFocus={() => this.setState({isFocus: true})} onBlur={() => this.setState({isFocus: false})}>
+            <div {...wrapperProps} onFocus={() => this.setState({ isFocus: true })} onBlur={() => this.setState({ isFocus: false })}>
               <input
                 {...componentInputProps}
                 {...inputProps}
