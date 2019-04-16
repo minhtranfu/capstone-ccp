@@ -125,18 +125,26 @@ class Cart extends PureComponent {
       <tr key={material.id} className="py-1 border-bottom transaction align-items-center">
         <td>
           <div className="custom-control custom-checkbox">
-            <input type="checkbox" className="custom-control-input" checked={selectedItemIds.includes(material.id)} onChange={() => {}} />
-            <label className="custom-control-label cursor-pointer" onClick={(e) => this._handleSelectItem(material.id)}>
-            </label>
+            <input type="checkbox" className="custom-control-input"
+              onChange={() => {}}
+              checked={selectedItemIds.includes(material.id)}
+              />
+            <label className="custom-control-label cursor-pointer"
+              onClick={(e) => this._handleSelectItem(material.id)}
+            ></label>
           </div>
         </td>
         <td className="image text-center">
-          <img src={material.thumbnailImageUrl} alt={material.name} style={{ height: 100, maxWidth: 100 }} />
+          <Link to={getRoutePath(routeConsts.MATERIAL_DETAIL, { id: material.id })}>
+            <img src={material.thumbnailImageUrl} alt={material.name} style={{ height: 100, maxWidth: 100 }} />
+          </Link>
         </td>
         <td>
-          <h6>{material.name}</h6>
+          <Link to={getRoutePath(routeConsts.MATERIAL_DETAIL, { id: material.id })}>
+            <h6>{material.name}</h6>
+          </Link>
           <div>
-            <Image src={material.contractor.thumbnailImageUrl} circle className="rounded-circle" width="30" height="30" /> {material.contractor.name}
+            <Image src={material.contractor.thumbnailImageUrl} circle className="rounded-circle" width="30" height="30" /> <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: material.contractor.id })}>{material.contractor.name}</Link>
           </div>
         </td>
         <td>

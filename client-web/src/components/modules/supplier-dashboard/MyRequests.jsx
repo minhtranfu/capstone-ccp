@@ -390,7 +390,7 @@ class MyRequests extends Component {
               style={{width: '50px', height: '50px'}}
               src={transaction.requester.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
             />
-            <p>{transaction.requester.name}</p>
+            <p><Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: transaction.requester.id })}>{transaction.requester.name}</Link></p>
           </div>
         </div>
       </CSSTransition>

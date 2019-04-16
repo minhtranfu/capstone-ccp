@@ -367,7 +367,7 @@ class MaterialTransactions extends Component {
               height={50}
               src={transaction.requester.thumbnailImageUrl}
             />
-            <div>{transaction.requester.name}</div>
+            <div><Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: transaction.requester.id })}>{transaction.requester.name}</Link></div>
           </div>
           <div className="col-md-5 py-2 d-flex align-items-center text-muted border-left">
             {transaction.materialTransactionDetails.map(detail => {

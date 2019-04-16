@@ -118,7 +118,7 @@ class DebrisSearch extends Component {
                       <div className="lh-1">
                         <Image width={80} height={80} src={avatarSrc} className="rounded-circle avatar" circle/>
                       </div>
-                      <h6>{requester.name}</h6>
+                      <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: requester.id })}><h6>{requester.name}</h6></Link>
                     </div>
                   </div>
                 </div>
