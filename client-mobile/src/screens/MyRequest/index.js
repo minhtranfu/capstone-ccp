@@ -11,11 +11,16 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import {
   listTransactionByRequester,
   listMaterialTransactionByRequester,
   listDebrisTransactionByRequester
 } from "../../redux/actions/transaction";
+import {
+  countTotalNotification,
+  getAllNotification
+} from "../../redux/actions/notification";
 import RequireLogin from "../Login/RequireLogin";
 import Feather from "@expo/vector-icons/Feather";
 
@@ -108,6 +113,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 @connect(
   state => {
+    console.log(state.notification);
     return {
       isLoggedIn: state.auth.userIsLoggin,
       loading: state.transaction.loading,
@@ -115,20 +121,19 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       listMaterial: state.transaction.listRequesterMaterial,
       listDebrisTransaction: state.transaction.listRequesterDebris,
       user: state.auth.data,
-      token: state.auth.token
+      token: state.auth.token,
+      countNotification: state.notification.countNotification
     };
   },
-  dispatch => ({
-    fetchRequesterTransaction: contractorId => {
-      dispatch(listTransactionByRequester(contractorId));
-    },
-    fetchRequesterMaterial: contractorId => {
-      dispatch(listMaterialTransactionByRequester(contractorId));
-    },
-    fetchGetRequesterDebris: () => {
-      dispatch(listDebrisTransactionByRequester());
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      {
+        fetchRequesterTransaction: listTransactionByRequester,
+        fetchRequesterMaterial: listMaterialTransactionByRequester,
+        fetchGetRequesterDebris: listDebrisTransactionByRequester
+      },
+      dispatch
+    )
 )
 class MyRequest extends Component {
   constructor(props) {
@@ -343,21 +348,48 @@ class MyRequest extends Component {
     }
   };
 
+  _showNotificationIcon = () => {
+    return (
+      <TouchableOpacity
+        onPress={() => this.props.navigation.navigate("Notification")}
+      >
+        <Feather name="bell" size={20} />
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#FF0000",
+            borderRadius: 5,
+            width: 13,
+            position: "absolute",
+            top: 1,
+            right: 1,
+            margin: -1
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+
+              textAlign: "center",
+              fontSize: 9
+            }}
+          >
+            {this.props.countNotification}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   render() {
     const { navigation, isLoggedIn, loading, status } = this.props;
     const { activeTab } = this.state;
+    console.log(this.props.countNotification);
     if (isLoggedIn) {
       return (
         <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
-          <Header
-            renderRightButton={() => (
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("Notification")}
-              >
-                <Feather name="bell" size={20} />
-              </TouchableOpacity>
-            )}
-          >
+          <Header renderRightButton={this._showNotificationIcon}>
             <Text style={styles.header}>My Request</Text>
           </Header>
           <TabView

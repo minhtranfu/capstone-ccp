@@ -211,7 +211,8 @@ const styles = StyleSheet.create({
   description: {
     color: colors.text50,
     fontSize: fontSize.secondaryText,
-    fontWeight: "600"
+    fontWeight: "600",
+    marginBottom: 10
   },
   price: {
     color: colors.secondaryColor,

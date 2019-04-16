@@ -103,7 +103,8 @@ DiscoverStack.navigationOptions = ({ navigation }) => {
     routeName == "SearchDetail" ||
     routeName == "MaterialDetail" ||
     routeName == "BidDetail" ||
-    routeName == "ConfirmBid"
+    routeName == "ConfirmBid" ||
+    routeName == "Cart"
   ) {
     tabBarVisible = false;
   }

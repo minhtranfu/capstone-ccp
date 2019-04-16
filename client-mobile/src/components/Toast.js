@@ -11,12 +11,20 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { goToNotification } from "../Utils/Helpers";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { countNotification } from "../redux/actions/notification";
 
 import fontSize from "../config/fontSize";
 import colors from "../config/colors";
 
 const { width } = Dimensions.get("window");
 
+@connect(
+  state => ({}),
+  dispatch =>
+    bindActionCreators({ fetchCountNotification: countNotification }, dispatch)
+)
 class ShowToast extends Component {
   static propTypes = {
     message: PropTypes.object
@@ -31,7 +39,6 @@ class ShowToast extends Component {
 
   show = () => {
     Animated.spring(this.state.y, {
-      tension: 10,
       toValue: 5
     }).start();
     this.setState({
@@ -50,6 +57,7 @@ class ShowToast extends Component {
   };
 
   componentDidMount() {
+    this.props.fetchCountNotification();
     setTimeout(() => this.show(), 1000); // show toast after 1s
 
     setTimeout(() => this.hide(), 4000); // hide toast after 4s
@@ -57,6 +65,7 @@ class ShowToast extends Component {
 
   componentDidUpdate(prevProp) {
     if (prevProp.message !== this.props.message) {
+      this.props.fetchCountNotification();
       setTimeout(() => this.show(), 1000); // show toast after 1s
 
       setTimeout(() => this.hide(), 4000); // hide toast after 4s

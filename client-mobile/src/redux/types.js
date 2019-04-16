@@ -303,3 +303,7 @@ export const REGISTER = renderActions("@@auth/REGISTER");
 
 //UPLOAD
 export const RESET_EQUIPMENT_IMAGE = "@@equip/RESET_EQUIPMENT_IMAGE";
+
+export const COUNT_NOTIFICATION = "@@notification/COUNT_NOTIFICATION";
+export const COUNT_TOTAL_NOTIFICATION =
+  "@@notification/COUNT_TOTAL_NOTIFICATION";
