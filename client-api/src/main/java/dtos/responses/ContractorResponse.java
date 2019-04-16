@@ -51,6 +51,12 @@ public class ContractorResponse {
 	private long finishedMaterialTransactionCount;
 	private long finishedDebrisTransactionCount;
 
+	private long finishedCanceledHiringTransactionCount;
+	private long finishedCanceledMaterialTransactionCount;
+	private long finishedCanceledDebrisTransactionCount;
+
+
+
 
 
 	public ContractorResponse() {
@@ -192,5 +198,29 @@ public class ContractorResponse {
 
 	public void setFinishedDebrisTransactionCount(long finishedDebrisTransactionCount) {
 		this.finishedDebrisTransactionCount = finishedDebrisTransactionCount;
+	}
+
+	public long getFinishedCanceledHiringTransactionCount() {
+		return finishedCanceledHiringTransactionCount;
+	}
+
+	public void setFinishedCanceledHiringTransactionCount(long finishedCanceledHiringTransactionCount) {
+		this.finishedCanceledHiringTransactionCount = finishedCanceledHiringTransactionCount;
+	}
+
+	public long getFinishedCanceledMaterialTransactionCount() {
+		return finishedCanceledMaterialTransactionCount;
+	}
+
+	public void setFinishedCanceledMaterialTransactionCount(long finishedCanceleMaterialTransactionCount) {
+		this.finishedCanceledMaterialTransactionCount = finishedCanceleMaterialTransactionCount;
+	}
+
+	public long getFinishedCanceledDebrisTransactionCount() {
+		return finishedCanceledDebrisTransactionCount;
+	}
+
+	public void setFinishedCanceledDebrisTransactionCount(long finishedCanceleDebrisTransactionCount) {
+		this.finishedCanceledDebrisTransactionCount = finishedCanceleDebrisTransactionCount;
 	}
 }

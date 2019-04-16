@@ -2,9 +2,7 @@ package daos;
 
 import entities.ContractorEntity;
 
-import javax.ejb.Singleton;
 import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.BadRequestException;
 
 @Stateless
@@ -24,19 +22,36 @@ public class ContractorDAO extends BaseDAO<ContractorEntity, Long> {
 
 
 	public long countFinishedDebrisTransactionRateBySupplierId(long supplierId) {
-		return entityManager.createNamedQuery("ContractorEntity.finishedDebrisTransactionRateBySupplierId", Long.class)
+		return entityManager.createNamedQuery("ContractorEntity.finishedDebrisTransactionBySupplierId", Long.class)
 				.setParameter("supplierId", supplierId)
 				.getSingleResult();
 	}
 	public long countFinishedMaterialTransactionRateBySupplierId(long supplierId) {
-		return entityManager.createNamedQuery("ContractorEntity.finishedMaterialTransactionRateBySupplierId", Long.class)
+		return entityManager.createNamedQuery("ContractorEntity.finishedMaterialTransactionBySupplierId", Long.class)
 				.setParameter("supplierId", supplierId)
 				.getSingleResult();
 	}
 	public long countFinishedHiringTransactionRateBySupplierId(long supplierId) {
-		return entityManager.createNamedQuery("ContractorEntity.finishedHiringTransactionRateBySupplierId", Long.class)
+		return entityManager.createNamedQuery("ContractorEntity.finishedHiringTransactionBySupplierId", Long.class)
 				.setParameter("supplierId", supplierId)
 				.getSingleResult();
 	}
+	public long countFinishedCanceledDebrisTransactionRateBySupplierId(long supplierId) {
+		return entityManager.createNamedQuery("ContractorEntity.finishedCanceledDebrisTransactionRateBySupplierId", Long.class)
+				.setParameter("supplierId", supplierId)
+				.getSingleResult();
+	}
+	public long countFinishedCanceleMaterialTransactionRateBySupplierId(long supplierId) {
+		return entityManager.createNamedQuery("ContractorEntity.finishedCanceledMaterialTransactionBySupplierId", Long.class)
+				.setParameter("supplierId", supplierId)
+				.getSingleResult();
+	}
+	public long countFinishedCanceleHiringTransactionRateBySupplierId(long supplierId) {
+		return entityManager.createNamedQuery("ContractorEntity.finishedCanceledHiringTransactionBySupplierId", Long.class)
+				.setParameter("supplierId", supplierId)
+				.getSingleResult();
+	}
+
+
 
 }

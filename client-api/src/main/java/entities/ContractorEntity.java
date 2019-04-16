@@ -14,9 +14,13 @@ import java.util.List;
 @Table(name = "contractor", schema = "capstone_ccp")
 @Where(clause = "is_deleted=0")
 @NamedQueries({
-		@NamedQuery(name = "ContractorEntity.finishedHiringTransactionRateBySupplierId", query = "select COUNT(e) from HiringTransactionEntity e where e.equipment.contractor.id = :supplierId and e.status = 'FINISHED'")
-		, @NamedQuery(name = "ContractorEntity.finishedMaterialTransactionRateBySupplierId", query = "select COUNT(e) from MaterialTransactionEntity e where e.supplier.id  = :supplierId and e.status = 'FINISHED'")
-		, @NamedQuery(name = "ContractorEntity.finishedDebrisTransactionRateBySupplierId", query = "select COUNT(e) from DebrisTransactionEntity e where e.supplier.id = :supplierId and e.status = 'FINISHED'")
+		@NamedQuery(name = "ContractorEntity.finishedHiringTransactionBySupplierId", query = "select COUNT(e) from HiringTransactionEntity e where e.equipment.contractor.id = :supplierId and e.status = 'FINISHED'")
+		, @NamedQuery(name = "ContractorEntity.finishedMaterialTransactionBySupplierId", query = "select COUNT(e) from MaterialTransactionEntity e where e.supplier.id  = :supplierId and e.status = 'FINISHED'")
+		, @NamedQuery(name = "ContractorEntity.finishedDebrisTransactionBySupplierId", query = "select COUNT(e) from DebrisTransactionEntity e where e.supplier.id = :supplierId and e.status = 'FINISHED'")
+		, @NamedQuery(name = "ContractorEntity.finishedCanceledHiringTransactionBySupplierId", query = "select COUNT(e) from HiringTransactionEntity e where e.equipment.contractor.id = :supplierId and e.status = 'FINISHED' or e.status= 'CANCLED'")
+		, @NamedQuery(name = "ContractorEntity.finishedCanceledMaterialTransactionBySupplierId", query = "select COUNT(e) from MaterialTransactionEntity e where e.supplier.id  = :supplierId and e.status = 'FINISHED' or e.status = 'CANCELED'")
+		, @NamedQuery(name = "ContractorEntity.finishedCanceledDebrisTransactionRateBySupplierId", query = "select COUNT(e) from DebrisTransactionEntity e where e.supplier.id = :supplierId and e.status = 'FINISHED' or e.status = 'CANCELED'")
+
 }
 )
 public class ContractorEntity {
