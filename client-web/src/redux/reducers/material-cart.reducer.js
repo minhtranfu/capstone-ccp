@@ -36,7 +36,11 @@ export default (state = INITIAL_STATE.materialCart, action) => {
       };
     }
 
-    // Remove one item by Id
+    // Remove one item by Ids
+    case materialCartActionTypes.MATERIAL_CART_ITEMS_REMOVE: {
+      return removeItems(state, action);
+    }
+
     case materialCartActionTypes.MATERIAL_CART_ITEM_REMOVE: {
       let minusCount = 0;
       return {
@@ -83,4 +87,22 @@ export default (state = INITIAL_STATE.materialCart, action) => {
 
 function addItem(state, action) {
   
+}
+
+function removeItems(state, action) {
+  let minusCount = 0;
+  
+  return {
+    ...state,
+    items: state.items.filter(item => {
+      const isIncludes = action.itemIds.includes(item.id);
+      if (isIncludes) {
+        minusCount = item.quantity;
+      }
+
+      return !isIncludes;
+    }),
+    itemIds: state.itemIds.filter(id => !action.itemIds.includes(id)),
+    count: state.count - minusCount,
+  };
 }

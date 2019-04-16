@@ -5,6 +5,7 @@ export const materialCartActions = {
   removeItem,
   updateItem,
   clear,
+  removeItems,
 };
 
 /**
@@ -26,6 +27,17 @@ function removeItem(itemId) {
   return {
     type: materialCartActionTypes.MATERIAL_CART_ITEM_REMOVE,
     itemId
+  };
+}
+
+/**
+ * Remove items from cart
+ * @param {Array of int} itemIds Id of item will be removed from cart
+ */
+function removeItems(itemIds) {
+  return {
+    type: materialCartActionTypes.MATERIAL_CART_ITEMS_REMOVE,
+    itemIds
   };
 }
 
