@@ -82,7 +82,6 @@ export class AddressInput extends Component {
           window.alert('Can not get your location, please try again!');
         }
       } catch (error) {
-        console.log(error);
         window.alert('Can not get your location, please try again!');
       }
     },
@@ -123,6 +122,7 @@ export class AddressInput extends Component {
           return (
             <div {...wrapperProps} onFocus={() => this.setState({ isFocus: true })} onBlur={() => this.setState({ isFocus: false })}>
               <input
+                autoComplete={false}
                 {...componentInputProps}
                 {...inputProps}
               />
