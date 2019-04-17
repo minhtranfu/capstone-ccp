@@ -14,17 +14,17 @@ class DebrisSearch extends Component {
     super(props);
 
     this.state = {
-      products: [],
+      debrises: [],
       isFetching: true,
       criteria: {}
     };
   }
 
   _loadData = async () => {
-    const products = await debrisServices.getDebrisesByCriteria({});
+    const debrises = await debrisServices.getDebrisesByCriteria({});
 
     this.setState({
-      products,
+      debrises,
       isFetching: false
     });
   };
@@ -35,10 +35,10 @@ class DebrisSearch extends Component {
     this.setState({
       isFetching: true
     });
-    const products = await debrisServices.getDebrisesByCriteria(criteria);
+    const debrises = await debrisServices.getDebrisesByCriteria(criteria);
 
     this.setState({
-      products,
+      debrises,
       isFetching: false,
       criteria
     });
@@ -67,8 +67,40 @@ class DebrisSearch extends Component {
     return value * Math.PI / 180;
   }
 
+  _renderDebrisCard = debris => {
+    const { criteria } = this.state;
+    const { requester, debrisServiceTypes, debrisBids, thumbnailImage } = debris;
+    const avatarSrc = requester.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg';
+    const services = debrisServiceTypes.map(type => type.name).join(', ');
+
+    return (
+      <div key={debris.id} className="bg-white shadow my-2 d-flex flex-column flex-sm-row debris-request">
+        <div className="image-xs-169">
+          <Image src={thumbnailImage.url} width={230} height={140} />
+        </div>
+        <div className="flex-fill p-3">
+          <Link to={getRoutePath(routeConsts.DEBRIS_DETAIL, {id: debris.id})}><h6>{debris.title}</h6></Link>
+          <div className="text-muted"><small><i className="fal fa-tags"></i></small> {services}</div>
+          <div className="text-muted"><i className="fal fa-map-marker"></i> {debris.address}</div>
+          {criteria.latitude &&
+            <div className="text-muted">
+              <i className="fal fa-map-marker-alt"></i> Distance: {this.calcCrow(criteria.latitude, criteria.longitude, debris.latitude, debris.longitude)}Km
+            </div>
+          }
+          <div><i className="fas fa-gavel"></i> Bid: {debrisBids.length}</div>
+        </div>
+        <div className="d-flex align-items-center flex-column justify-content-center p-3">
+          <div className="lh-1">
+            <Image width={80} height={80} src={avatarSrc} className="rounded-circle avatar" circle/>
+          </div>
+          <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: requester.id })}><h6>{requester.name}</h6></Link>
+        </div>
+      </div>
+    );
+  };
+
   render() {
-    const { products, isFetching, criteria } = this.state;
+    const { debrises, isFetching } = this.state;
 
     return (
       <div>
@@ -85,7 +117,7 @@ class DebrisSearch extends Component {
             <div className="col-md-12">
               <h3>Result</h3>
             </div>
-            {(!products || products.length === 0) && !isFetching &&
+            {(!debrises || debrises.length === 0) && !isFetching &&
               <div className="col-md-12 text-center py-4 alert alert-info">
                 <h2>No material found, please try again with another criteria!</h2>
               </div>
@@ -95,35 +127,11 @@ class DebrisSearch extends Component {
                 <Skeleton height={210} count={5} />
               </div>
             }
-            {!isFetching && products && products.map((product, index) => {
-              const { requester, debrisServiceTypes, debrisBids } = product;
-              const avatarSrc = requester.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg';
-              const services = debrisServiceTypes.map(type => type.name).join(', ');
-
-              return (
-                <div key={index} className="col-md-8">
-                  <div className="bg-white shadow my-2 p-3 d-flex debris-request">
-                    <div className="flex-fill">
-                      <Link to={getRoutePath(routeConsts.DEBRIS_DETAIL, {id: product.id})}><h6>{product.title}</h6></Link>
-                      <div className="text-muted"><small><i className="fal fa-tags"></i></small> {services}</div>
-                      <div className="text-muted"><i className="fal fa-map-marker"></i> {product.address}</div>
-                      {criteria.latitude &&
-                        <div className="text-muted">
-                          <i className="fal fa-map-marker-alt"></i> Distance: {this.calcCrow(criteria.latitude, criteria.longitude, product.latitude, product.longitude)}Km
-                        </div>
-                      }
-                      <div><i className="fas fa-gavel"></i> Bid: {debrisBids.length}</div>
-                    </div>
-                    <div className="d-flex align-items-center flex-column justify-content-center">
-                      <div className="lh-1">
-                        <Image width={80} height={80} src={avatarSrc} className="rounded-circle avatar" circle/>
-                      </div>
-                      <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: requester.id })}><h6>{requester.name}</h6></Link>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {!isFetching && debrises &&
+              <div className="col-md-8">
+                {debrises.map(debris => this._renderDebrisCard(debris))}
+              </div>
+            }
           </div>
         </div>
       </div>
