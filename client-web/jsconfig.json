@@ -15,6 +15,7 @@
       "Components/*": ["./src/components/*"],
       "Utils/*": ["./src/utils/*"],
       "Assets/*": ["./src/assets/*"],
+      "Scss/*": ["./src/scss/*"],
     }
   }
 }

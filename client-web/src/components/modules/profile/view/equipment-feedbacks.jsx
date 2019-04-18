@@ -1,37 +1,17 @@
-import React, { PureComponent } from 'react';
-import { CSSTransition } from 'react-transition-group';
-import PropTypes from 'prop-types';
+import { withRouter } from "react-router-dom";
 
-class EquipmentFeebacks extends PureComponent {
-  state = {
-    isShow: false,
+import { equipmentFeedbackServices } from 'Services/domain/ccp';
+import Feedbacks from './feedbacks';
+
+class EquipmentFeebacks extends Feedbacks {
+
+  _requestDataFromService = async (contractorId, criteria) => {
+    return await equipmentFeedbackServices.getFeedbackBySupplierId(contractorId, criteria);
   };
-
-  componentDidMount() {
-    this.setState({
-      isShow: true
-    });
-  }
-
-  render() {
-    const { isShow } = this.state;
-    return (
-      <CSSTransition
-        in={isShow}
-        timeout={500}
-        classNames="fade"
-      >
-        <div>
-          <strong>Equipment Feedbacks</strong>
-          <p>With supporting text below as a natural lead-in to additional content. With supporting text below as a natural lead-in to additional content.</p>
-        </div>
-      </CSSTransition>
-    );
-  }
 }
 
-EquipmentFeebacks.props = {
-  contractorId: PropTypes.number.isRequired
+EquipmentFeebacks.defaultProps = {
+  feedbackType: 'equipment',
 };
 
-export default EquipmentFeebacks;
+export default withRouter(EquipmentFeebacks);

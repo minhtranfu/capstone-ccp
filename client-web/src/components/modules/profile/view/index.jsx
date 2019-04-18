@@ -15,6 +15,8 @@ import IconEquipments from 'Assets/icons/equipments.svg';
 import IconDebris from 'Assets/icons/debris.svg';
 import { CONTRACTOR_STATUS_INFOS } from 'Common/consts';
 
+import 'Scss/profile.scss';
+
 class ViewProfile extends PureComponent {
 
   state = {
@@ -260,7 +262,7 @@ class ViewProfile extends PureComponent {
 
   render() {
     return (
-      <div className="container">
+      <div className="container profile">
         <div className="row">
           <div className="col-lg-3">
             {this._renderContractorCard()}
