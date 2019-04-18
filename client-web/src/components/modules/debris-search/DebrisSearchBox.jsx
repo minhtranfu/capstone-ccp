@@ -1,17 +1,27 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import moment from 'moment';
 import Select from 'react-select';
 
 import { debrisServices } from 'Services/domain/ccp';
 import { AddressInput } from 'Components/common';
 
 class DebrisSearchBox extends PureComponent {
-  state = {
-    typeOptions: [],
-    criteria: {
+  
+  constructor(props) {
+    super(props);
+
+    let criteria = {};
+    if (props.criteria) {
+      criteria = {
+        ...props.criteria
+      };
     }
-  };
+
+    this.state = {
+      criteria,
+      typeOptions: [],
+    };
+  }
 
   _loadData = async () => {
     const types = await debrisServices.getDebrisServiceTypes();
@@ -61,20 +71,21 @@ class DebrisSearchBox extends PureComponent {
    * Handle user change location
    */
   _handleChangeLocation = location => {
-    const { latitude, longitude } = location;
+    const { latitude, longitude, address } = location;
     const { criteria } = this.state;
 
     this.setState({
       criteria: {
         ...criteria,
         latitude,
-        longitude
+        longitude,
+        address,
       }
     });
   };
 
   render() {
-    const { typeOptions } = this.state;
+    const { typeOptions, criteria } = this.state;
     const { isFetching } = this.props;
 
     return (
@@ -86,13 +97,17 @@ class DebrisSearchBox extends PureComponent {
           <div className="col-md-4">
             <div className="form-group">
               <label htmlFor="keyword" className="text-light">Keyword:</label>
-              <input type="text" name="q" onChange={this._handleChangeCriteria} id="keyword" className="form-control" />
+              <input type="text" name="q"
+                id="keyword" className="form-control"
+                value={criteria.q}
+                onChange={this._handleChangeCriteria}
+                />
             </div>
           </div>
           <div className="col-md-4">
             <div className="form-group">
               <label htmlFor="location" className="text-light">Location:</label>
-              <AddressInput onSelect={this._handleChangeLocation} inputProps={{id: 'location'}} />
+              <AddressInput onSelect={this._handleChangeLocation} inputProps={{id: 'location', value: criteria.address}} />
             </div>
           </div>
           <div className="col-md-4">
@@ -108,6 +123,10 @@ class DebrisSearchBox extends PureComponent {
                 placeholder="Select some services you need..."
                 options={typeOptions}
                 onChange={this._handleSelectServiceTypes}
+                value={!typeOptions || !criteria.debrisTypeId
+                  ? []
+                  : typeOptions.filter(option => criteria.debrisTypeId.includes(option.value))
+                }
               />
             </div>
           </div>

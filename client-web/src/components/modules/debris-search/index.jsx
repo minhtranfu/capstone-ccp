@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import Helmet from 'react-helmet-async';
 import Skeleton from 'react-loading-skeleton';
+import qs from 'query-string';
 
 import { debrisServices } from 'Services/domain/ccp';
 import DebrisSearchBox from './DebrisSearchBox';
-import { getRoutePath } from 'Utils/common.utils';
+import { getRoutePath, parseQueryString } from 'Utils/common.utils';
 import { Image } from 'Components/common';
 import { routeConsts } from 'Common/consts';
 
@@ -13,34 +14,60 @@ class DebrisSearch extends Component {
   constructor(props) {
     super(props);
 
+    const { location } = this.props;
+    let criteria = {};
+    if (location.search) {
+      criteria = parseQueryString(location.search);
+      if (criteria.debrisTypeId) {
+        criteria.debrisTypeId = criteria.debrisTypeId.map(debrisTypeId => +debrisTypeId);
+      }
+    }
+
     this.state = {
+      criteria,
       debrises: [],
-      isFetching: true,
-      criteria: {}
+      isFetching: false,
+      isSearched: false,
     };
   }
 
   _loadData = async () => {
-    const debrises = await debrisServices.getDebrisesByCriteria({});
+    const { criteria } = this.state;
+
+    if (Object.keys(criteria).length === 0) {
+      return;
+    }
+    
+    this.setState({
+      isFetching: true
+    });
+    const { address, ...criteriaToSearch } = criteria;
+    const debrises = await debrisServices.getDebrisesByCriteria(criteriaToSearch);
 
     this.setState({
       debrises,
-      isFetching: false
+      criteria,
+      isFetching: false,
+      isSearched: true,
     });
   };
 
   _handleSearch = async (criteria) => {
-    console.log(criteria);
+    const { history } = this.props;
+
+    history.push(`${getRoutePath(routeConsts.DEBRISES)}?${qs.stringify(criteria)}`);
 
     this.setState({
       isFetching: true
     });
-    const debrises = await debrisServices.getDebrisesByCriteria(criteria);
+    const { address, ...criteriaToSearch } = criteria;
+    const debrises = await debrisServices.getDebrisesByCriteria(criteriaToSearch);
 
     this.setState({
       debrises,
       isFetching: false,
-      criteria
+      criteria,
+      isSearched: true,
     });
   };
 
@@ -99,44 +126,62 @@ class DebrisSearch extends Component {
     );
   };
 
-  render() {
-    const { debrises, isFetching } = this.state;
+
+  _renderResults = () => {
+    const { isSearched, isFetching, debrises } = this.state;
+
+    if (!isSearched && !isFetching) {
+      return null;
+    }
 
     return (
-      <div>
+      <div className="container">
+        <div className="row py-3">
+          <div className="col-md-12">
+            <h3>Result</h3>
+          </div>
+          {(!debrises || debrises.length === 0) && !isFetching &&
+            <div className="col-md-12 text-center py-4 alert alert-info">
+              <h2>No material found, please try again with another criteria!</h2>
+            </div>
+          }
+          {isFetching &&
+            <div className="bg-white p-4 w-100">
+              <Skeleton height={210} count={5} />
+            </div>
+          }
+          {!isFetching && debrises &&
+            <div className="col-md-8">
+              {debrises.map(debris => this._renderDebrisCard(debris))}
+            </div>
+          }
+        </div>
+      </div>
+    );
+  };
+
+  render() {
+    const { isFetching, isSearched, criteria } = this.state;
+
+    let containerClassName = '';
+    if (!isSearched && !isFetching) {
+      containerClassName += 'flex-fill d-flex align-items-center section-search';
+    }
+
+    return (
+      <div className={containerClassName}>
         <Helmet>
           <title>Home</title>
         </Helmet>
-        <div className="section-search">
+        <div className={isSearched || isFetching ? 'section-search' : 'flex-fill pb-5'}>
           <div className="container">
-            <DebrisSearchBox onSearch={this._handleSearch} isFetching={isFetching} />
+            <DebrisSearchBox criteria={criteria} onSearch={this._handleSearch} isFetching={isFetching} />
           </div>
         </div>
-        <div className="container">
-          <div className="row py-3">
-            <div className="col-md-12">
-              <h3>Result</h3>
-            </div>
-            {(!debrises || debrises.length === 0) && !isFetching &&
-              <div className="col-md-12 text-center py-4 alert alert-info">
-                <h2>No material found, please try again with another criteria!</h2>
-              </div>
-            }
-            {isFetching &&
-              <div className="bg-white p-4 w-100">
-                <Skeleton height={210} count={5} />
-              </div>
-            }
-            {!isFetching && debrises &&
-              <div className="col-md-8">
-                {debrises.map(debris => this._renderDebrisCard(debris))}
-              </div>
-            }
-          </div>
-        </div>
+        {this._renderResults()}
       </div>
     );
   }
 }
 
-export default DebrisSearch;
+export default withRouter(DebrisSearch);

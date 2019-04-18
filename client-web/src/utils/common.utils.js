@@ -1,5 +1,6 @@
 import React from 'react';
-import { modules } from "Src/components/modules/Routes";
+import { modules } from "Components/modules/Routes";
+import qs from 'query-string';
 
 export const getRoutePath = (name, data) => {
     const route = modules.find(route => route.name === name);
@@ -41,7 +42,7 @@ export const getErrorMessage = error => {
   return 'Unknown error occurr!';
 };
 
-export const toQueryString = data => {
+export const toQueryStringOld = data => {
   if (typeof data !== 'object' || data === null) {
     return '';
   }
@@ -51,6 +52,14 @@ export const toQueryString = data => {
   });
 
   return params.join('&');
+};
+
+export const toQueryString = data => {
+  return qs.stringify(data);
+};
+
+export const parseQueryString = queryString => {
+  return qs.parse(queryString);
 };
 
 /**
