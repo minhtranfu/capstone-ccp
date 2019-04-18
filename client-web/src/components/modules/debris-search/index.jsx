@@ -75,8 +75,8 @@ class DebrisSearch extends Component {
 
     return (
       <div key={debris.id} className="bg-white shadow my-2 d-flex flex-column flex-sm-row debris-request">
-        <div className="image-xs-169">
-          <Image src={thumbnailImage.url} width={230} height={140} />
+        <div className="image-xs-169 lh-1">
+          <Image src={thumbnailImage ? thumbnailImage.url : 'https://via.placeholder.com/230x140'} width={230} height={140} alt={debris.title} />
         </div>
         <div className="flex-fill p-3">
           <Link to={getRoutePath(routeConsts.DEBRIS_DETAIL, {id: debris.id})}><h6>{debris.title}</h6></Link>
