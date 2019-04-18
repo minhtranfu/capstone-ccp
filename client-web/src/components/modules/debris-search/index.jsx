@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import { Link, withRouter } from "react-router-dom";
 import Helmet from 'react-helmet-async';
 import Skeleton from 'react-loading-skeleton';
-import qs from 'query-string';
 
 import { debrisServices } from 'Services/domain/ccp';
 import DebrisSearchBox from './DebrisSearchBox';
-import { getRoutePath, parseQueryString } from 'Utils/common.utils';
+import { getRoutePath, parseQueryString, toQueryString } from 'Utils/common.utils';
 import { Image } from 'Components/common';
 import { routeConsts } from 'Common/consts';
 
@@ -55,7 +54,7 @@ class DebrisSearch extends Component {
   _handleSearch = async (criteria) => {
     const { history } = this.props;
 
-    history.push(`${getRoutePath(routeConsts.DEBRISES)}?${qs.stringify(criteria)}`);
+    history.push(`${getRoutePath(routeConsts.DEBRISES)}?${toQueryString(criteria)}`);
 
     this.setState({
       isFetching: true
