@@ -5,6 +5,7 @@ import Skeleton from 'react-loading-skeleton';
 import className from 'classnames';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
+import { AddressInput } from 'Components/common';
 
 class MyConstructions extends Component {
   state = {
@@ -37,6 +38,20 @@ class MyConstructions extends Component {
         ...construction,
         [name]: value
       }
+    });
+  };
+
+  _handleSelectAddress = location => {
+    const { construction } = this.state;
+    const { longitude, latitude, address } = location;
+
+    this.setState({
+      construction: {
+        ...construction,
+        longitude,
+        latitude,
+        address,
+      },
     });
   };
 
@@ -108,7 +123,8 @@ class MyConstructions extends Component {
         </div>
         <div className="form-group">
           <label htmlFor="">Address: <i className="text-danger">*</i></label>
-          <input type="text" className="form-control" name="address" onChange={this._handleChangeField} defaultValue={construction.address} />
+          {/* <input type="text" className="form-control" name="address" onChange={this._handleChangeField} defaultValue={construction.address} /> */}
+          <AddressInput onSelect={this._handleSelectAddress} address={construction.address || '' }  />
         </div>
         <div className="form-group">
           <span className="float-right">
