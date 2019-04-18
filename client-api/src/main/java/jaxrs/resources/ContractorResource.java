@@ -97,6 +97,8 @@ public class ContractorResource {
 
 		modelConverter.toEntity(contractorRequest, foundContractorEntity);
 
+		foundContractorEntity.setStatus(ContractorEntity.Status.NOT_VERIFIED);
+
 		return Response.ok(contractorDao.merge(foundContractorEntity)).build();
 
 	}
