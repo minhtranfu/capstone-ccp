@@ -9,6 +9,12 @@ export const getFeedbackById = id => {
   return DataAccessService.get(`/equipmentFeedbacks/${id}`);
 };
 
-export const getFeedbackBySupplierId = (id, queryData) => {
-  return DataAccessService.get(`/equipmentFeedbacks/supplier?${toQueryString(queryData)}`);
+export const getFeedbackBySupplierId = (supplierId, queryData) => {
+  console.log({supplierId, queryData});
+  const data = {
+    ...queryData,
+    supplierId,
+  };
+
+  return DataAccessService.get(`/equipmentFeedbacks?${toQueryString(data)}`);
 };

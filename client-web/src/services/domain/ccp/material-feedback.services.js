@@ -10,5 +10,10 @@ export const getFeedbackById = id => {
 };
 
 export const getFeedbackBySupplierId = (id, queryData) => {
-  return DataAccessService.get(`/materialFeedbacks/supplier?${toQueryString(queryData)}`);
+  const data = {
+    ...queryData,
+    supplierId: id,
+  };
+  
+  return DataAccessService.get(`/materialFeedbacks?${toQueryString(data)}`);
 };

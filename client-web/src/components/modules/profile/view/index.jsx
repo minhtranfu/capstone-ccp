@@ -19,12 +19,20 @@ import 'Scss/profile.scss';
 
 class ViewProfile extends PureComponent {
 
-  state = {
-    errorMessage: null,
-    contractor: {},
-    isFetching: true,
-    activeFeedbackTab: 0,
-  };
+  constructor(props) {
+    super(props);
+
+    const { params } = this.props.match;
+    const { id } = params;
+    
+    this.state = {
+      constructorId: id,
+      errorMessage: null,
+      contractor: {},
+      isFetching: true,
+      activeFeedbackTab: 0,
+    };
+  }
 
   feedbackTabs = [
     {
@@ -45,11 +53,10 @@ class ViewProfile extends PureComponent {
    * Load contractor detail
    */
   _loadData = async () => {
-    const { params } = this.props.match;
-    const { id } = params;
+    const { constructorId } = this.state;
 
     try {
-      const contractor = await userServices.getUserInfoById(id);
+      const contractor = await userServices.getUserInfoById(constructorId);
 
       this.setState({
         contractor,
@@ -85,6 +92,7 @@ class ViewProfile extends PureComponent {
     if (prevId !== id) {
       this.setState({
         isFeching: true,
+        constructorId: id,
       }, () => {
         this._loadData();
       });
@@ -138,7 +146,7 @@ class ViewProfile extends PureComponent {
   };
 
   _renderFeedbacksCard = () => {
-    const { activeFeedbackTab, contractor } = this.state;
+    const { activeFeedbackTab, contractor, constructorId } = this.state;
 
     let TabComponent = null;
     return (
@@ -164,7 +172,7 @@ class ViewProfile extends PureComponent {
         </div>
         <div className="card-body">
           {TabComponent &&
-            <TabComponent contractorId={contractor.id} />
+            <TabComponent contractorId={constructorId} />
           }
         </div>
       </div>

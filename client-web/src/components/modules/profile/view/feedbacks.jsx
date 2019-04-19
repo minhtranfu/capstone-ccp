@@ -56,7 +56,7 @@ class Feebacks extends PureComponent {
         queryString = `?${queryString}`;
       }
       
-      history.push(`${newUrl}${queryString}`);
+      history.replace(`${newUrl}${queryString}`);
     }
 
     this.setState({
@@ -69,7 +69,7 @@ class Feebacks extends PureComponent {
       orderBy: 'createdTime.desc',
     };
 
-    const feedbacks = await this._requestDataFromService(null, criteria);
+    const feedbacks = await this._requestDataFromService(contractorId, criteria);
 
     this.setState({
       page,
@@ -117,6 +117,29 @@ class Feebacks extends PureComponent {
     }
 
     return feedbacks.items.map(feedback => <Feedback key={feedback.id} feedback={feedback} />);
+  };
+
+  componentDidUpdate(prevProps) {
+    this._checkForUpdateContractor(prevProps);
+  }
+
+  /**
+   * Check for update contractor to load new contractor information
+   */
+  _checkForUpdateContractor = prevProps => {
+    const { contractorId } = this.props;
+
+    const { contractorId: prevContractorId } = prevProps;
+
+    if (contractorId !== prevContractorId) {
+      console.log('CHANGEDDDDD!', {contractorId, prevContractorId});
+      this._loadData(1);
+      this.setState({
+        page: null,
+      }, () => {
+        this._loadData(1);
+      });
+    }
   };
 
   render() {
