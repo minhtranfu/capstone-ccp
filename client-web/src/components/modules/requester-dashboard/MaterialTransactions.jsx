@@ -11,6 +11,7 @@ import { materialTransactionServices } from 'Src/services/domain/ccp';
 import { formatPrice } from 'Src/utils/format.utils';
 import { getRoutePath } from 'Utils/common.utils';
 import { formatDate } from 'Utils/format.utils';
+import { Image } from 'Components/common';
 
 class MaterialTransactions extends Component {
   state = {
@@ -205,15 +206,30 @@ class MaterialTransactions extends Component {
     if (!transactions) {
       for (let i = 0; i < 10; i++) {
         loadingTransactions.push(
-          <div key={i} className="d-flex transaction my-3 rounded shadow-sm">
-            <div className="image flex-fill">
-              <Skeleton width={300} height={200} />
-            </div>
-            <div className="detail flex-fill p-2">
-              <h6><Skeleton width={40} className="d-inline" /> <Skeleton width={300} className="d-inline" /></h6>
-              <div className="white-space-normal">
-                <Skeleton count={3} width={300} />
+          <div key={i} className="transaction my-3 rounded shadow-sm row">
+            <div className="detail col-md-3 py-2">
+              <h5><Skeleton width={90} /> <Skeleton width={30} /></h5>
+              <div>
+                <Skeleton width={100} />
               </div>
+              <div className="text-large">
+                <Skeleton width={90} />
+              </div>
+            </div>
+            <div className="col-md-2 text-center d-flex flex-column align-items-center justify-content-center lh-1 py-2">
+              <Skeleton circle width={50} height={50} />
+              <div>
+                <Skeleton width={90} />
+              </div>
+              <div className="mt-2">
+                <Skeleton width={105} />
+              </div>
+            </div>
+            <div className="col-md-5 py-2 d-flex align-items-center text-muted border-left">
+              <Skeleton width={180} />
+            </div>
+            <div className="col-md-2 py-2 d-flex flex-column justify-content-center">
+              <Skeleton width={112} height={31} />
             </div>
           </div>
         );
@@ -355,7 +371,22 @@ class MaterialTransactions extends Component {
               <i className="fal fa-money-bill"></i> {formatPrice(transaction.totalPrice)}
             </div>
           </div>
-          <div className="col-md-7 py-2 d-flex align-items-center text-muted border-left">
+          <div className="col-md-2 text-center d-flex flex-column align-items-center justify-content-center lh-1 py-2">
+            <Image
+              circle
+              className="rounded-circle"
+              width={50}
+              height={50}
+              src={transaction.supplier.thumbnailImageUrl}
+            />
+            <div><Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: transaction.supplier.id })}>{transaction.supplier.name}</Link></div>
+            <div className="mt-2">
+              <a className="text-muted" href={`tel:${transaction.supplier.phoneNumber}`}>
+              <i className="fal fa-phone"></i> {transaction.supplier.phoneNumber}
+              </a>
+            </div>
+          </div>
+          <div className="col-md-5 py-2 d-flex align-items-center text-muted border-left">
             {transaction.materialTransactionDetails.map(detail => {
               return detail.material.name;
             }).join(', ')}
