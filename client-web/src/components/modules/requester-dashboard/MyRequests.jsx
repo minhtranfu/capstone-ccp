@@ -13,7 +13,7 @@ import {
   EQUIPMENT_SHOWABLE_STATUSES,
   routeConsts
 } from 'Common/consts';
-import { RatingEquipmentTransaction, Image } from "Components/common";
+import { RatingEquipmentTransaction, Image, StarRatings } from "Components/common";
 import ccpApiService from 'Services/domain/ccp-api-service';
 import { getRoutePath } from 'Utils/common.utils';
 import { formatPrice } from 'Utils/format.utils';
@@ -258,6 +258,7 @@ class MyRequests extends Component {
     }
 
     const thumbnail = transaction.equipment.thumbnailImage ? transaction.equipment.thumbnailImage.url : '/public/upload/product-images/unnamed-19-jpg.jpg';
+    const supplier = transaction.equipment.contractor;
 
     return (
       <CSSTransition
@@ -277,23 +278,35 @@ class MyRequests extends Component {
               <span>Days: {days}</span>
               <span className="ml-2 text-muted">({transaction.beginDate} to {transaction.endDate})</span>
             </div>
-            <div>
+            <div className="flex-wrap">
               <span className="">Daily Price: {formatPrice(equipment.dailyPrice)}</span>
               <span className="ml-2 pl-2 border-left">Total fee: <strong>{formatPrice(equipment.dailyPrice * days)}</strong></span>
             </div>
             {changeStatusButtons}
           </div>
-          <div className="contractor-detail flex-fill p-2 text-center">
-            <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: transaction.equipment.contractor.id })} >
-              <img
+          <div className="contractor-detail flex-fill p-2 text-center d-flex flex-row flex-sm-column">
+            <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: supplier.id })} >
+              <Image
+                circle
                 className="rounded-circle"
-                style={{width: '50px', height: '50px'}}
-                src={transaction.equipment.contractor.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
+                width={50}
+                height={50}
+                src={supplier.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
               />
             </Link>
-            <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: transaction.equipment.contractor.id })} >
-              <p>{transaction.equipment.contractor.name}</p>
-            </Link>
+            <div className="text-left text-sm-center mx-2">
+              <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: supplier.id })} >
+                <span>{supplier.name}</span>
+              </Link>
+              <div className="mt-n2">
+                <StarRatings rating={supplier.averageEquipmentRating} starDimension="15px" />
+              </div>
+              <div>
+                <a className="text-muted" href={`tel:${supplier.phoneNumber}`}>
+                  <i className="fal fa-phone"></i> {supplier.phoneNumber}
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </CSSTransition>

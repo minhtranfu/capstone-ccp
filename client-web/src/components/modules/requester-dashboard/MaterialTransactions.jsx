@@ -382,7 +382,7 @@ class MaterialTransactions extends Component {
             <div><Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: transaction.supplier.id })}>{transaction.supplier.name}</Link></div>
             <div className="mt-2">
               <a className="text-muted" href={`tel:${transaction.supplier.phoneNumber}`}>
-              <i className="fal fa-phone"></i> {transaction.supplier.phoneNumber}
+                <i className="fal fa-phone"></i> {transaction.supplier.phoneNumber}
               </a>
             </div>
           </div>

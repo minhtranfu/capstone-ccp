@@ -8,8 +8,8 @@ import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
-import { RatingEquipmentTransaction } from "../../common";
-import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES, routeConsts } from '../../../common/consts';
+import { RatingEquipmentTransaction, Image } from "Components/common";
+import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES, routeConsts, EQUIPMENT_SHOWABLE_STATUSES } from '../../../common/consts';
 import { getRoutePath } from 'Utils/common.utils';
 
 class MyRequests extends Component {
@@ -358,6 +358,7 @@ class MyRequests extends Component {
     }
 
     const thumbnail = transaction.equipment.thumbnailImage ? transaction.equipment.thumbnailImage.url : '/public/upload/product-images/unnamed-19-jpg.jpg';
+    const { requester } = transaction;
 
     return (
       <CSSTransition
@@ -380,17 +381,30 @@ class MyRequests extends Component {
             <div>
               <span className="">Daily Price: ${equipment.dailyPrice}</span>
               <span className="ml-2 pl-2 border-left">Total fee: ${equipment.dailyPrice * days}</span>
-              <div className="">Equipment: {equipment.status}</div>
+              <div className="">Equipment: {EQUIPMENT_SHOWABLE_STATUSES[equipment.status]}</div>
             </div>
             {changeStatusButtons}
           </div>
           <div className="contractor-detail flex-fill p-2 text-center">
-            <img
-              className="rounded-circle"
-              style={{width: '50px', height: '50px'}}
-              src={transaction.requester.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
-            />
-            <p><Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: transaction.requester.id })}>{transaction.requester.name}</Link></p>
+            <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: requester.id })} >
+              <Image
+                circle
+                className="rounded-circle"
+                width={50}
+                height={50}
+                src={requester.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
+              />
+            </Link>
+            <div className="text-left text-sm-center mx-2">
+              <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: requester.id })} >
+                <span>{requester.name}</span>
+              </Link>
+              <div className="mt-1">
+                <a className="text-muted" href={`tel:${requester.phoneNumber}`}>
+                  <i className="fal fa-phone"></i> {requester.phoneNumber}
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </CSSTransition>
