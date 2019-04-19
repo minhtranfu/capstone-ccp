@@ -27,7 +27,7 @@ import java.util.List;
 
 @RolesAllowed("contractor")
 @Path("transactionDateChangeRequests")
-public class TransactionDateChangeResource {
+public class TransactionDateChangeRequestResource {
 
 	@Inject
 	HiringTransactionDAO hiringTransactionDAO;
@@ -50,7 +50,7 @@ public class TransactionDateChangeResource {
 	ModelConverter modelConverter;
 
 
-	public TransactionDateChangeResource() {
+	public TransactionDateChangeRequestResource() {
 	}
 
 	@GET

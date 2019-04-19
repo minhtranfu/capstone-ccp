@@ -240,6 +240,22 @@ public class DebrisTransactionResource {
 
 
 	@GET
+	public Response getTransactions(@QueryParam("postId") Long postId
+			, @QueryParam("bidId") Long bidId
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy) {
+		if (postId == null && bidId == null) {
+			throw new BadRequestException("Both postId & bidId cannot be null");
+		}
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+		return Response.ok(debrisTransactionDAO.getDebrisTransactions(postId, bidId, limit, offset, orderBy)).build();
+
+	}
+
+	@GET
 	@Path("requester")
 	@RolesAllowed("contractor")
 	public Response getDebrisTransactionsAsRequester(

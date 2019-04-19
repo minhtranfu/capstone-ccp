@@ -47,7 +47,7 @@ public class HiringTransactionResource {
 
 
 	@Inject
-	TransactionDateChangeResource transactionDateChangeResource;
+	TransactionDateChangeRequestResource transactionDateChangeRequestResource;
 	@Inject
 	ModelConverter modelConverter;
 
@@ -125,8 +125,6 @@ public class HiringTransactionResource {
 
 		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByIdWithValidation(id);
 
-
-		//todo not validate authority for ease
 
 		if (transactionEntity.getStatus() == null) {
 			throw new BadRequestException("Status is null!");
@@ -252,13 +250,13 @@ public class HiringTransactionResource {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
 							foundTransaction.getStatus(), transactionEntity.getStatus()));
 				}
-				// TODO: 2/18/19 check equipment status must be WAITING_FOR_RETURNING
+				// 2/18/19 check equipment status must be WAITING_FOR_RETURNING
 				if (foundEquipment.getStatus() != EquipmentEntity.Status.WAITING_FOR_RETURNING) {
 					throw new BadRequestException(String.format("Equipment id=%d status must be WAITING_FOR_RETURNING to finish transaction",
 							foundEquipment.getId()));
 				}
 
-				// TODO: 2/18/19 change equipment status to AVAILABLE
+				//2/18/19 change equipment status to AVAILABLE
 				foundEquipment.setStatus(EquipmentEntity.Status.AVAILABLE);
 				equipmentDAO.merge(foundEquipment);
 				break;
