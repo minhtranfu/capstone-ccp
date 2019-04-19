@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import Image from './Image';
 import { getRoutePath } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
+import { StarRatings } from '.';
+import { formatPrice } from 'Utils/format.utils';
 
 class EquipmentCard extends PureComponent {
   render() {
@@ -21,10 +23,18 @@ class EquipmentCard extends PureComponent {
               <div className="d-flex align-items-center info lh-1">
                 <Image circle src={product.contractor.thumbnailImageUrl} alt={`${product.contractor.name}'s avatar`} className="rounded-circle" width={40} height={40}/>
                 <span className="ml-2">
-                  {product.contractor.name}
+                  <div>
+                    {product.contractor.name}
+                  </div>
+                  <div>
+                    <StarRatings
+                      rating={product.contractor.averageEquipmentRating}
+                      starDimension="15px"
+                      />
+                  </div>
                 </span>
 
-                <span className="ml-auto text-large price bg-primary">{product.dailyPrice}K</span>
+                <span className="ml-auto text-large price bg-primary">{formatPrice(product.dailyPrice)}</span>
               </div>
             </div>
             <div className="card-body">
