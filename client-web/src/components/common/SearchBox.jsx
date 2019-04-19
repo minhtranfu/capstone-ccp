@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 
 import ccpApiService from "../../services/domain/ccp-api-service";
+import { AddressInput } from "Components/common";
 
 class SearchBox extends PureComponent {
   state = {
@@ -62,6 +63,19 @@ class SearchBox extends PureComponent {
     });
   };
 
+  _handleSelectLocation = location => {
+    const { longitude, latitude } = location;
+    const { criteria } = this.state;
+    
+    this.setState({
+      criteria: {
+        ...criteria,
+        long: longitude,
+        lat: latitude,
+      },
+    });
+  };
+
   render() {
     const { equipmentTypes, criteria } = this.state;
     const { isFetching } = this.props;
@@ -79,6 +93,15 @@ class SearchBox extends PureComponent {
                 name="q"
                 id="equipment_keyword"
                 onChange={this._handleChangeCriteria}
+              />
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="form-group">
+              <label htmlFor="equipment_keyword">Address:</label>
+              <AddressInput
+                wrapperProps={{className: "text-dark"}}
+                onSelect={this._handleSelectLocation}
               />
             </div>
           </div>

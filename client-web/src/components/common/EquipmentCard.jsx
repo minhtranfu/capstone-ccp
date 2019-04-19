@@ -2,16 +2,19 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Image from './Image';
-import { getRoutePath } from 'Utils/common.utils';
+import { getRoutePath, calcDistance } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
 import { StarRatings } from '.';
 import { formatPrice } from 'Utils/format.utils';
 
 class EquipmentCard extends PureComponent {
+
   render() {
-    const { product: productData, className } = this.props;
+    const { product: productData, className, criteria } = this.props;
     const product = productData.equipmentEntity;
     const thumbnail = product.thumbnailImage ? product.thumbnailImage.url : '/public/upload/product-images/unnamed-19-jpg.jpg';
+    const { construction } = product;
+
     return (
       <div className={`equip-card my-2 ${className}`}>
         <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, {id: product.id})}>
@@ -39,7 +42,16 @@ class EquipmentCard extends PureComponent {
             </div>
             <div className="card-body">
               <h6 className="card-title">{product.name}</h6>
-              <div className="text-muted"><i className="fal fa-archive"></i> {product.equipmentType.name}</div>
+              <div className="text-muted">
+                {criteria.lat &&
+                  <span className="mr-2 pr-2 border-right">
+                    <i className="fal fa-map"></i> {calcDistance(criteria.lat, criteria.long, construction.latitude, construction.longitude)} Km
+                  </span>
+                }
+                <span>
+                  <i className="fal fa-archive"></i> {product.equipmentType.name}
+                </span>
+              </div>
             </div>
           </div>
         </Link>
@@ -50,7 +62,8 @@ class EquipmentCard extends PureComponent {
 
 EquipmentCard.propTypes = {
   product: PropTypes.object.isRequired,
-  className: PropTypes.string
+  className: PropTypes.string,
+  criteria: PropTypes.object,
 };
 
 export default EquipmentCard;

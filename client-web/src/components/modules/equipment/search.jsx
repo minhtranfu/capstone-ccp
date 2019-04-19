@@ -140,7 +140,11 @@ class Home extends Component {
                 <Skeleton height={210} count={5} />
               </div>
             }
-            {!isFetching && products && products.map((product, index) => <EquipmentCard key={index} className="col-md-4" product={product} />)}
+            {!isFetching && products &&
+              products.map((product, index) =>
+                <EquipmentCard key={index} className="col-md-4" product={product} criteria={criteria} />
+              )
+            }
           </div>
         </div>
       </div>
