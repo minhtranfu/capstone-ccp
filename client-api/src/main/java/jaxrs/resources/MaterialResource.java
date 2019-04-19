@@ -45,6 +45,9 @@ public class MaterialResource {
 	MaterialFeedbackDAO materialFeedbackDAO;
 
 	@Inject
+	MaterialTransactionDAO materialTransactionDAO;
+
+	@Inject
 	@Claim("contractorId")
 	ClaimValue<JsonNumber> claimId;
 
@@ -67,14 +70,14 @@ public class MaterialResource {
 	public Response getFeedbacksByMaterial(@PathParam("id") long id,
 										   @QueryParam("limit") @DefaultValue(DEFAULT_RESULT_LIMIT) int limit,
 										   @QueryParam("offset") @DefaultValue("0") int offset
-										   , @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
 	) {
 		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
 			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
 		}
 
 		materialDAO.findByIdWithValidation(id);
-		return Response.ok(materialFeedbackDAO.getFeedbacksByMaterial(id, limit, offset,orderBy)).build();
+		return Response.ok(materialFeedbackDAO.getFeedbacksByMaterial(id, limit, offset, orderBy)).build();
 	}
 
 
@@ -220,4 +223,18 @@ public class MaterialResource {
 	}
 
 
+	@GET
+	@Path("{id:\\d+}/transactions")
+	public Response getTransactions(
+			@PathParam("id") long id
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
+	) {
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+		return Response.ok(materialTransactionDAO.getByMaterialId(id, limit, offset, orderBy)).build();
+
+	}
 }
