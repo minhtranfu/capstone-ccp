@@ -18,8 +18,8 @@ class EquipmentCard extends PureComponent {
               <div className="image-169 lh-1">
                 <Image src={thumbnail} height={210} className="card-img-top" alt="Equipment thumbnail image" />
               </div>
-              <div className="d-flex align-items-center info">
-                <Image src={product.contractor.thumbnailImageUrl} alt={`${product.contractor.name}'s avatar`} className="rounded-circle" width={40} height={40}/>
+              <div className="d-flex align-items-center info lh-1">
+                <Image circle src={product.contractor.thumbnailImageUrl} alt={`${product.contractor.name}'s avatar`} className="rounded-circle" width={40} height={40}/>
                 <span className="ml-2">
                   {product.contractor.name}
                 </span>
