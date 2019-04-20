@@ -830,3 +830,8 @@ nav.navbar {
 .description {
   white-space: pre-line;
 }
+
+/* Custom date range picker */
+.daterangepicker td.disabled, .daterangepicker option.disabled {
+  color: #d6d6d6 !important;
+}

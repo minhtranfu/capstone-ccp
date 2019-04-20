@@ -1,16 +1,19 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
+import DateRangePicker from 'react-bootstrap-daterangepicker';
+import 'bootstrap-daterangepicker/daterangepicker.css';
 
 import ccpApiService from "../../services/domain/ccp-api-service";
 import { AddressInput } from "Components/common";
+import { formatDate } from "Utils/format.utils";
 
 class SearchBox extends PureComponent {
   state = {
     equipmentTypes: [],
     criteria: {
-      beginDate: moment().format("YYYY-MM-DD"),
-      endDate: moment().add(3, 'days').format("YYYY-MM-DD")
+      beginDate: moment(),
+      endDate: moment().add(3, 'days'),
     }
   };
 
@@ -27,6 +30,7 @@ class SearchBox extends PureComponent {
   }
 
   _search = e => {
+    const { criteria } = this.state
     if (e) {
       e.preventDefault();
     }
@@ -35,7 +39,11 @@ class SearchBox extends PureComponent {
       return;
     }
 
-    onSearch && onSearch(this.state.criteria);
+    onSearch && onSearch({
+      ...criteria,
+      beginDate: criteria.beginDate.format("YYYY-MM-DD"),
+      endDate: criteria.endDate.format("YYYY-MM-DD"),
+    });
   };
 
   _handleChangeCriteria = e => {
@@ -44,18 +52,6 @@ class SearchBox extends PureComponent {
     criteria = {
       ...criteria,
       [name]: value
-    }
-
-    if (name === 'beginDate') {
-      // TODO: Clear end date when begin is after end date
-      if (moment(value).isSameOrAfter(moment(criteria.endDate))) {
-        return this.setState({
-          criteria: {
-            ...criteria,
-            endDate: moment(value).add(3, 'days').format("YYYY-MM-DD")
-          }
-        });
-      }
     }
 
     this.setState({
@@ -76,6 +72,25 @@ class SearchBox extends PureComponent {
     });
   };
 
+  _onChangeDateRanage = (fieldName, picker) => {
+    const { criteria } = this.state;
+    const newCriteria = {
+      ...criteria,
+      [fieldName]: picker.startDate,
+    };
+
+    if (fieldName === 'beginDate') {
+      // TODO: Clear end date when begin is after end date
+      if (picker.startDate.isSameOrAfter(criteria.endDate)) {
+        newCriteria.endDate = picker.startDate.add(3, 'days');
+      }
+    }
+
+    this.setState({
+      criteria: newCriteria
+    });
+  };
+
   render() {
     const { equipmentTypes, criteria } = this.state;
     const { isFetching } = this.props;
@@ -93,6 +108,7 @@ class SearchBox extends PureComponent {
                 name="q"
                 id="equipment_keyword"
                 onChange={this._handleChangeCriteria}
+                placeholder="Find for equiment, type, brand that you want..."
               />
             </div>
           </div>
@@ -105,7 +121,7 @@ class SearchBox extends PureComponent {
               />
             </div>
           </div>
-          <div className="col-md-3">
+          <div className="col-md-2">
             <div className="form-group">
               <label htmlFor="equipment_type">Equipment type:</label>
               <select
@@ -125,12 +141,12 @@ class SearchBox extends PureComponent {
               </select>
             </div>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-4">
             <div className="row">
               <div className="col-md-6">
                 <div className="form-group">
                   <label htmlFor="begin_date">Start at:</label>
-                  <input
+                  {/* <input
                     type="date"
                     className="form-control"
                     name="beginDate"
@@ -138,13 +154,29 @@ class SearchBox extends PureComponent {
                     onChange={this._handleChangeCriteria}
                     value={criteria.beginDate || ''}
                     min={moment().format("YYYY-MM-DD")}
-                  />
+                  /> */}
+                  <DateRangePicker
+                    singleDatePicker
+                    opens="left"
+                    minDate={moment()}
+                    containerClass="w-100"
+                    onApply={(e, picker) => this._onChangeDateRanage('beginDate', picker)}
+                  >
+                    <div className="input-group date-range-picker">
+                      <input type="text" id="timeRange" className="form-control" readOnly value={formatDate(criteria.beginDate) || ''} />
+                      <div className="input-group-append">
+                        <button type="button" className="input-group-text bg-primary text-white" id="basic-addon2">
+                          <i className="fal fa-calendar"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </DateRangePicker>
                 </div>
               </div>
               <div className="col-md-6 mt-md-0 mt-2">
                 <div className="form-group">
                   <label htmlFor="end_date">End at:</label>
-                  <input
+                  {/* <input
                     type="date"
                     className="form-control"
                     name="endDate"
@@ -156,7 +188,25 @@ class SearchBox extends PureComponent {
                         ? moment(criteria.beginDate).add(1, 'day').format("YYYY-MM-DD")
                         : moment().format("YYYY-MM-DD")
                     }
-                  />
+                  /> */}
+                  <DateRangePicker
+                    singleDatePicker
+                    opens="left"
+                    minDate={criteria.beginDate
+                      ? moment(criteria.beginDate).add(1, 'day')
+                      : moment()}
+                    containerClass="w-100"
+                    onApply={(e, picker) => this._onChangeDateRanage('endDate', picker)}
+                  >
+                    <div className="input-group date-range-picker">
+                      <input type="text" id="timeRange" className="form-control" readOnly value={formatDate(criteria.endDate) || ''} />
+                      <div className="input-group-append">
+                        <button type="button" className="input-group-text bg-primary text-white" id="basic-addon2">
+                          <i className="fal fa-calendar"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </DateRangePicker>
                 </div>
               </div>
             </div>

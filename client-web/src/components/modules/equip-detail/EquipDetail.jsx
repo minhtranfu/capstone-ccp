@@ -196,21 +196,33 @@ class EquipDetail extends Component {
             <div className="my-2 py-2 px-3 shadow-sm bg-white">
               <h1 className="">{equip.name || <Skeleton />}</h1>
               <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-6 py-2">
                   {equip.equipmentType ?
-                    <h6><i className="fal fa-tags"></i> Type: {equip.equipmentType && equip.equipmentType.name}</h6>
+                    <h6>
+                      <span className="text-muted">
+                        <i className="fal fa-tags"></i> Type:
+                      </span> {equip.equipmentType && equip.equipmentType.name}
+                    </h6>
                     : <Skeleton width={200} />
                   }
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-6 py-2">
                   {equip.dailyPrice ?
-                    <h6><i className="fal fa-money-bill"></i> Daily price: {formatPrice(equip.dailyPrice)}</h6>
+                    <h6>
+                      <span className="text-muted">
+                        <i className="fal fa-money-bill"></i>
+                      </span> Daily price: {formatPrice(equip.dailyPrice)}
+                    </h6>
                     : <Skeleton width={200} />
                   }
                 </div>
-                <div className="col-md-12">
+                <div className="col-md-12 py-2">
                   {equip.construction ?
-                    <h6><i className="fal fa-map-marker"></i> Address: {equip.construction.address}</h6>
+                    <h6>
+                      <span className="text-muted">
+                        <i className="fal fa-map-marker"></i> Address:
+                      </span> {equip.construction.address}
+                    </h6>
                     : <Skeleton width={400} />
                   }
                 </div>

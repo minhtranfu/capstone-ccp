@@ -40,8 +40,8 @@ class EquipmentCard extends PureComponent {
                 <span className="ml-auto text-large price bg-primary">{formatPrice(product.dailyPrice)}</span>
               </div>
             </div>
-            <div className="card-body">
-              <h6 className="card-title">{product.name}</h6>
+            <div className="card-body py-2 px-3">
+              <h6 className="card-title mb-1">{product.name}</h6>
               <div className="text-muted">
                 {criteria.lat &&
                   <span className="mr-2 pr-2 border-right">
