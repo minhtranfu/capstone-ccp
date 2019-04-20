@@ -3,13 +3,12 @@ import PropTypes from "prop-types";
 import moment from "moment";
 
 import { materialServices } from "Services/domain/ccp";
+import { AddressInput } from "Components/common";
 
 class MaterialSearchBox extends PureComponent {
   state = {
     materialTypes: [],
-    criteria: {
-      beginDate: moment().format("YYYY-MM-DD")
-    }
+    criteria: {}
   };
 
   _loadData = async () => {
@@ -36,22 +35,23 @@ class MaterialSearchBox extends PureComponent {
     criteria = {
       ...criteria,
       [name]: value
-    }
-
-    if (name === 'beginDate') {
-      // TODO: Clear end date when begin is after end date
-      if (moment(value).isSameOrAfter(moment(criteria.endDate))) {
-        return this.setState({
-          criteria: {
-            ...criteria,
-            endDate: undefined
-          }
-        });
-      }
-    }
+    };
 
     this.setState({
       criteria
+    });
+  };
+
+  _handleSelectLocation = location => {
+    const { longitude, latitude } = location;
+    const { criteria } = this.state;
+    
+    this.setState({
+      criteria: {
+        ...criteria,
+        long: longitude,
+        lat: latitude,
+      },
     });
   };
 
@@ -66,13 +66,13 @@ class MaterialSearchBox extends PureComponent {
             <h3>Search</h3>
           </div>
           
-            <div className="col-md-6">
+            <div className="col-md-4">
               <div className="form-group">
-                <label htmlFor="keyword">Keyword</label>
+                <label htmlFor="keyword">Keyword:</label>
                 <input type="text" name="q" onChange={this._handleChangeCriteria} id="keyword" className="form-control"/>
               </div>
             </div>
-            <div className="col-md-6">
+            <div className="col-md-4">
               <div className="form-group">
                 <label htmlFor="material_type">Material type:</label>
                 <select
@@ -90,6 +90,13 @@ class MaterialSearchBox extends PureComponent {
                     ))}
                 </select>
               </div>
+            </div>
+            <div className="col-md-4">
+              <label htmlFor="keyword">Address:</label>
+              <AddressInput
+                onSelect={this._handleSelectLocation}
+                wrapperProps={{ className: 'text-dark' }}
+              />
             </div>
             <div className="col-md-12">
               <button
