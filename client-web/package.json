@@ -4,11 +4,11 @@
   "description": "A web client with ReactJS for CCP capstone project",
   "scripts": {
     "start": "npm run prod",
-    "dev": "npm run build:dev && npm run start-dev-server",
+    "dev": "npm run start-dev-server",
     "prod": "npm run build:prod && npm run start-prod-server",
     "build:dev": "cross-env NODE_ENV=development webpack --progress --colors",
     "build:prod": "cross-env NODE_ENV=production ENV_CONFIG_PATH=./production.json webpack --progress --colors",
-    "start-dev-server": "cross-env NODE_ENV=development node server.js",
+    "start-dev-server": "cross-env NODE_ENV=development node server.js --open",
     "start-prod-server": "cross-env NODE_ENV=production node server.js",
     "lint": "eslint src/**/*.js src/**/*.jsx",
     "fix": "eslint --fix src/**/*.js src/**/*.jsx"

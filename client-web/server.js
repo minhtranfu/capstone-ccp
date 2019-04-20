@@ -9,8 +9,9 @@ if (!example) throw new Error('configuration cannot be null/undefined');
 
 const PORT = example.port;
 
+const express = require('express');
+
 if (NodeService.isProduction()) {
-    const express = require('express');
 
     const app = express();
 
@@ -42,8 +43,11 @@ if (NodeService.isProduction()) {
     new WebpackDevServer(webpack(config), {
         hot               : true,
         historyApiFallback: true,
-        // contentBase       : path.join(__dirname, "/public"),
+        contentBase: false,
         open: true,
+        before: (app) => {
+          app.use('/public', express.static('public'));
+        },
     }).listen(PORT, 'localhost', error => {
         console.log(error || `Started WebpackDevServer on port ${PORT}`);
     });

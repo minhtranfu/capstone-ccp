@@ -147,6 +147,9 @@ if (NodeUtils.isProduction()) {
   config.plugins.push(
     new webpack.HotModuleReplacementPlugin()
   );
+  config.devServer = {
+    open: true
+  };
 }
 
 module.exports = config;
