@@ -29,7 +29,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	FirebaseMessagingManager firebaseMessagingManager;
 
 	public List<EquipmentEntity> searchEquipment(String query, LocalDate beginDate, LocalDate endDate,
-												 Long contractorId, long equipmentTypeId,
+												 Double latitude, Double longitude, Double maxDistance, Long contractorId, long equipmentTypeId,
 												 String orderBy, int offset, int limit) {
 
 
@@ -59,6 +59,10 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		ParameterExpression<Long> equipmentTypeIdParam = criteriaBuilder.parameter(Long.class);
 
 
+		ParameterExpression<Double> curLatParam = criteriaBuilder.parameter(Double.class);
+		ParameterExpression<Double> curLongParam = criteriaBuilder.parameter(Double.class);
+		ParameterExpression<Double> maxDistanceParam = criteriaBuilder.parameter(Double.class);
+
 //		select equipment available in current timerange
 		List<Predicate> whereClauses = new ArrayList<>();
 		whereClauses.add(criteriaBuilder.equal(t.get("equipment").get("id"), e.get("id")));
@@ -71,6 +75,21 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		if (endDate != null) {
 			whereClauses.add(criteriaBuilder.lessThanOrEqualTo(endDateParam, t.get("endDate")));
 		}
+
+		Predicate distanceWhereClause;
+		if (latitude != null && longitude != null && maxDistance != null) {
+			distanceWhereClause = criteriaBuilder
+					.lessThan(
+							criteriaBuilder.function("calcDistance"
+									, Double.class, e.get("construction").get("latitude"), e.get("construction").get("longitude")
+									, curLatParam, curLongParam)
+							, maxDistanceParam);
+		} else {
+			distanceWhereClause = criteriaBuilder.conjunction();
+		}
+
+		whereClauses.add(distanceWhereClause);
+
 		subQuery.select(t).where(whereClauses.toArray(new Predicate[0]));
 
 		/*Select not exist active transactions intersect current timerange*/
@@ -126,6 +145,12 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		if (equipmentTypeId > 0) {
 			typeQuery.setParameter(equipmentTypeIdParam, equipmentTypeId);
 
+		}
+
+		if (latitude != null && longitude != null && maxDistance != null) {
+			typeQuery.setParameter(curLatParam, latitude);
+			typeQuery.setParameter(curLongParam, longitude);
+			typeQuery.setParameter(maxDistanceParam, maxDistance);
 		}
 
 		typeQuery.setFirstResult(offset);

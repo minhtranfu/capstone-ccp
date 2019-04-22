@@ -97,8 +97,9 @@ public class EquipmentResource {
 	public Response searchEquipment(
 
 			@QueryParam("q") @DefaultValue("") String query,
-			@QueryParam("lat") @DefaultValue(DEFAULT_LAT) double latitude,
-			@QueryParam("long") @DefaultValue(DEFAULT_LONG) double longitude,
+			@QueryParam("lat") Double latitude,
+			@QueryParam("long") Double longitude,
+			@QueryParam("maxDistance") Double maxDistance,
 			@QueryParam("beginDate") @DefaultValue("") LocalDateWrapper beginDateWrapper,
 			@QueryParam("endDate") @DefaultValue("") LocalDateWrapper endDateWrapper,
 			@QueryParam("equipmentTypeId") @DefaultValue("0") long equipmentTypeId,
@@ -136,6 +137,9 @@ public class EquipmentResource {
 		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(
 				query,
 				beginDate, endDate,
+				latitude,
+				longitude,
+				maxDistance,
 				contractorId,
 				equipmentTypeId,
 				orderBy,
@@ -145,6 +149,13 @@ public class EquipmentResource {
 
 		List<EquipmentResponse> result = new ArrayList<EquipmentResponse>();
 
+		// TODO: 4/22/19 fix this
+		if (latitude == null) {
+			latitude = Double.parseDouble(DEFAULT_LAT);
+		}
+		if (longitude == null) {
+			longitude = Double.parseDouble(DEFAULT_LONG);
+		}
 		for (EquipmentEntity equipmentEntity : equipmentEntities) {
 			EquipmentResponse equipmentResponse = new EquipmentResponse(equipmentEntity
 					, new LocationWrapper(locationQuery, latitude, longitude)
@@ -243,15 +254,15 @@ public class EquipmentResource {
 		equipmentEntity.setEquipmentType(foundEquipmentType);
 
 		//check construction
-		if (equipmentEntity.getConstruction() != null && equipmentEntity.getConstruction().getId() != 0) {
+//		if (equipmentEntity.getConstruction() != null && equipmentEntity.getConstruction().getId() != 0) {
 
-			long constructionId = equipmentEntity.getConstruction().getId();
-			ConstructionEntity foundConstructionEntity = constructionDAO.findByIdWithValidation(constructionId);
-			if (foundConstructionEntity.getContractor().getId() != equipmentEntity.getContractor().getId()) {
-				throw new BadRequestException(String.format("construction id=%d not belongs to contractor id=%d"
-						, constructionId
-						, foundContractor.getId()));
-			}
+		long constructionId = equipmentEntity.getConstruction().getId();
+		ConstructionEntity foundConstructionEntity = constructionDAO.findByIdWithValidation(constructionId);
+		if (foundConstructionEntity.getContractor().getId() != equipmentEntity.getContractor().getId()) {
+			throw new BadRequestException(String.format("construction id=%d not belongs to contractor id=%d"
+					, constructionId
+					, foundContractor.getId()));
+		}
 
 //			equipmentEntity.setConstruction(foundConstructionEntity);
 //			// TODO: 3/5/19 take address from construction
@@ -260,18 +271,18 @@ public class EquipmentResource {
 //			equipmentEntity.setLatitude(foundConstructionEntity.getLatitude());
 //			equipmentEntity.setLongitude(foundConstructionEntity.getLongitude());
 
-		} else {
-			//validate long lat address
-			LocationValidator locationValidator = new LocationValidator(
-					equipmentEntity.getConstruction().getAddress()
-					, equipmentEntity.getConstruction().getLongitude()
-					, equipmentEntity.getConstruction().getLatitude());
-			Set<ConstraintViolation<LocationValidator>> validationResult = validator.validate(locationValidator);
-			if (!validationResult.isEmpty()) {
-				throw new ConstraintViolationException(validationResult);
-			}
+//		} else {
+		//validate long lat address
+//			LocationValidator locationValidator = new LocationValidator(
+//					equipmentEntity.getConstruction().getAddress()
+//					, equipmentEntity.getConstruction().getLongitude()
+//					, equipmentEntity.getConstruction().getLatitude());
+//			Set<ConstraintViolation<LocationValidator>> validationResult = validator.validate(locationValidator);
+//			if (!validationResult.isEmpty()) {
+//				throw new ConstraintViolationException(validationResult);
+//			}
 
-		}
+//		}
 
 
 		//todo validate for additionalSpecsValues
