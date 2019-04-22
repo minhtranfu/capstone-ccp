@@ -211,7 +211,7 @@ class Notifications extends Component {
     }
 
     return (
-      <div className="dropdown-menu shadow mt-2 rounded-top-0 show">
+      <div className="dropdown-menu shadow mt-2 rounded-top-0 show dropdown-menu-right">
         <div className="dropdown-item px-1 border-bottom">
           <h6 className="d-inline">Notifications</h6>
           <button className="btn btn-link float-right py-0" onClick={this._markAllAsRead}>Mark all as read</button>

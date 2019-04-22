@@ -106,7 +106,7 @@ class DebrisSearchBox extends PureComponent {
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="location" className="text-light">Location:</label>
+              <label htmlFor="location" className="text-light">Your address:</label>
               <AddressInput onSelect={this._handleChangeLocation} inputProps={{id: 'location', value: criteria.address}} />
             </div>
           </div>
