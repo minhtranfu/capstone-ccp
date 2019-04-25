@@ -469,7 +469,7 @@ class EditEquipment extends Component {
     });
 
     return (
-      <div className="bg-white px-2 pt-3 pb-1 sticky-top sticky-sidebar mb-3">
+      <div className="bg-white px-2 pt-3 pb-1 sticky-top sticky-sidebar mb-3 shadow-sm">
         {/* TODO: Add back to list link */}
         <h4>Information: <Link to={getRoutePath(routeConsts.EQUIPMENT_MY)} className="btn btn-sm btn-outline-info float-right"><i className="fal fa-chevron-left"></i> Back to list</Link></h4>
         {isSuccess &&
@@ -572,7 +572,7 @@ class EditEquipment extends Component {
 
     return (
       <div className="container">
-        <h1 className="my-3">Edit equipment: {equipment.name}</h1>
+        <h4 className="my-3">Edit equipment: {equipment.name}</h4>
         {message &&
           <div className="alert alert-warning">{message}</div>
         }
@@ -581,7 +581,7 @@ class EditEquipment extends Component {
             {this._renderDetailForm()}
           </div>
           <div className="col-md-7">
-            <div className="bg-white px-2 py-3 position-relative">
+            <div className="bg-white px-2 py-3 position-relative shadow-sm">
               {isChangingImage &&
                 <ComponentBlocking />
               }

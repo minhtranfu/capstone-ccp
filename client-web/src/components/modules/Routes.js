@@ -114,7 +114,7 @@ export const modules = [
   {
     name: routeConsts.MATERIAL_EDIT,
     path: '/materials/my/:id/edit',
-    modulePath: './supplier-dashboard/material/edit',
+    modulePath: './material/edit',
     isPrivate: true
   },
   {
