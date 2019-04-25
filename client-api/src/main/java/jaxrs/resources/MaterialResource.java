@@ -64,7 +64,7 @@ public class MaterialResource {
 	@GET
 	@Path("{id:\\d+}")
 	public Response getMaterial(@PathParam("id") long id) {
-		return Response.ok(materialDAO.findByIdWithValidation(id)).build();
+		return Response.ok(materialDAO.findByIdWithValidation(id,false)).build();
 	}
 
 	@GET

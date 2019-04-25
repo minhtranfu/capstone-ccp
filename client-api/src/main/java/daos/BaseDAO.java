@@ -1,11 +1,7 @@
 package daos;
 
 
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
@@ -31,6 +27,29 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 
 	public void persist(T t) {
 		entityManager.persist(t);
+	}
+
+
+	public T findByID(PK id, boolean includeDeleted, String softDeleteColumnName) {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<T> cq = cb.createQuery(entityClass);
+		Root<T> rootEntry = cq.from(entityClass);
+		List<Predicate> whereClauses = new ArrayList<>();
+		whereClauses.add(cb.equal(rootEntry.get("id"), id));
+		if (!includeDeleted) {
+			whereClauses.add(cb.equal(rootEntry.get(softDeleteColumnName), false));
+		}
+		CriteriaQuery<T> all = cq.select(rootEntry).where(whereClauses.toArray(new Predicate[0]));
+		TypedQuery<T> typedQuery = entityManager.createQuery(all);
+		try {
+			return typedQuery.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public T findByID(PK id, boolean includeDeleted) {
+		return findByID(id, includeDeleted, "deleted");
 	}
 
 
@@ -63,11 +82,21 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 		return entity;
 	}
 
+	public T findByIdWithValidation(PK id, boolean includeDeleted) {
+		T entity = this.findByID(id, includeDeleted);
+		if (entity == null) {
+			throw new BadRequestException(String.format("%s id=%s not found!", entityClass.getSimpleName(), id));
+		}
+		return entity;
+	}
+
+
 	public List<T> findAll(boolean includeDeleted) {
 		return findAll(includeDeleted, "deleted");
 
 	}
-	public List<T> findAll(boolean includeDeleted,String softDeleteColumnName) {
+
+	public List<T> findAll(boolean includeDeleted, String softDeleteColumnName) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<T> cq = cb.createQuery(entityClass);
 		Root<T> rootEntry = cq.from(entityClass);
@@ -76,7 +105,7 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 			whereClauses.add(cb.equal(rootEntry.get(softDeleteColumnName), false));
 		}
 		CriteriaQuery<T> all = cq.select(rootEntry).where(whereClauses.toArray(new Predicate[0]));
-		TypedQuery<T> allQuery = entityManager.createQuery(all);
-		return allQuery.getResultList();
+		TypedQuery<T> typedQuery = entityManager.createQuery(all);
+		return typedQuery.getResultList();
 	}
 }

@@ -102,8 +102,7 @@ public class DebrisPostResource {
 	@GET
 	@Path("{id:\\d+}")
 	public Response getPostById(@PathParam("id") long postId) {
-
-		return Response.ok(debrisPostDAO.findByIdWithValidation(postId)).build();
+		return Response.ok(debrisPostDAO.findByIdWithValidation(postId, false)).build();
 
 	}
 
@@ -205,21 +204,13 @@ public class DebrisPostResource {
 		return Response.ok(debrisPostDAO.merge(managedPostEntity)).build();
 	}
 
-	@DELETE
-	@Path("{id:\\d+}")
-	public Response delete(@PathParam("id") long postId) {
-		DebrisPostEntity managedDebrisPost = debrisPostDAO.findByIdWithValidation(postId);
-		managedDebrisPost.setDeleted(true);
-		debrisPostDAO.merge(managedDebrisPost);
-		return Response.ok().build();
-	}
 
 	@GET
 	@Path("requester")
 	@RolesAllowed("contractor")
 	public Response getAllByRequester(
 			@QueryParam("status") DebrisPostEntity.Status status
-			,@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
 			, @QueryParam("offset") @DefaultValue("0") int offset
 			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
 	) {
@@ -231,14 +222,15 @@ public class DebrisPostResource {
 			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
 		}
 
-		return Response.ok(debrisPostDAO.getByRequester(getClaimContractorId(),status, limit, offset, orderBy)).build();
+		return Response.ok(debrisPostDAO.getByRequester(getClaimContractorId(), status, limit, offset, orderBy)).build();
 	}
+
 	@GET
 	@Path("supplier")
 	@RolesAllowed("contractor")
 	public Response getAllBySupplier(
 			@QueryParam("status") DebrisPostEntity.Status status
-			,@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
 			, @QueryParam("offset") @DefaultValue("0") int offset
 			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
 	) {
@@ -250,7 +242,7 @@ public class DebrisPostResource {
 			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
 		}
 
-		return Response.ok(debrisPostDAO.getByBidedSupplier(getClaimContractorId(),status, limit, offset, orderBy)).build();
+		return Response.ok(debrisPostDAO.getByBidedSupplier(getClaimContractorId(), status, limit, offset, orderBy)).build();
 	}
 
 	@Path("{id:\\d+}/images")
@@ -259,4 +251,27 @@ public class DebrisPostResource {
 		return debrisImageSubResource;
 	}
 
+
+	@DELETE
+	@Path("{id:\\d+}")
+	@RolesAllowed("contractor")
+	public Response deletePost(@PathParam("id") long postId) {
+		// TODO: 4/26/19 validate belongs
+		DebrisPostEntity debrisPostEntity = debrisPostDAO.findByIdWithValidation(postId);
+		if (debrisPostEntity.getRequester().getId() != getClaimContractorId()) {
+			throw new BadRequestException("You cannot delete other people's post");
+		}
+
+
+		// TODO: 4/26/19 check status is closed or pending
+		if (debrisPostEntity.getStatus() != DebrisPostEntity.Status.PENDING
+				&& debrisPostEntity.getStatus() != DebrisPostEntity.Status.CLOSED
+				&& debrisPostEntity.getStatus() != DebrisPostEntity.Status.FINISHED) {
+			throw new BadRequestException("Cannot delete post with status=" + debrisPostEntity.getStatus());
+		}
+
+		debrisPostEntity.setDeleted(true);
+		debrisPostDAO.merge(debrisPostEntity);
+		return Response.ok().build();
+	}
 }
