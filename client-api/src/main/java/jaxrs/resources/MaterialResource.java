@@ -2,6 +2,7 @@ package jaxrs.resources;
 
 import daos.*;
 import dtos.requests.MaterialRequest;
+import dtos.responses.MaterialDeleteResponse;
 import entities.*;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
@@ -20,6 +21,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("materials")
 @Produces(MediaType.APPLICATION_JSON)
@@ -235,6 +237,44 @@ public class MaterialResource {
 			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
 		}
 		return Response.ok(materialTransactionDAO.getByMaterialId(id, limit, offset, orderBy)).build();
+
+	}
+
+	@DELETE
+	@RolesAllowed("contractor")
+	@Path("{id:\\d+}")
+	public Response deleteMaterial(@PathParam("id") long id) {
+
+		MaterialEntity materialEntity = materialDAO.findByIdWithValidation(id);
+		//  4/26/19 validate belonsg to contractor
+
+		if (materialEntity.getContractor().getId() != getClaimContractorId()) {
+			throw new BadRequestException("You can not delete other people's materials");
+		}
+
+		// 4/26/19 validate not in processing transaction
+		List<MaterialTransactionEntity> materialTransactionEntities = materialTransactionDAO.getByMaterialId(materialEntity.getId());
+		List<MaterialTransactionEntity> processingTransactions = materialTransactionEntities.stream().filter(transaction -> transaction.getStatus() == MaterialTransactionEntity.Status.ACCEPTED
+				|| transaction.getStatus() == MaterialTransactionEntity.Status.DELIVERING).collect(Collectors.toList());
+		if (!processingTransactions.isEmpty()) {
+			throw new BadRequestException("Material #%s is currently processing in other transactions");
+		}
+
+		// deny other pending transaction
+		List<MaterialTransactionEntity> pendingTransactions = materialTransactionEntities.stream().filter(transaction -> transaction.getStatus() == MaterialTransactionEntity.Status.PENDING)
+				.collect(Collectors.toList());
+		for (MaterialTransactionEntity pendingTransaction : pendingTransactions) {
+			pendingTransaction.setStatus(MaterialTransactionEntity.Status.DENIED);
+			materialTransactionDAO.merge(pendingTransaction);
+		}
+
+
+		materialEntity.setDeleted(true);
+		MaterialEntity mergedEntity = materialDAO.merge(materialEntity);
+		MaterialDeleteResponse response = new MaterialDeleteResponse();
+		response.setDeletedMaterialId(mergedEntity.getId());
+		response.setDeniedTransactionsTotal(pendingTransactions.size());
+		return Response.ok(response).build();
 
 	}
 }

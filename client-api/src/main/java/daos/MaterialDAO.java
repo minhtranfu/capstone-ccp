@@ -40,6 +40,7 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 				materialTypeId != 0 ? criteriaBuilder.equal(materialTypeIdParam, e.get("materialType").get("id")) : criteriaBuilder.conjunction()
 				, contractorId != null ? criteriaBuilder.notEqual(e.get("contractor").get("id"), contractorIdParam) : criteriaBuilder.conjunction()
 				, criteriaBuilder.like(e.get("name"), queryParam)
+				//hidden
 				, criteriaBuilder.equal(e.get("hidden"), false)
 				//soft delete
 				,criteriaBuilder.equal(e.get("deleted"),false)

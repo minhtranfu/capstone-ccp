@@ -85,7 +85,7 @@ public class MaterialTransactionDAO extends BaseDAO<MaterialTransactionEntity, L
 				.setMaxResults(limit)
 				.getResultList();
 	}
-	
+
 	public GETListResponse<MaterialTransactionEntity> getMaterialTransactionsByRequesterId(long requesterId, MaterialTransactionEntity.Status status, int limit, int offset, String orderBy) {
 		//select e from MaterialTransactionEntity  e where e.requester.id = :requesterId
 
@@ -165,7 +165,7 @@ public class MaterialTransactionDAO extends BaseDAO<MaterialTransactionEntity, L
 		//set distinct
 		countQuery.distinct(true);
 		criteriaQuery.distinct(true);
-		
+
 		if (!orderBy.isEmpty()) {
 			List<Order> orderList = new ArrayList<>();
 			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
@@ -184,11 +184,17 @@ public class MaterialTransactionDAO extends BaseDAO<MaterialTransactionEntity, L
 				.setFirstResult(offset);
 
 
-
 		Long itemCount = countTypedQuery.getSingleResult();
 		List<MaterialTransactionDetailEntity> hiringTransactionEntities = listTypedQuery.getResultList();
 
 		return new GETListResponse<>(itemCount, limit, offset, orderBy, hiringTransactionEntities);
 
+	}
+
+	public List<MaterialTransactionEntity> getByMaterialId(long materialId) {
+		return entityManager.createQuery("select e.materialTransaction from MaterialTransactionDetailEntity e where e.material.id = :materialId"
+				, MaterialTransactionEntity.class)
+				.setParameter("materialId", materialId)
+				.getResultList();
 	}
 }
