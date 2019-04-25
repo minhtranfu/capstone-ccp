@@ -12,8 +12,4 @@ public class GeneralEquipmentTypeDAO extends BaseDAO<GeneralEquipmentTypeEntity,
 	@PersistenceContext
 	EntityManager entityManager;
 
-	public List<GeneralEquipmentTypeEntity> getAllGeneralEquipmentType() {
-		return entityManager.createNamedQuery("GeneralEquipmentTypeEntity.getAllGeneralEquipmentType")
-				.getResultList();
-	}
 }

@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.util.Objects;
 
 @Entity
-@Where(clause = "is_deleted=0")
 @Table(name = "additional_specs_field", schema = "capstone_ccp")
 public class AdditionalSpecsFieldEntity {
 	private long id;

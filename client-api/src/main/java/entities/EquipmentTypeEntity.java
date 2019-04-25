@@ -7,9 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Where(clause = "is_deleted=0")
 @Table(name = "equipment_type", schema = "capstone_ccp")
-@NamedQuery(name = "EquipmentTypeEntity.getAllEquipmentType", query = "select p from EquipmentTypeEntity p")
 public class EquipmentTypeEntity {
 	private long id;
 	private String name;
@@ -86,7 +84,6 @@ public class EquipmentTypeEntity {
 	}
 
 	@OneToMany(mappedBy = "equipmentType", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@Where(clause = "is_deleted=0")
 	public List<AdditionalSpecsFieldEntity> getAdditionalSpecsFields() {
 		return additionalSpecsFields;
 	}

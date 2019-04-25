@@ -276,7 +276,7 @@ public class TestResource {
 	@Path("hashing/changeAll")
 	public Response changeAllPassword(Credentials credentials) {
 		String password = credentials.getPassword();
-		List<ContractorAccountEntity> all = contractorAccountDAO.findAll();
+		List<ContractorAccountEntity> all = contractorAccountDAO.findAll(false);
 		for (ContractorAccountEntity contractorAccountEntity : all) {
 			String hashpw = BCrypt.hashpw(password, BCrypt.gensalt());
 			contractorAccountEntity.setPassword(hashpw);

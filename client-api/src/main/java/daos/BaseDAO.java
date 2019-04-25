@@ -6,12 +6,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -64,11 +63,19 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 		return entity;
 	}
 
-	public List<T> findAll() {
+	public List<T> findAll(boolean includeDeleted) {
+		return findAll(includeDeleted, "deleted");
+
+	}
+	public List<T> findAll(boolean includeDeleted,String softDeleteColumnName) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<T> cq = cb.createQuery(entityClass);
 		Root<T> rootEntry = cq.from(entityClass);
-		CriteriaQuery<T> all = cq.select(rootEntry);
+		List<Predicate> whereClauses = new ArrayList<>();
+		if (!includeDeleted) {
+			whereClauses.add(cb.equal(rootEntry.get(softDeleteColumnName), false));
+		}
+		CriteriaQuery<T> all = cq.select(rootEntry).where(whereClauses.toArray(new Predicate[0]));
 		TypedQuery<T> allQuery = entityManager.createQuery(all);
 		return allQuery.getResultList();
 	}

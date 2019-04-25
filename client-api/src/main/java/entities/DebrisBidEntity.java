@@ -11,9 +11,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Where(clause = "is_deleted = 0")
-@Table(name = "debris_bid", schema = "capstone_ccp", catalog = "")
-@NamedQuery(name = "DebrisBidEntity.bySupplier", query = "select e from DebrisBidEntity e where e.supplier.id = :supplierId")
+@Table(name = "debris_bid", schema = "capstone_ccp")
+@NamedQuery(name = "DebrisBidEntity.bySupplier", query = "select e from DebrisBidEntity e where e.supplier.id = :supplierId and deleted=false ")
 @EntityListeners(DebrisBidEntityListener.class)
 public class DebrisBidEntity {
 

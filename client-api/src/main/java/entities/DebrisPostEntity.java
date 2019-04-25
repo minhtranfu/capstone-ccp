@@ -12,9 +12,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Where(clause = "is_deleted = 0")
 @Table(name = "debris_post", schema = "capstone_ccp")
-@NamedQuery(name = "DebrisPostEntity.byRequester", query = "select e from DebrisPostEntity e where e.requester.id = :requesterId")
+@NamedQuery(name = "DebrisPostEntity.byRequester", query = "select e from DebrisPostEntity e where e.requester.id = :requesterId and deleted= false ")
 public class DebrisPostEntity {
 	private long id;
 	@NotNull

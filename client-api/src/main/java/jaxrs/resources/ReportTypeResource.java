@@ -14,7 +14,7 @@ public class ReportTypeResource {
 	ReportTypeDAO reportTypeDAO;
 	@GET
 	public Response getAll() {
-		return Response.ok(reportTypeDAO.findAll()).build();
+		return Response.ok(reportTypeDAO.findAll(false)).build();
 	}
 
 	@GET

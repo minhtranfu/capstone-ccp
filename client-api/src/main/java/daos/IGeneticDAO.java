@@ -14,6 +14,6 @@ public interface IGeneticDAO<T, PK> {
 	T merge(T t);
 	List<T> getByNamedQuery(String queryName);
 
-	List<T> findAll();
+	List<T> findAll(boolean includeDeleted);
 
 }

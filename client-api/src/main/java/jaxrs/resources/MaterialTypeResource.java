@@ -19,8 +19,8 @@ public class MaterialTypeResource {
 
 
 	@GET
-	public Response getAllmaterialType() {
-		return Response.ok(materialTypeDAO.findAll()).build();
+	public Response getAllMaterialType() {
+		return Response.ok(materialTypeDAO.findAll(false)).build();
 
 	}
 

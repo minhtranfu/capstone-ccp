@@ -10,7 +10,6 @@ import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
 @Entity
-@Where(clause = "is_deleted=0")
 @Table(name = "material", schema = "capstone_ccp")
 public class MaterialEntity {
 	private long id;

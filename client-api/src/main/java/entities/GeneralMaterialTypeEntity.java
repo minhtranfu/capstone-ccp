@@ -9,9 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Where(clause = "is_deleted=0")
 @Table(name = "general_material_type", schema = "capstone_ccp")
-@NamedQuery(name = "GeneralMaterialTypeEntity.findAll",query = "select e from GeneralMaterialTypeEntity e")
 public class GeneralMaterialTypeEntity {
 	private long id;
 
@@ -77,6 +75,7 @@ public class GeneralMaterialTypeEntity {
 
 	@JsonbTransient
 	@OneToMany(mappedBy = "generalMaterialType")
+	@Where(clause = "is_deleted=0")
 	public List<MaterialTypeEntity> getMaterialTypes() {
 		return materialTypes;
 	}

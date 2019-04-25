@@ -88,7 +88,9 @@ public class DebrisBidResource {
 		//  3/26/19 valdiate only can bid once
 		managedPost.getDebrisBids().stream().filter(bid -> bid.getSupplier().getId() == supplierId).findAny().ifPresent(
 				bidEntity -> {
-					throw new BadRequestException("You already bid this post");
+					if (!bidEntity.isDeleted()) {
+						throw new BadRequestException("You already bid this post");
+					}
 				}
 		);
 
@@ -187,7 +189,7 @@ public class DebrisBidResource {
 
 		GETListResponse<DebrisBidEntity> bySupplier = debrisBidDAO.getBySupplier(
 				getClaimContractorId(), status, limit, offset, orderBy);
-	
+
 		List<DebrisBidResponse> debrisBidResponses = modelConverter.toResponse(bySupplier.getItems());
 
 		GETListResponse<DebrisBidResponse> response = new GETListResponse<>(

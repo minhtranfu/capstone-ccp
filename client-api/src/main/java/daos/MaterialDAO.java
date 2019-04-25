@@ -83,7 +83,7 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 		return typeQuery.getResultList();
 	}
 
-	public Object getBySupplierId(long supplierId, int limit, int offset, String orderBy) {
+	public GETListResponse<MaterialEntity> getBySupplierId(long supplierId, int limit, int offset, String orderBy) {
 
 		//select  e from MaterialEntity  e where e.contractor.id = :supplierId
 
@@ -97,10 +97,16 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 
 		ParameterExpression<Long> supplierIdParam = criteriaBuilder.parameter(Long.class);
 
-		Predicate whereClause = criteriaBuilder.equal(e.get("contractor").get("id"), supplierIdParam);
 
-		countQuery.select(criteriaBuilder.count(e.get("id"))).where(whereClause);
-		criteriaQuery.select(e).where(whereClause);
+		List<Predicate> whereClauses = new ArrayList<>();
+		whereClauses.add(criteriaBuilder.equal(e.get("contractor").get("id"), supplierIdParam));
+
+		//soft delete
+		whereClauses.add((criteriaBuilder.equal(e.get("deleted"), false)));
+
+
+		countQuery.select(criteriaBuilder.count(e.get("id"))).where(whereClauses.toArray(new Predicate[0]));
+		criteriaQuery.select(e).where(whereClauses.toArray(new Predicate[0]));
 		TypedQuery<Long> countTypedQuery = entityManager.createQuery(countQuery)
 				.setParameter(supplierIdParam, supplierId);
 

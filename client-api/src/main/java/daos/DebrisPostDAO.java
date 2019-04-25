@@ -35,6 +35,8 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 
 		Predicate whereClause = criteriaBuilder.and(
 				criteriaBuilder.equal(e.get("requester").get("id"), requesterIdParam)
+				//soft delete
+				,criteriaBuilder.equal(e.get("deleted"),false)
 				, status != null ? criteriaBuilder.equal(e.get("status"), statusParam) : criteriaBuilder.conjunction());
 
 		countQuery.select(criteriaBuilder.count(e.get("id"))).where(whereClause);
@@ -91,12 +93,16 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 
 		subBidQuery.select(b).where(
 				criteriaBuilder.equal(b.get("debrisPost").get("id"), p.get("id"))
+				//soft delete
+				, criteriaBuilder.equal(b.get("deleted"),false)
 				, criteriaBuilder.equal(b.get("supplier").get("id"), supplierIdParam)
 		);
 
 				
 		Predicate whereClause = criteriaBuilder.and(
 				criteriaBuilder.exists(subBidQuery)
+				//soft delete
+				, criteriaBuilder.equal(p.get("deleted"),false)
 				, status != null ? criteriaBuilder.equal(p.get("status"), statusParam) : criteriaBuilder.conjunction());
 
 		countQuery.select(criteriaBuilder.count(p.get("id"))).where(whereClause);
@@ -209,6 +215,7 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 				, debrisServiceTypeWhereClause
 				, contractorId != null ? criteriaBuilder.notEqual(e.get("requester").get("id"), contractorIdParam) : criteriaBuilder.conjunction()
 				, criteriaBuilder.equal(e.get("hidden"), false)
+				//soft delete
 				, criteriaBuilder.equal(e.get("delete"),false)
 				, criteriaBuilder.equal(e.get("status"), DebrisPostEntity.Status.PENDING)
 		);
