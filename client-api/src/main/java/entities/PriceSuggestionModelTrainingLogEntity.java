@@ -3,6 +3,9 @@ package entities;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -15,8 +18,10 @@ public class PriceSuggestionModelTrainingLogEntity {
 	private long equipmentTypeId;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
+	private List<PriceSuggestionModelTrainingLogDetailEntity> priceSuggestionModelTrainingLogDetailEntities = new ArrayList<>();
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;
@@ -67,7 +72,7 @@ public class PriceSuggestionModelTrainingLogEntity {
 	}
 
 	@Basic
-	@Column(name = "created_time", nullable = true)
+	@Column(name = "created_time", nullable = true, insertable = false, updatable = false)
 	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
@@ -77,7 +82,7 @@ public class PriceSuggestionModelTrainingLogEntity {
 	}
 
 	@Basic
-	@Column(name = "updated_time", nullable = true)
+	@Column(name = "updated_time", nullable = true, insertable = false, updatable = false)
 	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
@@ -91,17 +96,31 @@ public class PriceSuggestionModelTrainingLogEntity {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		PriceSuggestionModelTrainingLogEntity that = (PriceSuggestionModelTrainingLogEntity) o;
-		return id == that.id &&
-				Double.compare(that.testingRate, testingRate) == 0 &&
-				equipmentTypeId == that.equipmentTypeId &&
-				Objects.equals(toDate, that.toDate) &&
-				Objects.equals(fromDate, that.fromDate) &&
-				Objects.equals(createdTime, that.createdTime) &&
-				Objects.equals(updatedTime, that.updatedTime);
+		return id == that.id;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, toDate, fromDate, testingRate, equipmentTypeId, createdTime, updatedTime);
+		return Objects.hash(id);
+	}
+
+	@OneToMany(mappedBy = "priceSuggestionModelTrainingLogEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+	public List<PriceSuggestionModelTrainingLogDetailEntity> getPriceSuggestionModelTrainingLogDetailEntities() {
+		return priceSuggestionModelTrainingLogDetailEntities;
+	}
+
+	public void setPriceSuggestionModelTrainingLogDetailEntities(List<PriceSuggestionModelTrainingLogDetailEntity> priceSuggestionModelTrainingLogDetailEntities) {
+		this.priceSuggestionModelTrainingLogDetailEntities = priceSuggestionModelTrainingLogDetailEntities;
+	}
+
+	public void addDetails(PriceSuggestionModelTrainingLogDetailEntity detailEntity) {
+		priceSuggestionModelTrainingLogDetailEntities.add(detailEntity);
+		detailEntity.setPriceSuggestionModelTrainingLogEntity(this);
+	}
+
+	public void removeDetails(PriceSuggestionModelTrainingLogDetailEntity detailEntity) {
+		priceSuggestionModelTrainingLogDetailEntities.remove(detailEntity);
+		detailEntity.setPriceSuggestionModelTrainingLogEntity(null);
+
 	}
 }

@@ -2,8 +2,11 @@ package jaxrs.resources;
 
 import daos.*;
 import dtos.notifications.NotificationDTO;
+import dtos.requests.AdditionalSpecsValueRequest;
 import dtos.requests.EquipmentPostRequest;
+import dtos.requests.EquipmentPriceSuggestionRequest;
 import dtos.requests.EquipmentPutRequest;
+import dtos.responses.EquipmentPriceSuggestionResponse;
 import dtos.responses.EquipmentResponse;
 import dtos.validationObjects.LocationValidator;
 import dtos.wrappers.LocalDateWrapper;
@@ -494,5 +497,26 @@ public class EquipmentResource {
 		return equipmentImageSubResource;
 	}
 
+
+	@GET
+	@Path("/suggestedPrice")
+	public Response getSuggestedPrice(@Valid EquipmentPriceSuggestionRequest priceSuggestionRequest) {
+		// TODO: 4/25/19 validate reqeust
+
+
+		double suggestedPrice = 0;
+		EquipmentTypeEntity equipmentTypeEntity = equipmentTypeDAO.findByIdWithValidation(priceSuggestionRequest.getEquipmentType().getId());
+		for (AdditionalSpecsValueRequest additionalValue : priceSuggestionRequest.getAdditionalSpecsValues()) {
+			AdditionalSpecsFieldEntity field = additionalSpecsFieldDAO.findByIdWithValidation(additionalValue.additionalSpecsField.getId());
+			if (field.getDataType().isNumbericType()) {
+				double parsedValue = Double.parseDouble(additionalValue.value);
+				suggestedPrice += parsedValue * field.getPriceWeight();
+			}
+		}
+
+		EquipmentPriceSuggestionResponse response = new EquipmentPriceSuggestionResponse();
+		response.setSuggestedPrice(suggestedPrice);
+		return Response.ok(response).build();
+	}
 
 }

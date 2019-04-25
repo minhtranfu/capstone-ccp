@@ -42,6 +42,8 @@
         <class>entities.MaterialFeedbackEntity</class>
         <class>entities.EquipmentFeedbackEntity</class>
         <class>entities.ContractorVerifyingImageEntity</class>
+        <class>entities.PriceSuggestionModelTrainingLogEntity</class>
+        <class>entities.PriceSuggestionModelTrainingLogDetailEntity</class>
         <properties>
 
             <!--<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>-->

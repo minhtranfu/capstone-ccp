@@ -268,6 +268,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	}
 
 	public GETListResponse<EquipmentEntity> getEquipmentsBySupplierId(long supplierId, EquipmentEntity.Status status, int limit, int offset, String orderBy) {
+
+
 		//select  e from EquipmentEntity  e where e.contractor.id = :supplierId
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -320,6 +322,15 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		return new GETListResponse<EquipmentEntity>(itemCount, limit, offset, orderBy, equipmentEntities);
 
 	}
+
+	public List<EquipmentEntity> getEquipmentsByEquipmentTypeId(long equipmentTypeId) {
+		return entityManager.createQuery("select e from EquipmentEntity e where e.equipmentType.id = :equipmentTypeId "
+				, EquipmentEntity.class)
+				.setParameter("equipmentTypeId", equipmentTypeId)
+				.getResultList();
+
+	}
+
 }
 
 

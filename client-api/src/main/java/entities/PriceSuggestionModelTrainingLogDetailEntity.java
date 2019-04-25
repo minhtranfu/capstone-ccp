@@ -9,13 +9,13 @@ import java.util.Objects;
 public class PriceSuggestionModelTrainingLogDetailEntity {
 	private long id;
 	private double weight;
-	private int priceSuggestionModelTrainingLogId;
-	private long addtionalSpecsFieldId;
+	private PriceSuggestionModelTrainingLogEntity priceSuggestionModelTrainingLogEntity;
+	private Long additionalSpecsFieldId;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
-	private PriceSuggestionModelTrainingLogEntity priceSuggestionModelTrainingLogByPriceSuggestionModelTrainingLogId;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "id", nullable = false)
 	public long getId() {
 		return id;
@@ -35,28 +35,19 @@ public class PriceSuggestionModelTrainingLogDetailEntity {
 		this.weight = weight;
 	}
 
-	@Basic
-	@Column(name = "price_suggestion_model_training_log_id", nullable = false)
-	public int getPriceSuggestionModelTrainingLogId() {
-		return priceSuggestionModelTrainingLogId;
-	}
-
-	public void setPriceSuggestionModelTrainingLogId(int priceSuggestionModelTrainingLogId) {
-		this.priceSuggestionModelTrainingLogId = priceSuggestionModelTrainingLogId;
-	}
 
 	@Basic
-	@Column(name = "addtional_specs_field_id", nullable = false)
-	public long getAddtionalSpecsFieldId() {
-		return addtionalSpecsFieldId;
+	@Column(name = "additional_specs_field_id", nullable = false)
+	public Long getAdditionalSpecsFieldId() {
+		return additionalSpecsFieldId;
 	}
 
-	public void setAddtionalSpecsFieldId(long addtionalSpecsFieldId) {
-		this.addtionalSpecsFieldId = addtionalSpecsFieldId;
+	public void setAdditionalSpecsFieldId(Long addtionalSpecsFieldId) {
+		this.additionalSpecsFieldId = addtionalSpecsFieldId;
 	}
 
 	@Basic
-	@Column(name = "created_time", nullable = false)
+	@Column(name = "created_time", nullable = false, insertable = false, updatable = false)
 	public LocalDateTime getCreatedTime() {
 		return createdTime;
 	}
@@ -66,7 +57,7 @@ public class PriceSuggestionModelTrainingLogDetailEntity {
 	}
 
 	@Basic
-	@Column(name = "updated_time", nullable = false)
+	@Column(name = "updated_time", nullable = false, insertable = false, updatable = false)
 	public LocalDateTime getUpdatedTime() {
 		return updatedTime;
 	}
@@ -80,26 +71,23 @@ public class PriceSuggestionModelTrainingLogDetailEntity {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		PriceSuggestionModelTrainingLogDetailEntity that = (PriceSuggestionModelTrainingLogDetailEntity) o;
-		return id == that.id &&
-				Double.compare(that.weight, weight) == 0 &&
-				priceSuggestionModelTrainingLogId == that.priceSuggestionModelTrainingLogId &&
-				addtionalSpecsFieldId == that.addtionalSpecsFieldId &&
-				Objects.equals(createdTime, that.createdTime) &&
-				Objects.equals(updatedTime, that.updatedTime);
+		return id == that.id;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, weight, priceSuggestionModelTrainingLogId, addtionalSpecsFieldId, createdTime, updatedTime);
+		return Objects.hash(id);
 	}
 
 	@ManyToOne
 	@JoinColumn(name = "price_suggestion_model_training_log_id", referencedColumnName = "id", nullable = false)
-	public PriceSuggestionModelTrainingLogEntity getPriceSuggestionModelTrainingLogByPriceSuggestionModelTrainingLogId() {
-		return priceSuggestionModelTrainingLogByPriceSuggestionModelTrainingLogId;
+	public PriceSuggestionModelTrainingLogEntity getPriceSuggestionModelTrainingLogEntity() {
+		return priceSuggestionModelTrainingLogEntity;
 	}
 
-	public void setPriceSuggestionModelTrainingLogByPriceSuggestionModelTrainingLogId(PriceSuggestionModelTrainingLogEntity priceSuggestionModelTrainingLogByPriceSuggestionModelTrainingLogId) {
-		this.priceSuggestionModelTrainingLogByPriceSuggestionModelTrainingLogId = priceSuggestionModelTrainingLogByPriceSuggestionModelTrainingLogId;
+	public void setPriceSuggestionModelTrainingLogEntity(PriceSuggestionModelTrainingLogEntity priceSuggestionModelTrainingLogEntity) {
+		this.priceSuggestionModelTrainingLogEntity = priceSuggestionModelTrainingLogEntity;
 	}
+
+
 }

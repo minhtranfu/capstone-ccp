@@ -14,7 +14,7 @@ public class EquipmentTypeEntity {
 	private long id;
 	private String name;
 	private GeneralEquipmentTypeEntity generalEquipment;
-
+	private double priceWeight;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 	private boolean isDeleted;
@@ -41,6 +41,17 @@ public class EquipmentTypeEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+
+	@Basic
+	@Column(name = "price_weight")
+	public double getPriceWeight() {
+		return priceWeight;
+	}
+
+	public void setPriceWeight(double priceWeight) {
+		this.priceWeight = priceWeight;
 	}
 
 	@Basic

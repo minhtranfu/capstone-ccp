@@ -16,6 +16,7 @@ import entities.EquipmentEntity;
 import entities.EquipmentTypeEntity;
 import managers.EmailManager;
 import managers.FirebaseMessagingManager;
+import managers.PriceSuggestionCalculator;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -24,9 +25,8 @@ import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.mindrot.jbcrypt.BCrypt;
-import org.omg.CORBA.PUBLIC_MEMBER;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import utils.ModelConverter;
-import utils.NotificationHelper;
 
 import javax.annotation.Resource;
 import javax.annotation.security.PermitAll;
@@ -47,7 +47,6 @@ import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.sql.Wrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -56,9 +55,8 @@ import java.util.logging.Logger;
 @Path("cdiTest")
 @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
 @RequestScoped
-public class TestResource  {
+public class TestResource {
 	public static final Logger LOGGER = Logger.getLogger(TestResource.class.toString());
-
 
 
 	@Inject
@@ -107,17 +105,18 @@ public class TestResource  {
 		EquipmentRequest equipmentRequest1 = modelConverter.toRequest(equipmentEntity);
 		return Response.ok(equipmentRequest1).build();
 	}
+
 	@PUT
 	@Path("equipment/{id:\\d+}")
 	public Response testPutEquipment(@PathParam("id") long equipmentId, @Valid EquipmentPutRequest equipmentRequest) {
 
 		EquipmentEntity foundEquipment = equipmentDAO.findByIdWithValidation(equipmentId);
-		 modelConverter.toEntity(equipmentRequest,foundEquipment );
+		modelConverter.toEntity(equipmentRequest, foundEquipment);
 
 		return Response.ok(foundEquipment).build();
 	}
 
-//	@PUT
+	//	@PUT
 //	@Path("equipment")
 //	public Response testSaveOrMupdateEquipment(@Valid EquipmentPutRequest equipmentPutRequest) {
 //
@@ -154,13 +153,11 @@ public class TestResource  {
 	Validator validator;
 
 
-
 	@GET
 	@Path("validate")
 	public Response testValidation(LocationValidator validatioObject) throws NoSuchMethodException {
 		;
 		Set<ConstraintViolation<LocationValidator>> validate = validator.validate(validatioObject);
-
 
 
 		if (!validate.isEmpty()) {
@@ -169,7 +166,6 @@ public class TestResource  {
 
 		return Response.ok().build();
 	}
-
 
 
 	@Context
@@ -201,6 +197,7 @@ public class TestResource  {
 	public Response testAuthenWithoutJWT() {
 		return Response.ok().build();
 	}
+
 	private String toIdentityString() {
 //		JsonWebToken jsonWebToken = (JsonWebToken) securityContext.getUserPrincipal();
 		JsonWebToken jsonWebToken = this.jsonWebToken.get();
@@ -241,7 +238,7 @@ public class TestResource  {
 		NotificationDTO notificationDTO = new NotificationDTO();
 		notificationDTO.setTitle("test");
 		notificationDTO.setContent("testBody");
-		return Response.ok(messagingManager.sendExpo(notificationDTO,"ExponentPushToken[4SfrLEChNrtCnwgRHZcAFV]")).build();
+		return Response.ok(messagingManager.sendExpo(notificationDTO, "ExponentPushToken[4SfrLEChNrtCnwgRHZcAFV]")).build();
 	}
 
 
@@ -292,8 +289,30 @@ public class TestResource  {
 	@POST
 	@Path("email/test")
 	public Response sendTestingEmail() throws IOException, MessagingException {
-		emailManager.sendmail("Testing from nghia","Testing content from nghia\nTesting content from nghia\nTesting content from nghia\n","luuquangnghia97@gmail.com");
+		emailManager.sendmail("Testing from nghia", "Testing content from nghia\nTesting content from nghia\nTesting content from nghia\n", "luuquangnghia97@gmail.com");
 		return Response.ok().build();
 	}
+
+
+	@Inject
+	PriceSuggestionCalculator priceSuggestionCalculator;
+	public static INDArray theta = null;
+
+
+	@GET
+	@Path("suggestPrice/getTheta/{id}")
+	public Response testSuggestPrice(@PathParam("id") long equipmentTypeId) {
+		theta = priceSuggestionCalculator.calculateTheta(equipmentTypeId);
+
+		return Response.ok(theta.toString()).build();
+	}
+
+	@GET
+	@Path("suggestPrice/train")
+	public Response train() {
+		priceSuggestionCalculator.trainModel();
+		return Response.ok().build();
+	}
+
 
 }

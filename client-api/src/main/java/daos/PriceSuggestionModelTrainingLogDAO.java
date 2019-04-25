@@ -1,4 +1,9 @@
 package daos;
 
-public class PriceSuggestionModelTrainingLogDAO {
+import entities.PriceSuggestionModelTrainingLogEntity;
+
+import javax.ejb.Stateless;
+
+@Stateless
+public class PriceSuggestionModelTrainingLogDAO extends BaseDAO<PriceSuggestionModelTrainingLogEntity, Long> {
 }
