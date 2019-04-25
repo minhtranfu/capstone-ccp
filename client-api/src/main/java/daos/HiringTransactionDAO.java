@@ -161,4 +161,12 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 	}
 
 
+	public int denyAllPendingTransaction(long equipmentEntityId) {
+
+		int rows = entityManager.createNativeQuery("update hiring_transaction set status = 'DENIED' where equipment_id = :equipmentId and status = 'PENDING'")
+				.setParameter("equipmentId", equipmentEntityId)
+				.executeUpdate();
+		return rows;
+	}
+
 }

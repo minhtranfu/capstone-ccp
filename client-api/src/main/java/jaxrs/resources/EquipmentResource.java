@@ -6,6 +6,7 @@ import dtos.requests.AdditionalSpecsValueRequest;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentPriceSuggestionRequest;
 import dtos.requests.EquipmentPutRequest;
+import dtos.responses.EquipmentDeleteResponse;
 import dtos.responses.EquipmentPriceSuggestionResponse;
 import dtos.responses.EquipmentResponse;
 import dtos.validationObjects.LocationValidator;
@@ -60,6 +61,9 @@ public class EquipmentResource {
 
 	@Inject
 	EquipmentImageSubResource equipmentImageSubResource;
+
+	@Inject
+	HiringTransactionDAO hiringTransactionDAO;
 
 
 	@Resource
@@ -519,4 +523,38 @@ public class EquipmentResource {
 		return Response.ok(response).build();
 	}
 
+
+	@DELETE
+	@Path("{id:\\d+}")
+	@RolesAllowed("contractor")
+	public Response deleteEquipment(@PathParam("id") long id) {
+		EquipmentEntity equipmentEntity = equipmentDAO.findByIdWithValidation(id);
+		if (equipmentEntity.getContractor().getId() == getClaimContractorId()) {
+			throw new BadRequestException("You can not delete other people's equipment");
+		}
+
+		// TODO: 4/25/19 validate cant delete if status is not available
+		if (equipmentEntity.getStatus() != EquipmentEntity.Status.AVAILABLE) {
+			throw new BadRequestException("You can only delete AVAILABLE equipment!");
+		}
+
+		// TODO: 4/25/19 validate cant delete if have processing transaction
+		;
+		if (equipmentEntity.getProcessingHiringTransaction() != null) {
+			throw new BadRequestException("This equipment is processing in hiring transaction #" + equipmentEntity.getProcessingHiringTransaction().getId());
+		}
+
+		// TODO: 4/25/19 deny all pending transaction
+		int deletedRows = hiringTransactionDAO.denyAllPendingTransaction(equipmentEntity.getId());
+
+
+		equipmentEntity.setDeleted(true);
+
+		equipmentDAO.merge(equipmentEntity);
+
+		EquipmentDeleteResponse response = new EquipmentDeleteResponse();
+		response.setDeniedTransactionsTotal(deletedRows);
+		response.setDeletedEquipmentId(equipmentEntity.getId());
+		return Response.ok(response).build();
+	}
 }

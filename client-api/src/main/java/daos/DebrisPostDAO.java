@@ -209,6 +209,7 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 				, debrisServiceTypeWhereClause
 				, contractorId != null ? criteriaBuilder.notEqual(e.get("requester").get("id"), contractorIdParam) : criteriaBuilder.conjunction()
 				, criteriaBuilder.equal(e.get("hidden"), false)
+				, criteriaBuilder.equal(e.get("delete"),false)
 				, criteriaBuilder.equal(e.get("status"), DebrisPostEntity.Status.PENDING)
 		);
 

@@ -41,6 +41,9 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 				, contractorId != null ? criteriaBuilder.notEqual(e.get("contractor").get("id"), contractorIdParam) : criteriaBuilder.conjunction()
 				, criteriaBuilder.like(e.get("name"), queryParam)
 				, criteriaBuilder.equal(e.get("hidden"), false)
+				//soft delete
+				,criteriaBuilder.equal(e.get("deleted"),false)
+
 		);
 
 		if (!orderBy.isEmpty()) {

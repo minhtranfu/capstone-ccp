@@ -60,7 +60,7 @@ public class PriceSuggestionCalculator {
 
 	public INDArray calculateTheta(long equipmentTypeId) {
 		LOGGER.info("training model for equipmentTypeId=" + equipmentTypeId);
-		List<EquipmentEntity> equipments = equipmentDAO.getEquipmentsByEquipmentTypeId(equipmentTypeId);
+		List<EquipmentEntity> equipments = equipmentDAO.getEquipmentsByEquipmentTypeId(equipmentTypeId, true);
 		List<AdditionalSpecsFieldEntity> fields = additionalSpecsFieldDAO.getFieldsByEquipmentType(equipmentTypeId);
 
 		if (fields.isEmpty()) {

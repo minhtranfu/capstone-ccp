@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Where(clause = "is_deleted=0")
+//@Where(clause = "is_deleted=0")
 @Table(name = "equipment", schema = "capstone_ccp")
 @NamedQueries({
 		@NamedQuery(name = "EquipmentEntity.searchEquipment", query = "select e from EquipmentEntity  e where exists (select t from e.availableTimeRanges t where t.beginDate <= :curBeginDate and :curBeginDate <= :curEndDate  and  :curEndDate <= t.endDate)")
@@ -32,6 +32,7 @@ import java.util.Objects;
 
 @NamedNativeQuery(name = "EquipmentEntity.getMatchedEquipmentForSubscriptions", query = "select e.id as equipment_id, s.id as subscription_id, s.contractor_id from equipment e , subscription s " +
 		"where e.status = 'AVAILABLE'" +
+		"and e.is_deleted=0 "+
 		"and e.updated_time > now()-:timeOffset\n" +
 		"and \n" +
 		"(s.equipment_type_id = e.equipment_type_id or s.equipment_type_id is null or s.equipment_type_id = 0)\n" +

@@ -64,16 +64,16 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		ParameterExpression<Double> maxDistanceParam = criteriaBuilder.parameter(Double.class);
 
 //		select equipment available in current timerange
-		List<Predicate> whereClauses = new ArrayList<>();
-		whereClauses.add(criteriaBuilder.equal(t.get("equipment").get("id"), e.get("id")));
+		List<Predicate> whereClausesSubQuery = new ArrayList<>();
+		whereClausesSubQuery.add(criteriaBuilder.equal(t.get("equipment").get("id"), e.get("id")));
 
 		// this shit by no means be done in another way, fucking retarded jpa
 		if (beginDate != null) {
-			whereClauses.add(criteriaBuilder.lessThanOrEqualTo(t.get("beginDate"), beginDateParam));
+			whereClausesSubQuery.add(criteriaBuilder.lessThanOrEqualTo(t.get("beginDate"), beginDateParam));
 
 		}
 		if (endDate != null) {
-			whereClauses.add(criteriaBuilder.lessThanOrEqualTo(endDateParam, t.get("endDate")));
+			whereClausesSubQuery.add(criteriaBuilder.lessThanOrEqualTo(endDateParam, t.get("endDate")));
 		}
 
 		Predicate distanceWhereClause;
@@ -88,9 +88,9 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 			distanceWhereClause = criteriaBuilder.conjunction();
 		}
 
-		whereClauses.add(distanceWhereClause);
+		whereClausesSubQuery.add(distanceWhereClause);
 
-		subQuery.select(t).where(whereClauses.toArray(new Predicate[0]));
+		subQuery.select(t).where(whereClausesSubQuery.toArray(new Predicate[0]));
 
 		/*Select not exist active transactions intersect current timerange*/
 		List<Predicate> subQueryActiveWhereClauses = new ArrayList<>();
@@ -114,6 +114,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 				, contractorId != null ? criteriaBuilder.notEqual(e.get("contractor").get("id"), contractorParam) : criteriaBuilder.conjunction()
 				, criteriaBuilder.exists(subQuery)
 				, criteriaBuilder.not(criteriaBuilder.exists(subQueryActiveTransaction))
+				//excluded deleted equipments
+				, criteriaBuilder.equal(e.get("deleted"), true)
 		);
 
 		if (!orderBy.isEmpty()) {
@@ -155,7 +157,6 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 		typeQuery.setFirstResult(offset);
 		typeQuery.setMaxResults(limit);
-
 
 
 		return typeQuery.getResultList();
@@ -285,7 +286,10 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 		Predicate whereClause = criteriaBuilder.and(
 				criteriaBuilder.equal(e.get("contractor").get("id"), supplierIdParam)
-				, status != null ? criteriaBuilder.equal(e.get("status"), statusParam) : criteriaBuilder.conjunction());
+				, status != null ? criteriaBuilder.equal(e.get("status"), statusParam) : criteriaBuilder.conjunction()
+				//is_deleted = 0
+				, criteriaBuilder.equal(e.get("deleted"), false)
+		);
 
 		countQuery.select(criteriaBuilder.count(e.get("id"))).where(whereClause);
 		criteriaQuery.select(e).where(whereClause);
@@ -323,8 +327,12 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 	}
 
-	public List<EquipmentEntity> getEquipmentsByEquipmentTypeId(long equipmentTypeId) {
-		return entityManager.createQuery("select e from EquipmentEntity e where e.equipmentType.id = :equipmentTypeId "
+	public List<EquipmentEntity> getEquipmentsByEquipmentTypeId(long equipmentTypeId, boolean includeDeleted) {
+		String query = "select e from EquipmentEntity e where e.equipmentType.id = :equipmentTypeId  ";
+		if (!includeDeleted) {
+			query += " and e.deleted=false ";
+		}
+		return entityManager.createQuery(query
 				, EquipmentEntity.class)
 				.setParameter("equipmentTypeId", equipmentTypeId)
 				.getResultList();
