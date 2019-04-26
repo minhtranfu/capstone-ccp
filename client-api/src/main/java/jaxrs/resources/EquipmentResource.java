@@ -101,7 +101,7 @@ public class EquipmentResource {
 
 
 	@GET
-	public Response searchEquipment(
+		public Response searchEquipment(
 
 			@QueryParam("q") @DefaultValue("") String query,
 			@QueryParam("lat") Double latitude,
@@ -529,7 +529,7 @@ public class EquipmentResource {
 	@RolesAllowed("contractor")
 	public Response deleteEquipment(@PathParam("id") long id) {
 		EquipmentEntity equipmentEntity = equipmentDAO.findByIdWithValidation(id);
-		if (equipmentEntity.getContractor().getId() == getClaimContractorId()) {
+		if (equipmentEntity.getContractor().getId() != getClaimContractorId()) {
 			throw new BadRequestException("You can not delete other people's equipment");
 		}
 
