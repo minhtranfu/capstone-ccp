@@ -273,6 +273,23 @@ class EquipDetail extends Component {
                   )}
                 </div>
               </div>
+              
+              <h5 className="mt-3">Additional information:</h5>
+              <div className="my-2 row">
+                {equipment.additionalSpecsValues && equipment.additionalSpecsValues.map(info => {
+                  return (
+                    <div key={info.id} className="col-md-6 py-2">
+                      <h6>
+                        <span className="text-muted">
+                          <small className="fal fa-circle"></small> {info.additionalSpecsField.name}
+                        </span>{' '}
+                        {info.value}
+                      </h6>
+                    </div>
+                  );
+                })}
+              </div>
+
               <h5 className="mt-3">Description:</h5>
               <div className="description">
                 {equipment.description}
