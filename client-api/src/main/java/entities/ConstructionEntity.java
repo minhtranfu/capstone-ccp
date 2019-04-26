@@ -12,7 +12,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "construction", schema = "capstone_ccp")
-@Where(clause = "is_deleted = 0")
 @EntityListeners(ConstructionEntityListener.class)
 public class ConstructionEntity {
 	private long id;

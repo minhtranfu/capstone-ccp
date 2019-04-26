@@ -180,7 +180,6 @@ public class ContractorEntity {
 		this.updatedTime = updatedTime;
 	}
 
-	// TODO: 2/27/19 orphan removal here
 	@JsonbTransient
 	@OneToMany(mappedBy = "contractor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")

@@ -124,6 +124,7 @@ public class DebrisBidResource {
 
 	@DELETE
 	@Path("{id:\\d+}")
+	@RolesAllowed("contractor")
 	public Response cancelPendingBid(@PathParam("id") long postId) {
 		DebrisBidEntity managedDebrisBid = debrisBidDAO.findByIdWithValidation(postId);
 		// check status is pending
