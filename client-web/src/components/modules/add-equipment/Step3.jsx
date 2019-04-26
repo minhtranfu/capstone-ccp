@@ -246,7 +246,7 @@ class AddEquipmentStep3 extends Step {
 
       this.setState({
         isGettingSuggestedPrice: false,
-        suggestedPrice: suggestResult.suggestedPrice,
+        suggestedPrice: +suggestResult.suggestedPrice.toFixed(0),
       });
     } catch (error) {
       const suggestPriceError = getErrorMessage(error);
