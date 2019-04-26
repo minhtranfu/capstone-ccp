@@ -502,7 +502,7 @@ public class EquipmentResource {
 	}
 
 
-	@GET
+	@POST
 	@Path("/suggestedPrice")
 	public Response getSuggestedPrice(@Valid EquipmentPriceSuggestionRequest priceSuggestionRequest) {
 		// TODO: 4/25/19 validate reqeust
