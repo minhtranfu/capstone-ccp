@@ -12,7 +12,7 @@ export const formatDate = time => {
   return moment(time).format('DD-MM-YYYY');
 };
 
-export const formatPrice = (price, decimalCount = 2, decimal = ".", thousands = ",") => {
+export const formatPrice = (price, withUnit = true, decimalCount = 2, decimal = ".", thousands = ",") => {
   // const currencyConfig = config.get('app.currency');
   const currencyConfig = {
     position: 'postfix',
@@ -34,6 +34,10 @@ export const formatPrice = (price, decimalCount = 2, decimal = ".", thousands = 
   }
 
   price = price.replace('.00', '');
+
+  if (!withUnit) {
+    return price;
+  }
 
   if (currencyConfig.position === 'postfix') {
     return `${price}${currencyConfig.unit}`;

@@ -52,15 +52,6 @@ class AddEquipmentStep1 extends Step {
         message: '^Please select an equipment type'
       }
     },
-    dailyPrice: {
-      presence: {
-        allowEmpty: false,
-        message: 'is required'
-      },
-      numericality: {
-        greaterThan: 0
-      }
-    },
     availableTimeRanges: {
       presence: {
         allowEmpty: false,
@@ -384,11 +375,6 @@ class AddEquipmentStep1 extends Step {
             </div>
           </div>
           <div className="col-md-6">
-            <div className="form-group">
-              <label htmlFor="daily_price">Price per day (K): <i className="text-danger">*</i></label>
-              <input type="string" name="dailyPrice" onChange={this._handleFieldChange} value={this.state.showableDailyPrice} className="form-control" id="daily_price" />
-              {getValidateFeedback('dailyPrice', validateResult)}
-            </div>
             <div className="form-group">
               <label htmlFor="">Available time:</label>
               {this._renderDateRangePickers()}
