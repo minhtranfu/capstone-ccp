@@ -84,6 +84,7 @@ public class EquipmentTypeEntity {
 	}
 
 	@OneToMany(mappedBy = "equipmentType", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@Where(clause = "is_deleted = 0")
 	public List<AdditionalSpecsFieldEntity> getAdditionalSpecsFields() {
 		return additionalSpecsFields;
 	}
