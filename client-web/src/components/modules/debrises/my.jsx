@@ -99,7 +99,19 @@ class MyDebrises extends Component {
       const services = debrisServiceTypes.map(type => type.name).join(', ');
       return (
         <div key={debris.id} className="my-2 p-3 bg-white shadow-sm">
-          <Link to={getRoutePath(routeConsts.DEBRIS_DETAIL, { id: debris.id })}><h6>{debris.title}</h6></Link>
+          <div>
+            <Link to={getRoutePath(routeConsts.DEBRIS_DETAIL, { id: debris.id })}>
+              <h6 className="d-inline">{debris.title}</h6>
+            </Link>
+            <span className="float-right">
+              <button className="btn btn-sm btn-outline-primary">
+                <i className="fal fa-edit"></i>
+              </button>
+              <button className="btn btn-sm btn-outline-danger ml-3">
+                <i className="fal fa-trash"></i>
+              </button>
+            </span>
+          </div>
           <div className="text-muted"><small><i className="fal fa-tags"></i></small> {services}</div>
           <div className="text-muted"><i className="fal fa-map-marker"></i> {debris.address}</div>
           <div><i className="fas fa-gavel"></i> Bided: {debrisBids.length}</div>
