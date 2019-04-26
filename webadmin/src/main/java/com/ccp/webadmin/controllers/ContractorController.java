@@ -78,7 +78,6 @@ public class ContractorController {
         //change contractor status Not Verify into Active
         switch (contractorEntity.getStatus()) {
             case NOT_VERIFIED:
-
                 contractorEntity.setStatus(ContractorEntity.Status.ACTIVATED);
                 break;
             case ACTIVATED:

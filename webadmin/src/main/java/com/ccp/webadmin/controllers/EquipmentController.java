@@ -73,8 +73,6 @@ public class EquipmentController {
         foundEquipment.setName(equipmentEntity.getName());
         foundEquipment.setEquipmentTypeEntity(equipmentEntity.getEquipmentTypeEntity());
         foundEquipment.setDailyPrice(equipmentEntity.getDailyPrice());
-        foundEquipment.setAddress(equipmentEntity.getAddress());
-
         equipmentService.save(foundEquipment);
         Integer id = foundEquipment.getId();
         return "redirect:detail/" + id;

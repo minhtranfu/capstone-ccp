@@ -83,7 +83,7 @@ public class AdminAccountController {
                 return "staff/detail";
             } else
                 model.addAttribute("roles", roleService.findAll());
-                return "staff/create";
+            return "staff/create";
         }
         String imageUrl = updateImageFile(file);
 
@@ -99,10 +99,11 @@ public class AdminAccountController {
                     return "staff/detail";
                 }
             }
-            if(!file.isEmpty()){
+            if (!file.isEmpty()) {
                 foundAdminAccount.getAdminUserEntity().setThumbnail(imageUrl);
             }
             foundAdminAccount.getAdminUserEntity().setName(adminAccountEntity.getAdminUserEntity().getName());
+            foundAdminAccount.getAdminUserEntity().setAddress(adminAccountEntity.getAdminUserEntity().getAddress());
             foundAdminAccount.getAdminUserEntity().setMale(adminAccountEntity.getAdminUserEntity().isMale());
             foundAdminAccount.getAdminUserEntity().setPhone(adminAccountEntity.getAdminUserEntity().getPhone());
             foundAdminAccount.getAdminUserEntity().setEmail(adminAccountEntity.getAdminUserEntity().getEmail());
@@ -163,6 +164,16 @@ public class AdminAccountController {
         return "redirect:detail/" + id;
     }
 
+    @GetMapping("/delete")
+    public String delete(@RequestParam("id") Integer id,
+                         Model model) {
+        AdminAccountEntity adminAccountEntity = adminAccountService.findById(id);
+        adminAccountEntity.setDeleted(true);
+        adminAccountEntity.getAdminUserEntity().setDeleted(true);
+        adminAccountService.save(adminAccountEntity);
+
+        return "redirect:index";
+    }
 
     private String updateImageFile(MultipartFile file) {
         String credentialPath = this.getClass().getClassLoader().getResource("capstone-ccp-credential.json").getPath();

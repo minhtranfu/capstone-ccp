@@ -44,15 +44,6 @@ public class EquipmentEntity {
     @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
     private LocalDateTime updatedTime;
 
-    @Column(name = "address")
-    private String address;
-
-    @Column(name = "`long`")
-    private Double longitude;
-
-    @Column(name = "lat")
-    private Double lat;
-
     @ManyToOne
     @JoinColumn(name = "equipment_type_id")
     private EquipmentTypeEntity equipmentTypeEntity;
@@ -61,27 +52,13 @@ public class EquipmentEntity {
     @JoinColumn(name = "contractor_id")
     private ContractorEntity contractorEntity;
 
-//    @Basic
-//    @Column(name = "construction_id")
-//    public Integer getConstructionId() {
-//        return constructionId;
-//    }
-
-
-//    @Basic
-//    @Column(name = "description_image_id")
-//    public Integer getDescriptionImageId() {
-//        return descriptionImageId;
-//    }
-//
-//    public void setDescriptionImageId(Integer descriptionImageId) {
-//        this.descriptionImageId = descriptionImageId;
-//    }
+    @ManyToOne
+    @JoinColumn(name = "construction_id")
+    private ConstructionEntity constructionEntity;
 
 
     public EquipmentEntity() {
     }
-
 
     public Integer getId() {
         return id;
@@ -147,30 +124,6 @@ public class EquipmentEntity {
         this.updatedTime = updatedTime;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public Double getLat() {
-        return lat;
-    }
-
-    public void setLat(Double lat) {
-        this.lat = lat;
-    }
-
     public EquipmentTypeEntity getEquipmentTypeEntity() {
         return equipmentTypeEntity;
     }
@@ -185,6 +138,18 @@ public class EquipmentEntity {
 
     public void setContractorEntity(ContractorEntity contractorEntity) {
         this.contractorEntity = contractorEntity;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public ConstructionEntity getConstructionEntity() {
+        return constructionEntity;
+    }
+
+    public void setConstructionEntity(ConstructionEntity constructionEntity) {
+        this.constructionEntity = constructionEntity;
     }
 
     public enum Status {

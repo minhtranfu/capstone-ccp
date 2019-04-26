@@ -50,9 +50,15 @@
                                         <label>Full Name:</label>
                                         <input th:field="*{adminUserEntity.name}" class="form-control" placeholder="Full Name">
                                     </div>
-
                                     <div class="form-group">
                                         <span th:if="${#fields.hasErrors('adminUserEntity.name')}" th:errors="*{adminUserEntity.name}" style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Address:</label>
+                                        <input th:field="*{adminUserEntity.address}" class="form-control" placeholder="Address">
+                                    </div>
+                                    <div class="form-group">
+                                        <span th:if="${#fields.hasErrors('adminUserEntity.address')}" th:errors="*{adminUserEntity.address}" style="color: red"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Avatar:</label>

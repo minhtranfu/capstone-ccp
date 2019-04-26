@@ -18,7 +18,7 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Equipment Manage</h1>
+                <h1 class="page-header">Manage Equipment</h1>
             </div>
 
 
@@ -52,6 +52,7 @@
                                 <th>Equipment Type</th>
                                 <th>Supplier</th>
                                 <th>Daily Price</th>
+                                <th>Construction</th>
                                 <th>Address</th>
                             </tr>
                             </thead>
@@ -77,8 +78,8 @@
                                     <span th:text="${item.contractorEntity.name}" class="link"></span></a>
                                 </td>
                                 <td th:text="${item.dailyPrice}"></td>
-
-                                <td th:text="${item.address}"></td>
+                                <td th:text="${item.constructionEntity.name}"></td>
+                                <td th:text="${item.constructionEntity.address}"></td>
                             </tr>
 
                             </tbody>

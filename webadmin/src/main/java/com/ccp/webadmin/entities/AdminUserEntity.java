@@ -1,11 +1,14 @@
 package com.ccp.webadmin.entities;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "admin_user")
@@ -38,6 +41,17 @@ public class AdminUserEntity implements Serializable {
 
     @Column(name = "thumbnail_image")
     private String thumbnail;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
+    @Column(name = "created_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private LocalDateTime createdTime;
+
+    @Column(name = "updated_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private LocalDateTime updatedTime;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -119,5 +133,29 @@ public class AdminUserEntity implements Serializable {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public LocalDateTime getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(LocalDateTime updatedTime) {
+        this.updatedTime = updatedTime;
     }
 }

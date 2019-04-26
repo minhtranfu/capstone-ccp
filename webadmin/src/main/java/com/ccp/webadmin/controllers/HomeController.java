@@ -22,9 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("home")
@@ -53,13 +55,12 @@ public class HomeController {
 
     @GetMapping({"", "/", "index"})
     public String home(Model model) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
         model.addAttribute("newContractor", contractorService.countNewContractor());
         model.addAttribute("newFeedback", reportService.countNewReport());
-        model.addAttribute("hiringTransactionStatistic", hiringTransactionService.countHiringTransactionIncome());
-        model.addAttribute("materialTransactionStatistic", materialTransactionService.countMaterialTransactionIncome());
-        System.out.println("bbbb" + materialTransactionService.countMaterialTransactionIncome());
-        model.addAttribute("debrisTransactionStatistic", debrisTransactionService.countDebrisTransactionIncome());
-        System.out.println("ccc" + debrisTransactionService.countDebrisTransactionIncome());
+        model.addAttribute("hiringTransactionStatistic", numberFormat.format(hiringTransactionService.countHiringTransactionIncome()));
+        model.addAttribute("materialTransactionStatistic", numberFormat.format(materialTransactionService.countMaterialTransactionIncome()));
+        model.addAttribute("debrisTransactionStatistic", numberFormat.format(debrisTransactionService.countDebrisTransactionIncome()));
         return "home/index";
     }
 

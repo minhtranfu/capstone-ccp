@@ -5,7 +5,6 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "equipment_image")
-//@Where(clause = "is_deleted='false'")
 public class EquipmentImageEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
