@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
+import { withTranslation } from 'react-i18next';
 
 import ccpApiService from "../../services/domain/ccp-api-service";
 import { AddressInput } from "Components/common";
@@ -93,17 +94,17 @@ class SearchBox extends PureComponent {
 
   render() {
     const { equipmentTypes, criteria } = this.state;
-    const { isFetching } = this.props;
+    const { isFetching, t } = this.props;
 
     return (
       <form onSubmit={this._search}>
         <div className="row">
           <div className="col-md-12">
-            <h3>Search</h3>
+            <h3>{t('common.search')}</h3>
           </div>
           <div className="col-md-3">
             <div className="form-group">
-              <label htmlFor="equipment_keyword">Keyword:</label>
+              <label htmlFor="equipment_keyword">{t('common.keyword')}:</label>
               <input type="text" className="form-control"
                 name="q"
                 id="equipment_keyword"
@@ -114,7 +115,7 @@ class SearchBox extends PureComponent {
           </div>
           <div className="col-md-3">
             <div className="form-group">
-              <label htmlFor="equipment_keyword">Address:</label>
+              <label htmlFor="equipment_keyword">{t('common.address')}:</label>
               <AddressInput
                 wrapperProps={{className: "text-dark"}}
                 onSelect={this._handleSelectLocation}
@@ -123,14 +124,14 @@ class SearchBox extends PureComponent {
           </div>
           <div className="col-md-2">
             <div className="form-group">
-              <label htmlFor="equipment_type">Equipment type:</label>
+              <label htmlFor="equipment_type">{t('common.type')}:</label>
               <select
                 name="equipmentTypeId"
                 id="equipment_type"
                 className="form-control"
                 onChange={this._handleChangeCriteria}
               >
-                <option value="">--Choose--</option>
+                <option value="">{t('common.select')}</option>
                 {equipmentTypes &&
                   equipmentTypes.map(equipmentType => (
                     <option key={equipmentType.id} value={equipmentType.id}>
@@ -223,7 +224,7 @@ class SearchBox extends PureComponent {
                   aria-hidden="true"
                 />
               )}
-              Search
+              {t('common.search')}
             </button>
           </div>
         </div>
@@ -237,4 +238,4 @@ SearchBox.propTypes = {
   isFetching: PropTypes.bool.isRequired
 };
 
-export default SearchBox;
+export default withTranslation()(SearchBox);

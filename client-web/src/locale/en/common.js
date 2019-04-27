@@ -1,0 +1,20 @@
+export default {
+  keyword: 'Keyword',
+  address: 'Address',
+  search: 'Search',
+  result: 'Result',
+  type: 'Type',
+  types: 'Types',
+  information: 'Information',
+  description: 'Description',
+  posted: 'Posted',
+  construction: 'Construction',
+  use_your_current_location: 'Use your current location',
+  select: 'Select...',
+  feebacks: 'Feedbacks',
+  joined_at: 'Joined at',
+
+  equipment: 'Equipment',
+  material: 'Material',
+  debris: 'Debris',
+};

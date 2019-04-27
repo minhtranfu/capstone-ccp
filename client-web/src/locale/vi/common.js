@@ -1,0 +1,20 @@
+export default {
+  keyword: 'Từ khóa',
+  address: 'Địa chỉ',
+  search: 'Tìm',
+  result: 'Kết quả',
+  type: 'Loại',
+  types: 'Loại',
+  information: 'Thông tin',
+  description: 'Mô tả',
+  posted: 'Đã đăng',
+  construction: 'Công trường',
+  use_your_current_location: 'Sử dụng vị trí hiện tại',
+  select: 'Chọn...',
+  feebacks: 'Phản hồi',
+  joined_at: 'Tham gia',
+
+  equipment: 'Thiết bị',
+  material: 'Vật liệu',
+  debris: 'Dọn xà bần',
+};

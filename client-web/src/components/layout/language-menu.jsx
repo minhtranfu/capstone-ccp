@@ -9,7 +9,7 @@ export default function LanguageMenu() {
   };
 
   return (
-    <li className="nav-item dropdown">
+    <li className="nav-item dropdown py-1 mr-2">
       <a
         className="dropdown-toggle text-light"
         data-toggle="dropdown"

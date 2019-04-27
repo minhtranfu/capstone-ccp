@@ -24,4 +24,12 @@ export default {
     serving: 'Serving debrises',
     hiring: 'Hiring debrises',
   },
+
+  login: 'Login',
+  logout: 'Logout',
+  signup: 'Sign Up',
+  profile: 'Profile',
+  my_constructions: 'My constructions',
+  settings: 'Settings',
+  notifications: 'Notifications',
 };

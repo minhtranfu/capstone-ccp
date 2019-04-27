@@ -126,7 +126,7 @@ class Header extends Component {
 
   render() {
     const { showOffCanvas, isShowNotifications } = this.state;
-    const { authentication, onChangeLang } = this.props;
+    const { authentication, t } = this.props;
     const { contractor } = authentication;
 
     return (
@@ -152,7 +152,7 @@ class Header extends Component {
             <ul className="navbar-nav mr-auto mt-2 mt-lg-0">{this._renderMenus(this.leftMenus)}</ul>
             <ul className="navbar-nav ml-auto mt-2 mt-lg-0">
               {this._renderMenus(this.rightMenus)}
-              <LanguageMenu changeLanguage={onChangeLang} />
+              <LanguageMenu />
             </ul>
             {authentication.isAuthenticated && (
               <ul className="navbar-nav">
@@ -196,17 +196,17 @@ class Header extends Component {
                       className="dropdown-item"
                       to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: contractor.id })}
                     >
-                      <i className="fal fa-user-circle" /> Profile
+                      <i className="fal fa-user-circle" /> {t('menu.profile')}
                     </Link>
                     <Link className="dropdown-item" to={getRoutePath(routeConsts.CONSTRUCTIONS)}>
-                      <i className="fal fa-building" /> My constructions
+                      <i className="fal fa-building" /> {t('menu.my_constructions')}
                     </Link>
                     <Link className="dropdown-item" to={getRoutePath(routeConsts.PROFILE)}>
-                      <i className="fal fa-cogs" /> Settings
+                      <i className="fal fa-cogs" /> {t('menu.settings')}
                     </Link>
                     <div className="dropdown-divider" />
                     <a className="dropdown-item" href="#" onClick={this._logout}>
-                      <i className="fal fa-sign-out" /> Logout
+                      <i className="fal fa-sign-out" /> {t('menu.logout')}
                     </a>
                   </div>
                 </li>
@@ -218,14 +218,14 @@ class Header extends Component {
                   className="btn btn-outline-primary my-2 my-sm-0 mx-2"
                   onClick={this._toggleLoginModal}
                 >
-                  Login
+                  {t('menu.login')}
                 </button>
                 <Link to="/signup">
                   <button
                     className="btn btn-primary my-2 my-sm-0 mx-2"
                     onClick={this._closeOffCanvas}
                   >
-                    Sign Up
+                    {t('menu.signup')}
                   </button>
                 </Link>
               </span>

@@ -24,4 +24,12 @@ export default {
     serving: 'Giao dịch cung cấp',
     hiring: 'Giao dịch thuê',
   },
+
+  login: 'Đăng nhập',
+  logout: 'Đăng xuất',
+  signup: 'Đăng ký',
+  profile: 'Trang cá nhân',
+  my_constructions: 'Công trường của tôi',
+  settings: 'Thiết lập',
+  notifications: 'Thông báo',
 };

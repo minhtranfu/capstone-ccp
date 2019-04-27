@@ -8,6 +8,7 @@ import { Collapse, Fade } from "reactstrap";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { withTranslation } from 'react-i18next';
 
 import ccpApiService from '../../../services/domain/ccp-api-service';
 import SubscriptionCardAdd from '../subscription/subscription-card-add';
@@ -75,7 +76,7 @@ class Home extends Component {
 
   render() {
     const { products, isFetching, isShowSubcribeBox, subcription, criteria } = this.state;
-    const { authentication, toggleLoginModal } = this.props;
+    const { authentication, toggleLoginModal, t } = this.props;
 
     return (
       <div>
@@ -90,7 +91,7 @@ class Home extends Component {
         <div className="container">
           <div className="row py-3">
             <div className="col-md-12">
-              <h3>Result</h3>
+              <h3>{t('common.result')}</h3>
             </div>
             {(!products || products.length === 0) && !isFetching &&
               <div className="col-md-12 py-4">
@@ -153,7 +154,8 @@ class Home extends Component {
 }
 
 Home.props = {
-  authentication: PropTypes.object
+  authentication: PropTypes.object,
+  t: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -168,4 +170,4 @@ const mapDispatchToProps = {
   toggleLoginModal: authActions.toggleLoginModal
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Home));
