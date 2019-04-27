@@ -115,7 +115,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 				, criteriaBuilder.exists(subQuery)
 				, criteriaBuilder.not(criteriaBuilder.exists(subQueryActiveTransaction))
 				//excluded deleted equipments
-				, criteriaBuilder.equal(e.get("deleted"), true)
+				, criteriaBuilder.equal(e.get("deleted"), false)
 		);
 
 		if (!orderBy.isEmpty()) {
