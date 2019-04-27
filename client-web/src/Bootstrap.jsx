@@ -17,6 +17,7 @@ import Popper from 'popper.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { initializeFirebase } from './push-notification';
 import runtime from 'serviceworker-webpack-plugin/lib/runtime';
+import './i18n';
 
 const { store, persistor } = configureStore(INITIAL_STATE);
 
@@ -30,7 +31,7 @@ const ROOT_ELEMENT_ID_AS_DEFINED_IN_INDEX_HTML = 'app-root';
 
 ReactDOM.render(
   <AppContainer>
-    <Root store={store} persistor={persistor}/>
+    <Root store={store} persistor={persistor} />
   </AppContainer>,
   document.getElementById(ROOT_ELEMENT_ID_AS_DEFINED_IN_INDEX_HTML)
 );
@@ -43,7 +44,7 @@ if (module.hot) {
 
     ReactDOM.render(
       <AppContainer>
-        <NextApp store={store} persistor={persistor}/>
+        <NextApp store={store} persistor={persistor} />
       </AppContainer>,
       document.getElementById(ROOT_ELEMENT_ID_AS_DEFINED_IN_INDEX_HTML)
     );

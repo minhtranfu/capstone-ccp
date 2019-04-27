@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 import { debrisServices } from 'Services/domain/ccp';
 import { getErrorMessage, getRoutePath } from 'Utils/common.utils';
@@ -10,18 +10,16 @@ import { routeConsts } from 'Common/consts';
 import { Pagination } from 'Components/common';
 
 class MyDebrises extends Component {
-
   state = {
     debrises: {},
     isFetching: false,
-    activePage: 1
+    activePage: 1,
   };
   pageSize = 6;
 
   _loadData = async activePage => {
-
     this.setState({
-      isFetching: true
+      isFetching: true,
     });
     try {
       const debrises = await debrisServices.getMyDebrises({
@@ -31,14 +29,14 @@ class MyDebrises extends Component {
       this.setState({
         activePage,
         debrises,
-        isFetching: false
+        isFetching: false,
       });
     } catch (error) {
       const message = getErrorMessage(error);
 
       this.setState({
         message,
-        isFetching: false
+        isFetching: false,
       });
     }
   };
@@ -76,11 +74,15 @@ class MyDebrises extends Component {
         <h2>You have no material!</h2>
         <Link to={getRoutePath(routeConsts.DEBRIS_ADD)}>
           <button className="btn btn-success btn-lg">
-            <i className="fal fa-plus"></i> Request for a debris service
+            <i className="fal fa-plus" /> Request for a debris service
           </button>
         </Link>
       </div>
     );
+  };
+
+  _handleDeleteDebris = debrisId => {
+    console.log(debrisId);
   };
 
   _renderDebrises = () => {
@@ -105,16 +107,28 @@ class MyDebrises extends Component {
             </Link>
             <span className="float-right">
               <button className="btn btn-sm btn-outline-primary">
-                <i className="fal fa-edit"></i>
+                <i className="fal fa-edit" />
               </button>
-              <button className="btn btn-sm btn-outline-danger ml-3">
-                <i className="fal fa-trash"></i>
+              <button
+                className="btn btn-sm btn-outline-danger ml-2"
+                onClick={() => this._handleDeleteDebris(debris.id)}
+              >
+                <i className="fal fa-trash" />
               </button>
             </span>
           </div>
-          <div className="text-muted"><small><i className="fal fa-tags"></i></small> {services}</div>
-          <div className="text-muted"><i className="fal fa-map-marker"></i> {debris.address}</div>
-          <div><i className="fas fa-gavel"></i> Bided: {debrisBids.length}</div>
+          <div className="text-muted">
+            <small>
+              <i className="fal fa-tags" />
+            </small>{' '}
+            {services}
+          </div>
+          <div className="text-muted">
+            <i className="fal fa-map-marker" /> {debris.address}
+          </div>
+          <div>
+            <i className="fas fa-gavel" /> Bid: {debrisBids.length}
+          </div>
         </div>
       );
     });
@@ -127,15 +141,16 @@ class MyDebrises extends Component {
       <div className="container">
         <div className="row">
           <div className="col-md-9">
-            <h2 className="my-3">My debris requests
+            <h2 className="my-3">
+              My debris requests
               <Link to={getRoutePath(routeConsts.DEBRIS_ADD)} className="float-right">
                 <button className="btn btn-success">
-                  <i className="fal fa-plus"></i> New request
+                  <i className="fal fa-plus" /> New request
                 </button>
               </Link>
             </h2>
             {this._renderDebrises()}
-            {debrises && debrises.totalItems > this.pageSize &&
+            {debrises && debrises.totalItems > this.pageSize && (
               <div className="text-center">
                 <Pagination
                   activePage={activePage}
@@ -145,7 +160,7 @@ class MyDebrises extends Component {
                   onChange={this._loadData}
                 />
               </div>
-            }
+            )}
           </div>
         </div>
       </div>
@@ -154,7 +169,7 @@ class MyDebrises extends Component {
 }
 
 MyDebrises.props = {
-  contractor: PropTypes.object.isRequired
+  contractor: PropTypes.object.isRequired,
 };
 
 // const mapStateToProps = state => {

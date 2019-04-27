@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { withTranslation } from 'react-i18next';
 
 import { authActions } from 'Redux/actions';
 
@@ -8,25 +9,26 @@ import LoginModal from '../modules/login/LoginModal';
 import { getRoutePath } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
 import Notifications from './notifications';
+import LanguageMenu from './language-menu';
 
 class Header extends Component {
   leftMenus = [
     {
       to: getRoutePath(routeConsts.HOME),
-      name: 'Home',
+      name: 'home',
       exact: true,
     },
     {
       to: getRoutePath(routeConsts.EQUIPMENTS),
-      name: 'Equipments',
+      name: 'equipment',
     },
     {
       to: getRoutePath(routeConsts.MATERIALS),
-      name: 'Materials',
+      name: 'material',
     },
     {
       to: getRoutePath(routeConsts.DEBRISES),
-      name: 'Debrises',
+      name: 'debris',
     },
   ];
 
@@ -82,7 +84,7 @@ class Header extends Component {
   };
 
   _renderMenus = menus => {
-    const { authentication } = this.props;
+    const { authentication, t } = this.props;
 
     return menus.map(menu => {
       if (menu.requiredAuth && !authentication.isAuthenticated) {
@@ -92,7 +94,7 @@ class Header extends Component {
       return (
         <li key={menu.name} className={`nav-item ${this._isMenuActive(menu) ? 'active' : ''}`}>
           <Link className="nav-link" to={menu.to} onClick={this._closeOffCanvas}>
-            {menu.name}
+            {t(`menu.${menu.name}`)}
           </Link>
         </li>
       );
@@ -124,7 +126,7 @@ class Header extends Component {
 
   render() {
     const { showOffCanvas, isShowNotifications } = this.state;
-    const { authentication } = this.props;
+    const { authentication, onChangeLang } = this.props;
     const { contractor } = authentication;
 
     return (
@@ -150,6 +152,7 @@ class Header extends Component {
             <ul className="navbar-nav mr-auto mt-2 mt-lg-0">{this._renderMenus(this.leftMenus)}</ul>
             <ul className="navbar-nav ml-auto mt-2 mt-lg-0">
               {this._renderMenus(this.rightMenus)}
+              <LanguageMenu changeLanguage={onChangeLang} />
             </ul>
             {authentication.isAuthenticated && (
               <ul className="navbar-nav">
@@ -256,5 +259,5 @@ export default withRouter(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(Header)
+  )(withTranslation()(Header))
 );

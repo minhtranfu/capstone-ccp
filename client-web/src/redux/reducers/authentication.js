@@ -20,6 +20,7 @@ const authentication = (state = INITIAL_STATE.authentication, action) => {
       return {
         ...state,
         loggingIn: false,
+        authenticating: false,
         error: action.error
       };
 

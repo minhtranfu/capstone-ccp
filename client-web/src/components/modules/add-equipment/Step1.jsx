@@ -7,6 +7,8 @@ import validate from 'validate.js';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 
+import { withTranslation } from 'react-i18next';
+
 import Step from './Step';
 import { fetchEquipmentTypes } from 'Redux/actions/thunks';
 import { ENTITY_KEY } from 'Common/app-const';
@@ -309,7 +311,7 @@ class AddEquipmentStep1 extends Step {
   };
 
   render() {
-    const { entities } = this.props;
+    const { entities, t } = this.props;
     const equipmentTypes = entities[ENTITY_KEY.EQUIPMENT_TYPES];
     const { constructions, categories, categoryId, validateResult } = this.state;
 
@@ -321,7 +323,7 @@ class AddEquipmentStep1 extends Step {
           </div>
           <div className="col-md-6">
             <div className="form-group">
-              <label htmlFor="">Equipment name: <i className="text-danger">*</i></label>
+              <label htmlFor="">{t('equipment.name')}: <i className="text-danger">*</i></label>
               <input type="text" name="name" onChange={this._handleFieldChange} value={this.state.name || ''} className="form-control" maxLength="80" required />
               {getValidateFeedback('name', validateResult)}
             </div>
@@ -412,4 +414,4 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   fetchEquipmentTypes
-})(AddEquipmentStep1);
+})(withTranslation()(AddEquipmentStep1));
