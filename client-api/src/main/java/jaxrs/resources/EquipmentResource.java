@@ -141,7 +141,7 @@ public class EquipmentResource {
 			contractorId = null;
 		}
 
-		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(
+		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipmentByElasticSearch(
 				query,
 				beginDate, endDate,
 				latitude,

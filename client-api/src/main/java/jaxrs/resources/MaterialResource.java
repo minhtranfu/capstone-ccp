@@ -188,7 +188,7 @@ public class MaterialResource {
 		} else {
 			contractorId = null;
 		}
-		List<MaterialEntity> materialEntities = materialDAO.searchMaterial(
+		List<MaterialEntity> materialEntities = materialDAO.searchMaterialByElasticSearch(
 				contractorId,
 				query,
 				materialTypeId,

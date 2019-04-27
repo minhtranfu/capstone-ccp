@@ -5,10 +5,13 @@ import dtos.wrappers.OrderByWrapper;
 import entities.DebrisBidEntity;
 import entities.DebrisPostEntity;
 import entities.DebrisServiceTypeDebrisPostEntity;
+import entities.MaterialEntity;
+import managers.ElasticSearchManager;
 import utils.CommonUtils;
 import utils.Constants;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
@@ -18,6 +21,11 @@ import java.util.regex.Pattern;
 
 @Stateless
 public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
+
+	@Inject
+	ElasticSearchManager elasticSearchManager;
+
+
 	public GETListResponse<DebrisPostEntity> getByRequester(long requesterId, DebrisPostEntity.Status status, int limit, int offset, String orderBy) {
 
 		//select e from DebrisPostEntity e where e.requester.id = :requesterId
@@ -36,7 +44,7 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 		Predicate whereClause = criteriaBuilder.and(
 				criteriaBuilder.equal(e.get("requester").get("id"), requesterIdParam)
 				//soft delete
-				,criteriaBuilder.equal(e.get("deleted"),false)
+				, criteriaBuilder.equal(e.get("deleted"), false)
 				, status != null ? criteriaBuilder.equal(e.get("status"), statusParam) : criteriaBuilder.conjunction());
 
 		countQuery.select(criteriaBuilder.count(e.get("id"))).where(whereClause);
@@ -73,6 +81,7 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 		return new GETListResponse<DebrisPostEntity>(itemCount, limit, offset, orderBy, debrisPostEntities);
 
 	}
+
 	public GETListResponse<DebrisPostEntity> getByBidedSupplier(long supplierId, DebrisPostEntity.Status status, int limit, int offset, String orderBy) {
 
 		//select p from DebrisPostEntity p where exists (select b from DebrisBidEntity b where b.debrisPost.id  = p.id and b.supplier = :supplierId ) and p.status=:status
@@ -94,15 +103,15 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 		subBidQuery.select(b).where(
 				criteriaBuilder.equal(b.get("debrisPost").get("id"), p.get("id"))
 				//soft delete
-				, criteriaBuilder.equal(b.get("deleted"),false)
+				, criteriaBuilder.equal(b.get("deleted"), false)
 				, criteriaBuilder.equal(b.get("supplier").get("id"), supplierIdParam)
 		);
 
-				
+
 		Predicate whereClause = criteriaBuilder.and(
 				criteriaBuilder.exists(subBidQuery)
 				//soft delete
-				, criteriaBuilder.equal(p.get("deleted"),false)
+				, criteriaBuilder.equal(p.get("deleted"), false)
 				, status != null ? criteriaBuilder.equal(p.get("status"), statusParam) : criteriaBuilder.conjunction());
 
 		countQuery.select(criteriaBuilder.count(p.get("id"))).where(whereClause);
@@ -139,6 +148,7 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 		return new GETListResponse<DebrisPostEntity>(itemCount, limit, offset, orderBy, debrisPostEntities);
 
 	}
+
 	public List<DebrisPostEntity> getByRequester(long requesterId, int limit, int offset) {
 		return entityManager.createNamedQuery("DebrisPostEntity.byRequester", DebrisPostEntity.class)
 				.setParameter("requesterId", requesterId)
@@ -216,7 +226,7 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 				, contractorId != null ? criteriaBuilder.notEqual(e.get("requester").get("id"), contractorIdParam) : criteriaBuilder.conjunction()
 				, criteriaBuilder.equal(e.get("hidden"), false)
 				//soft delete
-				, criteriaBuilder.equal(e.get("deleted"),false)
+				, criteriaBuilder.equal(e.get("deleted"), false)
 				, criteriaBuilder.equal(e.get("status"), DebrisPostEntity.Status.PENDING)
 		);
 
@@ -262,6 +272,121 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 		}
 
 		typeQuery.setParameter(queryParam, "%" + query + "%");
+
+		typeQuery.setFirstResult(offset);
+		typeQuery.setMaxResults(limit);
+
+		return typeQuery.getResultList();
+
+
+	}
+
+	public List<DebrisPostEntity> searchDebrisPostByElasticSearch(
+			Long contractorId
+			, String query
+			, Double latitude
+			, Double longitude
+			, Double maxDistance
+			, List<Long> debrisTypeIdList
+			, String orderBy
+			, int offset, int limit) {
+
+
+		//select e from DebrisPostEntity  e where 1=1  and e.title like '%a%' and calcDistance(e.latitude,e.longitude,10,106) <= 1000 and exists (select t from DebrisServiceTypeDebrisPostEntity t where t.debrisPostId = e.id and t.debrisServiceTypeId in (1,3)) and e.hidden = false  and e.status = 'PENDING'
+		List<Long> idList = elasticSearchManager.searchDebrisPost(contractorId, query, orderBy, offset, limit);
+		if (idList.isEmpty()) {
+			return new ArrayList<DebrisPostEntity>();
+		}
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<DebrisPostEntity> criteriaQuery = criteriaBuilder.createQuery(DebrisPostEntity.class);
+
+
+		Root<DebrisPostEntity> e = criteriaQuery.from(DebrisPostEntity.class);
+
+		ParameterExpression<List> idListParam = criteriaBuilder.parameter(List.class, "idListParam");
+
+		ParameterExpression<Double> curLatParam = criteriaBuilder.parameter(Double.class);
+		ParameterExpression<Double> curLongParam = criteriaBuilder.parameter(Double.class);
+		ParameterExpression<Double> maxDistanceParam = criteriaBuilder.parameter(Double.class);
+
+
+		ParameterExpression<List> debrisServiceTypesParam = criteriaBuilder.parameter(List.class);
+
+
+		Predicate distanceWhereClause;
+		if (latitude != null && longitude != null && maxDistance != null) {
+			distanceWhereClause = criteriaBuilder
+					.lessThan(
+							criteriaBuilder.function("calcDistance"
+									, Double.class, e.get("latitude"), e.get("longitude")
+									, curLatParam, curLongParam)
+							, maxDistanceParam);
+		} else {
+			distanceWhereClause = criteriaBuilder.conjunction();
+		}
+
+
+		Predicate debrisServiceTypeWhereClause;
+
+		if (debrisTypeIdList != null && !debrisTypeIdList.isEmpty()) {
+			//debrisServiceTypeWhereClause
+			Subquery<DebrisServiceTypeDebrisPostEntity> subquery = criteriaQuery.subquery(DebrisServiceTypeDebrisPostEntity.class);
+			Root<DebrisServiceTypeDebrisPostEntity> t = subquery.from(DebrisServiceTypeDebrisPostEntity.class);
+			subquery.select(t).where(criteriaBuilder.equal(t.get("debrisPostId"), e.get("id"))
+					, t.get("debrisServiceTypeId").in(debrisServiceTypesParam));
+			debrisServiceTypeWhereClause = criteriaBuilder.exists(subquery);
+
+		} else {
+			debrisServiceTypeWhereClause = criteriaBuilder.conjunction();
+		}
+
+
+//		merge 3 main where clauses
+		criteriaQuery.select(e).where(
+				distanceWhereClause
+				, debrisServiceTypeWhereClause
+				, e.get("id").in(idListParam)
+
+		);
+
+		if (!orderBy.isEmpty()) {
+			List<Order> orderList = new ArrayList<>();
+			// TODO: 2/14/19 string split to orderBy list
+			Pattern pattern = Pattern.compile(Constants.RESOURCE_REGEX_ORDERBY_SINGLEITEM);
+
+			Matcher matcher = pattern.matcher(orderBy);
+			while (matcher.find()) {
+				String orderBySingleItem = orderBy.substring(matcher.start(), matcher.end());
+				String columnName = matcher.group(1);
+				String orderKeyword = matcher.group(2);
+
+				if (orderKeyword.equals("desc")) {
+					orderList.add(criteriaBuilder.desc(e.get(columnName)));
+				} else {
+					orderList.add(criteriaBuilder.asc(e.get(columnName)));
+
+				}
+			}
+			criteriaQuery.orderBy(orderList);
+		}
+
+		TypedQuery<DebrisPostEntity> typeQuery = entityManager.createQuery(criteriaQuery);
+		typeQuery.setParameter(idListParam, idList);
+
+
+
+		if (latitude != null && longitude != null && maxDistance != null) {
+			typeQuery.setParameter(curLatParam, latitude);
+			typeQuery.setParameter(curLongParam, longitude);
+			typeQuery.setParameter(maxDistanceParam, maxDistance);
+		}
+
+
+		if (debrisTypeIdList != null && !debrisTypeIdList.isEmpty()) {
+			typeQuery.setParameter(debrisServiceTypesParam, debrisTypeIdList);
+		}
+
 
 		typeQuery.setFirstResult(offset);
 		typeQuery.setMaxResults(limit);

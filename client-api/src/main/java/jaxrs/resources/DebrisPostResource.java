@@ -84,7 +84,7 @@ public class DebrisPostResource {
 			contractorId = null;
 		}
 
-		List<DebrisPostEntity> debrisEntities = debrisPostDAO.searchDebrisPost(
+		List<DebrisPostEntity> debrisEntities = debrisPostDAO.searchDebrisPostByElasticSearch(
 				contractorId,
 				query,
 				latitude,

@@ -14,6 +14,7 @@ import dtos.requests.EquipmentRequest;
 import entities.ContractorAccountEntity;
 import entities.EquipmentEntity;
 import entities.EquipmentTypeEntity;
+import managers.ElasticSearchManager;
 import managers.EmailManager;
 import managers.FirebaseMessagingManager;
 import managers.PriceSuggestionCalculator;
@@ -312,6 +313,20 @@ public class TestResource {
 	public Response train() {
 		priceSuggestionCalculator.trainModel();
 		return Response.ok().build();
+	}
+
+	@Inject
+	ElasticSearchManager elasticSearchManager;
+
+	@GET
+	@Path("elasticSearch/test")
+	public Response testElasticSearch() {
+		return Response.ok(elasticSearchManager.searchElastic()).build();
+	}
+	@GET
+	@Path("elasticSearch/testEquipment")
+	public Response testElasticSearchForEquipment() {
+		return Response.ok(elasticSearchManager.searchEquipment().toString()).build();
 	}
 
 

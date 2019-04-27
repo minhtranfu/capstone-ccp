@@ -4,10 +4,12 @@ import dtos.responses.GETListResponse;
 import dtos.wrappers.OrderByWrapper;
 import entities.*;
 import entities.MaterialEntity;
+import managers.ElasticSearchManager;
 import utils.CommonUtils;
 import utils.Constants;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.LocalDate;
@@ -18,6 +20,9 @@ import java.util.regex.Pattern;
 
 @Stateless
 public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
+
+	@Inject
+	ElasticSearchManager elasticSearchManager;
 
 	public List<MaterialEntity> searchMaterial(Long contractorId, String query, long materialTypeId, String orderBy, int offset, int limit) {
 
@@ -43,7 +48,7 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 				//hidden
 				, criteriaBuilder.equal(e.get("hidden"), false)
 				//soft delete
-				,criteriaBuilder.equal(e.get("deleted"),false)
+				, criteriaBuilder.equal(e.get("deleted"), false)
 
 		);
 
@@ -80,6 +85,54 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 
 		typeQuery.setFirstResult(offset);
 		typeQuery.setMaxResults(limit);
+
+		return typeQuery.getResultList();
+	}
+
+	public List<MaterialEntity> searchMaterialByElasticSearch(Long contractorId, String query, long materialTypeId, String orderBy, int offset, int limit) {
+
+		//"select e from MaterialEntity  e where e.materialType.id = :materialTypeId and e.name like '%query%'"
+		List<Long> idList = elasticSearchManager.searchMaterial(contractorId, query, materialTypeId, orderBy, offset, limit);
+
+		if (idList.isEmpty()) {
+			return new ArrayList<MaterialEntity>();
+		}
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<MaterialEntity> criteriaQuery = criteriaBuilder.createQuery(MaterialEntity.class);
+
+
+		Root<MaterialEntity> e = criteriaQuery.from(MaterialEntity.class);
+
+
+		ParameterExpression<List> idListParam = criteriaBuilder.parameter(List.class, "idListParam");
+
+//		merge 3 main where clauses
+		criteriaQuery.select(e).where(
+				e.get("id").in(idListParam)
+		);
+
+
+
+		if (!orderBy.isEmpty()) {
+			List<Order> orderList = new ArrayList<>();
+			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+				if (orderByWrapper.isAscending()) {
+					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
+				} else {
+					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
+				}
+			}
+			criteriaQuery.orderBy(orderList);
+		}
+
+		TypedQuery<MaterialEntity> typeQuery = entityManager.createQuery(criteriaQuery);
+
+		typeQuery.setParameter(idListParam, idList);
+
+		typeQuery.setFirstResult(offset);
+		typeQuery.setMaxResults(limit);
+
 
 		return typeQuery.getResultList();
 	}
