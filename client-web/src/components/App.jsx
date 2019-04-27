@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { useTranslation } from 'react-i18next';
-
 import Header from './layout/Header';
 import SubHeader from './layout/SubHeader';
 import Footer from './layout/Footer';
@@ -28,12 +26,6 @@ function App({ loadUserFromToken, authenticating, isAuthenticated }) {
     loadUserFromToken();
   }, []);
 
-  const { i18n } = useTranslation();
-
-  const _changeLanguage = lng => {
-    i18n.changeLanguage(lng);
-  };
-
   // shouldComponentUpdate(nextProps) {
   //   const { location, isAuthenticated } = this.props;
 
@@ -54,7 +46,7 @@ function App({ loadUserFromToken, authenticating, isAuthenticated }) {
 
   return (
     <div className="d-flex flex-column min-vh-100">
-      <Header onChangeLang={_changeLanguage} />
+      <Header />
       {isAuthenticated &&
         <SubHeader />
       }

@@ -1,8 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function LanguageMenu({ changeLanguage }) {
-  const { t } = useTranslation();
+export default function LanguageMenu() {
+  const { t, i18n } = useTranslation();
+
+  const _changeLanguage = lng => {
+    i18n.changeLanguage(lng);
+  };
 
   return (
     <li className="nav-item dropdown">
@@ -17,7 +21,7 @@ export default function LanguageMenu({ changeLanguage }) {
         <span dangerouslySetInnerHTML={{__html: t('flag')}}></span>
       </a>
       <div className="dropdown-menu shadow mt-2 rounded-top-0 dropdown-menu-right">
-        <a className="dropdown-item" href="#" onClick={() => changeLanguage('vi')}>
+        <a className="dropdown-item" href="#" onClick={() => _changeLanguage('vi')}>
           <img
             width="22"
             className="mr-1 mb-1"
@@ -26,7 +30,7 @@ export default function LanguageMenu({ changeLanguage }) {
           />
           Tiếng Việt
         </a>
-        <a className="dropdown-item" href="#" onClick={() => changeLanguage('en')}>
+        <a className="dropdown-item" href="#" onClick={() => _changeLanguage('en')}>
           <img
             width="22"
             className="mr-1 mb-1"
