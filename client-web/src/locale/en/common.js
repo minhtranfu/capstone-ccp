@@ -17,4 +17,5 @@ export default {
   equipment: 'Equipment',
   material: 'Material',
   debris: 'Debris',
+  language: 'Language',
 };

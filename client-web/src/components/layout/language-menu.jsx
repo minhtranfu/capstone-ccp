@@ -9,7 +9,7 @@ export default function LanguageMenu() {
   };
 
   return (
-    <li className="nav-item dropdown py-1 mr-2">
+    <li className="nav-item dropup">
       <a
         className="dropdown-toggle text-light"
         data-toggle="dropdown"
@@ -18,9 +18,9 @@ export default function LanguageMenu() {
         aria-haspopup="true"
         aria-expanded="false"
       >
-        <span dangerouslySetInnerHTML={{__html: t('flag')}}></span>
+        {t('common.language')}: <span dangerouslySetInnerHTML={{__html: t('flag')}}></span>
       </a>
-      <div className="dropdown-menu shadow mt-2 rounded-top-0 dropdown-menu-right">
+      <div className="dropdown-menu shadow mb-2 dropdown-menu-right">
         <a className="dropdown-item" href="#" onClick={() => _changeLanguage('vi')}>
           <img
             width="22"

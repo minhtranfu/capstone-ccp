@@ -17,4 +17,5 @@ export default {
   equipment: 'Thiết bị',
   material: 'Vật liệu',
   debris: 'Dọn xà bần',
+  language: 'Ngôn ngữ',
 };
