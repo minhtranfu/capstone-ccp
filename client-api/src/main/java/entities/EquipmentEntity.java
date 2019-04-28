@@ -45,7 +45,9 @@ import java.util.Objects;
 		"\n" +
 		"\n" +
 		"-- check equipment renting time not contain the subscribed time range \n" +
-		"and not exists (select * from hiring_transaction h where h.equipment_id = e.id and (h.status = 'ACCEPTED' or h.status = 'PROCESSING') and not (h.end_date > s.end_date or h.end_date< s.begin_date))\n"
+		"and not exists (select * from hiring_transaction h where h.equipment_id = e.id and (h.status = 'ACCEPTED' or h.status = 'PROCESSING') and not (h.end_date > s.end_date or h.end_date< s.begin_date))\n" +
+		" -- filter out notified\n" +
+		"    and not exists(select * from subscription_matched_log log where log.matched_equipment_id = e.id and log.matched_subscription_id = s.id)"
 		, resultSetMapping = "MatchedSubscriptionResult"
 )
 @SqlResultSetMapping(

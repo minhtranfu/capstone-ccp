@@ -196,14 +196,14 @@ public class AuthenticationResource {
 					contractorAccount.getUsername()));
 		}
 
-		// TODO: 3/31/19 set new password
+		// 3/31/19 set new password
 		String hashedNewPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
 
 		contractorAccount.setPassword(hashedNewPassword);
 		contractorAccountDAO.merge(contractorAccount);
 
 
-		// TODO: 3/31/19 return new token
+		//  3/31/19 return new token
 		final long expiresIn = DEFAULT_ACCESS_TOKEN_EXPIRATION_TIME; // still in seconds
 
 		String token = issueToken(contractorAccount, expiresIn);
@@ -251,6 +251,7 @@ public class AuthenticationResource {
 		ContractorAccountEntity accountEntity = contractorAccountDAO.findByUsername(username).stream().findAny()
 				.orElseThrow(() -> new BadRequestException("Username not available"));
 
+		//check password changed time
 		if (accountEntity.getUpdatedTime().isAfter(issuedAtTime)) {
 			//  3/31/19 password changed, refresh token expired
 			throw new ForbiddenException("Password changed, please login to get new refresh token!");
