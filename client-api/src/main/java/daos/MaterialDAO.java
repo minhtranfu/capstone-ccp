@@ -12,8 +12,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import javax.ws.rs.InternalServerErrorException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,28 +115,38 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 		);
 
 
-
-		if (!orderBy.isEmpty()) {
-			List<Order> orderList = new ArrayList<>();
-			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
-				if (orderByWrapper.isAscending()) {
-					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
-				} else {
-					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
-				}
-			}
-			criteriaQuery.orderBy(orderList);
-		}
+//
+//		if (!orderBy.isEmpty()) {
+//			List<Order> orderList = new ArrayList<>();
+//			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+//				if (orderByWrapper.isAscending()) {
+//					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
+//				} else {
+//					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
+//				}
+//			}
+//			criteriaQuery.orderBy(orderList);
+//		}
 
 		TypedQuery<MaterialEntity> typeQuery = entityManager.createQuery(criteriaQuery);
 
 		typeQuery.setParameter(idListParam, idList);
 
-		typeQuery.setFirstResult(offset);
-		typeQuery.setMaxResults(limit);
-
-
-		return typeQuery.getResultList();
+//		typeQuery.setFirstResult(offset);
+//		typeQuery.setMaxResults(limit);
+		List<MaterialEntity> resultList = typeQuery.getResultList();
+		// TODO: 4/28/19 sort result list by id
+		ArrayList<MaterialEntity> sortedResultList = new ArrayList<>();
+		for (Long id : idList) {
+			try {
+				sortedResultList.add(resultList.stream().filter(entity -> entity.getId() == id).findAny()
+						.orElseThrow(InternalServerErrorException::new));
+			} catch (InternalServerErrorException e1) {
+				e1.printStackTrace();
+				// simply dont add it =="
+			}
+		}
+		return sortedResultList;
 	}
 
 	public GETListResponse<MaterialEntity> getBySupplierId(long supplierId, int limit, int offset, String orderBy) {

@@ -2,10 +2,7 @@ package daos;
 
 import dtos.responses.GETListResponse;
 import dtos.wrappers.OrderByWrapper;
-import entities.DebrisBidEntity;
-import entities.DebrisPostEntity;
-import entities.DebrisServiceTypeDebrisPostEntity;
-import entities.MaterialEntity;
+import entities.*;
 import managers.ElasticSearchManager;
 import utils.CommonUtils;
 import utils.Constants;
@@ -14,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import javax.ws.rs.InternalServerErrorException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -350,26 +348,26 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 
 		);
 
-		if (!orderBy.isEmpty()) {
-			List<Order> orderList = new ArrayList<>();
-			// TODO: 2/14/19 string split to orderBy list
-			Pattern pattern = Pattern.compile(Constants.RESOURCE_REGEX_ORDERBY_SINGLEITEM);
-
-			Matcher matcher = pattern.matcher(orderBy);
-			while (matcher.find()) {
-				String orderBySingleItem = orderBy.substring(matcher.start(), matcher.end());
-				String columnName = matcher.group(1);
-				String orderKeyword = matcher.group(2);
-
-				if (orderKeyword.equals("desc")) {
-					orderList.add(criteriaBuilder.desc(e.get(columnName)));
-				} else {
-					orderList.add(criteriaBuilder.asc(e.get(columnName)));
-
-				}
-			}
-			criteriaQuery.orderBy(orderList);
-		}
+//		if (!orderBy.isEmpty()) {
+//			List<Order> orderList = new ArrayList<>();
+//			// TODO: 2/14/19 string split to orderBy list
+//			Pattern pattern = Pattern.compile(Constants.RESOURCE_REGEX_ORDERBY_SINGLEITEM);
+//
+//			Matcher matcher = pattern.matcher(orderBy);
+//			while (matcher.find()) {
+//				String orderBySingleItem = orderBy.substring(matcher.start(), matcher.end());
+//				String columnName = matcher.group(1);
+//				String orderKeyword = matcher.group(2);
+//
+//				if (orderKeyword.equals("desc")) {
+//					orderList.add(criteriaBuilder.desc(e.get(columnName)));
+//				} else {
+//					orderList.add(criteriaBuilder.asc(e.get(columnName)));
+//
+//				}
+//			}
+//			criteriaQuery.orderBy(orderList);
+//		}
 
 		TypedQuery<DebrisPostEntity> typeQuery = entityManager.createQuery(criteriaQuery);
 		typeQuery.setParameter(idListParam, idList);
@@ -388,10 +386,22 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 		}
 
 
-		typeQuery.setFirstResult(offset);
-		typeQuery.setMaxResults(limit);
-
-		return typeQuery.getResultList();
+//		typeQuery.setFirstResult(offset);
+//		typeQuery.setMaxResults(limit);
+		List<DebrisPostEntity> resultList = typeQuery.getResultList();
+		// TODO: 4/28/19 sort result list by id
+		ArrayList<DebrisPostEntity> sortedResultList = new ArrayList<>();
+		for (Long id : idList) {
+			try {
+				sortedResultList.add(resultList.stream().filter(entity -> entity.getId() == id).findAny()
+						.orElseThrow(InternalServerErrorException::new));
+			} catch (InternalServerErrorException e1) {
+				e1.printStackTrace();
+				// simply dont add it =="
+			}
+		}
+		return sortedResultList;
+//		return typeQuery.getResultList();
 
 
 	}

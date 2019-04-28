@@ -109,7 +109,7 @@ public class EquipmentResource {
 			@QueryParam("maxDistance") Double maxDistance,
 			@QueryParam("beginDate") @DefaultValue("") LocalDateWrapper beginDateWrapper,
 			@QueryParam("endDate") @DefaultValue("") LocalDateWrapper endDateWrapper,
-			@QueryParam("equipmentTypeId") @DefaultValue("0") long equipmentTypeId,
+			@QueryParam("equipmentTypeId") Long equipmentTypeId,
 			@QueryParam("lquery") @DefaultValue("") String locationQuery,
 			@QueryParam("orderBy") @DefaultValue("id.asc") String orderBy,
 			@QueryParam("limit") @DefaultValue(DEFAULT_RESULT_LIMIT) int limit,

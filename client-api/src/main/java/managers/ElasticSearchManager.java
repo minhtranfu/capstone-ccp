@@ -90,10 +90,10 @@ public class ElasticSearchManager {
 				.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("manufacturer", query))
 				.filter(QueryBuilders.termQuery("is_hidden", false))
 				.filter(QueryBuilders.termQuery("is_deleted", false));
-		if (materialTypeId != null) {
+		if (materialTypeId != null && materialTypeId > 0) {
 			boolQuery.filter(QueryBuilders.termQuery("material_type_id", materialTypeId));
 		}
-		if (contractorId != null) {
+		if (contractorId != null&& contractorId > 0) {
 			boolQuery.mustNot(QueryBuilders.termQuery("contractor_id", contractorId));
 		}
 
@@ -102,19 +102,19 @@ public class ElasticSearchManager {
 
 
 		// TODO: 4/28/19 must related to orderBy
-//		searchSourceBuilder.from(offset).size(limit);
+		searchSourceBuilder.from(offset).size(limit);
 
 		// TODO: 4/28/19 fix this shit, cant do it now because already done in search DAO
 
-//		if (!orderBy.isEmpty()) {
-//			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
-//				if (orderByWrapper.isAscending()) {
-//					searchSourceBuilder.sort(orderByWrapper.getColumnName(), SortOrder.ASC);
-//				} else {
-//					searchSourceBuilder.sort(orderByWrapper.getColumnName(), SortOrder.DESC);
-//				}
-//			}
-//		}
+		if (!orderBy.isEmpty()) {
+			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+				if (orderByWrapper.isAscending()) {
+					searchSourceBuilder.sort(orderByWrapper.getColumnName(), SortOrder.ASC);
+				} else {
+					searchSourceBuilder.sort(orderByWrapper.getColumnName(), SortOrder.DESC);
+				}
+			}
+		}
 		searchRequest.source(searchSourceBuilder);
 
 		try {
@@ -163,19 +163,19 @@ public class ElasticSearchManager {
 
 		searchSourceBuilder.query(boolQuery);
 
-//		searchSourceBuilder.from(offset).size(limit);
+		searchSourceBuilder.from(offset).size(limit);
 
 		// TODO: 4/28/19 fix this shit, cant do it now because already done in search DAO
 
-//		if (!orderBy.isEmpty()) {
-//			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
-//				if (orderByWrapper.isAscending()) {
-//					searchSourceBuilder.sort(orderByWrapper.getColumnName(), SortOrder.ASC);
-//				} else {
-//					searchSourceBuilder.sort(orderByWrapper.getColumnName(), SortOrder.DESC);
-//				}
-//			}
-//		}
+		if (!orderBy.isEmpty()) {
+			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+				if (orderByWrapper.isAscending()) {
+					searchSourceBuilder.sort(orderByWrapper.getColumnName(), SortOrder.ASC);
+				} else {
+					searchSourceBuilder.sort(orderByWrapper.getColumnName(), SortOrder.DESC);
+				}
+			}
+		}
 		searchRequest.source(searchSourceBuilder);
 
 		try {
@@ -215,7 +215,7 @@ public class ElasticSearchManager {
 				.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("description", query))
 				.filter(QueryBuilders.termQuery("is_deleted", false))
 				.filter(QueryBuilders.matchQuery("status", "AVAILABLE"));
-		if (equipmentTypeId != null) {
+		if (equipmentTypeId != null && equipmentTypeId>0) {
 			boolQuery.filter(QueryBuilders.termQuery("equipment_type_id", equipmentTypeId));
 		}
 		if (contractorId != null) {

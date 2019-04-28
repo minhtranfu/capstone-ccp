@@ -15,6 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import javax.ws.rs.InternalServerErrorException;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
@@ -33,7 +34,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	ElasticSearchManager elasticSearchManager;
 
 	public List<EquipmentEntity> searchEquipment(String query, LocalDate beginDate, LocalDate endDate,
-												 Double latitude, Double longitude, Double maxDistance, Long contractorId, long equipmentTypeId,
+												 Double latitude, Double longitude, Double maxDistance, Long contractorId, Long equipmentTypeId,
 												 String orderBy, int offset, int limit) {
 
 
@@ -113,7 +114,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 //		merge 3 main where clauses
 		criteriaQuery.select(e).where(
 				criteriaBuilder.like(e.get("name"), queryParam),
-				equipmentTypeId != 0 ? criteriaBuilder.equal(equipmentTypeIdParam, e.get("equipmentType").get("id")) : criteriaBuilder.conjunction()
+				equipmentTypeId != null && equipmentTypeId>0 ? criteriaBuilder.equal(equipmentTypeIdParam, e.get("equipmentType").get("id")) : criteriaBuilder.conjunction()
 				, contractorId != null ? criteriaBuilder.notEqual(e.get("contractor").get("id"), contractorParam) : criteriaBuilder.conjunction()
 				, criteriaBuilder.exists(subQuery)
 				, criteriaBuilder.not(criteriaBuilder.exists(subQueryActiveTransaction))
@@ -149,7 +150,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 			typeQuery.setParameter(endDateParam, endDate);
 		}
 
-		if (equipmentTypeId > 0) {
+		if (equipmentTypeId!=null && equipmentTypeId > 0) {
 			typeQuery.setParameter(equipmentTypeIdParam, equipmentTypeId);
 
 		}
@@ -170,7 +171,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 
 	public List<EquipmentEntity> searchEquipmentByElasticSearch(String query, LocalDate beginDate, LocalDate endDate,
-																Double latitude, Double longitude, Double maxDistance, Long contractorId, long equipmentTypeId,
+																Double latitude, Double longitude, Double maxDistance, Long contractorId, Long equipmentTypeId,
 																String orderBy, int offset, int limit) {
 		List<Long> idList = elasticSearchManager.searchEquipment(query, contractorId, equipmentTypeId, orderBy, offset, limit);
 		if (idList.isEmpty()) {
@@ -254,17 +255,17 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 
 
-		if (!orderBy.isEmpty()) {
-			List<Order> orderList = new ArrayList<>();
-			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
-				if (orderByWrapper.isAscending()) {
-					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
-				} else {
-					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
-				}
-			}
-			criteriaQuery.orderBy(orderList);
-		}
+//		if (!orderBy.isEmpty()) {
+//			List<Order> orderList = new ArrayList<>();
+//			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+//				if (orderByWrapper.isAscending()) {
+//					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
+//				} else {
+//					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
+//				}
+//			}
+//			criteriaQuery.orderBy(orderList);
+//		}
 
 		TypedQuery<EquipmentEntity> typeQuery = entityManager.createQuery(criteriaQuery);
 
@@ -287,11 +288,23 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		//set equipment list
 		typeQuery.setParameter(idListParam, idList);
 
-		typeQuery.setFirstResult(offset);
-		typeQuery.setMaxResults(limit);
+//		typeQuery.setFirstResult(offset);
+//		typeQuery.setMaxResults(limit);
 
+		List<EquipmentEntity> resultList = typeQuery.getResultList();
+		// TODO: 4/28/19 sort result list by id
+		ArrayList<EquipmentEntity> sortedResultList = new ArrayList<>();
+		for (Long id : idList) {
+			try {
+				sortedResultList.add(resultList.stream().filter(entity -> entity.getId() == id).findAny()
+						.orElseThrow(InternalServerErrorException::new));
+			} catch (InternalServerErrorException e1) {
+				e1.printStackTrace();
+				// simply dont add it =="
+			}
+		}
+		return sortedResultList;
 
-		return typeQuery.getResultList();
 
 	}
 
