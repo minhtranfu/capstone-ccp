@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "additional_specs_field")
-//@Where(clause = "is_deleted='false'")
+@Where(clause = "is_deleted='false'")
 public class AdditionalSpecialFieldEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

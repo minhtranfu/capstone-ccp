@@ -49,10 +49,10 @@ public class AdditionalFieldController {
             @Valid @ModelAttribute("additionalSpecialField") AdditionalSpecialFieldEntity additionalSpecialFieldEntity,
             BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            if(additionalSpecialFieldEntity.getId() != null){
+            if (additionalSpecialFieldEntity.getId() != null) {
                 model.addAttribute("dataTypes", Arrays.asList(AdditionalSpecialFieldEntity.Datatype.values()));
                 return "additional_special_field/detail";
-            } else{
+            } else {
                 model.addAttribute("dataTypes", Arrays.asList(AdditionalSpecialFieldEntity.Datatype.values()));
                 return "additional_special_field/create";
             }
@@ -64,9 +64,12 @@ public class AdditionalFieldController {
     }
 
     @GetMapping("/delete")
-    public String delete(@RequestParam("id") Integer id) {
-        AdditionalSpecialFieldEntity  additionalSpecialFieldEntity = additionalSpecialFieldService.findById(id);
-        additionalSpecialFieldService.deleteById(id);
-        return "equipment_type/index";
+    public String delete(@RequestParam("id") Integer id,
+                         @RequestParam("equipmentId") Integer equipmentId) {
+        AdditionalSpecialFieldEntity additionalSpecialFieldEntity = additionalSpecialFieldService.findById(id);
+        additionalSpecialFieldEntity.setDeleted(true);
+        additionalSpecialFieldService.save(additionalSpecialFieldEntity);
+
+        return "redirect:/equipment_type/detail/" + equipmentId;
     }
 }

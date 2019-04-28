@@ -77,7 +77,7 @@ public class ReportController {
         notificationEntity.setContent(content);
         notificationEntity.setClickAction(clickAction);
         notificationEntity.setContractorEntity(contractorEntity);
-        if (contractorEntity.countReceivedFeedbackEntity() == 2){
+        if (contractorEntity.countReceivedFeedbackEntity() == 3){
             try {
                 for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(contractorEntity)
                 ) {

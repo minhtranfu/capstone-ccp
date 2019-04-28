@@ -18,7 +18,7 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Hiring Transaction Manage</h1>
+                <h1 class="page-header">Manage Hiring Transaction</h1>
             </div>
 
 
@@ -50,6 +50,7 @@
                                 <th>Id</th>
                                 <th>Status</th>
                                 <th>Equipment</th>
+                                <th>Supplier</th>
                                 <th>Requester</th>
                                 <th>Daily Price</th>
                                 <th>Equipment Address</th>
@@ -73,6 +74,9 @@
 
                                 <td><a th:href="@{/equipment/detail/{id}(id = ${item.equipment.id})}">
                                     <span th:text="${item.equipment.name}" class="link"></span></a>
+                                </td>
+                                <td><a th:href="@{/contractor/detail/{id}(id = ${item.equipment.contractorEntity.id})}">
+                                    <span th:text="${item.equipment.contractorEntity.name}" class="link"></span></a>
                                 </td>
                                 <td><a th:href="@{/contractor/detail/{id}(id = ${item.requester.id})}">
                                     <span th:text="${item.requester.name}" class="link"></span></a>

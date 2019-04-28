@@ -54,7 +54,7 @@
                                         <label>Equipment Type:</label>
                                         <a th:href="@{/equipment_type/detail/{id}(id = *{equipmentTypeEntity.id})}">
                                             <span th:text="*{equipmentTypeEntity.name}"
-                                                  class="link form-control"> </span>
+                                                  class="link form-control" style="color: #1ab7ea;"> </span>
                                         </a>
                                     </div>
 
@@ -84,7 +84,7 @@
                                                                     data-dismiss="modal">
                                                                 No
                                                             </button>
-                                                            <a th:href="@{/additional_special_field/index}" class="link btn btn-danger">Yes</a>
+                                                            <a th:href="@{/equipment_type/detail/{id}(id = ${equipmentTypeEntity.id})}" class="link btn btn-danger">Yes</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -112,7 +112,7 @@
                                                                     data-dismiss="modal">
                                                                 No
                                                             </button>
-                                                            <a th:href="@{/additional_special_field/delete(id = *{id})}" class="link btn btn-danger">Yes</a>
+                                                            <a th:href="@{/additional_special_field/delete(id = ${id}, equipmentId = ${equipmentTypeEntity.id})}" class="link btn btn-danger">Yes</a>
                                                         </div>
                                                     </div>
                                                 </div>

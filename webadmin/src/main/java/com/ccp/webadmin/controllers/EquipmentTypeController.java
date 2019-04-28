@@ -82,7 +82,13 @@ public class EquipmentTypeController {
     @GetMapping("/delete")
     public String delete(@RequestParam("id") Integer id) {
         EquipmentTypeEntity equipmentTypeEntity = equipmentTypeService.findEquipmentTypeById(id);
-        equipmentTypeService.deleteById(id);
+        equipmentTypeEntity.setDeleted(true);
+        List<AdditionalSpecialFieldEntity> additionalSpecialFieldEntities = additionalSpecialFieldService.findByEquipmentType(equipmentTypeEntity);
+        for (AdditionalSpecialFieldEntity additionalSpecialFieldEntity : additionalSpecialFieldEntities) {
+            additionalSpecialFieldEntity.setDeleted(true);
+            additionalSpecialFieldService.save(additionalSpecialFieldEntity);
+        }
+        equipmentTypeService.save(equipmentTypeEntity);
         return "redirect:index";
     }
 

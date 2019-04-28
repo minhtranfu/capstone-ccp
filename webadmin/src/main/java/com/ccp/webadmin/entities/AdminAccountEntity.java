@@ -1,4 +1,6 @@
 package com.ccp.webadmin.entities;
+import org.hibernate.annotations.Where;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -6,12 +8,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "admin_account")
+@Where(clause = "is_deleted = 0")
 public class AdminAccountEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +29,17 @@ public class AdminAccountEntity implements UserDetails {
     @Size(min = 3, message = "Password required more than 3 letters")
     @Column(name = "password")
     private String password;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
+    @Column(name = "created_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private LocalDateTime createdTime;
+
+    @Column(name = "updated_time", insertable = false, updatable = false)
+    @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
+    private LocalDateTime updatedTime;
 
     @OneToOne(cascade = CascadeType.ALL,
              optional = false)
@@ -108,5 +123,27 @@ public class AdminAccountEntity implements UserDetails {
         this.adminUserEntity = adminUserEntity;
     }
 
+    public boolean isDeleted() {
+        return isDeleted;
+    }
 
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public LocalDateTime getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(LocalDateTime updatedTime) {
+        this.updatedTime = updatedTime;
+    }
 }
