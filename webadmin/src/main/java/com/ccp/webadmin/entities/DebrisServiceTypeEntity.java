@@ -1,5 +1,6 @@
 package com.ccp.webadmin.entities;
 
+import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -9,7 +10,7 @@ import java.util.Collection;
 
 @Entity
 @Table(name = "debris_service_type")
-//@Where(clause = "is_deleted='false'")
+@Where(clause = "is_deleted='false'")
 public class DebrisServiceTypeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -59,7 +59,9 @@
                                     <span th:text="${item.name}" class="link"></span></a>
                                 </td>
                                 <td th:text="${item.unit}"></td>
-                                <td th:text="${item.generalMaterialTypeEntity.name}"></td>
+                                <td><a th:href="@{/general_material_type/detail/{id}(id = ${item.generalMaterialTypeEntity.id})}">
+                                    <span th:text="${item.generalMaterialTypeEntity.name}" class="link"></span></a>
+                                </td>
                             </tr>
 
                             </tbody>

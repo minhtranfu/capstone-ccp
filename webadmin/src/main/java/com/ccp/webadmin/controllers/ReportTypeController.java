@@ -57,12 +57,9 @@ public class ReportTypeController {
 
     @GetMapping("/delete")
     public String delete(@RequestParam("id") Integer id) {
-//        ReportTypeEntity feedbackTypeEntity = feedbackTypeService.(id);
-//
-//        if (equipmentTypeService.existsEquipmentTypeByGeneralEquipmentType(generalEquipmentTypeEntity) == false) {
-//            generalEquipmentTypeService.deleteById(id);
-//        }
-        reportTypeService.deleteById(id);
+        ReportTypeEntity reportTypeEntity = reportTypeService.findById(id);
+        reportTypeEntity.setDeleted(true);
+        reportTypeService.save(reportTypeEntity);
         return "redirect:index";
     }
 }

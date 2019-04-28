@@ -72,7 +72,8 @@ public class MaterialTypeController {
     @GetMapping("/delete")
     public String delete(@RequestParam("id") Integer id) {
         MaterialTypeEntity materialTypeEntity = materialTypeService.findById(id);
-        materialTypeService.deleteById(id);
+        materialTypeEntity.setDeleted(true);
+        materialTypeService.save(materialTypeEntity);
         return "redirect:index";
     }
 

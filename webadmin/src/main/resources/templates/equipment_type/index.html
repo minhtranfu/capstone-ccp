@@ -57,7 +57,10 @@
                                 <td><a th:href="@{/equipment_type/detail/{id}(id = ${item.id})}">
                                     <span th:text="${item.name}" class="link"></span></a>
                                 </td>
-                                <td th:text="${item.generalEquipmentType.name}"></td>
+                                <td><a th:href="@{/general_equipment_type/detail/{id}(id = ${item.generalEquipmentType.id})}">
+                                    <span th:text="${item.generalEquipmentType.name}" class="link"></span></a>
+                                </td>
+
                             </tr>
 
                             </tbody>

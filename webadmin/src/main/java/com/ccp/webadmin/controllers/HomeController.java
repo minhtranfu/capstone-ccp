@@ -58,11 +58,8 @@ public class HomeController {
         model.addAttribute("newContractor", contractorService.countNewContractor());
         model.addAttribute("newFeedback", reportService.countNewReport());
         model.addAttribute("hiringTransactionStatistic", NumberFormat.getNumberInstance(Locale.US).format(hiringTransactionService.countHiringTransactionIncome()));
-
         model.addAttribute("materialTransactionStatistic", NumberFormat.getNumberInstance(Locale.US).format(materialTransactionService.countMaterialTransactionIncome()));
-        System.out.println("bbbb" + materialTransactionService.countMaterialTransactionIncome());
         model.addAttribute("debrisTransactionStatistic", NumberFormat.getNumberInstance(Locale.US).format(debrisTransactionService.countDebrisTransactionIncome()));
-        System.out.println("ccc" + debrisTransactionService.countDebrisTransactionIncome());
         return "home/index";
     }
 

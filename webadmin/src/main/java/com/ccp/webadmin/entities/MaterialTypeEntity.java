@@ -1,5 +1,6 @@
 package com.ccp.webadmin.entities;
 
+import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "material_type")
-//@Where(clause = "is_deleted='false'")
+@Where(clause = "is_deleted='false'")
 public class MaterialTypeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

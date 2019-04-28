@@ -50,9 +50,9 @@ public class DebrisServiceTypeController {
             @Valid @ModelAttribute("debrisServiceType") DebrisServiceTypeEntity debrisServiceTypeEntity,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            if(debrisServiceTypeEntity.getId() != null){
+            if (debrisServiceTypeEntity.getId() != null) {
                 return "debris_service_type/detail";
-            } else{
+            } else {
                 return "debris_service_type/create";
             }
         }
@@ -64,35 +64,9 @@ public class DebrisServiceTypeController {
     @GetMapping("/delete")
     public String delete(@RequestParam("id") Integer id) {
         DebrisServiceTypeEntity debrisServiceTypeEntity = debrisServiceTypeService.findById(id);
-
+        debrisServiceTypeEntity.setDeleted(true);
+        debrisServiceTypeService.save(debrisServiceTypeEntity);
         return "redirect:index";
     }
 
-//    @GetMapping("/migrate")
-//    public String migrate(Model model) {
-//        model.addAttribute("debrisServiceTypes", debrisServiceTypeService.findAll());
-//        model.addAttribute("migrateDTO", new MigrateDTO());
-//        return "debris_service_type/migrate";
-//    }
-//
-//    @PostMapping("/migrateCate")
-//    public String migrateCate(
-//            @ModelAttribute("migrateDTO") MigrateDTO migrateDTO,
-//            Model model) {
-//        if(migrateDTO.getFromCate() == migrateDTO.getToCate()){
-//            model.addAttribute("errorMessage","Two Category Must Be Different");
-//            model.addAttribute("generalEquipmentTypes", generalEquipmentTypeService.findAll());
-//            model.addAttribute("migrateDTO", new MigrateDTO());
-//            return  "debris_service_type/migrate";
-//        }
-//        GeneralEquipmentTypeEntity fromCategory = generalEquipmentTypeService.findGeneralEquipmentTypeById(migrateDTO.getFromCate());
-//        GeneralEquipmentTypeEntity toCategory = generalEquipmentTypeService.findGeneralEquipmentTypeById(migrateDTO.getToCate());
-//        List<EquipmentTypeEntity> equipmentTypeEntities = equipmentTypeService.findByGeneralEquipmentType(fromCategory);
-//        for (EquipmentTypeEntity equipmentTypeEntity : equipmentTypeEntities) {
-//            equipmentTypeEntity.setGeneralEquipmentType(toCategory);
-//            equipmentTypeService.save(equipmentTypeEntity);
-//        }
-//        generalEquipmentTypeService.deleteById(fromCategory.getId());
-//        return "redirect:index";
-//    }
 }

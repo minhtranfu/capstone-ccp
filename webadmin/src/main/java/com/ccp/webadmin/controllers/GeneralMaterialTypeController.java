@@ -51,9 +51,9 @@ public class GeneralMaterialTypeController {
             @Valid @ModelAttribute("generalMaterialType") GeneralMaterialTypeEntity generalMaterialTypeEntity,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            if(generalMaterialTypeEntity.getId() != null){
+            if (generalMaterialTypeEntity.getId() != null) {
                 return "general_material_type/detail";
-            } else{
+            } else {
                 return "general_material_type/create";
             }
         }
@@ -65,10 +65,13 @@ public class GeneralMaterialTypeController {
     @GetMapping("/delete")
     public String delete(@RequestParam("id") Integer id) {
         GeneralMaterialTypeEntity generalMaterialTypeEntity = generalMaterialTypeService.findById(id);
-
-//        if (materialTypeService.existsMaterialTypeByGeneralMaterialType(generalMaterialTypeEntity) == false) {
-//            generalMaterialTypeService.deleteById(id);
-//        }
+        generalMaterialTypeEntity.setDeleted(true);
+        List<MaterialTypeEntity> materialTypeEntities = materialTypeService.findByGeneralMaterialType(generalMaterialTypeEntity);
+        for (MaterialTypeEntity materialTypeEntity : materialTypeEntities) {
+            materialTypeEntity.setDeleted(true);
+            materialTypeService.save(materialTypeEntity);
+        }
+        generalMaterialTypeService.save(generalMaterialTypeEntity);
         return "redirect:index";
     }
 
@@ -83,11 +86,11 @@ public class GeneralMaterialTypeController {
     public String migrateCate(
             @ModelAttribute("migrateDTO") MigrateDTO migrateDTO,
             Model model) {
-        if(migrateDTO.getFromCate() == migrateDTO.getToCate()){
-            model.addAttribute("errorMessage","Two Category Must Be Different");
+        if (migrateDTO.getFromCate() == migrateDTO.getToCate()) {
+            model.addAttribute("errorMessage", "Two Category Must Be Different");
             model.addAttribute("generalMaterialTypes", generalMaterialTypeService.findAll());
             model.addAttribute("migrateDTO", new MigrateDTO());
-            return  "general_material_type/migrate";
+            return "general_material_type/migrate";
         }
         GeneralMaterialTypeEntity fromCategory = generalMaterialTypeService.findById(migrateDTO.getFromCate());
         GeneralMaterialTypeEntity toCategory = generalMaterialTypeService.findById(migrateDTO.getToCate());

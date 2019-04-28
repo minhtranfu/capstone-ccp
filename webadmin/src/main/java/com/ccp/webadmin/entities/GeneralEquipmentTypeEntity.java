@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "general_equipment_type")
-//@Where(clause = "is_deleted='false'")
+@Where(clause = "is_deleted='false'")
 public class GeneralEquipmentTypeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

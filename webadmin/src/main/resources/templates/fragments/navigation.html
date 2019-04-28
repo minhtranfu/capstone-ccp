@@ -126,13 +126,14 @@
                         <a href="#"><i class="fa fa-gavel"></i> Manage Debris<span
                                 class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li sec:authorize="hasRole('ROLE_ADMIN')">
-                                <a th:href="@{/debris_service_type/index}"><i
-                                        class="glyphicon glyphicon-wrench"></i> Debris Service Type</a>
-                            </li>
+
                             <li>
                                 <a th:href="@{/debris_transaction/index}"><i
                                         class="glyphicon glyphicon-transfer"></i> Debris Transaction</a>
+                            </li>
+                            <li sec:authorize="hasRole('ROLE_ADMIN')">
+                                <a th:href="@{/debris_service_type/index}"><i
+                                        class="fa fa-table fa-fw"></i> Debris Service Type</a>
                             </li>
                         </ul>
                     </li>
@@ -144,7 +145,7 @@
                                 <a th:href="@{/report/index}"><i class="fa fa-table fa-fw"></i>Report
                                 </a>
                             </li>
-                            <li>
+                            <li sec:authorize="hasRole('ROLE_ADMIN')">
                                 <a th:href="@{/report_type/index}"><i class="fa fa-table fa-fw"></i>Report Type
                                 </a>
                             </li>
