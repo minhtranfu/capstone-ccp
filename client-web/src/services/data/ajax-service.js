@@ -34,7 +34,12 @@ instance.interceptors.response.use(
     // Save origin request config to request again after refresh token
     const originalRequest = error.config;
 
-    if (error.response.status === 401 && !!getRefreshToken()) {
+    if (error.response.status === 401) {
+
+      if (!getRefreshToken()) {
+        setTokens('', '');
+        history.push(getRoutePath(routeConsts.LOGIN));
+      }
 
       const options = {
         method: 'POST',
