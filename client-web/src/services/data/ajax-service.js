@@ -56,10 +56,10 @@ instance.interceptors.response.use(
       return refreshAxios
         .request('/authen/refresh', options)
         .then(responseData => {
-          // actualiza la información de OAuth
+          // get token, refresh token and persist them
           const { accessToken, refreshToken } = responseData.data.tokenWrapper;
           setTokens(accessToken, refreshToken);
-          axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+          // axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
           originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
           return axios(originalRequest);
         })
