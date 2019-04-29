@@ -1,6 +1,8 @@
 import ConfigService from '../common/config-service';
 import axios from 'axios';
-import { getRefreshToken, setTokens } from 'Utils/common.utils';
+import { getRefreshToken, setTokens, getRoutePath } from 'Utils/common.utils';
+import history from 'Common/createHistory';
+import { routeConsts } from 'Common/consts';
 
 const refreshAxios = axios.create({
   baseURL: ConfigService.getBaseUrl(),
@@ -25,7 +27,7 @@ instance.interceptors.response.use(
     return response;
   },
   // Check error 401 to refresh token
-  async error => {
+  error => {
 
     console.log(error);
     
@@ -58,7 +60,7 @@ instance.interceptors.response.use(
         })
         .catch(error => {
           setTokens('', '');
-          window.location.replace('/login');
+          history.push(getRoutePath(routeConsts.LOGIN));
         });
     }
 
