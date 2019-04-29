@@ -171,7 +171,7 @@ public class EquipmentEntity {
 	}
 
 
-	@ManyToOne()
+	@ManyToOne
 	@JoinColumn(name = "contractor_id")
 	public ContractorEntity getContractor() {
 		return contractor;

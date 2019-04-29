@@ -2,10 +2,7 @@ package test.shit;
 
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import daos.ContractorAccountDAO;
-import daos.DebrisPostDAO;
-import daos.EquipmentDAO;
-import daos.SubscriptionDAO;
+import daos.*;
 import dtos.Credentials;
 import dtos.notifications.NotificationDTO;
 import dtos.requests.EquipmentPutRequest;
@@ -342,6 +339,15 @@ public class TestResource {
 	@Path("searchOptimize/equipments/get/{id:\\d+}")
 	public Response searchOptimizeGetEquipmentById(@PathParam("id") long equipmentId) {
 		return Response.ok(equipmentDAO.findByIdWithValidation(equipmentId)).build();
+	}
+
+	@Inject
+	MaterialDAO materialDAO;
+
+	@GET
+	@Path("searchOptimize/materials/get/{id:\\d+}")
+	public Response searchOptimizeGetMaterialById(@PathParam("id") long materialId) {
+		return Response.ok(materialDAO.findByIdWithValidation(materialId)).build();
 	}
 
 

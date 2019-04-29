@@ -92,7 +92,7 @@ public class GeneralEquipmentTypeEntity {
 
 	@JsonbTransient
 	@XmlTransient
-	@OneToMany(mappedBy = "generalEquipment", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "generalEquipment", fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")
 	public List<EquipmentTypeEntity> getEquipmentTypeEntities() {
 		return equipmentTypeEntities;
