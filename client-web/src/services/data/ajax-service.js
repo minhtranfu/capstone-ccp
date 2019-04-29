@@ -21,15 +21,9 @@ const instance = axios.create({
 // For refresh token
 instance.interceptors.response.use(
   // Do nothing on success
-  response => {
-    console.log(response);
-
-    return response;
-  },
+  response => response,
   // Check error 401 to refresh token
   error => {
-
-    console.log(error);
     
     // Save origin request config to request again after refresh token
     const originalRequest = error.config;
@@ -39,6 +33,8 @@ instance.interceptors.response.use(
       if (!getRefreshToken()) {
         setTokens('', '');
         history.push(getRoutePath(routeConsts.LOGIN));
+
+        return error;
       }
 
       const options = {
@@ -69,9 +65,7 @@ instance.interceptors.response.use(
         });
     }
 
-    console.log(error.response.status);
-
-    return Promise.reject(error);
+    return error;
   }
 );
 
