@@ -1,5 +1,11 @@
 import ConfigService from '../common/config-service';
 import axios from 'axios';
+import { getRefreshToken, setTokens } from 'Utils/common.utils';
+
+const refreshAxios = axios.create({
+  baseURL: ConfigService.getBaseUrl(),
+  timeout: 60000,
+});
 
 /**
  * Service for making AJAX requests.
@@ -7,11 +13,63 @@ import axios from 'axios';
  */
 const instance = axios.create({
   baseURL: ConfigService.getBaseUrl(),
-  timeout: 60000
+  timeout: 60000,
 });
 
-export default {
-  request (options) {
-    return instance.request(options);
+// For refresh token
+instance.interceptors.response.use(
+  // Do nothing on success
+  response => {
+    console.log(response);
+
+    return response;
+  },
+  // Check error 401 to refresh token
+  async error => {
+
+    console.log(error);
+    
+    // Save origin request config to request again after refresh token
+    const originalRequest = error.config;
+
+    if (error.response.status === 401 && !!getRefreshToken()) {
+
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        responseType: 'json',
+        data: JSON.stringify({
+          refreshToken: getRefreshToken()
+        })
+      };
+
+      // refresh token
+      return refreshAxios
+        .request('/authen/refresh', options)
+        .then(responseData => {
+          // actualiza la información de OAuth
+          const { accessToken, refreshToken } = responseData.data.tokenWrapper;
+          setTokens(accessToken, refreshToken);
+          axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+          originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+          return axios(originalRequest);
+        })
+        .catch(error => {
+          setTokens('', '');
+          window.location.replace('/login');
+        });
+    }
+
+    console.log(error.response.status);
+
+    return Promise.reject(error);
   }
+);
+
+export default {
+  request(options) {
+    return instance.request(options);
+  },
 };

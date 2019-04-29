@@ -1,6 +1,7 @@
 import React from 'react';
 import { modules } from "Components/modules/Routes";
 import qs from 'query-string';
+import ConfigService from 'Services/common/config-service';
 
 export const getRoutePath = (name, data) => {
     const route = modules.find(route => route.name === name);
@@ -103,4 +104,33 @@ export const calcDistance = (lat1, lon1, lat2, lon2) => {
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
   var d = R * c;
   return d.toFixed(1);
+};
+
+export const getRefreshToken = () => {
+  const key = ConfigService.getRefreshTokenKey();
+
+  return localStorage.getItem(key);
+};
+
+export const setRefreshToken = value => {
+  const key = ConfigService.getRefreshTokenKey();
+
+  return localStorage.setItem(key, value);
+};
+
+export const getJwtToken = () => {
+  const key = ConfigService.getJwtKey();
+
+  return localStorage.getItem(key);
+};
+
+export const setJwtToken = value => {
+  const key = ConfigService.getJwtKey();
+
+  return localStorage.setItem(key, value);
+};
+
+export const setTokens = (jwt, refresh) => {
+  setJwtToken(jwt);
+  setRefreshToken(refresh);
 };
