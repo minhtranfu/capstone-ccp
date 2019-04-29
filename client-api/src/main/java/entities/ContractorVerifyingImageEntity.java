@@ -49,7 +49,7 @@ public class ContractorVerifyingImageEntity {
 	}
 
 	@JsonbTransient
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contractor_id")
 	public ContractorEntity getContractor() {
 		return contractor;

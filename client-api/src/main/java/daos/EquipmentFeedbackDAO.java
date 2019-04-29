@@ -4,6 +4,7 @@ import dtos.responses.GETListResponse;
 import dtos.wrappers.OrderByWrapper;
 import entities.EquipmentFeedbackEntity;
 import utils.CommonUtils;
+import utils.Constants;
 
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
@@ -58,6 +59,7 @@ public class EquipmentFeedbackDAO extends BaseDAO<EquipmentFeedbackEntity, Long>
 		TypedQuery<EquipmentFeedbackEntity> listTypedQuery = entityManager.createQuery(criteriaQuery)
 				.setParameter(supplierIdParam, supplierId)
 				.setMaxResults(limit)
+				.setHint(Constants.DEFAULT_ENTITY_GRAPH_TYPE, entityManager.getEntityGraph("graph.EquipmentFeedbackEntity.includeAll"))
 				.setFirstResult(offset);
 
 
@@ -67,5 +69,15 @@ public class EquipmentFeedbackDAO extends BaseDAO<EquipmentFeedbackEntity, Long>
 		return new GETListResponse<EquipmentFeedbackEntity>(itemCount, limit, offset, orderBy, equipmentFeedbackEntities);
 
 
+	}
+
+	public double calculateAverageEquipmentRating(long contractorId) {
+		return entityManager.createQuery("select avg(e.rating) from EquipmentFeedbackEntity e where e.supplier.id = :contractorId", Double.class)
+				.getSingleResult();
+	}
+
+	@Override
+	public EquipmentFeedbackEntity findByID(Long id) {
+		return findByID(id, "graph.EquipmentFeedbackEntity.includeAll");
 	}
 }

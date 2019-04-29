@@ -13,6 +13,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "equipment_feedback", schema = "capstone_ccp", catalog = "")
 @NamedQuery(name = "EquipmentFeedbackEntity.bySupplier", query = "select e from EquipmentFeedbackEntity e where e.supplier.id = :supplierId")
+@NamedEntityGraph(name = "graph.EquipmentFeedbackEntity.includeAll", includeAllAttributes = true)
 @EntityListeners(EquipmentFeedbackEntityListener.class)
 public class EquipmentFeedbackEntity {
 	private long id;
@@ -94,7 +95,7 @@ public class EquipmentFeedbackEntity {
 		isDeleted = deleted;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "supplier_id")
 	public ContractorEntity getSupplier() {
 		return supplier;
@@ -105,7 +106,7 @@ public class EquipmentFeedbackEntity {
 	}
 
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "requester_id")
 	public ContractorEntity getRequester() {
 		return requester;
@@ -115,7 +116,7 @@ public class EquipmentFeedbackEntity {
 		this.requester = requester;
 	}
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hiring_transaction_id")
 	public HiringTransactionEntity getHiringTransaction() {
 		return hiringTransaction;

@@ -15,4 +15,5 @@ public class Constants {
 
 
 	public static final String DEFAULT_RESULT_LIMIT = "100";
+	public static final String DEFAULT_ENTITY_GRAPH_TYPE = "javax.persistence.loadgraph";
 }

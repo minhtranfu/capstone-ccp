@@ -3,6 +3,7 @@ package test.shit;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import daos.ContractorAccountDAO;
+import daos.DebrisPostDAO;
 import daos.EquipmentDAO;
 import daos.SubscriptionDAO;
 import dtos.Credentials;
@@ -328,6 +329,22 @@ public class TestResource {
 	public Response testElasticSearchForEquipment() {
 		return Response.ok(elasticSearchManager.searchEquipment().toString()).build();
 	}
+
+	@Inject
+	DebrisPostDAO debrisPostDAO;
+	@GET
+	@Path("searchOptimize/debrisPost/get/{id:\\d+}")
+	public Response searchOptimizeGetDebrisPostById(@PathParam("id") long debrisPostId) {
+		return Response.ok(debrisPostDAO.findByIdWithValidation(debrisPostId)).build();
+	}
+
+	@GET
+	@Path("searchOptimize/equipments/get/{id:\\d+}")
+	public Response searchOptimizeGetEquipmentById(@PathParam("id") long equipmentId) {
+		return Response.ok(equipmentDAO.findByIdWithValidation(equipmentId)).build();
+	}
+
+
 
 
 }

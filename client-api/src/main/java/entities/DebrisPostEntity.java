@@ -80,6 +80,7 @@ public class DebrisPostEntity {
 	}
 
 	@OneToMany(mappedBy = "debrisPost",cascade = {},orphanRemoval = false)
+//	@JsonbTransient
 	public List<DebrisImageEntity> getDebrisImages() {
 		return debrisImages;
 	}
@@ -88,16 +89,18 @@ public class DebrisPostEntity {
 		this.debrisImages = debrisImages;
 	}
 
+	@Transient
 	public void addDebrisImage(DebrisImageEntity debrisImageEntity) {
 		this.debrisImages.add(debrisImageEntity);
 		debrisImageEntity.setDebrisPost(this);
 	}
 
+	@Transient
 	public void removeDebrisImage(DebrisImageEntity debrisImageEntity) {
 		this.debrisImages.remove(debrisImageEntity);
 		debrisImageEntity.setDebrisPost(null);
 	}
-
+	@Transient
 	public void deleteAllDebrisImage() {
 
 		for (DebrisImageEntity debrisImage : debrisImages) {
@@ -199,7 +202,7 @@ public class DebrisPostEntity {
 	}
 
 
-	@ManyToOne
+	@ManyToOne()
 	@JoinColumn(name = "requester_id", referencedColumnName = "id")
 	public ContractorEntity getRequester() {
 		return requester;

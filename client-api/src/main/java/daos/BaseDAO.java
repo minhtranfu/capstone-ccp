@@ -7,7 +7,9 @@ import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
@@ -57,6 +59,21 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 		return entityManager.find(entityClass, id);
 	}
 
+	public T findByID(PK id, String graphName) {
+		EntityGraph<?> entityGraph = entityManager.getEntityGraph(graphName);
+		Map<String, Object> hints = new HashMap<>();
+		hints.put("javax.persistence.loadgraph", entityGraph);
+		return entityManager.find(entityClass, id, hints);
+	}
+
+	public T findByIdWithValidation(PK id, String graphName) {
+		T entity = findByID(id,graphName);
+		if (entity == null) {
+			throw new BadRequestException(String.format("%s id=%s not found!", entityClass.getSimpleName(), id));
+		}
+		return entity;
+	}
+
 	public void delete(T t) {
 		entityManager.remove(entityManager.contains(t) ? t : entityManager.merge(t));
 	}
@@ -75,7 +92,7 @@ public class BaseDAO<T, PK> implements IGeneticDAO<T, PK> {
 	}
 
 	public T findByIdWithValidation(PK id) {
-		T entity = this.findByID(id);
+		T entity = findByID(id);
 		if (entity == null) {
 			throw new BadRequestException(String.format("%s id=%s not found!", entityClass.getSimpleName(), id));
 		}

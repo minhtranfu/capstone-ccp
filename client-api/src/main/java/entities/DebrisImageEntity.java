@@ -34,7 +34,7 @@ public class DebrisImageEntity {
 	}
 
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JsonbTransient
 	@JoinColumn(name = "debris_post_id", nullable = true)
 	public DebrisPostEntity getDebrisPost() {

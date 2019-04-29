@@ -1,7 +1,11 @@
 package entities;
 
+import daos.DebrisFeedbackDAO;
+import daos.EquipmentFeedbackDAO;
+import daos.MaterialFeedbackDAO;
 import org.hibernate.annotations.Where;
 
+import javax.inject.Inject;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.xml.bind.annotation.XmlTransient;
@@ -362,8 +366,20 @@ public class ContractorEntity {
 		this.averageEquipmentRating = averageEquipmentRating;
 	}
 
+	@Inject
+	DebrisFeedbackDAO debrisFeedbackDAO;
+	@Inject
+	EquipmentFeedbackDAO equipmentFeedbackDAO;
+
+	@Inject
+	MaterialFeedbackDAO materialFeedbackDAO;
+
+
 	@PostLoad
 	void postLoad() {
+//		this.averageDebrisRating = debrisFeedbackDAO.calculateAverageDebrisRating(getId());
+//		this.averageMaterialRating = materialFeedbackDAO.calculateAverageMaterialRating(getId());
+//		this.averageEquipmentRating = equipmentFeedbackDAO.calculateAverageEquipmentRating(getId());
 		this.averageDebrisRating = getDebrisFeedbacks().stream()
 				.mapToDouble(DebrisFeedbackEntity::getRating).average().orElse(0);
 		this.averageMaterialRating = getMaterialFeedbacks().stream()

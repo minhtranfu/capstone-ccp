@@ -31,6 +31,12 @@ public class ElasticSearchManager {
 	private static final int ELASTIC_SEARCH_PORT = 9200;
 	private static final Logger LOGGER = Logger.getLogger(ElasticSearchManager.class.toString());
 
+	/*==================index names ==================*/
+	private static final String INDEX_MATERIAL = "ccp-material";
+	private static final String INDEX_DEBRIS_POST = "ccp-debris_post";
+	private static final String INDEX_EQUIPMENT = "ccp-equipment";
+
+
 	public long searchElastic() {
 		RestHighLevelClient client = new RestHighLevelClient(
 				RestClient.builder(
@@ -38,7 +44,7 @@ public class ElasticSearchManager {
 				)
 		);
 
-		SearchRequest searchRequest = new SearchRequest("equipment");
+		SearchRequest searchRequest = new SearchRequest("ccp_equipment");
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(QueryBuilders.matchAllQuery());
 //		searchSourceBuilder.query(BoolQueryBuilder)
@@ -81,7 +87,7 @@ public class ElasticSearchManager {
 		RestHighLevelClient client = getNewClient();
 
 
-		SearchRequest searchRequest = new SearchRequest("material");
+		SearchRequest searchRequest = new SearchRequest(INDEX_MATERIAL);
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
@@ -148,7 +154,7 @@ public class ElasticSearchManager {
 		RestHighLevelClient client = getNewClient();
 
 
-		SearchRequest searchRequest = new SearchRequest("debris_post");
+		SearchRequest searchRequest = new SearchRequest(INDEX_DEBRIS_POST);
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
@@ -207,7 +213,7 @@ public class ElasticSearchManager {
 		RestHighLevelClient client = getNewClient();
 
 
-		SearchRequest searchRequest = new SearchRequest("equipment");
+		SearchRequest searchRequest = new SearchRequest(INDEX_EQUIPMENT);
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
