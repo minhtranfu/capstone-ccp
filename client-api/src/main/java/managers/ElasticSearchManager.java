@@ -95,11 +95,13 @@ public class ElasticSearchManager {
 				.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("description", query))
 				.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("manufacturer", query))
 				.filter(QueryBuilders.termQuery("is_hidden", false))
-				.filter(QueryBuilders.termQuery("is_deleted", false));
+				.filter(QueryBuilders.termQuery("is_deleted", false))
+				.minimumShouldMatch(1);
+		;
 		if (materialTypeId != null && materialTypeId > 0) {
 			boolQuery.filter(QueryBuilders.termQuery("material_type_id", materialTypeId));
 		}
-		if (contractorId != null&& contractorId > 0) {
+		if (contractorId != null && contractorId > 0) {
 			boolQuery.mustNot(QueryBuilders.termQuery("contractor_id", contractorId));
 		}
 
@@ -161,7 +163,9 @@ public class ElasticSearchManager {
 		boolQuery.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("title", query).boost(2.0f))
 				.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("description", query))
 				.filter(QueryBuilders.termQuery("is_hidden", false))
-				.filter(QueryBuilders.termQuery("is_deleted", false));
+				.filter(QueryBuilders.termQuery("is_deleted", false))
+				.minimumShouldMatch(1);
+
 		if (contractorId != null) {
 			boolQuery.mustNot(QueryBuilders.termQuery("requester_id", contractorId));
 		}
@@ -206,8 +210,9 @@ public class ElasticSearchManager {
 			e.printStackTrace();
 			throw new InternalErrorException(e);
 		}
-		
+
 	}
+
 	public List<Long> searchEquipment(String query, Long contractorId, Long equipmentTypeId,
 									  String orderBy, int offset, int limit) {
 		RestHighLevelClient client = getNewClient();
@@ -220,8 +225,9 @@ public class ElasticSearchManager {
 		boolQuery.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("name", query).boost(2.0f))
 				.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("description", query))
 				.filter(QueryBuilders.termQuery("is_deleted", false))
-				.filter(QueryBuilders.matchQuery("status", "AVAILABLE"));
-		if (equipmentTypeId != null && equipmentTypeId>0) {
+				.filter(QueryBuilders.matchQuery("status", "AVAILABLE"))
+				.minimumShouldMatch(1);
+		if (equipmentTypeId != null && equipmentTypeId > 0) {
 			boolQuery.filter(QueryBuilders.termQuery("equipment_type_id", equipmentTypeId));
 		}
 		if (contractorId != null) {
