@@ -69,7 +69,7 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 		Long itemCount = countTypedQuery.getSingleResult();
 		List<HiringTransactionEntity> hiringTransactionEntities = listTypedQuery.getResultList();
 
-		return new GETListResponse<>(itemCount, limit, offset, orderBy, hiringTransactionEntities);
+		return new GETListResponse<HiringTransactionEntity>(itemCount, limit, offset, orderBy, hiringTransactionEntities);
 	}
 
 	public List<HiringTransactionEntity> getNamedHiringTransactionsBySupplierId(long supplierId, int limit, int offset) {

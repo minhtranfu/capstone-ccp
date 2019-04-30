@@ -5,6 +5,7 @@ import daos.EquipmentDAO;
 import daos.HiringTransactionDAO;
 import daos.TransactionDateChangeRequestDAO;
 import dtos.requests.HiringTransactionRequest;
+import dtos.responses.GETListResponse;
 import dtos.responses.MessageResponse;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
@@ -22,6 +23,7 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("transactions")
@@ -93,6 +95,9 @@ public class HiringTransactionResource {
 
 		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByIdWithValidation(id);
 		return Response.ok(foundTransaction).build();
+//		ArrayList<HiringTransactionEntity> list = new ArrayList<>();
+//		list.add(foundTransaction);
+//		return Response.ok(new GETListResponse<HiringTransactionEntity>(1,1, 1, "orderBy", list)).build();
 	}
 
 	@DELETE
@@ -285,6 +290,7 @@ public class HiringTransactionResource {
 
 		//validate supplierId
 		contractorDAO.findByIdWithValidation(supplierId);
+
 
 		return Response.ok(hiringTransactionDAO.getHiringTransactionsBySupplierId(supplierId, status, limit, offset, orderBy)).build();
 

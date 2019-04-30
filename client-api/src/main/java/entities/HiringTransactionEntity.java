@@ -105,7 +105,7 @@ public class HiringTransactionEntity {
 	}
 
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "requester_id")
 	public ContractorEntity getRequester() {
 		return requester;
@@ -277,8 +277,8 @@ public class HiringTransactionEntity {
 		this.equipment = equipment;
 	}
 
-	@OneToOne(mappedBy = "hiringTransaction")
 	@JsonbTransient
+	@OneToOne(mappedBy = "hiringTransaction")
 	public EquipmentFeedbackEntity getEquipmentFeedback() {
 		return equipmentFeedback;
 	}
@@ -293,27 +293,6 @@ public class HiringTransactionEntity {
 		return this.getEquipmentFeedback() != null;
 	}
 
-	@Override
-	public String toString() {
-		return "HiringTransactionEntity{" +
-				"id=" + id +
-				", status=" + status +
-				", dailyPrice=" + dailyPrice +
-				", createdTime=" + createdTime +
-				", updatedTime=" + updatedTime +
-				", beginDate=" + beginDate +
-				", endDate=" + endDate +
-				", equipmentAddress='" + equipmentAddress + '\'' +
-				", equipmentLatitude=" + equipmentLatitude +
-				", equipmentLongitude=" + equipmentLongitude +
-				", requesterAddress='" + requesterAddress + '\'' +
-				", requesterLatitude=" + requesterLatitude +
-				", requesterLongitude=" + requesterLongitude +
-				", isDeleted=" + isDeleted +
-				", equipment=" + equipment +
-				", requester=" + requester +
-				'}';
-	}
 
 	public enum Status {
 		PENDING,
