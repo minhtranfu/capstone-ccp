@@ -23,7 +23,7 @@ instance.interceptors.response.use(
   // Do nothing on success
   response => response,
   // Check error 401 to refresh token
-  error => {
+  async error => {
     
     // Save origin request config to request again after refresh token
     const originalRequest = error.config;
@@ -34,7 +34,7 @@ instance.interceptors.response.use(
         setTokens('', '');
         history.push(getRoutePath(routeConsts.LOGIN));
 
-        return error;
+        return Promise.reject(error);
       }
 
       const options = {
@@ -49,23 +49,23 @@ instance.interceptors.response.use(
       };
 
       // refresh token
-      return refreshAxios
-        .request('/authen/refresh', options)
-        .then(responseData => {
-          // get token, refresh token and persist them
-          const { accessToken, refreshToken } = responseData.data.tokenWrapper;
-          setTokens(accessToken, refreshToken);
-          // axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-          originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
-          return axios(originalRequest);
-        })
-        .catch(error => {
-          setTokens('', '');
-          history.push(getRoutePath(routeConsts.LOGIN));
-        });
+      try {
+        const responseData = await refreshAxios
+          .request('/authen/refresh', options);
+        // get token, refresh token and persist them
+        const { accessToken, refreshToken } = responseData.data.tokenWrapper;
+        setTokens(accessToken, refreshToken);
+        // axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+        return axios(originalRequest);
+      }
+      catch (error) {
+        setTokens('', '');
+        history.push(getRoutePath(routeConsts.LOGIN));
+      }
     }
 
-    return error;
+    return Promise.reject(error);
   }
 );
 
