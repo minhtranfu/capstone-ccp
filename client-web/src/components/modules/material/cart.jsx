@@ -65,10 +65,15 @@ class Cart extends PureComponent {
    */
   _handleUpdateQuantity = (item, quantity) => {
     const { updateItem } = this.props;
+
+    if (+quantity === 0) {
+      this._handleRemoveItem(item.id);
+      return;
+    }
     
     updateItem({
       ...item,
-      quantity
+      quantity: +quantity
     });
   };
 

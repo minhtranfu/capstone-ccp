@@ -37,13 +37,17 @@ class RequestCard extends Component {
     const quantity = `${value}`.replace(/[^0-9\.]/g, '').replace(/(.+)\.(.+)?\./g, '$1.$2');
 
     this.setState({
-      quantity
+      quantity: +quantity
     });
   };
 
   _addToCart = () => {
     const { material, quantity } = this.state;
     const { addItem } = this.props;
+
+    if (quantity === 0) {
+      return;
+    }
 
     const item = {
       ...material,
@@ -53,6 +57,12 @@ class RequestCard extends Component {
   };
 
   _requestNow = () => {
+    const { quantity } = this.state;
+
+    if (+quantity === 0) {
+      return;
+    }
+
     this._addToCart();
 
     this.setState({
