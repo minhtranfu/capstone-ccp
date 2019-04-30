@@ -2,8 +2,7 @@ package com.ccp.webadmin.repositories;
 
 import com.ccp.webadmin.dtos.LineChartStatisticDTO;
 import com.ccp.webadmin.dtos.PieChartStatisticDTO;
-import com.ccp.webadmin.entities.MaterialEntity;
-import com.ccp.webadmin.entities.MaterialTypeEntity;
+import com.ccp.webadmin.entities.*;
 import com.ccp.webadmin.entities.MaterialEntity;
 import com.ccp.webadmin.entities.MaterialTypeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MaterialRepository extends JpaRepository<MaterialEntity, Integer> {
+
     List<MaterialEntity> findByMaterialTypeEntity(MaterialTypeEntity materialTypeEntity);
 
     @Query("select new com.ccp.webadmin.dtos.LineChartStatisticDTO(FUNCTION('year',(e.createdTime))," +

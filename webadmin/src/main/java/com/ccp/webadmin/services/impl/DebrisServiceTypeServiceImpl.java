@@ -25,7 +25,7 @@ public class DebrisServiceTypeServiceImpl implements DebrisServiceTypeService {
 
     @Override
     public List<DebrisServiceTypeEntity> findAll() {
-        return debrisServiceTypeRepository.findAll();
+        return debrisServiceTypeRepository.findAllNotDeleted();
     }
 
     @Override

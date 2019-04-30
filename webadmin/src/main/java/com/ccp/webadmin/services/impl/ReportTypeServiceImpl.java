@@ -20,7 +20,7 @@ public class ReportTypeServiceImpl implements ReportTypeService {
 
     @Override
     public List<ReportTypeEntity> findAll() {
-        return reportTypeRepository.findAll();
+        return reportTypeRepository.findAllNotDeleted();
     }
 
     @Override

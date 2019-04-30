@@ -10,7 +10,6 @@ import java.util.Collection;
 
 @Entity
 @Table(name = "debris_service_type")
-@Where(clause = "is_deleted='false'")
 public class DebrisServiceTypeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

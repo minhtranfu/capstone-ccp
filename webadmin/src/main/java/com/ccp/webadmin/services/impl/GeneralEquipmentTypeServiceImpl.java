@@ -25,7 +25,7 @@ public class GeneralEquipmentTypeServiceImpl implements GeneralEquipmentTypeServ
 
     @Override
     public List<GeneralEquipmentTypeEntity> findAll() {
-        return generalEquipmentTypeRepository.findAll();
+        return generalEquipmentTypeRepository.findAllNotDeleted();
     }
 
     @Override

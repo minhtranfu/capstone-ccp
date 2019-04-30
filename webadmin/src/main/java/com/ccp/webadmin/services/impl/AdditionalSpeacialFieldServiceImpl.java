@@ -32,7 +32,7 @@ public class AdditionalSpeacialFieldServiceImpl implements AdditionalSpecialFiel
 
     @Override
     public List<AdditionalSpecialFieldEntity> findAll() {
-        return additionalSpecialFieldRepository.findAll();
+        return additionalSpecialFieldRepository.findAllNotDeleted();
     }
 
     @Override

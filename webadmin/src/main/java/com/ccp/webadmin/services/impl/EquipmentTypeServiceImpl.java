@@ -28,7 +28,7 @@ public class EquipmentTypeServiceImpl implements EquipmentTypeService {
 
     @Override
     public List<EquipmentTypeEntity> findAll() {
-        return equipmentTypeRepository.findAll();
+        return equipmentTypeRepository.findAllNotDeleted();
     }
 
     @Override

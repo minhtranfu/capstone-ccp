@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "general_equipment_type")
-@Where(clause = "is_deleted='false'")
 public class GeneralEquipmentTypeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,13 +50,7 @@ public class GeneralEquipmentTypeEntity {
         this.name = name;
     }
 
-    public boolean isIs_deleted() {
-        return isDeleted;
-    }
 
-    public void setIs_deleted(boolean is_delete) {
-        this.isDeleted = isDeleted;
-    }
 
     public Timestamp getCreatedTime() {
         return createdTime;

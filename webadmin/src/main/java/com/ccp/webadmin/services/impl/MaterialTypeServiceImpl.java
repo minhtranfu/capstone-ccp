@@ -25,7 +25,7 @@ public class MaterialTypeServiceImpl implements MaterialTypeService {
 
     @Override
     public List<MaterialTypeEntity> findAll() {
-        return materialTypeRepository.findAll();
+        return materialTypeRepository.findAllNotDeleted();
     }
 
     @Override

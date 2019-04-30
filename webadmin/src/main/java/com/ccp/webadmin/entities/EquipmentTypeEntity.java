@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "equipment_type")
-@Where(clause = "is_deleted = 0")
 public class EquipmentTypeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

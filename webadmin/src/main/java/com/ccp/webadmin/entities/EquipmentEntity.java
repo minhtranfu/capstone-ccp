@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "equipment")
-@Where(clause = "is_deleted = 0")
 public class EquipmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

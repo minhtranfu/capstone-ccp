@@ -23,7 +23,7 @@ public class GeneralMaterialTypeServiceImpl implements GeneralMaterialTypeServic
 
     @Override
     public List<GeneralMaterialTypeEntity> findAll() {
-        return generalMaterialTypeRepository.findAll();
+        return generalMaterialTypeRepository.findAllNotDeleted();
     }
 
     @Override

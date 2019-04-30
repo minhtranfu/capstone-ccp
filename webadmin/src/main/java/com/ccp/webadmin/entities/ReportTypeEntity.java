@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "report_type")
-@Where(clause = "is_deleted='false'")
+
 public class ReportTypeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
