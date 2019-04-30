@@ -38,6 +38,8 @@ public class ContractorEntity {
 	private String phoneNumber;
 	private String thumbnailImageUrl;
 
+	private boolean emailVerified;
+	private boolean phoneNumberVerified;
 	private Status status;
 
 	private LocalDateTime createdTime;
@@ -139,6 +141,24 @@ public class ContractorEntity {
 
 	public void setPhoneNumber(String phonenumber) {
 		this.phoneNumber = phonenumber;
+	}
+
+	@Column(name = "email_verified")
+	public boolean isEmailVerified() {
+		return emailVerified;
+	}
+
+	public void setEmailVerified(boolean emailVerified) {
+		this.emailVerified = emailVerified;
+	}
+
+	@Column(name = "phone_number_verified")
+	public boolean isPhoneNumberVerified() {
+		return phoneNumberVerified;
+	}
+
+	public void setPhoneNumberVerified(boolean phoneNumberVerified) {
+		this.phoneNumberVerified = phoneNumberVerified;
 	}
 
 	@Basic

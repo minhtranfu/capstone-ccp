@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @NamedQueries({
 		@NamedQuery(name = "ContractorAccountEntity.validateAccount", query = "select e from ContractorAccountEntity  e where e.username = :username and e.password = :password")
 		,@NamedQuery(name = "ContractorAccountEntity.findByUsername", query = "select e from ContractorAccountEntity  e where e.username = :username ")
+		,@NamedQuery(name = "ContractorAccountEntity.findByContractorId", query = "select e from ContractorAccountEntity  e where e.contractor.id = :contractorId ")
 
 })
 public class ContractorAccountEntity
