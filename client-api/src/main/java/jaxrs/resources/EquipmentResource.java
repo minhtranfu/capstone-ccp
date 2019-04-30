@@ -38,10 +38,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @Path("/equipments")
 @Produces(MediaType.APPLICATION_JSON)
 public class EquipmentResource {
+	public static final Logger LOGGER = Logger.getLogger(EquipmentResource.class.toString());
 
 	@Inject
 	EquipmentDAO equipmentDAO;
@@ -101,7 +103,7 @@ public class EquipmentResource {
 
 
 	@GET
-		public Response searchEquipment(
+	public Response searchEquipment(
 
 			@QueryParam("q") @DefaultValue("") String query,
 			@QueryParam("lat") Double latitude,
@@ -126,7 +128,8 @@ public class EquipmentResource {
 			endDate = beginDate;
 		}
 
-		System.out.println(String.format("search: beginDate=%s, endDate=%s", beginDate, endDate));
+
+		LOGGER.info(String.format("search: beginDate=%s, endDate=%s", beginDate, endDate));
 
 		if (beginDate != null && endDate != null && beginDate.isAfter(endDate)) {
 			throw new BadRequestException("Error: beginDate > endDate");
@@ -175,7 +178,7 @@ public class EquipmentResource {
 	@GET
 	@Path("{id:\\d+}")
 	public Response getEquipment(@PathParam("id") long id) {
-		return Response.ok(equipmentDAO.findByIdWithValidation(id,false)).build();
+		return Response.ok(equipmentDAO.findByIdWithValidation(id, false)).build();
 	}
 
 

@@ -28,7 +28,7 @@ public class LocalDateWrapper {
 		try {
 			localDate = LocalDate.parse(valueStr, DateTimeFormatter.ISO_DATE);
 		} catch (DateTimeParseException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		return new LocalDateWrapper(localDate);
 

@@ -19,9 +19,11 @@ import javax.ws.rs.InternalServerErrorException;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Stateless
 public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
+	private static final Logger LOGGER = Logger.getLogger(EquipmentDAO.class.toString());
 
 
 	@PersistenceContext
@@ -299,7 +301,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 				sortedResultList.add(resultList.stream().filter(entity -> entity.getId() == id).findAny()
 						.orElseThrow(InternalServerErrorException::new));
 			} catch (InternalServerErrorException e1) {
-				e1.printStackTrace();
+//				e1.printStackTrace();
+//				LOGGER.info("searchEquipmentByElasticSearch(), equipment id=%s is filtered");
 				// simply dont add it =="
 			}
 		}

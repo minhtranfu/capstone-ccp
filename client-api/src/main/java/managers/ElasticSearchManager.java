@@ -231,20 +231,20 @@ public class ElasticSearchManager {
 
 		searchSourceBuilder.query(boolQuery);
 
-		// TODO: 4/28/19 must related to orderBy
-//		searchSourceBuilder.from(offset).size(limit);
+//		 TODO: 4/28/19 must related to orderBy
+		searchSourceBuilder.from(offset).size(limit);
 
 
 		// TODO: 4/28/19 fix this shit, cant do it now because already done in search DAO
-//		if (!orderBy.isEmpty()) {
-//			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
-//				if (orderByWrapper.isAscending()) {
-//					searchSourceBuilder.sort(orderByWrapper.getColumnName(), SortOrder.ASC);
-//				} else {
-//					searchSourceBuilder.sort(orderByWrapper.getColumnName(), SortOrder.DESC);
-//				}
-//			}
-//		}
+		if (!orderBy.isEmpty()) {
+			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+				if (orderByWrapper.isAscending()) {
+					searchSourceBuilder.sort(orderByWrapper.getColumnName(), SortOrder.ASC);
+				} else {
+					searchSourceBuilder.sort(orderByWrapper.getColumnName(), SortOrder.DESC);
+				}
+			}
+		}
 		searchRequest.source(searchSourceBuilder);
 
 		try {

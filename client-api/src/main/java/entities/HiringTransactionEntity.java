@@ -2,6 +2,7 @@ package entities;
 
 
 import dtos.requests.HiringTransactionRequest;
+import dtos.requests.TransactionDateChangeRequestRequest;
 import listeners.entityListenters.HiringTransactionEntityListener;
 import org.hibernate.annotations.Where;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "hiring_transaction", schema = "capstone_ccp")
@@ -46,11 +48,12 @@ public class HiringTransactionEntity {
 
 	private boolean isDeleted;
 
-
 	private EquipmentEntity equipment;
 	private ContractorEntity requester;
 	private EquipmentFeedbackEntity equipmentFeedback;
 
+	private boolean hasPendingTransactionDateChangeRequest;
+	private List<TransactionDateChangeRequestEntity> transactionDateChangeRequests;
 
 	public HiringTransactionEntity() {
 	}
@@ -293,6 +296,22 @@ public class HiringTransactionEntity {
 		return this.getEquipmentFeedback() != null;
 	}
 
+	@Transient
+	public boolean isHasPendingTransactionDateChangeRequest() {
+		return getTransactionDateChangeRequests().stream()
+				.anyMatch(entity -> entity.getStatus() == TransactionDateChangeRequestEntity.Status.PENDING);
+	}
+
+
+	@OneToMany(mappedBy = "hiringTransactionEntity")
+	@Where(clause = "is_deleted=0")
+	public List<TransactionDateChangeRequestEntity> getTransactionDateChangeRequests() {
+		return transactionDateChangeRequests;
+	}
+
+	public void setTransactionDateChangeRequests(List<TransactionDateChangeRequestEntity> transactionDateChangeRequests) {
+		this.transactionDateChangeRequests = transactionDateChangeRequests;
+	}
 
 	public enum Status {
 		PENDING,
