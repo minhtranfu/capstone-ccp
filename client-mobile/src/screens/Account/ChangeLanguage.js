@@ -44,12 +44,9 @@ const language = [
     )
 )
 class ChangeLanguage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   shouldComponentUpdate(nextProps) {
+    console.log("a", this.props.language);
+    console.log("b", nextProps.language);
     return this.props.language !== nextProps.language;
   }
 

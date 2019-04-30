@@ -13,6 +13,7 @@ export default function contractorReducer(state = initialState, action) {
   const { type, payload } = action;
   switch (action.type) {
     case "CHANGE_LANGUAGE": {
+      console.log(payload);
       return {
         ...state,
         language: payload

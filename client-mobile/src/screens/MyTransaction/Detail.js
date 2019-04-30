@@ -231,7 +231,7 @@ class MyTransactionDetail extends Component {
                     onPress={() =>
                       this._handleRequestAdjustTransaction(
                         "Are you sure to accept?",
-                        id,
+                        item.id,
                         "ACCEPTED"
                       )
                     }
@@ -242,7 +242,7 @@ class MyTransactionDetail extends Component {
                     onPress={() =>
                       this._handleRequestAdjustTransaction(
                         "Are you sure to deny this transaction?",
-                        id,
+                        item.id,
                         "DENIED"
                       )
                     }

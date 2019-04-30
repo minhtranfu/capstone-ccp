@@ -133,19 +133,25 @@ export function requestAdjustTransaction(date) {
   };
 }
 
-export function responseAdjustTransaction(transactionId, status) {
+export function responseAdjustTransaction(adjustTransactionId, status) {
   return async dispatch => {
-    dispatch({
-      type: Actions.RESPONSE_ADJUST_TRANSACTION.REQUEST
-    });
-    const res = await axios.put(
-      `transactionDateChangeRequests/${transactionId}`,
-      status
-    );
-    dispatch({
-      type: Actions.RESPONSE_ADJUST_TRANSACTION.SUCCESS,
-      payload: { data: res, id: transactionId }
-    });
+    try {
+      dispatch({
+        type: Actions.RESPONSE_ADJUST_TRANSACTION.REQUEST
+      });
+      const res = await axios.put(
+        `transactionDateChangeRequests/${adjustTransactionId}`,
+        status
+      );
+      dispatch({
+        type: Actions.RESPONSE_ADJUST_TRANSACTION.SUCCESS,
+        payload: { data: res, id: transactionId }
+      });
+    } catch (error) {
+      dispatch({
+        type: Actions.RESPONSE_ADJUST_TRANSACTION.ERROR
+      });
+    }
   };
 }
 

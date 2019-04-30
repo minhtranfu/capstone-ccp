@@ -8,6 +8,7 @@ import {
 } from "react-navigation";
 import DismissableStackNav from "../Utils/DismissableStackNav";
 import colors from "./colors";
+import i18n from "i18n-js";
 
 import Discover from "../screens/Discover";
 import Account from "../screens/Account";
@@ -133,7 +134,7 @@ const AccountStack = createStackNavigator(
     AboutUs: AboutUs,
     Construction: Construction,
     ConstructionDetail: ConstructionDetail,
-    Subcription: Subscription,
+    Subscription: Subscription,
     AddSubscription: AddSubscription,
     EditSubscription: EditSubscription,
     Register: Register,

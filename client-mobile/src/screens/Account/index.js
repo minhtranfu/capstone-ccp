@@ -18,6 +18,7 @@ import { SafeAreaView } from "react-navigation";
 import axios from "axios";
 import { Notifications, Permissions, Camera } from "expo";
 import { Ionicons } from "@expo/vector-icons";
+import i18n from "i18n-js";
 
 import {
   getConstructionList,
@@ -48,37 +49,37 @@ import { ACTION_NIGHT_DISPLAY_SETTINGS } from "expo/build/IntentLauncherAndroid"
 const SETTING_ITEMS_VALUE = [
   {
     id: 1,
-    value: "Edit profile",
+    value: "EditProfile",
     code: "Profile"
   },
   {
     id: 2,
-    value: "Change password",
+    value: "ChangePassword",
     code: "ChangePassword"
   },
   {
     id: 3,
-    value: "Change language",
+    value: "ChangeLanguage",
     code: "ChangeLanguage"
   },
   {
     id: 4,
-    value: "My Feedback",
+    value: "MyFeedback",
     code: "MyFeedback"
   },
   {
     id: 5,
-    value: "My constructions",
+    value: "MyConstruction",
     code: "Construction"
   },
   {
     id: 6,
-    value: "My subscription",
-    code: "Subcription"
+    value: "MySubscription",
+    code: "Subscription"
   },
   {
     id: 7,
-    value: "Push notifications",
+    value: "Notifications",
     code: "Notifications"
   }
 ];
@@ -90,7 +91,8 @@ const SETTING_ITEMS_VALUE = [
       contractor: state.contractor.detail,
       loading: state.contractor.loading,
       user: state.auth.data,
-      allowPushNotification: state.notification.allowPushNotification
+      allowPushNotification: state.notification.allowPushNotification,
+      language: state.contractor.language
     };
   },
   dispatch =>
@@ -219,6 +221,7 @@ class Account extends Component {
   _handleLogout = async () => {
     await this._handleRemoveToken();
     await AsyncStorage.removeItem("userToken");
+    await AsyncStorage.removeItem("userRefreshToken");
     this.props.fetchLogout();
   };
 
@@ -283,7 +286,7 @@ class Account extends Component {
         >
           <Header style={{ position: "relative" }}>
             <Left />
-            <Body title="Settings" />
+            <Body title={i18n.t("Settings")} />
             <Right>
               <TouchableOpacity onPress={this._handleLogout}>
                 <RNImage
@@ -324,7 +327,8 @@ class Account extends Component {
                     <Text style={styles.text}>Waiting For Verify</Text>
                   ) : null}
                   <Text style={styles.text}>
-                    Joined {this._dateConverter(contractor.createdTime)}
+                    {i18n.t("Joined")}{" "}
+                    {this._dateConverter(contractor.createdTime)}
                   </Text>
                 </View>
                 <View style={styles.contentWrapper}>
@@ -350,7 +354,7 @@ class Account extends Component {
                       //     contractorId: contractor.id
                       //   })
                       // }
-                      value={item.value}
+                      value={i18n.t(item.value)}
                       onSwitchValue={this.state.switchValue}
                       onSwitchChange={this._handleOnSwitchChange}
                       onPress={() =>

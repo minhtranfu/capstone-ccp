@@ -5,12 +5,15 @@ import i18n from "i18n-js";
 
 export function updateLanguage(language) {
   console.log(language);
-  if (language !== undefined) {
-    i18n.locale = language;
-  }
-  return {
-    type: "CHANGE_LANGUAGE",
-    payload: language
+
+  return dispatch => {
+    if (language !== undefined) {
+      i18n.locale = language;
+    }
+    dispatch({
+      type: "CHANGE_LANGUAGE",
+      payload: language
+    });
   };
 }
 

@@ -58,10 +58,13 @@ class Discover extends Component {
     this.state = {
       checked: 0
     };
+    i18n.locale = props.language;
   }
-  shouldComponentUpdate(nextProps) {
-    return this.props.language !== nextProps.language;
-  }
+
+  // componentDidMount() {
+  //   console.log(this.props.language);
+  //   i18n.locale = this.props.language;
+  // }
 
   _renderDiscoverItem = ({ item }) => {
     return (

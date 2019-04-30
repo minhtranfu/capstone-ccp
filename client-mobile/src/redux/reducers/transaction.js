@@ -165,6 +165,11 @@ export default function transactionReducer(state = initialState, action) {
         adjustLoading: false
         //adjustTransaction: payload.data
       };
+    case Actions.RESPONSE_ADJUST_TRANSACTION.ERROR:
+      return {
+        ...state,
+        adjustLoading: false
+      };
     case Actions.DELETE_ADJUST_TRANSACTION.REQUEST:
       return {
         ...state,

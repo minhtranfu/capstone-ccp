@@ -54,18 +54,17 @@ export default async function configAPI(config) {
                 .post(`authen/refresh`, { refreshToken })
                 .then(response => {
                   console.log(response);
-                  isAlreadyFetchingAccessToken = false;
                   AsyncStorage.setItem(
                     "userToken",
                     response.data.tokenWrapper.accessToken
                   );
-                  // axios.defaults.headers.Authorization = `Bearer ${
-                  //   response.data.tokenWrapper.accessToken
-                  // }`;
+                  axios.defaults.headers.common["Authorization"] = `Bearer ${
+                    response.data.tokenWrapper.accessToken
+                  }`;
                   originalRequest.headers["Authorization"] = `Bearer ${
                     response.data.tokenWrapper.accessToken
                   }`;
-                  console.log(originalRequest);
+                  isAlreadyFetchingAccessToken = false;
                   return axios(originalRequest);
                 })
                 .catch(error => {
@@ -73,7 +72,7 @@ export default async function configAPI(config) {
                   config.store.dispatch(
                     StatusAction.error(
                       401,
-                      error.response.data.message,
+                      "Session has expired. Please login again!!",
                       Date.now()
                     )
                   );
