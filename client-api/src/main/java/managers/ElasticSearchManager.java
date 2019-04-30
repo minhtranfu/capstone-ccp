@@ -91,7 +91,7 @@ public class ElasticSearchManager {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
-		boolQuery.must(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("name", query).boost(2.0f))
+		boolQuery.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("name", query).boost(2.0f))
 				.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("description", query))
 				.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("manufacturer", query))
 				.filter(QueryBuilders.termQuery("is_hidden", false))
@@ -158,7 +158,7 @@ public class ElasticSearchManager {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
-		boolQuery.must(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("title", query).boost(2.0f))
+		boolQuery.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("title", query).boost(2.0f))
 				.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("description", query))
 				.filter(QueryBuilders.termQuery("is_hidden", false))
 				.filter(QueryBuilders.termQuery("is_deleted", false));
@@ -217,7 +217,7 @@ public class ElasticSearchManager {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
-		boolQuery.must(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("name", query).boost(2.0f))
+		boolQuery.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("name", query).boost(2.0f))
 				.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("description", query))
 				.filter(QueryBuilders.termQuery("is_deleted", false))
 				.filter(QueryBuilders.matchQuery("status", "AVAILABLE"));
