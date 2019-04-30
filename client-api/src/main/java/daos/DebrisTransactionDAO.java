@@ -3,7 +3,6 @@ package daos;
 import dtos.responses.GETListResponse;
 import dtos.wrappers.OrderByWrapper;
 import entities.DebrisTransactionEntity;
-import entities.HiringTransactionEntity;
 import utils.CommonUtils;
 
 import javax.ejb.Stateless;
@@ -133,5 +132,64 @@ public class DebrisTransactionDAO extends BaseDAO<DebrisTransactionEntity, Long>
 		List<DebrisTransactionEntity> hiringTransactionEntities = listTypedQuery.getResultList();
 
 		return new GETListResponse<>(itemCount, limit, offset, orderBy, hiringTransactionEntities);
+	}
+
+	public GETListResponse<DebrisTransactionEntity> getDebrisTransactions(Long postId, Long bidId, int limit, int offset, String orderBy) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+		CriteriaQuery<DebrisTransactionEntity> criteriaQuery = criteriaBuilder.createQuery(DebrisTransactionEntity.class);
+
+		Root<DebrisTransactionEntity> e = countQuery.from(DebrisTransactionEntity.class);
+		criteriaQuery.from(DebrisTransactionEntity.class);
+
+
+		ParameterExpression<Long> bidIdParam = criteriaBuilder.parameter(Long.class);
+		ParameterExpression<Long> postIdParam = criteriaBuilder.parameter(Long.class);
+
+		Predicate whereClause = criteriaBuilder.and(
+				bidId != null ? criteriaBuilder.equal(e.get("debrisBid").get("id"), bidIdParam) : criteriaBuilder.conjunction()
+				, postId != null ? criteriaBuilder.equal(e.get("debrisPost").get("id"),postIdParam) : criteriaBuilder.conjunction()
+				);
+
+		countQuery.select(criteriaBuilder.count(e.get("id"))).where(whereClause);
+		criteriaQuery.select(e).where(whereClause);
+		TypedQuery<Long> countTypedQuery = entityManager.createQuery(countQuery)
+				.setParameter(bidIdParam, bidId);
+
+
+		if (!orderBy.isEmpty()) {
+			List<Order> orderList = new ArrayList<>();
+			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+				if (orderByWrapper.isAscending()) {
+					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
+				} else {
+					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
+				}
+			}
+			criteriaQuery.orderBy(orderList);
+		}
+
+		TypedQuery<DebrisTransactionEntity> listTypedQuery = entityManager.createQuery(criteriaQuery)
+				.setParameter(bidIdParam, bidId)
+				.setMaxResults(limit)
+				.setFirstResult(offset);
+
+
+
+		if (bidId != null) {
+			countTypedQuery.setParameter(bidIdParam, bidId);
+			listTypedQuery.setParameter(bidIdParam, bidId);
+		}
+
+		if (postId != null) {
+			countTypedQuery.setParameter(postIdParam, postId);
+			listTypedQuery.setParameter(postIdParam, postId);
+		}
+
+		Long itemCount = countTypedQuery.getSingleResult();
+		List<DebrisTransactionEntity> hiringTransactionEntities = listTypedQuery.getResultList();
+
+		return new GETListResponse<>(itemCount, limit, offset, orderBy, hiringTransactionEntities);
+
 	}
 }

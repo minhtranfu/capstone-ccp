@@ -27,7 +27,7 @@ import java.util.List;
 
 @RolesAllowed("contractor")
 @Path("transactionDateChangeRequests")
-public class TransactionDateChangeResource {
+public class TransactionDateChangeRequestResource {
 
 	@Inject
 	HiringTransactionDAO hiringTransactionDAO;
@@ -50,7 +50,7 @@ public class TransactionDateChangeResource {
 	ModelConverter modelConverter;
 
 
-	public TransactionDateChangeResource() {
+	public TransactionDateChangeRequestResource() {
 	}
 
 	@GET
@@ -107,7 +107,7 @@ public class TransactionDateChangeResource {
 
 
 		// TODO: 4/13/19 validate new end date must after today
-		if (!transactionDateChangeRequestRequest.getRequestedEndDate().isBefore(LocalDate.now())) {
+		if (transactionDateChangeRequestRequest.getRequestedEndDate().isBefore(LocalDate.now())) {
 			throw new BadRequestException("Extended end date must not before today");
 		}
 

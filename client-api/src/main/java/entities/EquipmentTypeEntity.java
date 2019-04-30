@@ -7,14 +7,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Where(clause = "is_deleted=0")
 @Table(name = "equipment_type", schema = "capstone_ccp")
-@NamedQuery(name = "EquipmentTypeEntity.getAllEquipmentType", query = "select p from EquipmentTypeEntity p")
 public class EquipmentTypeEntity {
 	private long id;
 	private String name;
 	private GeneralEquipmentTypeEntity generalEquipment;
-
+	private double priceWeight;
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 	private boolean isDeleted;
@@ -41,6 +39,17 @@ public class EquipmentTypeEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+
+	@Basic
+	@Column(name = "price_weight")
+	public double getPriceWeight() {
+		return priceWeight;
+	}
+
+	public void setPriceWeight(double priceWeight) {
+		this.priceWeight = priceWeight;
 	}
 
 	@Basic
@@ -75,7 +84,7 @@ public class EquipmentTypeEntity {
 	}
 
 	@OneToMany(mappedBy = "equipmentType", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@Where(clause = "is_deleted=0")
+	@Where(clause = "is_deleted = 0")
 	public List<AdditionalSpecsFieldEntity> getAdditionalSpecsFields() {
 		return additionalSpecsFields;
 	}

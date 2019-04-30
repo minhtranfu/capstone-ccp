@@ -12,8 +12,4 @@ public class EquipmentTypeDAO extends BaseDAO<EquipmentTypeEntity, Long> {
 	@PersistenceContext
 	EntityManager entityManager;
 
-	public List<EquipmentTypeEntity> getAllEquipmentTypes() {
-		return entityManager.createNamedQuery("EquipmentTypeEntity.getAllEquipmentType")
-				.getResultList();
-	}
 }

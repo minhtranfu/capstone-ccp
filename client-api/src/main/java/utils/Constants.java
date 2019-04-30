@@ -15,4 +15,16 @@ public class Constants {
 
 
 	public static final String DEFAULT_RESULT_LIMIT = "100";
+	public static final String DEFAULT_ENTITY_GRAPH_TYPE = "javax.persistence.loadgraph";
+
+
+
+	/*===============JWT====================*/
+
+	public static final String BUSINESS_TYPE_EMAIL = "emailVerification";
+	public static final String CLAIM_BUSINESS_TYPE = "businessType";
+
+	public static final String CLAIM_CONTRACTOR_ID = "contractorId";
+	public static final String CLAIM_USERNAME = "username";
+	public static final String CLAIM_CONTRACTOR_NAME = "name";
 }

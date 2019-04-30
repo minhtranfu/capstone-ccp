@@ -4,6 +4,7 @@ import dtos.responses.GETListResponse;
 import dtos.wrappers.OrderByWrapper;
 import entities.MaterialFeedbackEntity;
 import utils.CommonUtils;
+import utils.Constants;
 
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
@@ -18,6 +19,7 @@ public class MaterialFeedbackDAO extends BaseDAO<MaterialFeedbackEntity, Long> {
 				.setParameter("supplierId", supplierId)
 				.setMaxResults(limit)
 				.setFirstResult(offset)
+				.setHint(Constants.DEFAULT_ENTITY_GRAPH_TYPE,entityManager.getEntityGraph("graph.MaterialFeedbackEntity.includeAll"))
 				.getResultList();
 	}
 
@@ -26,6 +28,7 @@ public class MaterialFeedbackDAO extends BaseDAO<MaterialFeedbackEntity, Long> {
 				.setParameter("materialId", materialId)
 				.setFirstResult(offset)
 				.setMaxResults(limit)
+				.setHint(Constants.DEFAULT_ENTITY_GRAPH_TYPE,entityManager.getEntityGraph("graph.MaterialFeedbackEntity.includeAll"))
 				.getResultList();
 
 
@@ -68,6 +71,7 @@ public class MaterialFeedbackDAO extends BaseDAO<MaterialFeedbackEntity, Long> {
 		TypedQuery<MaterialFeedbackEntity> listTypedQuery = entityManager.createQuery(criteriaQuery)
 				.setParameter(supplierIdParam, supplierId)
 				.setMaxResults(limit)
+				.setHint(Constants.DEFAULT_ENTITY_GRAPH_TYPE,entityManager.getEntityGraph("graph.MaterialFeedbackEntity.includeAll"))
 				.setFirstResult(offset);
 
 
@@ -114,6 +118,7 @@ public class MaterialFeedbackDAO extends BaseDAO<MaterialFeedbackEntity, Long> {
 		TypedQuery<MaterialFeedbackEntity> listTypedQuery = entityManager.createQuery(criteriaQuery)
 				.setParameter(materialIdParam, materialId)
 				.setMaxResults(limit)
+				.setHint(Constants.DEFAULT_ENTITY_GRAPH_TYPE,entityManager.getEntityGraph("graph.MaterialFeedbackEntity.includeAll"))
 				.setFirstResult(offset);
 
 
@@ -122,4 +127,17 @@ public class MaterialFeedbackDAO extends BaseDAO<MaterialFeedbackEntity, Long> {
 		return new GETListResponse<MaterialFeedbackEntity>(itemCount, limit, offset, orderBy, materialFeedbackEntities);
 
 	}
+
+	public double calculateAverageMaterialRating(long contractorId) {
+
+		return entityManager.createQuery("select avg(e.rating) from MaterialFeedbackEntity e where e.supplier.id = :contractorId",Double.class)
+				.getSingleResult();
+	}
+
+	@Override
+	public MaterialFeedbackEntity findByID(Long id) {
+		return super.findByID(id,"graph.MaterialFeedbackEntity.includeAll");
+	}
+
+
 }

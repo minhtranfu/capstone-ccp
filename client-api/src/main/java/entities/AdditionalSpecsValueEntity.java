@@ -57,4 +57,5 @@ public class AdditionalSpecsValueEntity {
 	public void setEquipment(EquipmentEntity equipment) {
 		this.equipment = equipment;
 	}
+
 }

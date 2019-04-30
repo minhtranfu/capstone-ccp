@@ -7,9 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Where(clause = "is_deleted=0")
 @Table(name = "material_type", schema = "capstone_ccp")
-@NamedQuery(name = "MaterialTypeEntity.findAll", query = "select e from MaterialTypeEntity e ")
 public class MaterialTypeEntity {
 	private long id;
 	private String name;

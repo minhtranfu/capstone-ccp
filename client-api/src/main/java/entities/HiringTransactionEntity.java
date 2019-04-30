@@ -2,6 +2,7 @@ package entities;
 
 
 import dtos.requests.HiringTransactionRequest;
+import dtos.requests.TransactionDateChangeRequestRequest;
 import listeners.entityListenters.HiringTransactionEntityListener;
 import org.hibernate.annotations.Where;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "hiring_transaction", schema = "capstone_ccp")
@@ -46,11 +48,12 @@ public class HiringTransactionEntity {
 
 	private boolean isDeleted;
 
-
 	private EquipmentEntity equipment;
 	private ContractorEntity requester;
 	private EquipmentFeedbackEntity equipmentFeedback;
 
+	private boolean hasPendingTransactionDateChangeRequest;
+	private List<TransactionDateChangeRequestEntity> transactionDateChangeRequests;
 
 	public HiringTransactionEntity() {
 	}
@@ -105,7 +108,7 @@ public class HiringTransactionEntity {
 	}
 
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "requester_id")
 	public ContractorEntity getRequester() {
 		return requester;
@@ -277,8 +280,8 @@ public class HiringTransactionEntity {
 		this.equipment = equipment;
 	}
 
-	@OneToOne(mappedBy = "hiringTransaction")
 	@JsonbTransient
+	@OneToOne(mappedBy = "hiringTransaction")
 	public EquipmentFeedbackEntity getEquipmentFeedback() {
 		return equipmentFeedback;
 	}
@@ -293,26 +296,21 @@ public class HiringTransactionEntity {
 		return this.getEquipmentFeedback() != null;
 	}
 
-	@Override
-	public String toString() {
-		return "HiringTransactionEntity{" +
-				"id=" + id +
-				", status=" + status +
-				", dailyPrice=" + dailyPrice +
-				", createdTime=" + createdTime +
-				", updatedTime=" + updatedTime +
-				", beginDate=" + beginDate +
-				", endDate=" + endDate +
-				", equipmentAddress='" + equipmentAddress + '\'' +
-				", equipmentLatitude=" + equipmentLatitude +
-				", equipmentLongitude=" + equipmentLongitude +
-				", requesterAddress='" + requesterAddress + '\'' +
-				", requesterLatitude=" + requesterLatitude +
-				", requesterLongitude=" + requesterLongitude +
-				", isDeleted=" + isDeleted +
-				", equipment=" + equipment +
-				", requester=" + requester +
-				'}';
+	@Transient
+	public boolean isHasPendingTransactionDateChangeRequest() {
+		return getTransactionDateChangeRequests().stream()
+				.anyMatch(entity -> entity.getStatus() == TransactionDateChangeRequestEntity.Status.PENDING);
+	}
+
+
+	@OneToMany(mappedBy = "hiringTransactionEntity")
+	@Where(clause = "is_deleted=0")
+	public List<TransactionDateChangeRequestEntity> getTransactionDateChangeRequests() {
+		return transactionDateChangeRequests;
+	}
+
+	public void setTransactionDateChangeRequests(List<TransactionDateChangeRequestEntity> transactionDateChangeRequests) {
+		this.transactionDateChangeRequests = transactionDateChangeRequests;
 	}
 
 	public enum Status {

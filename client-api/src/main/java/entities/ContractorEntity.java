@@ -1,7 +1,12 @@
 package entities;
 
+import daos.DebrisFeedbackDAO;
+import daos.EquipmentFeedbackDAO;
+import daos.MaterialFeedbackDAO;
+import org.hibernate.annotations.JoinFormula;
 import org.hibernate.annotations.Where;
 
+import javax.inject.Inject;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.xml.bind.annotation.XmlTransient;
@@ -14,9 +19,13 @@ import java.util.List;
 @Table(name = "contractor", schema = "capstone_ccp")
 @Where(clause = "is_deleted=0")
 @NamedQueries({
-		@NamedQuery(name = "ContractorEntity.finishedHiringTransactionRateBySupplierId", query = "select COUNT(e) from HiringTransactionEntity e where e.equipment.contractor.id = :supplierId and e.status = 'FINISHED'")
-		, @NamedQuery(name = "ContractorEntity.finishedMaterialTransactionRateBySupplierId", query = "select COUNT(e) from MaterialTransactionEntity e where e.supplier.id  = :supplierId and e.status = 'FINISHED'")
-		, @NamedQuery(name = "ContractorEntity.finishedDebrisTransactionRateBySupplierId", query = "select COUNT(e) from DebrisTransactionEntity e where e.supplier.id = :supplierId and e.status = 'FINISHED'")
+		@NamedQuery(name = "ContractorEntity.finishedHiringTransactionBySupplierId", query = "select COUNT(e) from HiringTransactionEntity e where e.equipment.contractor.id = :supplierId and e.status = 'FINISHED'")
+		, @NamedQuery(name = "ContractorEntity.finishedMaterialTransactionBySupplierId", query = "select COUNT(e) from MaterialTransactionEntity e where e.supplier.id  = :supplierId and e.status = 'FINISHED'")
+		, @NamedQuery(name = "ContractorEntity.finishedDebrisTransactionBySupplierId", query = "select COUNT(e) from DebrisTransactionEntity e where e.supplier.id = :supplierId and e.status = 'FINISHED'")
+		, @NamedQuery(name = "ContractorEntity.finishedCanceledHiringTransactionBySupplierId", query = "select COUNT(e) from HiringTransactionEntity e where e.equipment.contractor.id = :supplierId and e.status = 'FINISHED' or e.status= 'CANCLED'")
+		, @NamedQuery(name = "ContractorEntity.finishedCanceledMaterialTransactionBySupplierId", query = "select COUNT(e) from MaterialTransactionEntity e where e.supplier.id  = :supplierId and e.status = 'FINISHED' or e.status = 'CANCELED'")
+		, @NamedQuery(name = "ContractorEntity.finishedCanceledDebrisTransactionRateBySupplierId", query = "select COUNT(e) from DebrisTransactionEntity e where e.supplier.id = :supplierId and e.status = 'FINISHED' or e.status = 'CANCELED'")
+
 }
 )
 public class ContractorEntity {
@@ -29,6 +38,8 @@ public class ContractorEntity {
 	private String phoneNumber;
 	private String thumbnailImageUrl;
 
+	private boolean emailVerified;
+	private boolean phoneNumberVerified;
 	private Status status;
 
 	private LocalDateTime createdTime;
@@ -51,13 +62,13 @@ public class ContractorEntity {
 
 
 	private List<DebrisFeedbackEntity> debrisFeedbacks;
-	private double averageDebrisRating;
+//	private double averageDebrisRating;
 
 	private List<MaterialFeedbackEntity> materialFeedbacks;
-	private double averageMaterialRating;
+//	private double averageMaterialRating;
 
 	private List<EquipmentFeedbackEntity> equipmentFeedbacks;
-	private double averageEquipmentRating;
+//	private double averageEquipmentRating;
 
 
 	public ContractorEntity() {
@@ -132,6 +143,24 @@ public class ContractorEntity {
 		this.phoneNumber = phonenumber;
 	}
 
+	@Column(name = "email_verified")
+	public boolean isEmailVerified() {
+		return emailVerified;
+	}
+
+	public void setEmailVerified(boolean emailVerified) {
+		this.emailVerified = emailVerified;
+	}
+
+	@Column(name = "phone_number_verified")
+	public boolean isPhoneNumberVerified() {
+		return phoneNumberVerified;
+	}
+
+	public void setPhoneNumberVerified(boolean phoneNumberVerified) {
+		this.phoneNumberVerified = phoneNumberVerified;
+	}
+
 	@Basic
 	@Column(name = "thumbnail_image_url", nullable = true, length = 255)
 	public String getThumbnailImageUrl() {
@@ -176,7 +205,6 @@ public class ContractorEntity {
 		this.updatedTime = updatedTime;
 	}
 
-	// TODO: 2/27/19 orphan removal here
 	@JsonbTransient
 	@OneToMany(mappedBy = "contractor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")
@@ -285,8 +313,9 @@ public class ContractorEntity {
 	}
 
 
-	@JsonbTransient
 	@OneToMany(mappedBy = "supplier")
+	@JsonbTransient
+	@XmlTransient
 	public List<DebrisFeedbackEntity> getDebrisFeedbacks() {
 		return debrisFeedbacks;
 	}
@@ -302,14 +331,16 @@ public class ContractorEntity {
 
 	@Transient
 	public double getAverageDebrisRating() {
-		return averageDebrisRating;
+		return getDebrisFeedbacks().stream()
+				.mapToDouble(DebrisFeedbackEntity::getRating).average().orElse(0);
 	}
 
-	public void setAverageDebrisRating(double averageDebrisRating) {
-		this.averageDebrisRating = averageDebrisRating;
-	}
+//	public void setAverageDebrisRating(double averageDebrisRating) {
+//		this.averageDebrisRating = averageDebrisRating;
+//	}
 
 	@JsonbTransient
+	@XmlTransient
 	@OneToMany(mappedBy = "supplier")
 	public List<MaterialFeedbackEntity> getMaterialFeedbacks() {
 		return materialFeedbacks;
@@ -325,16 +356,19 @@ public class ContractorEntity {
 	}
 
 	@Transient
+//	@JoinFormula("(select avg(rating) from material_feedback where supplier_id = 13)")
 	public double getAverageMaterialRating() {
-		return averageMaterialRating;
+		return getMaterialFeedbacks().stream()
+				.mapToDouble(MaterialFeedbackEntity::getRating).average().orElse(0);
 	}
-
-	public void setAverageMaterialRating(double averageMaterialRating) {
-		this.averageMaterialRating = averageMaterialRating;
-	}
+//
+//	public void setAverageMaterialRating(double averageMaterialRating) {
+//		this.averageMaterialRating = averageMaterialRating;
+//	}
 
 
 	@JsonbTransient
+	@XmlTransient
 	@OneToMany(mappedBy = "supplier")
 	public List<EquipmentFeedbackEntity> getEquipmentFeedbacks() {
 		return equipmentFeedbacks;
@@ -351,23 +385,25 @@ public class ContractorEntity {
 
 	@Transient
 	public double getAverageEquipmentRating() {
-		return averageEquipmentRating;
-	}
-
-
-	public void setAverageEquipmentRating(double averageEquipmentRating) {
-		this.averageEquipmentRating = averageEquipmentRating;
-	}
-
-	@PostLoad
-	void postLoad() {
-		this.averageDebrisRating = getDebrisFeedbacks().stream()
-				.mapToDouble(DebrisFeedbackEntity::getRating).average().orElse(0);
-		this.averageMaterialRating = getMaterialFeedbacks().stream()
-				.mapToDouble(MaterialFeedbackEntity::getRating).average().orElse(0);
-		this.averageEquipmentRating = getEquipmentFeedbacks().stream()
+		return getEquipmentFeedbacks().stream()
 				.mapToDouble(EquipmentFeedbackEntity::getRating).average().orElse(0);
 	}
+
+
+
+//	@PostLoad
+//	@JsonbTransient
+//	void postLoad() {
+//		this.averageDebrisRating = debrisFeedbackDAO.calculateAverageDebrisRating(getId());
+//		this.averageMaterialRating = materialFeedbackDAO.calculateAverageMaterialRating(getId());
+//		this.averageEquipmentRating = equipmentFeedbackDAO.calculateAverageEquipmentRating(getId());
+//		this.averageDebrisRating = getDebrisFeedbacks().stream()
+//				.mapToDouble(DebrisFeedbackEntity::getRating).average().orElse(0);
+//		this.averageMaterialRating = getMaterialFeedbacks().stream()
+//				.mapToDouble(MaterialFeedbackEntity::getRating).average().orElse(0);
+//		this.averageEquipmentRating = getEquipmentFeedbacks().stream()
+//				.mapToDouble(EquipmentFeedbackEntity::getRating).average().orElse(0);
+//	}
 
 
 	public enum Status {

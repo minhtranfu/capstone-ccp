@@ -61,6 +61,11 @@ public class ContractorResource {
 		contractorResponse.setFinishedDebrisTransactionCount(contractorDao.countFinishedDebrisTransactionRateBySupplierId(id));
 		contractorResponse.setFinishedMaterialTransactionCount(contractorDao.countFinishedMaterialTransactionRateBySupplierId(id));
 		contractorResponse.setFinishedHiringTransactionCount(contractorDao.countFinishedHiringTransactionRateBySupplierId(id));
+		contractorResponse.setFinishedCanceledDebrisTransactionCount(contractorDao.countFinishedCanceledDebrisTransactionRateBySupplierId(id));
+		contractorResponse.setFinishedCanceledMaterialTransactionCount(contractorDao.countFinishedCanceleMaterialTransactionRateBySupplierId(id));
+		contractorResponse.setFinishedCanceledHiringTransactionCount(contractorDao.countFinishedCanceleHiringTransactionRateBySupplierId(id));
+
+
 		return Response.ok(contractorResponse).build();
 	}
 
@@ -92,10 +97,11 @@ public class ContractorResource {
 
 		modelConverter.toEntity(contractorRequest, foundContractorEntity);
 
+		foundContractorEntity.setStatus(ContractorEntity.Status.NOT_VERIFIED);
+
 		return Response.ok(contractorDao.merge(foundContractorEntity)).build();
 
 	}
-
 
 
 	@Path("{id:\\d+}/constructions")
@@ -111,9 +117,6 @@ public class ContractorResource {
 	private ContractorEntity validateContractorId(long contractorId) {
 		return contractorDao.findByIdWithValidation(contractorId);
 	}
-
-
-
 
 
 	@Path("{id:\\d+}/cart")

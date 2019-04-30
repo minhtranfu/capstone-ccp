@@ -2,6 +2,7 @@ package jaxrs.resources;
 
 import daos.*;
 import dtos.requests.MaterialRequest;
+import dtos.responses.MaterialDeleteResponse;
 import entities.*;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
@@ -20,6 +21,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("materials")
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,7 +30,7 @@ public class MaterialResource {
 
 	private static final String DEFAULT_LAT = "10.806488";
 	private static final String DEFAULT_LONG = "106.676364";
-	private static final String DEFAULT_RESULT_LIMIT = "100";
+	private static final String DEFAULT_RESULT_LIMIT = "50";
 	@Inject
 	MaterialDAO materialDAO;
 
@@ -45,6 +47,9 @@ public class MaterialResource {
 	MaterialFeedbackDAO materialFeedbackDAO;
 
 	@Inject
+	MaterialTransactionDAO materialTransactionDAO;
+
+	@Inject
 	@Claim("contractorId")
 	ClaimValue<JsonNumber> claimId;
 
@@ -59,7 +64,7 @@ public class MaterialResource {
 	@GET
 	@Path("{id:\\d+}")
 	public Response getMaterial(@PathParam("id") long id) {
-		return Response.ok(materialDAO.findByIdWithValidation(id)).build();
+		return Response.ok(materialDAO.findByIdWithValidation(id,false)).build();
 	}
 
 	@GET
@@ -67,14 +72,14 @@ public class MaterialResource {
 	public Response getFeedbacksByMaterial(@PathParam("id") long id,
 										   @QueryParam("limit") @DefaultValue(DEFAULT_RESULT_LIMIT) int limit,
 										   @QueryParam("offset") @DefaultValue("0") int offset
-										   , @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
 	) {
 		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
 			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
 		}
 
 		materialDAO.findByIdWithValidation(id);
-		return Response.ok(materialFeedbackDAO.getFeedbacksByMaterial(id, limit, offset,orderBy)).build();
+		return Response.ok(materialFeedbackDAO.getFeedbacksByMaterial(id, limit, offset, orderBy)).build();
 	}
 
 
@@ -183,7 +188,7 @@ public class MaterialResource {
 		} else {
 			contractorId = null;
 		}
-		List<MaterialEntity> materialEntities = materialDAO.searchMaterial(
+		List<MaterialEntity> materialEntities = materialDAO.searchMaterialByElasticSearch(
 				contractorId,
 				query,
 				materialTypeId,
@@ -220,4 +225,56 @@ public class MaterialResource {
 	}
 
 
+	@GET
+	@Path("{id:\\d+}/transactions")
+	public Response getTransactions(
+			@PathParam("id") long id
+			, @QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
+			, @QueryParam("offset") @DefaultValue("0") int offset
+			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
+	) {
+		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
+			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
+		}
+		return Response.ok(materialTransactionDAO.getByMaterialId(id, limit, offset, orderBy)).build();
+
+	}
+
+	@DELETE
+	@RolesAllowed("contractor")
+	@Path("{id:\\d+}")
+	public Response deleteMaterial(@PathParam("id") long id) {
+
+		MaterialEntity materialEntity = materialDAO.findByIdWithValidation(id);
+		//  4/26/19 validate belonsg to contractor
+
+		if (materialEntity.getContractor().getId() != getClaimContractorId()) {
+			throw new BadRequestException("You can not delete other people's materials");
+		}
+
+		// 4/26/19 validate not in processing transaction
+		List<MaterialTransactionEntity> materialTransactionEntities = materialTransactionDAO.getByMaterialId(materialEntity.getId());
+		List<MaterialTransactionEntity> processingTransactions = materialTransactionEntities.stream().filter(transaction -> transaction.getStatus() == MaterialTransactionEntity.Status.ACCEPTED
+				|| transaction.getStatus() == MaterialTransactionEntity.Status.DELIVERING).collect(Collectors.toList());
+		if (!processingTransactions.isEmpty()) {
+			throw new BadRequestException("Material #%s is currently processing in other transactions");
+		}
+
+		// deny other pending transaction
+		List<MaterialTransactionEntity> pendingTransactions = materialTransactionEntities.stream().filter(transaction -> transaction.getStatus() == MaterialTransactionEntity.Status.PENDING)
+				.collect(Collectors.toList());
+		for (MaterialTransactionEntity pendingTransaction : pendingTransactions) {
+			pendingTransaction.setStatus(MaterialTransactionEntity.Status.DENIED);
+			materialTransactionDAO.merge(pendingTransaction);
+		}
+
+
+		materialEntity.setDeleted(true);
+		MaterialEntity mergedEntity = materialDAO.merge(materialEntity);
+		MaterialDeleteResponse response = new MaterialDeleteResponse();
+		response.setDeletedMaterialId(mergedEntity.getId());
+		response.setDeniedTransactionsTotal(pendingTransactions.size());
+		return Response.ok(response).build();
+
+	}
 }

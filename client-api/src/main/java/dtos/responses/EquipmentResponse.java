@@ -38,7 +38,7 @@ public class EquipmentResponse {
 	}
 
 	public double calculateDistance(LocationWrapper location1, LocationWrapper location2) {
-		// TODO: 1/24/19 calculate distance
+		// TODO: 1/24/19 calculateTheta distance
 
 
 //		return Math.sqrt(Math.pow(location1.getLatitude() - location2.getLatitude(), 2)

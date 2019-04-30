@@ -34,7 +34,7 @@ public class EquipmentImageEntity {
 	}
 
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "equipment_id", referencedColumnName = "id")
 	@JsonbTransient
 	public EquipmentEntity getEquipment() {

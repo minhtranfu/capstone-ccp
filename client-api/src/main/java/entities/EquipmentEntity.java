@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Where(clause = "is_deleted=0")
+//@Where(clause = "is_deleted=0")
 @Table(name = "equipment", schema = "capstone_ccp")
 @NamedQueries({
 		@NamedQuery(name = "EquipmentEntity.searchEquipment", query = "select e from EquipmentEntity  e where exists (select t from e.availableTimeRanges t where t.beginDate <= :curBeginDate and :curBeginDate <= :curEndDate  and  :curEndDate <= t.endDate)")
@@ -32,6 +32,7 @@ import java.util.Objects;
 
 @NamedNativeQuery(name = "EquipmentEntity.getMatchedEquipmentForSubscriptions", query = "select e.id as equipment_id, s.id as subscription_id, s.contractor_id from equipment e , subscription s " +
 		"where e.status = 'AVAILABLE'" +
+		"and e.is_deleted=0 "+
 		"and e.updated_time > now()-:timeOffset\n" +
 		"and \n" +
 		"(s.equipment_type_id = e.equipment_type_id or s.equipment_type_id is null or s.equipment_type_id = 0)\n" +
@@ -44,7 +45,9 @@ import java.util.Objects;
 		"\n" +
 		"\n" +
 		"-- check equipment renting time not contain the subscribed time range \n" +
-		"and not exists (select * from hiring_transaction h where h.equipment_id = e.id and (h.status = 'ACCEPTED' or h.status = 'PROCESSING') and not (h.end_date > s.end_date or h.end_date< s.begin_date))\n"
+		"and not exists (select * from hiring_transaction h where h.equipment_id = e.id and (h.status = 'ACCEPTED' or h.status = 'PROCESSING') and not (h.end_date > s.end_date or h.end_date< s.begin_date))\n" +
+		" -- filter out notified\n" +
+		"    and not exists(select * from subscription_matched_log log where log.matched_equipment_id = e.id and log.matched_subscription_id = s.id)"
 		, resultSetMapping = "MatchedSubscriptionResult"
 )
 @SqlResultSetMapping(
@@ -168,7 +171,7 @@ public class EquipmentEntity {
 	}
 
 
-	@ManyToOne()
+	@ManyToOne
 	@JoinColumn(name = "contractor_id")
 	public ContractorEntity getContractor() {
 		return contractor;

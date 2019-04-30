@@ -29,6 +29,8 @@ public class DebrisBidDAO extends BaseDAO<DebrisBidEntity,Long> {
 
 		Predicate whereClause = criteriaBuilder.and(
 				criteriaBuilder.equal(e.get("supplier").get("id"), supplierIdParam)
+				//soft delete
+				,criteriaBuilder.equal(e.get("deleted"),false)
 				, status != null ? criteriaBuilder.equal(e.get("status"), statusParam) : criteriaBuilder.conjunction());
 
 		countQuery.select(criteriaBuilder.count(e.get("id"))).where(whereClause);

@@ -2,6 +2,7 @@ package jaxrs.resources;
 
 import daos.MaterialTypeDAO;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -12,15 +13,14 @@ import javax.ws.rs.core.Response;
 
 @Path("materialTypes")
 @Produces(MediaType.APPLICATION_JSON)
-
 public class MaterialTypeResource {
 	@Inject
 	MaterialTypeDAO materialTypeDAO;
 
 
 	@GET
-	public Response getAllmaterialType() {
-		return Response.ok(materialTypeDAO.findAll()).build();
+	public Response getAllMaterialType() {
+		return Response.ok(materialTypeDAO.findAll(false)).build();
 
 	}
 

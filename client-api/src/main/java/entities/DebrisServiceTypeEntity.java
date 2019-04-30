@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Where(clause = "is_deleted=0")
-@Table(name = "debris_service_type", schema = "capstone_ccp", catalog = "")
+@Table(name = "debris_service_type", schema = "capstone_ccp")
 public class DebrisServiceTypeEntity {
 	private long id;
 

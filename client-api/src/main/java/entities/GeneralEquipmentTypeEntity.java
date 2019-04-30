@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Where(clause = "is_deleted=0")
 @Table(name = "general_equipment_type", schema = "capstone_ccp")
-@NamedQuery(name = "GeneralEquipmentTypeEntity.getAllGeneralEquipmentType",query = "select e from GeneralEquipmentTypeEntity e")
 public class GeneralEquipmentTypeEntity {
 	private long id;
 	private String name;
@@ -94,7 +92,7 @@ public class GeneralEquipmentTypeEntity {
 
 	@JsonbTransient
 	@XmlTransient
-	@OneToMany(mappedBy = "generalEquipment", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "generalEquipment", fetch = FetchType.LAZY)
 	@Where(clause = "is_deleted=0")
 	public List<EquipmentTypeEntity> getEquipmentTypeEntities() {
 		return equipmentTypeEntities;

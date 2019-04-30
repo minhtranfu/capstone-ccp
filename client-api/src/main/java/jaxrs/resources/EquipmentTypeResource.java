@@ -1,10 +1,8 @@
 package jaxrs.resources;
 
 import daos.EquipmentTypeDAO;
-import dtos.responses.MessageResponse;
 import entities.EquipmentTypeEntity;
 
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -19,7 +17,7 @@ public class EquipmentTypeResource {
 	@GET
 	public Response getAllEquipmentTypes() {
 
-		return Response.ok(equipmentTypeDAO.getAllEquipmentTypes()).build();
+		return Response.ok(equipmentTypeDAO.findAll(false)).build();
 	}
 
 	@GET

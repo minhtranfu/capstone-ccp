@@ -89,7 +89,7 @@ public class TransactionDateChangeRequestEntity {
 		this.isDeleted = isDeleted;
 	}
 
-	@OneToOne
+	@ManyToOne
 	@JsonbTransient
 	@JoinColumn(name = "transaction_id", nullable = true)
 	public HiringTransactionEntity getHiringTransactionEntity() {

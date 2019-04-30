@@ -5,7 +5,9 @@ import dtos.queryResults.MatchedSubscriptionResult;
 import dtos.responses.GETListResponse;
 import dtos.wrappers.OrderByWrapper;
 import entities.*;
+import managers.ElasticSearchManager;
 import managers.FirebaseMessagingManager;
+import org.apache.commons.lang3.StringUtils;
 import utils.CommonUtils;
 
 import javax.ejb.Stateless;
@@ -14,12 +16,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import javax.ws.rs.InternalServerErrorException;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Stateless
 public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
+	private static final Logger LOGGER = Logger.getLogger(EquipmentDAO.class.toString());
 
 
 	@PersistenceContext
@@ -28,8 +33,11 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	@Inject
 	FirebaseMessagingManager firebaseMessagingManager;
 
+	@Inject
+	ElasticSearchManager elasticSearchManager;
+
 	public List<EquipmentEntity> searchEquipment(String query, LocalDate beginDate, LocalDate endDate,
-												 Long contractorId, long equipmentTypeId,
+												 Double latitude, Double longitude, Double maxDistance, Long contractorId, Long equipmentTypeId,
 												 String orderBy, int offset, int limit) {
 
 
@@ -59,19 +67,37 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		ParameterExpression<Long> equipmentTypeIdParam = criteriaBuilder.parameter(Long.class);
 
 
+		ParameterExpression<Double> curLatParam = criteriaBuilder.parameter(Double.class);
+		ParameterExpression<Double> curLongParam = criteriaBuilder.parameter(Double.class);
+		ParameterExpression<Double> maxDistanceParam = criteriaBuilder.parameter(Double.class);
+
 //		select equipment available in current timerange
-		List<Predicate> whereClauses = new ArrayList<>();
-		whereClauses.add(criteriaBuilder.equal(t.get("equipment").get("id"), e.get("id")));
+		List<Predicate> whereClausesTimeRangeSubQuery = new ArrayList<>();
+		whereClausesTimeRangeSubQuery.add(criteriaBuilder.equal(t.get("equipment").get("id"), e.get("id")));
 
 		// this shit by no means be done in another way, fucking retarded jpa
 		if (beginDate != null) {
-			whereClauses.add(criteriaBuilder.lessThanOrEqualTo(t.get("beginDate"), beginDateParam));
+			whereClausesTimeRangeSubQuery.add(criteriaBuilder.lessThanOrEqualTo(t.get("beginDate"), beginDateParam));
 
 		}
 		if (endDate != null) {
-			whereClauses.add(criteriaBuilder.lessThanOrEqualTo(endDateParam, t.get("endDate")));
+			whereClausesTimeRangeSubQuery.add(criteriaBuilder.lessThanOrEqualTo(endDateParam, t.get("endDate")));
 		}
-		subQuery.select(t).where(whereClauses.toArray(new Predicate[0]));
+
+		Predicate distanceWhereClause;
+		if (latitude != null && longitude != null && maxDistance != null) {
+			distanceWhereClause = criteriaBuilder
+					.lessThan(
+							criteriaBuilder.function("calcDistance"
+									, Double.class, e.get("construction").get("latitude"), e.get("construction").get("longitude")
+									, curLatParam, curLongParam)
+							, maxDistanceParam);
+		} else {
+			distanceWhereClause = criteriaBuilder.conjunction();
+		}
+
+
+		subQuery.select(t).where(whereClausesTimeRangeSubQuery.toArray(new Predicate[0]));
 
 		/*Select not exist active transactions intersect current timerange*/
 		List<Predicate> subQueryActiveWhereClauses = new ArrayList<>();
@@ -91,10 +117,14 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 //		merge 3 main where clauses
 		criteriaQuery.select(e).where(
 				criteriaBuilder.like(e.get("name"), queryParam),
-				equipmentTypeId != 0 ? criteriaBuilder.equal(equipmentTypeIdParam, e.get("equipmentType").get("id")) : criteriaBuilder.conjunction()
+				equipmentTypeId != null && equipmentTypeId>0 ? criteriaBuilder.equal(equipmentTypeIdParam, e.get("equipmentType").get("id")) : criteriaBuilder.conjunction()
 				, contractorId != null ? criteriaBuilder.notEqual(e.get("contractor").get("id"), contractorParam) : criteriaBuilder.conjunction()
 				, criteriaBuilder.exists(subQuery)
 				, criteriaBuilder.not(criteriaBuilder.exists(subQueryActiveTransaction))
+				//distance query
+				, distanceWhereClause
+				//excluded deleted equipments
+				, criteriaBuilder.equal(e.get("deleted"), false)
 		);
 
 		if (!orderBy.isEmpty()) {
@@ -123,20 +153,169 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 			typeQuery.setParameter(endDateParam, endDate);
 		}
 
-		if (equipmentTypeId > 0) {
+		if (equipmentTypeId!=null && equipmentTypeId > 0) {
 			typeQuery.setParameter(equipmentTypeIdParam, equipmentTypeId);
 
+		}
+
+		if (latitude != null && longitude != null && maxDistance != null) {
+			typeQuery.setParameter(curLatParam, latitude);
+			typeQuery.setParameter(curLongParam, longitude);
+			typeQuery.setParameter(maxDistanceParam, maxDistance);
 		}
 
 		typeQuery.setFirstResult(offset);
 		typeQuery.setMaxResults(limit);
 
 
-
 		return typeQuery.getResultList();
 
 	}
 
+
+	public List<EquipmentEntity> searchEquipmentByElasticSearch(String query, LocalDate beginDate, LocalDate endDate,
+																Double latitude, Double longitude, Double maxDistance, Long contractorId, Long equipmentTypeId,
+																String orderBy, int offset, int limit) {
+		List<Long> idList = elasticSearchManager.searchEquipment(query, contractorId, equipmentTypeId, orderBy);
+		String idListString = StringUtils.join(idList.toArray(new Long[0]), ",");
+		LOGGER.info("idListString="+idListString);
+		if (idList.isEmpty()) {
+			return new ArrayList<EquipmentEntity>();
+		}
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<EquipmentEntity> criteriaQuery = criteriaBuilder.createQuery(EquipmentEntity.class);
+
+
+		Root<EquipmentEntity> e = criteriaQuery.from(EquipmentEntity.class);
+
+		Subquery<AvailableTimeRangeEntity> subQuery = criteriaQuery.subquery(AvailableTimeRangeEntity.class);
+		Root<AvailableTimeRangeEntity> t = subQuery.from(AvailableTimeRangeEntity.class);
+
+		Subquery<HiringTransactionEntity> subQueryActiveTransaction = criteriaQuery.subquery(HiringTransactionEntity.class);
+		Root<HiringTransactionEntity> a = subQueryActiveTransaction.from(HiringTransactionEntity.class);
+
+
+		ParameterExpression<LocalDate> beginDateParam = criteriaBuilder.parameter(LocalDate.class, "beginDateParam");
+		ParameterExpression<LocalDate> endDateParam = criteriaBuilder.parameter(LocalDate.class, "endDateParam");
+
+		ParameterExpression<List> idListParam = criteriaBuilder.parameter(List.class, "idListParam");
+
+
+		ParameterExpression<Double> curLatParam = criteriaBuilder.parameter(Double.class, "curLatParam");
+		ParameterExpression<Double> curLongParam = criteriaBuilder.parameter(Double.class, "curLongParam");
+		ParameterExpression<Double> maxDistanceParam = criteriaBuilder.parameter(Double.class, "maxDistanceParam");
+		ParameterExpression<String> idListStringParam = criteriaBuilder.parameter(String.class);
+
+//		select equipment available in current timerange
+		List<Predicate> whereClausesTimeRangeQuery = new ArrayList<>();
+		whereClausesTimeRangeQuery.add(criteriaBuilder.equal(t.get("equipment").get("id"), e.get("id")));
+
+		// this shit by no means be done in another way, fucking retarded jpa
+		if (beginDate != null) {
+			whereClausesTimeRangeQuery.add(criteriaBuilder.lessThanOrEqualTo(t.get("beginDate"), beginDateParam));
+
+		}
+		if (endDate != null) {
+			whereClausesTimeRangeQuery.add(criteriaBuilder.lessThanOrEqualTo(endDateParam, t.get("endDate")));
+		}
+
+		Predicate distanceWhereClause;
+		if (latitude != null && longitude != null && maxDistance != null) {
+			distanceWhereClause = criteriaBuilder
+					.lessThan(
+							criteriaBuilder.function("calcDistance"
+									, Double.class, e.get("construction").get("latitude"), e.get("construction").get("longitude")
+									, curLatParam, curLongParam)
+							, maxDistanceParam);
+		} else {
+			distanceWhereClause = criteriaBuilder.conjunction();
+		}
+
+
+		subQuery.select(t).where(whereClausesTimeRangeQuery.toArray(new Predicate[0]));
+
+		/*Select not exist active transactions intersect current timerange*/
+		List<Predicate> subQueryActiveWhereClauses = new ArrayList<>();
+		subQueryActiveWhereClauses.add(criteriaBuilder.equal(a.get("equipment").get("id"), e.get("id")));
+		subQueryActiveWhereClauses.add(a.get("status").in(HiringTransactionEntity.Status.PROCESSING, HiringTransactionEntity.Status.ACCEPTED));
+
+
+		subQueryActiveWhereClauses.add(
+				criteriaBuilder.not(
+						criteriaBuilder.or(
+								beginDate != null ? criteriaBuilder.lessThan(a.get("endDate"), beginDateParam) : criteriaBuilder.conjunction()
+								, endDate != null ? criteriaBuilder.greaterThan(a.get("beginDate"), endDateParam) : criteriaBuilder.conjunction()
+						)));
+		subQueryActiveTransaction.select(a).where(subQueryActiveWhereClauses.toArray(new Predicate[0]));
+
+
+//		merge 3 main where clauses
+		criteriaQuery.select(e).where(
+				criteriaBuilder.exists(subQuery)
+				, criteriaBuilder.not(criteriaBuilder.exists(subQueryActiveTransaction))
+				//distance
+				, distanceWhereClause
+				, e.get("id").in(idListParam)
+		);
+
+
+		Order orderByIdListOrder = criteriaBuilder.asc(criteriaBuilder
+				.function("find_in_set", Long.class, e.get("id"), idListStringParam));
+		criteriaQuery.orderBy(orderByIdListOrder);
+
+//		if (!orderBy.isEmpty()) {
+//			List<Order> orderList = new ArrayList<>();
+//			for (OrderByWrapper orderByWrapper : CommonUtils.getOrderList(orderBy)) {
+//				if (orderByWrapper.isAscending()) {
+//					orderList.add(criteriaBuilder.asc(e.get(orderByWrapper.getColumnName())));
+//				} else {
+//					orderList.add(criteriaBuilder.desc(e.get(orderByWrapper.getColumnName())));
+//				}
+//			}
+//			criteriaQuery.orderBy(orderList);
+//		}c
+
+		TypedQuery<EquipmentEntity> typeQuery = entityManager.createQuery(criteriaQuery);
+
+		if (beginDate != null) {
+			typeQuery.setParameter(beginDateParam, beginDate);
+		}
+		if (endDate != null) {
+			typeQuery.setParameter(endDateParam, endDate);
+		}
+
+
+		if (latitude != null && longitude != null && maxDistance != null) {
+			typeQuery.setParameter(curLatParam, latitude);
+			typeQuery.setParameter(curLongParam, longitude);
+			typeQuery.setParameter(maxDistanceParam, maxDistance);
+		}
+
+
+		//set equipment list
+		typeQuery.setParameter(idListParam, idList);
+		typeQuery.setParameter(idListStringParam, idListString);
+		typeQuery.setFirstResult(offset);
+		typeQuery.setMaxResults(limit);
+
+		List<EquipmentEntity> resultList = typeQuery.getResultList();
+		// TODO: 4/28/19 sort result list by id
+//		ArrayList<EquipmentEntity> sortedResultList = new ArrayList<>();
+//		for (Long id : idList) {
+//			try {
+//				sortedResultList.add(resultList.stream().filter(entity -> entity.getId() == id).findAny()
+//						.orElseThrow(InternalServerErrorException::new));
+//			} catch (InternalServerErrorException e1) {
+////				e1.printStackTrace();
+////				LOGGER.info("searchEquipmentByElasticSearch(), equipment id=%s is filtered");
+//				// simply dont add it =="
+//			}
+//		}
+		return resultList;
+
+
+	}
 
 	//validate if the equipment is available in this time range
 	public boolean validateEquipmentAvailable(long equipmentId, LocalDate beginDate, LocalDate endDate) {
@@ -243,6 +422,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	}
 
 	public GETListResponse<EquipmentEntity> getEquipmentsBySupplierId(long supplierId, EquipmentEntity.Status status, int limit, int offset, String orderBy) {
+
+
 		//select  e from EquipmentEntity  e where e.contractor.id = :supplierId
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -258,7 +439,10 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 		Predicate whereClause = criteriaBuilder.and(
 				criteriaBuilder.equal(e.get("contractor").get("id"), supplierIdParam)
-				, status != null ? criteriaBuilder.equal(e.get("status"), statusParam) : criteriaBuilder.conjunction());
+				, status != null ? criteriaBuilder.equal(e.get("status"), statusParam) : criteriaBuilder.conjunction()
+				//is_deleted = 0
+				, criteriaBuilder.equal(e.get("deleted"), false)
+		);
 
 		countQuery.select(criteriaBuilder.count(e.get("id"))).where(whereClause);
 		criteriaQuery.select(e).where(whereClause);
@@ -295,6 +479,20 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		return new GETListResponse<EquipmentEntity>(itemCount, limit, offset, orderBy, equipmentEntities);
 
 	}
+
+	public List<EquipmentEntity> getEquipmentsByEquipmentTypeId(long equipmentTypeId, boolean includeDeleted) {
+		String query = "select e from EquipmentEntity e where e.equipmentType.id = :equipmentTypeId  ";
+		if (!includeDeleted) {
+			query += " and e.deleted=false ";
+		}
+		return entityManager.createQuery(query
+				, EquipmentEntity.class)
+				.setParameter("equipmentTypeId", equipmentTypeId)
+				.getResultList();
+
+	}
+
+
 }
 
 

@@ -7,6 +7,7 @@ import entities.EquipmentFeedbackEntity;
 import utils.CommonUtils;
 
 import javax.ejb.Stateless;
+import javax.persistence.EntityGraph;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class DebrisFeedbackDAO extends BaseDAO<DebrisFeedbackEntity, Long> {
 				.setParameter("supplierId", supplierId)
 				.setFirstResult(offset)
 				.setMaxResults(limit)
+				.setHint("javax.persistence.loadgraph",entityManager.getEntityGraph("graph.DebrisFeedbackEntity.includeAll"))
 				.getResultList();
 	}
 
@@ -55,9 +57,11 @@ public class DebrisFeedbackDAO extends BaseDAO<DebrisFeedbackEntity, Long> {
 			criteriaQuery.orderBy(orderList);
 		}
 
+
 		TypedQuery<DebrisFeedbackEntity> listTypedQuery = entityManager.createQuery(criteriaQuery)
 				.setParameter(supplierIdParam, supplierId)
 				.setMaxResults(limit)
+				.setHint("javax.persistence.loadgraph",entityManager.getEntityGraph("graph.DebrisFeedbackEntity.includeAll"))
 				.setFirstResult(offset);
 
 
@@ -65,5 +69,17 @@ public class DebrisFeedbackDAO extends BaseDAO<DebrisFeedbackEntity, Long> {
 		List<DebrisFeedbackEntity> debrisFeedbackEntities = listTypedQuery.getResultList();
 
 		return new GETListResponse<DebrisFeedbackEntity>(itemCount, limit, offset, orderBy, debrisFeedbackEntities);
+	}
+
+	public double calculateAverageDebrisRating(long contractorId) {
+		return entityManager.createQuery("select avg(e.rating) from DebrisFeedbackEntity e where e.supplier.id = :contractorId",Double.class)
+				.getSingleResult();
+
+	}
+
+
+	@Override
+	public DebrisFeedbackEntity findByID(Long id) {
+		return findByID(id, "graph.DebrisFeedbackEntity.includeAll");
 	}
 }

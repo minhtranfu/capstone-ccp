@@ -73,20 +73,26 @@ public class DebrisFeedbackResource {
 	}
 
 	@GET
-	@Path("supplier")
-	@RolesAllowed("contractor")
 	public Response getFeedbacksBySupplier(
 			@QueryParam("limit") @DefaultValue(Constants.DEFAULT_RESULT_LIMIT) int limit
 			, @QueryParam("offset") @DefaultValue("0") int offset
 			, @QueryParam("orderBy") @DefaultValue("id.asc") String orderBy
+			,@QueryParam("supplierId") Long supplierIdParam
 
 	) {
 		if (!orderBy.matches(Constants.RESOURCE_REGEX_ORDERBY)) {
 			throw new BadRequestException("orderBy param format must be " + Constants.RESOURCE_REGEX_ORDERBY);
 		}
+		long supplierId;
+		if (supplierIdParam != null) {
+			supplierId = supplierIdParam;
+
+		} else {
+			supplierId = getClaimContractorId();
+		}
 		//no need to validate contractor because it will return empty list instead
 		return Response.ok(debrisFeedbackDAO.getFeedbacksBySupplier(
-				getClaimContractorId()
+				supplierId
 				, limit, offset, orderBy)).build();
 	}
 

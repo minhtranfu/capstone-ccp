@@ -69,7 +69,7 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 		Long itemCount = countTypedQuery.getSingleResult();
 		List<HiringTransactionEntity> hiringTransactionEntities = listTypedQuery.getResultList();
 
-		return new GETListResponse<>(itemCount, limit, offset, orderBy, hiringTransactionEntities);
+		return new GETListResponse<HiringTransactionEntity>(itemCount, limit, offset, orderBy, hiringTransactionEntities);
 	}
 
 	public List<HiringTransactionEntity> getNamedHiringTransactionsBySupplierId(long supplierId, int limit, int offset) {
@@ -160,5 +160,13 @@ public class HiringTransactionDAO extends BaseDAO<HiringTransactionEntity, Long>
 				.getResultList();
 	}
 
+
+	public int denyAllPendingTransaction(long equipmentEntityId) {
+
+		int rows = entityManager.createNativeQuery("update hiring_transaction set status = 'DENIED' where equipment_id = :equipmentId and status = 'PENDING'")
+				.setParameter("equipmentId", equipmentEntityId)
+				.executeUpdate();
+		return rows;
+	}
 
 }

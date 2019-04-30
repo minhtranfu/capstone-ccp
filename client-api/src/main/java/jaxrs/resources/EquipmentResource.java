@@ -2,8 +2,12 @@ package jaxrs.resources;
 
 import daos.*;
 import dtos.notifications.NotificationDTO;
+import dtos.requests.AdditionalSpecsValueRequest;
 import dtos.requests.EquipmentPostRequest;
+import dtos.requests.EquipmentPriceSuggestionRequest;
 import dtos.requests.EquipmentPutRequest;
+import dtos.responses.EquipmentDeleteResponse;
+import dtos.responses.EquipmentPriceSuggestionResponse;
 import dtos.responses.EquipmentResponse;
 import dtos.validationObjects.LocationValidator;
 import dtos.wrappers.LocalDateWrapper;
@@ -34,10 +38,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @Path("/equipments")
 @Produces(MediaType.APPLICATION_JSON)
 public class EquipmentResource {
+	public static final Logger LOGGER = Logger.getLogger(EquipmentResource.class.toString());
 
 	@Inject
 	EquipmentDAO equipmentDAO;
@@ -57,6 +63,9 @@ public class EquipmentResource {
 
 	@Inject
 	EquipmentImageSubResource equipmentImageSubResource;
+
+	@Inject
+	HiringTransactionDAO hiringTransactionDAO;
 
 
 	@Resource
@@ -81,7 +90,7 @@ public class EquipmentResource {
 //	Nghia's house address
 	private static final String DEFAULT_LAT = "10.806488";
 	private static final String DEFAULT_LONG = "106.676364";
-	private static final String DEFAULT_RESULT_LIMIT = "100";
+	private static final String DEFAULT_RESULT_LIMIT = "50";
 
 
 	private void validateBeginEndDate(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {
@@ -97,11 +106,12 @@ public class EquipmentResource {
 	public Response searchEquipment(
 
 			@QueryParam("q") @DefaultValue("") String query,
-			@QueryParam("lat") @DefaultValue(DEFAULT_LAT) double latitude,
-			@QueryParam("long") @DefaultValue(DEFAULT_LONG) double longitude,
+			@QueryParam("lat") Double latitude,
+			@QueryParam("long") Double longitude,
+			@QueryParam("maxDistance") Double maxDistance,
 			@QueryParam("beginDate") @DefaultValue("") LocalDateWrapper beginDateWrapper,
 			@QueryParam("endDate") @DefaultValue("") LocalDateWrapper endDateWrapper,
-			@QueryParam("equipmentTypeId") @DefaultValue("0") long equipmentTypeId,
+			@QueryParam("equipmentTypeId") Long equipmentTypeId,
 			@QueryParam("lquery") @DefaultValue("") String locationQuery,
 			@QueryParam("orderBy") @DefaultValue("id.asc") String orderBy,
 			@QueryParam("limit") @DefaultValue(DEFAULT_RESULT_LIMIT) int limit,
@@ -118,7 +128,8 @@ public class EquipmentResource {
 			endDate = beginDate;
 		}
 
-		System.out.println(String.format("search: beginDate=%s, endDate=%s", beginDate, endDate));
+
+		LOGGER.info(String.format("search: beginDate=%s, endDate=%s", beginDate, endDate));
 
 		if (beginDate != null && endDate != null && beginDate.isAfter(endDate)) {
 			throw new BadRequestException("Error: beginDate > endDate");
@@ -133,9 +144,12 @@ public class EquipmentResource {
 			contractorId = null;
 		}
 
-		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipment(
+		List<EquipmentEntity> equipmentEntities = equipmentDAO.searchEquipmentByElasticSearch(
 				query,
 				beginDate, endDate,
+				latitude,
+				longitude,
+				maxDistance,
 				contractorId,
 				equipmentTypeId,
 				orderBy,
@@ -145,6 +159,13 @@ public class EquipmentResource {
 
 		List<EquipmentResponse> result = new ArrayList<EquipmentResponse>();
 
+		// TODO: 4/22/19 fix this
+		if (latitude == null) {
+			latitude = Double.parseDouble(DEFAULT_LAT);
+		}
+		if (longitude == null) {
+			longitude = Double.parseDouble(DEFAULT_LONG);
+		}
 		for (EquipmentEntity equipmentEntity : equipmentEntities) {
 			EquipmentResponse equipmentResponse = new EquipmentResponse(equipmentEntity
 					, new LocationWrapper(locationQuery, latitude, longitude)
@@ -157,7 +178,7 @@ public class EquipmentResource {
 	@GET
 	@Path("{id:\\d+}")
 	public Response getEquipment(@PathParam("id") long id) {
-		return Response.ok(equipmentDAO.findByIdWithValidation(id)).build();
+		return Response.ok(equipmentDAO.findByIdWithValidation(id, false)).build();
 	}
 
 
@@ -243,15 +264,15 @@ public class EquipmentResource {
 		equipmentEntity.setEquipmentType(foundEquipmentType);
 
 		//check construction
-		if (equipmentEntity.getConstruction() != null && equipmentEntity.getConstruction().getId() != 0) {
+//		if (equipmentEntity.getConstruction() != null && equipmentEntity.getConstruction().getId() != 0) {
 
-			long constructionId = equipmentEntity.getConstruction().getId();
-			ConstructionEntity foundConstructionEntity = constructionDAO.findByIdWithValidation(constructionId);
-			if (foundConstructionEntity.getContractor().getId() != equipmentEntity.getContractor().getId()) {
-				throw new BadRequestException(String.format("construction id=%d not belongs to contractor id=%d"
-						, constructionId
-						, foundContractor.getId()));
-			}
+		long constructionId = equipmentEntity.getConstruction().getId();
+		ConstructionEntity foundConstructionEntity = constructionDAO.findByIdWithValidation(constructionId);
+		if (foundConstructionEntity.getContractor().getId() != equipmentEntity.getContractor().getId()) {
+			throw new BadRequestException(String.format("construction id=%d not belongs to contractor id=%d"
+					, constructionId
+					, foundContractor.getId()));
+		}
 
 //			equipmentEntity.setConstruction(foundConstructionEntity);
 //			// TODO: 3/5/19 take address from construction
@@ -260,18 +281,18 @@ public class EquipmentResource {
 //			equipmentEntity.setLatitude(foundConstructionEntity.getLatitude());
 //			equipmentEntity.setLongitude(foundConstructionEntity.getLongitude());
 
-		} else {
-			//validate long lat address
-			LocationValidator locationValidator = new LocationValidator(
-					equipmentEntity.getConstruction().getAddress()
-					, equipmentEntity.getConstruction().getLongitude()
-					, equipmentEntity.getConstruction().getLatitude());
-			Set<ConstraintViolation<LocationValidator>> validationResult = validator.validate(locationValidator);
-			if (!validationResult.isEmpty()) {
-				throw new ConstraintViolationException(validationResult);
-			}
+//		} else {
+		//validate long lat address
+//			LocationValidator locationValidator = new LocationValidator(
+//					equipmentEntity.getConstruction().getAddress()
+//					, equipmentEntity.getConstruction().getLongitude()
+//					, equipmentEntity.getConstruction().getLatitude());
+//			Set<ConstraintViolation<LocationValidator>> validationResult = validator.validate(locationValidator);
+//			if (!validationResult.isEmpty()) {
+//				throw new ConstraintViolationException(validationResult);
+//			}
 
-		}
+//		}
 
 
 		//todo validate for additionalSpecsValues
@@ -484,4 +505,59 @@ public class EquipmentResource {
 	}
 
 
+	@POST
+	@Path("/suggestedPrice")
+	public Response getSuggestedPrice(@Valid EquipmentPriceSuggestionRequest priceSuggestionRequest) {
+		// TODO: 4/25/19 validate reqeust
+
+
+		double suggestedPrice = 0;
+		EquipmentTypeEntity equipmentTypeEntity = equipmentTypeDAO.findByIdWithValidation(priceSuggestionRequest.getEquipmentType().getId());
+		for (AdditionalSpecsValueRequest additionalValue : priceSuggestionRequest.getAdditionalSpecsValues()) {
+			AdditionalSpecsFieldEntity field = additionalSpecsFieldDAO.findByIdWithValidation(additionalValue.additionalSpecsField.getId());
+			if (field.getDataType().isNumbericType()) {
+				double parsedValue = Double.parseDouble(additionalValue.value);
+				suggestedPrice += parsedValue * field.getPriceWeight();
+			}
+		}
+
+		EquipmentPriceSuggestionResponse response = new EquipmentPriceSuggestionResponse();
+		response.setSuggestedPrice(suggestedPrice);
+		return Response.ok(response).build();
+	}
+
+
+	@DELETE
+	@Path("{id:\\d+}")
+	@RolesAllowed("contractor")
+	public Response deleteEquipment(@PathParam("id") long id) {
+		EquipmentEntity equipmentEntity = equipmentDAO.findByIdWithValidation(id);
+		if (equipmentEntity.getContractor().getId() != getClaimContractorId()) {
+			throw new BadRequestException("You can not delete other people's equipment");
+		}
+
+		// TODO: 4/25/19 validate cant delete if status is not available
+		if (equipmentEntity.getStatus() != EquipmentEntity.Status.AVAILABLE) {
+			throw new BadRequestException("You can only delete AVAILABLE equipment!");
+		}
+
+		// TODO: 4/25/19 validate cant delete if have processing transaction
+		;
+		if (equipmentEntity.getProcessingHiringTransaction() != null) {
+			throw new BadRequestException("This equipment is processing in hiring transaction #" + equipmentEntity.getProcessingHiringTransaction().getId());
+		}
+
+		// TODO: 4/25/19 deny all pending transaction
+		int deletedRows = hiringTransactionDAO.denyAllPendingTransaction(equipmentEntity.getId());
+
+
+		equipmentEntity.setDeleted(true);
+
+		equipmentDAO.merge(equipmentEntity);
+
+		EquipmentDeleteResponse response = new EquipmentDeleteResponse();
+		response.setDeniedTransactionsTotal(deletedRows);
+		response.setDeletedEquipmentId(equipmentEntity.getId());
+		return Response.ok(response).build();
+	}
 }

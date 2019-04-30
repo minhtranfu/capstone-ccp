@@ -28,6 +28,10 @@
         <mp-jwt.version>1.0</mp-jwt.version>
         <mp-config.version>1.2</mp-config.version>
 
+        <nd4j.backend>nd4j-native-platform</nd4j.backend>
+        <nd4j.version>1.0.0-beta3</nd4j.version>
+
+        <elasticSearch.version>6.5.1</elasticSearch.version>
     </properties>
 
     <dependencies>
@@ -177,12 +181,61 @@
             <artifactId>jbcrypt</artifactId>
             <version>0.4</version>
         </dependency>
+
+        <!--for linear computing-->
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.apache.commons/commons-math3 &ndash;&gt;-->
+        <!--<dependency>-->
+        <!--<groupId>org.apache.commons</groupId>-->
+        <!--<artifactId>commons-math3</artifactId>-->
+        <!--<version>3.6.1</version>-->
+        <!--</dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-api -->
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-api</artifactId>
+            <version>${nd4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>${nd4j.backend}</artifactId>
+            <version>${nd4j.version}</version>
+        </dependency>
+
+        <!--elastic search-->
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>${elasticSearch.version}</version>
+        </dependency>
+
+        <!--dependency of elasticsearch-rest-high-level-client-->
+        <!-- https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-client -->
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
+            <version>${elasticSearch.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${elasticSearch.version}</version>
+        </dependency>
+
+        <!--for password generation-->
+        <!-- https://mvnrepository.com/artifact/org.passay/passay -->
+        <dependency>
+            <groupId>org.passay</groupId>
+            <artifactId>passay</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
         <finalName>CcpApi</finalName>
         <plugins>
-
 
 
             <!--<plugin>-->
@@ -289,24 +342,24 @@
 
             <!--For Lazy loading initialization enhancement for hibernate @Formula-->
             <!--<plugin>-->
-                <!--<groupId>org.hibernate.orm.tooling</groupId>-->
-                <!--<artifactId>hibernate-enhance-maven-plugin</artifactId>-->
-                <!--<version>${hibernateVersion}</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>process-classes</phase>-->
-                        <!--<configuration>-->
-                            <!--<failOnError>true</failOnError>-->
-                            <!--<enableLazyInitialization>true</enableLazyInitialization>-->
-                            <!--<enableDirtyTracking>true</enableDirtyTracking>-->
-                            <!--<enableAssociationManagement>true</enableAssociationManagement>-->
-                            <!--<enableExtendedEnhancement>false</enableExtendedEnhancement>-->
-                        <!--</configuration>-->
-                        <!--<goals>-->
-                            <!--<goal>enhance</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
+            <!--<groupId>org.hibernate.orm.tooling</groupId>-->
+            <!--<artifactId>hibernate-enhance-maven-plugin</artifactId>-->
+            <!--<version>${hibernateVersion}</version>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<phase>process-classes</phase>-->
+            <!--<configuration>-->
+            <!--<failOnError>true</failOnError>-->
+            <!--<enableLazyInitialization>true</enableLazyInitialization>-->
+            <!--<enableDirtyTracking>true</enableDirtyTracking>-->
+            <!--<enableAssociationManagement>true</enableAssociationManagement>-->
+            <!--<enableExtendedEnhancement>false</enableExtendedEnhancement>-->
+            <!--</configuration>-->
+            <!--<goals>-->
+            <!--<goal>enhance</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
             <!--</plugin>-->
         </plugins>
     </build>

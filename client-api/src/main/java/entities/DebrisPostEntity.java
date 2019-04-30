@@ -12,9 +12,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Where(clause = "is_deleted = 0")
 @Table(name = "debris_post", schema = "capstone_ccp")
-@NamedQuery(name = "DebrisPostEntity.byRequester", query = "select e from DebrisPostEntity e where e.requester.id = :requesterId")
+@NamedQuery(name = "DebrisPostEntity.byRequester", query = "select e from DebrisPostEntity e where e.requester.id = :requesterId and deleted= false ")
 public class DebrisPostEntity {
 	private long id;
 	@NotNull
@@ -81,6 +80,7 @@ public class DebrisPostEntity {
 	}
 
 	@OneToMany(mappedBy = "debrisPost",cascade = {},orphanRemoval = false)
+//	@JsonbTransient
 	public List<DebrisImageEntity> getDebrisImages() {
 		return debrisImages;
 	}
@@ -89,16 +89,18 @@ public class DebrisPostEntity {
 		this.debrisImages = debrisImages;
 	}
 
+	@Transient
 	public void addDebrisImage(DebrisImageEntity debrisImageEntity) {
 		this.debrisImages.add(debrisImageEntity);
 		debrisImageEntity.setDebrisPost(this);
 	}
 
+	@Transient
 	public void removeDebrisImage(DebrisImageEntity debrisImageEntity) {
 		this.debrisImages.remove(debrisImageEntity);
 		debrisImageEntity.setDebrisPost(null);
 	}
-
+	@Transient
 	public void deleteAllDebrisImage() {
 
 		for (DebrisImageEntity debrisImage : debrisImages) {
@@ -200,7 +202,7 @@ public class DebrisPostEntity {
 	}
 
 
-	@ManyToOne
+	@ManyToOne()
 	@JoinColumn(name = "requester_id", referencedColumnName = "id")
 	public ContractorEntity getRequester() {
 		return requester;

@@ -3,7 +3,6 @@ package jaxrs.resources;
 
 import daos.GeneralEquipmentTypeDAO;
 import dtos.responses.GeneralEquipmentTypeResponse;
-import dtos.responses.MessageResponse;
 import entities.GeneralEquipmentTypeEntity;
 
 import javax.inject.Inject;
@@ -22,7 +21,7 @@ public class GeneralEquipmentTypeResource {
 
 	@GET
 	public Response getAllGeneralEquipmentType() {
-		List<GeneralEquipmentTypeEntity> allGeneralEquipmentType = generalEquipmentTypeDAO.getAllGeneralEquipmentType();
+		List<GeneralEquipmentTypeEntity> allGeneralEquipmentType = generalEquipmentTypeDAO.findAll(false);
 		List<GeneralEquipmentTypeResponse> responseList = new ArrayList<>();
 		for (GeneralEquipmentTypeEntity generalEquipmentTypeEntity : allGeneralEquipmentType) {
 			responseList.add(new GeneralEquipmentTypeResponse(generalEquipmentTypeEntity));

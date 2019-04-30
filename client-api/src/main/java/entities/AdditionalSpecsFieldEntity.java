@@ -6,15 +6,16 @@ import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.xml.bind.annotation.XmlTransient;
+import java.util.Objects;
 
 @Entity
-@Where(clause = "is_deleted=0")
 @Table(name = "additional_specs_field", schema = "capstone_ccp")
 public class AdditionalSpecsFieldEntity {
 	private long id;
 	private String name;
 	private DataType dataType;
 	private EquipmentTypeEntity equipmentType;
+	private double priceWeight;
 	private boolean isDeleted;
 
 
@@ -50,12 +51,22 @@ public class AdditionalSpecsFieldEntity {
 		this.dataType = dataType;
 	}
 
+	@Basic
+	@Column(name = "price_weight")
+	public double getPriceWeight() {
+		return priceWeight;
+	}
+
+	public void setPriceWeight(double priceWeight) {
+		this.priceWeight = priceWeight;
+	}
+
+
 
 	@JsonbTransient
 	@XmlTransient
 	@ManyToOne
 	@JoinColumn(name = "equipment_type_id")
-	@Where(clause = "is_deleted=0")
 	public EquipmentTypeEntity getEquipmentType() {
 		return equipmentType;
 	}
@@ -74,11 +85,28 @@ public class AdditionalSpecsFieldEntity {
 		isDeleted = deleted;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof AdditionalSpecsFieldEntity)) return false;
+		AdditionalSpecsFieldEntity that = (AdditionalSpecsFieldEntity) o;
+		return id == that.id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 
 	public enum DataType {
 		STRING,
 		INTEGER,
-		DOUBLE
+		DOUBLE;
+
+
+		public boolean isNumbericType() {
+			return this == DOUBLE || this == INTEGER;
+		}
 	}
 
 }

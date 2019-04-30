@@ -18,7 +18,7 @@ public class DebrisServiceTypeResource {
 
 	@GET
 	public Response getAll() {
-		return Response.ok(debrisServiceTypeDAO.findAll()).build();
+		return Response.ok(debrisServiceTypeDAO.findAll(false)).build();
 	}
 
 	@GET

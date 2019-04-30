@@ -5,6 +5,7 @@ import daos.EquipmentDAO;
 import daos.HiringTransactionDAO;
 import daos.TransactionDateChangeRequestDAO;
 import dtos.requests.HiringTransactionRequest;
+import dtos.responses.GETListResponse;
 import dtos.responses.MessageResponse;
 import entities.ContractorEntity;
 import entities.EquipmentEntity;
@@ -22,6 +23,7 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("transactions")
@@ -47,7 +49,7 @@ public class HiringTransactionResource {
 
 
 	@Inject
-	TransactionDateChangeResource transactionDateChangeResource;
+	TransactionDateChangeRequestResource transactionDateChangeRequestResource;
 	@Inject
 	ModelConverter modelConverter;
 
@@ -93,6 +95,9 @@ public class HiringTransactionResource {
 
 		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByIdWithValidation(id);
 		return Response.ok(foundTransaction).build();
+//		ArrayList<HiringTransactionEntity> list = new ArrayList<>();
+//		list.add(foundTransaction);
+//		return Response.ok(new GETListResponse<HiringTransactionEntity>(1,1, 1, "orderBy", list)).build();
 	}
 
 	@DELETE
@@ -117,7 +122,7 @@ public class HiringTransactionResource {
 
 	@PUT
 	@Path("{id:\\d+}")
-	public Response updateTransactionStatus(@PathParam("id") long id, HiringTransactionEntity transactionEntity) {
+	public Response updateTransactionStatus(@PathParam("id") long id, HiringTransactionEntity statusRequest) {
 
 		// TODO: 3/10/19 validate authority
 
@@ -126,26 +131,19 @@ public class HiringTransactionResource {
 		HiringTransactionEntity foundTransaction = hiringTransactionDAO.findByIdWithValidation(id);
 
 
-		//todo not validate authority for ease
-
-		if (transactionEntity.getStatus() == null) {
+		if (statusRequest.getStatus() == null) {
 			throw new BadRequestException("Status is null!");
 		}
 
 		EquipmentEntity foundEquipment = foundTransaction.getEquipment();
 		ContractorEntity foundContractor = foundEquipment.getContractor();
-		switch (transactionEntity.getStatus()) {
+		switch (statusRequest.getStatus()) {
 			case PENDING:
-				//  4/3/19 validate if active
-				if (!foundContractor.isActivated()) {
-					throw new BadRequestException(String.format("Supplier %s is %s",
-							foundContractor.getName(), foundContractor.getStatus().getBeautifiedName()));
-				}
 
 				//validate
-				if (foundTransaction.getStatus() != transactionEntity.getStatus()) {
+				if (foundTransaction.getStatus() != statusRequest.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
-							foundTransaction.getStatus(), transactionEntity.getStatus()));
+							foundTransaction.getStatus(), statusRequest.getStatus()));
 
 				}
 				break;
@@ -159,9 +157,9 @@ public class HiringTransactionResource {
 				}
 
 				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING
-						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
+						&& foundTransaction.getStatus() != statusRequest.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
-							foundTransaction.getStatus(), transactionEntity.getStatus()));
+							foundTransaction.getStatus(), statusRequest.getStatus()));
 
 				}
 				// deny other pending requests that intersect with this accepted transaction
@@ -184,9 +182,9 @@ public class HiringTransactionResource {
 				//validate
 
 				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING
-						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
+						&& foundTransaction.getStatus() != statusRequest.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
-							foundTransaction.getStatus(), transactionEntity.getStatus()));
+							foundTransaction.getStatus(), statusRequest.getStatus()));
 
 
 				}
@@ -195,9 +193,9 @@ public class HiringTransactionResource {
 				//validate
 
 				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.ACCEPTED
-						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
+						&& foundTransaction.getStatus() != statusRequest.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
-							foundTransaction.getStatus(), transactionEntity.getStatus()));
+							foundTransaction.getStatus(), statusRequest.getStatus()));
 
 
 				}
@@ -232,12 +230,12 @@ public class HiringTransactionResource {
 				//validate
 				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.ACCEPTED
 				&& foundTransaction.getStatus() != HiringTransactionEntity.Status.PENDING
-						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
+						&& foundTransaction.getStatus() != statusRequest.getStatus()) {
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
-							foundTransaction.getStatus(), transactionEntity.getStatus()));
+							foundTransaction.getStatus(), statusRequest.getStatus()));
 				}
 
-				foundTransaction.setCancelReason(transactionEntity.getCancelReason());
+				foundTransaction.setCancelReason(statusRequest.getCancelReason());
 				//canceledBy
 				ContractorEntity canceledBy = new ContractorEntity();
 				canceledBy.setId(getClaimContractorId());
@@ -247,18 +245,18 @@ public class HiringTransactionResource {
 			case FINISHED:
 				//validate
 				if (foundTransaction.getStatus() != HiringTransactionEntity.Status.PROCESSING
-						&& foundTransaction.getStatus() != transactionEntity.getStatus()) {
+						&& foundTransaction.getStatus() != statusRequest.getStatus()) {
 
 					throw new BadRequestException(String.format("Cannot change from %s to %s",
-							foundTransaction.getStatus(), transactionEntity.getStatus()));
+							foundTransaction.getStatus(), statusRequest.getStatus()));
 				}
-				// TODO: 2/18/19 check equipment status must be WAITING_FOR_RETURNING
+				// 2/18/19 check equipment status must be WAITING_FOR_RETURNING
 				if (foundEquipment.getStatus() != EquipmentEntity.Status.WAITING_FOR_RETURNING) {
 					throw new BadRequestException(String.format("Equipment id=%d status must be WAITING_FOR_RETURNING to finish transaction",
 							foundEquipment.getId()));
 				}
 
-				// TODO: 2/18/19 change equipment status to AVAILABLE
+				//2/18/19 change equipment status to AVAILABLE
 				foundEquipment.setStatus(EquipmentEntity.Status.AVAILABLE);
 				equipmentDAO.merge(foundEquipment);
 				break;
@@ -266,7 +264,7 @@ public class HiringTransactionResource {
 		}
 
 
-		foundTransaction.setStatus(transactionEntity.getStatus());
+		foundTransaction.setStatus(statusRequest.getStatus());
 		hiringTransactionDAO.merge(foundTransaction);
 		return Response.status(Response.Status.OK).entity(hiringTransactionDAO.findByID(id)).build();
 	}
@@ -292,6 +290,7 @@ public class HiringTransactionResource {
 
 		//validate supplierId
 		contractorDAO.findByIdWithValidation(supplierId);
+
 
 		return Response.ok(hiringTransactionDAO.getHiringTransactionsBySupplierId(supplierId, status, limit, offset, orderBy)).build();
 

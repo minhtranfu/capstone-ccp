@@ -2,6 +2,7 @@ package entities;
 
 import listeners.entityListenters.MaterialFeedbackEntityListener;
 import net.jcip.annotations.NotThreadSafe;
+import org.apache.bval.util.Lazy;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -17,6 +18,8 @@ import java.util.Objects;
 		@NamedQuery(name = "MaterialFeedbackEntity.bySupplier", query = "select e from MaterialFeedbackEntity e where e.supplier.id = :supplierId")
 		, @NamedQuery(name = "MaterialFeedbackEntity.byMaterial", query = "select e from MaterialFeedbackEntity e where e.materialTransactionDetail.material.id = :materialId order by createdTime desc ")
 })
+
+@NamedEntityGraph(name = "graph.MaterialFeedbackEntity.includeAll", includeAllAttributes = true)
 @EntityListeners(MaterialFeedbackEntityListener.class)
 public class MaterialFeedbackEntity {
 	private long id;
@@ -88,7 +91,7 @@ public class MaterialFeedbackEntity {
 		this.updatedTime = updatedTime;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "requester_id")
 	public ContractorEntity getRequester() {
 		return requester;
@@ -99,7 +102,7 @@ public class MaterialFeedbackEntity {
 		this.requester = requester;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "supplier_id")
 	public ContractorEntity getSupplier() {
 		return supplier;
@@ -109,7 +112,7 @@ public class MaterialFeedbackEntity {
 		this.supplier = supplier;
 	}
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "material_transaction_detail_id")
 	public MaterialTransactionDetailEntity getMaterialTransactionDetail() {
 		return materialTransactionDetail;

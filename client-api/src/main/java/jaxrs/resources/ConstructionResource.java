@@ -3,7 +3,6 @@ package jaxrs.resources;
 import daos.ConstructionDAO;
 import entities.ConstructionEntity;
 import entities.ContractorEntity;
-import entities.EquipmentEntity;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 
@@ -37,11 +36,10 @@ public class ConstructionResource {
 
 	@GET
 	public Response getConstructionsByContractorId() {
-
 		return Response.ok(contractorEntity.getConstructions()).build();
 	}
 
-	public void validateContructionAll(long constructionId) {
+	public void validateConstructionAll(long constructionId) {
 		//validate construction id
 		ConstructionEntity foundConstruction = constructionDao.findByIdWithValidation(constructionId);
 
@@ -61,8 +59,8 @@ public class ConstructionResource {
 			@PathParam("constructionId") long constructionId
 	) {
 
-		validateContructionAll(constructionId);
-		return Response.ok(constructionDao.findByID(constructionId)).build();
+		validateConstructionAll(constructionId);
+		return Response.ok(constructionDao.findByID(constructionId,false)).build();
 	}
 
 	@POST
@@ -94,7 +92,7 @@ public class ConstructionResource {
 			throw new BadRequestException("You cannot edit other people's construction");
 		}
 
-		validateContructionAll(constructionId);
+		validateConstructionAll(constructionId);
 
 
 		ConstructionEntity foundConstruction = constructionDao.findByID(constructionId);
@@ -123,10 +121,9 @@ public class ConstructionResource {
 			throw new BadRequestException("You cannot edit other people's construction");
 		}
 
-		validateContructionAll(constructionId);
+		validateConstructionAll(constructionId);
+
 		ConstructionEntity foundConstruction = constructionDao.findByID(constructionId);
-
-
 		foundConstruction.setDeleted(true);
 		constructionDao.merge(foundConstruction);
 		return Response.ok().build();
