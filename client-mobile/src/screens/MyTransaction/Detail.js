@@ -21,8 +21,9 @@ import {
   requestTransaction,
   cancelTransaction,
   getAdjustTransaction,
-  requestAdjustTransaction
+  responseAdjustTransaction
 } from "../../redux/actions/transaction";
+import axios from "axios";
 
 import Item from "./components/Item";
 import InputField from "../../components/InputField";
@@ -71,27 +72,21 @@ const COLORS = {
       adjustTransactionList: state.transaction.adjustTransaction
     };
   },
-  dispatch => ({
-    fetchRequestTransaction: (id, transactionStatus) => {
-      dispatch(requestTransaction(id, transactionStatus));
-    },
-    fetchCancelTransaction: id => {
-      dispatch(cancelTransaction(id));
-    },
-    fetchGetAdjustTransaction: id => {
-      dispatch(getAdjustTransaction(id));
-    },
-    fetchRequestAdjustTransaction: (id, status) => {
-      dispatch(requestAdjustTransaction(id, status));
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      {
+        fetchRequestTransaction: requestTransaction,
+        fetchCancelTransaction: cancelTransaction,
+        fetchGetAdjustTransaction: getAdjustTransaction,
+        fetchResponseAdjustTransaction: responseAdjustTransaction
+      },
+      dispatch
+    )
 )
 class MyTransactionDetail extends Component {
   componentDidMount() {
     const { id } = this.props.navigation.state.params;
     this.props.fetchGetAdjustTransaction(id);
-    if (!this.props.transactionDetail) {
-    }
   }
 
   _handleRequestButton = (id, status) => {
@@ -198,38 +193,66 @@ class MyTransactionDetail extends Component {
     );
   };
 
-  _handleRequestAdjustTransaction = (transactionId, status) => {
-    this.props.fetchRequestAdjustTransaction(transactionId, { status: status });
+  _handleRequestAdjustTransaction = (alertTitle, transactionId, status) => {
+    Alert.alert(alertTitle, undefined, [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel"
+      },
+      {
+        text: "OK",
+        onPress: () =>
+          this.props.fetchResponseAdjustTransaction(transactionId, {
+            status: status
+          })
+      }
+    ]);
   };
 
   _renderAdjustDateTransaction = (id, equipmentStatus) => {
     const { adjustTransactionList } = this.props;
-    // console.log(adjustTransactionList);
-    if (equipmentStatus === "RENTING" && adjustTransactionList.length > 0) {
+    if (
+      (equipmentStatus !== "FINISHED" || equipmentStatus !== "PENDING") &&
+      adjustTransactionList.length > 0
+    ) {
       return (
         <View>
           <Text>New Adjust Transaction Request</Text>
-          <Text>{adjustTransactionList.requestedBeginDate}</Text>
-          <Text>{adjustTransactionList.requestedEndDate}</Text>
-          <Text>Status: {adjustTransactionList.status}</Text>
-          {adjustTransactionList.status === "PENDING" ? (
+          {adjustTransactionList.map(item => (
             <View>
-              <TouchableOpacity
-                onPress={() =>
-                  this._handleRequestAdjustTransaction(id, "ACCEPTED")
-                }
-              >
-                <Text>Accept</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  this._handleRequestAdjustTransaction(id, "DENIED")
-                }
-              >
-                <Text>Deny</Text>
-              </TouchableOpacity>
+              <Text>{item.id}</Text>
+              <Text>{item.requestedEndDate}</Text>
+              <Text>{item.createdTime}</Text>
+              <Text>Status: {item.status}</Text>
+              {item.status === "PENDING" ? (
+                <View>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this._handleRequestAdjustTransaction(
+                        "Are you sure to accept?",
+                        id,
+                        "ACCEPTED"
+                      )
+                    }
+                  >
+                    <Text>Accept</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this._handleRequestAdjustTransaction(
+                        "Are you sure to deny this transaction?",
+                        id,
+                        "DENIED"
+                      )
+                    }
+                  >
+                    <Text>Deny</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null}
             </View>
-          ) : null}
+          ))}
         </View>
       );
     }

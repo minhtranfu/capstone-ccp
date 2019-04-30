@@ -76,7 +76,7 @@ export function getMaterialListFromContractor(contractorId) {
     dispatch({
       type: Actions.GET_MATERIAL_LIST_BY_CONTRACTOR.REQUEST
     });
-    const res = await axios.get(`materials/supplier`);
+    const res = await axios.get(`materials/supplier?orderBy=createdTime.desc`);
     dispatch({
       type: Actions.GET_MATERIAL_LIST_BY_CONTRACTOR.SUCCESS,
       payload: res

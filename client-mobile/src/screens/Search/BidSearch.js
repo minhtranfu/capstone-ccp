@@ -5,7 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Animated
+  Animated,
+  Modal
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -43,12 +44,68 @@ const DROPDOWN_DEBRIS_TYPE_OPTIONS = [
 class BidSearch extends Component {
   constructor(props) {
     super(props);
-    this.state = { keyword: "" };
+    this.state = { keyword: "", modalVisible: false };
   }
 
   componentDidMount() {
     this.props.fetchGetTypeSerivces();
   }
+
+  setModalVisible = visible => {
+    this.setState({ modalVisible: visible });
+  };
+
+  _showModal = () => {
+    const { debrisTypes } = this.props;
+    return (
+      <View style={{ flex: 1 }}>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+          }}
+        >
+          <SafeAreaView style={{ flex: 1 }} forceInset={{ top: "always" }}>
+            <Header
+              renderLeftButton={() => (
+                <TouchableOpacity onPress={() => this.setModalVisible(false)}>
+                  <Feather name="x" size={24} />
+                </TouchableOpacity>
+              )}
+            />
+            <View style={{ height: 44, marginHorizontal: 15 }}>
+              <SearchBar
+                style={{ height: 44 }}
+                handleOnChangeText={this._handleOnChangeText}
+                icon={"navigation"}
+                placeholder={"Search debris type "}
+                onSubmitEditing={this._handleSearch}
+              />
+            </View>
+            <Text>Debris types</Text>
+            <ScrollView style={{ paddingHorizontal: 15 }}>
+              {debrisTypes.map(item => (
+                <TouchableOpacity key={item.id}>
+                  <Text>{this._capitializeLetter(item.name)}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <SafeAreaView forceInset={{ bottom: "always" }}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setModalVisible(!this.state.modalVisible);
+                }}
+              >
+                <Text>Hide Modal</Text>
+              </TouchableOpacity>
+            </SafeAreaView>
+          </SafeAreaView>
+        </Modal>
+      </View>
+    );
+  };
 
   _capitializeLetter = string => {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -60,32 +117,6 @@ class BidSearch extends Component {
       keyword: value.toLowerCase()
     });
   };
-
-  _handleDebrisType = () => {
-    const { debrisTypes } = this.props;
-    console.log(debrisTypes);
-    let newDebrisTypeArray = debrisTypes.map(item => ({
-      id: item.id,
-      name: this._capitializeLetter(item.name),
-      value: this._capitializeLetter(item.name)
-    }));
-    return [...DROPDOWN_DEBRIS_TYPE_OPTIONS, ...newDebrisTypeArray];
-  };
-
-  // _showBidItem = (id, name) => (
-  //   <TouchableOpacity
-  //     key={id}
-  //     style={styles.itemWrapper}
-  //     onPress={() =>
-  //       this.props.navigation.navigate("BidResult", {
-  //         typeId: id
-  //       })
-  //     }
-  //   >
-  //     <Text style={styles.text}>{name}</Text>
-  //     <Feather name="chevron-right" size={24} />
-  //   </TouchableOpacity>
-  // );
 
   // _renderItem = () => {
   //   const { debrisTypes } = this.props;
@@ -124,20 +155,15 @@ class BidSearch extends Component {
           onSubmitEditing={this._handleSearch}
           renderRightButton={() => (
             <TouchableOpacity onPress={this._handleSearch}>
-              <Text>Search</Text>
+              <Text style={styles.searchText}>Search</Text>
             </TouchableOpacity>
           )}
         />
-        <Dropdown
-          style={{ marginBottom: 10 }}
-          isHorizontal={true}
-          label={"Debris type"}
-          defaultText={DROPDOWN_DEBRIS_TYPE_OPTIONS[0].name}
-          onSelectValue={(value, index) => {
-            this.setState({ debrisTypeIndex: index, debrisType: value });
-          }}
-          options={this._handleDebrisType()}
-        />
+        {this._showModal()}
+        <TouchableOpacity onPress={() => this.setModalVisible(true)}>
+          <Text>Debris type</Text>
+        </TouchableOpacity>
+        <View />
       </View>
     );
   };
@@ -172,6 +198,11 @@ const styles = StyleSheet.create({
   text: {
     fontSize: fontSize.bodyText,
     fontWeight: "500"
+  },
+  searchText: {
+    fontSize: fontSize.caption,
+    color: colors.primaryColor,
+    fontWeight: "600"
   }
 });
 

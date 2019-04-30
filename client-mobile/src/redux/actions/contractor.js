@@ -1,6 +1,18 @@
 import axios from "axios";
 import StatusAction from "./status";
 import * as Actions from "../types";
+import i18n from "i18n-js";
+
+export function updateLanguage(language) {
+  console.log(language);
+  if (language !== undefined) {
+    i18n.locale = language;
+  }
+  return {
+    type: "CHANGE_LANGUAGE",
+    payload: language
+  };
+}
 
 export function register(contractor) {
   return async dispatch => {

@@ -17,6 +17,7 @@ import {
   getCurrentLocation,
   autoCompleteSearch
 } from "../../../redux/actions/location";
+import axios from "axios";
 //import Autocomplete from "react-native-autocomplete-input";
 import AutoComplete from "../../../components/AutoComplete";
 
@@ -93,7 +94,8 @@ class AddDetail extends Component {
       hideResults: false,
       address: null,
       lat: null,
-      lng: null
+      lng: null,
+      suggestPrice: null
     };
   }
 
@@ -112,6 +114,7 @@ class AddDetail extends Component {
         };
       }
     }
+    return null;
   }
 
   //All data must be fill before move to next screen
@@ -271,6 +274,39 @@ class AddDetail extends Component {
     });
   };
 
+  _loadSuggestPrice = async () => {
+    const {
+      typeIndex,
+      generalTypeIndex,
+      additionalSpecsFields,
+      suggestPrice
+    } = this.state;
+    const newTypeOptions = this._handleEquipmentType(generalTypeIndex);
+    const data = {
+      equipmentType: {
+        id: newTypeOptions[typeIndex].id
+      },
+      additionalSpecsValues: additionalSpecsFields.filter(item => item !== null)
+    };
+    console.log(
+      additionalSpecsFields.filter(item => item.value).length,
+      additionalSpecsFields.length
+    );
+    if (
+      newTypeOptions[typeIndex].id &&
+      additionalSpecsFields.filter(item => item.value !== "").length !== 0 &&
+      additionalSpecsFields.filter(item => item !== null).length ===
+        additionalSpecsFields.filter(item => item.value !== "").length &&
+      !suggestPrice
+    ) {
+      const res = await axios.post(`equipments/suggestedPrice`, data);
+      console.log(res);
+      if (res) {
+        this.setState({ suggestPrice: res.data.suggestedPrice.toFixed(2) });
+      }
+    }
+  };
+
   _renderScrollViewItem = () => {
     const {
       name,
@@ -287,7 +323,7 @@ class AddDetail extends Component {
     const NEW_DROPDOWN_TYPES_OPTIONS = this._handleEquipmentType(
       generalTypeIndex
     );
-    console.log(this.state.additionalSpecsFields);
+    this._loadSuggestPrice();
     return (
       <View>
         <InputField
@@ -309,6 +345,11 @@ class AddDetail extends Component {
           keyboardType={"numeric"}
           returnKeyType={"next"}
         />
+        <Text>
+          Suggested price: Please select equipment type and input full
+          additional specs
+        </Text>
+        <Text>{this.state.suggestPrice}</Text>
         <Dropdown
           label={"General Equipment Type"}
           defaultText={NEW_DROPDOWN_GENERAL_TYPES_OPTIONS[0].name}
@@ -331,7 +372,9 @@ class AddDetail extends Component {
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate("AddConstruction")}
         >
-          <Text style={styles.text}>Do you want to build a snow man? </Text>
+          <Text style={[styles.text, { color: colors.secondaryColor }]}>
+            Create new address
+          </Text>
         </TouchableOpacity>
         <Dropdown
           label={"Construction"}

@@ -37,7 +37,7 @@ class Item extends PureComponent {
             alignItems: "center",
             justifyContent: "space-between",
             backgroundColor: "white",
-            padding: 15
+            paddingVertical: 15
           }}
         >
           <Image
@@ -47,32 +47,32 @@ class Item extends PureComponent {
           />
           <View
             style={{
+              flex: 2,
+              paddingLeft: 10,
               flexDirection: "column",
               justifyContent: "center",
-              alignItems: "flex-end"
+              alignItems: "flex-start"
             }}
           >
-            <TouchableOpacity>
-              <Feather name="x" size={20} />
-            </TouchableOpacity>
             <Text style={styles.title}>{this._capitializeLetter(name)}</Text>
             <Text style={styles.text}>
               {this._capitializeLetter(manufacturer)}
             </Text>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <TouchableOpacity>
-                <Feather name="minus" size={20} />
-              </TouchableOpacity>
-              <TextInput
-                placeholder={"Input your quantity"}
-                keyboardType={"numeric"}
-                value={quantity.toString()}
-              />
-              <TouchableOpacity>
-                <Feather name="plus" size={20} />
-              </TouchableOpacity>
-            </View>
+
             <Text style={styles.price}>{totalPrice}K/ VND</Text>
+          </View>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <TouchableOpacity>
+              <Feather name="minus" size={20} />
+            </TouchableOpacity>
+            <TextInput
+              placeholder={"Input your quantity"}
+              keyboardType={"numeric"}
+              value={quantity.toString()}
+            />
+            <TouchableOpacity>
+              <Feather name="plus" size={20} />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -82,8 +82,11 @@ class Item extends PureComponent {
 
 const styles = StyleSheet.create({
   container: {
-    ...colors.shadow,
-    marginBottom: 15
+    flex: 1,
+    // ...colors.shadow,
+    marginBottom: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.primaryColor
   },
   title: {
     color: colors.text,

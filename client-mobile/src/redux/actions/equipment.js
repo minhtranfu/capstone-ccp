@@ -4,14 +4,20 @@ import { AsyncStorage } from "react-native";
 import * as Actions from "../types";
 import { ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS } from "expo/build/IntentLauncherAndroid";
 
-export function getContractorEquipmentList(contractorId) {
+export function getContractorEquipmentList(contractorId, offset) {
+  console.log("check", offset);
   return async dispatch => {
-    dispatch({ type: Actions.LIST_CONTRACTOR_EQUIPMENT.REQUEST });
     try {
-      const res = await axios.get(`equipments/supplier`);
+      if (offset < 10) {
+        dispatch({ type: Actions.LIST_CONTRACTOR_EQUIPMENT.REQUEST });
+      }
+      const res = await axios.get(
+        `equipments/supplier?orderBy=createdTime.desc&offset=${offset}&limit=10`
+      );
       dispatch({
         type: Actions.LIST_CONTRACTOR_EQUIPMENT.SUCCESS,
-        payload: res
+        payload: res,
+        offset: offset
       });
     } catch (error) {
       console.log(error);
@@ -79,9 +85,12 @@ export function updateEquipmentStatus(transactionId, equipmentId, status) {
 }
 
 export function removeEquipment(id) {
-  return {
-    type: Actions.REMOVE_EQUIPMENT.SUCCESS,
-    id
+  return async dispatch => {
+    const res = await axios.delete(`equipments/${id}`);
+    dispatch({
+      type: Actions.REMOVE_EQUIPMENT.SUCCESS,
+      payload: { id }
+    });
   };
 }
 

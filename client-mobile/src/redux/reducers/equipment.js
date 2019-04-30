@@ -20,11 +20,20 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
       };
     }
     case Actions.LIST_CONTRACTOR_EQUIPMENT.SUCCESS: {
-      return {
-        ...state,
-        loading: false,
-        contractorEquipment: payload.data.items
-      };
+      if (action.offset <= 0) {
+        return {
+          ...state,
+          loading: false,
+          contractorEquipment: payload.data.items
+        };
+      } else {
+        return {
+          ...state,
+          contractorEquipment: state.contractorEquipment.concat(
+            payload.data.items
+          )
+        };
+      }
     }
     case Actions.LIST_CONTRACTOR_EQUIPMENT.ERROR: {
       return {
@@ -81,7 +90,7 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
     case Actions.UPDATE_EQUIPMENT_STATUS.SUCCESS: {
       return {
         ...state,
-        loaing: false,
+        loading: false,
         contractorEquipment: state.contractorEquipment.map(item =>
           item.id === payload.id ? (item = payload.data.data) : item
         )
@@ -89,7 +98,10 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
     }
     case Actions.REMOVE_EQUIPMENT.SUCCESS:
       return {
-        ...state
+        ...state,
+        contractorEquipment: state.contractorEquipment.filter(
+          item => item.id !== payload.id
+        )
       };
     case Actions.SEARCH_EQUIPMENT.REQUEST: {
       return {
@@ -111,11 +123,6 @@ export default function equipmentReducer(state = INITIAL_STATE, action) {
           listSearch: state.listSearch.concat(payload.data)
         };
       }
-    // return {
-    //   ...state,
-    //   searchLoading: false,
-    //   listSearch: payload.data
-    // };
     case Actions.SEARCH_EQUIPMENT.ERROR:
       return {
         ...state,

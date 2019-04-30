@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { SafeAreaView } from "react-navigation";
 import axios from "axios";
 import { Notifications, Permissions, Camera } from "expo";
@@ -55,23 +56,28 @@ const SETTING_ITEMS_VALUE = [
     value: "Change password",
     code: "ChangePassword"
   },
-  // {
-  //   id: 3,
-  //   value: "NOT_VERIFIED",
-  //   code: "Verify"
-  // },
+  {
+    id: 3,
+    value: "Change language",
+    code: "ChangeLanguage"
+  },
   {
     id: 4,
+    value: "My Feedback",
+    code: "MyFeedback"
+  },
+  {
+    id: 5,
     value: "My constructions",
     code: "Construction"
   },
   {
-    id: 5,
+    id: 6,
     value: "My subscription",
     code: "Subcription"
   },
   {
-    id: 6,
+    id: 7,
     value: "Push notifications",
     code: "Notifications"
   }
@@ -87,23 +93,17 @@ const SETTING_ITEMS_VALUE = [
       allowPushNotification: state.notification.allowPushNotification
     };
   },
-  dispatch => ({
-    fetchLogout: () => {
-      dispatch(logOut());
-    },
-    fetchGetConstructionList: userId => {
-      dispatch(getConstructionList(userId));
-    },
-    fetchGetContractorDetail: userId => {
-      dispatch(getContractorDetail(userId));
-    },
-    fetchRemoveNotiToken: token => {
-      dispatch(deleteNoticationToken(token));
-    },
-    fetchAllowPushNotification: () => {
-      dispatch(allowPushNotification());
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      {
+        fetchLogout: logOut,
+        fetchGetConstructionList: getConstructionList,
+        fetchGetContractorDetail: getContractorDetail,
+        fetchRemoveNotiToken: deleteNoticationToken,
+        fetchAllowPushNotification: allowPushNotification
+      },
+      dispatch
+    )
 )
 class Account extends Component {
   constructor(props) {
@@ -306,9 +306,22 @@ class Account extends Component {
               <View>
                 {this._renderImageProfile(contractor.thumbnailImageUrl)}
                 <View style={styles.nameWrapper}>
-                  <Text style={styles.name}>{contractor.name}</Text>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Text style={styles.name}>{contractor.name}</Text>
+                    {contractor.status === "ACTIVATED" ? (
+                      <RNImage
+                        source={require("../../../assets/icons/icons8-checked.png")}
+                        style={{ marginLeft: 5, width: 20, height: 20 }}
+                      />
+                    ) : (
+                      <RNImage
+                        source={require("../../../assets/icons/icons8-warning.png")}
+                        style={{ marginLeft: 5, width: 20, height: 20 }}
+                      />
+                    )}
+                  </View>
                   {contractor.status !== "ACTIVATED" ? (
-                    <Text style={styles.text}>WAITING_FOR_VERIFFY</Text>
+                    <Text style={styles.text}>Waiting For Verify</Text>
                   ) : null}
                   <Text style={styles.text}>
                     Joined {this._dateConverter(contractor.createdTime)}

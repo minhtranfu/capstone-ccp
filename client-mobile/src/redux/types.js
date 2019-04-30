@@ -91,6 +91,9 @@ export const SEND_ADJUST_TRANSACTION = renderActions(
 export const REQUEST_ADJUST_TRANSACTION = renderActions(
   "@@transaction/REQUEST_ADJUST_TRANSACTION"
 );
+export const RESPONSE_ADJUST_TRANSACTION = renderActions(
+  "@@transaction/RESPONSE_ADJUST_TRANSACTION"
+);
 export const DELETE_ADJUST_TRANSACTION = renderActions(
   "@@transaction/DELETE_ADJUST_TRANSACTION"
 );

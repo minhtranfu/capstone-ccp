@@ -66,7 +66,7 @@ class EquipmentResult extends Component {
   }
 
   componentDidMount() {
-    const { equipment } = this.props.navigation.state.params;
+    const { equipment, params } = this.props.navigation.state.params;
     const { offset } = this.state;
 
     this.props.fetchSearchEquipment(equipment, offset);
@@ -192,6 +192,8 @@ class EquipmentResult extends Component {
   };
 
   _renderHeader = () => {
+    const { listSearch } = this.props;
+    const { equipment } = this.props.navigation.state.params;
     return (
       <View
         style={{

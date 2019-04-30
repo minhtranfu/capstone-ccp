@@ -11,6 +11,10 @@ export function logIn(user) {
         "userToken",
         res.data.tokenWrapper.accessToken
       );
+      await AsyncStorage.setItem(
+        "userRefreshToken",
+        res.data.tokenWrapper.refreshToken
+      );
       dispatch({
         type: Actions.LOGIN_SUCCESS,
         payload: {

@@ -3,6 +3,12 @@ import StatusAction from "../redux/actions/status";
 import { logOut } from "../redux/actions/auth";
 import { AsyncStorage } from "react-native";
 import { goToLogin } from "../Utils/Helpers";
+import i18n from "i18n-js";
+import { en, vn } from "./translation";
+import { ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS } from "expo/build/IntentLauncherAndroid";
+
+let isAlreadyFetchingAccessToken = false;
+const refresh = axios.create();
 
 export default async function configAPI(config) {
   axios.defaults.baseURL = "http://35.198.233.204:8080/api/";
@@ -15,7 +21,7 @@ export default async function configAPI(config) {
         !config.headers.Authorization
       ) {
         const token = await AsyncStorage.getItem("userToken");
-        if (token !== null && token) {
+        if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         } else {
           delete config.headers.Authorization;
@@ -31,18 +37,51 @@ export default async function configAPI(config) {
     response => {
       return response;
     },
-    error => {
+    async error => {
       // Do something with response error
       const originalRequest = error.config;
+      //console.log("origin", originalRequest._retry);
       if (error.response) {
         switch (error.response.status) {
           case 401:
-            config.store.dispatch(
-              StatusAction.error(401, error.response.data.message, Date.now())
-            );
-            config.store.dispatch(logOut());
-            //goToLogin();
-            break;
+            if (!isAlreadyFetchingAccessToken) {
+              isAlreadyFetchingAccessToken = true;
+              const refreshToken = await AsyncStorage.getItem(
+                "userRefreshToken"
+              );
+              console.log(refreshToken);
+              return refresh
+                .post(`authen/refresh`, { refreshToken })
+                .then(response => {
+                  console.log(response);
+                  isAlreadyFetchingAccessToken = false;
+                  AsyncStorage.setItem(
+                    "userToken",
+                    response.data.tokenWrapper.accessToken
+                  );
+                  // axios.defaults.headers.Authorization = `Bearer ${
+                  //   response.data.tokenWrapper.accessToken
+                  // }`;
+                  originalRequest.headers["Authorization"] = `Bearer ${
+                    response.data.tokenWrapper.accessToken
+                  }`;
+                  console.log(originalRequest);
+                  return axios(originalRequest);
+                })
+                .catch(error => {
+                  console.log("foacker", error);
+                  config.store.dispatch(
+                    StatusAction.error(
+                      401,
+                      error.response.data.message,
+                      Date.now()
+                    )
+                  );
+                  config.store.dispatch(logOut());
+                });
+            }
+            return Promise.reject(error);
+          // break;
           case 403:
             config.store.dispatch(
               StatusAction.error(401, "Wrong username or password", Date.now())
@@ -82,4 +121,10 @@ export default async function configAPI(config) {
       return Promise.reject(error);
     }
   );
+
+  //Config for i18n
+  i18n.fallbacks = true;
+  i18n.defaultLocale = "en";
+  // i18n.locale = "vn";
+  i18n.translations = { en, vn };
 }

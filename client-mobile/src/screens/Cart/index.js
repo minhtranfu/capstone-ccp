@@ -8,6 +8,7 @@ import {
   Alert
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
+import CheckBox from "react-native-check-box";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "react-native-expo-image-cache";
@@ -56,7 +57,9 @@ class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cart: {}
+      cart: {},
+      isChecked: false,
+      selectCart: {}
     };
   }
 
@@ -75,6 +78,7 @@ class Cart extends Component {
         cart: nextProps.materialCart
       };
     }
+    return null;
   }
 
   _handleQuantityChanged = (supplierId, id, value) => {
@@ -121,65 +125,101 @@ class Cart extends Component {
       <View>
         {cart.map(supplierItems => (
           <View key={supplierItems.id}>
-            <Title title={"Supplier"} />
-            <Contractor
-              name={supplierItems.items[0].contractor.name}
-              rating={supplierItems.items[0].contractor.averageMaterialRating}
-              phone={supplierItems.items[0].contractor.phoneNumber}
-              imageUrl={supplierItems.items[0].contractor.thumbnailImageUrl}
-            />
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between"
-              }}
-            >
-              <Title title="Total items" />
-              <View style={styles.status}>
-                <Text
-                  style={{ fontSize: fontSize.secondaryText, color: "white" }}
+            <View style={styles.supplierOrderWrapper}>
+              <View
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: 10,
+                  paddingHorizontal: 15
+                }}
+              >
+                <View key={supplierItems.id} style={styles.itemWrapper}>
+                  <CheckBox
+                    style={{ paddingRight: 10 }}
+                    isChecked={this.state.isChecked}
+                    onClick={() => {
+                      this.setState({
+                        isChecked: !this.state.isChecked
+                      });
+                    }}
+                  />
+                  <Contractor
+                    name={supplierItems.items[0].contractor.name}
+                    rating={
+                      supplierItems.items[0].contractor.averageMaterialRating
+                    }
+                    phone={supplierItems.items[0].contractor.phoneNumber}
+                    imageUrl={
+                      supplierItems.items[0].contractor.thumbnailImageUrl
+                    }
+                  />
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center"
+                  }}
                 >
-                  {supplierItems.items.length}
-                </Text>
+                  <Title title="Total items" />
+                  <View style={styles.status}>
+                    <Text
+                      style={{
+                        fontSize: fontSize.secondaryText,
+                        color: "white"
+                      }}
+                    >
+                      {supplierItems.items.length}
+                    </Text>
+                  </View>
+                </View>
+                {supplierItems.items.map(item => (
+                  <View key={item.id} style={styles.itemWrapper}>
+                    <CheckBox
+                      style={{ paddingRight: 10 }}
+                      isChecked={this.state.isChecked}
+                      onClick={() => {
+                        this.setState({
+                          isChecked: !this.state.isChecked
+                        });
+                      }}
+                    />
+                    <Item
+                      name={item.name}
+                      manufacturer={item.manufacturer}
+                      price={item.price}
+                      imageUrl={item.thumbnailImageUrl}
+                      quantity={item.quantity}
+                    />
+                  </View>
+                  // <View key={item.id} >
+                  //   <Text style={styles.text}>{item.name}</Text>
+                  //   <Text style={styles.text}>{item.price}</Text>
+                  //   <InputField
+                  //     label={"Quantity"}
+                  //     placeholder={"Input your quantity"}
+                  //     customWrapperStyle={{ marginBottom: 20 }}
+                  //     inputType="text"
+                  //     onBlur={() =>
+                  //       this._handleUpdateItemQuantity(item.contractor.id, item.id)
+                  //     }
+                  //     onChangeText={value =>
+                  //       this._handleQuantityChanged(
+                  //         item.contractor.id,
+                  //         item.id,
+                  //         value
+                  //       )
+                  //     }
+                  //     value={item.quantity.toString()}
+                  //     keyboardType={"numeric"}
+                  //     returnKeyType={"next"}
+                  //   />
+                  //   <Text style={styles.text}>
+                  //     Total price: {item.price * item.quantity}VND
+                  //   </Text>
+                  // </View>
+                ))}
               </View>
             </View>
-            {supplierItems.items.map(item => (
-              <Item
-                key={item.id}
-                name={item.name}
-                manufacturer={item.manufacturer}
-                price={item.price}
-                imageUrl={item.thumbnailImageUrl}
-                quantity={item.quantity}
-              />
-              // <View key={item.id} >
-              //   <Text style={styles.text}>{item.name}</Text>
-              //   <Text style={styles.text}>{item.price}</Text>
-              //   <InputField
-              //     label={"Quantity"}
-              //     placeholder={"Input your quantity"}
-              //     customWrapperStyle={{ marginBottom: 20 }}
-              //     inputType="text"
-              //     onBlur={() =>
-              //       this._handleUpdateItemQuantity(item.contractor.id, item.id)
-              //     }
-              //     onChangeText={value =>
-              //       this._handleQuantityChanged(
-              //         item.contractor.id,
-              //         item.id,
-              //         value
-              //       )
-              //     }
-              //     value={item.quantity.toString()}
-              //     keyboardType={"numeric"}
-              //     returnKeyType={"next"}
-              //   />
-              //   <Text style={styles.text}>
-              //     Total price: {item.price * item.quantity}VND
-              //   </Text>
-              // </View>
-            ))}
           </View>
         ))}
       </View>
@@ -236,6 +276,17 @@ class Cart extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  supplierOrderWrapper: {
+    flex: 1,
+    ...colors.shadow,
+    marginBottom: 15,
+    marginTop: 10
+  },
+  itemWrapper: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center"
   },
   status: {
     width: 30,

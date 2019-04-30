@@ -16,6 +16,13 @@ import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import Feather from "@expo/vector-icons/Feather";
 import { Image } from "react-native-expo-image-cache";
+import { bindActionCreators } from "redux";
+import {
+  DROPDOWN_OPTIONS,
+  EQUIPMETN_TRANSACTION_STATUSES,
+  TABS
+} from "../../Utils/Constants";
+import i18n from "i18n-js";
 import {
   getContractorEquipmentList,
   removeEquipment
@@ -30,9 +37,10 @@ import {
   getDebrisArticleByRequester
 } from "../../redux/actions/debris";
 
+import MyEquipmentTab from "./MyEquipmentTab";
 import MyPostTab from "./MyPostTab";
 import MyBidsTab from "./MyBidsTab";
-import MaterialTab from "./components/MaterialTab";
+import MaterialTab from "./MaterialTab";
 import MaterialSearchItem from "../../components/MaterialSearchItem";
 import TabView from "../../components/TabView";
 import AddModal from "./components/AddModal";
@@ -50,71 +58,6 @@ import Loading from "../../components/Loading";
 
 const { width, height } = Dimensions.get("window");
 
-const EQUIPMENT_STATUSES = [
-  {
-    code: "AVAILABLE",
-    title: "Available"
-  },
-  {
-    code: "ACCEPTED",
-    title: "Accepted"
-  },
-  {
-    code: "DELIVERING",
-    title: "Delivering"
-  },
-  {
-    code: "RENTING",
-    title: "Renting" // On Waiting,
-  },
-  {
-    code: "WAITING_FOR_RETURNING",
-    title: "Waiting for returning"
-  },
-  {
-    code: "DENIED",
-    title: "Denied"
-  }
-];
-
-const DROPDOWN_OPTIONS = [
-  {
-    id: 0,
-    name: "All",
-    value: "All"
-  },
-  {
-    id: 1,
-    name: "Available",
-    value: "Available"
-  },
-  {
-    id: 2,
-    name: "Delivering",
-    value: "Delivering"
-  },
-  {
-    id: 3,
-    name: "Pending",
-    value: "Pending"
-  },
-  {
-    id: 4,
-    name: "Accepted",
-    value: "Accepted"
-  },
-  {
-    id: 5,
-    name: "Denied",
-    value: "Denied"
-  },
-  {
-    id: 6,
-    name: "Waiting to returning",
-    value: "waiting"
-  }
-];
-
 @connect(
   state => {
     return {
@@ -128,26 +71,18 @@ const DROPDOWN_OPTIONS = [
       token: state.auth.token
     };
   },
-  dispatch => ({
-    fetchRemoveEquipment: id => {
-      dispatch(removeEquipment(id));
-    },
-    fetchContractorEquipment: id => {
-      dispatch(getContractorEquipmentList(id));
-    },
-    fetchClearMyTransaction: () => {
-      dispatch(clearSupplierTransactionList());
-    },
-    fetchGetMaterialList: id => {
-      dispatch(getMaterialListFromContractor(id));
-    },
-    fetchAllBids: () => {
-      dispatch(getDebrisBidBySupplier());
-    },
-    fetchGetAllPost: () => {
-      dispatch(getDebrisArticleByRequester());
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      {
+        fetchRemoveEquipment: removeEquipment,
+        fetchContractorEquipment: getContractorEquipmentList,
+        fetchClearMyTransaction: clearSupplierTransactionList,
+        fetchGetMaterialList: getMaterialListFromContractor,
+        fetchAllBids: getDebrisBidBySupplier,
+        fetchGetAllPost: getDebrisArticleByRequester
+      },
+      dispatch
+    )
 )
 class MyEquipment extends PureComponent {
   constructor(props) {
@@ -165,7 +100,7 @@ class MyEquipment extends PureComponent {
   componentDidMount() {
     const { user, isLoggedIn } = this.props;
     if (isLoggedIn) {
-      this.props.fetchContractorEquipment(user.contractor.id);
+      this.props.fetchContractorEquipment(user.contractor.id, 0);
       this.props.fetchGetMaterialList(user.contractor.id);
       this.props.fetchAllBids();
       this.props.fetchGetAllPost();
@@ -176,7 +111,7 @@ class MyEquipment extends PureComponent {
     const { user, token, isLoggedIn } = this.props;
     //Check user is login or not. If yes, fetch data
     if (isLoggedIn && prevProps.token !== token && token) {
-      this.props.fetchContractorEquipment(user.contractor.id);
+      this.props.fetchContractorEquipment(user.contractor.id, 0);
       this.props.fetchGetMaterialList(user.contractor.id);
       this.props.fetchAllBids();
       this.props.fetchGetAllPost();
@@ -190,7 +125,10 @@ class MyEquipment extends PureComponent {
   _onRefresh = async () => {
     const { user } = this.props;
     this.setState({ refreshing: true });
-    const res = await this.props.fetchContractorEquipment(user.contractor.id);
+    const res = await this.props.fetchContractorEquipment(
+      user.contractor.id,
+      0
+    );
     const resMaterial = await this.props.fetchGetMaterialList(
       user.contractor.id
     );
@@ -229,7 +167,7 @@ class MyEquipment extends PureComponent {
       this.setState({ addModalVisible: true });
     } else {
       this._showAlert(
-        "Nani kore....",
+        "Sorry",
         `Your account is not verified to access this action`
       );
     }
@@ -243,9 +181,9 @@ class MyEquipment extends PureComponent {
 
   _handleFilter = () => {
     if (this.state.status === "All") {
-      return EQUIPMENT_STATUSES;
+      return EQUIPMETN_TRANSACTION_STATUSES;
     } else {
-      return EQUIPMENT_STATUSES.filter(
+      return EQUIPMETN_TRANSACTION_STATUSES.filter(
         status => status.code === this.state.status.toUpperCase()
       );
     }
@@ -298,7 +236,10 @@ class MyEquipment extends PureComponent {
       listMaterial,
       listDebrisBids,
       listEquipment,
-      listDebrisPost
+      listDebrisPost,
+      user,
+      token,
+      isLoggedIn
     } = this.props;
     switch (index) {
       case 1:
@@ -308,7 +249,7 @@ class MyEquipment extends PureComponent {
       case 3:
         return <MyBidsTab listDebrisBids={listDebrisBids} />;
       default:
-        return this._renderContent(listEquipment);
+        return <MyEquipmentTab />;
     }
   };
 
@@ -321,7 +262,7 @@ class MyEquipment extends PureComponent {
               label={"By Status"}
               defaultText={"All"}
               onSelectValue={value => this.setState({ status: value })}
-              options={DROPDOWN_OPTIONS}
+              options={DROPDOWN_OPTIONS.EQUIPMENT}
               isHorizontal={true}
             />
 
@@ -358,10 +299,10 @@ class MyEquipment extends PureComponent {
               </TouchableOpacity>
             )}
           >
-            <Text style={styles.header}>Manage</Text>
+            <Text style={styles.header}>{i18n.t("Manage.Name")}</Text>
           </Header>
           <TabView
-            tabs={["Equipments", "Material", "Posts", "Bids"]}
+            tabs={TABS.manage.map(item => i18n.t(`Manage.${item}`))}
             onChangeTab={this._onChangeTab}
             activeTab={activeTab}
           />
@@ -401,7 +342,7 @@ class MyEquipment extends PureComponent {
           <View style={{ flex: 1 }}>
             {!loading ? (
               <ScrollView
-                contentContainerStyle={styles.scrollContent}
+                style={styles.scrollContent}
                 refreshControl={
                   <RefreshControl
                     refreshing={this.state.refreshing}
@@ -410,11 +351,6 @@ class MyEquipment extends PureComponent {
                 }
               >
                 {this._handleActiveTab(activeTab)}
-                {/* {activeTab == 0 ? (
-                  this._renderContent(listEquipment)
-                ) : (
-                  <MaterialTab materialList={materialList} />
-                )} */}
               </ScrollView>
             ) : (
               <Loading />
@@ -443,7 +379,8 @@ const styles = StyleSheet.create({
     marginBottom: 15
   },
   scrollContent: {
-    paddingHorizontal: 15
+    flex: 1
+    //paddingHorizontal: 15
   },
   equipmentItemContainer: {
     paddingVertical: 8

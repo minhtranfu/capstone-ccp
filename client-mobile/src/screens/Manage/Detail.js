@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   Modal,
   Dimensions,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Alert
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { SafeAreaView } from "react-navigation";
@@ -21,7 +22,8 @@ import { updateEquipment } from "../../redux/actions/equipment";
 import { getGeneralEquipmentType } from "../../redux/actions/type";
 import {
   getEquipmentImage,
-  resetEquipmentImage
+  resetEquipmentImage,
+  removeEquipment
 } from "../../redux/actions/equipment";
 import axios from "axios";
 
@@ -92,7 +94,8 @@ const COLORS = {
         fetchUpdateEquipment: updateEquipment,
         fetchGeneralType: getGeneralEquipmentType,
         fetchGetEquipmentImages: getEquipmentImage,
-        fetchResetEquipmentImage: resetEquipmentImage
+        fetchResetEquipmentImage: resetEquipmentImage,
+        fetchDeleteEquipment: removeEquipment
       },
       dispatch
     )
@@ -118,6 +121,7 @@ class MyEquipmentDetail extends Component {
 
   componentDidMount() {
     const { id } = this.props.navigation.state.params;
+    console.log(id);
     this.props.fetchGetEquipmentImages(id);
   }
 
@@ -243,9 +247,35 @@ class MyEquipmentDetail extends Component {
     this.props.navigation.goBack();
   };
 
+  _handleDelete = id => {
+    Alert.alert("Are you sure to delete?", undefined, [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel"
+      },
+      {
+        text: "OK",
+        onPress: async () => {
+          await this.props.fetchDeleteEquipment(id);
+          this.props.navigation.goBack();
+        }
+      }
+    ]);
+  };
+
   _renderAvailableBottom = id => (
     <View style={styles.bottomWrapper}>
-      <Button text={"Update"} onPress={this._handleSubmitEdit} />
+      <Button
+        text={"Update"}
+        onPress={this._handleSubmitEdit}
+        wrapperStyle={{ marginBottom: 15 }}
+      />
+      <Button
+        text={"Delete"}
+        onPress={() => this._handleDelete(id)}
+        buttonStyle={{ backgroundColor: "red" }}
+      />
     </View>
   );
 

@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Image } from "react-native-expo-image-cache";
+import i18n from "i18n-js";
 
 import Button from "../../components/Button";
 import Title from "../../components/Title";
@@ -48,7 +49,8 @@ const RADIO_BUTON_DATA = [
 
 @connect(state => ({
   status: state.transaction.status,
-  user: state.auth.data
+  user: state.auth.data,
+  language: state.contractor.language
 }))
 class Discover extends Component {
   constructor(props) {
@@ -56,6 +58,9 @@ class Discover extends Component {
     this.state = {
       checked: 0
     };
+  }
+  shouldComponentUpdate(nextProps) {
+    return this.props.language !== nextProps.language;
   }
 
   _renderDiscoverItem = ({ item }) => {
@@ -155,7 +160,7 @@ class Discover extends Component {
     return (
       <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
         <ParallaxList
-          title={"Discover"}
+          title={i18n.t("Discover")}
           hasLeft={false}
           hasCart={true}
           onCartPress={this._handleShowCart}

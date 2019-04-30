@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { Rating } from "react-native-ratings";
 import PropTypes from "prop-types";
-import Feather from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 
 import colors from "../../../config/colors";
 import fontSize from "../../../config/fontSize";
@@ -30,23 +30,30 @@ class Contractor extends PureComponent {
             flexDirection: "row",
             alignItems: "center",
             paddingVertical: 15,
-            marginBottom: 10
+            justifyContent: "space-between"
           }}
         >
           <Image
             uri={imageUrl}
             resize={"cover"}
-            style={{ width: 50, height: 50, borderRadius: 25, marginLeft: 15 }}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              ...colors.shadow
+            }}
           />
           <View
             style={{
+              flex: 2,
               flexDirection: "column",
               justifyContent: "center",
-              paddingLeft: 15
+              alignItems: "flex-start",
+              paddingLeft: 10
             }}
           >
             <Text style={styles.title}>{this._capitializeLetter(name)}</Text>
-            <Text style={styles.text}>{this._capitializeLetter(phone)}</Text>
+            {/* <Text style={styles.text}>{this._capitializeLetter(phone)}</Text> */}
             <Rating
               readonly={true}
               ratingCount={5}
@@ -59,6 +66,7 @@ class Contractor extends PureComponent {
               }}
             />
           </View>
+          <Feather name="chevron-right" size={24} />
         </View>
       </TouchableOpacity>
     );
@@ -67,7 +75,10 @@ class Contractor extends PureComponent {
 
 const styles = StyleSheet.create({
   container: {
-    ...colors.shadow
+    flex: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.primaryColor
+    //...colors.shadow
   },
   title: {
     fontSize: fontSize.bodyText,

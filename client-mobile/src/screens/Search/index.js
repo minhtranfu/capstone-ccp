@@ -13,6 +13,8 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Location } from "expo";
+import { bindActionCreators } from "redux";
+import { DROPDOWN_OPTIONS } from "../../Utils/Constants";
 import { grantPermission } from "../../redux/reducers/permission";
 import { autoCompleteSearch } from "../../redux/actions/location";
 import { searchEquipment } from "../../redux/actions/equipment";
@@ -26,29 +28,12 @@ import InputField from "../../components/InputField";
 import Dropdown from "../../components/Dropdown";
 import SearchBar from "../../components/SearchBar";
 import Header from "../../components/Header";
-import { FlatList } from "react-native-gesture-handler";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import ParallaxList from "../../components/ParallaxList";
 import Title from "../../components/Title";
 import Calendar from "../../components/Calendar";
-
-const DROPDOWN_GENERAL_TYPES_OPTIONS = [
-  {
-    id: 0,
-    name: "Any Category",
-    value: "Any Category"
-  }
-];
-
-const DROPDOWN_TYPES_OPTIONS = [
-  {
-    id: 0,
-    name: "Any Type",
-    value: "Any Type"
-  }
-];
 
 @connect(
   state => {
@@ -57,11 +42,8 @@ const DROPDOWN_TYPES_OPTIONS = [
       generalType: state.type.listGeneralEquipmentType
     };
   },
-  dispatch => ({
-    fetchGeneralType: () => {
-      dispatch(getGeneralEquipmentType());
-    }
-  })
+  dispatch =>
+    bindActionCreators({ fetchGeneralType: getGeneralEquipmentType }, dispatch)
 )
 class Search extends Component {
   constructor(props) {
@@ -72,9 +54,6 @@ class Search extends Component {
       address: "",
       lat: null,
       lng: null,
-      modalVisible: false,
-      fromDate: "",
-      toDate: "",
       generalTypeIndex: 0,
       generalType: null,
       typeIndex: 0,
@@ -82,7 +61,9 @@ class Search extends Component {
       checked: 0,
       calendarVisible: false,
       beginDate: moment(),
-      endDate: moment().add(30, "days")
+      endDate: moment().add(30, "days"),
+      construction: null,
+      constructionIndex: 0
     };
   }
 
@@ -103,10 +84,6 @@ class Search extends Component {
     this.setState({ location: [], currentLat: "", currentLong: "" });
   };
 
-  _setModalVisible(visible) {
-    this.setState({ modalVisible: visible });
-  }
-
   _handleOnChangeText = async value => {
     const { lat, lng } = this.state;
     this.setState({
@@ -122,7 +99,7 @@ class Search extends Component {
       name: item.name,
       value: item.name
     }));
-    return [...DROPDOWN_GENERAL_TYPES_OPTIONS, ...newGeneralEquipmentTypeArray];
+    return [...DROPDOWN_OPTIONS.CATEGORY, ...newGeneralEquipmentTypeArray];
   };
 
   //Create new dropdown options for type
@@ -140,9 +117,9 @@ class Search extends Component {
         value: item.name,
         additionalSpecsFields: item.additionalSpecsFields
       }));
-      return [...DROPDOWN_TYPES_OPTIONS, ...newEquipmentTypeArray];
+      return [...DROPDOWN_OPTIONS.TYPE, ...newEquipmentTypeArray];
     }
-    return DROPDOWN_TYPES_OPTIONS;
+    return DROPDOWN_OPTIONS.TYPE;
   };
 
   _showAlert = msg => {
@@ -271,11 +248,11 @@ class Search extends Component {
           style={{ marginBottom: 10 }}
           isHorizontal={true}
           label={"Category"}
-          defaultText={DROPDOWN_GENERAL_TYPES_OPTIONS[0].name}
+          defaultText={DROPDOWN_OPTIONS.CATEGORY[0].name}
           onSelectValue={(value, index) => {
             if (index === 0) {
               this.setState({
-                type: DROPDOWN_TYPES_OPTIONS[0].name,
+                type: DROPDOWN_OPTIONS.CATEGORY[0].name,
                 typeIndex: 0
               });
             }
@@ -286,7 +263,7 @@ class Search extends Component {
         <Dropdown
           isHorizontal={true}
           label={"Type"}
-          defaultText={DROPDOWN_TYPES_OPTIONS[0].name}
+          defaultText={DROPDOWN_OPTIONS.TYPE[0].name}
           onSelectValue={(value, index) =>
             this.setState({ type: value, typeIndex: index })
           }
@@ -310,6 +287,15 @@ class Search extends Component {
             </Text>
           </View>
         </TouchableOpacity>
+        {/* <Dropdown
+          isHorizontal={true}
+          label={"Location"}
+          defaultText={DROPDOWN_OPTIONS.CONSTRUCTION[0].name}
+          onSelectValue={(value, index) =>
+            this.setState({ type: value, typeIndex: index })
+          }
+          options={this._handleEquipmentType(generalTypeIndex)}
+        /> */}
         <View style={styles.searchBoxWrapper}>
           <InputField
             label={"Address"}

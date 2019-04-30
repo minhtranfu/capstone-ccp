@@ -9,7 +9,9 @@ export function listTransactionBySupplier(contractorId) {
       type: Actions.LIST_SUPPLIER_TRANSACTION.REQUEST
     });
     try {
-      const res = await axios.get(`transactions/supplier/${contractorId}`);
+      const res = await axios.get(
+        `transactions/supplier/${contractorId}?orderBy=createdTime.desc`
+      );
       dispatch({
         type: Actions.LIST_SUPPLIER_TRANSACTION.SUCCESS,
         payload: res
@@ -29,7 +31,9 @@ export function listTransactionByRequester(contractorId) {
       type: Actions.LIST_REQUESTER_TRANSACTION.REQUEST
     });
     try {
-      const res = await axios.get(`transactions/requester/${contractorId}`);
+      const res = await axios.get(
+        `transactions/requester/${contractorId}?orderBy=createdTime.desc`
+      );
       dispatch({
         type: Actions.LIST_REQUESTER_TRANSACTION.SUCCESS,
         payload: res
@@ -135,7 +139,7 @@ export function responseAdjustTransaction(transactionId, status) {
       type: Actions.RESPONSE_ADJUST_TRANSACTION.REQUEST
     });
     const res = await axios.put(
-      `transactions/${transactionId}/adjustDateRequests`,
+      `transactionDateChangeRequests/${transactionId}`,
       status
     );
     dispatch({
@@ -184,7 +188,7 @@ export function listMaterialTransactionBySupplier(supplierId) {
         type: Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.REQUEST
       });
       const res = await axios.get(
-        `materialTransactions/supplier/${supplierId}`
+        `materialTransactions/supplier/${supplierId}?orderBy=createdTime.desc`
       );
       dispatch({
         type: Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.SUCCESS,
@@ -206,7 +210,7 @@ export function listMaterialTransactionByRequester(requesterId) {
     });
     try {
       const res = await axios.get(
-        `materialTransactions/requester/${requesterId}`
+        `materialTransactions/requester/${requesterId}?orderBy=createdTime.desc`
       );
       dispatch({
         type: Actions.LIST_REQUESTER_MATERIAL_TRANSACTION.SUCCESS,
@@ -255,7 +259,9 @@ export function listDebrisTransactionBySupplier() {
       dispatch({
         type: Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.REQUEST
       });
-      const res = await axios.get("debrisTransactions/supplier");
+      const res = await axios.get(
+        "debrisTransactions/supplier?orderBy=createdTime.desc"
+      );
       dispatch({
         type: Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.SUCCESS,
         payload: res
@@ -270,7 +276,9 @@ export function listDebrisTransactionBySupplier() {
 
 export function listDebrisTransactionByRequester() {
   return async dispatch => {
-    const res = await axios.get("debrisTransactions/requester");
+    const res = await axios.get(
+      "debrisTransactions/requester?orderBy=createdTime.desc"
+    );
     dispatch({
       type: Actions.GET_DEBRIS_TRANSACTION_BY_REQUESTER.SUCCESS,
       payload: res

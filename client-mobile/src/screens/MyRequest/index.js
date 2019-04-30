@@ -23,6 +23,12 @@ import {
 } from "../../redux/actions/notification";
 import RequireLogin from "../Login/RequireLogin";
 import Feather from "@expo/vector-icons/Feather";
+import i18n from "i18n-js";
+import {
+  DROPDOWN_OPTIONS,
+  TRANSACTION_STATUSES,
+  TABS
+} from "../../Utils/Constants";
 
 import DebrisTab from "./DebrisTab";
 import MaterialTab from "./MaterialTab";
@@ -41,62 +47,6 @@ import fontSize from "../../config/fontSize";
 import DebrisItem from "../../components/DebrisItem";
 import DebrisSearchItem from "../../components/DebrisSearchItem";
 import { COLORS } from "../../Utils/Constants";
-
-const DROPDOWN_OPTIONS = [
-  {
-    id: 0,
-    name: "All Statuses",
-    value: "All Statuses"
-  },
-  {
-    id: 1,
-    name: "Pending",
-    value: "Pending"
-  },
-  {
-    id: 2,
-    name: "Accepted",
-    value: "Accepted"
-  },
-  {
-    id: 3,
-    name: "Processing",
-    value: "Processing"
-  },
-  {
-    id: 4,
-    name: "Finished",
-    value: "Finished"
-  },
-  {
-    id: 5,
-    name: "Denied",
-    value: "Denied"
-  }
-];
-
-const TRANSACTION_STATUSES = [
-  {
-    code: "PENDING",
-    title: "Pending"
-  },
-  {
-    code: "ACCEPTED",
-    title: "Accepted"
-  },
-  {
-    code: "PROCESSING",
-    title: "Processing"
-  },
-  {
-    code: "FINISHED",
-    title: "Finished"
-  },
-  {
-    code: "DENIED",
-    title: "Denied"
-  }
-];
 
 const EQUIPMENT_STATUS = {
   AVAILABLE: "Available",
@@ -268,7 +218,7 @@ class MyRequest extends Component {
           label={"Filter"}
           defaultText={"All Statuses"}
           onSelectValue={value => this.setState({ status: value })}
-          options={DROPDOWN_OPTIONS}
+          options={DROPDOWN_OPTIONS.REQUEST}
           isHorizontal={true}
         />
         <View>
@@ -321,10 +271,6 @@ class MyRequest extends Component {
                       hasEquipmentStatus={true}
                       hasStatus={true}
                     />
-                    {/* {this._renderBottomStatus(
-                      item.status,
-                      item.equipment.status
-                    )} */}
                   </View>
                 ))}
               </View>
@@ -390,10 +336,10 @@ class MyRequest extends Component {
       return (
         <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
           <Header renderRightButton={this._showNotificationIcon}>
-            <Text style={styles.header}>My Request</Text>
+            <Text style={styles.header}>{i18n.t("MyRequest.Name")}</Text>
           </Header>
           <TabView
-            tabs={["Equipments", "Material", "Debris"]}
+            tabs={TABS.transaction.map(item => i18n.t(`MyRequest.${item}`))}
             onChangeTab={this._onChangeTab}
             activeTab={activeTab}
           />
