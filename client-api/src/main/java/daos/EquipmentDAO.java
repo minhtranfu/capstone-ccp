@@ -7,6 +7,7 @@ import dtos.wrappers.OrderByWrapper;
 import entities.*;
 import managers.ElasticSearchManager;
 import managers.FirebaseMessagingManager;
+import org.apache.commons.lang3.StringUtils;
 import utils.CommonUtils;
 
 import javax.ejb.Stateless;
@@ -175,7 +176,9 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	public List<EquipmentEntity> searchEquipmentByElasticSearch(String query, LocalDate beginDate, LocalDate endDate,
 																Double latitude, Double longitude, Double maxDistance, Long contractorId, Long equipmentTypeId,
 																String orderBy, int offset, int limit) {
-		List<Long> idList = elasticSearchManager.searchEquipment(query, contractorId, equipmentTypeId, orderBy, offset, limit);
+		List<Long> idList = elasticSearchManager.searchEquipment(query, contractorId, equipmentTypeId, orderBy);
+		String idListString = StringUtils.join(idList.toArray(new Long[0]), ",");
+		LOGGER.info("idListString="+idListString);
 		if (idList.isEmpty()) {
 			return new ArrayList<EquipmentEntity>();
 		}
@@ -202,6 +205,7 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		ParameterExpression<Double> curLatParam = criteriaBuilder.parameter(Double.class, "curLatParam");
 		ParameterExpression<Double> curLongParam = criteriaBuilder.parameter(Double.class, "curLongParam");
 		ParameterExpression<Double> maxDistanceParam = criteriaBuilder.parameter(Double.class, "maxDistanceParam");
+		ParameterExpression<String> idListStringParam = criteriaBuilder.parameter(String.class);
 
 //		select equipment available in current timerange
 		List<Predicate> whereClausesTimeRangeQuery = new ArrayList<>();
@@ -256,6 +260,9 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 		);
 
 
+		Order orderByIdListOrder = criteriaBuilder.asc(criteriaBuilder
+				.function("find_in_set", Long.class, e.get("id"), idListStringParam));
+		criteriaQuery.orderBy(orderByIdListOrder);
 
 //		if (!orderBy.isEmpty()) {
 //			List<Order> orderList = new ArrayList<>();
@@ -267,10 +274,9 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 //				}
 //			}
 //			criteriaQuery.orderBy(orderList);
-//		}
+//		}c
 
 		TypedQuery<EquipmentEntity> typeQuery = entityManager.createQuery(criteriaQuery);
-
 
 		if (beginDate != null) {
 			typeQuery.setParameter(beginDateParam, beginDate);
@@ -289,24 +295,24 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 		//set equipment list
 		typeQuery.setParameter(idListParam, idList);
-
-//		typeQuery.setFirstResult(offset);
-//		typeQuery.setMaxResults(limit);
+		typeQuery.setParameter(idListStringParam, idListString);
+		typeQuery.setFirstResult(offset);
+		typeQuery.setMaxResults(limit);
 
 		List<EquipmentEntity> resultList = typeQuery.getResultList();
 		// TODO: 4/28/19 sort result list by id
-		ArrayList<EquipmentEntity> sortedResultList = new ArrayList<>();
-		for (Long id : idList) {
-			try {
-				sortedResultList.add(resultList.stream().filter(entity -> entity.getId() == id).findAny()
-						.orElseThrow(InternalServerErrorException::new));
-			} catch (InternalServerErrorException e1) {
-//				e1.printStackTrace();
-//				LOGGER.info("searchEquipmentByElasticSearch(), equipment id=%s is filtered");
-				// simply dont add it =="
-			}
-		}
-		return sortedResultList;
+//		ArrayList<EquipmentEntity> sortedResultList = new ArrayList<>();
+//		for (Long id : idList) {
+//			try {
+//				sortedResultList.add(resultList.stream().filter(entity -> entity.getId() == id).findAny()
+//						.orElseThrow(InternalServerErrorException::new));
+//			} catch (InternalServerErrorException e1) {
+////				e1.printStackTrace();
+////				LOGGER.info("searchEquipmentByElasticSearch(), equipment id=%s is filtered");
+//				// simply dont add it =="
+//			}
+//		}
+		return resultList;
 
 
 	}

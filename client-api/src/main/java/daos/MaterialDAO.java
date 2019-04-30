@@ -5,6 +5,7 @@ import dtos.wrappers.OrderByWrapper;
 import entities.*;
 import entities.MaterialEntity;
 import managers.ElasticSearchManager;
+import org.apache.commons.lang3.StringUtils;
 import utils.CommonUtils;
 import utils.Constants;
 
@@ -17,12 +18,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Stateless
 public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 
+	private static final Logger LOGGER = Logger.getLogger(MaterialDAO.class.toString());
 	@Inject
 	ElasticSearchManager elasticSearchManager;
 
@@ -94,7 +97,9 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 	public List<MaterialEntity> searchMaterialByElasticSearch(Long contractorId, String query, long materialTypeId, String orderBy, int offset, int limit) {
 
 		//"select e from MaterialEntity  e where e.materialType.id = :materialTypeId and e.name like '%query%'"
-		List<Long> idList = elasticSearchManager.searchMaterial(contractorId, query, materialTypeId, orderBy, offset, limit);
+		List<Long> idList = elasticSearchManager.searchMaterial(contractorId, query, materialTypeId, orderBy);
+		String idListString = StringUtils.join(idList.toArray(new Long[0]), ",");
+		LOGGER.info("idListString="+idListString);
 
 		if (idList.isEmpty()) {
 			return new ArrayList<MaterialEntity>();
@@ -108,12 +113,17 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 
 
 		ParameterExpression<List> idListParam = criteriaBuilder.parameter(List.class, "idListParam");
+		ParameterExpression<String> idListStringParam = criteriaBuilder.parameter(String.class);
 
 //		merge 3 main where clauses
 		criteriaQuery.select(e).where(
 				e.get("id").in(idListParam)
 		);
 
+
+		Order orderByIdListOrder = criteriaBuilder.asc(criteriaBuilder
+				.function("find_in_set", Long.class, e.get("id"), idListStringParam));
+		criteriaQuery.orderBy(orderByIdListOrder);
 
 //
 //		if (!orderBy.isEmpty()) {
@@ -131,22 +141,23 @@ public class MaterialDAO extends BaseDAO<MaterialEntity, Long> {
 		TypedQuery<MaterialEntity> typeQuery = entityManager.createQuery(criteriaQuery);
 
 		typeQuery.setParameter(idListParam, idList);
+		typeQuery.setParameter(idListStringParam, idListString);
 
-//		typeQuery.setFirstResult(offset);
-//		typeQuery.setMaxResults(limit);
+		typeQuery.setFirstResult(offset);
+		typeQuery.setMaxResults(limit);
 		List<MaterialEntity> resultList = typeQuery.getResultList();
 		// TODO: 4/28/19 sort result list by id
-		ArrayList<MaterialEntity> sortedResultList = new ArrayList<>();
-		for (Long id : idList) {
-			try {
-				sortedResultList.add(resultList.stream().filter(entity -> entity.getId() == id).findAny()
-						.orElseThrow(InternalServerErrorException::new));
-			} catch (InternalServerErrorException e1) {
-				e1.printStackTrace();
-				// simply dont add it =="
-			}
-		}
-		return sortedResultList;
+//		ArrayList<MaterialEntity> sortedResultList = new ArrayList<>();
+//		for (Long id : idList) {
+//			try {
+//				sortedResultList.add(resultList.stream().filter(entity -> entity.getId() == id).findAny()
+//						.orElseThrow(InternalServerErrorException::new));
+//			} catch (InternalServerErrorException e1) {
+//				e1.printStackTrace();
+//				// simply dont add it =="
+//			}
+//		}
+		return resultList;
 	}
 
 	public GETListResponse<MaterialEntity> getBySupplierId(long supplierId, int limit, int offset, String orderBy) {

@@ -4,6 +4,7 @@ import dtos.responses.GETListResponse;
 import dtos.wrappers.OrderByWrapper;
 import entities.*;
 import managers.ElasticSearchManager;
+import org.apache.commons.lang3.StringUtils;
 import utils.CommonUtils;
 import utils.Constants;
 
@@ -14,12 +15,14 @@ import javax.persistence.criteria.*;
 import javax.ws.rs.InternalServerErrorException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Stateless
 public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 
+	private static final Logger LOGGER = java.util.logging.Logger.getLogger(DebrisPostDAO.class.toString());
 	@Inject
 	ElasticSearchManager elasticSearchManager;
 
@@ -291,7 +294,9 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 
 
 		//select e from DebrisPostEntity  e where 1=1  and e.title like '%a%' and calcDistance(e.latitude,e.longitude,10,106) <= 1000 and exists (select t from DebrisServiceTypeDebrisPostEntity t where t.debrisPostId = e.id and t.debrisServiceTypeId in (1,3)) and e.hidden = false  and e.status = 'PENDING'
-		List<Long> idList = elasticSearchManager.searchDebrisPost(contractorId, query, orderBy, offset, limit);
+		List<Long> idList = elasticSearchManager.searchDebrisPost(contractorId, query, orderBy);
+		String idListString = StringUtils.join(idList.toArray(new Long[0]), ",");
+		LOGGER.info("idListString="+idListString);
 		if (idList.isEmpty()) {
 			return new ArrayList<DebrisPostEntity>();
 		}
@@ -303,6 +308,7 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 		Root<DebrisPostEntity> e = criteriaQuery.from(DebrisPostEntity.class);
 
 		ParameterExpression<List> idListParam = criteriaBuilder.parameter(List.class, "idListParam");
+		ParameterExpression<String> idListStringParam = criteriaBuilder.parameter(String.class);
 
 		ParameterExpression<Double> curLatParam = criteriaBuilder.parameter(Double.class);
 		ParameterExpression<Double> curLongParam = criteriaBuilder.parameter(Double.class);
@@ -348,6 +354,12 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 
 		);
 
+		Order orderByIdListOrder = criteriaBuilder.asc(criteriaBuilder
+				.function("find_in_set", Long.class, e.get("id"), idListStringParam));
+		criteriaQuery.orderBy(orderByIdListOrder);
+
+
+
 //		if (!orderBy.isEmpty()) {
 //			List<Order> orderList = new ArrayList<>();
 //			// TODO: 2/14/19 string split to orderBy list
@@ -374,6 +386,7 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 
 
 
+
 		if (latitude != null && longitude != null && maxDistance != null) {
 			typeQuery.setParameter(curLatParam, latitude);
 			typeQuery.setParameter(curLongParam, longitude);
@@ -385,23 +398,23 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 			typeQuery.setParameter(debrisServiceTypesParam, debrisTypeIdList);
 		}
 
-
-//		typeQuery.setFirstResult(offset);
-//		typeQuery.setMaxResults(limit);
+		typeQuery.setParameter(idListStringParam, idListString);
+		typeQuery.setFirstResult(offset);
+		typeQuery.setMaxResults(limit);
 		List<DebrisPostEntity> resultList = typeQuery.getResultList();
 		// TODO: 4/28/19 sort result list by id
-		ArrayList<DebrisPostEntity> sortedResultList = new ArrayList<>();
-		for (Long id : idList) {
-			try {
-				sortedResultList.add(resultList.stream().filter(entity -> entity.getId() == id).findAny()
-						.orElseThrow(InternalServerErrorException::new));
-			} catch (InternalServerErrorException e1) {
-				e1.printStackTrace();
-				// simply dont add it =="
-			}
-		}
-		return sortedResultList;
-//		return typeQuery.getResultList();
+//		ArrayList<DebrisPostEntity> sortedResultList = new ArrayList<>();
+//		for (Long id : idList) {
+//			try {
+//				sortedResultList.add(resultList.stream().filter(entity -> entity.getId() == id).findAny()
+//						.orElseThrow(InternalServerErrorException::new));
+//			} catch (InternalServerErrorException e1) {
+//				e1.printStackTrace();
+//				// simply dont add it =="
+//			}
+//		}
+//		return sortedResultList;
+		return typeQuery.getResultList();
 
 
 	}

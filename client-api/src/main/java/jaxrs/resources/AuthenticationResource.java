@@ -22,6 +22,7 @@ import org.eclipse.microprofile.jwt.ClaimValue;
 import org.mindrot.jbcrypt.BCrypt;
 import utils.Constants;
 import utils.ModelConverter;
+import utils.PasswordAutoGenerator;
 import utils.TokenUtil;
 
 import javax.annotation.security.RolesAllowed;
@@ -61,6 +62,9 @@ public class AuthenticationResource {
 
 	@Inject
 	ContractorAccountDAO contractorAccountDAO;
+
+	@Inject
+	PasswordAutoGenerator passwordAutoGenerator;
 
 	@Inject
 	@Claim("contractorId")
@@ -380,17 +384,7 @@ public class AuthenticationResource {
 	}
 
 
-	@POST
-	@Path("forgotPassword")
-	public Response forgotPassword(@Valid ForgotPasswordRequest changePasswordRequest) {
 
-		String email = changePasswordRequest.getEmail();
-
-		// TODO: 4/30/19 generate new passwrod
-		// TODO: 4/30/19 send changed password to email
-		return Response.ok().build();
-
-	}
 
 
 //	@POST

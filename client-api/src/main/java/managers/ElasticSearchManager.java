@@ -35,6 +35,7 @@ public class ElasticSearchManager {
 	private static final String INDEX_MATERIAL = "ccp-material";
 	private static final String INDEX_DEBRIS_POST = "ccp-debris_post";
 	private static final String INDEX_EQUIPMENT = "ccp-equipment";
+	private static final int DEFAULT_ELASTICSEARCH_RESULT_LIMIT = 10000;
 
 
 	public long searchElastic() {
@@ -70,7 +71,7 @@ public class ElasticSearchManager {
 
 	public List<Long> searchEquipment() {
 		return this.searchEquipment("xe", 12l, 4l,
-				"_score.desc", 0, 1000);
+				"_score.desc");
 	}
 
 
@@ -83,7 +84,7 @@ public class ElasticSearchManager {
 		return client;
 	}
 
-	public List<Long> searchMaterial(Long contractorId, String query, Long materialTypeId, String orderBy, int offset, int limit) {
+	public List<Long> searchMaterial(Long contractorId, String query, Long materialTypeId, String orderBy) {
 		RestHighLevelClient client = getNewClient();
 
 
@@ -110,7 +111,7 @@ public class ElasticSearchManager {
 
 
 		// TODO: 4/28/19 must related to orderBy
-		searchSourceBuilder.from(offset).size(limit);
+		searchSourceBuilder.from(0).size(DEFAULT_ELASTICSEARCH_RESULT_LIMIT);
 
 		// TODO: 4/28/19 fix this shit, cant do it now because already done in search DAO
 
@@ -152,7 +153,7 @@ public class ElasticSearchManager {
 	public List<Long> searchDebrisPost(Long contractorId
 			, String query
 			, String orderBy
-			, int offset, int limit) {
+			) {
 		RestHighLevelClient client = getNewClient();
 
 
@@ -173,7 +174,7 @@ public class ElasticSearchManager {
 
 		searchSourceBuilder.query(boolQuery);
 
-		searchSourceBuilder.from(offset).size(limit);
+		searchSourceBuilder.from(0).size(DEFAULT_ELASTICSEARCH_RESULT_LIMIT);
 
 		// TODO: 4/28/19 fix this shit, cant do it now because already done in search DAO
 
@@ -214,7 +215,7 @@ public class ElasticSearchManager {
 	}
 
 	public List<Long> searchEquipment(String query, Long contractorId, Long equipmentTypeId,
-									  String orderBy, int offset, int limit) {
+									  String orderBy) {
 		RestHighLevelClient client = getNewClient();
 
 
@@ -237,8 +238,9 @@ public class ElasticSearchManager {
 
 		searchSourceBuilder.query(boolQuery);
 
-//		 TODO: 4/28/19 must related to orderBy
-		searchSourceBuilder.from(offset).size(limit);
+//		 TODO: 4/28/19 only paging after filter all in DAO
+		//default size of elastic search is 10 so this is necessary
+		searchSourceBuilder.from(0).size(DEFAULT_ELASTICSEARCH_RESULT_LIMIT);
 
 
 		// TODO: 4/28/19 fix this shit, cant do it now because already done in search DAO
@@ -263,7 +265,6 @@ public class ElasticSearchManager {
 			for (SearchHit hit : hits) {
 				long id = Long.parseLong(hit.getId());
 				resultList.add(id);
-
 			}
 
 			long totalHitsNumber = hits.getTotalHits();

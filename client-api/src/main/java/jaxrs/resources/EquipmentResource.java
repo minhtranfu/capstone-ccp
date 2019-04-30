@@ -90,7 +90,7 @@ public class EquipmentResource {
 //	Nghia's house address
 	private static final String DEFAULT_LAT = "10.806488";
 	private static final String DEFAULT_LONG = "106.676364";
-	private static final String DEFAULT_RESULT_LIMIT = "100";
+	private static final String DEFAULT_RESULT_LIMIT = "50";
 
 
 	private void validateBeginEndDate(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {

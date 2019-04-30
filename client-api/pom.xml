@@ -198,7 +198,7 @@
         </dependency>
 
         <dependency>
-                <groupId>org.nd4j</groupId>
+            <groupId>org.nd4j</groupId>
             <artifactId>${nd4j.backend}</artifactId>
             <version>${nd4j.version}</version>
         </dependency>
@@ -221,6 +221,14 @@
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>${elasticSearch.version}</version>
+        </dependency>
+
+        <!--for password generation-->
+        <!-- https://mvnrepository.com/artifact/org.passay/passay -->
+        <dependency>
+            <groupId>org.passay</groupId>
+            <artifactId>passay</artifactId>
+            <version>1.4.0</version>
         </dependency>
 
     </dependencies>
