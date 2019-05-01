@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import validate from 'validate.js';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
@@ -101,6 +102,20 @@ class AddEquipmentStep1 extends Step {
   // Handle select date range
   _onChangeDateRanage = (picker, rangeId) => {
     let { availableTimeRanges } = this.state;
+
+    let tempDate = moment(picker.startDate);
+    while (!tempDate.isAfter(picker.endDate)) {
+      if (this._isInvalidDate(tempDate, rangeId)) {
+
+        this.setState({
+          infoMessage: 'Invalid! The selected time range includes disabled date!'
+        });
+
+        return false;
+      }
+      tempDate.add(1, 'day');
+    }
+
     if (!availableTimeRanges) {
       availableTimeRanges = [];
     }
@@ -245,7 +260,6 @@ class AddEquipmentStep1 extends Step {
             onApply={(e, picker) => this._onChangeDateRanage(picker, i)}
             containerClass="custom-file"
             autoApply
-            alwaysShowCalendars
           >
             <div className="input-group date-range-picker">
               <div className="input-group-prepend">
@@ -362,10 +376,21 @@ class AddEquipmentStep1 extends Step {
   render() {
     const { entities, t } = this.props;
     const equipmentTypes = entities[ENTITY_KEY.EQUIPMENT_TYPES];
-    const { constructions, categories, categoryId, validateResult } = this.state;
+    const { constructions, categories, categoryId, validateResult, infoMessage } = this.state;
 
     return (
       <div className="container">
+        {infoMessage &&
+          <SweetAlert
+            info
+            confirmBtnText="OK"
+            confirmBtnBsStyle="default"
+            title="Info!"
+            onConfirm={() => this.setState({ infoMessage: undefined })}
+          >
+            {infoMessage}
+          </SweetAlert>
+        }
         <div className="row">
           <div className="col-12">
             <h4 className="my-3">General information</h4>
