@@ -142,20 +142,26 @@ class MaterialDetail extends Component {
                 </div>
                 <div className="col-md-6 py-2">
                   <h6>
+                    <span className="text-muted"><i className="fal fa-money-bill"></i> Price: </span>
+                    {material.price ? <span class="text-large">{formatPrice(material.price)}<i className="text-muted">/{material.materialType.unit}</i></span> : <Skeleton width={75}/>}
+                  </h6>
+                </div>
+                <div className="col-md-6 py-2">
+                  <h6>
                     <span className="text-muted"><i className="fal fa-tags"></i> Type: </span>
                     {material.materialType ? material.materialType.name : <Skeleton width={100}/>}
                   </h6>
                 </div>
                 <div className="col-md-6 py-2">
                   <h6>
-                    <span className="text-muted"><i className="fal fa-bullseye"></i> Construction: </span>
-                    {material.construction ? material.construction.name : <Skeleton width={100}/>}
+                    <span className="text-muted"><i className="fal fa-user-circle"></i> Manufacturer: </span>
+                    {material.manufacturer ? material.manufacturer : <Skeleton width={100}/>}
                   </h6>
                 </div>
                 <div className="col-md-6 py-2">
                   <h6>
-                    <span className="text-muted"><i className="fal fa-money-bill"></i> Price: </span>
-                    {material.price ? <span>{formatPrice(material.price)}<i className="text-muted">/{material.materialType.unit}</i></span> : <Skeleton width={75}/>}
+                    <span className="text-muted"><i className="fal fa-bullseye"></i> Construction: </span>
+                    {material.construction ? material.construction.name : <Skeleton width={100}/>}
                   </h6>
                 </div>
                 <div className="col-md-12 py-2">
