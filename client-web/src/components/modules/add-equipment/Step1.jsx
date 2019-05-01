@@ -15,8 +15,6 @@ import { ENTITY_KEY } from 'Common/app-const';
 
 import ccpApiService from 'Services/domain/ccp-api-service';
 import { getValidateFeedback } from 'Utils/common.utils';
-import { AddressInput } from 'Components/common';
-import { formatPrice } from 'Utils/format.utils';
 
 class AddEquipmentStep1 extends Step {
   constructor(props) {
@@ -206,6 +204,33 @@ class AddEquipmentStep1 extends Step {
     );
   };
 
+  /**
+   * Check date is invalid for disabling date of date range picker
+   */
+  _isInvalidDate = (date, rangeIndex) => {
+    const { availableTimeRanges } = this.state;
+    
+    if (availableTimeRanges.length === 0) {
+      return false;
+    }
+
+    // Check the date is not in any other date ranges
+    const inAvailableTimeRange = availableTimeRanges.find((range, index) => {
+
+      if (index === rangeIndex) {
+        return false;
+      }
+
+      if (!date.isBefore(range.beginDate) && !date.isAfter(range.endDate)) {
+        return true;
+      }
+
+      return false;
+    });
+
+    return !!inAvailableTimeRange;
+  };
+
   // render list date range picker with remove option
   _renderDateRangePickers = () => {
     let { availableTimeRanges } = this.state;
@@ -215,6 +240,7 @@ class AddEquipmentStep1 extends Step {
       return (
         <div key={i} className="input-group date-range-picker mb-4">
           <DateRangePicker
+            isInvalidDate={date => this._isInvalidDate(date, i)}
             minDate={moment()}
             onApply={(e, picker) => this._onChangeDateRanage(picker, i)}
             containerClass="custom-file"
