@@ -99,7 +99,7 @@ class LoginForm extends Component {
         {authentication.error &&
           <div className="col-md-12">
             <div className="alert alert-warning alert-dismissible fade show" role="alert">
-              {authentication.error.response ? authentication.error.response.data.message : authentication.error.message}
+              {authentication.error ? 'Wrong username or password' : authentication.error.message}
             </div>
           </div>
         }
