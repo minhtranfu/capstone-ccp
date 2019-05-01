@@ -26,40 +26,40 @@ class AddEquipmentStep1 extends Step {
       constructions: [],
       categories: [],
       availableTimeRanges: [{}],
-      validateResult: {}
+      validateResult: {},
     };
   }
 
   validateRules = {
     name: {
       presence: {
-        allowEmpty: false
-      }
+        allowEmpty: false,
+      },
     },
     constructionId: {
       presence: {
         allowEmpty: false,
-        message: '^Please select a construction'
-      }
+        message: '^Please select a construction',
+      },
     },
     address: {
       presence: {
         allowEmpty: false,
-        message: '^Please select an address'
-      }
+        message: '^Please select an address',
+      },
     },
     equipmentTypeId: {
       presence: {
         allowEmpty: false,
-        message: '^Please select an equipment type'
-      }
+        message: '^Please select an equipment type',
+      },
     },
     availableTimeRanges: {
       presence: {
         allowEmpty: false,
-        message: 'is required'
+        message: 'is required',
       },
-    }
+    },
   };
 
   componentDidMount() {
@@ -74,7 +74,7 @@ class AddEquipmentStep1 extends Step {
     try {
       const constructions = await ccpApiService.getConstructionsByContractorId(contractor.id);
       this.setState({
-        constructions
+        constructions,
       });
     } catch (error) {
       alert('Error while loading constructions');
@@ -83,11 +83,10 @@ class AddEquipmentStep1 extends Step {
 
   // Load equipment type categories
   _loadEquipmentTypeCategories = async () => {
-
     try {
       const categories = await ccpApiService.getEquipmentTypeCategories();
       this.setState({
-        categories
+        categories,
       });
     } catch (error) {
       alert('Error while loading categories');
@@ -110,16 +109,16 @@ class AddEquipmentStep1 extends Step {
 
     availableTimeRanges[rangeId] = {
       beginDate: picker.startDate.format('YYYY-MM-DD'),
-      endDate: picker.endDate.format('YYYY-MM-DD')
+      endDate: picker.endDate.format('YYYY-MM-DD'),
     };
 
     this.setState({
-      availableTimeRanges
+      availableTimeRanges,
     });
   };
 
   // Get date range in string by range id
-  _getLabelOfRange = (rangeId) => {
+  _getLabelOfRange = rangeId => {
     const { availableTimeRanges } = this.state;
     if (availableTimeRanges == undefined || availableTimeRanges.length == 0) {
       return '';
@@ -133,7 +132,7 @@ class AddEquipmentStep1 extends Step {
     const { beginDate, endDate } = range;
 
     return `${beginDate} - ${endDate}`;
-  }
+  };
 
   // Change value of field in state
   _handleFieldChange = e => {
@@ -146,7 +145,6 @@ class AddEquipmentStep1 extends Step {
     }
 
     if (name === 'constructionId' || name === 'equipmentTypeId') {
-
       if (+value === 0) {
         value = '';
       }
@@ -171,7 +169,7 @@ class AddEquipmentStep1 extends Step {
       ...this.state,
       availableTimeRanges: availableTimeRanges.filter(range => !!range.beginDate),
       constructions: undefined,
-      validateResult: undefined
+      validateResult: undefined,
     };
 
     // Validate form
@@ -193,16 +191,19 @@ class AddEquipmentStep1 extends Step {
 
     if (validateResult) {
       this.setState({
-        validateResult
+        validateResult,
       });
       return;
     }
 
-    this.setState({
-      validateResult
-    }, () => {
-      this._handleStepDone({ data });
-    });
+    this.setState(
+      {
+        validateResult,
+      },
+      () => {
+        this._handleStepDone({ data });
+      }
+    );
   };
 
   // render list date range picker with remove option
@@ -213,26 +214,43 @@ class AddEquipmentStep1 extends Step {
     return availableTimeRanges.map((range, i) => {
       return (
         <div key={i} className="input-group date-range-picker mb-4">
-          <DateRangePicker minDate={moment()} onApply={(e, picker) => this._onChangeDateRanage(picker, i)} containerClass="custom-file" autoApply alwaysShowCalendars>
-            {/* <input type="text" className="custom-file-input" id={`inputDate${i}`} />
-            <label className="custom-file-label" htmlFor={`inputDate${i}`} aria-describedby={`inputDate${i}`}>{this._getLabelOfRange(i) || 'Select time range'}</label> */}
+          <DateRangePicker
+            minDate={moment()}
+            onApply={(e, picker) => this._onChangeDateRanage(picker, i)}
+            containerClass="custom-file"
+            autoApply
+            alwaysShowCalendars
+          >
             <div className="input-group date-range-picker">
               <div className="input-group-prepend">
-                <label className="input-group-text" id={`inputDate${i}`}><i className="fal fa-calendar"></i></label>
+                <label className="input-group-text" id={`inputDate${i}`}>
+                  <i className="fal fa-calendar" />
+                </label>
               </div>
-              <input type="text" id={`inputDate${i}`} className="form-control" readOnly value={this._getLabelOfRange(i) || 'Select time range'} />
+              <input
+                type="text"
+                id={`inputDate${i}`}
+                className="form-control"
+                readOnly
+                value={this._getLabelOfRange(i) || 'Select time range'}
+              />
             </div>
           </DateRangePicker>
-          {numOfRange > 1 &&
+          {numOfRange > 1 && (
             <div className="input-group-append">
-              <button className="btn btn-outline-danger" onClick={e => {
-                e.preventDefault();
-                e.stopPropagation();
-                this._removeTimeRangePicker(i);
-                return false;
-              }}><i className="fal fa-trash"></i></button>
+              <button
+                className="btn btn-outline-danger"
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  this._removeTimeRangePicker(i);
+                  return false;
+                }}
+              >
+                <i className="fal fa-trash" />
+              </button>
             </div>
-          }
+          )}
         </div>
       );
     });
@@ -243,10 +261,7 @@ class AddEquipmentStep1 extends Step {
     const { availableTimeRanges } = this.state;
 
     this.setState({
-      availableTimeRanges: [
-        ...availableTimeRanges,
-        {}
-      ]
+      availableTimeRanges: [...availableTimeRanges, {}],
     });
   };
 
@@ -256,7 +271,7 @@ class AddEquipmentStep1 extends Step {
     availableTimeRanges = availableTimeRanges.filter((range, id) => id !== rangeId);
 
     this.setState({
-      availableTimeRanges
+      availableTimeRanges,
     });
   };
 
@@ -268,7 +283,9 @@ class AddEquipmentStep1 extends Step {
       return;
     }
 
-    const selectedContruction = constructions.find(construction => +construction.id === +constructionId);
+    const selectedContruction = constructions.find(
+      construction => +construction.id === +constructionId
+    );
 
     if (!selectedContruction) {
       this.setState({
@@ -290,7 +307,7 @@ class AddEquipmentStep1 extends Step {
   _handleSelectAddress = addressResult => {
     this.setState({
       ...addressResult,
-      isAddressEditted: true
+      isAddressEditted: true,
     });
   };
 
@@ -312,8 +329,8 @@ class AddEquipmentStep1 extends Step {
       address,
       longitude: undefined,
       latitude: undefined,
-      isAddressEditted: false
-    })
+      isAddressEditted: false,
+    });
   };
 
   render() {
@@ -329,55 +346,93 @@ class AddEquipmentStep1 extends Step {
           </div>
           <div className="col-md-6">
             <div className="form-group">
-              <label htmlFor="">{t('equipment.name')}: <i className="text-danger">*</i></label>
-              <input type="text" name="name" onChange={this._handleFieldChange} value={this.state.name || ''} className="form-control" maxLength="80" required />
+              <label htmlFor="">
+                {t('equipment.name')}: <i className="text-danger">*</i>
+              </label>
+              <input
+                type="text"
+                name="name"
+                onChange={this._handleFieldChange}
+                value={this.state.name || ''}
+                className="form-control"
+                maxLength="80"
+                required
+              />
               {getValidateFeedback('name', validateResult)}
             </div>
             <div className="form-group">
-              <label htmlFor="">Construction: <i className="text-danger">*</i></label>
-              <select name="constructionId" onChange={this._handleFieldChange} value={this.state.constructionId || '0'} id="construction_id" className="form-control" required>
+              <label htmlFor="">
+                Construction: <i className="text-danger">*</i>
+              </label>
+              <select
+                name="constructionId"
+                onChange={this._handleFieldChange}
+                value={this.state.constructionId || '0'}
+                id="construction_id"
+                className="form-control"
+                required
+              >
                 <option value="0">Choose...</option>
-                {constructions.map(construction => <option key={construction.id} value={construction.id}>{construction.name}</option>)}
+                {constructions.map(construction => (
+                  <option key={construction.id} value={construction.id}>
+                    {construction.name}
+                  </option>
+                ))}
               </select>
               {getValidateFeedback('constructionId', validateResult)}
             </div>
             <div className="form-group">
               <label htmlFor="">Address:</label>
-              <div>
-                {this.state.address || 'Select a construction...'}
-              </div>
-              {/* <AddressInput
-                inputProps={{
-                  value: this.state.address,
-                  onBlur: this._handleBlurAddressInput
-                }}
-                onChange={this._handleAddressChanged}
-                onSelect={this._handleSelectAddress}
-                />
-              {getValidateFeedback('address', validateResult)} */}
+              <div>{this.state.address || 'Select a construction...'}</div>
             </div>
             <div className="form-group">
               <label htmlFor="">Equipment Category: </label>
-              <select name="categoryId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.categoryId || ''} id="equip_type_id" className="form-control selectpicker">
+              <select
+                name="categoryId"
+                onChange={this._handleFieldChange}
+                data-live-search="true"
+                value={this.state.categoryId || ''}
+                id="equip_type_id"
+                className="form-control selectpicker"
+              >
                 <option value="0">Choose...</option>
-                {categories && categories.map(cat => {
-                  return (<option value={cat.id} key={cat.id}>{cat.name}</option>);
-                })}
+                {categories &&
+                  categories.map(cat => {
+                    return (
+                      <option value={cat.id} key={cat.id}>
+                        {cat.name}
+                      </option>
+                    );
+                  })}
               </select>
               {getValidateFeedback('categoryId', validateResult)}
             </div>
             <div className="form-group">
-              <label htmlFor="">Equipment type: <i className="text-danger">*</i></label>
-              <select name="equipmentTypeId" onChange={this._handleFieldChange} data-live-search="true" value={this.state.equipmentTypeId || '0'} id="equip_type_id" className="form-control selectpicker">
+              <label htmlFor="">
+                Equipment type: <i className="text-danger">*</i>
+              </label>
+              <select
+                name="equipmentTypeId"
+                onChange={this._handleFieldChange}
+                data-live-search="true"
+                value={this.state.equipmentTypeId || '0'}
+                id="equip_type_id"
+                className="form-control selectpicker"
+              >
                 <option value="0">Choose...</option>
-                {equipmentTypes && equipmentTypes.data && equipmentTypes.data.map(type => {
+                {equipmentTypes &&
+                  equipmentTypes.data &&
+                  equipmentTypes.data.map(type => {
+                    if (!!categoryId && type.generalEquipment.id !== categoryId) {
+                      return null;
+                    }
 
-                  if (!!categoryId && type.generalEquipment.id !== categoryId) {
-                    return null;
-                  }
-
-                  return (<option value={type.id} key={type.id}>{type.name}</option>);
-                })}
+                    return (
+                      <option value={type.id} key={type.id}>
+                        {type.name}
+                      </option>
+                    );
+                  })}
               </select>
               {getValidateFeedback('equipmentTypeId', validateResult)}
             </div>
@@ -389,12 +444,16 @@ class AddEquipmentStep1 extends Step {
               {getValidateFeedback('availableTimeRanges', validateResult)}
             </div>
             <div className="form-group text-center">
-              <button className="btn btn-outline-primary mt-4" onClick={this._addTimeRangePicker}><i className="fal fa-plus"></i> Add more time range</button>
+              <button className="btn btn-outline-primary mt-4" onClick={this._addTimeRangePicker}>
+                <i className="fal fa-plus" /> Add more time range
+              </button>
             </div>
           </div>
           <div className="col-12 text-center">
             <div className="form-group">
-              <button className="btn btn-primary" onClick={this._handleSubmitForm}>NEXT STEP <i className="fal fa-chevron-right"></i></button>
+              <button className="btn btn-primary" onClick={this._handleSubmitForm}>
+                NEXT STEP <i className="fal fa-chevron-right" />
+              </button>
             </div>
           </div>
         </div>
@@ -405,7 +464,7 @@ class AddEquipmentStep1 extends Step {
 
 AddEquipmentStep1.propTypes = {
   entities: PropTypes.object.isRequired,
-  fetchEquipmentTypes: PropTypes.func.isRequired
+  fetchEquipmentTypes: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -414,10 +473,13 @@ const mapStateToProps = state => {
 
   return {
     contractor,
-    entities
+    entities,
   };
 };
 
-export default connect(mapStateToProps, {
-  fetchEquipmentTypes
-})(withTranslation()(AddEquipmentStep1));
+export default connect(
+  mapStateToProps,
+  {
+    fetchEquipmentTypes,
+  }
+)(withTranslation()(AddEquipmentStep1));
