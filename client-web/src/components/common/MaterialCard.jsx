@@ -33,7 +33,7 @@ class MaterialCard extends PureComponent {
                   <div>{product.contractor.name}</div>
                   <div>
                     <StarRatings
-                      rating={product.contractor.averageEquipmentRating}
+                      rating={product.contractor.averageMaterialRating}
                       starDimension="15px"
                     />
                   </div>
