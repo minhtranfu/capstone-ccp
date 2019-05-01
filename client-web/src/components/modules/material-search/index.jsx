@@ -4,7 +4,7 @@ import MaterialCard from '../../common/MaterialCard';
 import Helmet from 'react-helmet-async';
 import Skeleton from 'react-loading-skeleton';
 
-import { materialServices } from "Services/domain/ccp";
+import { materialServices } from 'Services/domain/ccp';
 
 class MaterialSearch extends Component {
   constructor(props) {
@@ -12,7 +12,8 @@ class MaterialSearch extends Component {
 
     this.state = {
       products: [],
-      isFetching: true
+      isFetching: true,
+      criteria: {},
     };
   }
 
@@ -21,20 +22,20 @@ class MaterialSearch extends Component {
 
     this.setState({
       products,
-      isFetching: false
+      isFetching: false,
     });
   };
 
-  _handleSearch = async (criteria) => {
-
+  _handleSearch = async criteria => {
     this.setState({
-      isFetching: true
+      isFetching: true,
     });
     const products = await materialServices.searchMaterials(criteria);
 
     this.setState({
       products,
-      isFetching: false
+      isFetching: false,
+      criteria,
     });
   };
 
@@ -43,7 +44,7 @@ class MaterialSearch extends Component {
   }
 
   render() {
-    const { products, isFetching } = this.state;
+    const { products, isFetching, criteria } = this.state;
 
     return (
       <div>
@@ -60,17 +61,26 @@ class MaterialSearch extends Component {
             <div className="col-md-12">
               <h3>Result</h3>
             </div>
-            {(!products || products.length === 0) && !isFetching &&
+            {(!products || products.length === 0) && !isFetching && (
               <div className="col-md-12 text-center py-4 alert alert-info">
                 <h2>No material found, please try again with another criteria!</h2>
               </div>
-            }
-            {isFetching &&
+            )}
+            {isFetching && (
               <div className="bg-white p-4 w-100">
                 <Skeleton height={210} count={5} />
               </div>
-            }
-            {!isFetching && products && products.map((product, index) => <MaterialCard key={index} className="col-md-4" product={product} />)}
+            )}
+            {!isFetching &&
+              products &&
+              products.map((product, index) => (
+                <MaterialCard
+                  key={index}
+                  className="col-md-4"
+                  product={product}
+                  criteria={criteria}
+                />
+              ))}
           </div>
         </div>
       </div>
