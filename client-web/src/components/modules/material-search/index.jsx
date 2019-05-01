@@ -50,7 +50,7 @@ class MaterialSearch extends Component {
         <Helmet>
           <title>Home</title>
         </Helmet>
-        <div className="section-search text-light">
+        <div className="section-search text-light material">
           <div className="container">
             <MaterialSearchBox onSearch={this._handleSearch} isFetching={isFetching} />
           </div>

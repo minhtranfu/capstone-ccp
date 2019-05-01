@@ -145,7 +145,7 @@ class DebrisSearch extends Component {
 
     let containerClassName = '';
     if (!isSearched && !isFetching) {
-      containerClassName += 'flex-fill d-flex align-items-center section-search';
+      containerClassName += 'flex-fill d-flex align-items-center section-search debris';
     }
 
     return (
@@ -153,7 +153,7 @@ class DebrisSearch extends Component {
         <Helmet>
           <title>Home</title>
         </Helmet>
-        <div className={isSearched || isFetching ? 'section-search' : 'flex-fill pb-5'}>
+        <div className={isSearched || isFetching ? 'section-search debris' : 'flex-fill pb-5'}>
           <div className="container">
             <DebrisSearchBox criteria={criteria} onSearch={this._handleSearch} isFetching={isFetching} />
           </div>

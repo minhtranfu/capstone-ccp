@@ -83,7 +83,7 @@ class Home extends Component {
         <Helmet>
           <title>Home</title>
         </Helmet>
-        <div className="section-search text-light">
+        <div className="section-search text-light equipment">
           <div className="container">
             <SearchBox onSearch={this._handleSearch} isFetching={isFetching} />
           </div>
