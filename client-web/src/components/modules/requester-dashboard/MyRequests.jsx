@@ -170,6 +170,12 @@ class MyRequests extends Component {
    */
   _toggleRatingEquipmentTransaction = (feedbackTransaction) => {
     const { isShowRatingEquipmentTransaction } = this.state;
+
+    if (feedbackTransaction === true) {
+      const { feedbackTransaction: feedbackTransactionState } = this.state;
+      feedbackTransactionState.feedbacked = true;
+    }
+
     this.setState({
       isShowRatingEquipmentTransaction: !isShowRatingEquipmentTransaction,
       feedbackTransaction
@@ -249,11 +255,13 @@ class MyRequests extends Component {
       case TRANSACTION_STATUSES.FINISHED:
         statusClasses += 'badge-success';
         // TODO: Feedback function
-        changeStatusButtons = (
-          <div className="mt-2">
-            <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingEquipmentTransaction(transaction)}>Feedback</button>
-          </div>
-        );
+        if (!transaction.feedbacked) {
+          changeStatusButtons = (
+            <div className="mt-2">
+              <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingEquipmentTransaction(transaction)}>Feedback</button>
+            </div>
+          );
+        }
         break;
     }
 
@@ -608,7 +616,7 @@ class MyRequests extends Component {
         <ExtendTimeModal isOpen={isOpenExtendTimeModal} transaction={transactionToExtend} onClose={this._handleCloseExtendTimeModal}/>
         <RatingEquipmentTransaction
           isOpen={isShowRatingEquipmentTransaction}
-          onClose={() => this._toggleRatingEquipmentTransaction()}
+          onClose={this._toggleRatingEquipmentTransaction}
           transaction={feedbackTransaction}
         />
         <div className="row">
