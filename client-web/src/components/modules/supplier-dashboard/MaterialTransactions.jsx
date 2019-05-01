@@ -228,7 +228,7 @@ class MaterialTransactions extends Component {
               <Skeleton width={180} />
             </div>
             <div className="col-md-2 py-2 d-flex flex-column justify-content-center">
-              <Skeleton width={112} height={31} />
+              <Skeleton width={50} height={31} />
             </div>
           </div>
         );
@@ -318,8 +318,8 @@ class MaterialTransactions extends Component {
         statusClasses += ' badge-info';
         changeStatusButtons = (
           <div className="mb-2">
-            <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.ACCEPTED)}>Accept</button>
-            <button className="btn btn-sm btn-outline-danger ml-2" onClick={() => this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.DENIED)}>Deny</button>
+            <button className="btn btn-sm btn-block mb-2 btn-success" onClick={() => this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.ACCEPTED)}>Accept</button>
+            <button className="btn btn-sm btn-block btn-outline-danger" onClick={() => this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.DENIED)}>Deny</button>
           </div>
         );
         break;
@@ -329,7 +329,7 @@ class MaterialTransactions extends Component {
         statusClasses += ' badge-success';
         changeStatusButtons = (
           <div className="mb-2">
-            <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.DELIVERING)}>Deliver</button>
+            <button className="btn btn-sm btn-block btn-success" onClick={() => this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.DELIVERING)}>Deliver</button>
           </div>
         );
         break;
@@ -396,7 +396,7 @@ class MaterialTransactions extends Component {
           </div>
           <div className="col-md-2 py-2 d-flex flex-column justify-content-center">
             {changeStatusButtons}
-            <Link to={getRoutePath(routeConsts.MATERIAL_SUPPLY_DETAIL, { id: transaction.id })} className="btn btn-sm btn-outline-primary">View detail</Link>
+            <Link to={getRoutePath(routeConsts.MATERIAL_SUPPLY_DETAIL, { id: transaction.id })} className="btn btn-sm btn-block btn-link">Detail</Link>
           </div>
         </div>
       </CSSTransition>
