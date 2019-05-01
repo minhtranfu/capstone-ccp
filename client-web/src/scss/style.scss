@@ -145,8 +145,8 @@ nav.navbar {
     border-left: none;
     border-right: inherit;
     border-radius: 0.25rem 0 0 0.25rem;
-    font-family: FontAwesome;
-    content: '\F073' !important;
+    font-family: Font awesome\5 Pro !important;
+    content: "\F133" !important;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
@@ -658,9 +658,6 @@ nav.navbar {
       height: auto !important;
     }
   }
-}
-.date-range-picker .custom-file-label::after {
-  font-family: Font awesome\5 Pro;
 }
 .text-large,
 .text-x-large {

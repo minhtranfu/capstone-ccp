@@ -273,20 +273,6 @@ class AddEquipmentStep3 extends Step {
     this._handleGetSuggestedPrice(prevProps);
   }
 
-  _handleChooseSuggestedPrice = () => {
-    const { suggestedPrice } = this.state
-
-    // Prepare event data
-    const event = {
-      target: {
-        name: 'dailyPrice',
-        value: suggestedPrice,
-      },
-    };
-
-    this._handleFieldChange(event);
-  };
-
   render() {
     const {
       isFetching,
@@ -326,10 +312,10 @@ class AddEquipmentStep3 extends Step {
               <label htmlFor="daily_price">
                 Price per day (K): <i className="text-danger">*</i>
               </label>
-              <div className="mb-3">
+              <div className="mb-2">
                 <span className="text-muted">Suggested price:</span>
                 <span className="ml-1 text-primary">
-                  <strong>{formatPrice(suggestedPrice)}</strong>
+                  <strong>{formatPrice(suggestedPrice - 0.05 * suggestedPrice)} - {formatPrice(suggestedPrice + 0.05 * suggestedPrice)}</strong>
                 </span>
                 <i className="fal fa-question-circle text-muted ml-1" id="about_suggested_price"></i>
                 <UncontrolledTooltip
@@ -337,12 +323,6 @@ class AddEquipmentStep3 extends Step {
                 >
                   Suggested price base on recently market
                 </UncontrolledTooltip>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-outline-primary float-right"
-                  onClick={this._handleChooseSuggestedPrice}
-                >Choose this price</button>
-                <div className="clearfix"></div>
               </div>
               <input
                 type="string"

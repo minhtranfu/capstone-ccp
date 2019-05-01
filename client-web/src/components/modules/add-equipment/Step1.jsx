@@ -214,8 +214,14 @@ class AddEquipmentStep1 extends Step {
       return (
         <div key={i} className="input-group date-range-picker mb-4">
           <DateRangePicker minDate={moment()} onApply={(e, picker) => this._onChangeDateRanage(picker, i)} containerClass="custom-file" autoApply alwaysShowCalendars>
-            <input type="text" className="custom-file-input" id={`inputDate${i}`} />
-            <label className="custom-file-label" htmlFor={`inputDate${i}`} aria-describedby={`inputDate${i}`}>{this._getLabelOfRange(i) || 'Select time range'}</label>
+            {/* <input type="text" className="custom-file-input" id={`inputDate${i}`} />
+            <label className="custom-file-label" htmlFor={`inputDate${i}`} aria-describedby={`inputDate${i}`}>{this._getLabelOfRange(i) || 'Select time range'}</label> */}
+            <div className="input-group date-range-picker">
+              <div className="input-group-prepend">
+                <label className="input-group-text" id={`inputDate${i}`}><i className="fal fa-calendar"></i></label>
+              </div>
+              <input type="text" id={`inputDate${i}`} className="form-control" readOnly value={this._getLabelOfRange(i) || 'Select time range'} />
+            </div>
           </DateRangePicker>
           {numOfRange > 1 &&
             <div className="input-group-append">
