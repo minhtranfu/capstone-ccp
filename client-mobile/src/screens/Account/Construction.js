@@ -168,7 +168,7 @@ class Construction extends Component {
   );
 
   _renderModalItem = () => {
-    const { address, name } = this.state;
+    const { address, name, location } = this.state;
     return (
       <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
         <InputField
@@ -202,6 +202,7 @@ class Construction extends Component {
   _renderScrollViewItem = () => {
     const { list } = this.props;
     const { contractorId } = this.props.navigation.state.params;
+    console.log(list);
     return (
       <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
         {list.length > 0 ? (

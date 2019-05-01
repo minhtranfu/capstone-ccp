@@ -51,7 +51,7 @@ class Search extends Component {
     this.state = {
       keyword: "",
       location: [],
-      address: "",
+      address: null,
       lat: null,
       lng: null,
       generalTypeIndex: 0,
@@ -162,10 +162,21 @@ class Search extends Component {
       equipmentTypeIndex: this.state.typeIndex,
       equipmentType: this.state.type,
       q: keyword,
-      location: address ? location : {}
+      location: address ? location : null
+    };
+
+    const searchParams = {
+      beginDate: moment(beginDate).format("YYYY-MM-DD"),
+      endDate: moment(endDate).format("YYYY-MM-DD"),
+      equipmentTypeId: id !== 0 ? id : "",
+      q: keyword,
+      lquery: address || "",
+      long: lng || "",
+      lat: lat || ""
     };
     this.props.navigation.navigate("Result", {
-      equipment
+      equipment,
+      searchParams
     });
   };
 
@@ -287,20 +298,12 @@ class Search extends Component {
             </Text>
           </View>
         </TouchableOpacity>
-        {/* <Dropdown
-          isHorizontal={true}
-          label={"Location"}
-          defaultText={DROPDOWN_OPTIONS.CONSTRUCTION[0].name}
-          onSelectValue={(value, index) =>
-            this.setState({ type: value, typeIndex: index })
-          }
-          options={this._handleEquipmentType(generalTypeIndex)}
-        /> */}
+
         <View style={styles.searchBoxWrapper}>
           <InputField
-            label={"Address"}
+            label={"Receive address"}
             borderBottomWidth={0}
-            placeholder={"Equipment Location"}
+            placeholder={"Input your address"}
             customWrapperStyle={{ marginTop: 5, marginBottom: -15 }}
             inputType="text"
             onChangeText={value => {

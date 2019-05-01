@@ -7,13 +7,15 @@ import {
   FlatList,
   Alert,
   Dimensions,
-  TextInput
+  TextInput,
+  Image
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { searchEquipment } from "../../redux/actions/equipment";
 import { addSubscription } from "../../redux/actions/subscription";
+import { LinearGradient } from "expo";
 
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";
@@ -66,10 +68,10 @@ class EquipmentResult extends Component {
   }
 
   componentDidMount() {
-    const { equipment, params } = this.props.navigation.state.params;
+    const { equipment, searchParams } = this.props.navigation.state.params;
     const { offset } = this.state;
 
-    this.props.fetchSearchEquipment(equipment, offset);
+    this.props.fetchSearchEquipment(searchParams, offset);
   }
 
   _showAlert = (title, msg) => {
@@ -150,17 +152,6 @@ class EquipmentResult extends Component {
 
   _renderAddSubscription = () => {
     const { equipment } = this.props.navigation.state.params;
-    // const { beginDate, endDate } = this.state;
-    // const subscriptionInfo = {
-    //   beginDate: moment(beginDate).format("MM/YY"),
-    //   endDate: moment(endDate).format("MM/YY"),
-    //   equipmentType: {
-    //     id: equipmentTypeId
-    //   },
-    //   latitude: 0,
-    //   longitude: 0
-    // };
-
     return (
       <View
         style={{
@@ -169,23 +160,63 @@ class EquipmentResult extends Component {
           justifyContent: "center"
         }}
       >
+        <Image
+          source={require("../../../assets/images/air-plane.png")}
+          resizeMode={"contain"}
+          style={{ width: 100, height: 100, marginBottom: 15 }}
+        />
+        <Text
+          style={{
+            textAlign: "center",
+            marginBottom: 5,
+            fontSize: fontSize.bodyText,
+            fontWeight: "500",
+            color: colors.primaryColor
+          }}
+        >
+          Oops! No equipment available.
+        </Text>
         <Text
           style={{
             textAlign: "center",
             marginBottom: 5,
             fontSize: fontSize.secondaryText,
-            fontWeight: "500"
+            fontWeight: "500",
+            color: colors.primaryColor
           }}
         >
-          Not Available Equipment. Please subscribe and we will notify to you
-          when it is available
+          Please subscribe and we will notify to you when it is available
         </Text>
         <TouchableOpacity
           onPress={() =>
             this.props.navigation.navigate("AddSubscription", { equipment })
           }
+          style={{
+            backgroundColor: "transparent",
+            marginTop: 50
+          }}
         >
-          <Text>Add subscription</Text>
+          <LinearGradient
+            colors={["#F2E5A0", "#F2D06B", "#F2B33D", "#F29B30", "#D97B29"]}
+            start={[0.3, 0.2]}
+            style={{
+              height: 40,
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 20,
+              paddingHorizontal: 15
+            }}
+          >
+            <Text
+              style={{
+                color: colors.primaryColor,
+                fontSize: fontSize.bodyText,
+                fontWeight: "500"
+              }}
+            >
+              Add subscription
+            </Text>
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     );
@@ -249,15 +280,7 @@ class EquipmentResult extends Component {
 
   render() {
     const { listSearch, loading } = this.props;
-    const {
-      equipment
-      // keyword,
-      // beginDate,
-      // endDate,
-      // equipmentCat,
-      // equipmentType
-    } = this.props.navigation.state.params;
-    //const result = this._findResultByAddress(equipment);
+    const { equipment } = this.props.navigation.state.params;
 
     return (
       <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
@@ -289,9 +312,9 @@ class EquipmentResult extends Component {
                   index
                 })}
                 keyExtractor={(item, index) => index.toString()}
-                ListFooterComponent={this._renderFooter}
-                onEndReachedThreshold={0.5}
-                onEndReached={this._handleLoadMore}
+                // ListFooterComponent={this._renderFooter}
+                // onEndReachedThreshold={0.5}
+                // onEndReached={this._handleLoadMore}
               />
             ) : (
               this._renderAddSubscription()
@@ -309,41 +332,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.5)"
-  },
-  filterContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.4)"
-  },
-  modalWrapper: {
-    borderRadius: 5,
-    width: width,
-    height: 160,
-    backgroundColor: "white"
-  },
-  filterWrapper: {
-    borderRadius: 5,
-    width: width,
-    height: 200,
-    backgroundColor: "white",
-    paddingHorizontal: 15
-  },
-  rowWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-    paddingVertical: 10
-  },
-  buttonWrapper: {
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center"
-  },
   title: {
     fontSize: fontSize.h4,
     fontWeight: "600"
@@ -359,13 +347,6 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: "600",
     marginBottom: 3
-  },
-  textDone: {
-    fontWeight: "500",
-    fontSize: fontSize.bodyText,
-    color: colors.secondaryColor,
-    paddingTop: 15,
-    paddingBottom: 15
   },
   largeTitle: {
     alignItems: "center",

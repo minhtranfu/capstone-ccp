@@ -99,20 +99,20 @@ export function searchEquipment(equipment, offset) {
     value => `${value}=${equipment[value]}`
   );
   const queryString = params.join("&");
-  let url = `equipments?${queryString}&offset=${offset}&limit=10`;
+  let url = `equipments?${queryString}&offset=${offset}&limit=100`;
   console.log(url);
   return async dispatch => {
     try {
-      if (offset < 10) {
-        dispatch({
-          type: Actions.SEARCH_EQUIPMENT.REQUEST
-        });
-      }
+      // if (offset < 10) {
+      dispatch({
+        type: Actions.SEARCH_EQUIPMENT.REQUEST
+      });
+      // }
       const res = await axios.get(url);
       dispatch({
         type: Actions.SEARCH_EQUIPMENT.SUCCESS,
-        payload: res,
-        offset: offset
+        payload: res
+        // offset: offset
       });
     } catch (error) {
       dispatch({

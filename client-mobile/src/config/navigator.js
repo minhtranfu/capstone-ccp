@@ -144,7 +144,7 @@ const AccountStack = createStackNavigator(
     MyFeedback: MyFeedback,
     ChangeLanguage: ChangeLanguage
     // AuthLoading: AuthLoading,
-    // Auth: AuthStack
+    //Auth: AuthStack
   },
   {
     initialRouteName: "Account",
@@ -190,8 +190,8 @@ const MyEquipmentStack = createStackNavigator(
     MyBidsDetail: MyBidsDetail,
     AddDebrisPost: AddDebrisPost,
     AddServicesTypes: AddServicesTypes,
-    ManageImages: ManageImages,
-    Login
+    ManageImages: ManageImages
+    // Login
   },
   {
     headerMode: "none",
@@ -220,7 +220,7 @@ const MyTransactionStack = createStackNavigator(
     MaterialSupplierDetail: MaterialSupplierDetail,
     ContractorProfile: ContractorProfile,
     SupplierDebrisDetail: SupplierDebrisDetail,
-    Login,
+    // Login,
     Feedback: Feedback,
     CancelBid: CancelBid
   },
@@ -239,7 +239,7 @@ const MyRequestStack = createStackNavigator(
     ContractorProfile: ContractorProfile,
     MaterialRequesterDetail: MaterialRequesterDetail,
     DebrisDetail: DebrisDetail,
-    LoginModal: Login,
+    // LoginModal: Login,
     Feedback: Feedback,
     CancelBid: CancelBid
   },

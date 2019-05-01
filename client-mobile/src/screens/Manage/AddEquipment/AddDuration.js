@@ -6,10 +6,12 @@ import {
   TouchableOpacity,
   Animated,
   Alert,
-  ScrollView
+  ScrollView,
+  TextInput
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { Feather, Ionicons } from "@expo/vector-icons";
+import axios from "axios";
 
 import Calendar from "../../../components/Calendar";
 import Loading from "../../../components/Loading";
@@ -29,9 +31,34 @@ class AddDuration extends PureComponent {
       calendarIndex: 0,
       fromDate: "",
       toDate: "",
-      endDateRange: ""
+      endDateRange: "",
+      dailyPrice: 0,
+      suggestPrice: 0,
+      loading: false
     };
   }
+
+  componentDidMount() {
+    this._handleLoadSuggestPrice();
+  }
+
+  _handleLoadSuggestPrice = async () => {
+    const { data } = this.props.navigation.state.params;
+    const type = {
+      equipmentType: data.equipmentType,
+      additionalSpecsValues: data.additionalSpecsValues
+    };
+    this.setState({ loading: true });
+    const res = await axios.post("equipments/suggestedPrice", type);
+    if (res) {
+      this.setState({
+        suggestPrice: res.data.suggestedPrice,
+        loading: false
+      });
+    } else {
+      this.setState({ loading: false });
+    }
+  };
 
   _handleAddMore = () => {
     const { beginDate, endDate, index } = this.state;
@@ -96,6 +123,7 @@ class AddDuration extends PureComponent {
 
   _renderCalendar = (id, beginDate, endDate) => {
     const { timeRanges } = this.state;
+    console.log("asd", this._formatDate(beginDate));
     return (
       <Calendar
         visible={this.state.calendarVisible}
@@ -106,7 +134,7 @@ class AddDuration extends PureComponent {
         minDate={
           id > 0
             ? this._handleAddMoreDay(timeRanges[id - 1].endDate, 2)
-            : this._formatDate(beginDate)
+            : "2019-05-2"
         }
         maxDate={
           id > 0
@@ -223,7 +251,8 @@ class AddDuration extends PureComponent {
               delete item.id;
               return item;
             })
-          })
+          }),
+          dailyPrice: parseInt(this.state.dailyPrice)
         })
       }
     >
@@ -240,7 +269,7 @@ class AddDuration extends PureComponent {
   render() {
     const { beginDate, endDate, timeRanges, calendarIndex } = this.state;
     const { data } = this.props.navigation.state.params;
-    console.log(timeRanges);
+    const upperPrice = this.state.suggestPrice * 1.15;
     return (
       <SafeAreaView
         style={styles.container}
@@ -256,22 +285,38 @@ class AddDuration extends PureComponent {
           <Text style={styles.header}>Available time range</Text>
         </Header>
         <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-          {this.state.timeRanges.map((item, index) =>
-            this._renderDateRange(item, index)
-          )}
-          {this._renderCalendar(
-            calendarIndex,
-            Date.now(),
-            this._handleAddMoreMonth(Date.now(), 3)
-          )}
+          {!this.state.loading ? (
+            <View>
+              <Text>Price per day (K):</Text>
+              <Text>
+                Suggested price: {Math.round(this.state.suggestPrice)} -{" "}
+                {Math.round(upperPrice)}
+              </Text>
+              <TextInput
+                placeholder={"Input your price"}
+                keyboardType={"numeric"}
+                onChangeText={value => this.setState({ dailyPrice: value })}
+              />
+              {this.state.timeRanges.map((item, index) =>
+                this._renderDateRange(item, index)
+              )}
+              {this._renderCalendar(
+                calendarIndex,
+                Date.now(),
+                this._handleAddMoreMonth(Date.now(), 3)
+              )}
 
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.buttonPlus}
-            onPress={this._handleAddMore}
-          >
-            <Feather name="plus" size={24} color={"white"} />
-          </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.buttonPlus}
+                onPress={this._handleAddMore}
+              >
+                <Feather name="plus" size={24} color={"white"} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <Loading />
+          )}
         </ScrollView>
         <View style={styles.bottomWrapper}>
           {this._renderBottomButton(data, timeRanges)}

@@ -15,7 +15,7 @@ import MapView, { Marker } from "react-native-maps";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import Calendar from "react-native-calendar-select";
+import Calendar from "../../components/Calendar";
 import Swiper from "react-native-swiper";
 import { getEquipmentDetail } from "../../redux/actions/equipment";
 import moment from "moment";
@@ -49,16 +49,7 @@ class SearchDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      modalVisible: false,
       selectedDate: "",
-      startDate: "",
-      endDate: "",
-      minDate: "",
-      maxDate: "",
-      loadQueue: [0, 0, 0, 0],
-      fromDate: "",
-      toDate: "",
-      calendarVisible: false,
       isModalOpen: false,
       date: {},
       finishedAnimation: false
@@ -110,7 +101,6 @@ class SearchDetail extends Component {
   _handleDateChanged = (id, selectedDate) => {
     const { name } = this.props.detail.equipmentEntity;
     const { query } = this.props.navigation.state.params;
-    console.log(id);
     let newToDate = selectedDate.endDate
       ? selectedDate.endDate
       : this._handleAddMoreMonth(selectedDate.startDate, 3);
@@ -126,8 +116,15 @@ class SearchDetail extends Component {
     });
   };
 
-  renderDateTimeModal = (id, dateRange) => {
+  _renderDateTimeModal = (id, dateRange) => {
     const { isModalOpen } = this.state;
+    const newDateRange = dateRange
+      .filter(item => new Date(item.endDate) > new Date(Date.now()))
+      .map(item =>
+        new Date(item.beginDate) <= new Date(Date.now())
+          ? { ...item, beginDate: moment(Date.now()).format("YYYY-MM-DD") }
+          : item
+      );
     return (
       <Modal visible={isModalOpen}>
         <View
@@ -140,39 +137,14 @@ class SearchDetail extends Component {
             }}
             onClose={() => this.setState(() => ({ isModalOpen: false }))}
             single={true}
-            availableDateRange={dateRange}
+            availableDateRange={newDateRange}
           />
         </View>
       </Modal>
     );
   };
 
-  _onSelectDate = (fromDate, toDate, modalVisible) => {
-    const { id } = this.props.detail.equipmentEntity;
-    let newToDate = toDate ? toDate : this._handleAddMoreMonth(fromDate, 3);
-    const cart = {
-      equipment: {
-        id: id
-      },
-      beginDate: fromDate,
-      endDate: newToDate
-    };
-    this.props.navigation.navigate("ConfirmCart", { cart });
-  };
-  _onAddToCart = ({ startDate, endDate }) => {
-    const { id } = this.props.detail.equipmentEntity;
-    // this.setState({ fromDate, toDate, calendarVisible: false });
-    const cart = {
-      equipment: {
-        id: id
-      },
-      beginDate: this._handleFormatDate(startDate),
-      endDate: this._handleFormatDate(endDate)
-    };
-    this.props.navigation.navigate("ConfirmCart", { cart });
-  };
-
-  _showAvailableTimeRange = (item, index) => {
+  _showAvailableTimeRange = (index, item) => {
     return (
       <View key={index} style={styles.dateBoxWrapper}>
         <View>
@@ -205,18 +177,13 @@ class SearchDetail extends Component {
     const {
       name,
       contractor,
-      location,
-      available,
       availableTimeRanges,
       status,
       address,
       dailyPrice,
-      deliveryPrice,
       description,
-      thumbnailImage,
       equipmentImages,
-      latitude,
-      longitude
+      construction
     } = this.props.detail.equipmentEntity;
     console.log(this.props.detail);
     return (
@@ -292,20 +259,23 @@ class SearchDetail extends Component {
           style={[styles.text, { color: colors.text68, alignItems: "center" }]}
         >
           <MaterialIcons name={"location-on"} size={15} color={colors.text68} />
-          {address}
+          {construction.address}
         </Text>
         {this.state.finishedAnimation && (
           <MapView
             style={styles.mapWrapper}
             initialRegion={{
-              latitude: latitude,
-              longitude: longitude,
+              latitude: construction.latitude,
+              longitude: construction.longitude,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421
             }}
           >
             <Marker
-              coordinate={{ latitude: latitude, longitude: longitude }}
+              coordinate={{
+                latitude: construction.latitude,
+                longitude: construction.longitude
+              }}
               title={"Contractor location"}
               image={require("../../../assets/icons/icon8-marker-96.png")}
             />
@@ -338,7 +308,7 @@ class SearchDetail extends Component {
           renderScrollItem={this._renderScrollItem}
         />
 
-        {this.renderDateTimeModal(
+        {this._renderDateTimeModal(
           detail.equipmentEntity.id,
           detail.equipmentEntity.availableTimeRanges
         )}

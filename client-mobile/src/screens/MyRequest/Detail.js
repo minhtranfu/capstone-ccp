@@ -144,11 +144,12 @@ class EquipmentDetail extends Component {
     <Calendar
       animationType={"slide"}
       transparent={false}
-      minDate={moment(Date.now()).format("YYYY-MM-DD")}
+      minDate={moment(dateRange.begin).format("YYYY-MM-DD")}
+      maxDate={moment(dateRange.endDate).format("YYYY-MM-DD")}
       visible={this.state.calendarVisible}
       onLeftButtonPress={() => this._setCalendarVisible(false)}
       onSelectDate={this._handleSelectDate}
-      notAvailableDateRange={dateRange}
+      single={true}
     />
   );
 
@@ -299,10 +300,10 @@ class EquipmentDetail extends Component {
     const duration = moment.duration(end.diff(begin));
     const days = duration.asDays() + 1;
     const totalPrice = days * detail.dailyPrice;
-    const dateRange = detail.equipment.activeHiringTransactions.map(item => ({
-      beginDate: item.beginDate,
-      endDate: item.endDate
-    }));
+    const dateRange = {
+      beginDate: detail.beginDate,
+      endDate: detail.endDate
+    };
     console.log(detail);
     return (
       <View style={{ paddingHorizontal: 15 }}>

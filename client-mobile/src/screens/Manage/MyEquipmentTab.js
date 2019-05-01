@@ -96,7 +96,7 @@ class MyEquipmenTab extends PureComponent {
   _handleLoadMore = async () => {
     const { listEquipment, user } = this.props;
     const { offset, loadMore } = this.state;
-    if (listEquipment.length >= offset - 1 && loadMore === false) {
+    if (listEquipment.length >= offset - 1) {
       this.setState(
         {
           offset: offset + 10,

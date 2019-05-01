@@ -61,9 +61,9 @@ class AddSubscription extends Component {
         maxDistance: null,
         beginDate: equipment.beginDate || null,
         endDate: equipment.endDate || null,
-        address: location.lquery || null,
-        latitude: location.lat || 0,
-        longitude: location.long || 0
+        address: location ? location.lquery : null,
+        latitude: location ? location.lat : 0,
+        longitude: location ? location.long : 0
       },
       isModalOpen: false,
       generalType: equipment.equipmentCat || null,
@@ -231,7 +231,7 @@ class AddSubscription extends Component {
     return (
       <View>
         <InputField
-          label={"Price (K VND)"}
+          label={"Price (K)"}
           placeholder={"Input your max price"}
           customWrapperStyle={{ marginBottom: 20 }}
           inputType="text"

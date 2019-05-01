@@ -31,7 +31,10 @@ class Dropdown extends Component {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (prevState.options !== null && !_.isEqual(nextProps.options, prevState.options)) {
+    if (
+      prevState.options !== null &&
+      !_.isEqual(nextProps.options, prevState.options)
+    ) {
       console.log("ssss");
       return {
         options: nextProps.options,
@@ -133,7 +136,9 @@ class Dropdown extends Component {
             }}
           >
             <Text style={styles.label}>{this.props.label}</Text>
-            <Text style={styles.placeholder}>{this.state.pickerValue}</Text>
+            <Text style={styles.placeholder}>
+              {this.props.value || this.state.pickerValue}
+            </Text>
           </TouchableOpacity>
         )}
       </View>

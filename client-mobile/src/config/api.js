@@ -49,12 +49,10 @@ export default async function configAPI(config) {
               const refreshToken = await AsyncStorage.getItem(
                 "userRefreshToken"
               );
-              console.log(refreshToken);
               return refresh
                 .post(`authen/refresh`, { refreshToken })
-                .then(response => {
-                  console.log(response);
-                  AsyncStorage.setItem(
+                .then(async response => {
+                  await AsyncStorage.setItem(
                     "userToken",
                     response.data.tokenWrapper.accessToken
                   );
