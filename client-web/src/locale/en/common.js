@@ -18,4 +18,10 @@ export default {
   material: 'Material',
   debris: 'Debris',
   language: 'Language',
+
+  orderBy: 'Order by',
+  orderByScore: 'Score',
+  orderByLatest: 'Newest',
+  priceDescrease: 'Price descrease',
+  priceIncrease: 'Price increase',
 };

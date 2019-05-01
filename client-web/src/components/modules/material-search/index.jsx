@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import MaterialSearchBox from '../../common/MaterialSearchBox';
-import MaterialCard from '../../common/MaterialCard';
 import Helmet from 'react-helmet-async';
 import Skeleton from 'react-loading-skeleton';
+import { withTranslation } from 'react-i18next';
 
+import MaterialSearchBox from 'Components/common/MaterialSearchBox';
+import MaterialCard from 'Components/common/MaterialCard';
 import { materialServices } from 'Services/domain/ccp';
 
 class MaterialSearch extends Component {
@@ -43,7 +44,18 @@ class MaterialSearch extends Component {
     this._loadData();
   }
 
+  _handleSort = e => {
+    const { name, value } = e.target;
+    const { criteria } = this.state;
+
+    this._handleSearch({
+      ...criteria,
+      [name]: value,
+    });
+  };
+
   render() {
+    const { t } = this.props;
     const { products, isFetching, criteria } = this.state;
 
     return (
@@ -58,9 +70,25 @@ class MaterialSearch extends Component {
         </div>
         <div className="container">
           <div className="row py-3">
-            <div className="col-md-12">
-              <h3>Result</h3>
+            
+            <div className="col-md-12 d-flex justify-content-between">
+              <h3 className="d-inline">{t('common.result')}</h3>
+              <span className="form-inline">
+                {t('common.orderBy')}:
+                <select
+                  name="orderBy"
+                  id="equipment_order_by"
+                  className="form-control form-control-sm ml-1"
+                  onChange={this._handleSort}
+                >
+                  <option value="_score.desc">{t('common.orderByScore')}</option>
+                  <option value="created_time.desc">{t('common.orderByLatest')}</option>
+                  <option value="price.desc">{t('common.priceDescrease')}</option>
+                  <option value="price.asc">{t('common.priceIncrease')}</option>
+                </select>
+              </span>
             </div>
+
             {(!products || products.length === 0) && !isFetching && (
               <div className="col-md-12 text-center py-4 alert alert-info">
                 <h2>No material found, please try again with another criteria!</h2>
@@ -88,4 +116,4 @@ class MaterialSearch extends Component {
   }
 }
 
-export default MaterialSearch;
+export default withTranslation()(MaterialSearch);

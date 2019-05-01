@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link, withRouter } from "react-router-dom";
 import Helmet from 'react-helmet-async';
 import Skeleton from 'react-loading-skeleton';
+import { withTranslation } from 'react-i18next';
 
 import { debrisServices } from 'Services/domain/ccp';
 import DebrisSearchBox from './DebrisSearchBox';
@@ -32,10 +33,6 @@ class DebrisSearch extends Component {
 
   _loadData = async () => {
     const { criteria } = this.state;
-
-    if (Object.keys(criteria).length === 0) {
-      return;
-    }
     
     this.setState({
       isFetching: true
@@ -74,6 +71,16 @@ class DebrisSearch extends Component {
     this._loadData();
   }
 
+  _handleSort = e => {
+    const { name, value } = e.target;
+    const { criteria } = this.state;
+
+    this._handleSearch({
+      ...criteria,
+      [name]: value,
+    });
+  };
+
   _renderDebrisCard = debris => {
     const { criteria } = this.state;
     const { requester, debrisServiceTypes, debrisBids, thumbnailImage } = debris;
@@ -108,6 +115,7 @@ class DebrisSearch extends Component {
 
 
   _renderResults = () => {
+    const { t } = this.props;
     const { isSearched, isFetching, debrises } = this.state;
 
     if (!isSearched && !isFetching) {
@@ -117,8 +125,20 @@ class DebrisSearch extends Component {
     return (
       <div className="container">
         <div className="row py-3">
-          <div className="col-md-12">
-            <h3>Result</h3>
+          <div className="col-md-12 d-flex justify-content-between">
+            <h3 className="d-inline">{t('common.result')}</h3>
+            <span className="form-inline">
+              {t('common.orderBy')}:
+              <select
+                name="orderBy"
+                id="equipment_order_by"
+                className="form-control form-control-sm ml-1"
+                onChange={this._handleSort}
+              >
+                <option value="_score.desc">{t('common.orderByScore')}</option>
+                <option value="created_time.desc">{t('common.orderByLatest')}</option>
+              </select>
+            </span>
           </div>
           {(!debrises || debrises.length === 0) && !isFetching &&
             <div className="col-md-12 text-center py-4 alert alert-info">
@@ -151,7 +171,7 @@ class DebrisSearch extends Component {
     return (
       <div className={containerClassName}>
         <Helmet>
-          <title>Home</title>
+          <title>Find debris posts</title>
         </Helmet>
         <div className={isSearched || isFetching ? 'section-search debris' : 'flex-fill pb-5'}>
           <div className="container">
@@ -164,4 +184,4 @@ class DebrisSearch extends Component {
   }
 }
 
-export default withRouter(DebrisSearch);
+export default withTranslation()(withRouter(DebrisSearch));

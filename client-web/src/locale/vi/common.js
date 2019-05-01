@@ -18,4 +18,10 @@ export default {
   material: 'Vật liệu',
   debris: 'Dọn xà bần',
   language: 'Ngôn ngữ',
+
+  orderBy: 'Sắp xếp',
+  orderByScore: 'Liên quan',
+  orderByLatest: 'Mới nhất',
+  priceDescrease: 'Giá giảm dần',
+  priceIncrease: 'Giá tăng dần',
 };

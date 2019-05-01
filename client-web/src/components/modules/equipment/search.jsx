@@ -4,7 +4,7 @@ import EquipmentCard from '../../common/EquipmentCard';
 import Helmet from 'react-helmet-async';
 import moment from 'moment';
 import Skeleton from 'react-loading-skeleton';
-import { Collapse, Fade } from "reactstrap";
+import { Collapse, Fade } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -22,30 +22,29 @@ class Home extends Component {
 
     this.state = {
       products: [],
-      isFetching: false
+      isFetching: false,
     };
   }
 
   // Load search data on didmount
   _loadData = async () => {
     const products = await ccpApiService.searchEquipment({
-      beginDate: moment().format('YYYY-MM-DD')
+      beginDate: moment().format('YYYY-MM-DD'),
     });
 
     this.setState({
       products,
       isFetching: false,
       criteria: {
-        beginDate: moment().format('YYYY-MM-DD')
-      }
+        beginDate: moment().format('YYYY-MM-DD'),
+      },
     });
   };
 
   // Handle criteria change from search box
-  _handleSearch = async (criteria) => {
-
+  _handleSearch = async criteria => {
     this.setState({
-      isFetching: true
+      isFetching: true,
     });
     const products = await ccpApiService.searchEquipment(criteria);
 
@@ -54,7 +53,7 @@ class Home extends Component {
       criteria,
       isFetching: false,
       subcription: undefined,
-      isShowSubcribeBox: false
+      isShowSubcribeBox: false,
     });
   };
 
@@ -62,7 +61,7 @@ class Home extends Component {
   _toggleSubcribeBox = () => {
     const { isShowSubcribeBox } = this.state;
     this.setState({
-      isShowSubcribeBox: !isShowSubcribeBox
+      isShowSubcribeBox: !isShowSubcribeBox,
     });
   };
 
@@ -70,7 +69,17 @@ class Home extends Component {
   _handleSubcribed = subcription => {
     this.setState({
       subcription,
-      isShowSubcribeBox: false
+      isShowSubcribeBox: false,
+    });
+  };
+
+  _handleSort = e => {
+    const { name, value } = e.target;
+    const { criteria } = this.state;
+
+    this._handleSearch({
+      ...criteria,
+      [name]: value,
     });
   };
 
@@ -90,62 +99,88 @@ class Home extends Component {
         </div>
         <div className="container">
           <div className="row py-3">
-            <div className="col-md-12">
-              <h3>{t('common.result')}</h3>
+            <div className="col-md-12 d-flex justify-content-between">
+              <h3 className="d-inline">{t('common.result')}</h3>
+              <span className="form-inline">
+                {t('common.orderBy')}:
+                <select
+                  name="orderBy"
+                  id="equipment_order_by"
+                  className="form-control form-control-sm ml-1"
+                  onChange={this._handleSort}
+                >
+                  <option value="_score.desc">{t('common.orderByScore')}</option>
+                  <option value="created_time.desc">{t('common.orderByLatest')}</option>
+                  <option value="daily_price.desc">{t('common.priceDescrease')}</option>
+                  <option value="daily_price.asc">{t('common.priceIncrease')}</option>
+                </select>
+              </span>
             </div>
-            {(!products || products.length === 0) && !isFetching &&
+            {(!products || products.length === 0) && !isFetching && (
               <div className="col-md-12 py-4">
-                {!isShowSubcribeBox && !subcription &&
+                {!isShowSubcribeBox && !subcription && (
                   <Fade in={!isShowSubcribeBox && !subcription} className="text-center">
                     <div className="alert alert-info w-100 text-center">
                       <h2>No equipment found, please try again with another criteria!</h2>
                     </div>
                     <h2 className="text-center">OR</h2>
-                    {authentication.isAuthenticated &&
+                    {authentication.isAuthenticated && (
                       <button className="btn btn-primary" onClick={this._toggleSubcribeBox}>
-                        <i className="fal fa-binoculars"></i> Subcribe this criteria
+                        <i className="fal fa-binoculars" /> Subcribe this criteria
                       </button>
-                    }
-                    {!authentication.isAuthenticated &&
+                    )}
+                    {!authentication.isAuthenticated && (
                       <button className="btn btn-primary" onClick={toggleLoginModal}>
-                        <i className="fal fa-binoculars"></i> Login to subcribe this criteria
+                        <i className="fal fa-binoculars" /> Login to subcribe this criteria
                       </button>
-                    }
+                    )}
                   </Fade>
-                }
+                )}
                 <Collapse isOpen={isShowSubcribeBox}>
                   <h3 className="text-center">Subcribe to this criteria</h3>
-                  {isShowSubcribeBox &&
+                  {isShowSubcribeBox && (
                     <SubscriptionCardAdd
                       subscription={{
                         ...criteria,
-                        equipmentType: !criteria.equipmentTypeId ? undefined : { id: +criteria.equipmentTypeId }
+                        equipmentType: !criteria.equipmentTypeId
+                          ? undefined
+                          : { id: +criteria.equipmentTypeId },
                       }}
                       onCancelEdit={this._toggleSubcribeBox}
                       onCreated={this._handleSubcribed}
                     />
-                  }
+                  )}
                 </Collapse>
                 <Collapse isOpen={subcription}>
                   <h1 className="text-center text-success mt-3">
-                    <i className="fal fa-check-circle"></i> Subcribed
+                    <i className="fal fa-check-circle" /> Subcribed
                   </h1>
                   <div className="mt-2 mb-3 text-center">
-                    <Link className="btn btn-outline-primary" to={getRoutePath(routeConsts.SUBSCRIPTION_REQUEST)}>View my subscriptions</Link>
+                    <Link
+                      className="btn btn-outline-primary"
+                      to={getRoutePath(routeConsts.SUBSCRIPTION_REQUEST)}
+                    >
+                      View my subscriptions
+                    </Link>
                   </div>
                 </Collapse>
               </div>
-            }
-            {isFetching &&
+            )}
+            {isFetching && (
               <div className="bg-white p-4 w-100">
                 <Skeleton height={210} count={5} />
               </div>
-            }
-            {!isFetching && products &&
-              products.map((product, index) =>
-                <EquipmentCard key={index} className="col-md-4" product={product} criteria={criteria} />
-              )
-            }
+            )}
+            {!isFetching &&
+              products &&
+              products.map((product, index) => (
+                <EquipmentCard
+                  key={index}
+                  className="col-md-4"
+                  product={product}
+                  criteria={criteria}
+                />
+              ))}
           </div>
         </div>
       </div>
@@ -162,12 +197,15 @@ const mapStateToProps = state => {
   const { authentication } = state;
 
   return {
-    authentication
+    authentication,
   };
 };
 
 const mapDispatchToProps = {
-  toggleLoginModal: authActions.toggleLoginModal
+  toggleLoginModal: authActions.toggleLoginModal,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Home));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withTranslation()(Home));
