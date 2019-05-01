@@ -95,7 +95,7 @@ class EquipDetail extends Component {
                   id: transaction.id,
                 })}
               >
-                <h6>#{transaction.id} - {formatPrice()}</h6>
+                <h6>#{transaction.id} - {formatPrice(0)}</h6>
               </Link>
               <div className="my-">
                 <i className="fal fa-calendar" /> {formatDate(transaction.beginDate)} -{' '}
@@ -252,9 +252,9 @@ class EquipDetail extends Component {
                   {equipment.dailyPrice ? (
                     <h6>
                       <span className="text-muted">
-                        <i className="fal fa-money-bill" />
+                        <i className="fal fa-money-bill" /> Daily price:
                       </span>{' '}
-                      Daily price: {formatPrice(equipment.dailyPrice)}
+                      <span className="text-large">{formatPrice(equipment.dailyPrice)}</span>
                     </h6>
                   ) : (
                     <Skeleton width={200} />
