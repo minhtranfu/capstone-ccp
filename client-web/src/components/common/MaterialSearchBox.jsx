@@ -73,6 +73,13 @@ class MaterialSearchBox extends PureComponent {
               </div>
             </div>
             <div className="col-md-4">
+              <label htmlFor="keyword">Address:</label>
+              <AddressInput
+                onSelect={this._handleSelectLocation}
+                wrapperProps={{ className: 'text-dark' }}
+              />
+            </div>
+            <div className="col-md-4">
               <div className="form-group">
                 <label htmlFor="material_type">Material type:</label>
                 <select
@@ -90,13 +97,6 @@ class MaterialSearchBox extends PureComponent {
                     ))}
                 </select>
               </div>
-            </div>
-            <div className="col-md-4">
-              <label htmlFor="keyword">Address:</label>
-              <AddressInput
-                onSelect={this._handleSelectLocation}
-                wrapperProps={{ className: 'text-dark' }}
-              />
             </div>
             <div className="col-md-12">
               <button
