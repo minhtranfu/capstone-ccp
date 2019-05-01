@@ -5,6 +5,7 @@ import Image from './Image';
 import { formatPrice } from 'Utils/format.utils';
 import { getRoutePath, calcDistance } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
+import { StarRatings } from 'Components/common';
 
 class MaterialCard extends PureComponent {
   render() {
@@ -15,17 +16,37 @@ class MaterialCard extends PureComponent {
       <div className={`equip-card my-2 ${className}`}>
         <Link to={getRoutePath(routeConsts.MATERIAL_DETAIL, { id: product.id })}>
           <div className="card">
-            <div className="image-169 lh-1">
-              <Image src={thumbnail} height={210} className="card-img-top" alt={product.name} />
-            </div>
-            <div className="card-body">
-              <h6 className="card-title">
-                {product.name}{' '}
-                <span className="float-right">
-                  {formatPrice(product.price)}
-                  <small className="text-muted">/{product.materialType.unit}</small>
+            <div className="thumbnail">
+              <div className="image-169 lh-1">
+                <Image src={thumbnail} height={210} className="card-img-top" alt={product.name} />
+              </div>
+              <div className="d-flex align-items-center info lh-1">
+                <Image
+                  circle
+                  src={product.contractor.thumbnailImageUrl}
+                  alt={`${product.contractor.name}'s avatar`}
+                  className="rounded-circle"
+                  width={40}
+                  height={40}
+                />
+                <span className="ml-2">
+                  <div>{product.contractor.name}</div>
+                  <div>
+                    <StarRatings
+                      rating={product.contractor.averageEquipmentRating}
+                      starDimension="15px"
+                    />
+                  </div>
                 </span>
-                <span className="clearfix" />
+                <span className="ml-auto text-large price bg-primary">
+                  {formatPrice(product.dailyPrice)}
+                  <small>/{product.materialType.unit}</small>
+                </span>
+              </div>
+            </div>
+            <div className="card-body py-2 px-3">
+              <h6 className="card-title mb-1">
+                {product.name}
               </h6>
               <div className="text-muted">
                 <i className="fal fa-calendar" /> {product.materialType.name}
@@ -41,7 +62,8 @@ class MaterialCard extends PureComponent {
                       criteria.long,
                       construction.latitude,
                       construction.longitude
-                    )} Km
+                    )}{' '}
+                    Km
                   </span>
                 )}
               </div>
