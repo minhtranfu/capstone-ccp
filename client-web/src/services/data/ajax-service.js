@@ -32,7 +32,7 @@ instance.interceptors.response.use(
 
       if (!getRefreshToken()) {
         setTokens('', '');
-        history.push(getRoutePath(routeConsts.LOGIN));
+        window.logout();
 
         return Promise.reject(error);
       }
@@ -61,7 +61,9 @@ instance.interceptors.response.use(
       }
       catch (error) {
         setTokens('', '');
-        history.push(getRoutePath(routeConsts.LOGIN));
+        window.logout();
+
+        return Promise.reject(error);
       }
     }
 

@@ -56,9 +56,13 @@ function login(username, password) {
 function logout() {
   return async dispatch => {
     // unsubcribe notification
-    const token = localStorage.getItem(appConsts.NOTI_TOKEN);
-    if (token) {
-      await userServices.unsubcribeNotification(token);
+    try {
+      const token = localStorage.getItem(appConsts.NOTI_TOKEN);
+      if (token) {
+        await userServices.unsubcribeNotification(token);
+      }
+    } catch (error) {
+      console.log(error);
     }
 
     localStorage.removeItem(appConsts.JWT_KEY);
@@ -68,7 +72,7 @@ function logout() {
 
 function loadUserFromToken() {
   return async dispatch => {
-    let token = localStorage.getItem(appConsts.JWT_KEY);
+    const token = localStorage.getItem(appConsts.JWT_KEY);
     console.log('Current JWT token', token);
     if (!token || token === '') {//if there is no token, dont bother
       return;

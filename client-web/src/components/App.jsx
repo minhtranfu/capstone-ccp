@@ -14,7 +14,9 @@ import { authActions } from '../redux/actions';
 
 import PageLoader from './common/PageLoader';
 
-function App({ loadUserFromToken, authenticating, isAuthenticated }) {
+function App({ loadUserFromToken, authenticating, isAuthenticated, logout }) {
+
+  window.logout = logout;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -76,7 +78,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  loadUserFromToken: authActions.loadUserFromToken
+  loadUserFromToken: authActions.loadUserFromToken,
+  logout: authActions.logout,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
