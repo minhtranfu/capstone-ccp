@@ -21,12 +21,18 @@ module.exports = {
     }
   },
   getPort () {
-    return this.getRequiredProperty('example.port');
+    return this.getRequiredProperty('ccp.port');
   },
   getBasePath () {
-    return this.getRequiredProperty('example.basePath');
+    return this.getRequiredProperty('ccp.basePath');
   },
   getBaseUrl () {
-    return this.getRequiredProperty('example.baseUrl');
+    return this.getRequiredProperty('ccp.baseUrl');
+  },
+  getJwtKey () {
+    return this.getRequiredProperty('ccp.jwtKey');
+  },
+  getRefreshTokenKey () {
+    return this.getRequiredProperty('ccp.refreshTokenKey');
   }
 };

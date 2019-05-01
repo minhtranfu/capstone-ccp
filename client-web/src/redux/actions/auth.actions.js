@@ -3,7 +3,7 @@ import { appConsts } from 'Common/app-const';
 
 import { askForPermissioToReceiveNotifications } from "../../push-notification";
 import { userServices } from 'Services/domain/ccp';
-import { getErrorMessage } from 'Utils/common.utils';
+import { getErrorMessage, setTokens } from 'Utils/common.utils';
 
 /**
  * Decide what to export here
@@ -38,7 +38,8 @@ function login(username, password) {
 
     try {
       const user = await userServices.login(username, password);
-      localStorage.setItem(appConsts.JWT_KEY, user.tokenWrapper.accessToken);
+      const { accessToken, refreshToken } = user.tokenWrapper;
+      setTokens(accessToken, refreshToken);
 
       dispatch(loginSuccess(user.contractor));
       askForPermissioToReceiveNotifications();

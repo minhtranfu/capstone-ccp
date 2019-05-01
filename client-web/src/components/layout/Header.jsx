@@ -152,7 +152,6 @@ class Header extends Component {
             <ul className="navbar-nav mr-auto mt-2 mt-lg-0">{this._renderMenus(this.leftMenus)}</ul>
             <ul className="navbar-nav ml-auto mt-2 mt-lg-0">
               {this._renderMenus(this.rightMenus)}
-              <LanguageMenu />
             </ul>
             {authentication.isAuthenticated && (
               <ul className="navbar-nav">

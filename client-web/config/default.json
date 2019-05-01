@@ -1,7 +1,9 @@
 {
-  "example": {
+  "ccp": {
     "port": 3060,
-    "baseUrl": "https://ccp.hoctot.net/api"
+    "baseUrl": "https://ccp.hoctot.net/api",
+    "jwtKey": "JWT_TOKEN",
+    "refreshTokenKey": "REFRESH_TOKEN"
   },
   "app": {
     "currency": {

@@ -140,7 +140,7 @@ if (NodeUtils.isProduction()) {
   config.mode = 'development';
   config.entry = [
     'react-hot-loader/patch',
-    `webpack-dev-server/client?http://localhost:${appConfig.example.port}`,
+    `webpack-dev-server/client?http://localhost:${appConfig.ccp.port}`,
     'webpack/hot/only-dev-server',
     './src/Bootstrap'
   ];

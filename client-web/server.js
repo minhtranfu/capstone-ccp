@@ -4,10 +4,10 @@ const config = require('./config/config');
 const NodeService = require('./src/services/common/node-service');
 const path = require('path');
 
-const { example } = config;
-if (!example) throw new Error('configuration cannot be null/undefined');
+const { ccp } = config;
+if (!ccp) throw new Error('configuration cannot be null/undefined');
 
-const PORT = example.port;
+const PORT = ccp.port;
 
 const express = require('express');
 
