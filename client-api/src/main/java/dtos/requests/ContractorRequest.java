@@ -20,7 +20,7 @@ public class ContractorRequest {
 	public String phoneNumber;
 
 
-	@NotEmpty
+//	@NotEmpty
 	public String thumbnailImageUrl;
 
 

@@ -141,7 +141,7 @@ public class AuthenticationResource {
 
 		List<ContractorAccountEntity> accountsByUsernamePassword = contractorAccountDAO.findByUsername(username);
 		if (accountsByUsernamePassword == null || accountsByUsernamePassword.size() == 0) {
-			throw new ForbiddenException(String.format("incorrect username=%s", username));
+			throw new ForbiddenException(String.format("Incorrect username or password"));
 		}
 		for (ContractorAccountEntity contractorAccountEntity : accountsByUsernamePassword) {
 			if (BCrypt.checkpw(password, contractorAccountEntity.getPassword())) {
@@ -150,7 +150,7 @@ public class AuthenticationResource {
 			}
 		}
 
-		throw new ForbiddenException("Password not correct");
+		throw new ForbiddenException("Incorrect username or password");
 	}
 
 

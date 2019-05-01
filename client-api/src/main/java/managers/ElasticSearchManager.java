@@ -165,6 +165,7 @@ public class ElasticSearchManager {
 				.should(query == null || query.isEmpty() ? QueryBuilders.matchAllQuery() : QueryBuilders.matchQuery("description", query))
 				.filter(QueryBuilders.termQuery("is_hidden", false))
 				.filter(QueryBuilders.termQuery("is_deleted", false))
+				.filter(QueryBuilders.matchQuery("status", "PENDING"))
 				.minimumShouldMatch(1);
 
 		if (contractorId != null) {
