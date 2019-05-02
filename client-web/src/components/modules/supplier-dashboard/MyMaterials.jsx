@@ -8,6 +8,7 @@ import { routeConsts } from 'Common/consts';
 import { getRoutePath } from 'Utils/common.utils';
 import { materialServices } from 'Services/domain/ccp';
 import { Pagination } from 'Components/common';
+import { formatPrice } from 'Utils/format.utils';
 
 class MyMaterials extends PureComponent {
   state = {
@@ -111,7 +112,7 @@ class MyMaterials extends PureComponent {
                 <span className="clearfix"></span>
               </h6>
               <div><i className="fal fa-user-circle"></i> {equipment.manufacturer}</div>
-              <div><i className="fal fa-money-bill"></i> {equipment.price}/{equipment.unit}</div>
+              <div><i className="fal fa-money-bill"></i> {formatPrice(equipment.price)}/{equipment.materialType.unit}</div>
               <div><i className="fal fa-bullseye"></i> {equipment.construction.name}</div>
             </div>
           </div>

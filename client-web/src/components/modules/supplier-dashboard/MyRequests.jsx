@@ -11,6 +11,7 @@ import ccpApiService from 'Services/domain/ccp-api-service';
 import { RatingEquipmentTransaction, Image, StarRatings } from "Components/common";
 import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES, routeConsts, EQUIPMENT_SHOWABLE_STATUSES } from 'Common/consts';
 import { getRoutePath } from 'Utils/common.utils';
+import { formatPrice } from 'Utils/format.utils';
 
 class MyRequests extends Component {
   state = {
@@ -379,8 +380,8 @@ class MyRequests extends Component {
               <span className="ml-2 text-muted">({transaction.beginDate} to {transaction.endDate})</span>
             </div>
             <div>
-              <span className="">Daily Price: ${equipment.dailyPrice}</span>
-              <span className="ml-2 pl-2 border-left">Total fee: ${equipment.dailyPrice * days}</span>
+              <span className="">Daily Price: {formatPrice(equipment.dailyPrice)}</span>
+              <span className="ml-2 pl-2 border-left">Total fee: {formatPrice(equipment.dailyPrice * days)}</span>
               <div className="">Equipment: {EQUIPMENT_SHOWABLE_STATUSES[equipment.status]}</div>
             </div>
             {changeStatusButtons}
