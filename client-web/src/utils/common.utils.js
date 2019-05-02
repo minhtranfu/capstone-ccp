@@ -2,6 +2,7 @@ import React from 'react';
 import { modules } from "Components/modules/Routes";
 import qs from 'query-string';
 import ConfigService from 'Services/common/config-service';
+import { routeConsts } from 'Common/consts';
 
 export const getRoutePath = (name, data) => {
     const route = modules.find(route => route.name === name);
@@ -80,8 +81,24 @@ export const getValidateFeedback = (fieldName, validateResult) => {
   );
 };
 
-export const clickActionToLink = clickAction => {
-  
+const actionRouteMapping = {
+  materialTransactions: routeConsts.MATERIAL_REQUEST_DETAIL,
+  hiringTransactions: routeConsts.EQUIPMENT_TRANSACTION_DETAIL,
+  debrisTransactions: routeConsts.DEBRIS_REQUEST_DETAIL,
+  equipments: routeConsts.EQUIPMENT_DETAIL
+};
+
+export const getRouteFromClickAction = clickAction => {
+  const info = clickAction.split('/');
+  const action = info[0];
+  const id = info[1];
+
+  const routeConst = actionRouteMapping[action];
+  if (!routeConst) {
+    return '';
+  }
+
+  return getRoutePath(routeConst, { id });
 };
 
 /**
