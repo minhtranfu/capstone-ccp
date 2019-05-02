@@ -201,7 +201,7 @@ class Calendar extends PureComponent {
 
   _handleSingleDateSelect = day => {
     this.setState({
-      selected: day.dateString
+      singleDate: day.dateString
     });
   };
 
@@ -227,8 +227,7 @@ class Calendar extends PureComponent {
       timeRange,
       single
     } = this.props;
-    const { fromDate, endDate } = this.state;
-    console.log(minDate);
+    const { fromDate, endDate, singleDate } = this.state;
     return (
       <Modal
         style={{ margin: 0, padding: 0, flex: 1 }}
@@ -289,9 +288,12 @@ class Calendar extends PureComponent {
               single
                 ? {
                     [this.state.singleDate]: {
-                      selected: true,
+                      startingDay: true,
+                      endingDay: true,
                       color: colors.secondaryColor,
                       textColor: "white"
+                      // color: colors.secondaryColor,
+                      // textColor: "white"
                     }
                   }
                 : { ...this.state.markedDates }
@@ -315,7 +317,9 @@ class Calendar extends PureComponent {
                 right: 0
               }}
               onPress={() => {
-                onSelectDate(fromDate, endDate, false);
+                single
+                  ? onSelectDate(singleDate, false)
+                  : onSelectDate(fromDate, endDate, false);
                 this.setState({ markedDates: {} });
               }}
             />

@@ -86,7 +86,8 @@ class EquipmentDetail extends Component {
     this.state = {
       calendarVisible: false,
       beginDate: null,
-      endDate: null
+      endDate: null,
+      extendDate: null
     };
   }
 
@@ -132,26 +133,34 @@ class EquipmentDetail extends Component {
     this.setState({ calendarVisible: visible });
   };
 
-  _handleSelectDate = (beginDate, endDate, visible) => {
+  _handleSelectDate = (date, visible) => {
     this.setState({
-      beginDate,
-      endDate: newToDate,
+      extendDate: date,
       calendarVisible: visible
     });
   };
 
-  _renderCalendar = dateRange => (
-    <Calendar
-      animationType={"slide"}
-      transparent={false}
-      minDate={moment(dateRange.begin).format("YYYY-MM-DD")}
-      maxDate={moment(dateRange.endDate).format("YYYY-MM-DD")}
-      visible={this.state.calendarVisible}
-      onLeftButtonPress={() => this._setCalendarVisible(false)}
-      onSelectDate={this._handleSelectDate}
-      single={true}
-    />
-  );
+  _renderCalendar = dateRange => {
+    const newBeginDate =
+      new Date(dateRange.beginDate) < new Date(Date.now)
+        ? Date.now()
+        : dateRange.beginDate;
+    if (new Date(dateRange.endDate) <= new Date(Date.now())) {
+      console.log("ahihi");
+    }
+    return (
+      <Calendar
+        animationType={"slide"}
+        transparent={false}
+        minDate={moment(newBeginDate).format("YYYY-MM-DD")}
+        maxDate={moment(dateRange.endDate).format("YYYY-MM-DD")}
+        visible={this.state.calendarVisible}
+        onLeftButtonPress={() => this._setCalendarVisible(false)}
+        onSelectDate={this._handleSelectDate}
+        single={true}
+      />
+    );
+  };
 
   _handleSelectDate = (beginDate, endDate, visible) => {
     const { id } = this.props.navigation.state.params;

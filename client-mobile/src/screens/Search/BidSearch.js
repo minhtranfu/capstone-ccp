@@ -6,7 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Animated,
-  Modal
+  Modal,
+  Image
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
@@ -18,6 +19,8 @@ import ParallaxList from "../../components/ParallaxList";
 import SearchBar from "../../components/SearchBar";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
+import Title from "../../components/Title";
+import Button from "../../components/Button";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
@@ -44,18 +47,50 @@ const DROPDOWN_DEBRIS_TYPE_OPTIONS = [
 class BidSearch extends Component {
   constructor(props) {
     super(props);
-    this.state = { keyword: "", modalVisible: false };
+    this.state = {
+      keyword: "",
+      modalVisible: false,
+      listType: [],
+      tagSearch: ""
+    };
   }
 
   componentDidMount() {
     this.props.fetchGetTypeSerivces();
   }
 
+  _clearList = () => {
+    this.setState({ listType: [] });
+  };
+
   setModalVisible = visible => {
     this.setState({ modalVisible: visible });
   };
 
+  _checkItemIsExist = id => {
+    return this.state.listType.some(item => item.id === id);
+  };
+
+  _checkDataChanged = () => {
+    if (this.state.listType.length > 0) {
+      return true;
+    }
+    return false;
+  };
+
+  _handleRemoveItem = id => {
+    this.setState({
+      listType: this.state.listType.filter(item => item.id !== id)
+    });
+  };
+
+  _handleAddItem = item => {
+    console.log("add", item);
+    this.setState({ listType: [...this.state.listType, item] });
+  };
+
   _showModal = () => {
+    const { tagSearch } = this.state;
     const { debrisTypes } = this.props;
     return (
       <View style={{ flex: 1 }}>
@@ -70,7 +105,11 @@ class BidSearch extends Component {
           <SafeAreaView style={{ flex: 1 }} forceInset={{ top: "always" }}>
             <Header
               renderLeftButton={() => (
-                <TouchableOpacity onPress={() => this.setModalVisible(false)}>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.setModalVisible(false), this._clearList();
+                  }}
+                >
                   <Feather name="x" size={24} />
                 </TouchableOpacity>
               )}
@@ -78,28 +117,70 @@ class BidSearch extends Component {
             <View style={{ height: 44, marginHorizontal: 15 }}>
               <SearchBar
                 style={{ height: 44 }}
-                handleOnChangeText={this._handleOnChangeText}
-                icon={"navigation"}
+                handleOnChangeText={value =>
+                  this.setState({ tagSearch: value })
+                }
+                icon={"tag"}
                 placeholder={"Search debris type "}
-                onSubmitEditing={this._handleSearch}
               />
             </View>
-            <Text>Debris types</Text>
             <ScrollView style={{ paddingHorizontal: 15 }}>
-              {debrisTypes.map(item => (
-                <TouchableOpacity key={item.id}>
-                  <Text>{this._capitializeLetter(item.name)}</Text>
-                </TouchableOpacity>
-              ))}
+              <Title title={"Debris types"} />
+              {debrisTypes
+                .filter(item => item.name.includes(tagSearch.toLowerCase()))
+                .map(item => (
+                  <TouchableOpacity
+                    key={item.id}
+                    style={styles.debrisTypeWrapper}
+                    onPress={() =>
+                      this._checkItemIsExist(item.id)
+                        ? this._handleRemoveItem(item.id)
+                        : this._handleAddItem(item)
+                    }
+                  >
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <Image
+                        source={require("../../../assets/icons/icons8-tags.png")}
+                        resizeMode={"contain"}
+                        style={{ width: 24, height: 24, marginRight: 10 }}
+                      />
+                      <Text style={styles.text}>
+                        {this._capitializeLetter(item.name)}
+                      </Text>
+                    </View>
+
+                    {this._checkItemIsExist(item.id) ? (
+                      <Image
+                        source={require("../../../assets/icons/icon_remove.png")}
+                        resizeMode={"contain"}
+                        style={{ width: 24, height: 24 }}
+                      />
+                    ) : (
+                      <Image
+                        source={require("../../../assets/icons/icon_add.png")}
+                        resizeMode={"contain"}
+                        style={{ width: 24, height: 24 }}
+                      />
+                    )}
+                  </TouchableOpacity>
+                ))}
             </ScrollView>
-            <SafeAreaView forceInset={{ bottom: "always" }}>
-              <TouchableOpacity
-                onPress={() => {
-                  this.setModalVisible(!this.state.modalVisible);
-                }}
-              >
-                <Text>Hide Modal</Text>
-              </TouchableOpacity>
+            <SafeAreaView
+              forceInset={{ bottom: "always" }}
+              style={{
+                backgroundColor: this._checkDataChanged()
+                  ? colors.secondaryColor
+                  : "#a5acb8"
+              }}
+            >
+              <Button
+                text={"Confirm"}
+                onPress={() => this.setModalVisible(false)}
+                disabled={!this._checkDataChanged()}
+                buttonStyle={{ backgroundColor: "transparent" }}
+              />
             </SafeAreaView>
           </SafeAreaView>
         </Modal>
@@ -118,29 +199,14 @@ class BidSearch extends Component {
     });
   };
 
-  // _renderItem = () => {
-  //   const { debrisTypes } = this.props;
-  //   const { keyword } = this.state;
-  //   let values = [];
-  //   if (keyword && keyword.length > 0)
-  //     values = debrisTypes.filter(item => item.name.includes(keyword));
-  //   return (
-  //     <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
-  //       {debrisTypes
-  //         .filter(item => item.name.includes(keyword))
-  //         .map(item => this._showBidItem(item.id, item.name))}
-  //     </View>
-  //   );
-  // };
-
   _handleSearch = () => {
-    const { debrisTypeIndex, keyword } = this.state;
+    const { debrisTypeIndex, keyword, listType } = this.state;
     const { debrisTypes } = this.props;
-
-    this.props.navigation.navigate("BidResult", {
-      keyword: keyword,
-      typeId: debrisTypeIndex > 0 ? debrisTypes[debrisTypeIndex - 1].id : ""
-    });
+    const data = {
+      keyword,
+      typeId: listType.map(item => ({ id: item.id }))
+    };
+    this.props.navigation.navigate("BidResult", { data });
   };
 
   _renderScrollContent = () => {
@@ -160,9 +226,31 @@ class BidSearch extends Component {
           )}
         />
         {this._showModal()}
-        <TouchableOpacity onPress={() => this.setModalVisible(true)}>
-          <Text>Debris type</Text>
+        <TouchableOpacity
+          onPress={() => this.setModalVisible(true)}
+          style={{
+            width: 140,
+            alignItems: "center",
+            justifyContent: "center",
+            height: 30,
+            backgroundColor: colors.secondaryColor,
+            borderRadius: 20
+          }}
+        >
+          <Text style={styles.title}>Types filter</Text>
         </TouchableOpacity>
+        {this.state.listType.length > 0 ? (
+          <View>
+            <Title title={"Already selected"} />
+            {this.state.listType.map(item => (
+              <View key={item.id}>
+                <Text style={styles.text}>
+                  {this._capitializeLetter(item.name)}
+                </Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
         <View />
       </View>
     );
@@ -195,14 +283,29 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     paddingBottom: 15
   },
+  debrisTypeWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: 50,
+    paddingBottom: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.primaryColor
+  },
   text: {
-    fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
+    color: colors.primaryColor
   },
   searchText: {
     fontSize: fontSize.caption,
     color: colors.primaryColor,
     fontWeight: "600"
+  },
+  title: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: colors.white
   }
 });
 

@@ -221,6 +221,7 @@ class MyTransaction extends Component {
                       : null
                   }
                   avatarURL={
+                    item.requester.thumbnailImageUrl ||
                     "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
                   }
                   status={this._capitalizeCharacter(item.status)}

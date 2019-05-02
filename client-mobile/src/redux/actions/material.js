@@ -9,7 +9,7 @@ export function searchMaterial(text, id, offset) {
           type: Actions.SEARCH_MATERIAL.REQUEST
         });
       }
-      const url = `materials?q=${text}&limit=10&orderBy=createdTime.desc&materialTypeId=${id}&offset=${offset}`;
+      const url = `materials?q=${text}&limit=10&orderBy=created_time.desc&materialTypeId=${id}&offset=${offset}`;
       const res = await axios.get(url);
       dispatch({
         type: Actions.SEARCH_MATERIAL.SUCCESS,

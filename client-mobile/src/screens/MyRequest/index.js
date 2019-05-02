@@ -226,7 +226,6 @@ class MyRequest extends Component {
             const equipmentList = this._handleFilterStatusResult(status.code);
             //Hide section if there is no equipment
             if (equipmentList.length === 0) return null;
-
             // Otherwise, display the whole list
             return (
               <View key={`sec_${idx}`}>
@@ -258,6 +257,7 @@ class MyRequest extends Component {
                           : "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
                       }
                       avatarURL={
+                        item.equipment.contractor.thumbnailImageUrl ||
                         "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
                       }
                       status={this._capitalizeCharacter(item.status)}

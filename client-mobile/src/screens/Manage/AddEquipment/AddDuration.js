@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+import moment from 'moment';
 
 import Calendar from "../../../components/Calendar";
 import Loading from "../../../components/Loading";
@@ -134,7 +135,7 @@ class AddDuration extends PureComponent {
         minDate={
           id > 0
             ? this._handleAddMoreDay(timeRanges[id - 1].endDate, 2)
-            : "2019-05-2"
+            : this._formatDate(beginDate)
         }
         maxDate={
           id > 0
@@ -151,7 +152,8 @@ class AddDuration extends PureComponent {
     let month = newDate.getMonth() + 1;
     let newMonth = month < 10 ? "0" + month : month;
     let day = newDate.getDate();
-    return year + "-" + newMonth + "-" + day;
+    let newDay = day < 10 ? "0" + day : day;
+    return year + "-" + newMonth + "-" + newDay;
   };
 
   _handleAddMoreDay = (date, day) => {
@@ -192,7 +194,7 @@ class AddDuration extends PureComponent {
               }}
             >
               {timeRanges[index].beginDate
-                ? timeRanges[index].beginDate
+                ? moment(timeRanges[index].beginDate).format("DD-MM-YYYY")
                 : "Begin Date"}
             </Text>
           </View>
@@ -206,7 +208,7 @@ class AddDuration extends PureComponent {
               }}
             >
               {timeRanges[index].endDate
-                ? timeRanges[index].endDate
+                ? moment(timeRanges[index].endDate).format("DD-MM-YYYY")
                 : "End Date"}
             </Text>
           </View>
@@ -250,9 +252,9 @@ class AddDuration extends PureComponent {
             availableTimeRanges: timeRanges.map(item => {
               delete item.id;
               return item;
-            })
-          }),
-          dailyPrice: parseInt(this.state.dailyPrice)
+            }),
+            dailyPrice: parseInt(this.state.dailyPrice)
+          })
         })
       }
     >
@@ -289,7 +291,7 @@ class AddDuration extends PureComponent {
             <View>
               <Text>Price per day (K):</Text>
               <Text>
-                Suggested price: {Math.round(this.state.suggestPrice)} -{" "}
+                Suggested price: {Math.round(this.state.suggestPrice)} ~{" "}
                 {Math.round(upperPrice)}
               </Text>
               <TextInput

@@ -236,6 +236,7 @@ class AddDetail extends Component {
       name,
       typeIndex,
       generalTypeIndex,
+      constructionIndex,
       description,
       construction,
       additionalSpecsFields,
@@ -248,6 +249,7 @@ class AddDetail extends Component {
     const findAddressByCons = this.props.construction.find(
       item => item.address === address
     );
+
     if (!address) {
       this._showAlert("Address must be not null");
     } else {
@@ -256,6 +258,9 @@ class AddDetail extends Component {
         description: description,
         equipmentType: type,
         address: address,
+        construction: {
+          id: findAddressByCons.id
+        },
         longitude: findAddressByCons ? findAddressByCons.longitude : lng,
         latitude: findAddressByCons ? findAddressByCons.latitude : lat,
         additionalSpecsValues:
@@ -297,7 +302,7 @@ class AddDetail extends Component {
           returnKeyType={"next"}
         />
         <Dropdown
-          label={"General Equipment Type"}
+          label={"Categories"}
           defaultText={NEW_DROPDOWN_GENERAL_TYPES_OPTIONS[0].name}
           onSelectValue={(value, index) => {
             this.setState({ generalTypeIndex: index, generalType: value });

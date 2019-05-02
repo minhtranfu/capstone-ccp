@@ -144,6 +144,7 @@ class EquipmentResult extends Component {
             ? item.equipmentEntity.thumbnailImage.url
             : "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
         }
+        rating={item.equipmentEntity.contractor.averageEquipmentRating}
         address={item.equipmentEntity.address}
         price={item.equipmentEntity.dailyPrice}
       />

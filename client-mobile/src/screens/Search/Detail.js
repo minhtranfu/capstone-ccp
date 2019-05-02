@@ -98,7 +98,7 @@ class SearchDetail extends Component {
     return this._formatDate(result);
   };
 
-  _handleDateChanged = (id, selectedDate) => {
+  _handleDateChanged = (id, price, selectedDate) => {
     const { name } = this.props.detail.equipmentEntity;
     const { query } = this.props.navigation.state.params;
     let newToDate = selectedDate.endDate
@@ -112,11 +112,12 @@ class SearchDetail extends Component {
     this.props.navigation.navigate("ConfirmTransaction", {
       equipment: equipment,
       name: name,
-      query: query
+      query: query,
+      price
     });
   };
 
-  _renderDateTimeModal = (id, dateRange) => {
+  _renderDateTimeModal = (id, price, dateRange) => {
     const { isModalOpen } = this.state;
     const newDateRange = dateRange
       .filter(item => new Date(item.endDate) > new Date(Date.now()))
@@ -132,7 +133,7 @@ class SearchDetail extends Component {
         >
           <WithRangeCalendar
             onConfirm={date => {
-              this._handleDateChanged(id, date);
+              this._handleDateChanged(id, price, date);
               this.setState(() => ({ isModalOpen: false }));
             }}
             onClose={() => this.setState(() => ({ isModalOpen: false }))}
@@ -310,6 +311,7 @@ class SearchDetail extends Component {
 
         {this._renderDateTimeModal(
           detail.equipmentEntity.id,
+          detail.equipmentEntity.dailyPrice,
           detail.equipmentEntity.availableTimeRanges
         )}
         <SafeAreaView

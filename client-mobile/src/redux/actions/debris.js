@@ -106,14 +106,17 @@ export function supplierDeleteBid(articleId) {
   };
 }
 
-export function searchDebris(debrisTypeId) {
+export function searchDebris(data) {
   return async dispatch => {
     dispatch({
       type: Actions.SEARCH_DEBRIS.REQUEST
     });
-    const res = await axios.get(
-      `debrisPosts?offset=0&limit=1000&debrisTypeId=${debrisTypeId}`
-    );
+    console.log("check", data);
+    const typeId = data.typeId.map(item => `debrisTypeId=${item.id}`);
+    const query = typeId.join("&");
+    const url = `debrisPosts?offset=0&limit=1000&q=${data.keyword}&${query}`;
+    console.log(url);
+    const res = await axios.get(url);
     dispatch({
       type: Actions.SEARCH_DEBRIS.SUCCESS,
       payload: res
