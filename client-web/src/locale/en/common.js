@@ -21,8 +21,8 @@ export default {
   language: 'Language',
 
   orderBy: 'Order by',
-  orderByScore: 'Score',
+  orderByScore: 'Relevance',
   orderByLatest: 'Newest',
-  priceDescrease: 'Price descrease',
-  priceIncrease: 'Price increase',
+  priceDescrease: 'Price: hight to low',
+  priceIncrease: 'Price: low to hight',
 };

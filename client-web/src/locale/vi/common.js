@@ -23,6 +23,6 @@ export default {
   orderBy: 'Sắp xếp',
   orderByScore: 'Liên quan',
   orderByLatest: 'Mới nhất',
-  priceDescrease: 'Giá giảm dần',
-  priceIncrease: 'Giá tăng dần',
+  priceDescrease: 'Giá: giảm dần',
+  priceIncrease: 'Giá: tăng dần',
 };

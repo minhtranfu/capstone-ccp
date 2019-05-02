@@ -59,7 +59,7 @@ class AddEquipmentStep3 extends Step {
     };
 
     if (name === 'dailyPrice') {
-      value = +(`${value}`.replace(/[^0-9\.]+/g, ''));
+      value = +`${value}`.replace(/[^0-9\.]+/g, '');
       if (Number.isNaN(value)) {
         return;
       }
@@ -260,7 +260,6 @@ class AddEquipmentStep3 extends Step {
 
   _handleGetSuggestedPrice = prevProps => {
     const { isShown } = this.props;
-    
 
     if (!isShown || prevProps.isShown) {
       return;
@@ -297,7 +296,13 @@ class AddEquipmentStep3 extends Step {
             )}
             {suggestPriceError && (
               <div className="alert alert-warning shadow-sm">
-                <i className="fal fa-info-circle" /> {suggestPriceError} <button className="btn btn-sm btn-outline-primary ml-2" onClick={this._getSuggestedPrice}>Retry</button>
+                <i className="fal fa-info-circle" /> {suggestPriceError}{' '}
+                <button
+                  className="btn btn-sm btn-outline-primary ml-2"
+                  onClick={this._getSuggestedPrice}
+                >
+                  Retry
+                </button>
               </div>
             )}
           </div>
@@ -315,12 +320,13 @@ class AddEquipmentStep3 extends Step {
               <div className="mb-2">
                 <span className="text-muted">Suggested price:</span>
                 <span className="ml-1 text-primary">
-                  <strong>{formatPrice(suggestedPrice - 0.05 * suggestedPrice, true, 0)} - {formatPrice(suggestedPrice + 0.05 * suggestedPrice, true, 0)}</strong>
+                  <strong>
+                    {formatPrice(suggestedPrice - 0.05 * suggestedPrice, true, 0)} ~{' '}
+                    {formatPrice(suggestedPrice + 0.05 * suggestedPrice, true, 0)}
+                  </strong>
                 </span>
-                <i className="fal fa-question-circle text-muted ml-1" id="about_suggested_price"></i>
-                <UncontrolledTooltip
-                  target="about_suggested_price"
-                >
+                <i className="fal fa-question-circle text-muted ml-1" id="about_suggested_price" />
+                <UncontrolledTooltip target="about_suggested_price">
                   Suggested price base on recently market
                 </UncontrolledTooltip>
               </div>
