@@ -315,7 +315,7 @@ class AddEquipmentStep3 extends Step {
               <div className="mb-2">
                 <span className="text-muted">Suggested price:</span>
                 <span className="ml-1 text-primary">
-                  <strong>{formatPrice(suggestedPrice - 0.05 * suggestedPrice)} - {formatPrice(suggestedPrice + 0.05 * suggestedPrice)}</strong>
+                  <strong>{formatPrice(suggestedPrice - 0.05 * suggestedPrice, true, 0)} - {formatPrice(suggestedPrice + 0.05 * suggestedPrice, true, 0)}</strong>
                 </span>
                 <i className="fal fa-question-circle text-muted ml-1" id="about_suggested_price"></i>
                 <UncontrolledTooltip
