@@ -167,9 +167,11 @@ class Header extends Component {
                     onClick={this._toggleNotifications}
                   >
                     <i className="fal fa-bell" />
-                    <span className="badge badge-pill badge-danger">
-                      {contractor.totalUnreadNotifications}
-                    </span>
+                    {contractor.totalUnreadNotifications > 0 &&
+                      <span className="badge badge-pill badge-danger">
+                        {contractor.totalUnreadNotifications}
+                      </span>
+                    }
                   </span>
                   <Notifications isShow={isShowNotifications} toggle={this._toggleNotifications} />
                 </li>
