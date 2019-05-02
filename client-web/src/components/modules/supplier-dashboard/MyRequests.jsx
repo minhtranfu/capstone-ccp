@@ -7,9 +7,9 @@ import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
-import { RatingEquipmentTransaction, Image } from "Components/common";
-import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES, routeConsts, EQUIPMENT_SHOWABLE_STATUSES } from '../../../common/consts';
+import ccpApiService from 'Services/domain/ccp-api-service';
+import { RatingEquipmentTransaction, Image, StarRatings } from "Components/common";
+import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES, routeConsts, EQUIPMENT_SHOWABLE_STATUSES } from 'Common/consts';
 import { getRoutePath } from 'Utils/common.utils';
 
 class MyRequests extends Component {
@@ -399,7 +399,10 @@ class MyRequests extends Component {
               <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: requester.id })} >
                 <span>{requester.name}</span>
               </Link>
-              <div className="mt-1">
+              <div className="mt-n2">
+                <StarRatings rating={requester.averageEquipmentRating} starDimension="15px" />
+              </div>
+              <div>
                 <a className="text-muted" href={`tel:${requester.phoneNumber}`}>
                   <i className="fal fa-phone"></i> {requester.phoneNumber}
                 </a>

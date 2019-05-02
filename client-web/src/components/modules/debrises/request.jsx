@@ -9,7 +9,7 @@ import Sweetalert from 'react-bootstrap-sweetalert';
 import { debrisTransactionServices } from 'Services/domain/ccp';
 import { getErrorMessage, getRoutePath } from 'Utils/common.utils';
 import { routeConsts, DEBRIS_POST_STATUSES, DEBRIS_POST_STATUS_COLORS } from 'Common/consts';
-import { ComponentBlocking } from 'Components/common';
+import { ComponentBlocking, Image, StarRatings } from 'Components/common';
 import { RatingModal } from 'Components/common';
 import { formatPrice } from 'Utils/format.utils';
 
@@ -180,11 +180,33 @@ class DebriseTransactionsRequest extends Component {
         return null;
       }
 
-      const { debrisPost:debris } = transaction;
+      const { debrisPost:debris, supplier } = transaction;
       const { debrisBids, debrisServiceTypes } = debris;
       const services = debrisServiceTypes.map(type => type.name).join(', ');
       return (
         <div key={transaction.id} className="my-2 p-3 bg-white shadow-sm d-flex">
+          <div className="contractor-info text-center pr-2" style={{width: 160}}>
+            <Image
+              circle
+              className="rounded-circle"
+              width={50}
+              height={50}
+              src={supplier.thumbnailImageUrl}
+            />
+            <div>
+              <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: supplier.id })}>
+                {supplier.name}
+              </Link>
+            </div>
+            <div className="mt-n2">
+              <StarRatings rating={supplier.averageDebrisRating} starDimension="15px" />
+            </div>
+            <div>
+              <a className="text-muted" href={`tel:${supplier.phoneNumber}`}>
+                <i className="fal fa-phone" /> {supplier.phoneNumber}
+              </a>
+            </div>
+          </div>
           <div className="flex-fill">
             <Link to={getRoutePath(routeConsts.DEBRIS_DETAIL, { id: debris.id })}>
               <h6>
@@ -193,10 +215,9 @@ class DebriseTransactionsRequest extends Component {
             </Link>
             <div className="text-muted"><small><i className="fal fa-tags"></i></small> {services}</div>
             <div className="text-muted"><i className="fal fa-map-marker"></i> {debris.address}</div>
-            <div className="description">{debris.description}</div>
             <div><i className="fas fa-gavel"></i> Bid: {debrisBids.length}</div>
           </div>
-          <div className="d-flex px-3 flex-md-column">
+          <div className="d-flex pl-3 flex-md-column">
             <div className="price text-large mb-auto ml-auto">
               {formatPrice(transaction.price)}
             </div>

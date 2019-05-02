@@ -4,28 +4,29 @@ import { CSSTransition } from 'react-transition-group';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 import { MATERIAL_TRANSACTION_STATUSES, routeConsts } from '../../../common/consts';
 import { materialTransactionServices } from 'Src/services/domain/ccp';
 import { formatPrice } from 'Src/utils/format.utils';
 import { getRoutePath } from 'Utils/common.utils';
 import { formatDate } from 'Utils/format.utils';
-import { Image } from 'Components/common';
+import { Image, StarRatings } from 'Components/common';
 
 class MaterialTransactions extends Component {
   state = {
     filterStatus: 'all',
     confirm: {},
-    alert: {}
+    alert: {},
   };
 
   confirmMessages = {
     [MATERIAL_TRANSACTION_STATUSES.ACCEPTED]: 'Are you sure to accept this transaction?',
     [MATERIAL_TRANSACTION_STATUSES.CANCELED]: 'Are you sure to cancel this transaction?',
     [MATERIAL_TRANSACTION_STATUSES.DENIED]: 'Are you sure to deny this transaction?',
-    [MATERIAL_TRANSACTION_STATUSES.DELIVERING]: 'Are you going to deliver material of this transaction?',
-    [MATERIAL_TRANSACTION_STATUSES.FINISHED]: 'Have you received the material from requester?'
+    [MATERIAL_TRANSACTION_STATUSES.DELIVERING]:
+      'Are you going to deliver material of this transaction?',
+    [MATERIAL_TRANSACTION_STATUSES.FINISHED]: 'Have you received the material from requester?',
   };
 
   showableStatuses = {
@@ -33,7 +34,7 @@ class MaterialTransactions extends Component {
     [MATERIAL_TRANSACTION_STATUSES.ACCEPTED]: 'Accepted',
     [MATERIAL_TRANSACTION_STATUSES.DELIVERING]: 'Delivering',
     [MATERIAL_TRANSACTION_STATUSES.FINISHED]: 'Finished',
-    [MATERIAL_TRANSACTION_STATUSES.DENIED]: 'Denied'
+    [MATERIAL_TRANSACTION_STATUSES.DENIED]: 'Denied',
   };
 
   tabContents = {};
@@ -42,9 +43,11 @@ class MaterialTransactions extends Component {
 
   _loadData = async () => {
     const { contractor } = this.props;
-    const transactions = await materialTransactionServices.getTransactionsByRequesterId(contractor.id);
+    const transactions = await materialTransactionServices.getTransactionsByRequesterId(
+      contractor.id
+    );
     this.setState({
-      transactions
+      transactions,
     });
   };
 
@@ -55,7 +58,7 @@ class MaterialTransactions extends Component {
   _handleFilterChange = e => {
     const value = e.target.value;
     this.setState({
-      filterStatus: value
+      filterStatus: value,
     });
   };
 
@@ -68,12 +71,12 @@ class MaterialTransactions extends Component {
       confirmText: 'Yes',
       confirmStyle: 'info',
       showCancel: true,
-      onCancel: this._removeConfirm
+      onCancel: this._removeConfirm,
     };
     confirm.title = this.confirmMessages[status];
 
     this.setState({
-      confirm
+      confirm,
     });
   };
 
@@ -82,12 +85,16 @@ class MaterialTransactions extends Component {
     this.setState({
       confirm: {
         ...confirm,
-        confirmText: <span><span className="spinner-border" role="status" aria-hidden="true"></span> Changing...</span>,
+        confirmText: (
+          <span>
+            <span className="spinner-border" role="status" aria-hidden="true" /> Changing...
+          </span>
+        ),
         confirmClass: 'disabled',
         showCancel: false,
         onCancel: undefined,
-        onConfirm: () => { }
-      }
+        onConfirm: () => {},
+      },
     });
   };
 
@@ -96,14 +103,16 @@ class MaterialTransactions extends Component {
 
     this._showLoadingConfirm();
     const data = {
-      status: confirm.status
+      status: confirm.status,
     };
 
     let transaction = null;
     try {
-      transaction = await materialTransactionServices.updateTransaction(confirm.transactionId, data);
+      transaction = await materialTransactionServices.updateTransaction(
+        confirm.transactionId,
+        data
+      );
     } catch (error) {
-
       let title = 'An unknowned error has been occured, please try again!';
 
       if (error.response && error.response.data && error.response.data.message) {
@@ -115,9 +124,9 @@ class MaterialTransactions extends Component {
       this.setState({
         alert: {
           danger: true,
-          title
+          title,
         },
-        confirm: {}
+        confirm: {},
       });
 
       return;
@@ -129,9 +138,9 @@ class MaterialTransactions extends Component {
         alert: {
           danger: true,
           title: 'An error occur!',
-          message: 'Please try again!'
+          message: 'Please try again!',
         },
-        confirm: {}
+        confirm: {},
       });
 
       return;
@@ -143,9 +152,9 @@ class MaterialTransactions extends Component {
         alert: {
           danger: true,
           title: 'Something went wrong!',
-          message: 'Status was not changed, please try again!'
+          message: 'Status was not changed, please try again!',
         },
-        confirm: {}
+        confirm: {},
       });
       return;
     }
@@ -154,20 +163,20 @@ class MaterialTransactions extends Component {
     const alert = {
       success: true,
       title: 'Success!',
-      message: `Transaction status was changed to ${confirm.status}.`
+      message: `Transaction status was changed to ${confirm.status}.`,
     };
     const transactions = this._getUpdatedTransactionsList(transaction);
     this.setState({
       alert,
       confirm: {},
-      transactions
+      transactions,
     });
   };
 
   _getUpdatedTransactionsList = updatedTransaction => {
     const { transactions } = this.state;
 
-    const items =  transactions.items.map(transaction => {
+    const items = transactions.items.map(transaction => {
       if (transaction.id !== updatedTransaction.id) {
         return transaction;
       }
@@ -175,7 +184,7 @@ class MaterialTransactions extends Component {
       // Update information of transaction
       transaction = {
         ...transaction,
-        ...updatedTransaction
+        ...updatedTransaction,
       };
 
       return transaction;
@@ -189,13 +198,13 @@ class MaterialTransactions extends Component {
 
   _removeAlert = () => {
     this.setState({
-      alert: {}
+      alert: {},
     });
   };
 
   _removeConfirm = () => {
     this.setState({
-      confirm: {}
+      confirm: {},
     });
   };
 
@@ -208,7 +217,9 @@ class MaterialTransactions extends Component {
         loadingTransactions.push(
           <div key={i} className="transaction my-3 rounded shadow-sm row">
             <div className="detail col-md-3 py-2">
-              <h5><Skeleton width={90} /> <Skeleton width={30} /></h5>
+              <h5>
+                <Skeleton width={90} /> <Skeleton width={30} />
+              </h5>
               <div>
                 <Skeleton width={100} />
               </div>
@@ -221,7 +232,10 @@ class MaterialTransactions extends Component {
               <div>
                 <Skeleton width={90} />
               </div>
-              <div className="mt-2">
+              <div className="mt-1">
+                <Skeleton width={75} />
+              </div>
+              <div className="mt-1">
                 <Skeleton width={105} />
               </div>
             </div>
@@ -244,7 +258,7 @@ class MaterialTransactions extends Component {
 
     return (
       <div>
-        {confirm.title &&
+        {confirm.title && (
           <SweetAlert
             info
             showCancel={confirm.showCancel}
@@ -257,10 +271,8 @@ class MaterialTransactions extends Component {
           >
             {confirm.message}
           </SweetAlert>
-        }
-        {alert.title &&
-          <SweetAlert {...alert} onConfirm={this._removeAlert} />
-        }
+        )}
+        {alert.title && <SweetAlert {...alert} onConfirm={this._removeAlert} />}
       </div>
     );
   };
@@ -283,9 +295,9 @@ class MaterialTransactions extends Component {
 
       this.tabContents[transaction.status].push(transactionItem);
     });
-  }
+  };
 
-  _countNeedActionForStatus = (status) => {
+  _countNeedActionForStatus = status => {
     if (!this.needActionCounters[status]) {
       this.needActionCounters[status] = 0;
     }
@@ -295,11 +307,11 @@ class MaterialTransactions extends Component {
   /**
    * Show feedback modal
    */
-  _toggleFeedbackModal = (feedbackTransaction) => {
+  _toggleFeedbackModal = feedbackTransaction => {
     const { isShowFeedbackModal } = this.state;
     this.setState({
       isShowFeedbackModal: !isShowFeedbackModal,
-      feedbackTransaction
+      feedbackTransaction,
     });
   };
 
@@ -323,7 +335,14 @@ class MaterialTransactions extends Component {
         statusClasses += ' badge-success';
         changeStatusButtons = (
           <div className="mb-2">
-            <button className="btn btn-sm btn-block btn-outline-danger" onClick={() => this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.CANCELED)}>Cancel</button>
+            <button
+              className="btn btn-sm btn-block btn-outline-danger"
+              onClick={() =>
+                this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.CANCELED)
+              }
+            >
+              Cancel
+            </button>
           </div>
         );
         break;
@@ -342,7 +361,14 @@ class MaterialTransactions extends Component {
 
         changeStatusButtons = (
           <div className="mb-2">
-            <button className="btn btn-sm btn-block btn-success" onClick={() => this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.FINISHED)}>Receive</button>
+            <button
+              className="btn btn-sm btn-block btn-success"
+              onClick={() =>
+                this._handleChangeStatus(transaction.id, MATERIAL_TRANSACTION_STATUSES.FINISHED)
+              }
+            >
+              Receive
+            </button>
           </div>
         );
 
@@ -356,19 +382,17 @@ class MaterialTransactions extends Component {
     // const thumbnail = transaction.material.thumbnailImageUrl || '/public/upload/product-images/unnamed-19-jpg.jpg';
 
     return (
-      <CSSTransition
-        key={transaction.id}
-        classNames="fade"
-        timeout={500}
-      >
+      <CSSTransition key={transaction.id} classNames="fade" timeout={500}>
         <div className="transaction my-3 rounded shadow-sm row">
           <div className="detail col-md-3 py-2">
-            <h5><span className={statusClasses}>{transaction.status}</span> #{transaction.id}</h5>
+            <h5>
+              <span className={statusClasses}>{transaction.status}</span> #{transaction.id}
+            </h5>
             <div>
-              <i className="fal fa-calendar"></i> {formatDate(transaction.createdTime)}
+              <i className="fal fa-calendar" /> {formatDate(transaction.createdTime)}
             </div>
             <div className="text-large">
-              <i className="fal fa-money-bill"></i> {formatPrice(transaction.totalPrice)}
+              <i className="fal fa-money-bill" /> {formatPrice(transaction.totalPrice)}
             </div>
           </div>
           <div className="col-md-2 text-center d-flex flex-column align-items-center justify-content-center lh-1 py-2">
@@ -377,23 +401,37 @@ class MaterialTransactions extends Component {
               className="rounded-circle"
               width={50}
               height={50}
-              src={transaction.supplier.thumbnailImageUrl}
+              src={supplier.thumbnailImageUrl}
             />
-            <div><Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: transaction.supplier.id })}>{transaction.supplier.name}</Link></div>
-            <div className="mt-2">
-              <a className="text-muted" href={`tel:${transaction.supplier.phoneNumber}`}>
-                <i className="fal fa-phone"></i> {transaction.supplier.phoneNumber}
+            <div>
+              <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: supplier.id })}>
+                {supplier.name}
+              </Link>
+            </div>
+            <div>
+              <StarRatings rating={supplier.averageMaterialRating} starDimension="15px" />
+            </div>
+            <div className="mt-1">
+              <a className="text-muted" href={`tel:${supplier.phoneNumber}`}>
+                <i className="fal fa-phone" /> {supplier.phoneNumber}
               </a>
             </div>
           </div>
           <div className="col-md-5 py-2 d-flex align-items-center text-muted border-left">
-            {transaction.materialTransactionDetails.map(detail => {
-              return detail.material.name;
-            }).join(', ')}
+            {transaction.materialTransactionDetails
+              .map(detail => {
+                return detail.material.name;
+              })
+              .join(', ')}
           </div>
           <div className="col-md-2 py-2 d-flex flex-column justify-content-center">
             {changeStatusButtons}
-            <Link to={getRoutePath(routeConsts.MATERIAL_REQUEST_DETAIL, { id: transaction.id })} className="btn btn-sm btn-block btn-link">Detail</Link>
+            <Link
+              to={getRoutePath(routeConsts.MATERIAL_REQUEST_DETAIL, { id: transaction.id })}
+              className="btn btn-sm btn-block btn-link"
+            >
+              Detail
+            </Link>
           </div>
         </div>
       </CSSTransition>
@@ -409,20 +447,40 @@ class MaterialTransactions extends Component {
         <div className="row">
           <div className="col-md-12">
             <h5>
-              <button className="btn btn-outline-primary float-right" onClick={this._loadData}><i className="fal fa-sync"></i></button>
+              <button className="btn btn-outline-primary float-right" onClick={this._loadData}>
+                <i className="fal fa-sync" />
+              </button>
             </h5>
           </div>
           <div className="col-md-3">
             <div className="border-right border-primary h-100">
-              <div className="sticky-top sticky-sidebar nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+              <div
+                className="sticky-top sticky-sidebar nav flex-column nav-pills"
+                id="v-pills-tab"
+                role="tablist"
+                aria-orientation="vertical"
+              >
                 <h4>Status</h4>
                 {Object.keys(this.showableStatuses).map(status => {
                   return (
-                    <a key={status} className={`nav-link ${status == MATERIAL_TRANSACTION_STATUSES.PENDING ? 'active' : ''}`} id={`v-pills-${status}-tab`} data-toggle="pill" href={`#v-pills-${status}`} role="tab" aria-controls={`v-pills-${status}`} aria-selected={status == MATERIAL_TRANSACTION_STATUSES.PENDING}>
+                    <a
+                      key={status}
+                      className={`nav-link ${
+                        status == MATERIAL_TRANSACTION_STATUSES.PENDING ? 'active' : ''
+                      }`}
+                      id={`v-pills-${status}-tab`}
+                      data-toggle="pill"
+                      href={`#v-pills-${status}`}
+                      role="tab"
+                      aria-controls={`v-pills-${status}`}
+                      aria-selected={status == MATERIAL_TRANSACTION_STATUSES.PENDING}
+                    >
                       {this.showableStatuses[status]}
-                      {this.needActionCounters[status] &&
-                        <span className="badge badge-pill badge-danger ml-1">{this.needActionCounters[status]}</span>
-                      }
+                      {this.needActionCounters[status] && (
+                        <span className="badge badge-pill badge-danger ml-1">
+                          {this.needActionCounters[status]}
+                        </span>
+                      )}
                     </a>
                   );
                 })}
@@ -433,7 +491,15 @@ class MaterialTransactions extends Component {
             <div className="tab-content" id="v-pills-tabContent">
               {Object.keys(MATERIAL_TRANSACTION_STATUSES).map(status => {
                 return (
-                  <div key={status} className={`tab-pane fade ${status == MATERIAL_TRANSACTION_STATUSES.PENDING ? 'show active' : ''}`} id={`v-pills-${status}`} role="tabpanel" aria-labelledby={`v-pills-${status}-tab`}>
+                  <div
+                    key={status}
+                    className={`tab-pane fade ${
+                      status == MATERIAL_TRANSACTION_STATUSES.PENDING ? 'show active' : ''
+                    }`}
+                    id={`v-pills-${status}`}
+                    role="tabpanel"
+                    aria-labelledby={`v-pills-${status}-tab`}
+                  >
                     {this.tabContents[status]}
                     {this._renderLoadingTransactions()}
                   </div>
@@ -448,7 +514,7 @@ class MaterialTransactions extends Component {
 }
 
 MaterialTransactions.props = {
-  contractor: PropTypes.object.isRequired
+  contractor: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -456,7 +522,7 @@ const mapStateToProps = state => {
   const { contractor } = authentication;
 
   return {
-    contractor
+    contractor,
   };
 };
 
