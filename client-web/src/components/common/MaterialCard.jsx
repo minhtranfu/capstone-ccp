@@ -39,7 +39,7 @@ class MaterialCard extends PureComponent {
                   </div>
                 </span>
                 <span className="ml-auto text-large price bg-primary">
-                  {formatPrice(product.dailyPrice)}
+                  {formatPrice(product.price)}
                   <small>/{product.materialType.unit}</small>
                 </span>
               </div>
