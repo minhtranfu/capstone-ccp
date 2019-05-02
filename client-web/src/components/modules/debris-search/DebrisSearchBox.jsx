@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import Select from 'react-select';
+import { withTranslation } from "react-i18next";
 
 import { debrisServices } from 'Services/domain/ccp';
 import { AddressInput } from 'Components/common';
@@ -86,7 +87,7 @@ class DebrisSearchBox extends PureComponent {
 
   render() {
     const { typeOptions, criteria } = this.state;
-    const { isFetching } = this.props;
+    const { isFetching, t } = this.props;
 
     return (
       <form onSubmit={this._search}>
@@ -96,7 +97,7 @@ class DebrisSearchBox extends PureComponent {
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="keyword" className="text-light">Keyword:</label>
+              <label htmlFor="keyword" className="text-light">{t('common.keyword')}:</label>
               <input type="text" name="q"
                 id="keyword" className="form-control"
                 value={criteria.q}
@@ -106,13 +107,13 @@ class DebrisSearchBox extends PureComponent {
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="location" className="text-light">Your address:</label>
+              <label htmlFor="location" className="text-light">{t('common.yourAddress')}:</label>
               <AddressInput onSelect={this._handleChangeLocation} inputProps={{id: 'location', value: criteria.address}} />
             </div>
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="service_types" className="text-light">Debris type:</label>
+              <label htmlFor="service_types" className="text-light">{t('common.type')}:</label>
               <Select
                 isMulti
                 openMenuOnFocus
@@ -158,4 +159,4 @@ DebrisSearchBox.propTypes = {
   isFetching: PropTypes.bool.isRequired
 };
 
-export default DebrisSearchBox;
+export default withTranslation()(DebrisSearchBox);

@@ -1,20 +1,20 @@
-import React, { PureComponent } from "react";
-import PropTypes from "prop-types";
-import moment from "moment";
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import { withTranslation } from 'react-i18next';
 
-import { materialServices } from "Services/domain/ccp";
-import { AddressInput } from "Components/common";
+import { materialServices } from 'Services/domain/ccp';
+import { AddressInput } from 'Components/common';
 
 class MaterialSearchBox extends PureComponent {
   state = {
     materialTypes: [],
-    criteria: {}
+    criteria: {},
   };
 
   _loadData = async () => {
     const materialTypes = await materialServices.getMaterialTypes();
     this.setState({
-      materialTypes
+      materialTypes,
     });
   };
 
@@ -34,18 +34,18 @@ class MaterialSearchBox extends PureComponent {
     let { criteria } = this.state;
     criteria = {
       ...criteria,
-      [name]: value
+      [name]: value,
     };
 
     this.setState({
-      criteria
+      criteria,
     });
   };
 
   _handleSelectLocation = location => {
     const { longitude, latitude } = location;
     const { criteria } = this.state;
-    
+
     this.setState({
       criteria: {
         ...criteria,
@@ -57,7 +57,7 @@ class MaterialSearchBox extends PureComponent {
 
   render() {
     const { materialTypes } = this.state;
-    const { isFetching } = this.props;
+    const { isFetching, t } = this.props;
 
     return (
       <form onSubmit={this._search}>
@@ -65,56 +65,57 @@ class MaterialSearchBox extends PureComponent {
           <div className="col-md-12">
             <h3>Search</h3>
           </div>
-          
-            <div className="col-md-4">
-              <div className="form-group">
-                <label htmlFor="keyword">Keyword:</label>
-                <input type="text" name="q" onChange={this._handleChangeCriteria} id="keyword" className="form-control"/>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <label htmlFor="keyword">Address:</label>
-              <AddressInput
-                onSelect={this._handleSelectLocation}
-                wrapperProps={{ className: 'text-dark' }}
+
+          <div className="col-md-4">
+            <div className="form-group">
+              <label htmlFor="keyword">{t('common.keyword')}:</label>
+              <input
+                type="text"
+                name="q"
+                onChange={this._handleChangeCriteria}
+                id="keyword"
+                className="form-control"
               />
             </div>
-            <div className="col-md-4">
-              <div className="form-group">
-                <label htmlFor="material_type">Material type:</label>
-                <select
-                  name="materialTypeId"
-                  id="material_type"
-                  className="form-control"
-                  onChange={this._handleChangeCriteria}
-                >
-                  <option value="">--Choose--</option>
-                  {materialTypes &&
-                    materialTypes.map(materialType => (
-                      <option key={materialType.id} value={materialType.id}>
-                        {materialType.name}
-                      </option>
-                    ))}
-                </select>
-              </div>
-            </div>
-            <div className="col-md-12">
-              <button
-                type="submit"
-                className="btn btn-success"
-                disabled={isFetching}
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="keyword">{t('common.yourAddress')}:</label>
+            <AddressInput
+              onSelect={this._handleSelectLocation}
+              wrapperProps={{ className: 'text-dark' }}
+            />
+          </div>
+          <div className="col-md-4">
+            <div className="form-group">
+              <label htmlFor="material_type">{t('common.type')}:</label>
+              <select
+                name="materialTypeId"
+                id="material_type"
+                className="form-control"
+                onChange={this._handleChangeCriteria}
               >
-                {isFetching && (
-                  <span
-                    className="spinner-border spinner-border-sm mr-1"
-                    role="status"
-                    aria-hidden="true"
-                  />
-                )}
-                Search
-              </button>
+                <option value="">--Choose--</option>
+                {materialTypes &&
+                  materialTypes.map(materialType => (
+                    <option key={materialType.id} value={materialType.id}>
+                      {materialType.name}
+                    </option>
+                  ))}
+              </select>
             </div>
-          
+          </div>
+          <div className="col-md-12">
+            <button type="submit" className="btn btn-success" disabled={isFetching}>
+              {isFetching && (
+                <span
+                  className="spinner-border spinner-border-sm mr-1"
+                  role="status"
+                  aria-hidden="true"
+                />
+              )}
+              Search
+            </button>
+          </div>
         </div>
       </form>
     );
@@ -123,7 +124,7 @@ class MaterialSearchBox extends PureComponent {
 
 MaterialSearchBox.propTypes = {
   onSearch: PropTypes.func.isRequired,
-  isFetching: PropTypes.bool.isRequired
+  isFetching: PropTypes.bool.isRequired,
 };
 
-export default MaterialSearchBox;
+export default withTranslation()(MaterialSearchBox);

@@ -115,7 +115,7 @@ class SearchBox extends PureComponent {
           </div>
           <div className="col-md-3">
             <div className="form-group">
-              <label htmlFor="equipment_keyword">{t('common.address')}:</label>
+              <label htmlFor="equipment_keyword">{t('common.yourAddress')}:</label>
               <AddressInput
                 wrapperProps={{className: "text-dark"}}
                 onSelect={this._handleSelectLocation}
@@ -146,7 +146,7 @@ class SearchBox extends PureComponent {
             <div className="row">
               <div className="col-md-6">
                 <div className="form-group">
-                  <label htmlFor="begin_date">Start at:</label>
+                  <label htmlFor="begin_date">{t('equipment.rentFrom')}:</label>
                   {/* <input
                     type="date"
                     className="form-control"
@@ -176,7 +176,7 @@ class SearchBox extends PureComponent {
               </div>
               <div className="col-md-6 mt-md-0 mt-2">
                 <div className="form-group">
-                  <label htmlFor="end_date">End at:</label>
+                  <label htmlFor="end_date">{t('equipment.rentTo')}:</label>
                   {/* <input
                     type="date"
                     className="form-control"

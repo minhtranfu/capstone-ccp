@@ -1,6 +1,7 @@
 export default {
   keyword: 'Từ khóa',
   address: 'Địa chỉ',
+  yourAddress: 'Địa chỉ của bạn',
   search: 'Tìm',
   result: 'Kết quả',
   type: 'Loại',

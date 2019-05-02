@@ -1,6 +1,7 @@
 export default {
   keyword: 'Keyword',
   address: 'Address',
+  yourAddress: 'Your address',
   search: 'Search',
   result: 'Result',
   type: 'Type',
