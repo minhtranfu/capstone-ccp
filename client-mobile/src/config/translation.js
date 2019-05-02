@@ -23,14 +23,14 @@ export const en = {
   },
   ChangeLanguage: "Change language",
   Settings: "Settings",
-  //Contracts: "Contracts",
   EditProfile: "Edit profile",
   ChangePassword: "Change password",
   MyFeedback: "My feedback",
   MyConstruction: "My construction",
   MySubscription: "My subscription",
   Notifications: "Push notifications",
-  Joined: "Joined"
+  Joined: "Joined",
+  Categories: "Categories"
 };
 
 export const vn = {
@@ -58,12 +58,12 @@ export const vn = {
   },
   Settings: "Thiết lập tài khoản",
   ChangeLanguage: "Thay đổi ngôn ngữ",
-  //Contracts: "Contracts",
   EditProfile: "Thay đổi thông tin cá nhân",
   ChangePassword: "Thay đổi mật khẩu",
   MyFeedback: "Đánh giá của tôi",
   MyConstruction: "Địa chỉ công trình của tôi",
   MySubscription: "Đang theo dõi",
   Notifications: "Gửi thông báo",
-  Joined: "Tham gia từ"
+  Joined: "Tham gia từ",
+  Categories: "Danh mục"
 };

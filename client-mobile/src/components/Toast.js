@@ -47,20 +47,20 @@ class ShowToast extends Component {
   };
 
   hide = () => {
-    Animated.timing(this.state.y, {
-      duration: 1000,
-      toValue: -100
-    }).start();
-    // this.setState({
-    //   visible: false
-    // });
+    // Animated.timing(this.state.y, {
+    //   duration: 1000,
+    //   toValue: -100
+    // }).start();
+    this.setState({
+      visible: false
+    });
   };
 
   componentDidMount() {
     this.props.fetchCountNotification();
     setTimeout(() => this.show(), 1000); // show toast after 1s
 
-    setTimeout(() => this.hide(), 4000); // hide toast after 4s
+    setTimeout(() => this.hide(), 4000); // hide toast after 3s
   }
 
   componentDidUpdate(prevProp) {
@@ -68,7 +68,7 @@ class ShowToast extends Component {
       this.props.fetchCountNotification();
       setTimeout(() => this.show(), 1000); // show toast after 1s
 
-      setTimeout(() => this.hide(), 4000); // hide toast after 4s
+      setTimeout(() => this.hide(), 3000); // hide toast after 3s
     }
   }
 
@@ -78,6 +78,7 @@ class ShowToast extends Component {
 
   render() {
     const { message } = this.props;
+    console.log(message);
     let parts = message.clickAction.split("/");
     return (
       <Modal transparent={true} visible={this.state.visible}>

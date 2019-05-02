@@ -31,7 +31,8 @@ export function logIn(user) {
 
 export function logOut() {
   return async dispatch => {
-    AsyncStorage.removeItem("userToken");
+    await AsyncStorage.removeItem("userToken");
+    await AsyncStorage.removeItem("userRefreshToken");
     dispatch({
       type: Actions.LOGOUT_SUCCESS,
       payload: { signIn: false }

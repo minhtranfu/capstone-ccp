@@ -154,7 +154,7 @@ class Account extends Component {
     if (this.props.isLoggedIn && this.state.switchValue === true) {
       await this._handlePermissionNotification();
       await this._registerForPushNotificationsAsync();
-    } else {
+    } else if (this.props.isLoggedIn && this.state.switchValue === false) {
       this._handleRemoveToken();
     }
   }

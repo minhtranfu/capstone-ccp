@@ -65,7 +65,7 @@ export default async function configAPI(config) {
                   isAlreadyFetchingAccessToken = false;
                   return axios(originalRequest);
                 })
-                .catch(error => {
+                .catch(async error => {
                   console.log("foacker", error);
                   config.store.dispatch(
                     StatusAction.error(
@@ -74,16 +74,19 @@ export default async function configAPI(config) {
                       Date.now()
                     )
                   );
+                  await AsyncStorage.removeItem("userToken");
+                  await AsyncStorage.removeItem("userRefreshToken");
+                  delete config.headers.Authorization;
                   config.store.dispatch(logOut());
                 });
             }
             return Promise.reject(error);
-          // break;
+          // // break;
           case 403:
             config.store.dispatch(
-              StatusAction.error(401, "Wrong username or password", Date.now())
+              StatusAction.error(403, "Wrong username or password", Date.now())
             );
-            config.store.dispatch(logOut());
+            //config.store.dispatch(logOut());
             //goToLogin();
             break;
           case 400:

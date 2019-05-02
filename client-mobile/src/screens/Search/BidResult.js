@@ -44,12 +44,15 @@ class BidResult extends Component {
 
   _renderContent = () => {
     const { results, navigation } = this.props;
+    console.log(results);
     return (
       <View>
         {results.map(item => (
           <DebrisSearchItem
             key={item.id}
-            imageUrl={item.debrisImages[0].url}
+            imageUrl={
+              item.debrisImages.length > 0 ? item.debrisImages[0].url : ""
+            }
             address={item.address}
             debrisServiceTypes={item.debrisServiceTypes}
             debrisBids={item.debrisBids}

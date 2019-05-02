@@ -236,8 +236,19 @@ class EquipmentResult extends Component {
           paddingBottom: 10
         }}
       >
-        <Text style={styles.largeTitle}>{`${listSearch.length ||
-          0} Results`}</Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between"
+          }}
+        >
+          <Text style={styles.largeTitle}>{`${listSearch.length ||
+            0} Results`}</Text>
+          <TouchableOpacity>
+            <Text>Filter</Text>
+          </TouchableOpacity>
+        </View>
         <View
           style={{
             flexDirection: "row",
