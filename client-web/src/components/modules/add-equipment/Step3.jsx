@@ -317,19 +317,21 @@ class AddEquipmentStep3 extends Step {
               <label htmlFor="daily_price">
                 Price per day (K): <i className="text-danger">*</i>
               </label>
-              <div className="mb-2">
-                <span className="text-muted">Suggested price:</span>
-                <span className="ml-1 text-primary">
-                  <strong>
-                    {formatPrice(suggestedPrice - 0.05 * suggestedPrice, true, 0)} ~{' '}
-                    {formatPrice(suggestedPrice + 0.05 * suggestedPrice, true, 0)}
-                  </strong>
-                </span>
-                <i className="fal fa-question-circle text-muted ml-1" id="about_suggested_price" />
-                <UncontrolledTooltip target="about_suggested_price">
-                  Suggested price base on recently market
-                </UncontrolledTooltip>
-              </div>
+              {suggestedPrice > 0 &&
+                <div className="mb-2">
+                  <span className="text-muted">Suggested price:</span>
+                  <span className="ml-1 text-primary">
+                    <strong>
+                      {formatPrice(suggestedPrice - 0.05 * suggestedPrice, true, 0)} ~{' '}
+                      {formatPrice(suggestedPrice + 0.05 * suggestedPrice, true, 0)}
+                    </strong>
+                  </span>
+                  <i className="fal fa-question-circle text-muted ml-1" id="about_suggested_price" />
+                  <UncontrolledTooltip target="about_suggested_price">
+                    Suggested price base on recently market
+                  </UncontrolledTooltip>
+                </div>
+              }
               <input
                 type="string"
                 name="dailyPrice"
