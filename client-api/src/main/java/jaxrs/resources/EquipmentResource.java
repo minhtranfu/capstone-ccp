@@ -524,7 +524,7 @@ public class EquipmentResource {
 		if (suggestedPrice < 0) {
 			suggestedPrice = 0;
 		}
-		
+
 		EquipmentPriceSuggestionResponse response = new EquipmentPriceSuggestionResponse();
 		response.setSuggestedPrice(suggestedPrice);
 		return Response.ok(response).build();

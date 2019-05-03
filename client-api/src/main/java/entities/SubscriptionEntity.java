@@ -18,7 +18,6 @@ import java.time.LocalDate;
 @Table(name = "subscription", schema = "capstone_ccp")
 @EntityListeners(SubscriptionEntityListener.class)
 @NamedNativeQueries({
-
 @NamedNativeQuery(name = "SubscriptionEntity.matchEquipment"
 		,resultClass = SubscriptionEntity.class
 		,query = "SELECT * from subscription s where " +
@@ -68,6 +67,7 @@ public class SubscriptionEntity {
 
 	private String address;
 
+	private boolean isDeleted;
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -199,5 +199,15 @@ public class SubscriptionEntity {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	@Basic
+	@Column(name = "is_deleted")
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		isDeleted = deleted;
 	}
 }

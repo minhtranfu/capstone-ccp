@@ -33,6 +33,7 @@ import java.util.Objects;
 @NamedNativeQuery(name = "EquipmentEntity.getMatchedEquipmentForSubscriptions", query = "select e.id as equipment_id, s.id as subscription_id, s.contractor_id from equipment e , subscription s " +
 		"where e.status = 'AVAILABLE'" +
 		"and e.is_deleted=0 "+
+		"and s.is_deleted=0 " +
 		"and e.updated_time > now()-:timeOffset\n" +
 		"and \n" +
 		"(s.equipment_type_id = e.equipment_type_id or s.equipment_type_id is null or s.equipment_type_id = 0)\n" +
