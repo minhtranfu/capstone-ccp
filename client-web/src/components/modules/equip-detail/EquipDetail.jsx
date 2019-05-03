@@ -281,7 +281,7 @@ class EquipDetail extends Component {
                     <div key={info.id} className="col-md-6 py-2">
                       <h6>
                         <span className="text-muted">
-                          <small className="fal fa-circle"></small> {info.additionalSpecsField.name}
+                          <small className="fal fa-circle"></small> {info.additionalSpecsField.name}:
                         </span>{' '}
                         {info.value}
                       </h6>
