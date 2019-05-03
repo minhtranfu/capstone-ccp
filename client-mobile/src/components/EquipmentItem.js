@@ -65,36 +65,38 @@ class EquipmentItem extends PureComponent {
           <View style={styles.titleWrapper}>
             <View style={{ flexDirection: "column" }}>
               <Text style={styles.equipmentName}>{name}</Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginVertical: 5
-                }}
-              >
-                <ImageCache
-                  uri={contractorThumbnail || requesterThumbnail}
+              {contractor ? (
+                <View
                   style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    ...colors.shadow,
-                    backgroundColor: "white"
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginVertical: 5
                   }}
-                  resizeMode={"cover"}
-                />
-                <View style={{ marginLeft: 10 }}>
-                  <Text style={styles.text}> {contractor}</Text>
-                  <Rating
-                    readonly={true}
-                    ratingCount={5}
-                    fractions={1}
-                    startingValue={rating}
-                    imageSize={20}
-                    style={{ paddingBottom: 10 }}
+                >
+                  <ImageCache
+                    uri={contractorThumbnail || requesterThumbnail}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      ...colors.shadow,
+                      backgroundColor: "white"
+                    }}
+                    resizeMode={"cover"}
                   />
+                  <View style={{ marginLeft: 10 }}>
+                    <Text style={styles.text}> {contractor}</Text>
+                    <Rating
+                      readonly={true}
+                      ratingCount={5}
+                      fractions={1}
+                      startingValue={rating}
+                      imageSize={20}
+                      style={{ paddingBottom: 10 }}
+                    />
+                  </View>
                 </View>
-              </View>
+              ) : null}
               {timeRange ? (
                 <Text style={styles.text}>
                   {timeRange.beginDate} ▶ {timeRange.endDate}

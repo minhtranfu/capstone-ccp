@@ -295,6 +295,7 @@ class MyRequest extends Component {
   };
 
   _showNotificationIcon = () => {
+    console.log(this.props.user);
     return (
       <TouchableOpacity
         onPress={() => this.props.navigation.navigate("Notification")}
@@ -321,7 +322,7 @@ class MyRequest extends Component {
               fontSize: 9
             }}
           >
-            {this.props.countNotification}
+            {this.props.user.contractor.totalUnreadNotifications}
           </Text>
         </View>
       </TouchableOpacity>

@@ -239,7 +239,7 @@ class Search extends Component {
         <SearchBar
           style={{ height: 56, marginBottom: 5 }}
           handleOnChangeText={value => this.setState({ keyword: value })}
-          placeholder={"Enter equipment keyword"}
+          placeholder={"Search equipment name, type, categories..."}
           onSubmitEditing={this._handleSearch}
           renderRightButton={() => (
             <TouchableOpacity onPress={this._handleSearch}>

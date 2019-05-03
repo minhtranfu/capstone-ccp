@@ -368,6 +368,7 @@ class EquipmentDetail extends Component {
             <View>
               <ImageCache
                 uri={
+                  detail.equipment.contractor.thumbnailImageUrl ||
                   "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
                 }
                 style={styles.avatar}

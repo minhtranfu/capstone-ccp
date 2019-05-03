@@ -147,15 +147,29 @@ class MaterialSupplierDetail extends Component {
         : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg";
     return (
       <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-        {/* <Image
-          uri={image}
-          style={{ height: 200, paddingHorizontal: 0 }}
-          resizeMode={"cover"}
-        /> */}
         <Title title={"Delivering To"} />
-        <Text style={styles.text}>{detail.requester.name}</Text>
-        <Text style={styles.caption}>{detail.requester.email}</Text>
-        <Text style={styles.caption}>{detail.requester.phoneNumber}</Text>
+        <TouchableOpacity
+          onPress={() =>
+            this.props.navigation.navigate("ContractorProfile", {
+              id: requester.id
+            })
+          }
+          style={{ flexDirection: "row", alignItems: "center" }}
+        >
+          <Image
+            uri={
+              detail.requester.thumbnailImageUrl ||
+              "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
+            }
+            style={{ width: 50, height: 50, borderRadius: 25 }}
+            resizeMode={"cover"}
+          />
+          <View style={{ paddingLeft: 10 }}>
+            <Text style={styles.text}>{detail.requester.name}</Text>
+            <Text style={styles.caption}>{detail.requester.email}</Text>
+            <Text style={styles.caption}>{detail.requester.phoneNumber}</Text>
+          </View>
+        </TouchableOpacity>
         <Title title={"Devlivery Address"} />
         <Text style={styles.description}>{detail.requesterAddress}</Text>
         <Title
@@ -168,6 +182,7 @@ class MaterialSupplierDetail extends Component {
         {detail.materialTransactionDetails.length > 0 ? (
           detail.materialTransactionDetails.map(item => (
             <MaterialTransactionDetail
+              key={item.id}
               imageUrl={item.material.thumbnailImageUrl}
               name={item.material.name}
               manufacturer={item.material.manufacturer}

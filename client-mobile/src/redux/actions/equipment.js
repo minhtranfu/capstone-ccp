@@ -66,21 +66,32 @@ export function updateEquipment(equipmentId, equipment) {
 
 export function updateEquipmentStatus(transactionId, equipmentId, status) {
   return async dispatch => {
-    dispatch({
-      type: Actions.UPDATE_EQUIPMENT_STATUS.REQUEST
-    });
-    dispatch({
-      type: Actions.UPDATE_TRANSACTION_EQUIPMENT_STATUS.REQUEST
-    });
-    const res = await axios.put(`equipments/${equipmentId}/status`, status);
-    dispatch({
-      type: Actions.UPDATE_EQUIPMENT_STATUS.SUCCESS,
-      payload: { data: res, id: equipmentId }
-    });
-    dispatch({
-      type: Actions.UPDATE_TRANSACTION_EQUIPMENT_STATUS.SUCCESS,
-      payload: { data: res, transactionId: transactionId }
-    });
+    try {
+      dispatch({
+        type: Actions.UPDATE_EQUIPMENT_STATUS.REQUEST
+      });
+      dispatch({
+        type: Actions.UPDATE_TRANSACTION_EQUIPMENT_STATUS.REQUEST
+      });
+      const res = await axios.put(`equipments/${equipmentId}/status`, status);
+      dispatch({
+        type: Actions.UPDATE_EQUIPMENT_STATUS.SUCCESS,
+        payload: { data: res, id: equipmentId }
+      });
+      dispatch({
+        type: Actions.UPDATE_TRANSACTION_EQUIPMENT_STATUS.SUCCESS,
+        payload: { data: res, transactionId: transactionId }
+      });
+      dispatch(StatusAction.success("Update status success"));
+    } catch (error) {
+      dispatch({
+        type: Actions.UPDATE_EQUIPMENT_STATUS.ERROR
+      });
+      dispatch({
+        type: Actions.UPDATE_TRANSACTION_EQUIPMENT_STATUS.ERROR
+      });
+      dispatch(StatusAction.error("Update status fail"));
+    }
   };
 }
 

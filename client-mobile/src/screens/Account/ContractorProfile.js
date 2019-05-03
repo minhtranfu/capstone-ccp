@@ -182,7 +182,7 @@ class ContractorProfile extends Component {
     );
   };
 
-  _renderImageProfile = thumbnailImage => (
+  _renderImageProfile = thumbnailImageUrl => (
     <View style={{ flex: 1 }}>
       <Image
         uri={"https://ak4.picdn.net/shutterstock/videos/6731134/thumb/1.jpg"}
@@ -192,6 +192,7 @@ class ContractorProfile extends Component {
       <View style={styles.avatarWrapper}>
         <Image
           uri={
+            thumbnailImageUrl ||
             "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
           }
           resizeMode={"cover"}
@@ -202,10 +203,15 @@ class ContractorProfile extends Component {
   );
 
   _renderListItem = () => {
-    const { name, thumbnailImage, email, phoneNumber } = this.props.contractor;
+    const {
+      name,
+      thumbnailImageUrl,
+      email,
+      phoneNumber
+    } = this.props.contractor;
     return (
       <ScrollView>
-        {this._renderImageProfile(thumbnailImage)}
+        {this._renderImageProfile(thumbnailImageUrl)}
         <View style={styles.nameWrapper}>
           <Text style={styles.text}>{name}</Text>
           <Text style={styles.text}>Phone Number: {phoneNumber}</Text>
@@ -234,7 +240,7 @@ class ContractorProfile extends Component {
         <Header
           renderLeftButton={() => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Feather name={"x"} size={24} />
+              <Feather name={"chevron-left"} size={24} />
             </TouchableOpacity>
           )}
         >
@@ -268,7 +274,9 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end"
   },
   header: {
-    fontSize: fontSize.h4
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: colors.primaryColor
   },
   title: {
     fontSize: fontSize.bodyText,

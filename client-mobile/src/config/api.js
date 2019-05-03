@@ -1,18 +1,30 @@
 import axios from "axios";
 import StatusAction from "../redux/actions/status";
-import { logOut } from "../redux/actions/auth";
+import { logOut, updateToken } from "../redux/actions/auth";
 import { AsyncStorage } from "react-native";
 import { goToLogin } from "../Utils/Helpers";
 import i18n from "i18n-js";
 import { en, vn } from "./translation";
 import { ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS } from "expo/build/IntentLauncherAndroid";
 
-let isAlreadyFetchingAccessToken = false;
 const refresh = axios.create();
+let isRefreshing = false;
+let requestQueue = [];
 
 export default async function configAPI(config) {
   axios.defaults.baseURL = "http://35.198.233.204:8080/api/";
   axios.defaults.headers.post["Content-Type"] = "application/json";
+
+  const processQueue = (error, token = null) => {
+    requestQueue.forEach(promise => {
+      if (error) {
+        promise.reject(error);
+      } else {
+        promise.resolve(token);
+      }
+    });
+    requestQueue = [];
+  };
 
   axios.interceptors.request.use(
     async config => {
@@ -44,44 +56,66 @@ export default async function configAPI(config) {
       if (error.response) {
         switch (error.response.status) {
           case 401:
-            if (!isAlreadyFetchingAccessToken) {
-              isAlreadyFetchingAccessToken = true;
+            if (!originalRequest._retry) {
+              if (isRefreshing) {
+                console.log("test");
+                return new Promise((resolve, reject) => {
+                  requestQueue.push({ resolve, reject });
+                })
+                  .then(token => {
+                    axios.defaults.headers.common[
+                      "Authorization"
+                    ] = `Bearer ${token}`;
+                    originalRequest.headers[
+                      "Authorization"
+                    ] = `Bearer ${token}`;
+                    return axios(originalRequest);
+                  })
+                  .catch(err => err);
+              }
+              originalRequest._retry = true;
+              isRefreshing = true;
               const refreshToken = await AsyncStorage.getItem(
                 "userRefreshToken"
               );
-              return refresh
-                .post(`authen/refresh`, { refreshToken })
-                .then(async response => {
-                  await AsyncStorage.setItem(
-                    "userToken",
-                    response.data.tokenWrapper.accessToken
-                  );
-                  axios.defaults.headers.common["Authorization"] = `Bearer ${
-                    response.data.tokenWrapper.accessToken
-                  }`;
-                  originalRequest.headers["Authorization"] = `Bearer ${
-                    response.data.tokenWrapper.accessToken
-                  }`;
-                  isAlreadyFetchingAccessToken = false;
-                  return axios(originalRequest);
-                })
-                .catch(async error => {
-                  console.log("foacker", error);
-                  config.store.dispatch(
-                    StatusAction.error(
-                      401,
-                      "Session has expired. Please login again!!",
-                      Date.now()
-                    )
-                  );
-                  await AsyncStorage.removeItem("userToken");
-                  await AsyncStorage.removeItem("userRefreshToken");
-                  delete config.headers.Authorization;
-                  config.store.dispatch(logOut());
-                });
+              console.log(refreshToken);
+              return new Promise((resolve, reject) => {
+                refresh
+                  .post(`authen/refresh`, { refreshToken })
+                  .then(async ({ data }) => {
+                    console.log(data);
+                    const userToken = data.tokenWrapper.accessToken;
+                    await AsyncStorage.setItem("userToken", userToken);
+                    axios.defaults.headers.common[
+                      "Authorization"
+                    ] = `Bearer ${userToken}`;
+                    originalRequest.headers[
+                      "Authorization"
+                    ] = `Bearer ${userToken}`;
+                    resolve(axios(originalRequest));
+                    processQueue(null, userToken);
+                  })
+                  .catch(async error => {
+                    console.log("foacker", error);
+                    config.store.dispatch(
+                      StatusAction.error(
+                        401,
+                        "Session has expired. Please login again!!",
+                        Date.now()
+                      )
+                    );
+                    delete config.headers.Authorization;
+                    config.store.dispatch(logOut());
+                    processQueue(err, null);
+                    reject(err);
+                  })
+                  .then(() => {
+                    isRefreshing = false;
+                  });
+              });
             }
             return Promise.reject(error);
-          // // break;
+          //break;
           case 403:
             config.store.dispatch(
               StatusAction.error(403, "Wrong username or password", Date.now())

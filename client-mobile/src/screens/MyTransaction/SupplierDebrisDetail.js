@@ -141,10 +141,15 @@ class SupplierDebrisDetail extends Component {
         </Text>
         <Title title={"Requester"} />
         <Bidder
+          onPress={() =>
+            this.props.navigation.navigate("ContractorProfile", {
+              id: detail.debrisPost.requester.id
+            })
+          }
           description={detail.description}
           price={detail.price}
           rating={detail.debrisPost.requester.averageDebrisRating}
-          imageUrl={detail.debrisPost.requester.thumbnailImage}
+          imageUrl={detail.debrisPost.requester.thumbnailImageUrl}
           name={detail.debrisPost.requester.name}
           hasDivider={true}
         />

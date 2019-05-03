@@ -175,9 +175,9 @@ class MyEquipmenTab extends PureComponent {
             offset: ITEM_HEIGHT * index,
             index
           })}
-          ListFooterComponent={this._renderFooter}
-          onEndReachedThreshold={0.5}
-          onEndReached={this._handleLoadMore}
+          // ListFooterComponent={this._renderFooter}
+          // onEndReachedThreshold={0.5}
+          // onEndReached={this._handleLoadMore}
         />
       </View>
     );

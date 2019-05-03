@@ -86,7 +86,14 @@ export default function transactionReducer(state = initialState, action) {
         loading: false,
         listRequesterTransaction: state.listRequesterTransaction.map(item =>
           item.id === payload.transactionId
-            ? (item.equipment.status = payload.data.data.status)
+            ? {
+                ...item,
+                status: payload.data.data.processingHiringTransaction.status,
+                equipment: {
+                  ...item.equipment,
+                  status: payload.data.data.status
+                }
+              }
             : item
         )
       };

@@ -145,12 +145,17 @@ class DebrisDetail extends Component {
         </View>
         <Title title={"Employee"} />
         <Bidder
+          onPress={() =>
+            this.props.navigation.navigate("ContractorProfile", {
+              id: detail.debrisPost.requester.id
+            })
+          }
           feedbackCount={detail.debrisBid.supplier.debrisFeedbacksCount}
           createdTime={detail.debrisBid.createdTime}
           description={detail.debrisBid.description}
           price={detail.debrisBid.price}
           rating={detail.debrisBid.supplier.averageDebrisRating}
-          imageUrl={detail.debrisBid.supplier.thumbnailImage}
+          imageUrl={detail.debrisBid.supplier.thumbnailImageUrl}
           name={detail.debrisBid.supplier.name}
         />
         {/* <Text>Total bids {detail.debrisPost.debrisBids.length}</Text>

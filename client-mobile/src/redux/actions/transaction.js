@@ -326,11 +326,13 @@ export function sendEquipmentFeedback(transactionId, feedback) {
         type: Actions.SEND_EQUIPMENT_FEEDBACK.SUCCESS,
         payload: res
       });
+      dispatch(StatusAction.success("Send feedback success"));
     } catch (error) {
       console.log(error);
       dispatch({
         type: Actions.SEND_EQUIPMENT_FEEDBACK.ERROR
       });
+      dispatch(StatusAction.success("Send feedback fail"));
     }
   };
 }

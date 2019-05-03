@@ -190,7 +190,8 @@ const MyEquipmentStack = createStackNavigator(
     MyBidsDetail: MyBidsDetail,
     AddDebrisPost: AddDebrisPost,
     AddServicesTypes: AddServicesTypes,
-    ManageImages: ManageImages
+    ManageImages: ManageImages,
+    ContractorProfile: ContractorProfile
     // Login
   },
   {

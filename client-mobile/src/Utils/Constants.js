@@ -52,15 +52,15 @@ export const DROPDOWN_OPTIONS = {
   CATEGORY: [
     {
       id: 0,
-      name: "Select your caterogy",
-      value: "Select your category"
+      name: "Select equipment caterogy",
+      value: "Select equipment category"
     }
   ],
   TYPE: [
     {
       id: 0,
-      name: "Select your type",
-      value: "Select your type"
+      name: "Select equipment type",
+      value: "Select equipment type"
     }
   ],
   CONSTRUCTION: [

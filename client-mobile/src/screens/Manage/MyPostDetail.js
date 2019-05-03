@@ -30,7 +30,7 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import Title from "../../components/Title";
 
-const Bid = ({ bid, onPress }) => {
+const Bid = ({ bid, onPress, onPressContractor }) => {
   const { createdTime, description, price, status, supplier } = bid;
   return (
     <View
@@ -45,15 +45,27 @@ const Bid = ({ bid, onPress }) => {
         marginTop: 5
       }}
     >
-      <View
+      <TouchableOpacity
         style={{ flexDirection: "row", alignItems: "center", marginBottom: 5 }}
+        onPress={onPressContractor}
       >
         <View style={{ flex: 1, marginRight: 8 }}>
-          <Text style={styles.bidSupplierName}>{supplier.name}</Text>
-          <Text style={styles.bidTime}>{moment(createdTime).fromNow()}</Text>
+          <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+            <Image
+              uri={supplier.thumbnailImageUrl}
+              style={{ width: 50, height: 50, borderRadius: 25 }}
+              resizeMode={"cover"}
+            />
+            <View style={{ paddingLeft: 10 }}>
+              <Text style={styles.bidSupplierName}>{supplier.name}</Text>
+              <Text style={styles.bidTime}>
+                {moment(createdTime).fromNow()}
+              </Text>
+            </View>
+          </View>
         </View>
         <Text style={styles.bidPrice}>{`${price}k VND`}</Text>
-      </View>
+      </TouchableOpacity>
       <Text style={styles.bidDescription}>{description}</Text>
       <TouchableOpacity
         onPress={onPress}
@@ -388,6 +400,11 @@ class MyPostDetail extends Component {
                 key={bid.id.toString()}
                 bid={bid}
                 onPress={() => this._handleAcceptRequest(bid.id)}
+                onPressContractor={() =>
+                  this.props.navigation.navigate("ContractorProfile", {
+                    id: bid.supplier.id
+                  })
+                }
               />
             ))}
         </View>

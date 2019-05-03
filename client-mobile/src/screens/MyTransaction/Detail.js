@@ -287,35 +287,32 @@ class MyTransactionDetail extends Component {
     }
   };
 
-  _renderContractor = detail => (
+  _renderContractor = requester => (
     <View style={styles.columnWrapper}>
-      <Text style={styles.title}>Contractor</Text>
+      <Text style={styles.title}>Requester</Text>
       <View style={styles.rowWrapper}>
         <TouchableOpacity
           onPress={() =>
             this.props.navigation.navigate("ContractorProfile", {
-              id: detail.equipment.contractor.id
+              id: requester.id
             })
           }
+          style={{ flexDirection: "row", alignItems: "center" }}
         >
           <ImageCache
             uri={
+              requester.thumbnailImageUrl ||
               "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
             }
             style={styles.avatar}
             resizeMode={"cover"}
           />
-        </TouchableOpacity>
-        <TouchableOpacity style={{ flexDirection: "column", paddingLeft: 15 }}>
-          <Text style={styles.text}>
-            Name: {detail.equipment.contractor.name}
-          </Text>
-          <Text style={styles.text}>
-            Phone: {detail.equipment.contractor.phoneNumber}
-          </Text>
-          <Text style={styles.text}>
-            Email: {detail.equipment.contractor.email}
-          </Text>
+
+          <View style={{ flexDirection: "column", paddingLeft: 15 }}>
+            <Text style={styles.text}>Name: {requester.name}</Text>
+            <Text style={styles.text}>Phone: {requester.phoneNumber}</Text>
+            <Text style={styles.text}>Email: {requester.email}</Text>
+          </View>
         </TouchableOpacity>
       </View>
     </View>
@@ -391,7 +388,7 @@ class MyTransactionDetail extends Component {
             <Text style={styles.text}>{totalPrice} K</Text>
           </View>
         </View>
-        {this._renderContractor(detail)}
+        {this._renderContractor(detail.requester)}
         {this._renderTransactionOnProcess(detail.status, detail.equipment)}
         {this._renderAdjustDateTransaction(id, detail.equipment.status)}
         {this._renderBottomButton(detail.status, id, detail.equipment.status)}

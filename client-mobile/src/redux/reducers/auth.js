@@ -18,6 +18,12 @@ export default function authReducer(state = Initial_State, action) {
         data: payload.data.data
       };
     }
+    case "UPDATE_TOKEN": {
+      return {
+        ...state,
+        token: payload.token
+      };
+    }
     case Actions.LOGOUT_SUCCESS: {
       return {
         ...state,

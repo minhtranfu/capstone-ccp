@@ -217,7 +217,7 @@ class BidSearch extends Component {
           style={{ height: 56, marginBottom: 5 }}
           handleOnChangeText={this._handleOnChangeText}
           icon={"navigation"}
-          placeholder={"Enter keyword"}
+          placeholder={"Search anything"}
           onSubmitEditing={this._handleSearch}
           renderRightButton={() => (
             <TouchableOpacity onPress={this._handleSearch}>

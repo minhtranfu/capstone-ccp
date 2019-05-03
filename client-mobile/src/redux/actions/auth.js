@@ -29,6 +29,17 @@ export function logIn(user) {
   };
 }
 
+export function updateToken(token) {
+  return dispatch => {
+    dispatch({
+      type: "UPDATE_TOKEN",
+      payload: {
+        token
+      }
+    });
+  };
+}
+
 export function logOut() {
   return async dispatch => {
     await AsyncStorage.removeItem("userToken");
