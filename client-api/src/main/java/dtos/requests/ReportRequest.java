@@ -20,5 +20,5 @@ public class ReportRequest {
 //	public IdOnly fromContractor;
 	@Valid
 	@NotNull
-	public IdOnly feedbackType;
+	public IdOnly reportType;
 }

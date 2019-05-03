@@ -3768,124 +3768,131 @@
       <DataType>double|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="777" parent="314" name="subscription_equipment_type_id_fk">
+    <column id="777" parent="314" name="is_deleted">
+      <Position>13</Position>
+      <DataType>tinyint(1)|0s</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>&apos;0&apos;</DefaultExpression>
+      <ColumnKind>normal</ColumnKind>
+    </column>
+    <index id="778" parent="314" name="subscription_equipment_type_id_fk">
       <ColNames>equipment_type_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="778" parent="314" name="subscription_contractor_id_fk">
+    <index id="779" parent="314" name="subscription_contractor_id_fk">
       <ColNames>contractor_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="779" parent="314" name="PRIMARY">
+    <key id="780" parent="314" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="780" parent="314" name="subscription_equipment_type_id_fk">
+    <foreign-key id="781" parent="314" name="subscription_equipment_type_id_fk">
       <ColNames>equipment_type_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>equipment_type</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <foreign-key id="781" parent="314" name="subscription_contractor_id_fk">
+    <foreign-key id="782" parent="314" name="subscription_contractor_id_fk">
       <ColNames>contractor_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>contractor</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="782" parent="315" name="id">
+    <column id="783" parent="315" name="id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="783" parent="315" name="matched_subscription_id">
+    <column id="784" parent="315" name="matched_subscription_id">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="784" parent="315" name="matched_equipment_id">
+    <column id="785" parent="315" name="matched_equipment_id">
       <Position>3</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="785" parent="315" name="contractor_id">
+    <column id="786" parent="315" name="contractor_id">
       <Position>4</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="786" parent="315" name="created_time">
+    <column id="787" parent="315" name="created_time">
       <Position>5</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="787" parent="315" name="updated_time">
+    <column id="788" parent="315" name="updated_time">
       <Position>6</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
-    <index id="788" parent="315" name="subscription_matched_log_subscription_id_fk">
+    <index id="789" parent="315" name="subscription_matched_log_subscription_id_fk">
       <ColNames>matched_subscription_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="789" parent="315" name="subscription_matched_log_equipment_id_fk">
+    <index id="790" parent="315" name="subscription_matched_log_equipment_id_fk">
       <ColNames>matched_equipment_id</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="790" parent="315" name="subscription_matched_log_contractor_id_fk">
+    <index id="791" parent="315" name="subscription_matched_log_contractor_id_fk">
       <ColNames>contractor_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="791" parent="315" name="PRIMARY">
+    <key id="792" parent="315" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="792" parent="315" name="subscription_matched_log_subscription_id_fk">
+    <foreign-key id="793" parent="315" name="subscription_matched_log_subscription_id_fk">
       <ColNames>matched_subscription_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>subscription</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <foreign-key id="793" parent="315" name="subscription_matched_log_equipment_id_fk">
+    <foreign-key id="794" parent="315" name="subscription_matched_log_equipment_id_fk">
       <ColNames>matched_equipment_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>equipment</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <foreign-key id="794" parent="315" name="subscription_matched_log_contractor_id_fk">
+    <foreign-key id="795" parent="315" name="subscription_matched_log_contractor_id_fk">
       <ColNames>contractor_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>contractor</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="795" parent="316" name="id">
+    <column id="796" parent="316" name="id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="796" parent="316" name="requested_end_date">
+    <column id="797" parent="316" name="requested_end_date">
       <Position>2</Position>
       <DataType>date|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="797" parent="316" name="created_time">
+    <column id="798" parent="316" name="created_time">
       <Position>3</Position>
       <DataType>datetime|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="798" parent="316" name="updated_time">
+    <column id="799" parent="316" name="updated_time">
       <Position>4</Position>
       <DataType>datetime|0s</DataType>
       <NotNull>1</NotNull>
@@ -3893,80 +3900,80 @@
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
-    <column id="799" parent="316" name="status">
+    <column id="800" parent="316" name="status">
       <Position>5</Position>
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <DefaultExpression>&apos;PENDING&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="800" parent="316" name="is_deleted">
+    <column id="801" parent="316" name="is_deleted">
       <Position>6</Position>
       <DataType>tinyint(1)|0s</DataType>
       <DefaultExpression>&apos;0&apos;</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="801" parent="316" name="transaction_id">
+    <column id="802" parent="316" name="transaction_id">
       <Position>7</Position>
       <DataType>int(11)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <index id="802" parent="316" name="transaction_date_change_request_hiring_transaction_id_fk">
+    <index id="803" parent="316" name="transaction_date_change_request_hiring_transaction_id_fk">
       <ColNames>transaction_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="803" parent="316" name="PRIMARY">
+    <key id="804" parent="316" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="804" parent="316" name="transaction_date_change_request_hiring_transaction_id_fk">
+    <foreign-key id="805" parent="316" name="transaction_date_change_request_hiring_transaction_id_fk">
       <ColNames>transaction_id</ColNames>
       <RefSchemaName>capstone_ccp</RefSchemaName>
       <RefTableName>hiring_transaction</RefTableName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <argument id="805" parent="317">
+    <argument id="806" parent="317">
       <ArgumentDirection>R</ArgumentDirection>
       <DataType>double|0s</DataType>
     </argument>
-    <argument id="806" parent="317" name="lat1">
+    <argument id="807" parent="317" name="lat1">
       <Position>1</Position>
       <DataType>double|0s</DataType>
     </argument>
-    <argument id="807" parent="317" name="long1">
+    <argument id="808" parent="317" name="long1">
       <Position>2</Position>
       <DataType>double|0s</DataType>
     </argument>
-    <argument id="808" parent="317" name="lat2">
+    <argument id="809" parent="317" name="lat2">
       <Position>3</Position>
       <DataType>double|0s</DataType>
     </argument>
-    <argument id="809" parent="317" name="long2">
+    <argument id="810" parent="317" name="long2">
       <Position>4</Position>
       <DataType>double|0s</DataType>
     </argument>
-    <argument id="810" parent="318" name="$requester_id">
+    <argument id="811" parent="318" name="$requester_id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
     </argument>
-    <argument id="811" parent="319">
+    <argument id="812" parent="319">
       <ArgumentDirection>R</ArgumentDirection>
       <DataType>double|0s</DataType>
     </argument>
-    <argument id="812" parent="319" name="equipmentId">
+    <argument id="813" parent="319" name="equipmentId">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
     </argument>
-    <argument id="813" parent="319" name="subscriptionId">
+    <argument id="814" parent="319" name="subscriptionId">
       <Position>2</Position>
       <DataType>int(11)|0s</DataType>
     </argument>
-    <argument id="814" parent="320" name="$requester_id">
+    <argument id="815" parent="320" name="$requester_id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
     </argument>
-    <argument id="815" parent="321" name="$requester_id">
+    <argument id="816" parent="321" name="$requester_id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
     </argument>
