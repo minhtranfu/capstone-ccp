@@ -40,6 +40,8 @@ public class ContractorEntity implements Serializable {
     @Column(name = "status")
     private Status status;
 
+    @Column(name = "email_verified")
+    private boolean isVerifiedEmail;
 
     @Column(name = "created_time", updatable = false, insertable = false)
     @DateTimeFormat(pattern = "hh:mm:ss dd/MM/yyyy")
@@ -104,6 +106,13 @@ public class ContractorEntity implements Serializable {
         this.status = status;
     }
 
+    public boolean isVerifiedEmail() {
+        return isVerifiedEmail;
+    }
+
+    public void setVerifiedEmail(boolean verifiedEmail) {
+        isVerifiedEmail = verifiedEmail;
+    }
 
     public List<ReportEntity> getReceivedFeedbackEntities() {
         return receivedFeedbackEntities;

@@ -2,9 +2,9 @@ package com.ccp.webadmin.controllers;
 
 import com.ccp.webadmin.entities.ContractorEntity;
 import com.ccp.webadmin.entities.ContractorVerifyingImageEntity;
-import com.ccp.webadmin.services.ContractorService;
-import com.ccp.webadmin.services.ContractorVerifyingImageService;
-import com.ccp.webadmin.services.ReportService;
+import com.ccp.webadmin.entities.NotificationDeviceTokenEntity;
+import com.ccp.webadmin.services.*;
+import com.ccp.webadmin.utils.PushNotifictionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,14 +19,22 @@ public class ContractorController {
 
     private final ContractorService contractorService;
     private final ReportService reportService;
+    private final PushNotifictionHelper pushNotifictionHelper;
     private final ContractorVerifyingImageService contractorVerifyingImageService;
+    private final NotificationService notificationService;
+    private final NotificationDeviceTokenService notificationDeviceTokenService;
 
-    @Autowired
-    public ContractorController(ContractorService contractorService, ReportService reportService, ContractorVerifyingImageService contractorVerifyingImageService) {
+    public ContractorController(ContractorService contractorService, ReportService reportService, PushNotifictionHelper pushNotifictionHelper, ContractorVerifyingImageService contractorVerifyingImageService, NotificationService notificationService, NotificationDeviceTokenService notificationDeviceTokenService) {
         this.contractorService = contractorService;
         this.reportService = reportService;
+        this.pushNotifictionHelper = pushNotifictionHelper;
         this.contractorVerifyingImageService = contractorVerifyingImageService;
+        this.notificationService = notificationService;
+        this.notificationDeviceTokenService = notificationDeviceTokenService;
     }
+
+
+
 
     @GetMapping({"", "/", "/index"})
     public String getContractor(Model model) {
@@ -79,6 +87,16 @@ public class ContractorController {
         switch (contractorEntity.getStatus()) {
             case NOT_VERIFIED:
                 contractorEntity.setStatus(ContractorEntity.Status.ACTIVATED);
+                try {
+                    for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(contractorEntity)
+                    ) {
+                        pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content, clickAction);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                notificationService.save(notificationEntity);
                 break;
             case ACTIVATED:
                 contractorEntity.setStatus(ContractorEntity.Status.DEACTIVATED);

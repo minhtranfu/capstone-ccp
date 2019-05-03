@@ -57,9 +57,9 @@ public class HomeController {
     public String home(Model model) {
         model.addAttribute("newContractor", contractorService.countNewContractor());
         model.addAttribute("newFeedback", reportService.countNewReport());
-        model.addAttribute("hiringTransactionStatistic", NumberFormat.getNumberInstance(Locale.US).format(hiringTransactionService.countHiringTransactionIncome()));
-        model.addAttribute("materialTransactionStatistic", NumberFormat.getNumberInstance(Locale.US).format(materialTransactionService.countMaterialTransactionIncome()));
-        model.addAttribute("debrisTransactionStatistic", NumberFormat.getNumberInstance(Locale.US).format(debrisTransactionService.countDebrisTransactionIncome()));
+        model.addAttribute("hiringTransactionStatistic", NumberFormat.getNumberInstance(Locale.US).format(hiringTransactionService.countHiringTransactionIncome().intValue()));
+        model.addAttribute("materialTransactionStatistic", NumberFormat.getNumberInstance(Locale.US).format(materialTransactionService.countMaterialTransactionIncome().intValue()));
+        model.addAttribute("debrisTransactionStatistic", NumberFormat.getNumberInstance(Locale.US).format(debrisTransactionService.countDebrisTransactionIncome().intValue()));
         return "home/index";
     }
 

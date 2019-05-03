@@ -56,6 +56,17 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Email:</label>
+                                        <span th:switch="${contractor.verifiedEmail}">
+                                            <span th:case="FALSE" style="color: red">Not Verified</span>
+                                            <span th:case="TRUE" style="color: green">Verified</span>
+                                        </span>
+                                        <span th:switch="${contractor.verifiedEmail}">
+                                            <img th:case="FALSE" src="/images/false.png" height="20"
+                                                 width="20">
+                                             <img th:case="TRUE" src="/images/true.png" height="20"
+                                                  width="20">
+                                        </span>
+
                                         <input th:field="*{email}" class="form-control" placeholder="Name">
                                     </div>
                                     <div class="form-group">
