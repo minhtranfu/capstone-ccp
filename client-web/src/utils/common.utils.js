@@ -82,7 +82,7 @@ export const getValidateFeedback = (fieldName, validateResult) => {
 };
 
 const actionRouteMapping = {
-  materialTransactions: routeConsts.MATERIAL_REQUEST_DETAIL,
+  materialTransactions: routeConsts.MATERIAL_TRANSACTION_DETAIL,
   hiringTransactions: routeConsts.EQUIPMENT_TRANSACTION_DETAIL,
   debrisTransactions: routeConsts.DEBRIS_REQUEST_DETAIL,
   equipments: routeConsts.EQUIPMENT_DETAIL

@@ -441,7 +441,7 @@ class MaterialTransactions extends Component {
           <div className="col-md-2 py-2 d-flex flex-column justify-content-center">
             {changeStatusButtons}
             <Link
-              to={getRoutePath(routeConsts.MATERIAL_SUPPLY_DETAIL, { id: transaction.id })}
+              to={getRoutePath(routeConsts.MATERIAL_TRANSACTION_DETAIL, { id: transaction.id })}
               className="btn btn-sm btn-block btn-link"
             >
               Detail

@@ -88,6 +88,8 @@ export const modules = [
     modulePath: './subscription/requested',
     isPrivate: true,
   },
+
+  // Material
   {
     name: routeConsts.EQUIPMENT_DETAIL,
     path: '/equipments/:id',
@@ -135,9 +137,9 @@ export const modules = [
     isPrivate: true
   },
   {
-    name: routeConsts.MATERIAL_REQUEST_DETAIL,
-    path: '/materials/request/:id',
-    modulePath: './material/request-detail',
+    name: routeConsts.MATERIAL_TRANSACTION_DETAIL,
+    path: '/materials/transactions/:id',
+    modulePath: './material/transaction-detail',
     isPrivate: true
   },
   {
@@ -151,6 +153,8 @@ export const modules = [
     path: '/materials/:id',
     modulePath: './material-detail'
   },
+
+  // Debris
   {
     name: routeConsts.DEBRIS_ADD,
     path: '/debrises/add',
