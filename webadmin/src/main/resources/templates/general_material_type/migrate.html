@@ -56,6 +56,33 @@
                                         </select>
                                     </div>
                                     <input type="Submit" value="Save" class="btn btn-success">
+                                    <a href="#" class="btn btn-default" data-toggle="modal"
+                                       data-target="#smallModalCancel">Cancel</a>
+
+                                    <div class="modal fade" id="smallModalCancel" tabindex="-1" role="dialog"
+                                         aria-labelledby="smallModalCancel" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-hidden="true">&times;
+                                                    </button>
+                                                    <h4 class="modal-title" id="myModalLabelCancel">Confirm</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <h4>Do you want to cancel?</h4>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default"
+                                                            data-dismiss="modal">
+                                                        No
+                                                    </button>
+                                                    <a th:href="@{/general_material_type/index}"
+                                                       class="link btn btn-danger">Yes</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </form>
 
                             </div>
