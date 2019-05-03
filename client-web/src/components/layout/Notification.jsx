@@ -17,6 +17,8 @@ class Notification extends PureComponent {
   render() {
     const { onClose, notification } = this.props;
 
+    console.log(notification);
+
     return (
       <div className="toast show" role="alert" aria-live="assertive" aria-atomic="true">
         <Link to={getRouteFromClickAction(notification.clickAction)}>

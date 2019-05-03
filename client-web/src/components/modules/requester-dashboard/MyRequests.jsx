@@ -500,6 +500,7 @@ class MyRequests extends Component {
    */
   _handleChangeEquipmentStatusConfirm = async (transaction, status) => {
     try {
+      this._showLoadingConfirm();
       const res = await ccpApiService.updateEquipmentStatus(transaction.equipment.id, status);
 
       // check if error
