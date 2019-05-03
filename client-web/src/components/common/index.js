@@ -9,3 +9,4 @@ export { default as RatingEquipmentTransaction } from './rating-equipment-transa
 export { default as RatingMaterialModal } from './rating-material-detail';
 export { default as Pagination } from './pagination';
 export { default as StarRatings } from './star-ratings';
+export { default as ContractorCard } from './contractor-card';
