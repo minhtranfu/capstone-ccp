@@ -513,6 +513,7 @@ public class EquipmentResource {
 
 		double suggestedPrice = 0;
 		EquipmentTypeEntity equipmentTypeEntity = equipmentTypeDAO.findByIdWithValidation(priceSuggestionRequest.getEquipmentType().getId());
+		suggestedPrice += equipmentTypeEntity.getPriceWeight();
 		for (AdditionalSpecsValueRequest additionalValue : priceSuggestionRequest.getAdditionalSpecsValues()) {
 			AdditionalSpecsFieldEntity field = additionalSpecsFieldDAO.findByIdWithValidation(additionalValue.additionalSpecsField.getId());
 			if (field.getDataType().isNumbericType()) {
@@ -520,6 +521,7 @@ public class EquipmentResource {
 				suggestedPrice += parsedValue * field.getPriceWeight();
 			}
 		}
+
 
 		if (suggestedPrice < 0) {
 			suggestedPrice = 0;

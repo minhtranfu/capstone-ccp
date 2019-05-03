@@ -86,6 +86,15 @@ public class AdditionalSpecsFieldEntity {
 	}
 
 	@Override
+	public String toString() {
+		return "AdditionalSpecsFieldEntity{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", dataType=" + dataType +
+				'}';
+	}
+
+	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof AdditionalSpecsFieldEntity)) return false;

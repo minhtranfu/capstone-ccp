@@ -480,8 +480,8 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 
 	}
 
-	public List<EquipmentEntity> getEquipmentsByEquipmentTypeId(long equipmentTypeId, boolean includeDeleted) {
-		String query = "select e from EquipmentEntity e where e.equipmentType.id = :equipmentTypeId  ";
+	public List<EquipmentEntity> getEquipmentsByEquipmentTypeIdForTraining(long equipmentTypeId, boolean includeDeleted) {
+		String query = "select e from EquipmentEntity e where e.equipmentType.id = :equipmentTypeId and e.additionalSpecsValues.size > 0 ";
 		if (!includeDeleted) {
 			query += " and e.deleted=false ";
 		}
