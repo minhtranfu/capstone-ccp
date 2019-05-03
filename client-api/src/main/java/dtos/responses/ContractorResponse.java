@@ -20,6 +20,9 @@ public class ContractorResponse {
 	private LocalDateTime createdTime;
 	private LocalDateTime updatedTime;
 
+	private boolean emailVerified;
+	private boolean phoneNumberVerified;
+
 
 
 //	private List<EquipmentEntity> equipments;
@@ -222,5 +225,21 @@ public class ContractorResponse {
 
 	public void setFinishedCanceledDebrisTransactionCount(long finishedCanceleDebrisTransactionCount) {
 		this.finishedCanceledDebrisTransactionCount = finishedCanceleDebrisTransactionCount;
+	}
+
+	public boolean isEmailVerified() {
+		return emailVerified;
+	}
+
+	public void setEmailVerified(boolean emailVerified) {
+		this.emailVerified = emailVerified;
+	}
+
+	public boolean isPhoneNumberVerified() {
+		return phoneNumberVerified;
+	}
+
+	public void setPhoneNumberVerified(boolean phoneNumberVerified) {
+		this.phoneNumberVerified = phoneNumberVerified;
 	}
 }
