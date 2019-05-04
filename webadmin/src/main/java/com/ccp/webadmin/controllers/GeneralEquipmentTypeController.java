@@ -54,8 +54,16 @@ public class GeneralEquipmentTypeController {
     @PostMapping("/saveProcess")
     public String saveProcess(
             @Valid @ModelAttribute("generalEquipmentType") GeneralEquipmentTypeEntity generalEquipmentTypeEntity,
-            BindingResult bindingResult) {
+            BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            if (generalEquipmentTypeEntity.getId() != null) {
+                return "general_equipment_type/detail";
+            } else {
+                return "general_equipment_type/create";
+            }
+        }
+        if(generalEquipmentTypeService.existsByName(generalEquipmentTypeEntity.getName())){
+            model.addAttribute("errorMessage", "Existed equipment category's name");
             if (generalEquipmentTypeEntity.getId() != null) {
                 return "general_equipment_type/detail";
             } else {

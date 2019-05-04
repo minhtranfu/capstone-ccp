@@ -48,8 +48,16 @@ public class DebrisServiceTypeController {
     @PostMapping("/saveProcess")
     public String saveProcess(
             @Valid @ModelAttribute("debrisServiceType") DebrisServiceTypeEntity debrisServiceTypeEntity,
-            BindingResult bindingResult) {
+            BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            if (debrisServiceTypeEntity.getId() != null) {
+                return "debris_service_type/detail";
+            } else {
+                return "debris_service_type/create";
+            }
+        }
+        if(debrisServiceTypeService.existsByName(debrisServiceTypeEntity.getName())){
+            model.addAttribute("errorMessage", "Existed debris service type's name");
             if (debrisServiceTypeEntity.getId() != null) {
                 return "debris_service_type/detail";
             } else {

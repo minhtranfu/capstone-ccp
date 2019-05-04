@@ -37,6 +37,11 @@ public class GeneralMaterialTypeServiceImpl implements GeneralMaterialTypeServic
     }
 
     @Override
+    public boolean existsByName(String name) {
+        return generalMaterialTypeRepository.existsByName(name);
+    }
+
+    @Override
     public void deleteById(Integer id) {
         generalMaterialTypeRepository.deleteById(id);
     }

@@ -16,5 +16,7 @@ public interface MaterialTypeRepository extends JpaRepository<MaterialTypeEntity
 
     List<MaterialTypeEntity> findAllByGeneralMaterialTypeEntity(GeneralMaterialTypeEntity generalMaterialTypeEntity);
 
+    boolean existsByName(String name);
+
     boolean existsEquipmentTypeEntitiesByGeneralMaterialTypeEntity(GeneralMaterialTypeEntity generalMaterialTypeEntity);
 }

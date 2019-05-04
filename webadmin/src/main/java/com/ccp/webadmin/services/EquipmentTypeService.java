@@ -18,6 +18,8 @@ public interface EquipmentTypeService {
 
     void save(EquipmentTypeEntity equipmentTypeEntity);
 
+    boolean existsByName(String name);
+
     void deleteById(Integer id);
 
 }

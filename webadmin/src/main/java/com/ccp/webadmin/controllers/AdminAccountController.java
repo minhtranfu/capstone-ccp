@@ -94,7 +94,7 @@ public class AdminAccountController {
             // validate existed username or email
             if (!adminAccountEntity.getAdminUserEntity().getEmail().equals(foundAdminAccount.getAdminUserEntity().getEmail())) {
                 if (adminAccountService.existsByEmail(adminAccountEntity.getAdminUserEntity().getEmail())) {
-                    model.addAttribute("errorMessageEmail", "Exitsted Email");
+                    model.addAttribute("errorMessageEmail", "Existed Email");
                     model.addAttribute("roles", roleService.findAll());
                     return "staff/detail";
                 }
@@ -113,8 +113,8 @@ public class AdminAccountController {
         } else {
             // validate existed username or email
             if (adminAccountService.existsByUsername(adminAccountEntity.getUsername()) || adminAccountService.existsByEmail(adminAccountEntity.getAdminUserEntity().getEmail())) {
-                model.addAttribute("errorMessage", "Exitsted Username");
-                model.addAttribute("errorMessageEmail", "Exitsted Email");
+                model.addAttribute("errorMessage", "Existed Username");
+                model.addAttribute("errorMessageEmail", "Existed Email");
                 model.addAttribute("roles", roleService.findAll());
                 return "staff/create";
             }

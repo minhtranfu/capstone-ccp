@@ -44,6 +44,11 @@ public class MaterialTypeServiceImpl implements MaterialTypeService {
     }
 
     @Override
+    public boolean existsByName(String name) {
+        return materialTypeRepository.existsByName(name);
+    }
+
+    @Override
     public void deleteById(Integer id) {
         materialTypeRepository.deleteById(id);
     }

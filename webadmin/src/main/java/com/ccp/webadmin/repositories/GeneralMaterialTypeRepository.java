@@ -11,4 +11,6 @@ public interface GeneralMaterialTypeRepository extends JpaRepository<GeneralMate
 {
     @Query("Select e from GeneralMaterialTypeEntity e where e.isDeleted = false")
     List<GeneralMaterialTypeEntity> findAllNotDeleted();
+
+    boolean existsByName(String name);
 }

@@ -47,6 +47,11 @@ public class EquipmentTypeServiceImpl implements EquipmentTypeService {
     }
 
     @Override
+    public boolean existsByName(String name) {
+        return equipmentTypeRepository.existsByName(name);
+    }
+
+    @Override
     public void deleteById(Integer id) {
         equipmentTypeRepository.deleteById(id);
     }

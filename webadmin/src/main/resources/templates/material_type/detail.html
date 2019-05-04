@@ -44,6 +44,10 @@
                                         <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red"></span>
                                     </div>
                                     <div class="form-group">
+                                        <span th:if="${errorMessage}" th:text="${errorMessage}"
+                                              style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
                                         <label>Unit:</label>
                                         <input th:field="*{unit}" class="form-control" placeholder="Unit">
                                     </div>

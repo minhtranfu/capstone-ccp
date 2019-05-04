@@ -18,6 +18,8 @@ public interface MaterialTypeService {
 
     void save(MaterialTypeEntity materialTypeEntity);
 
+    boolean existsByName(String name);
+
     void deleteById(Integer id);
 
 }

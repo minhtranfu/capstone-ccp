@@ -53,7 +53,6 @@ public class MaterialTypeController {
             @Valid @ModelAttribute("materialType") MaterialTypeEntity materialTypeEntity,
             BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-
             if(materialTypeEntity.getId() != null){
                 model.addAttribute("generalMaterialTypes", generalMaterialTypeService.findAll());
                 return "material_type/detail";
@@ -61,7 +60,16 @@ public class MaterialTypeController {
                 model.addAttribute("generalMaterialTypes", generalMaterialTypeService.findAll());
                 return "material_type/create";
             }
-
+        }
+        if(materialTypeService.existsByName(materialTypeEntity.getName())){
+            model.addAttribute("errorMessage", "Existed material type's name");
+            if(materialTypeEntity.getId() != null){
+                model.addAttribute("generalMaterialTypes", generalMaterialTypeService.findAll());
+                return "material_type/detail";
+            } else{
+                model.addAttribute("generalMaterialTypes", generalMaterialTypeService.findAll());
+                return "material_type/create";
+            }
         }
         model.addAttribute("generalMaterialTypes", generalMaterialTypeService.findAll());
         materialTypeService.save(materialTypeEntity);
