@@ -15,7 +15,7 @@ import {
 } from 'Common/consts';
 import { RatingEquipmentTransaction, Image, StarRatings } from "Components/common";
 import ccpApiService from 'Services/domain/ccp-api-service';
-import { getRoutePath } from 'Utils/common.utils';
+import { getRoutePath, getExtendableTimeRange } from 'Utils/common.utils';
 import { formatPrice } from 'Utils/format.utils';
 import ExtendTimeModal from './extend-time-modal';
 
@@ -182,9 +182,10 @@ class MyRequests extends Component {
     });
   };
 
-  _handleAdjustTime = transactionToExtend => {
+  _handleAdjustTime = (transactionToExtend, extendableTimeRange) => {
     this.setState({
       transactionToExtend,
+      extendableTimeRange,
       isOpenExtendTimeModal: true,
     });
   };
@@ -212,10 +213,15 @@ class MyRequests extends Component {
       case TRANSACTION_STATUSES.ACCEPTED:
         statusClasses += 'badge-success';
         this._countNeedActionForStatus(transaction.status);
+
+        const extendableTimeRange = getExtendableTimeRange(transaction);
+
         changeStatusButtons = (
           <div className="mt-2">
             <button className="btn btn-sm btn-outline-danger" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.CANCELED)}>Cancel</button>
-            <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction)}>Extend hiring time</button>
+            {extendableTimeRange &&
+              <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction, extendableTimeRange)}>Extend hiring time</button>
+            }
           </div>
         );
         break;
@@ -231,17 +237,26 @@ class MyRequests extends Component {
       case TRANSACTION_STATUSES.PROCESSING:
         if (transaction.equipment.status === EQUIPMENT_STATUSES.DELIVERING) {
           this._countNeedActionForStatus(transaction.status);
+
+          const extendableTimeRange = getExtendableTimeRange(transaction);
+
           changeStatusButtons = (
             <div className="mt-2">
               <button className="btn btn-sm btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction, EQUIPMENT_STATUSES.RENTING)}>Receive</button>
-              <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction)}>Extend hiring time</button>
+              {extendableTimeRange &&
+                <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction, extendableTimeRange)}>Extend hiring time</button>
+              }
             </div>
           );
         } else if (transaction.equipment.status === EQUIPMENT_STATUSES.RENTING) {
+          const extendableTimeRange = getExtendableTimeRange(transaction);
+
           changeStatusButtons = (
             <div className="mt-2">
               <button className="btn btn-sm btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction, EQUIPMENT_STATUSES.WAITING_FOR_RETURNING)}>Return equipment</button>
-              <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction)}>Extend hiring time</button>
+              {extendableTimeRange &&
+                <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction, extendableTimeRange)}>Extend hiring time</button>
+              }
             </div>
           );
         }
@@ -585,6 +600,8 @@ class MyRequests extends Component {
 
     const newState = {
       isOpenExtendTimeModal: false,
+      transactionToExtend: undefined,
+      extendableTimeRange: undefined,
       transaction: {},
     };
 
@@ -608,13 +625,14 @@ class MyRequests extends Component {
   };
 
   render() {
-    const { isShowRatingEquipmentTransaction, feedbackTransaction, isOpenExtendTimeModal, transactionToExtend } = this.state;
+    const { isShowRatingEquipmentTransaction, feedbackTransaction, isOpenExtendTimeModal, transactionToExtend, extendableTimeRange } = this.state;
+    
     this._renderTabContents();
 
     return (
       <div className="container py-3 user-dashboard">
         {this._renderAlert()}
-        <ExtendTimeModal isOpen={isOpenExtendTimeModal} transaction={transactionToExtend} onClose={this._handleCloseExtendTimeModal}/>
+        <ExtendTimeModal isOpen={isOpenExtendTimeModal} transaction={transactionToExtend} extendableTimeRange={extendableTimeRange} onClose={this._handleCloseExtendTimeModal}/>
         <RatingEquipmentTransaction
           isOpen={isShowRatingEquipmentTransaction}
           onClose={this._toggleRatingEquipmentTransaction}

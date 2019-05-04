@@ -1,6 +1,7 @@
 import React from 'react';
 import { modules } from "Components/modules/Routes";
 import qs from 'query-string';
+import moment from 'moment';
 import ConfigService from 'Services/common/config-service';
 import { routeConsts } from 'Common/consts';
 
@@ -154,4 +155,65 @@ export const setJwtToken = value => {
 export const setTokens = (jwt, refresh) => {
   setJwtToken(jwt);
   setRefreshToken(refresh);
+};
+
+// Get extendable time range of a transaction
+export const getExtendableTimeRange = transaction => {
+  const { equipment } = transaction;
+
+  const tBeginDate = moment(transaction.beginDate);
+  const tEndDate = moment(transaction.endDate);
+
+  const currentAvailableRange = equipment.availableTimeRanges.find(range => {
+    return (
+      !tBeginDate.isBefore(range.beginDate) &&
+      !tEndDate.isAfter(range.endDate)
+    );
+  });
+
+  if (!currentAvailableRange) {
+    return null;
+  }
+
+  let lastAvailabelDate = moment(currentAvailableRange.endDate);
+  let toCheckRanges = [];
+
+  if (equipment.processingHiringTransaction) {
+    toCheckRanges.push(equipment.processingHiringTransaction);
+  }
+
+  if (equipment.activeHiringTransactions && equipment.activeHiringTransactions.length > 0) {
+    toCheckRanges = [...toCheckRanges, ...equipment.activeHiringTransactions];
+  }
+
+  // Check with active hiring and processing transaction
+  if (toCheckRanges.length > 0) {
+    const sortedRange = toCheckRanges.sort((a, b) => {
+      return moment(a.beginDate).isBefore(b.beginDate) ? 1 : -1;
+    });
+
+    const nearestHiringRange = sortedRange.find(hiring => {
+      const momentBeginDate = moment(hiring.beginDate);
+      return (
+        !momentBeginDate.isBefore(currentAvailableRange.beginDate) &&
+        !moment(hiring.endDate).isAfter(currentAvailableRange.endDate) &&
+        momentBeginDate.isAfter(transaction.endDate)
+      );
+    });
+
+    if (nearestHiringRange) {
+      lastAvailabelDate = moment(nearestHiringRange.beginDate).subtract(1, 'day');
+    }
+  }
+
+  const beginDate = moment(transaction.endDate).add(1, 'day');
+
+  if (beginDate.isAfter(lastAvailabelDate)) {
+    return null;
+  }
+
+  return {
+    beginDate,
+    endDate: lastAvailabelDate,
+  };
 };
