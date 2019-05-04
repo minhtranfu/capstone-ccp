@@ -13,7 +13,7 @@ import { AddressInput } from 'Components/common';
 class AddEquipmentStep1 extends Step {
   state = {
     constructions: [],
-    categories: []
+    categories: [],
   };
 
   formFields = {};
@@ -31,9 +31,11 @@ class AddEquipmentStep1 extends Step {
     const { contractor } = this.props;
 
     try {
-      const constructions = await constructionServices.getConstructionsByContractorId(contractor.id);
+      const constructions = await constructionServices.getConstructionsByContractorId(
+        contractor.id
+      );
       this.setState({
-        constructions
+        constructions,
       });
     } catch (error) {
       alert('Error while loading constructions');
@@ -46,7 +48,7 @@ class AddEquipmentStep1 extends Step {
     fetchDebrisServiceTypes();
   };
 
-  _onChangeDescription = (description) => {
+  _onChangeDescription = description => {
     this.setState({ description });
   };
 
@@ -63,7 +65,7 @@ class AddEquipmentStep1 extends Step {
     }
 
     const newState = {
-      [name]: value
+      [name]: value,
     };
 
     if (name === 'address') {
@@ -79,8 +81,8 @@ class AddEquipmentStep1 extends Step {
     this._handleStepDone({
       data: {
         ...this.state,
-        constructions: undefined
-      }
+        constructions: undefined,
+      },
     });
   };
 
@@ -92,7 +94,9 @@ class AddEquipmentStep1 extends Step {
       return;
     }
 
-    const selectedContruction = constructions.find(construction => +construction.id === +constructionId);
+    const selectedContruction = constructions.find(
+      construction => +construction.id === +constructionId
+    );
     this.setState({
       address: selectedContruction.address,
       latitude: selectedContruction.latitude,
@@ -104,10 +108,10 @@ class AddEquipmentStep1 extends Step {
    * Handle multi select service types
    */
   _handleSelectServiceTypes = options => {
-    const debrisServiceTypes = options.map(option => ({id: option.value}));
+    const debrisServiceTypes = options.map(option => ({ id: option.value }));
 
     this.setState({
-      debrisServiceTypes
+      debrisServiceTypes,
     });
   };
 
@@ -132,7 +136,6 @@ class AddEquipmentStep1 extends Step {
   };
 
   _handleAddressChanged = address => {
-
     this.setState({
       address,
       longitude: undefined,
@@ -154,44 +157,78 @@ class AddEquipmentStep1 extends Step {
           </div>
           <div className="col-md-6">
             <div className="form-group">
-              <label htmlFor="">Title: <i className="text-danger">*</i></label>
-              <input ref={nameField => this.formFields.name = nameField} type="text" name="title" onChange={this._handleFieldChange} className="form-control" maxLength="80" required autoFocus/>
+              <label htmlFor="">
+                Title: <i className="text-danger">*</i>
+              </label>
+              <input
+                ref={nameField => (this.formFields.name = nameField)}
+                type="text"
+                name="title"
+                onChange={this._handleFieldChange}
+                className="form-control"
+                maxLength="80"
+                required
+                autoFocus
+              />
             </div>
             <div className="form-group">
-              <label htmlFor="">Construction: <i className="text-danger">*</i></label>
-              <select name="constructionId" onChange={this._handleFieldChange} id="construction_id" className="form-control" required>
+              <label htmlFor="">
+                Construction: <i className="text-danger">*</i>
+              </label>
+              <select
+                name="constructionId"
+                onChange={this._handleFieldChange}
+                id="construction_id"
+                className="form-control"
+                required
+              >
                 <option value="">Choose...</option>
-                {constructions.map(construction => <option key={construction.id} value={construction.id}>{construction.name}</option>)}
+                {constructions.map(construction => (
+                  <option key={construction.id} value={construction.id}>
+                    {construction.name}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="form-group">
-              <label htmlFor="">Address: <i className="text-danger">*</i></label>
+              <label htmlFor="">
+                Address: <i className="text-danger">*</i>
+              </label>
               {/* <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" /> */}
-              <AddressInput inputProps={{
+              <AddressInput
+                inputProps={{
                   value: this.state.address || '',
                   onBlur: this._handleBlurAddressInput,
                 }}
                 onChange={this._handleAddressChanged}
                 onSelect={this._handleSelectAddress}
-                />
+              />
             </div>
           </div>
           <div className="col-md-6">
             <div className="form-group">
-              <label htmlFor="service_types">Debris service types: <i className="text-danger">*</i></label>              
+              <label htmlFor="service_types">
+                Debris service types: <i className="text-danger">*</i>
+              </label>
               <Select
                 isMulti
                 closeMenuOnSelect={false}
                 inputId="service_types"
                 placeholder="Select some services you need..."
-                options={!debrisServiceTypes.data ? [] : debrisServiceTypes.data.map(type => ({label: type.name, value: type.id}))}
+                options={
+                  !debrisServiceTypes.data
+                    ? []
+                    : debrisServiceTypes.data.map(type => ({ label: type.name, value: type.id }))
+                }
                 onChange={this._handleSelectServiceTypes}
               />
             </div>
           </div>
           <div className="col-12 text-center">
             <div className="form-group">
-              <button className="btn btn-primary" onClick={this._handleSubmitForm}>NEXT STEP <i className="fal fa-chevron-right"></i></button>
+              <button className="btn btn-primary" onClick={this._handleSubmitForm}>
+                NEXT STEP <i className="fal fa-chevron-right" />
+              </button>
             </div>
           </div>
         </div>
@@ -202,7 +239,7 @@ class AddEquipmentStep1 extends Step {
 
 AddEquipmentStep1.propTypes = {
   entities: PropTypes.object.isRequired,
-  fetchDebrisServiceTypes: PropTypes.func.isRequired
+  fetchDebrisServiceTypes: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -211,10 +248,13 @@ const mapStateToProps = state => {
 
   return {
     contractor,
-    entities
+    entities,
   };
 };
 
-export default connect(mapStateToProps, {
-  fetchDebrisServiceTypes
-})(AddEquipmentStep1);
+export default connect(
+  mapStateToProps,
+  {
+    fetchDebrisServiceTypes,
+  }
+)(AddEquipmentStep1);
