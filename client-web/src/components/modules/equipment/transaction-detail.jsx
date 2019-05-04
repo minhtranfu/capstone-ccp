@@ -1,24 +1,25 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { withTranslation } from 'react-i18next';
 import SweetAlert from 'react-bootstrap-sweetalert';
 
-import { getErrorMessage } from 'Utils/common.utils';
+import { getErrorMessage, getRoutePath } from 'Utils/common.utils';
 import { equipmentTransactionServices } from 'Services/domain/ccp';
-import { Image, StarRatings } from 'Components/common';
+import { Image, StarRatings, RatingEquipmentTransaction, ContractorCard } from 'Components/common';
 import { formatPrice, formatDate } from 'Utils/format.utils';
-import { EQUIPMENT_STATUSES, TRANSACTION_STATUSES } from 'Common/consts';
+import { EQUIPMENT_STATUSES, TRANSACTION_STATUSES, TRANSACTION_STATUS_CLASSES, routeConsts } from 'Common/consts';
 import CcpApiService from 'Services/domain/ccp-api-service';
 import ExtendTimeModal from '../requester-dashboard/extend-time-modal';
 
 class EquipmentTransactionDetail extends PureComponent {
   state = {
     isFetching: true,
-    isOpenExtendTimeModal: false,
+    isShowExtendTimeModal: false,
+    isShowRatingModal: false,
     transaction: {},
     errorMessage: null,
     confirm: {},
@@ -270,7 +271,6 @@ class EquipmentTransactionDetail extends PureComponent {
         confirm: {}
       });
     } catch (error) {
-      console.log(error);
       let message = '';
 
       if (error.response && error.response.data) {
@@ -292,7 +292,6 @@ class EquipmentTransactionDetail extends PureComponent {
     const { transaction } = this.state;
     const { equipment } = transaction;
 
-    let statusClasses = 'badge ';
     let changeStatusButtons = '';
     switch (transaction.status) {
       case TRANSACTION_STATUSES.PENDING:
@@ -335,16 +334,7 @@ class EquipmentTransactionDetail extends PureComponent {
         }
         break;
 
-      case TRANSACTION_STATUSES.DENIED:
-        statusClasses += 'badge-danger';
-        break;
-
-      case TRANSACTION_STATUSES.CANCELED:
-        statusClasses += 'badge-danger';
-        break;
-
       case TRANSACTION_STATUSES.PROCESSING:
-        statusClasses += 'badge-warning';
 
         if (equipment.status === EQUIPMENT_STATUSES.WAITING_FOR_RETURNING) {
           changeStatusButtons = (
@@ -362,38 +352,43 @@ class EquipmentTransactionDetail extends PureComponent {
         }
 
         break;
-
-      case TRANSACTION_STATUSES.FINISHED:
-        statusClasses += 'badge-success';
-        // TODO: use or remove comment
-        // changeStatusButtons = (
-        //   <div className="mt-2">
-        //     <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingEquipmentTransaction(transaction)}>Feedback</button>
-        //   </div>
-        // );
-        break;
     }
 
     return changeStatusButtons;
   };
 
+  // Show adjust time modal
   _handleAdjustTime = transactionToExtend => {
     this.setState({
-      isOpenExtendTimeModal: true,
+      isShowExtendTimeModal: true,
     });
+  };
+  
+  /**
+   * Show rating modal
+   */
+  _toggleRatingEquipmentTransaction = (feedbacked) => {
+    const { isShowRatingModal, transaction } = this.state;
+    const newState = {
+      isShowRatingModal: !isShowRatingModal,
+    };
+
+    if (feedbacked === true) {
+      newState.transaction = {
+        ...transaction,
+        feedbacked
+      };
+    }
+
+    this.setState(newState);
   };
 
   _renderRequesterButtons = () => {
     const { transaction } = this.state;
     const { equipment } = transaction;
 
-    let statusClasses = 'badge ';
     let changeStatusButtons = '';
     switch (transaction.status) {
-      case TRANSACTION_STATUSES.PENDING:
-        statusClasses += ' badge-info';
-        break;
-
       case TRANSACTION_STATUSES.ACCEPTED:
         statusClasses += 'badge-success';
         changeStatusButtons = (
@@ -414,14 +409,6 @@ class EquipmentTransactionDetail extends PureComponent {
             </button>
           </div>
         );
-        break;
-
-      case TRANSACTION_STATUSES.DENIED:
-        statusClasses += 'badge-danger';
-        break;
-
-      case TRANSACTION_STATUSES.CANCELED:
-        statusClasses += 'badge-danger';
         break;
 
       case TRANSACTION_STATUSES.PROCESSING:
@@ -470,13 +457,8 @@ class EquipmentTransactionDetail extends PureComponent {
         statusClasses += 'badge-warning';
         break;
 
-      case TRANSACTION_STATUSES.WAITING_FOR_RETURNING:
-        statusClasses += 'badge-warning';
-        break;
-
       case TRANSACTION_STATUSES.FINISHED:
-        statusClasses += 'badge-success';
-        // TODO: Feedback function
+        
         if (!transaction.feedbacked) {
           changeStatusButtons = (
             <div className="mt-2">
@@ -497,45 +479,53 @@ class EquipmentTransactionDetail extends PureComponent {
 
   _renderTransactionInfo = () => {
     const { transaction } = this.state;
+    const { equipment } = transaction;
     const { t } = this.props;
 
     const days = moment(transaction.endDate).diff(moment(transaction.beginDate), 'days') + 1;
 
     return (
       <div>
-        <h3 className="align-text-bottom">{transaction.equipment.name}</h3>
+        <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, { id: equipment.id })}>
+          <h3 className="align-text-bottom">
+            <span className={`mr-2 badge badge-${TRANSACTION_STATUS_CLASSES[transaction.status]}`}>
+              {transaction.status}
+            </span>
+            {equipment.name}
+          </h3>
+        </Link>
         <div className="row">
           <div className="col-md-6">
-            <h6>
-              <span className="text-muted">{t('equipment.rentFrom')}:</span>{' '}
+            <h6 className="my-2">
+              <span className="text-muted">{t('equipment.transaction.rentFrom')}:</span>{' '}
               {formatDate(transaction.beginDate)}
             </h6>
           </div>
           <div className="col-md-6">
-            <h6>
-              <span className="text-muted">{t('equipment.rentTo')}:</span>{' '}
+            <h6 className="my-2">
+              <span className="text-muted">{t('equipment.transaction.rentTo')}:</span>{' '}
               {formatDate(transaction.endDate)}
             </h6>
           </div>
           <div className="col-md-6">
-            <h6>
-              <span className="text-muted">{t('equipment.status')}:</span> {transaction.status}
+            <h6 className="my-2">
+              <span className="text-muted">{t('equipment.transaction.status')}:</span> {transaction.status}
             </h6>
           </div>
           <div className="col-md-6">
-            <h6>
+            <h6 className="my-2">
               <span className="text-muted">{t('equipment.dailyPrice')}:</span>{' '}
               {formatPrice(transaction.dailyPrice)}
             </h6>
           </div>
           <div className="col-md-6">
-            <h6>
-              <span className="text-muted">{t('equipment.rentDays')}:</span> {days}
+            <h6 className="my-2">
+              <span className="text-muted">{t('equipment.transaction.rentDays')}:</span> {days}
             </h6>
           </div>
           <div className="col-md-6">
-            <h6>
-              <span className="text-muted">{t('equipment.totalFee')}:</span>{' '}
+            <h6 className="my-2">
+              <span className="text-muted">{t('equipment.transaction.totalFee')}:</span>{' '}
               <span className="text-large">{formatPrice(transaction.dailyPrice * days)}</span>
             </h6>
           </div>
@@ -552,7 +542,7 @@ class EquipmentTransactionDetail extends PureComponent {
   _handleCloseExtendTimeModal = (transaction, isChanged) => {
 
     const newState = {
-      isOpenExtendTimeModal: false,
+      isShowExtendTimeModal: false,
     };
 
     if (isChanged) {
@@ -565,9 +555,10 @@ class EquipmentTransactionDetail extends PureComponent {
   };
 
   render() {
-    const { transaction, isFetching, errorMessage, isOpenExtendTimeModal } = this.state;
+    const { transaction, isFetching, errorMessage, isShowExtendTimeModal, isShowRatingModal } = this.state;
     const { contractor } = this.props;
 
+    const { equipment } = transaction;
     const requester = transaction.requester || {};
     const supplier = transaction.equipment ? transaction.equipment.contractor : {};
     const isSupplier = supplier.id === contractor.id;
@@ -596,10 +587,20 @@ class EquipmentTransactionDetail extends PureComponent {
     return (
       <div className="container py-4">
         {this._renderAlert()}
-        <ExtendTimeModal isOpen={isOpenExtendTimeModal} transaction={transaction} onClose={this._handleCloseExtendTimeModal}/>
+        <ExtendTimeModal isOpen={isShowExtendTimeModal} transaction={transaction} onClose={this._handleCloseExtendTimeModal}/>
+        <RatingEquipmentTransaction
+          isOpen={isShowRatingModal}
+          onClose={this._toggleRatingEquipmentTransaction}
+          transaction={transaction}
+        />
         <div className="row">
           <div className="col-md-7">
-            <div className="bg-white shadow-sm px-2 py-2 mb-2">
+            <div className="image-169">
+              <Image
+                src={equipment.thumbnailImage.url}
+              />
+            </div>
+            <div className="bg-white shadow-sm px-2 py-2 my-2">
               {this._renderTransactionInfo()}
               <div className="my-2 text-center">
                 {isSupplier && this._renderSupplierButtons()}
@@ -611,53 +612,11 @@ class EquipmentTransactionDetail extends PureComponent {
             <div className="row">
               <div className="col-6">
                 <h6 className="text-center">Requester</h6>
-                <div className="constructor-card text-center">
-                  <Image
-                    circle
-                    width={125}
-                    height={125}
-                    className="rounded-circle"
-                    alt="Avatar"
-                    src={requester.thumbnailImageUrl}
-                  />
-                  <h5 className="mb-0">{requester.name || <Skeleton />}</h5>
-                  <StarRatings rating={requester.averageEquipmentRating} />
-                  <p className="mt-0">
-                    Joined:{' '}
-                    {requester.createdTime ? (
-                      new Date(requester.createdTime).toDateString()
-                    ) : (
-                      <span className="d-inline">
-                        <Skeleton width={100} />
-                      </span>
-                    )}
-                  </p>
-                </div>
+                <ContractorCard contractor={requester} ratingType="equipment" />
               </div>
               <div className="col-6">
                 <h6 className="text-center">Supplier</h6>
-                <div className="constructor-card text-center">
-                  <Image
-                    circle
-                    width={125}
-                    height={125}
-                    className="rounded-circle"
-                    alt="Avatar"
-                    src={supplier.thumbnailImageUrl}
-                  />
-                  <h5 className="mb-0">{supplier.name || <Skeleton />}</h5>
-                  <StarRatings rating={supplier.averageEquipmentRating} />
-                  <p className="mt-0">
-                    Joined:{' '}
-                    {supplier.createdTime ? (
-                      new Date(supplier.createdTime).toDateString()
-                    ) : (
-                      <span className="d-inline">
-                        <Skeleton width={100} />
-                      </span>
-                    )}
-                  </p>
-                </div>
+                <ContractorCard contractor={supplier} ratingType="equipment" />
               </div>
             </div>
           </div>

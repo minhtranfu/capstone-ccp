@@ -132,7 +132,6 @@ class Feebacks extends PureComponent {
     const { contractorId: prevContractorId } = prevProps;
 
     if (contractorId !== prevContractorId) {
-      console.log('CHANGEDDDDD!', {contractorId, prevContractorId});
       this._loadData(1);
       this.setState({
         page: null,

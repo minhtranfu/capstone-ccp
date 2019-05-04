@@ -1,5 +1,5 @@
 export { default as Error } from './Error';
-export { default as FeedbackModal } from './FeedbackModal';
+export { default as ReportModal } from './ReportModal';
 export { default as Image } from './Image';
 export { default as AddressInput } from './address-input';
 export { default as ComponentBlocking } from './component-blocking';
@@ -9,3 +9,4 @@ export { default as RatingEquipmentTransaction } from './rating-equipment-transa
 export { default as RatingMaterialModal } from './rating-material-detail';
 export { default as Pagination } from './pagination';
 export { default as StarRatings } from './star-ratings';
+export { default as ContractorCard } from './contractor-card';

@@ -6,7 +6,7 @@ import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { FeedbackModal, Image, StarRatings } from '../../common';
+import { ReportModal, Image, StarRatings } from '../../common';
 import {
   MATERIAL_TRANSACTION_STATUSES,
   EQUIPMENT_STATUSES,
@@ -310,10 +310,10 @@ class MaterialTransactions extends Component {
   /**
    * Show feedback modal
    */
-  _toggleFeedbackModal = feedbackTransaction => {
-    const { isShowFeedbackModal } = this.state;
+  _toggleReportModal = feedbackTransaction => {
+    const { isShowReportModal } = this.state;
     this.setState({
-      isShowFeedbackModal: !isShowFeedbackModal,
+      isShowReportModal: !isShowReportModal,
       feedbackTransaction,
     });
   };
@@ -387,7 +387,7 @@ class MaterialTransactions extends Component {
         statusClasses += 'badge-success';
         // changeStatusButtons = (
         //   <div className="mt-2">
-        //     <button className="btn btn-sm btn-success" onClick={() => this._toggleFeedbackModal(transaction)}>Feedback</button>
+        //     <button className="btn btn-sm btn-success" onClick={() => this._toggleReportModal(transaction)}>Feedback</button>
         //   </div>
         // );
         break;
@@ -453,15 +453,15 @@ class MaterialTransactions extends Component {
   };
 
   render() {
-    const { isShowFeedbackModal, feedbackTransaction } = this.state;
+    const { isShowReportModal, feedbackTransaction } = this.state;
     this._renderTabContents();
 
     return (
       <div className="container py-3 user-dashboard">
         {this._renderAlert()}
-        <FeedbackModal
-          isOpen={isShowFeedbackModal}
-          onClose={() => this._toggleFeedbackModal()}
+        <ReportModal
+          isOpen={isShowReportModal}
+          onClose={() => this._toggleReportModal()}
           transaction={feedbackTransaction}
         />
         <div className="row">

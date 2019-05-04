@@ -11,7 +11,7 @@ import { ENTITY_KEY } from 'Common/app-const';
 import { transactionUtils } from "Src/utils";
 import moment from 'moment';
 
-class FeedbackModal extends Component {
+class ReportModal extends Component {
 
   state = {
     validateResult: {}
@@ -58,10 +58,8 @@ class FeedbackModal extends Component {
       return;
     }
 
-    const { transaction, contractor } = this.props;
-    const toContractorId = transaction.requester.id !== contractor.id ?
-      transaction.requester.id :
-      transaction.equipment.contractor.id;
+    const { contractor } = this.props;
+    const toContractorId = contractor.id;
 
     // Submit form
     this.setState({
@@ -200,10 +198,10 @@ class FeedbackModal extends Component {
    * Render form fields
    */
   _renderForm = () => {
-    const { transaction, feedbackTypeEntity } = this.props;
+    const { contractor, feedbackTypeEntity } = this.props;
     const { validateResult } = this.state;
 
-    if (!transaction) {
+    if (!contractor) {
       return null;
     }
 
@@ -311,7 +309,7 @@ class FeedbackModal extends Component {
   };
 
   render() {
-    const { isOpen, className } = this.props;
+    const { isOpen, className, contractor } = this.props;
     const { isSending } = this.state;
 
     return (
@@ -319,15 +317,14 @@ class FeedbackModal extends Component {
         {this._renderAlert()}
         <Modal isOpen={isOpen} toggle={this._handleCloseModal} className={className} size="lg" onOpened={this._focusInput}>
           <form onSubmit={this._hanleSubmit}>
-            <ModalHeader toggle={this._handleCloseModal}>Feedback transaction</ModalHeader>
+            <ModalHeader toggle={this._handleCloseModal}>Report contractor <strong>{contractor.name}</strong></ModalHeader>
             <ModalBody>
-              {this._renderTransactionInfo()}
               {this._renderForm()}
             </ModalBody>
             <ModalFooter>
               {this._renderError()}
               <button type="submit" className="btn btn-success" disabled={!!isSending}>
-                {isSending && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>} Feedback
+                {isSending && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>} Report
               </button>
               <button className="btn btn-outline-info" onClick={this._handleCloseModal}>Cancel</button>
             </ModalFooter>
@@ -338,10 +335,10 @@ class FeedbackModal extends Component {
   }
 }
 
-FeedbackModal.props = {
+ReportModal.props = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
-  transaction: PropTypes.object.isRequired,
+  contractor: PropTypes.object.isRequired,
   fetchFeedbackTypes: PropTypes.func,
   contractor: PropTypes.object.isRequired,
   feedbackTypeEntity: PropTypes.object
@@ -361,4 +358,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(FeedbackModal);
+export default connect(mapStateToProps, mapDispatchToProps)(ReportModal);

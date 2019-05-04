@@ -11,6 +11,15 @@ export const TRANSACTION_STATUSES = {
   FINISHED: 'FINISHED'
 };
 
+export const TRANSACTION_STATUS_CLASSES = {
+  PENDING: 'info',
+  ACCEPTED: 'success',
+  DENIED: 'danger',
+  PROCESSING: 'danger',
+  CANCELED: 'warning',
+  FINISHED: 'success'
+};
+
 export const EQUIPMENT_STATUSES = {
   AVAILABLE: 'AVAILABLE',
   DELIVERING: 'DELIVERING',
