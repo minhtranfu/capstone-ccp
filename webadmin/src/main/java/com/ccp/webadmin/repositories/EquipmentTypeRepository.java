@@ -14,5 +14,7 @@ public interface EquipmentTypeRepository extends JpaRepository<EquipmentTypeEnti
 
     List<EquipmentTypeEntity> findAllByGeneralEquipmentType(GeneralEquipmentTypeEntity generalEquipmentTypeEntity);
 
+    boolean existsByName(String name);
+
     boolean existsEquipmentTypeEntitiesByGeneralEquipmentType(GeneralEquipmentTypeEntity generalEquipmentTypeEntity);
 }

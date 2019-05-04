@@ -18,6 +18,8 @@ public interface DebrisServiceTypeService {
 
     void deleteById(Integer id);
 
+    boolean existsByName(String name);
+
     List<PieChartStatisticDTO> countDebrisPostByDebrisServiceType(LocalDateTime beginDate, LocalDateTime endDate);
 
 }

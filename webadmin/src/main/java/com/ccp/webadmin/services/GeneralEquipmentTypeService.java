@@ -15,6 +15,8 @@ public interface GeneralEquipmentTypeService {
 
     void save(GeneralEquipmentTypeEntity generalEquipmentTypeEntity);
 
+    boolean existsByName(String name);
+
     void deleteById(Integer id);
 
 }

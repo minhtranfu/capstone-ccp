@@ -34,6 +34,11 @@ public class ReportTypeServiceImpl implements ReportTypeService {
     }
 
     @Override
+    public boolean existsByName(String name) {
+        return reportTypeRepository.existsByName(name);
+    }
+
+    @Override
     public void deleteById(Integer id) {
         reportTypeRepository.deleteById(id);
     }

@@ -44,6 +44,11 @@ public class DebrisServiceTypeServiceImpl implements DebrisServiceTypeService {
     }
 
     @Override
+    public boolean existsByName(String name) {
+        return debrisServiceTypeRepository.existsByName(name);
+    }
+
+    @Override
     public List<PieChartStatisticDTO> countDebrisPostByDebrisServiceType(LocalDateTime beginDate, LocalDateTime endDate) {
         return debrisServiceTypeRepository.countDebrisPostByDebrisServiceType(beginDate, endDate);
     }

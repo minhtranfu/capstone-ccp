@@ -42,8 +42,16 @@ public class ReportTypeController {
     @PostMapping("/saveProcess")
     public String saveProcess(
             @Valid @ModelAttribute("feedbackType") ReportTypeEntity reportTypeEntity,
-            BindingResult bindingResult) {
+            BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            if(reportTypeEntity.getId() != null){
+                return "report_type/detail";
+            } else{
+                return "report_type/create";
+            }
+        }
+        if(reportTypeService.existsByName(reportTypeEntity.getName())){
+            model.addAttribute("errorMessage", "Existed report type's name");
             if(reportTypeEntity.getId() != null){
                 return "report_type/detail";
             } else{

@@ -44,6 +44,10 @@
                                         <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red"></span>
                                     </div>
                                     <div class="form-group">
+                                        <span th:if="${errorMessage}" th:text="${errorMessage}"
+                                              style="color: red"></span>
+                                    </div>
+                                    <div class="form-group">
                                     <label>Equipment Type Category</label>
                                     <select th:field="*{generalEquipmentType}" class="form-control">
                                         <option th:each="generalEquipmentType : ${generalEquipmentTypes}"

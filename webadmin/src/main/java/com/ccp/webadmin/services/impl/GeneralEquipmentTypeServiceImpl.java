@@ -39,6 +39,11 @@ public class GeneralEquipmentTypeServiceImpl implements GeneralEquipmentTypeServ
     }
 
     @Override
+    public boolean existsByName(String name) {
+        return generalEquipmentTypeRepository.existsByName(name);
+    }
+
+    @Override
     public void deleteById(Integer id) {
         generalEquipmentTypeRepository.deleteById(id);
     }

@@ -3,6 +3,7 @@ package com.ccp.webadmin.controllers;
 import com.ccp.webadmin.entities.ContractorEntity;
 import com.ccp.webadmin.entities.ContractorVerifyingImageEntity;
 import com.ccp.webadmin.entities.NotificationDeviceTokenEntity;
+import com.ccp.webadmin.entities.NotificationEntity;
 import com.ccp.webadmin.services.*;
 import com.ccp.webadmin.utils.PushNotifictionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,19 +85,28 @@ public class ContractorController {
         ContractorEntity contractorEntity = contractorService.findById(id);
 
         //change contractor status Not Verify into Active
+        String title = "";
+        String content = "";
+        String clickAction = "";
+        NotificationEntity notificationEntity = new NotificationEntity();
+        notificationEntity.setTitle(title);
+        notificationEntity.setContent(content);
+        notificationEntity.setClickAction(clickAction);
+        notificationEntity.setContractorEntity(contractorEntity);
         switch (contractorEntity.getStatus()) {
             case NOT_VERIFIED:
                 contractorEntity.setStatus(ContractorEntity.Status.ACTIVATED);
-                try {
-                    for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(contractorEntity)
-                    ) {
-                        pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content, clickAction);
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                notificationService.save(notificationEntity);
+//                try {
+//                    title = ""
+//                    for (NotificationDeviceTokenEntity notificationDeviceTokenEntity : notificationDeviceTokenService.findByContractor(contractorEntity)
+//                    ) {
+//                        pushNotifictionHelper.pushFCMNotification(notificationDeviceTokenEntity.getRegistrationToken(), title, content, clickAction);
+//                    }
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                notificationService.save(notificationEntity);
                 break;
             case ACTIVATED:
                 contractorEntity.setStatus(ContractorEntity.Status.DEACTIVATED);

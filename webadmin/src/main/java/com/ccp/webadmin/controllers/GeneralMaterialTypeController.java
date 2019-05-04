@@ -49,8 +49,16 @@ public class GeneralMaterialTypeController {
     @PostMapping("/saveProcess")
     public String saveProcess(
             @Valid @ModelAttribute("generalMaterialType") GeneralMaterialTypeEntity generalMaterialTypeEntity,
-            BindingResult bindingResult) {
+            BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            if (generalMaterialTypeEntity.getId() != null) {
+                return "general_material_type/detail";
+            } else {
+                return "general_material_type/create";
+            }
+        }
+        if(generalMaterialTypeService.existsByName(generalMaterialTypeEntity.getName())){
+            model.addAttribute("errorMessage", "Existed material category's name");
             if (generalMaterialTypeEntity.getId() != null) {
                 return "general_material_type/detail";
             } else {

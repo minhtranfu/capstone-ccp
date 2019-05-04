@@ -13,5 +13,7 @@ public interface ReportTypeService {
 
     void save(ReportTypeEntity reportTypeEntity);
 
+    boolean existsByName(String name);
+
     void deleteById(Integer id);
 }

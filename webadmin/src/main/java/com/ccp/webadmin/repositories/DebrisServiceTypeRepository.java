@@ -22,4 +22,6 @@ public interface DebrisServiceTypeRepository extends JpaRepository<DebrisService
             "where e.createdTime >= :beginDate and e.createdTime <= :endDate " +
             "GROUP BY e.name, size(e.debrisPosts)")
     List<PieChartStatisticDTO> countDebrisPostByDebrisServiceType(@Param("beginDate") LocalDateTime beginDate, @Param("endDate") LocalDateTime endDate);
+
+    boolean existsByName(String name);
 }

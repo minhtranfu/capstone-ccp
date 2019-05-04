@@ -14,6 +14,8 @@ public interface GeneralMaterialTypeService {
 
     void save(GeneralMaterialTypeEntity generalMaterialTypeEntity);
 
+    boolean existsByName(String name);
+
     void deleteById(Integer id);
 
 }

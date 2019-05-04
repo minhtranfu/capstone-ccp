@@ -96,7 +96,7 @@ public class HomeController {
         if (!adminAccountEntity.getAdminUserEntity().getEmail().equals(foundAdminAccount.getAdminUserEntity().getEmail())) {
             if ( adminAccountService.existsByEmail(adminAccountEntity.getAdminUserEntity().getEmail())) {
 
-                model.addAttribute("errorMessageEmail", "Exitsted Email");
+                model.addAttribute("errorMessageEmail", "Existed Email");
                 return "home/userDetail";
             }
         }

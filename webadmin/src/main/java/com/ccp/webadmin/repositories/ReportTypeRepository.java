@@ -9,4 +9,6 @@ import java.util.List;
 public interface ReportTypeRepository extends JpaRepository<ReportTypeEntity, Integer> {
     @Query("Select e from ReportTypeEntity e where e.isDeleted = false")
     List<ReportTypeEntity> findAllNotDeleted();
+
+    boolean existsByName(String name);
 }
