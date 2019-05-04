@@ -89,6 +89,10 @@ const actionRouteMapping = {
 };
 
 export const getRouteFromClickAction = clickAction => {
+  if (!clickAction) {
+    return '';
+  }
+
   const info = clickAction.split('/');
   const action = info[0];
   const id = info[1];
