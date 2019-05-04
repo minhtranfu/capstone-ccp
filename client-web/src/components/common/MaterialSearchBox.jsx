@@ -63,7 +63,7 @@ class MaterialSearchBox extends PureComponent {
       <form onSubmit={this._search}>
         <div className="row">
           <div className="col-md-12">
-            <h3>Search</h3>
+            <h3>{t('material.search')}</h3>
           </div>
 
           <div className="col-md-4">
@@ -75,6 +75,7 @@ class MaterialSearchBox extends PureComponent {
                 onChange={this._handleChangeCriteria}
                 id="keyword"
                 className="form-control"
+                placeholder={t('material.keywordPlaceholder')}
               />
             </div>
           </div>
@@ -87,14 +88,14 @@ class MaterialSearchBox extends PureComponent {
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="material_type">{t('common.type')}:</label>
+              <label htmlFor="material_type">{t('material.type')}:</label>
               <select
                 name="materialTypeId"
                 id="material_type"
                 className="form-control"
                 onChange={this._handleChangeCriteria}
               >
-                <option value="">--Choose--</option>
+                <option value="">{t('common.all')}</option>
                 {materialTypes &&
                   materialTypes.map(materialType => (
                     <option key={materialType.id} value={materialType.id}>
@@ -113,7 +114,7 @@ class MaterialSearchBox extends PureComponent {
                   aria-hidden="true"
                 />
               )}
-              Search
+              {t('common.search')}
             </button>
           </div>
         </div>

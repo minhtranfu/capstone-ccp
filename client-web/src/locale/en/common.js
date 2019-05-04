@@ -1,7 +1,7 @@
 export default {
   keyword: 'Keyword',
   address: 'Address',
-  yourAddress: 'Your address',
+  yourAddress: 'Receive address',
   search: 'Search',
   result: 'Result',
   type: 'Type',
@@ -25,4 +25,9 @@ export default {
   orderByLatest: 'Newest',
   priceDescrease: 'Price: hight to low',
   priceIncrease: 'Price: low to hight',
+
+  searchLocation: 'Search location',
+  useCurrentLocation: 'Use your current location',
+  loading: 'Loading',
+  all: 'All',
 };

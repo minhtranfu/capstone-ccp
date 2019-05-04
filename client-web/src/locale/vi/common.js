@@ -1,7 +1,7 @@
 export default {
   keyword: 'Từ khóa',
   address: 'Địa chỉ',
-  yourAddress: 'Địa chỉ của bạn',
+  yourAddress: 'Địa chỉ nhận',
   search: 'Tìm',
   result: 'Kết quả',
   type: 'Loại',
@@ -25,4 +25,9 @@ export default {
   orderByLatest: 'Mới nhất',
   priceDescrease: 'Giá: giảm dần',
   priceIncrease: 'Giá: tăng dần',
+
+  searchLocation: 'Chọn địa chỉ',
+  useCurrentLocation: 'Sử dụng vị trí hiện tại',
+  loading: 'Đang tải',
+  all: 'Tất cả',
 };

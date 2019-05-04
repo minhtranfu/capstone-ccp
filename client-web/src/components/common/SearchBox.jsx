@@ -100,7 +100,7 @@ class SearchBox extends PureComponent {
       <form onSubmit={this._search}>
         <div className="row">
           <div className="col-md-12">
-            <h3>{t('common.search')}</h3>
+            <h3>{t('equipment.search')}</h3>
           </div>
           <div className="col-md-3">
             <div className="form-group">
@@ -109,7 +109,7 @@ class SearchBox extends PureComponent {
                 name="q"
                 id="equipment_keyword"
                 onChange={this._handleChangeCriteria}
-                placeholder="Find for equiment, type, brand that you want..."
+                placeholder={t('equipment.keywordPlaceholder')}
               />
             </div>
           </div>
@@ -124,7 +124,7 @@ class SearchBox extends PureComponent {
           </div>
           <div className="col-md-2">
             <div className="form-group">
-              <label htmlFor="equipment_type">{t('common.type')}:</label>
+              <label htmlFor="equipment_type">{t('equipment.type')}:</label>
               <select
                 name="equipmentTypeId"
                 id="equipment_type"

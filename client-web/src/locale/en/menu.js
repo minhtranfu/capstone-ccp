@@ -4,7 +4,7 @@ export default {
   equipments: {
     find: 'Find equipments',
     my: 'My equipments',
-    supply: 'Retal equipments',
+    supply: 'Rental equipments',
     hiring: 'Hiring equipments',
     subscriptions: 'Subscriptions',
   },

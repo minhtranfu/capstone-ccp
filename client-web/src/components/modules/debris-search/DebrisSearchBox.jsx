@@ -93,7 +93,7 @@ class DebrisSearchBox extends PureComponent {
       <form onSubmit={this._search}>
         <div className="row">
           <div className="col-md-12 text-light">
-            <h3>Search</h3>
+            <h3>{t('debris.search')}</h3>
           </div>
           <div className="col-md-4">
             <div className="form-group">
@@ -102,18 +102,19 @@ class DebrisSearchBox extends PureComponent {
                 id="keyword" className="form-control"
                 value={criteria.q}
                 onChange={this._handleChangeCriteria}
+                placeholder={t('debris.keywordPlacholder')}
                 />
             </div>
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="location" className="text-light">{t('common.yourAddress')}:</label>
+              <label htmlFor="location" className="text-light">{t('debris.searchAddress')}:</label>
               <AddressInput onSelect={this._handleChangeLocation} inputProps={{id: 'location', value: criteria.address}} />
             </div>
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="service_types" className="text-light">{t('common.type')}:</label>
+              <label htmlFor="service_types" className="text-light">{t('debris.type')}:</label>
               <Select
                 isMulti
                 openMenuOnFocus
@@ -121,7 +122,7 @@ class DebrisSearchBox extends PureComponent {
                 closeMenuOnSelect={false}
                 tabSelectsValue={false}
                 inputId="service_types"
-                placeholder="Select some services you need..."
+                placeholder={t('debris.typePlaceholder')}
                 options={typeOptions}
                 onChange={this._handleSelectServiceTypes}
                 value={!typeOptions || !criteria.debrisTypeId
@@ -144,7 +145,7 @@ class DebrisSearchBox extends PureComponent {
                   aria-hidden="true"
                 />
               )}
-              Search
+              {t('common.search')}
               </button>
           </div>
 

@@ -1,17 +1,17 @@
 import React, { PureComponent } from 'react';
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link, withRouter } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import { Pagination, Image } from 'Components/common';
-import qs from 'query-string'
+import qs from 'query-string';
+import { withTranslation } from 'react-i18next';
 
-import { EQUIPMENT_SHOWABLE_STATUSES, routeConsts } from '../../../common/consts';
+import { EQUIPMENT_SHOWABLE_STATUSES, routeConsts, CONTRACTOR_STATUSES } from 'Common/consts';
 import { getRoutePath } from 'Utils/common.utils';
 import { equipmentServices } from 'Services/domain/ccp';
 
 class MyEquipments extends PureComponent {
-
   constructor(props) {
     super(props);
 
@@ -31,31 +31,28 @@ class MyEquipments extends PureComponent {
     const { isFirstLoad } = this.state;
 
     if (!isFirstLoad) {
-
-      if (status === this.state.status
-        && page === this.state.page
-        ) {
-          return;
-        }
+      if (status === this.state.status && page === this.state.page) {
+        return;
+      }
 
       const newUrl = getRoutePath(routeConsts.EQUIPMENT_MY);
       let queryString = '';
       if (status !== 'all' || page != 1) {
         queryString = qs.stringify({
           status,
-          page
+          page,
         });
       }
 
       if (queryString) {
         queryString = `?${queryString}`;
       }
-      
+
       history.push(`${newUrl}${queryString}`);
     }
 
     this.setState({
-      isFetching: true
+      isFetching: true,
     });
 
     const equipments = await equipmentServices.getEquipmentsByContractorId({
@@ -77,13 +74,12 @@ class MyEquipments extends PureComponent {
     const { page, status } = this.state;
     this._loadData({
       status,
-      page
+      page,
     });
   }
 
   // Render loading placeholder
   _renderListPlaceholders = () => {
-
     const loadingPlacholders = [];
     for (let i = 0; i < this.pageSize; i++) {
       loadingPlacholders.push(
@@ -96,11 +92,15 @@ class MyEquipments extends PureComponent {
               <Skeleton width={300} />
               <span className="float-right">
                 <Skeleton width={30} height={30} />
-                <span className="ml-2"><Skeleton width={30} height={30} /></span>
+                <span className="ml-2">
+                  <Skeleton width={30} height={30} />
+                </span>
               </span>
-              <span className="clearfix"></span>
+              <span className="clearfix" />
             </h6>
-            <div><Skeleton width={150} /></div>
+            <div>
+              <Skeleton width={150} />
+            </div>
           </div>
         </div>
       );
@@ -111,12 +111,29 @@ class MyEquipments extends PureComponent {
 
   // Render no equipment
   _renderNoEquipment = () => {
+    const { contractor, t } = this.props;
+
+    // Verify account to add new
+    if (contractor.status !== CONTRACTOR_STATUSES.ACTIVATED) {
+      return (
+        <div className="py-5 text-center">
+          <h2>Your account is not activated!</h2>
+          <p className="text-muted my-2">What you need to do?</p>
+          <Link to={getRoutePath(routeConsts.PROFILE)}>
+            <button className="btn btn-success btn-lg">
+              Post images to verify
+            </button>
+          </Link>
+        </div>
+      );
+    }
+
     return (
       <div className="py-5 text-center">
         <h2>You have no equipment!</h2>
         <Link to={getRoutePath(routeConsts.EQUIPMENT_ADD)}>
           <button className="btn btn-success btn-lg">
-            <i className="fal fa-plus"></i> Add new equipment now
+            <i className="fal fa-plus" /> {t('equipment.newNow')}
           </button>
         </Link>
       </div>
@@ -135,31 +152,40 @@ class MyEquipments extends PureComponent {
       return this._renderNoEquipment();
     }
 
-    return (
-      equipments.items.map(equipment => {
-        const thumbnail = equipment.thumbnailImage ? equipment.thumbnailImage.url : '/public/upload/product-images/unnamed-19-jpg.jpg';
-        return (
-          <div key={equipment.id} className="d-flex transaction my-3 rounded shadow-sm">
-            <div className="image flex-fill">
-              <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, { id: equipment.id })}>
-                <Image src={thumbnail} className="rounded-left" height={168} />
-              </Link>
-            </div>
-            <div className="detail flex-fill p-2">
-              <h6>
-                <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, { id: equipment.id })}>{equipment.name}</Link>
-                <span className="float-right">
-                  <Link to={getRoutePath(routeConsts.EQUIPMENT_EDIT, { id: equipment.id })} className="btn btn-outline-success btn-sm"><i className="fal fa-pencil"></i></Link>
-                  <button className="btn btn-outline-danger btn-sm ml-2"><i className="fal fa-trash"></i></button>
-                </span>
-                <span className="clearfix"></span>
-              </h6>
-              <div>Status: {EQUIPMENT_SHOWABLE_STATUSES[equipment.status]}</div>
-            </div>
+    return equipments.items.map(equipment => {
+      const thumbnail = equipment.thumbnailImage
+        ? equipment.thumbnailImage.url
+        : '/public/upload/product-images/unnamed-19-jpg.jpg';
+      return (
+        <div key={equipment.id} className="d-flex transaction my-3 rounded shadow-sm">
+          <div className="image flex-fill">
+            <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, { id: equipment.id })}>
+              <Image src={thumbnail} className="rounded-left" height={168} />
+            </Link>
           </div>
-        );
-      })
-    );
+          <div className="detail flex-fill p-2">
+            <h6>
+              <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, { id: equipment.id })}>
+                {equipment.name}
+              </Link>
+              <span className="float-right">
+                <Link
+                  to={getRoutePath(routeConsts.EQUIPMENT_EDIT, { id: equipment.id })}
+                  className="btn btn-outline-success btn-sm"
+                >
+                  <i className="fal fa-pencil" />
+                </Link>
+                <button className="btn btn-outline-danger btn-sm ml-2">
+                  <i className="fal fa-trash" />
+                </button>
+              </span>
+              <span className="clearfix" />
+            </h6>
+            <div>Status: {EQUIPMENT_SHOWABLE_STATUSES[equipment.status]}</div>
+          </div>
+        </div>
+      );
+    });
   };
 
   _handleStatusChanged = e => {
@@ -175,17 +201,21 @@ class MyEquipments extends PureComponent {
     const { status } = this.state;
 
     const options = Object.keys(EQUIPMENT_SHOWABLE_STATUSES).map(status => {
-      return <option value={status} key={status}>{EQUIPMENT_SHOWABLE_STATUSES[status]}</option>
+      return (
+        <option value={status} key={status}>
+          {EQUIPMENT_SHOWABLE_STATUSES[status]}
+        </option>
+      );
     });
 
     return (
       <span className="form-inline d-inline">
         <select
           name="equipment_status"
-          className="form-control-sm ml-3"
+          className="form-control form-control-sm ml-3"
           value={status}
           onChange={this._handleStatusChanged}
-          >
+        >
           <option value="all">All</option>
           {options}
         </select>
@@ -204,23 +234,22 @@ class MyEquipments extends PureComponent {
 
   render() {
     const { equipments, page } = this.state;
+    const { t } = this.props;
 
     return (
       <div className="container py-4">
         <div className="row">
           <div className="col-md-9">
-            <h4 className="d-inline">
-              My equipments
-            </h4>
+            <h4 className="d-inline">{t('menu.equipments.my')}</h4>
             {this._renderStatusFilter()}
             <Link to={getRoutePath(routeConsts.EQUIPMENT_ADD)} className="float-right">
               <button className="btn btn-success">
-                <i className="fal fa-plus"></i> New equipment
+                <i className="fal fa-plus" /> {t('equipment.new')}
               </button>
             </Link>
-            <div className="clearfix"></div>
+            <div className="clearfix" />
             {this._renderListEquipments()}
-            {equipments &&
+            {equipments && (
               <div className="text-center">
                 <Pagination
                   activePage={page}
@@ -230,10 +259,9 @@ class MyEquipments extends PureComponent {
                   onChange={this._handlePageChanged}
                 />
               </div>
-            }
+            )}
           </div>
-          <div className="col-md-3">
-          </div>
+          <div className="col-md-3" />
         </div>
       </div>
     );
@@ -251,8 +279,8 @@ const mapStateToProps = state => {
   const { contractor } = authentication;
 
   return {
-    contractor
+    contractor,
   };
 };
 
-export default connect(mapStateToProps)(withRouter(MyEquipments));
+export default connect(mapStateToProps)(withTranslation()(withRouter(MyEquipments)));
