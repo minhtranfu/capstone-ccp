@@ -90,7 +90,8 @@ const DiscoverStack = createStackNavigator(
     BidDetail: BidDetail,
     ConfirmBid: ConfirmBid,
     ConfirmMaterial: MaterialTransaction,
-    AddSubscription: AddSubscription
+    AddSubscription: AddSubscription,
+    ContractorProfile: ContractorProfile
   },
   {
     headerMode: "none"

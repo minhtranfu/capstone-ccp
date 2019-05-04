@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     marginRight: 15,
     paddingVertical: 5,
-    width: 80,
+    width: 90,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",

@@ -230,7 +230,7 @@ class MyTransactionDetail extends Component {
                   <TouchableOpacity
                     onPress={() =>
                       this._handleRequestAdjustTransaction(
-                        "Are you sure to accept?",
+                        "Are you sure to accept adjust date?",
                         item.id,
                         "ACCEPTED"
                       )
@@ -241,7 +241,7 @@ class MyTransactionDetail extends Component {
                   <TouchableOpacity
                     onPress={() =>
                       this._handleRequestAdjustTransaction(
-                        "Are you sure to deny this transaction?",
+                        "Are you sure to deny requester adjust date?",
                         item.id,
                         "DENIED"
                       )

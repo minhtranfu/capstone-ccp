@@ -70,7 +70,6 @@ class EquipmentResult extends Component {
   componentDidMount() {
     const { equipment, searchParams } = this.props.navigation.state.params;
     const { offset } = this.state;
-
     this.props.fetchSearchEquipment(searchParams, offset);
   }
 
@@ -80,26 +79,9 @@ class EquipmentResult extends Component {
     });
   };
 
-  _handleAddMoreMonth = (date, month) => {
-    let today = new Date(date);
-    let result = today.setMonth(today.getMonth() + month);
-    return result;
-  };
-
-  _onSelectDate = (fromDate, toDate, visible) => {
-    const newToDate = toDate ? toDate : this._handleAddMoreMonth(fromDate, 6);
-    this.setState({
-      fromDate,
-      toDate: this._handleDateFormat(newToDate),
-      calendarVisible: visible,
-      modalVisible: !visible
-    });
-  };
-
   _handleSearchMore = async () => {
     const { equipment } = this.props.navigation.state.params;
-    const { offset } = this.state;
-    await this.props.fetchSearchEquipment(equipment, offset);
+    await this.props.fetchSearchEquipment(equipment, this.state.offset);
     this.setState({ loadMore: false });
   };
 
@@ -108,10 +90,10 @@ class EquipmentResult extends Component {
     const { offset, loadMore } = this.state;
     if (listSearch.length >= offset) {
       this.setState(
-        (prevState, nextProps) => ({
-          offset: prevState.offset + 10,
+        {
+          offset: offset + 10,
           loadMore: true
-        }),
+        },
         () => {
           this._handleSearchMore();
         }
@@ -125,13 +107,16 @@ class EquipmentResult extends Component {
   };
 
   _renderItem = ({ item }) => {
-    const { query } = this.props.navigation.state.params;
+    const { equipment, query } = this.props.navigation.state.params;
+    //console.log(query);
     return (
       <EquipmentItem
         onPress={() =>
           this.props.navigation.navigate("SearchDetail", {
             id: item.equipmentEntity.id,
-            query: query
+            beginDate: equipment.beginDate,
+            endDate: equipment.endDate,
+            query
           })
         }
         key={`eq_${item.equipmentEntity.id}`}
@@ -324,9 +309,9 @@ class EquipmentResult extends Component {
                   index
                 })}
                 keyExtractor={(item, index) => index.toString()}
-                // ListFooterComponent={this._renderFooter}
-                // onEndReachedThreshold={0.5}
-                // onEndReached={this._handleLoadMore}
+                ListFooterComponent={this._renderFooter}
+                onEndReachedThreshold={0.2}
+                onEndReached={this._handleLoadMore}
               />
             ) : (
               this._renderAddSubscription()

@@ -161,6 +161,11 @@ export default function transactionReducer(state = initialState, action) {
         adjustLoading: false,
         adjustTransaction: payload.data
       };
+    case Actions.REQUEST_ADJUST_TRANSACTION.ERROR:
+      return {
+        ...state,
+        adjustLoading: false
+      };
     case Actions.RESPONSE_ADJUST_TRANSACTION.REQUEST:
       return {
         ...state,
@@ -169,8 +174,12 @@ export default function transactionReducer(state = initialState, action) {
     case Actions.RESPONSE_ADJUST_TRANSACTION.SUCCESS:
       return {
         ...state,
-        adjustLoading: false
-        //adjustTransaction: payload.data
+        adjustLoading: false,
+        adjustTransaction: state.adjustTransaction.map(item =>
+          item.id == payload.id
+            ? { ...item, status: payload.data.data.status }
+            : item
+        )
       };
     case Actions.RESPONSE_ADJUST_TRANSACTION.ERROR:
       return {

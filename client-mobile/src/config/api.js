@@ -80,9 +80,15 @@ export default async function configAPI(config) {
               );
               console.log(refreshToken);
               return new Promise((resolve, reject) => {
-                refresh
-                  .post(`authen/refresh`, { refreshToken })
-                  .then(async ({ data }) => {
+                fetch(`http://35.198.233.204:8080/api/authen/refresh`, {
+                  headers: {
+                    "Content-Type": "application/json"
+                  },
+                  method: "POST",
+                  body: JSON.stringify({ refreshToken })
+                })
+                  .then(res => res.json())
+                  .then(async data => {
                     console.log(data);
                     const userToken = data.tokenWrapper.accessToken;
                     await AsyncStorage.setItem("userToken", userToken);

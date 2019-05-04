@@ -50,7 +50,8 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     fontSize: fontSize.bodyText,
     color: colors.text,
-    fontWeight: "500"
+    fontWeight: "500",
+    borderRadius: 5
   }
 });
 

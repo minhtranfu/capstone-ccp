@@ -53,7 +53,12 @@ export function sendTransactionRequest(transaction) {
       type: Actions.SEND_TRANSACTION_REQUEST.SUCCESS,
       payload: res
     });
-    dispatch(StatusAction.success("Send success"));
+    dispatch(
+      StatusAction.success(
+        "Your booking has been sent successfully",
+        Date.now()
+      )
+    );
   };
 }
 
@@ -66,7 +71,7 @@ export function requestTransaction(id, transactionStatus) {
         type: Actions.REQUEST_TRANSACTION.SUCCESS,
         payload: { data: res, id: id }
       });
-      // dispatch(StatusAction.success("Request success"));
+      dispatch(StatusAction.success("Request success", Date.now()));
     } catch (error) {
       dispatch({ type: Actions.REQUEST_TRANSACTION.ERROR });
     }
@@ -119,17 +124,26 @@ export function sendAdjustTransaction(transactionId, date) {
   };
 }
 
-export function requestAdjustTransaction(date) {
+export function requestAdjustTransaction(date, transactionId) {
   return async dispatch => {
     console.log(date);
-    dispatch({
-      type: Actions.REQUEST_ADJUST_TRANSACTION.REQUEST
-    });
-    const res = await axios.post(`transactionDateChangeRequests`, date);
-    dispatch({
-      type: Actions.REQUEST_ADJUST_TRANSACTION.SUCCESS,
-      payload: { data: res, id: transactionId }
-    });
+    try {
+      dispatch({
+        type: Actions.REQUEST_ADJUST_TRANSACTION.REQUEST,
+        payload: { id: transactionId }
+      });
+      const res = await axios.post(`transactionDateChangeRequests`, date);
+      dispatch({
+        type: Actions.REQUEST_ADJUST_TRANSACTION.SUCCESS,
+        payload: { data: res, id: transactionId }
+      });
+      dispatch(StatusAction.success("Request success", Date.now()));
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: Actions.REQUEST_ADJUST_TRANSACTION.ERROR
+      });
+    }
   };
 }
 
@@ -145,8 +159,14 @@ export function responseAdjustTransaction(adjustTransactionId, status) {
       );
       dispatch({
         type: Actions.RESPONSE_ADJUST_TRANSACTION.SUCCESS,
-        payload: { data: res, id: transactionId }
+        payload: { data: res, id: adjustTransactionId }
       });
+      dispatch(
+        StatusAction.success(
+          "Your adjust transaction date has been updated!!",
+          Date.now()
+        )
+      );
     } catch (error) {
       dispatch({
         type: Actions.RESPONSE_ADJUST_TRANSACTION.ERROR
@@ -177,7 +197,7 @@ export function cancelTransaction(id) {
       type: Actions.CANCEL_TRANSACTION.SUCCESS,
       payload: { id }
     });
-    dispatch(StatusAction.success("Send success"));
+    dispatch(StatusAction.success("Send success", Date.now()));
   };
 }
 
@@ -241,7 +261,7 @@ export function requestMaterialTransaction(material) {
       type: Actions.SEND_MATERIAL_TRANSACTION_REQUEST.SUCCESS,
       payload: res
     });
-    dispatch(StatusAction.success("Success"));
+    dispatch(StatusAction.success("Success", Date.now()));
   };
 }
 
@@ -299,7 +319,7 @@ export function sendRequestDebrisTransaction(transaction) {
       type: Actions.SEND_REQUEST_DEBRIS_TRANSACTION.SUCCESS,
       payload: res
     });
-    dispatch(StatusAction.success("Success"));
+    dispatch(StatusAction.success("Success", Date.now()));
   };
 }
 
@@ -310,7 +330,7 @@ export function updateDebrisTransactionStatus(transactionId, status) {
       type: Actions.UPDATE_DEBRIS_TRANSACTION_STATUS.SUCCESS,
       payload: { data: res, id: transactionId }
     });
-    dispatch(StatusAction.success("Cancel success"));
+    dispatch(StatusAction.success("Cancel success", Date.now()));
   };
 }
 
@@ -322,17 +342,17 @@ export function sendEquipmentFeedback(transactionId, feedback) {
         payload: { id: transactionId }
       });
       const res = await axios.post(`equipmentFeedbacks`, feedback);
+      dispatch(StatusAction.success("Send feedback success", Date.now()));
       dispatch({
         type: Actions.SEND_EQUIPMENT_FEEDBACK.SUCCESS,
         payload: res
       });
-      dispatch(StatusAction.success("Send feedback success"));
     } catch (error) {
       console.log(error);
       dispatch({
         type: Actions.SEND_EQUIPMENT_FEEDBACK.ERROR
       });
-      dispatch(StatusAction.success("Send feedback fail"));
+      dispatch(StatusAction.success("Send feedback fail", Date.now()));
     }
   };
 }

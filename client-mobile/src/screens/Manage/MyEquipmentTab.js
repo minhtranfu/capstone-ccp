@@ -161,7 +161,7 @@ class MyEquipmenTab extends PureComponent {
     return (
       <View style={styles.container}>
         <FlatList
-          contentContainerStyle={{ paddingHorizontal: 15 }}
+          // contentContainerStyle={{ paddingHorizontal: 15 }}
           renderItem={this.renderItem}
           data={listEquipment}
           keyExtractor={(item, index) => index.toString()}

@@ -85,7 +85,10 @@ class EquipmentItem extends PureComponent {
                     resizeMode={"cover"}
                   />
                   <View style={{ marginLeft: 10 }}>
-                    <Text style={styles.text}> {contractor}</Text>
+                    <Text style={[styles.text, { marginBottom: 5 }]}>
+                      {" "}
+                      {contractor}
+                    </Text>
                     <Rating
                       readonly={true}
                       ratingCount={5}

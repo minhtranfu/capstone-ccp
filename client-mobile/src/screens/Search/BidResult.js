@@ -50,9 +50,7 @@ class BidResult extends Component {
         {results.map(item => (
           <DebrisSearchItem
             key={item.id}
-            imageUrl={
-              item.debrisImages.length > 0 ? item.debrisImages[0].url : ""
-            }
+            imageUrl={item.thumbnailImage ? item.thumbnailImage.url : ""}
             address={item.address}
             debrisServiceTypes={item.debrisServiceTypes}
             debrisBids={item.debrisBids}

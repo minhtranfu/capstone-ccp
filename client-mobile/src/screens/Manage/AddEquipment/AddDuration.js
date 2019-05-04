@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-navigation";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import axios from "axios";
-import moment from 'moment';
+import moment from "moment";
 
 import Calendar from "../../../components/Calendar";
 import Loading from "../../../components/Loading";
@@ -288,9 +288,9 @@ class AddDuration extends PureComponent {
         </Header>
         <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
           {!this.state.loading ? (
-            <View>
-              <Text>Price per day (K):</Text>
-              <Text>
+            <View style={{ paddingTop: 10 }}>
+              <Text style={styles.price}>Price per day (K):</Text>
+              <Text style={styles.price}>
                 Suggested price: {Math.round(this.state.suggestPrice)} ~{" "}
                 {Math.round(upperPrice)}
               </Text>
@@ -298,6 +298,7 @@ class AddDuration extends PureComponent {
                 placeholder={"Input your price"}
                 keyboardType={"numeric"}
                 onChangeText={value => this.setState({ dailyPrice: value })}
+                style={styles.placeholder}
               />
               {this.state.timeRanges.map((item, index) =>
                 this._renderDateRange(item, index)
@@ -350,7 +351,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     marginRight: 15,
     paddingVertical: 5,
-    width: 80,
+    width: 90,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
@@ -392,6 +393,22 @@ const styles = StyleSheet.create({
     height: 15,
     fontWeight: "500",
     marginBottom: 5
+  },
+  price: {
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
+    marginBottom: 5,
+    color: colors.primaryColor
+  },
+  placeholder: {
+    fontSize: fontSize.bodyText,
+    color: colors.text,
+    fontWeight: "500",
+    paddingBottom: 10,
+    borderBottomColor: colors.text25,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    marginTop: 10,
+    marginBottom: 15
   }
 });
 

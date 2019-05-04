@@ -11,6 +11,7 @@ import {
   InteractionManager
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
+import { Image as ImageCache } from "react-native-expo-image-cache";
 import MapView, { Marker } from "react-native-maps";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { connect } from "react-redux";
@@ -19,6 +20,7 @@ import Calendar from "../../components/Calendar";
 import Swiper from "react-native-swiper";
 import { getEquipmentDetail } from "../../redux/actions/equipment";
 import moment from "moment";
+import { Rating } from "react-native-ratings";
 
 import WithRangeCalendar from "../../components/WithRangeCalendar";
 import CustomFlatList from "../../components/CustomFlatList";
@@ -80,11 +82,7 @@ class SearchDetail extends Component {
 
   _renderSlideItem = (uri, key, loaded) => (
     <View style={styles.slide} key={key}>
-      <Image
-        style={styles.imageSlide}
-        source={{ uri: uri }}
-        resizeMode={"contain"}
-      />
+      <ImageCache style={styles.imageSlide} uri={uri} resizeMode={"contain"} />
     </View>
   );
 
@@ -119,6 +117,11 @@ class SearchDetail extends Component {
 
   _renderDateTimeModal = (id, price, dateRange) => {
     const { isModalOpen } = this.state;
+    const { beginDate, endDate } = this.props.navigation.state.params;
+    const selectedDate = {
+      beginDate,
+      endDate
+    };
     const newDateRange = dateRange
       .filter(item => new Date(item.endDate) > new Date(Date.now()))
       .map(item =>
@@ -139,6 +142,7 @@ class SearchDetail extends Component {
             onClose={() => this.setState(() => ({ isModalOpen: false }))}
             single={true}
             availableDateRange={newDateRange}
+            selectedDate={selectedDate}
           />
         </View>
       </Modal>
@@ -210,10 +214,41 @@ class SearchDetail extends Component {
             >
               {status}
             </Text>
-            <Text style={[styles.text, { fontWeight: "600", marginBottom: 5 }]}>
-              {contractor.name}
-            </Text>
-            <Text style={styles.text}>Phone: {contractor.phoneNumber}</Text>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
+              onPress={() =>
+                this.props.navigation.navigate("ContractorProfile", {
+                  id: contractor.id
+                })
+              }
+            >
+              <ImageCache
+                uri={contractor.thumbnailImageUrl}
+                resizeMode={"contain"}
+                style={{ width: 50, height: 50, borderRadius: 25 }}
+              />
+              <View
+                style={{
+                  paddingLeft: 15,
+                  flexDirection: "column"
+                }}
+              >
+                <Text
+                  style={[styles.text, { fontWeight: "600", marginBottom: 5 }]}
+                >
+                  {contractor.name}
+                </Text>
+                <Text style={styles.text}>Phone: {contractor.phoneNumber}</Text>
+                <Rating
+                  readonly={true}
+                  ratingCount={5}
+                  fractions={1}
+                  startingValue={contractor.averageEquipmentRating}
+                  imageSize={20}
+                  style={{ alignSelf: "flex-start" }}
+                />
+              </View>
+            </TouchableOpacity>
           </View>
           <View
             style={{

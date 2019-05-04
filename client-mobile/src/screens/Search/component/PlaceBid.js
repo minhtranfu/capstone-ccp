@@ -19,6 +19,7 @@ import Feather from "@expo/vector-icons/Feather";
 
 import Button from "../../../components/Button";
 import Header from "../../../components/Header";
+import TextArea from "../../../components/TextArea";
 
 import colors from "../../../config/colors";
 import fontSize from "../../../config/fontSize";
@@ -93,21 +94,46 @@ class PlaceBid extends Component {
             <Text style={styles.title}>Place your bid</Text>
           </Header>
           <ScrollView style={{ paddingHorizontal: 15 }}>
-            <Text style={styles.text}>Place a bid on</Text>
+            <Text style={styles.text}>Place a bid on:</Text>
             <Text style={styles.text}>{title}</Text>
             <Text style={styles.text}>Paid to you</Text>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center"
+              }}
+            >
               <TextInput
                 style={styles.inputWrapper}
                 onChangeText={value => this.setState({ price: value })}
                 value={price.toString()}
                 keyboardType={"numeric"}
               />
-              <Text style={styles.text}> VND </Text>
+              <View
+                style={{
+                  height: 30,
+                  width: 40,
+                  borderTopRightRadius: 5,
+                  borderBottomRightRadius: 5,
+                  backgroundColor: colors.grayWhite,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderColor: "#000000",
+                  borderWidth: StyleSheet.hairlineWidth
+                }}
+              >
+                <Text style={[styles.text, { color: colors.primaryColor }]}>
+                  {" "}
+                  K{" "}
+                </Text>
+              </View>
             </View>
-            <Text style={styles.text}>Describe your bid</Text>
-            <TextInput
-              style={styles.wrapper}
+            <Text style={[styles.text, { marginTop: 10 }]}>
+              Describe your bid
+            </Text>
+            <TextArea
+              numberOfLines={5}
+              maxLength={1000}
               onChangeText={value => this.setState({ description: value })}
               value={description}
             />
@@ -147,7 +173,9 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: "400",
     width: 200,
-    height: 30
+    height: 30,
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5
   },
   wrapper: {
     paddingLeft: 10,
@@ -156,7 +184,9 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     fontSize: fontSize.bodyText,
     color: colors.text,
-    fontWeight: "400"
+    fontWeight: "400",
+    borderRadius: 5,
+    marginTop: 10
   },
   title: {
     fontSize: fontSize.bodyText,
@@ -165,8 +195,9 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: fontSize.secondaryText,
-    fontWeight: "300",
-    color: colors.text
+    fontWeight: "500",
+    color: colors.text,
+    marginBottom: 5
   }
 });
 

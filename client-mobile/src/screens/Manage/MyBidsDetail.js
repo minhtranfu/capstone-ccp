@@ -116,7 +116,7 @@ class MyBidsDetail extends Component {
         <InputField
           label={"Your current bid (VND)"}
           placeholder={"Your current bid (VND)"}
-          customWrapperStyle={{ marginBottom: 20 }}
+          customWrapperStyle={{ marginBottom: 10, marginTop: 10 }}
           inputType="text"
           onChangeText={value => this._handleInputChanged("price", value)}
           value={this._formatNumber(data.price.toString())}
@@ -130,6 +130,7 @@ class MyBidsDetail extends Component {
         />
         <Button
           text={"Submit"}
+          wrapperStyle={{ marginBottom: 10 }}
           onPress={() => this._handleSubmitEditButton()}
         />
       </View>

@@ -114,7 +114,9 @@ export function searchDebris(data) {
     console.log("check", data);
     const typeId = data.typeId.map(item => `debrisTypeId=${item.id}`);
     const query = typeId.join("&");
-    const url = `debrisPosts?offset=0&limit=1000&q=${data.keyword}&${query}`;
+    const url = `debrisPosts?offset=0&limit=1000&q=${
+      data.keyword
+    }&${query}&orderBy=created_time.desc`;
     console.log(url);
     const res = await axios.get(url);
     dispatch({

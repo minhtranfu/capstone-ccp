@@ -379,8 +379,8 @@ const styles = StyleSheet.create({
     marginBottom: 15
   },
   scrollContent: {
-    flex: 1
-    //paddingHorizontal: 15
+    flex: 1,
+    paddingHorizontal: 15
   },
   equipmentItemContainer: {
     paddingVertical: 8

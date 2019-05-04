@@ -105,6 +105,7 @@ class DebrisTab extends PureComponent {
           item => item.status === status.code.toUpperCase()
         );
         if (debrisList.length === 0) return null;
+        console.log(debrisList);
         return (
           <View key={`sec_${idx}`}>
             <EquipmentStatus
@@ -112,26 +113,28 @@ class DebrisTab extends PureComponent {
               title={status.title}
               code={status.code}
             />
-            {debrisList.map(item => (
-              <DebrisSearchItem
-                key={item.id}
-                address={item.debrisPost.address}
-                debrisBids={item.debrisPost.debrisBids}
-                description={item.debrisPost.description}
-                title={item.debrisPost.title}
-                debrisServiceTypes={item.debrisPost.debrisServiceTypes}
-                itemUrl={
-                  item.debrisPost.debrisImages.length > 0
-                    ? item.debrisPost.debrisImages[0]
-                    : "https://images1.houstonpress.com/imager/u/745xauto/9832653/dump_edit_resize.jpg"
-                }
-                onPress={() =>
-                  this.props.navigation.navigate("DebrisDetail", {
-                    id: item.id
-                  })
-                }
-              />
-            ))}
+            {debrisList.map(item => {
+              return (
+                <DebrisSearchItem
+                  key={item.id}
+                  address={item.debrisPost.address}
+                  debrisBids={item.debrisPost.debrisBids}
+                  description={item.debrisPost.description}
+                  title={item.debrisPost.title}
+                  debrisServiceTypes={item.debrisPost.debrisServiceTypes}
+                  itemUrl={
+                    item.debrisPost.thumbnailImage
+                      ? item.debrisPost.thumbnailImage.url
+                      : "https://images1.houstonpress.com/imager/u/745xauto/9832653/dump_edit_resize.jpg"
+                  }
+                  onPress={() =>
+                    this.props.navigation.navigate("DebrisDetail", {
+                      id: item.id
+                    })
+                  }
+                />
+              );
+            })}
           </View>
         );
       })}
@@ -168,7 +171,7 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     borderStyle: "dashed",
     borderWidth: 3,
-    borderColor: "#DEE4E3",
+    borderColor: "#DEE4E3"
   },
   text: {
     fontSize: fontSize.bodyText,

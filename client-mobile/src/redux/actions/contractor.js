@@ -136,6 +136,7 @@ export function listFeedbackTypes() {
 }
 
 export function createNewFeedback(report) {
+  console.log(report);
   return async dispatch => {
     const res = await axios.post(`reports`, report);
     dispatch({

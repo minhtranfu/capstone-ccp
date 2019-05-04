@@ -8,7 +8,8 @@ import {
   StyleSheet,
   ScrollView,
   Modal,
-  TextInput
+  TextInput,
+  Dimensions
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
@@ -18,6 +19,8 @@ import {
   listFeedbackTypes
 } from "../../redux/actions/contractor";
 import { Feather } from "@expo/vector-icons";
+import TabView from "../../components/TabView";
+import axios from "axios";
 
 import Dropdown from "../../components/Dropdown";
 import Button from "../../components/Button";
@@ -29,6 +32,7 @@ import fontSize from "../../config/fontSize";
 
 const maxLength = 100;
 
+const { width } = Dimensions.get("window");
 const DROPDOWN_FEEDBACK_OPTIONS = [
   {
     id: 0,
@@ -36,6 +40,24 @@ const DROPDOWN_FEEDBACK_OPTIONS = [
     value: "Select your reason"
   }
 ];
+
+const FeedbackStatus = ({ totalFeedbackType, feedbackType, lastIndex }) => (
+  <View
+    style={[
+      {
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: (width - 30) / 3,
+        height: 100
+      },
+      !lastIndex ? { borderRightWidth: 1, borderRightColor: "white" } : null
+    ]}
+  >
+    <Text style={[styles.text, { marginBottom: 10 }]}>{totalFeedbackType}</Text>
+    <Text style={[styles.text, { textAlign: "center" }]}>{feedbackType}</Text>
+  </View>
+);
 
 @connect(
   state => ({
@@ -64,7 +86,11 @@ class ContractorProfile extends Component {
       text: "",
       textLength: maxLength,
       feedback: "",
-      feedbackIndex: 0
+      feedbackIndex: 0,
+      activeTab: 0,
+      materialFeedback: [],
+      equipmentFeedback: [],
+      debrisFeedback: []
     };
   }
 
@@ -72,7 +98,40 @@ class ContractorProfile extends Component {
     const { id } = this.props.navigation.state.params;
     this.props.fetchGetContractorDetail(id);
     this.props.fetchListFeedbackTypes();
+    this._loadMaterialFeedback();
+    this._loadEquipmentFeedback();
+    this._loadDebrisFeedback();
   }
+
+  _loadMaterialFeedback = async () => {
+    const { id } = this.props.navigation.state.params;
+    const res = await axios.post(
+      `materialFeedbacks?limit=100&offset=0&orderBy=createdTime.desc&supplierId=${id}`
+    );
+    if (res) {
+      console.log(res);
+    }
+  };
+
+  _loadEquipmentFeedback = async () => {
+    const { id } = this.props.navigation.state.params;
+    const res = await axios.post(
+      `equipmentFeedbacks?limit=100&offset=0&orderBy=createdTime.desc&supplierId=${id}`
+    );
+    if (res) {
+      console.log(res);
+    }
+  };
+
+  _loadDebrisFeedback = async () => {
+    const { id } = this.props.navigation.state.params;
+    const res = await axios.post(
+      `debrisFeedbacks?limit=100&offset=0&orderBy=createdTime.desc&supplierId=${id}`
+    );
+    if (res) {
+      console.log(res);
+    }
+  };
 
   _setModalVisible = visible => {
     this.setState({ modalVisible: visible });
@@ -83,16 +142,14 @@ class ContractorProfile extends Component {
     const { text, checked, feedbackIndex, feedback } = this.state;
     const { user } = this.props;
     const feedBackList = this._handleFeedbackDropdown();
+    console.log(feedbackIndex);
     if (!feedback) {
       console.log("error");
     } else {
       const feedback = {
         content: text,
         toContractor: {
-          id: id
-        },
-        fromContractor: {
-          id: user.contractor.id
+          id
         },
         feedbackType: {
           id: feedBackList[feedbackIndex].id
@@ -182,42 +239,125 @@ class ContractorProfile extends Component {
     );
   };
 
-  _renderImageProfile = thumbnailImageUrl => (
+  _renderImageProfile = contractor => (
     <View style={{ flex: 1 }}>
       <Image
-        uri={"https://ak4.picdn.net/shutterstock/videos/6731134/thumb/1.jpg"}
+        uri={contractor.thumbnailImageUrl}
         style={styles.thumbnail}
         resizeMode={"cover"}
       />
       <View style={styles.avatarWrapper}>
-        <Image
-          uri={
-            thumbnailImageUrl ||
-            "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
-          }
-          resizeMode={"cover"}
-          style={styles.avatar}
-        />
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderBottomColor: colors.primaryColor
+          }}
+        >
+          <Image
+            uri={
+              contractor.thumbnailImageUrl ||
+              "https://microlancer.lancerassets.com/v2/services/bf/56f0a0434111e6aafc85259a636de7/large__original_PAT.jpg"
+            }
+            resizeMode={"cover"}
+            style={styles.avatar}
+          />
+          <View style={styles.nameWrapper}>
+            <Text style={styles.name}>{contractor.name}</Text>
+            <Text style={styles.phone}>{contractor.phoneNumber}</Text>
+            <Text style={styles.email}>{contractor.email}</Text>
+          </View>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center"
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              height: 40,
+              width: 180,
+              paddingHorizontal: 15,
+              borderWidth: 1,
+              borderColor: "#7F859A",
+              borderRadius: 5,
+              marginRight: 20
+            }}
+          >
+            <Text style={styles.text}>Report</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              height: 40,
+              width: 180,
+              paddingHorizontal: 15,
+              borderWidth: 1,
+              borderColor: "#7F859A",
+              borderRadius: 5
+            }}
+          >
+            <Text style={styles.text}>Call</Text>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            marginVertical: 15,
+            flexDirection: "row",
+            alignItems: "center"
+          }}
+        >
+          <FeedbackStatus
+            totalFeedbackType={contractor.finishedHiringTransactionCount}
+            feedbackType={"Finished equipment transaction"}
+          />
+          <FeedbackStatus
+            totalFeedbackType={contractor.finishedMaterialTransactionCount}
+            feedbackType={"Finished material transaction"}
+          />
+          <FeedbackStatus
+            totalFeedbackType={contractor.finishedDebrisTransactionCount}
+            feedbackType={"Finished debris transaction"}
+            lastIndex={true}
+          />
+        </View>
       </View>
     </View>
   );
 
+  _handleActiveTab = index => {
+    switch (index) {
+      case 1:
+        return <Text>J</Text>;
+      case 2:
+        return <Text>H</Text>;
+      default:
+        return <Text>K</Text>;
+    }
+  };
+
+  _onChangeTab = tab => {
+    this.setState({ activeTab: tab });
+  };
+
   _renderListItem = () => {
-    const {
-      name,
-      thumbnailImageUrl,
-      email,
-      phoneNumber
-    } = this.props.contractor;
+    const { contractor } = this.props;
+    const { activeTab } = this.state;
     return (
       <ScrollView>
-        {this._renderImageProfile(thumbnailImageUrl)}
-        <View style={styles.nameWrapper}>
-          <Text style={styles.text}>{name}</Text>
-          <Text style={styles.text}>Phone Number: {phoneNumber}</Text>
-          <Text style={styles.text}>Email: {email}</Text>
-        </View>
+        {this._renderImageProfile(contractor)}
+        <TabView
+          tabs={["Equipment", "Material", "Debris"]}
+          onChangeTab={this._onChangeTab}
+          activeTab={activeTab}
+        />
         {this._renderFeedbackModal()}
+        {this._handleActiveTab(activeTab)}
         <Button
           wrapperStyle={{ marginHorizontal: 15 }}
           text={"Report"}
@@ -257,21 +397,21 @@ const styles = StyleSheet.create({
     flex: 1
   },
   nameWrapper: {
-    alignItems: "center",
     justifyContent: "center",
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.primaryColor,
     paddingVertical: 10,
-    marginBottom: 10
+    paddingLeft: 15
   },
   avatarWrapper: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
     position: "absolute",
-    top: 10,
+    top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    alignItems: "center",
-    justifyContent: "flex-end"
+    alignItems: "flex-start",
+    justifyContent: "flex-end",
+    paddingHorizontal: 15
   },
   header: {
     fontSize: fontSize.bodyText,
@@ -282,9 +422,28 @@ const styles = StyleSheet.create({
     fontSize: fontSize.bodyText,
     fontWeight: "600"
   },
+  name: {
+    fontSize: fontSize.h4,
+    fontWeight: "500",
+    color: colors.white,
+    marginBottom: 5
+  },
+  phone: {
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
+    color: colors.secondaryColor,
+    marginBottom: 5
+  },
+  email: {
+    fontSize: fontSize.caption,
+    fontWeight: "500",
+    color: colors.grayWhite,
+    marginBottom: 5
+  },
   text: {
     fontSize: fontSize.bodyText,
-    fontWeight: "400"
+    fontWeight: "500",
+    color: colors.white
   },
   avatar: {
     width: 70,
@@ -292,7 +451,7 @@ const styles = StyleSheet.create({
     borderRadius: 35
   },
   thumbnail: {
-    height: 120
+    height: 320
   },
   cirleIcon: {
     width: 20,
