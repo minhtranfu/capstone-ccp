@@ -292,7 +292,7 @@ class MyRequests extends Component {
             </div>
             {changeStatusButtons}
           </div>
-          <div className="contractor-detail flex-fill p-2 text-center d-flex flex-row flex-sm-column">
+          <div className="contractor-detail p-2 text-center d-flex flex-row flex-sm-column">
             <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: supplier.id })} >
               <Image
                 circle

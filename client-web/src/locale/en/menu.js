@@ -4,7 +4,7 @@ export default {
   equipments: {
     find: 'Find equipments',
     my: 'My equipments',
-    supply: 'Rental equipments',
+    supply: 'Leasing equipments',
     hiring: 'Hiring equipments',
     subscriptions: 'Subscriptions',
   },
@@ -21,8 +21,8 @@ export default {
   debrises: {
     find: 'Find',
     my: 'My post',
-    serving: 'Serving debrises',
-    hiring: 'Hiring debrises',
+    serving: 'Supplying transactions',
+    hiring: 'Hiring transactions',
   },
 
   login: 'Login',
