@@ -8,6 +8,7 @@ import { ENTITY_KEY } from '../../../common/app-const';
 
 import { constructionServices } from 'Services/domain/ccp';
 import { fetchDebrisServiceTypes } from 'Redux/actions/thunks';
+import { AddressInput } from 'Components/common';
 
 class AddEquipmentStep1 extends Step {
   state = {
@@ -110,6 +111,36 @@ class AddEquipmentStep1 extends Step {
     });
   };
 
+  _handleSelectAddress = addressResult => {
+    this.setState({
+      ...addressResult,
+      isAddressEditted: true,
+    });
+  };
+
+  _handleBlurAddressInput = () => {
+    const { longitude } = this.state;
+
+    if (longitude) {
+      return;
+    }
+
+    this.setState({
+      address: '',
+      isAddressEditted: false,
+    });
+  };
+
+  _handleAddressChanged = address => {
+
+    this.setState({
+      address,
+      longitude: undefined,
+      latitude: undefined,
+      isAddressEditted: false,
+    });
+  };
+
   render() {
     const { entities } = this.props;
     const debrisServiceTypes = entities[ENTITY_KEY.DEBRIS_SERVICE_TYPES];
@@ -135,7 +166,14 @@ class AddEquipmentStep1 extends Step {
             </div>
             <div className="form-group">
               <label htmlFor="">Address: <i className="text-danger">*</i></label>
-              <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" />
+              {/* <input type="text" name="address" onChange={this._handleFieldChange} value={this.state.address || ''} className="form-control" /> */}
+              <AddressInput inputProps={{
+                  value: this.state.address || '',
+                  onBlur: this._handleBlurAddressInput,
+                }}
+                onChange={this._handleAddressChanged}
+                onSelect={this._handleSelectAddress}
+                />
             </div>
           </div>
           <div className="col-md-6">
