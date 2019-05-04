@@ -410,16 +410,16 @@ class DebriseTransactionsRequest extends Component {
     const transactionCards = this._renderTransactions();
 
     return (
-      <div className="container">
+      <div className="container py-3">
         <RatingModal isOpen={!!feedbackingTransaction} transaction={feedbackingTransaction} onClose={this._closeRatingModal} />
         {this._renderAlert()}
         {isChangingStatus &&
           <ComponentBlocking/>
         }
-        <h1 className="my-3">
+        <h4 className="my-3">
           Debris transactions are requested by me
           <button className="btn btn-outline-primary float-right" onClick={this._loadData}><i className="fal fa-sync"></i></button>
-        </h1>
+        </h4>
         <div className="row">
           <div className="col-md-3">
             <div className="border-right border-primary h-100">

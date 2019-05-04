@@ -233,7 +233,6 @@ class MyEquipments extends PureComponent {
             }
           </div>
           <div className="col-md-3">
-            <div className="bg-dark text-light sticky-top sticky-sidebar py-5 text-center">USER MENU PLACEHOLDER</div>
           </div>
         </div>
       </div>

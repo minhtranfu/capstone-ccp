@@ -446,11 +446,12 @@ class MaterialTransactions extends Component {
         {this._renderAlert()}
         <div className="row">
           <div className="col-md-12">
-            <h5>
+            <h4>
+              Buying material transactions
               <button className="btn btn-outline-primary float-right" onClick={this._loadData}>
                 <i className="fal fa-sync" />
               </button>
-            </h5>
+            </h4>
           </div>
           <div className="col-md-3">
             <div className="border-right border-primary h-100">
@@ -460,7 +461,7 @@ class MaterialTransactions extends Component {
                 role="tablist"
                 aria-orientation="vertical"
               >
-                <h4>Status</h4>
+                <h5>Status</h5>
                 {Object.keys(this.showableStatuses).map(status => {
                   return (
                     <a

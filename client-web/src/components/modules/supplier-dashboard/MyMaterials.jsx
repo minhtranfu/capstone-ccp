@@ -125,7 +125,7 @@ class MyMaterials extends PureComponent {
     const { materials, activePage } = this.state;
 
     return (
-      <div className="container py-4">
+      <div className="container py-3">
         <div className="row">
           <div className="col-md-9">
             <h4>
@@ -150,7 +150,6 @@ class MyMaterials extends PureComponent {
             }
           </div>
           <div className="col-md-3">
-            <div className="bg-dark text-light sticky-top sticky-sidebar py-5 text-center">USER MENU PLACEHOLDER</div>
           </div>
         </div>
       </div>

@@ -162,16 +162,13 @@ class RequestedSubscriptions extends Component {
   render() {
     return (
       <div className="container">
-        <h2 className="my-3">
+        <h4 className="my-3">
           My subscriptions
           <button className="btn btn-primary float-right" onClick={this._toggleAddCard}>
             <i className="fas fa-plus"></i> Add subscription
           </button>
-        </h2>
+        </h4>
         <div className="row">
-          <div className="col-md-4">
-            <div>User menu</div>
-          </div>
           <div className="col-md-8">
             {this._renderAddCard()}
             {this._renderPlaceholderCards()}

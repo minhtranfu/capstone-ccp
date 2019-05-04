@@ -162,9 +162,9 @@ class SubscriptionCard extends Component {
         }
         {this._renderConfirmToDelete()}
         {this._renderMessage()}
-        <h2 className="d-inline">
+        <h5 className="d-inline">
           {subscription.equipmentType.name}
-        </h2>
+        </h5>
         <span className="float-right">
           <button className="btn btn-sm btn-outline-primary" onClick={this._toggleEdit}>
             <i className="fal fa-edit"></i>
