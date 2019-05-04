@@ -49,9 +49,9 @@ public class CheckSubscriptionMatchedScheduler {
 			return;
 		}
 
-		synchronized (LOCK) {
-			isRunning = true;
-		}
+//		synchronized (LOCK) {
+//			isRunning = true;
+//		}
 //		int timeOffset = 30 * 60; // 30 mins
 //		int timeOffset = 2 * 60; // 2 mins
 		int timeOffset = 30 * 60 * 60; // 30 hours
@@ -73,9 +73,9 @@ public class CheckSubscriptionMatchedScheduler {
 			// TODO: 4/28/19 log matched subscription to database
 			logMatchedSubscriptionToDatabase(matchedSubscriptionResult);
 		}
-		synchronized (LOCK) {
-			isRunning = false;
-		}
+//		synchronized (LOCK) {
+//			isRunning = false;
+//		}
 	}
 
 	private void logMatchedSubscriptionToDatabase(MatchedSubscriptionResult matchedSubscriptionResult) {
