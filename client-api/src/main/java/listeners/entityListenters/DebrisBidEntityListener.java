@@ -42,7 +42,7 @@ public class DebrisBidEntityListener {
 				firebaseMessagingManager.sendMessage(new NotificationDTO("New Bid",
 						String.format("\"%s\" have a new bid from %s", entity.getDebrisPost().getTitle(),supplier.getName())
 						, requester.getId()
-						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.DEBRIS_TRANSACTIONS, entity.getId())));
+						, NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.DEBRIS_POST, entity.getDebrisPost().getId())));
 		}
 
 	}

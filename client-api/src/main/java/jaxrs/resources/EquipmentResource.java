@@ -92,7 +92,6 @@ public class EquipmentResource {
 	private static final String DEFAULT_LONG = "106.676364";
 	private static final String DEFAULT_RESULT_LIMIT = "50";
 
-
 	private void validateBeginEndDate(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {
 		for (AvailableTimeRangeEntity availableTimeRangeEntity : availableTimeRangeEntities) {
 			if (availableTimeRangeEntity.getBeginDate().isAfter(availableTimeRangeEntity.getEndDate())) {
@@ -172,6 +171,8 @@ public class EquipmentResource {
 			);
 			result.add(equipmentResponse);
 		}
+
+
 		return Response.ok(result).build();
 	}
 

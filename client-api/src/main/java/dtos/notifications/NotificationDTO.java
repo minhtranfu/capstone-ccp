@@ -62,6 +62,7 @@ public class NotificationDTO {
 		EQUIPMENTS("equipments"),
 		HIRING_TRANSACTIONS("hiringTransactions"),
 		TRANSACTION_DATE_CHANGE_REQUESTS("transactionDateChangeRequests"),
+		DEBRIS_POST("debrisPost"),
 		DEBRIS_TRANSACTIONS("debrisTransactions"),
 		DEBRIS_FEEDBACK("debrisFeedbacks"),
 		MATERIAL_TRANSACTIONS("materialTransactions")
