@@ -30,4 +30,5 @@ export default {
   useCurrentLocation: 'Use your current location',
   loading: 'Loading',
   all: 'All',
+  deleting: 'Deleting...',
 };

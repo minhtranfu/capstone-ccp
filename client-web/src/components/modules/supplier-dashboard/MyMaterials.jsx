@@ -155,7 +155,7 @@ class MyMaterials extends PureComponent {
               <PopConfirm
                 target={`_${material.id}-delete`}
                 title="Delete this material?"
-                message="Are you sure? All pending requests of this material will be denied, all transactions of this equipment will be keeped!"
+                message="Are you sure? All pending requests of this material will be denied, all transactions of this equipment will be kept!"
                 confirmText="Yes, delete it"
                 onConfirm={() => this._handleDeleteMaterial(material.id)}
               />

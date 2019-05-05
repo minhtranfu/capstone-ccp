@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Skeleton from 'react-loading-skeleton';
@@ -7,13 +8,16 @@ import { Link } from 'react-router-dom';
 import { debrisServices } from 'Services/domain/ccp';
 import { getErrorMessage, getRoutePath } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
-import { Pagination } from 'Components/common';
+import { Pagination, ComponentBlocking, PopConfirm } from 'Components/common';
+import { withTranslation } from 'react-i18next';
 
 class MyDebrises extends Component {
   state = {
     debrises: {},
     isFetching: false,
     activePage: 1,
+    isDeleting: false,
+    deleteError: null,
   };
   pageSize = 6;
 
@@ -81,26 +85,40 @@ class MyDebrises extends Component {
     );
   };
 
-  _handleDeleteDebris = debrisId => {
-    console.log(debrisId);
+  _handleDeleteDebris = async id => {
+    this.setState({
+      isDeleting: true,
+      deleteError: null,
+    });
+
+    try {
+      const isDeleted = await debrisServices.deleteDebris(id);
+      const { debrises } = this.state;
+
+      this.setState({
+        isDeleting: false,
+        debrises: {
+          ...debrises,
+          items: debrises.items.filter(debris => debris.id !== id),
+        },
+      });
+    } catch (error) {
+      const deleteError = getErrorMessage(error);
+
+      this.setState({
+        deleteError,
+        isDeleting: false,
+      });
+    }
   };
 
-  _renderDebrises = () => {
-    const { debrises, isFetching } = this.state;
+  _renderDebrisCard = debris => {
+    const { debrisBids, debrisServiceTypes } = debris;
+    const services = debrisServiceTypes.map(type => type.name).join(', ');
 
-    if (isFetching) {
-      return this._renderLoading();
-    }
-
-    if (!debrises || !debrises.items || debrises.items.length === 0) {
-      return this._renderNoDebris();
-    }
-
-    return debrises.items.map(debris => {
-      const { debrisBids, debrisServiceTypes } = debris;
-      const services = debrisServiceTypes.map(type => type.name).join(', ');
-      return (
-        <div key={debris.id} className="my-2 p-3 bg-white shadow-sm">
+    return (
+      <CSSTransition key={debris.id} timeout={500} classNames="item">
+        <div className="my-2 p-3 bg-white shadow-sm">
           <div>
             <Link to={getRoutePath(routeConsts.DEBRIS_DETAIL, { id: debris.id })}>
               <h6 className="d-inline">{debris.title}</h6>
@@ -110,10 +128,17 @@ class MyDebrises extends Component {
                 <i className="fal fa-edit" />
               </button>
               <button
+                id={`_${debris.id}-delete`}
                 className="btn btn-sm btn-outline-danger ml-2"
-                onClick={() => this._handleDeleteDebris(debris.id)}
               >
                 <i className="fal fa-trash" />
+                <PopConfirm
+                  target={`_${debris.id}-delete`}
+                  title="Delete this debris post?"
+                  message="Are you sure to delete this debris post? All transactions of this debris post will be kept!"
+                  confirmText="Yes, delete it"
+                  onConfirm={() => this._handleDeleteDebris(debris.id)}
+                />
               </button>
             </span>
           </div>
@@ -130,15 +155,33 @@ class MyDebrises extends Component {
             <i className="fas fa-gavel" /> Bid: {debrisBids.length}
           </div>
         </div>
-      );
-    });
+      </CSSTransition>
+    );
+  };
+
+  _renderDebrises = () => {
+    const { debrises, isFetching } = this.state;
+
+    if (isFetching) {
+      return this._renderLoading();
+    }
+
+    if (!debrises || !debrises.items || debrises.items.length === 0) {
+      return this._renderNoDebris();
+    }
+
+    const cards = debrises.items.map(this._renderDebrisCard);
+
+    return <TransitionGroup>{cards}</TransitionGroup>;
   };
 
   render() {
-    const { debrises, activePage } = this.state;
+    const { debrises, activePage, deleteError, isDeleting } = this.state;
+    const { t } = this.props;
 
     return (
       <div className="container">
+        {isDeleting && <ComponentBlocking message={t('common.deleting')} />}
         <div className="row">
           <div className="col-md-9">
             <h2 className="my-3">
@@ -149,6 +192,12 @@ class MyDebrises extends Component {
                 </button>
               </Link>
             </h2>
+            <div className="clearfix" />
+            {deleteError && (
+              <div className="my-2 alert alert-warning">
+                <i className="fal fa-info-circle" /> {deleteError}
+              </div>
+            )}
             {this._renderDebrises()}
             {debrises && debrises.totalItems > this.pageSize && (
               <div className="text-center">
@@ -170,6 +219,7 @@ class MyDebrises extends Component {
 
 MyDebrises.props = {
   contractor: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
 // const mapStateToProps = state => {
@@ -181,4 +231,4 @@ MyDebrises.props = {
 //   };
 // };
 
-export default MyDebrises;
+export default withTranslation()(MyDebrises);

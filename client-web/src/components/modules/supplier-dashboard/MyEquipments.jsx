@@ -197,7 +197,7 @@ class MyEquipments extends PureComponent {
                 <PopConfirm
                   target={`_${equipment.id}-delete`}
                   title="Delete this equipment?"
-                  message="Are you sure to delete this equipment? All pending requests will be denied, all transactions of this equipment will be keeped!"
+                  message="Are you sure to delete this equipment? All pending requests will be denied, all transactions of this equipment will be kept!"
                   onConfirm={() => this._handleDeleteEquipment(equipment.id)}
                   confirmText="Yes, delete it"
                 />

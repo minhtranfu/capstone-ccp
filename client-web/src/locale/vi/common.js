@@ -30,4 +30,5 @@ export default {
   useCurrentLocation: 'Sử dụng vị trí hiện tại',
   loading: 'Đang tải',
   all: 'Tất cả',
+  deleting: 'Đang xóa...',
 };

@@ -45,3 +45,7 @@ export const uploadImages = formData => {
     }
   });
 };
+
+export const deleteDebris = id => {
+  return DataAccessService.delete(`/debrisPosts/${id}`);
+};
