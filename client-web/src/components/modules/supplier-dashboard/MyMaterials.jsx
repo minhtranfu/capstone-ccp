@@ -128,7 +128,7 @@ class MyMaterials extends PureComponent {
           </div>
           <div className="detail flex-fill p-2">
             <h6>
-              <Link to={getRoutePath(routeConsts.MATERIAL_MY_DETAIL, { id: material.id })}>
+              <Link to={getRoutePath(routeConsts.MATERIAL_DETAIL, { id: material.id })}>
                 {material.name}
               </Link>
             </h6>
