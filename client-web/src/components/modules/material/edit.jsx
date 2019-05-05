@@ -6,7 +6,7 @@ import validate from 'validate.js';
 import { Image, ComponentBlocking, DropzoneUploadImage } from 'Components/common';
 import { getErrorMessage, getValidateFeedback } from 'Utils/common.utils';
 import CcpApiService from 'Services/domain/ccp-api-service';
-import { equipmentServices, materialServices } from 'Services/domain/ccp';
+import { materialServices } from 'Services/domain/ccp';
 
 class MaterialEdit extends Component {
   state = {

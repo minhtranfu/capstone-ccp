@@ -131,7 +131,7 @@ class SearchBox extends PureComponent {
                 className="form-control"
                 onChange={this._handleChangeCriteria}
               >
-                <option value="">{t('common.select')}</option>
+                <option value="">{t('common.all')}</option>
                 {equipmentTypes &&
                   equipmentTypes.map(equipmentType => (
                     <option key={equipmentType.id} value={equipmentType.id}>
