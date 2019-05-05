@@ -204,7 +204,7 @@ class AddEquipmentStep3 extends Step {
                 className="btn btn-success ml-2"
                 onClick={this._handleSubmitForm}
               >
-                NEXT STEP <i className="fal fa-chevron-right" />
+                POST <i className="fal fa-chevron-right" />
               </button>
             </div>
           </div>
