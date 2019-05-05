@@ -390,6 +390,7 @@ class DebriseTransactionsRequest extends Component {
 
     if (feedback && feedback.id) {
       const { feedbackingTransaction, transactions } = this.state;
+      newState.transactions = {};
       newState.transactions.items = transactions.items.map(transaction => {
         if (transaction.id !== feedbackingTransaction.id) {
           return transaction;
