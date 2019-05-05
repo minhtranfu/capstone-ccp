@@ -23,8 +23,8 @@ export default {
   orderBy: 'Order by',
   orderByScore: 'Relevance',
   orderByLatest: 'Newest',
-  priceDescrease: 'Price: hight to low',
-  priceIncrease: 'Price: low to hight',
+  priceDescrease: 'Price: high to low',
+  priceIncrease: 'Price: low to high',
 
   searchLocation: 'Search location',
   useCurrentLocation: 'Use your current location',
