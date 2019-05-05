@@ -11,6 +11,7 @@ export class AddressInput extends Component {
 
     this.state = {
       address: props.address || '',
+      isFetching: false,
     };
   }
 
@@ -31,6 +32,10 @@ export class AddressInput extends Component {
   _handleSelectAddress = address => {
     const { onSelect } = this.props;
 
+    this.setState({
+      isFetching: true,
+    });
+
     geocodeByAddress(address)
       .then(results => getLatLng(results[0]))
       .then(latLng => {
@@ -38,13 +43,19 @@ export class AddressInput extends Component {
           address,
           latitude: latLng.lat,
           longitude: latLng.lng,
+          isFetching: false,
         };
 
         this.setState(newState, () => {
           onSelect && onSelect(newState);
         });
       })
-      .catch(error => console.error('Error', error));
+      .catch(error => {
+        this.setState({
+          isFetching: false,
+        });
+        console.error('Error', error);
+      });
   };
 
   /**
@@ -58,6 +69,9 @@ export class AddressInput extends Component {
     const { onSelect } = this.props;
 
     const location = window.navigator.geolocation;
+    this.setState({
+      isFetching: true,
+    });
     location.getCurrentPosition(
       async result => {
         const { coords } = result;
@@ -71,26 +85,36 @@ export class AddressInput extends Component {
               address,
               latitude,
               longitude,
+              isFetching: false,
             };
 
             this.setState(newState, () => {
               onSelect && onSelect(newState);
             });
           } else {
+            this.setState({
+              isFetching: false,
+            });
             window.alert('Can not get your location, please try again!');
           }
         } catch (error) {
+          this.setState({
+            isFetching: false,
+          });
           window.alert('Can not get your location, please try again!');
         }
       },
       () => {
+        this.setState({
+          isFetching: false,
+        });
         window.alert('Can not get your location, please allow!');
       }
     );
   };
 
   render() {
-    const { address, isFocus } = this.state;
+    const { address, isFocus, isFetching } = this.state;
     const { wrapperProps, inputProps, t } = this.props;
 
     return (
@@ -137,9 +161,9 @@ export class AddressInput extends Component {
                   </div>
                 </div>
               )}
-              {(loading || suggestions.length > 0) && (
+              {(isFetching || loading || suggestions.length > 0) && (
                 <div className="autocomplete-dropdown-container shadow-lg border bg-white">
-                  {loading && (
+                  {(loading || isFetching) && (
                     <div className="suggestion-item">
                       <span
                         className="spinner-border spinner-border-sm mr-1"
