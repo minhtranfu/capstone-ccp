@@ -47,7 +47,7 @@ import java.util.logging.Logger;
 public class AuthenticationResource {
 	public static final Logger LOGGER = Logger.getLogger(AuthenticationResource.class.toString());
 
-	private static final long DEFAULT_ACCESS_TOKEN_EXPIRATION_TIME = 60 * 5; // 5 mins
+	private static final long DEFAULT_ACCESS_TOKEN_EXPIRATION_TIME = 60*60*24; // 1 days
 	private static final long DEFAULT_REFRESH_TOKEN_EXPIRE_TIME = 60 * 60 * 24 * 90; // 90 days
 	private static final long DEFAULT_EMAIL_VERIFICATION_EXPIRE_TIME = 60 * 60 * 24; // 1 days
 
