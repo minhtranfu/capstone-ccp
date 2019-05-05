@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 import { debrisServices } from 'Services/domain/ccp';
 import { getErrorMessage, getRoutePath } from 'Utils/common.utils';
-import { routeConsts } from 'Common/consts';
+import { routeConsts, CONTRACTOR_STATUSES } from 'Common/consts';
 import { Pagination, ComponentBlocking, PopConfirm } from 'Components/common';
 import { withTranslation } from 'react-i18next';
 
@@ -73,12 +73,27 @@ class MyDebrises extends Component {
 
   // Render no debris
   _renderNoDebris = () => {
+    const { contractor } = this.props;
+
+    // Verify account to add new
+    if (contractor.status !== CONTRACTOR_STATUSES.ACTIVATED) {
+      return (
+        <div className="py-5 text-center">
+          <h2>Your account is not activated!</h2>
+          <p className="text-muted my-2">What you need to do?</p>
+          <Link to={getRoutePath(routeConsts.PROFILE)}>
+            <button className="btn btn-success btn-lg">Post images to verify</button>
+          </Link>
+        </div>
+      );
+    }
+
     return (
       <div className="py-5 text-center">
-        <h2>You have no material!</h2>
+        <h2>You have no debris post!</h2>
         <Link to={getRoutePath(routeConsts.DEBRIS_ADD)}>
           <button className="btn btn-success btn-lg">
-            <i className="fal fa-plus" /> Request for a debris service
+            <i className="fal fa-plus" /> Request for a debris service now
           </button>
         </Link>
       </div>
@@ -177,7 +192,7 @@ class MyDebrises extends Component {
 
   render() {
     const { debrises, activePage, deleteError, isDeleting } = this.state;
-    const { t } = this.props;
+    const { t, contractor } = this.props;
 
     return (
       <div className="container">
@@ -186,11 +201,13 @@ class MyDebrises extends Component {
           <div className="col-md-9">
             <h4 className="my-3">
               My debris requests
-              <Link to={getRoutePath(routeConsts.DEBRIS_ADD)} className="float-right">
-                <button className="btn btn-success">
-                  <i className="fal fa-plus" /> New request
-                </button>
-              </Link>
+              {contractor.status === CONTRACTOR_STATUSES.ACTIVATED &&
+                <Link to={getRoutePath(routeConsts.DEBRIS_ADD)} className="float-right">
+                  <button className="btn btn-success">
+                    <i className="fal fa-plus" /> New request
+                  </button>
+                </Link>
+              }
             </h4>
             <div className="clearfix" />
             {deleteError && (
@@ -222,13 +239,13 @@ MyDebrises.props = {
   t: PropTypes.func.isRequired,
 };
 
-// const mapStateToProps = state => {
-//   const { authentication } = state;
-//   const { contractor } = authentication;
+const mapStateToProps = state => {
+  const { authentication } = state;
+  const { contractor } = authentication;
 
-//   return {
-//     contractor
-//   };
-// };
+  return {
+    contractor
+  };
+};
 
-export default withTranslation()(MyDebrises);
+export default connect(mapStateToProps)(withTranslation()(MyDebrises));

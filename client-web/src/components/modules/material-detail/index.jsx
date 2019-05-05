@@ -11,7 +11,7 @@ import RequestCard from "./RequestCard";
 import { formatPrice, formatDate } from "Utils/format.utils";
 import { StarRatings } from "Components/common";
 import { getRoutePath } from "Utils/common.utils";
-import { routeConsts } from "Common/consts";
+import { routeConsts, CONTRACTOR_STATUSES } from "Common/consts";
 
 class MaterialDetail extends Component {
   state = {
@@ -95,8 +95,20 @@ class MaterialDetail extends Component {
         </div>
         {material.id &&
           (!authentication.isAuthenticated ||
-            material.contractor.id !== contractor.id) && (
+            material.contractor.id !== contractor.id &&
+            contractor.status === CONTRACTOR_STATUSES.ACTIVATED) && (
             <RequestCard material={material} />
+          )}
+        {material.id &&
+          authentication.isAuthenticated &&
+          contractor.status === CONTRACTOR_STATUSES.NOT_VERIFIED && (
+            <div className="py-3 text-center bg-white shadow">
+              <h2>Your account is not activated!</h2>
+              <p className="text-muted my-2">What you need to do?</p>
+              <Link to={getRoutePath(routeConsts.PROFILE)}>
+                <button className="btn btn-success btn-lg">Post images to verify</button>
+              </Link>
+            </div>
           )}
         {material.id &&
           authentication.isAuthenticated &&
@@ -143,7 +155,7 @@ class MaterialDetail extends Component {
                 <div className="col-md-6 py-2">
                   <h6>
                     <span className="text-muted"><i className="fal fa-money-bill"></i> Price: </span>
-                    {material.price ? <span class="text-large">{formatPrice(material.price)}<i className="text-muted">/{material.materialType.unit}</i></span> : <Skeleton width={75}/>}
+                    {material.price ? <span className="text-large">{formatPrice(material.price)}<i className="text-muted">/{material.materialType.unit}</i></span> : <Skeleton width={75}/>}
                   </h6>
                 </div>
                 <div className="col-md-6 py-2">

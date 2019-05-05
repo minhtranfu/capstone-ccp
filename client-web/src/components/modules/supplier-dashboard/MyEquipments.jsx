@@ -280,7 +280,7 @@ class MyEquipments extends PureComponent {
 
   render() {
     const { equipments, page, isDeleting, deleteError } = this.state;
-    const { t } = this.props;
+    const { t, contractor } = this.props;
 
     return (
       <div className="container py-4">
@@ -288,12 +288,16 @@ class MyEquipments extends PureComponent {
         <div className="row">
           <div className="col-md-9">
             <h4 className="d-inline">{t('menu.equipments.my')}</h4>
-            {this._renderStatusFilter()}
-            <Link to={getRoutePath(routeConsts.EQUIPMENT_ADD)} className="float-right">
-              <button className="btn btn-success">
-                <i className="fal fa-plus" /> {t('equipment.new')}
-              </button>
-            </Link>
+            {contractor.status === CONTRACTOR_STATUSES.ACTIVATED &&
+              this._renderStatusFilter()
+            }
+            {contractor.status === CONTRACTOR_STATUSES.ACTIVATED &&
+              <Link to={getRoutePath(routeConsts.EQUIPMENT_ADD)} className="float-right">
+                <button className="btn btn-success">
+                  <i className="fal fa-plus" /> {t('equipment.new')}
+                </button>
+              </Link>
+            }
             <div className="clearfix" />
             {deleteError &&
               <div className="my-2 alert alert-warning">
@@ -301,7 +305,7 @@ class MyEquipments extends PureComponent {
               </div>
             }
             {this._renderListEquipments()}
-            {equipments && (
+            {equipments && equipments.totalItems > this.pageSize && (
               <div className="text-center">
                 <Pagination
                   activePage={page}

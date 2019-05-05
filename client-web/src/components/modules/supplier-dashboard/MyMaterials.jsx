@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 
-import { routeConsts } from 'Common/consts';
+import { routeConsts, CONTRACTOR_STATUSES } from 'Common/consts';
 import { getRoutePath, getErrorMessage } from 'Utils/common.utils';
 import { materialServices } from 'Services/domain/ccp';
 import { Pagination, Image, PopConfirm, ComponentBlocking } from 'Components/common';
@@ -104,6 +104,21 @@ class MyMaterials extends PureComponent {
 
   // Render no equipment
   _renderNoEquipment = () => {
+    const { contractor } = this.props;
+
+    // Verify account to add new
+    if (contractor.status !== CONTRACTOR_STATUSES.ACTIVATED) {
+      return (
+        <div className="py-5 text-center">
+          <h2>Your account is not activated!</h2>
+          <p className="text-muted my-2">What you need to do?</p>
+          <Link to={getRoutePath(routeConsts.PROFILE)}>
+            <button className="btn btn-success btn-lg">Post images to verify</button>
+          </Link>
+        </div>
+      );
+    }
+
     return (
       <div className="py-5 text-center">
         <h2>You have no material!</h2>
@@ -185,6 +200,7 @@ class MyMaterials extends PureComponent {
 
   render() {
     const { materials, activePage, isDeleting, deleteError } = this.state;
+    const { contractor } = this.props;
 
     return (
       <div className="container py-3">
@@ -193,11 +209,13 @@ class MyMaterials extends PureComponent {
           <div className="col-md-9">
             <h4>
               My materials
-              <Link to={getRoutePath(routeConsts.MATERIAL_ADD)} className="float-right">
-                <button className="btn btn-success">
-                  <i className="fal fa-plus" /> New material
-                </button>
-              </Link>
+              {contractor.status === CONTRACTOR_STATUSES.ACTIVATED &&
+                <Link to={getRoutePath(routeConsts.MATERIAL_ADD)} className="float-right">
+                  <button className="btn btn-success">
+                    <i className="fal fa-plus" /> New material
+                  </button>
+                </Link>
+              }
             </h4>
             <div className="clearfix"></div>
             {deleteError &&
@@ -226,15 +244,15 @@ class MyMaterials extends PureComponent {
 }
 
 MyMaterials.props = {
-  user: PropTypes.object.isRequired,
+  contractor: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
   const { authentication } = state;
-  const { user } = authentication;
+  const { contractor } = authentication;
 
   return {
-    user,
+    contractor,
   };
 };
 

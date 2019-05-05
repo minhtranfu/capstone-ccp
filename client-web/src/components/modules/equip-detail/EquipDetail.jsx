@@ -16,7 +16,7 @@ import Image from 'Components/common/Image';
 import { formatPrice, formatDate } from 'Utils/format.utils';
 import { StarRatings } from 'Components/common';
 import { getRoutePath } from 'Utils/common.utils';
-import { routeConsts } from 'Common/consts';
+import { routeConsts, CONTRACTOR_STATUSES } from 'Common/consts';
 
 class EquipDetail extends Component {
   state = {
@@ -89,13 +89,18 @@ class EquipDetail extends Component {
         <h5>Current transactions</h5>
         {equipment.activeHiringTransactions.map((transaction, index) => {
           return (
-            <div key={transaction.id} className={classnames('py-2 border-bottom', { 'border-top': index === 0 })}>
+            <div
+              key={transaction.id}
+              className={classnames('py-2 border-bottom', { 'border-top': index === 0 })}
+            >
               <Link
                 to={getRoutePath(routeConsts.EQUIPMENT_TRANSACTION_DETAIL, {
                   id: transaction.id,
                 })}
               >
-                <h6>#{transaction.id} - {formatPrice(0)}</h6>
+                <h6>
+                  #{transaction.id} - {formatPrice(0)}
+                </h6>
               </Link>
               <div className="my-">
                 <i className="fal fa-calendar" /> {formatDate(transaction.beginDate)} -{' '}
@@ -168,8 +173,21 @@ class EquipDetail extends Component {
           </p>
         </div>
         {!isFetching &&
-          (!authentication.isAuthenticated || equipment.contractor.id !== contractor.id) && (
+          (!authentication.isAuthenticated ||
+            equipment.contractor.id !== contractor.id &&
+            contractor.status === CONTRACTOR_STATUSES.ACTIVATED) && (
             <RequestCard equip={equipment} />
+          )}
+        {!isFetching &&
+          authentication.isAuthenticated &&
+          contractor.status === CONTRACTOR_STATUSES.NOT_VERIFIED && (
+            <div className="py-3 text-center bg-white shadow">
+              <h2>Your account is not activated!</h2>
+              <p className="text-muted my-2">What you need to do?</p>
+              <Link to={getRoutePath(routeConsts.PROFILE)}>
+                <button className="btn btn-success btn-lg">Post images to verify</button>
+              </Link>
+            </div>
           )}
         {!isFetching &&
           authentication.isAuthenticated &&
@@ -273,21 +291,22 @@ class EquipDetail extends Component {
                   )}
                 </div>
               </div>
-              
+
               <h5 className="mt-3">Additional information:</h5>
               <div className="my-2 row">
-                {equipment.additionalSpecsValues && equipment.additionalSpecsValues.map(info => {
-                  return (
-                    <div key={info.id} className="col-md-6 py-2">
-                      <h6>
-                        <span className="text-muted">
-                          <small className="fal fa-circle"></small> {info.additionalSpecsField.name}:
-                        </span>{' '}
-                        {info.value}
-                      </h6>
-                    </div>
-                  );
-                })}
+                {equipment.additionalSpecsValues &&
+                  equipment.additionalSpecsValues.map(info => {
+                    return (
+                      <div key={info.id} className="col-md-6 py-2">
+                        <h6>
+                          <span className="text-muted">
+                            <small className="fal fa-circle" /> {info.additionalSpecsField.name}:
+                          </span>{' '}
+                          {info.value}
+                        </h6>
+                      </div>
+                    );
+                  })}
               </div>
 
               <h5 className="mt-3">Description:</h5>
