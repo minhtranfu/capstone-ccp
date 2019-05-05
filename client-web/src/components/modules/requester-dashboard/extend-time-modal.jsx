@@ -7,10 +7,10 @@ import SweetAlert from 'react-bootstrap-sweetalert/lib/dist/SweetAlert';
 import { formatDate } from 'Utils/format.utils';
 import { equipmentTransactionServices } from 'Services/domain/ccp';
 import { getErrorMessage } from 'Utils/common.utils';
+import { ComponentBlocking } from 'Components/common';
 
 class ExtendTimeModal extends PureComponent {
   state = {
-    isSending: false,
     isSubmitSuccess: false,
     request: null,
     requestedEndDate: null,
@@ -52,6 +52,8 @@ class ExtendTimeModal extends PureComponent {
     this.setState({
       validateResult: {},
       requestedEndDate: null,
+      request: null,
+      isSubmitSuccess: null,
     });
 
     onClose && onClose(request, isSubmitSuccess);
@@ -73,7 +75,7 @@ class ExtendTimeModal extends PureComponent {
         focusConfirmBtn
         confirmBtnText="OK"
         confirmBtnBsStyle="primary"
-        title="Send feedback successfully!"
+        title="Request to extend hiring time successfully!"
         onConfirm={this._closeSuccessAlert}
         onCancel={this._closeSuccessAlert}
       />
@@ -167,6 +169,10 @@ class ExtendTimeModal extends PureComponent {
     const { transaction } = this.props;
 
     try {
+      this.setState({
+        isFetching: true,
+      });
+
       const data = {
         hiringTransactionEntity: {
           id: transaction.id,
@@ -178,6 +184,7 @@ class ExtendTimeModal extends PureComponent {
       this.setState({
         request: requestResult,
         isSubmitSuccess: true,
+        isFetching: false,
       });
     } catch (error) {
       const errorMessage = getErrorMessage(error);
@@ -190,19 +197,22 @@ class ExtendTimeModal extends PureComponent {
 
   render() {
     const { isOpen, className } = this.props;
-    const { isSending } = this.state;
+    const { isFetching } = this.state;
 
     return (
       <div>
         {this._renderAlert()}
+        {isFetching &&
+          <ComponentBlocking message="Sending" />
+        }
         <Modal isOpen={isOpen} toggle={this._handleCloseModal} className={className} size="md">
           <form onSubmit={this._hanleSubmit}>
             <ModalHeader toggle={this._handleCloseModal}>Extend hiring time</ModalHeader>
             <ModalBody>{this._renderForm()}</ModalBody>
             <ModalFooter>
               {this._renderError()}
-              <button type="submit" className="btn btn-primary" disabled={!!isSending}>
-                {isSending && (
+              <button type="submit" className="btn btn-primary" disabled={!!isFetching}>
+                {isFetching && (
                   <span
                     className="spinner-border spinner-border-sm"
                     role="status"

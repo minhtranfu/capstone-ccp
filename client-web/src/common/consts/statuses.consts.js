@@ -15,8 +15,8 @@ export const TRANSACTION_STATUS_CLASSES = {
   PENDING: 'info',
   ACCEPTED: 'success',
   DENIED: 'danger',
-  PROCESSING: 'danger',
-  CANCELED: 'warning',
+  PROCESSING: 'warning',
+  CANCELED: 'danger',
   FINISHED: 'success'
 };
 
@@ -93,4 +93,22 @@ export const CONTRACTOR_STATUS_INFOS = {
     name: 'Deactivated',
     bsColor: 'danger',
   },
+};
+
+
+/**
+ * Date change request statuses
+ */
+export const DATE_CHANGE_REQUEST_STATUSES = {
+  PENDING: 'PENDING',
+  CANCELED: 'CANCELED',
+  ACCEPTED: 'ACCEPTED',
+  DENIED: 'DENIED',
+};
+
+export const DATE_CHANGE_REQUEST_STATUS_COLORS = {
+  PENDING: 'info',
+  CANCELED: 'danger',
+  DENIED: 'danger',
+  ACCEPTED: 'success',
 };

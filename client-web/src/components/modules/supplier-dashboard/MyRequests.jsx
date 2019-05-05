@@ -299,16 +299,16 @@ class MyRequests extends Component {
     const days = moment(transaction.endDate).diff(moment(transaction.beginDate), 'days') + 1;
 
     let statusClasses = 'badge ';
-    let changeStatusButtons = '';
+    const changeStatusButtons = [];
     switch (transaction.status) {
       case TRANSACTION_STATUSES.PENDING:
         this._countNeedActionForStatus(TRANSACTION_STATUSES.PENDING);
         statusClasses += ' badge-info';
-        changeStatusButtons = (
-          <div className="mt-2">
-            <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.ACCEPTED)}>Accept</button>
-            <button className="btn btn-sm btn-outline-danger ml-2" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.DENIED)}>Deny</button>
-          </div>
+        changeStatusButtons.push(
+          <button key={`${transaction.id}-accept`} className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.ACCEPTED)}>Accept</button>
+        );
+        changeStatusButtons.push(
+          <button key={`${transaction.id}-deny`} className="btn btn-sm btn-outline-danger ml-2" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.DENIED)}>Deny</button>
         );
         break;
 
@@ -316,10 +316,8 @@ class MyRequests extends Component {
         this._countNeedActionForStatus(TRANSACTION_STATUSES.ACCEPTED);
         statusClasses += ' badge-success';
         if (transaction.equipment.status === EQUIPMENT_STATUSES.AVAILABLE) {
-          changeStatusButtons = (
-            <div className="mt-2">
-              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.PROCESSING)}>Deliver</button>
-            </div>
+          changeStatusButtons.push(
+            <button key={`${transaction.id}-deliver`} className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.PROCESSING)}>Deliver</button>
           );
         }
         break;
@@ -338,10 +336,8 @@ class MyRequests extends Component {
         if (transaction.equipment.status === EQUIPMENT_STATUSES.WAITING_FOR_RETURNING) {
           this._countNeedActionForStatus(TRANSACTION_STATUSES.PROCESSING);
 
-          changeStatusButtons = (
-            <div className="mt-2">
-              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.FINISHED)}>Receive</button>
-            </div>
+          changeStatusButtons.push(
+            <button key={`${transaction.id}-receive`} className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.FINISHED)}>Receive</button>
           );
         }
 
@@ -349,12 +345,6 @@ class MyRequests extends Component {
 
       case TRANSACTION_STATUSES.FINISHED:
         statusClasses += 'badge-success';
-        // TODO: use or remove comment
-        // changeStatusButtons = (
-        //   <div className="mt-2">
-        //     <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingEquipmentTransaction(transaction)}>Feedback</button>
-        //   </div>
-        // );
         break;
     }
 
@@ -384,7 +374,17 @@ class MyRequests extends Component {
               <span className="ml-2 pl-2 border-left">Total fee: {formatPrice(equipment.dailyPrice * days)}</span>
               <div className="">Equipment: {EQUIPMENT_SHOWABLE_STATUSES[equipment.status]}</div>
             </div>
-            {changeStatusButtons}
+            {transaction.hasPendingTransactionDateChangeRequest &&
+              <div className="text-primary"><i className="fal fa-info-circle"></i> Requesting to extend</div>
+            }
+            <div className="mt-2">
+              <Link
+                to={getRoutePath(routeConsts.EQUIPMENT_TRANSACTION_DETAIL, { id: transaction.id })}
+                className="btn btn-sm btn-link mr-2">
+                Detail
+              </Link>
+              {changeStatusButtons}
+            </div>
           </div>
           <div className="contractor-detail p-2 text-center">
             <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: requester.id })} >
