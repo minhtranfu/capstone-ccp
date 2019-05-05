@@ -24,7 +24,7 @@ public class DebrisBidResponse {
 	private boolean isDeleted;
 
 	@NotNull
-	private IdOnly supplier;
+	private ContractorResponse supplier;
 	@NotNull
 	private DebrisBidDebrisPostResponse debrisPost;
 
@@ -87,12 +87,11 @@ public class DebrisBidResponse {
 		isDeleted = deleted;
 	}
 
-	public IdOnly getSupplier() {
+	public ContractorResponse getSupplier() {
 		return supplier;
 	}
 
-	public void setSupplier(IdOnly supplier) {
-
+	public void setSupplier(ContractorResponse supplier) {
 		this.supplier = supplier;
 	}
 
