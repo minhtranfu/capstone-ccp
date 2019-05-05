@@ -16,7 +16,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import javax.ws.rs.InternalServerErrorException;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
@@ -493,6 +492,12 @@ public class EquipmentDAO extends BaseDAO<EquipmentEntity, Long> {
 	}
 
 
+	public List<EquipmentEntity> getMissingThumbnailEquipments() {
+		return entityManager.createQuery("select e from EquipmentEntity e where e.thumbnailImage is null ", EquipmentEntity.class)
+				.getResultList();
+
+
+	}
 }
 
 

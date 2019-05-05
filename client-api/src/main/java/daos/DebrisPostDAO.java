@@ -12,7 +12,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import javax.ws.rs.InternalServerErrorException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -417,5 +416,10 @@ public class DebrisPostDAO extends BaseDAO<DebrisPostEntity, Long> {
 		return typeQuery.getResultList();
 
 
+	}
+
+	public List<DebrisPostEntity> getMissingThumbnailDebrisPosts() {
+		return entityManager.createQuery("select e from DebrisPostEntity e where e.thumbnailImage is null ", DebrisPostEntity.class)
+				.getResultList();
 	}
 }

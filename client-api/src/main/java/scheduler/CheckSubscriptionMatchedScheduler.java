@@ -43,7 +43,7 @@ public class CheckSubscriptionMatchedScheduler {
 
 	//	@Schedule(hour = "*", minute = "30", second = "0")
 	@Schedule(hour = "*", minute = "*", second = "0/10")
-	public void checkMatchedEquipments() {
+	public void checkMatchedEquipments() throws InterruptedException {
 		if (isRunning) {
 			LOGGER.info("isRunning in another THREAD, skip the transaction");
 			return;
@@ -73,6 +73,7 @@ public class CheckSubscriptionMatchedScheduler {
 			// TODO: 4/28/19 log matched subscription to database
 			logMatchedSubscriptionToDatabase(matchedSubscriptionResult);
 		}
+
 //		synchronized (LOCK) {
 //			isRunning = false;
 //		}

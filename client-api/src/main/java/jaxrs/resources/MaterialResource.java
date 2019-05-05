@@ -257,7 +257,7 @@ public class MaterialResource {
 		List<MaterialTransactionEntity> processingTransactions = materialTransactionEntities.stream().filter(transaction -> transaction.getStatus() == MaterialTransactionEntity.Status.ACCEPTED
 				|| transaction.getStatus() == MaterialTransactionEntity.Status.DELIVERING).collect(Collectors.toList());
 		if (!processingTransactions.isEmpty()) {
-			throw new BadRequestException("Material #%s is currently processing in other transactions");
+			throw new BadRequestException(String.format("Material #%s is currently processing in %d other transactions", materialEntity.getId(), processingTransactions.size()));
 		}
 
 		// deny other pending transaction
