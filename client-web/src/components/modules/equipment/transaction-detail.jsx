@@ -687,7 +687,7 @@ class EquipmentTransactionDetail extends PureComponent {
                 >
                   Deny
                   <PopConfirm
-                    target={`accept-${request.id}`}
+                    target={`deny-${request.id}`}
                     title="Deny this request?"
                     message="Are you sure to deny this request?"
                     confirmText="Deny"
