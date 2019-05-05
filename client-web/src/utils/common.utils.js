@@ -86,7 +86,8 @@ const actionRouteMapping = {
   materialTransactions: routeConsts.MATERIAL_TRANSACTION_DETAIL,
   hiringTransactions: routeConsts.EQUIPMENT_TRANSACTION_DETAIL,
   debrisTransactions: routeConsts.DEBRIS_REQUEST_DETAIL,
-  equipments: routeConsts.EQUIPMENT_DETAIL
+  equipments: routeConsts.EQUIPMENT_DETAIL,
+  debrisPost: routeConsts.DEBRIS_DETAIL,
 };
 
 export const getRouteFromClickAction = clickAction => {
