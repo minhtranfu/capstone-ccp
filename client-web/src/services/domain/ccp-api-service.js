@@ -65,6 +65,13 @@ const CcpApiService = {
       }
     });
   },
+  uploadImage(formData) {
+    return DataAccessService.post('/storage', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  },
   userServices,
   constructionServices,
   equipmentServices,
