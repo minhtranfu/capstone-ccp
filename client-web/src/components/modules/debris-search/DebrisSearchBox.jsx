@@ -1,20 +1,19 @@
-import React, { PureComponent } from "react";
-import PropTypes from "prop-types";
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
-import { withTranslation } from "react-i18next";
+import { withTranslation } from 'react-i18next';
 
 import { debrisServices } from 'Services/domain/ccp';
 import { AddressInput } from 'Components/common';
 
 class DebrisSearchBox extends PureComponent {
-  
   constructor(props) {
     super(props);
 
     let criteria = {};
     if (props.criteria) {
       criteria = {
-        ...props.criteria
+        ...props.criteria,
       };
     }
 
@@ -26,9 +25,9 @@ class DebrisSearchBox extends PureComponent {
 
   _loadData = async () => {
     const types = await debrisServices.getDebrisServiceTypes();
-    const typeOptions = types.map(type => ({ label: type.name, value: type.id, }));
+    const typeOptions = types.map(type => ({ label: type.name, value: type.id }));
     this.setState({
-      typeOptions
+      typeOptions,
     });
   };
 
@@ -48,11 +47,11 @@ class DebrisSearchBox extends PureComponent {
     let { criteria } = this.state;
     criteria = {
       ...criteria,
-      [name]: value
-    }
+      [name]: value,
+    };
 
     this.setState({
-      criteria
+      criteria,
     });
   };
 
@@ -63,8 +62,8 @@ class DebrisSearchBox extends PureComponent {
     this.setState({
       criteria: {
         ...criteria,
-        debrisTypeId
-      }
+        debrisTypeId,
+      },
     });
   };
 
@@ -81,7 +80,7 @@ class DebrisSearchBox extends PureComponent {
         latitude,
         longitude,
         address,
-      }
+      },
     });
   };
 
@@ -97,24 +96,33 @@ class DebrisSearchBox extends PureComponent {
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="keyword" className="text-light">{t('common.keyword')}:</label>
-              <input type="text" name="q"
-                id="keyword" className="form-control"
+              <label htmlFor="keyword" className="text-light">
+                {t('common.keyword')}:
+              </label>
+              <input
+                type="text"
+                name="q"
+                id="keyword"
+                className="form-control"
                 value={criteria.q}
                 onChange={this._handleChangeCriteria}
                 placeholder={t('debris.keywordPlacholder')}
-                />
+              />
             </div>
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="location" className="text-light">{t('debris.searchAddress')}:</label>
-              <AddressInput onSelect={this._handleChangeLocation} inputProps={{id: 'location', value: criteria.address}} />
+              <label htmlFor="location" className="text-light">
+                {t('debris.searchAddress')}:
+              </label>
+              <AddressInput onSelect={this._handleChangeLocation} inputProps={{ id: 'location' }} />
             </div>
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="service_types" className="text-light">{t('debris.type')}:</label>
+              <label htmlFor="service_types" className="text-light">
+                {t('debris.type')}:
+              </label>
               <Select
                 isMulti
                 openMenuOnFocus
@@ -125,19 +133,16 @@ class DebrisSearchBox extends PureComponent {
                 placeholder={t('debris.typePlaceholder')}
                 options={typeOptions}
                 onChange={this._handleSelectServiceTypes}
-                value={!typeOptions || !criteria.debrisTypeId
-                  ? []
-                  : typeOptions.filter(option => criteria.debrisTypeId.includes(option.value))
+                value={
+                  !typeOptions || !criteria.debrisTypeId
+                    ? []
+                    : typeOptions.filter(option => criteria.debrisTypeId.includes(option.value))
                 }
               />
             </div>
           </div>
           <div className="col-md-12">
-            <button
-              type="submit"
-              className="btn btn-success"
-              disabled={isFetching}
-            >
+            <button type="submit" className="btn btn-success" disabled={isFetching}>
               {isFetching && (
                 <span
                   className="spinner-border spinner-border-sm mr-1"
@@ -146,9 +151,8 @@ class DebrisSearchBox extends PureComponent {
                 />
               )}
               {t('common.search')}
-              </button>
+            </button>
           </div>
-
         </div>
       </form>
     );
@@ -157,7 +161,7 @@ class DebrisSearchBox extends PureComponent {
 
 DebrisSearchBox.propTypes = {
   onSearch: PropTypes.func.isRequired,
-  isFetching: PropTypes.bool.isRequired
+  isFetching: PropTypes.bool.isRequired,
 };
 
 export default withTranslation()(DebrisSearchBox);
