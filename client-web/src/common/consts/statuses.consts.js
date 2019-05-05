@@ -46,6 +46,15 @@ export const MATERIAL_TRANSACTION_STATUSES = {
   FINISHED: 'FINISHED'
 };
 
+export const MATERIAL_TRANSACTION_STATUS_COLORS = {
+  PENDING: 'info',
+  ACCEPTED: 'success',
+  DENIED: 'danger',
+  DELIVERING: 'warning',
+  CANCELED: 'danger',
+  FINISHED: 'success'
+};
+
 /**
  * Deris statuses, color of each status
  */

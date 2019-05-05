@@ -269,7 +269,7 @@ class RatingMaterialModal extends Component {
         focusConfirmBtn
         confirmBtnText="OK"
         confirmBtnBsStyle="primary"
-        title="Send feedback successfully!"
+        title="Feedback was sent successfully!"
         onConfirm={this._closeSuccessAlert}
         onCancel={this._closeSuccessAlert}
       >

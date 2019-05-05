@@ -24,7 +24,7 @@ class MyRequests extends Component {
     [TRANSACTION_STATUSES.ACCEPTED]: 'Are you sure to accept this transaction?',
     [TRANSACTION_STATUSES.CANCELED]: 'Are you sure to cancel this transaction?',
     [TRANSACTION_STATUSES.DENIED]: 'Are you sure to deny this transaction?',
-    [TRANSACTION_STATUSES.PROCESSING]: 'Are you going to delivery equipment of this transaction?',
+    [TRANSACTION_STATUSES.PROCESSING]: 'Are you going to deliver equipment of this transaction?',
     [TRANSACTION_STATUSES.FINISHED]: 'Have you received the equipment from requester?'
   };
 
