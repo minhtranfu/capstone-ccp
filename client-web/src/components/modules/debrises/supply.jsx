@@ -374,6 +374,7 @@ class DebriseTransactionsSupply extends Component {
           info={status !== DEBRIS_POST_STATUSES.CANCELED}
           input={status === DEBRIS_POST_STATUSES.CANCELED}
           title={this.changeStatusConfirmMessages[status]}
+          showCancel={true}
           confirmButtonText={status}
           onConfirm={this._handleConfirmChangeStatus}
           onCancel={this._clearChangeStatusRequest}

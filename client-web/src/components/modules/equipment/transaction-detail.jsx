@@ -93,6 +93,7 @@ class EquipmentTransactionDetail extends PureComponent {
     const confirm = {
       status,
       transactionId,
+      input: status === TRANSACTION_STATUSES.CANCELED,
       show: true,
       onConfirm: this._handleChangeStatusConfirm,
       confirmText: 'Yes',
@@ -126,7 +127,8 @@ class EquipmentTransactionDetail extends PureComponent {
       <div>
         {confirm.title && (
           <SweetAlert
-            info
+            info={!confirm.input}
+            input={confirm.input}
             showCancel={confirm.showCancel}
             confirmBtnText={confirm.confirmText}
             confirmBtnBsStyle={confirm.confirmStyle}
@@ -161,12 +163,13 @@ class EquipmentTransactionDetail extends PureComponent {
     });
   };
 
-  _handleChangeStatusConfirm = async () => {
+  _handleChangeStatusConfirm = async (cancelReason) => {
     const { confirm } = this.state;
 
     this._showLoadingConfirm();
     const data = {
       status: confirm.status,
+      cancelReason,
     };
 
     let transaction = null;

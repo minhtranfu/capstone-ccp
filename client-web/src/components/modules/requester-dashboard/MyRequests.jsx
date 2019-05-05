@@ -345,6 +345,7 @@ class MyRequests extends Component {
     const confirm = {
       status,
       transactionId,
+      input: status === TRANSACTION_STATUSES.CANCELED,
       show: true,
       onConfirm: this._handleChangeStatusConfirm,
       confirmText: 'Yes',
@@ -380,12 +381,13 @@ class MyRequests extends Component {
    * Start change status when user confirmed
    * BUG HEREEEEE
    */
-  _handleChangeStatusConfirm = async () => {
+  _handleChangeStatusConfirm = async (cancelReason) => {
     const { confirm } = this.state;
 
     this._showLoadingConfirm();
     const data = {
-      status: confirm.status
+      cancelReason,
+      status: confirm.status,
     };
 
     let transaction = null;
@@ -566,16 +568,18 @@ class MyRequests extends Component {
    */
   _renderAlert = () => {
     const { confirm, alert } = this.state;
+    console.log('confirm', confirm);
 
     return (
       <div>
         {confirm.title &&
           <SweetAlert
-            info
+            info={!confirm.input}
             showCancel={confirm.showCancel}
             confirmBtnText={confirm.confirmText}
             confirmBtnBsStyle={confirm.confirmStyle}
             confirmBtnCssclassName={confirm.confirmClass}
+            input={confirm.input}
             title={confirm.title}
             onConfirm={confirm.onConfirm}
             onCancel={confirm.onCancel}

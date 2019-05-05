@@ -66,6 +66,7 @@ class MaterialTransactions extends Component {
     const confirm = {
       status,
       transactionId,
+      input: status === MATERIAL_TRANSACTION_STATUSES.CANCELED,
       show: true,
       onConfirm: this._handleChangeStatusConfirm,
       confirmText: 'Yes',
@@ -98,12 +99,13 @@ class MaterialTransactions extends Component {
     });
   };
 
-  _handleChangeStatusConfirm = async () => {
+  _handleChangeStatusConfirm = async (cancelReason) => {
     const { confirm } = this.state;
 
     this._showLoadingConfirm();
     const data = {
       status: confirm.status,
+      cancelReason,
     };
 
     let transaction = null;
@@ -260,7 +262,8 @@ class MaterialTransactions extends Component {
       <div>
         {confirm.title && (
           <SweetAlert
-            info
+            info={!confirm.input}
+            input={confirm.input}
             showCancel={confirm.showCancel}
             confirmBtnText={confirm.confirmText}
             confirmBtnBsStyle={confirm.confirmStyle}
