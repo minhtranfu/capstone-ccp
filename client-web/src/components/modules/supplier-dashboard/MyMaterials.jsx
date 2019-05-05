@@ -29,6 +29,7 @@ class MyMaterials extends PureComponent {
     const materials = await materialServices.getMaterialsBySupplierId({
       offset: (activePage - 1) * this.pageSize,
       limit: this.pageSize,
+      orderBy: 'createdTime.desc,id.asc',
     });
     this.setState({
       activePage,

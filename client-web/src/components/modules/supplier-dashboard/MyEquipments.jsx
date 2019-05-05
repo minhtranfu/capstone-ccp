@@ -62,6 +62,7 @@ class MyEquipments extends PureComponent {
       offset: (page - 1) * this.pageSize,
       limit: this.pageSize,
       status: status === 'all' ? undefined : status,
+      orderBy: 'createdTime.desc,id.asc',
     });
 
     this.setState({

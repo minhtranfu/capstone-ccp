@@ -1,3 +1,4 @@
+import qs from 'query-string';
 import { DataAccessService } from "Services/data/data-access-service";
 
 export const getMaterialTypeCategories = () => {
@@ -20,8 +21,9 @@ export const getMaterialById = id => {
   return DataAccessService.get(`/materials/${id}`);
 };
 
-export const getMaterialsBySupplierId = ({ offset, limit }) => {
-  return DataAccessService.get(`/materials/supplier?offset=${offset}&limit=${limit}`);
+export const getMaterialsBySupplierId = (params) => {
+  const queryString = qs.stringify(params);
+  return DataAccessService.get(`/materials/supplier?${queryString}`);
 };
 
 export const searchMaterials = criteria => {

@@ -29,6 +29,7 @@ class MyDebrises extends Component {
       const debrises = await debrisServices.getMyDebrises({
         offset: (activePage - 1) * this.pageSize,
         limit: this.pageSize,
+        orderBy: 'createdTime.desc,id.asc',
       });
       this.setState({
         activePage,
