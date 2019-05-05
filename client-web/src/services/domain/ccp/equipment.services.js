@@ -57,3 +57,7 @@ export const addImagesIntoEquipment = (images, equipmentId) => {
 export const getEquipmentSuggestedPrice = data => {
   return DataAccessService.post(`/equipments/suggestedPrice`, data);
 };
+
+export const deleteEquipment = id => {
+  return DataAccessService.delete(`/equipments/${id}`);
+};

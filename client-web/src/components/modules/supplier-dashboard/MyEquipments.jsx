@@ -1,14 +1,15 @@
 import React, { PureComponent } from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link, withRouter } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
-import { Pagination, Image } from 'Components/common';
+import { Pagination, Image, PopConfirm, ComponentBlocking } from 'Components/common';
 import qs from 'query-string';
 import { withTranslation } from 'react-i18next';
 
 import { EQUIPMENT_SHOWABLE_STATUSES, routeConsts, CONTRACTOR_STATUSES } from 'Common/consts';
-import { getRoutePath } from 'Utils/common.utils';
+import { getRoutePath, getErrorMessage } from 'Utils/common.utils';
 import { equipmentServices } from 'Services/domain/ccp';
 
 class MyEquipments extends PureComponent {
@@ -17,6 +18,7 @@ class MyEquipments extends PureComponent {
 
     const queryParams = qs.parse(props.location.search);
     this.state = {
+      isDeleting: false,
       status: queryParams.status || 'all',
       page: +queryParams.page || 1,
       isFetching: false,
@@ -120,9 +122,7 @@ class MyEquipments extends PureComponent {
           <h2>Your account is not activated!</h2>
           <p className="text-muted my-2">What you need to do?</p>
           <Link to={getRoutePath(routeConsts.PROFILE)}>
-            <button className="btn btn-success btn-lg">
-              Post images to verify
-            </button>
+            <button className="btn btn-success btn-lg">Post images to verify</button>
           </Link>
         </div>
       );
@@ -140,6 +140,75 @@ class MyEquipments extends PureComponent {
     );
   };
 
+  _handleDeleteEquipment = async id => {
+    this.setState({
+      isDeleting: true,
+    });
+
+    try {
+      const isDeleted = await equipmentServices.deleteEquipment(id);
+      const { equipments } = this.state;
+
+      this.setState({
+        isDeleting: false,
+        equipments: {
+          ...equipments,
+          items: equipments.items.filter(equipment => equipment.id !== id)
+        },
+      });
+    } catch (error) {
+      const deleteError = getErrorMessage(error);
+
+      this.setState({
+        deleteError,
+        isDeleting: false,
+      });
+    }
+  };
+
+  _renderEquipmentCard = equipment => {
+    const thumbnail = equipment.thumbnailImage
+      ? equipment.thumbnailImage.url
+      : '/public/upload/product-images/unnamed-19-jpg.jpg';
+
+    return (
+      <div className="d-flex transaction my-3 rounded shadow-sm">
+        <div className="image flex-fill">
+          <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, { id: equipment.id })}>
+            <Image src={thumbnail} className="rounded-left" height={168} />
+          </Link>
+        </div>
+        <div className="detail flex-fill p-2">
+          <h6>
+            <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, { id: equipment.id })}>
+              {equipment.name}
+            </Link>
+            <span className="float-right">
+              <Link
+                to={getRoutePath(routeConsts.EQUIPMENT_EDIT, { id: equipment.id })}
+                className="btn btn-outline-success btn-sm"
+              >
+                <i className="fal fa-pencil" />
+              </Link>
+              <button id={`_${equipment.id}-delete`} className="btn btn-outline-danger btn-sm ml-2">
+                <i className="fal fa-trash" />
+                <PopConfirm
+                  target={`_${equipment.id}-delete`}
+                  title="Delete this equipment?"
+                  message="Are you sure to delete this equipment? All pending requests will be denied, all transactions of this equipment will be keeped!"
+                  onConfirm={() => this._handleDeleteEquipment(equipment.id)}
+                  confirmText="Yes, delete it"
+                />
+              </button>
+            </span>
+            <span className="clearfix" />
+          </h6>
+          <div>Status: {EQUIPMENT_SHOWABLE_STATUSES[equipment.status]}</div>
+        </div>
+      </div>
+    );
+  };
+
   // Render list equipments
   _renderListEquipments = () => {
     const { equipments, isFetching } = this.state;
@@ -152,40 +221,15 @@ class MyEquipments extends PureComponent {
       return this._renderNoEquipment();
     }
 
-    return equipments.items.map(equipment => {
-      const thumbnail = equipment.thumbnailImage
-        ? equipment.thumbnailImage.url
-        : '/public/upload/product-images/unnamed-19-jpg.jpg';
+    const cards = equipments.items.map(equipment => {
       return (
-        <div key={equipment.id} className="d-flex transaction my-3 rounded shadow-sm">
-          <div className="image flex-fill">
-            <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, { id: equipment.id })}>
-              <Image src={thumbnail} className="rounded-left" height={168} />
-            </Link>
-          </div>
-          <div className="detail flex-fill p-2">
-            <h6>
-              <Link to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, { id: equipment.id })}>
-                {equipment.name}
-              </Link>
-              <span className="float-right">
-                <Link
-                  to={getRoutePath(routeConsts.EQUIPMENT_EDIT, { id: equipment.id })}
-                  className="btn btn-outline-success btn-sm"
-                >
-                  <i className="fal fa-pencil" />
-                </Link>
-                <button className="btn btn-outline-danger btn-sm ml-2">
-                  <i className="fal fa-trash" />
-                </button>
-              </span>
-              <span className="clearfix" />
-            </h6>
-            <div>Status: {EQUIPMENT_SHOWABLE_STATUSES[equipment.status]}</div>
-          </div>
-        </div>
+        <CSSTransition key={equipment.id} timeout={500} classNames="item">
+          {this._renderEquipmentCard(equipment)}
+        </CSSTransition>
       );
     });
+
+    return <TransitionGroup>{cards}</TransitionGroup>;
   };
 
   _handleStatusChanged = e => {
@@ -233,11 +277,12 @@ class MyEquipments extends PureComponent {
   };
 
   render() {
-    const { equipments, page } = this.state;
+    const { equipments, page, isDeleting, deleteError } = this.state;
     const { t } = this.props;
 
     return (
       <div className="container py-4">
+        {isDeleting && <ComponentBlocking message="Deleting..." />}
         <div className="row">
           <div className="col-md-9">
             <h4 className="d-inline">{t('menu.equipments.my')}</h4>
@@ -248,6 +293,11 @@ class MyEquipments extends PureComponent {
               </button>
             </Link>
             <div className="clearfix" />
+            {deleteError &&
+              <div className="my-2 alert alert-warning">
+                <i className="fal fa-info-circle"></i> {deleteError}
+              </div>
+            }
             {this._renderListEquipments()}
             {equipments && (
               <div className="text-center">
