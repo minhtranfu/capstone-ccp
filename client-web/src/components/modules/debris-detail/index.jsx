@@ -233,7 +233,7 @@ class DebrisDetail extends Component {
       return (
         <SweetAlert
           success
-          title="A transaction with choosed bid was created!"
+          title="A transaction with choosen bid was created!"
           onConfirm={() => this.setState({ transacstion: null })}
           onCancel={() => this.setState({ transacstion: null })}
         />
