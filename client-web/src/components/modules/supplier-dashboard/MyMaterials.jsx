@@ -1,28 +1,31 @@
 import React, { PureComponent } from 'react';
-import { connect } from "react-redux";
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 
 import { routeConsts } from 'Common/consts';
-import { getRoutePath } from 'Utils/common.utils';
+import { getRoutePath, getErrorMessage } from 'Utils/common.utils';
 import { materialServices } from 'Services/domain/ccp';
-import { Pagination } from 'Components/common';
+import { Pagination, Image, PopConfirm, ComponentBlocking } from 'Components/common';
 import { formatPrice } from 'Utils/format.utils';
 
 class MyMaterials extends PureComponent {
   state = {
     filterStatus: 'all',
     activePage: 1,
-    isFetching: false
+    isFetching: false,
+    isDeleting: false,
+    deleteError: null,
   };
   pageSize = 6;
 
   _loadData = async activePage => {
     this.setState({
-      isFetching: true
+      isFetching: true,
     });
-    
+
     const materials = await materialServices.getMaterialsBySupplierId({
       offset: (activePage - 1) * this.pageSize,
       limit: this.pageSize,
@@ -30,7 +33,7 @@ class MyMaterials extends PureComponent {
     this.setState({
       activePage,
       materials,
-      isFetching: false
+      isFetching: false,
     });
   };
 
@@ -54,18 +57,49 @@ class MyMaterials extends PureComponent {
             <h6>
               <Skeleton width={300} />
               <span className="float-right">
-                <Skeleton width={30} height={30}/>
-                <span className="ml-2"><Skeleton width={30} height={30}/></span>
+                <Skeleton width={30} height={30} />
+                <span className="ml-2">
+                  <Skeleton width={30} height={30} />
+                </span>
               </span>
-              <span className="clearfix"></span>
+              <span className="clearfix" />
             </h6>
-            <div><Skeleton width={150}/></div>
+            <div>
+              <Skeleton width={150} />
+            </div>
           </div>
         </div>
       );
     }
 
     return loadingPlacholders;
+  };
+
+  _handleDeleteMaterial = async id => {
+    this.setState({
+      isDeleting: true,
+      deleteError: null,
+    });
+
+    try {
+      const isDeleted = await materialServices.deleteMaterial(id);
+      const { materials } = this.state;
+
+      this.setState({
+        isDeleting: false,
+        materials: {
+          ...materials,
+          items: materials.items.filter(material => material.id !== id)
+        },
+      });
+    } catch (error) {
+      const deleteError = getErrorMessage(error);
+
+      this.setState({
+        deleteError,
+        isDeleting: false,
+      });
+    }
   };
 
   // Render no equipment
@@ -75,10 +109,60 @@ class MyMaterials extends PureComponent {
         <h2>You have no material!</h2>
         <Link to={getRoutePath(routeConsts.MATERIAL_ADD)}>
           <button className="btn btn-success btn-lg">
-            <i className="fal fa-plus"></i> Add new material now
+            <i className="fal fa-plus" /> Add new material now
           </button>
         </Link>
       </div>
+    );
+  };
+
+  _renderMaterialCard = material => {
+    const thumbnail =
+      material.thumbnailImageUrl || '/public/upload/product-images/unnamed-19-jpg.jpg';
+
+    return (
+      <CSSTransition key={material.id} timeout={500} classNames="item">
+        <div className="d-flex transaction my-3 rounded shadow-sm">
+          <div className="image flex-fill">
+            <Image src={thumbnail} className="rounded-left" />
+          </div>
+          <div className="detail flex-fill p-2">
+            <h6>
+              <Link to={getRoutePath(routeConsts.MATERIAL_MY_DETAIL, { id: material.id })}>
+                {material.name}
+              </Link>
+            </h6>
+            <div>
+              <i className="fal fa-user-circle" /> {material.manufacturer}
+            </div>
+            <div>
+              <i className="fal fa-money-bill" /> {formatPrice(material.price)}/
+              {material.materialType.unit}
+            </div>
+            <div>
+              <i className="fal fa-bullseye" /> {material.construction.name}
+            </div>
+          </div>
+          <div className="action-area p-2">
+            <Link
+              to={getRoutePath(routeConsts.MATERIAL_EDIT, { id: material.id })}
+              className="btn btn-outline-success btn-sm"
+            >
+              <i className="fal fa-pencil" />
+            </Link>
+            <button id={`_${material.id}-delete`} className="btn btn-outline-danger btn-sm ml-2">
+              <i className="fal fa-trash" />
+              <PopConfirm
+                target={`_${material.id}-delete`}
+                title="Delete this material?"
+                message="Are you sure? All pending requests of this material will be denied, all transactions of this equipment will be keeped!"
+                confirmText="Yes, delete it"
+                onConfirm={() => this._handleDeleteMaterial(material.id)}
+              />
+            </button>
+          </div>
+        </div>
+      </CSSTransition>
     );
   };
 
@@ -94,50 +178,35 @@ class MyMaterials extends PureComponent {
       return this._renderNoEquipment();
     }
 
-    return (
-      materials.items.map(equipment => {
-        const thumbnail = equipment.thumbnailImageUrl || '/public/upload/product-images/unnamed-19-jpg.jpg';
-        return (
-          <div key={equipment.id} className="d-flex transaction my-3 rounded shadow-sm">
-            <div className="image flex-fill">
-              <img src={thumbnail} className="rounded-left" />
-            </div>
-            <div className="detail flex-fill p-2">
-              <h6>
-                <Link to={getRoutePath(routeConsts.MATERIAL_MY_DETAIL, {id: equipment.id})}>{equipment.name}</Link>
-                <span className="float-right">
-                  <Link to={getRoutePath(routeConsts.MATERIAL_EDIT, {id: equipment.id})} className="btn btn-outline-success btn-sm"><i className="fal fa-pencil"></i></Link>
-                  <button className="btn btn-outline-danger btn-sm ml-2"><i className="fal fa-trash"></i></button>
-                </span>
-                <span className="clearfix"></span>
-              </h6>
-              <div><i className="fal fa-user-circle"></i> {equipment.manufacturer}</div>
-              <div><i className="fal fa-money-bill"></i> {formatPrice(equipment.price)}/{equipment.materialType.unit}</div>
-              <div><i className="fal fa-bullseye"></i> {equipment.construction.name}</div>
-            </div>
-          </div>
-        );
-      })
-    );
+    const cards = materials.items.map(this._renderMaterialCard);
+
+    return <TransitionGroup>{cards}</TransitionGroup>;
   };
 
   render() {
-    const { materials, activePage } = this.state;
+    const { materials, activePage, isDeleting, deleteError } = this.state;
 
     return (
       <div className="container py-3">
+        {isDeleting && <ComponentBlocking message="Deleting..." />}
         <div className="row">
           <div className="col-md-9">
             <h4>
               My materials
               <Link to={getRoutePath(routeConsts.MATERIAL_ADD)} className="float-right">
                 <button className="btn btn-success">
-                  <i className="fal fa-plus"></i> New material
+                  <i className="fal fa-plus" /> New material
                 </button>
               </Link>
             </h4>
+            <div className="clearfix"></div>
+            {deleteError &&
+              <div className="my-2 alert alert-warning">
+                <i className="fal fa-info-circle"></i> {deleteError}
+              </div>
+            }
             {this._renderListMaterials()}
-            {materials && materials.totalItems > this.pageSize &&
+            {materials && materials.totalItems > this.pageSize && (
               <div className="text-center">
                 <Pagination
                   activePage={activePage}
@@ -147,10 +216,9 @@ class MyMaterials extends PureComponent {
                   onChange={this._loadData}
                 />
               </div>
-            }
+            )}
           </div>
-          <div className="col-md-3">
-          </div>
+          <div className="col-md-3" />
         </div>
       </div>
     );
@@ -158,7 +226,7 @@ class MyMaterials extends PureComponent {
 }
 
 MyMaterials.props = {
-  user: PropTypes.object.isRequired
+  user: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -166,7 +234,7 @@ const mapStateToProps = state => {
   const { user } = authentication;
 
   return {
-    user
+    user,
   };
 };
 

@@ -18,11 +18,12 @@ class MyEquipments extends PureComponent {
 
     const queryParams = qs.parse(props.location.search);
     this.state = {
-      isDeleting: false,
       status: queryParams.status || 'all',
       page: +queryParams.page || 1,
       isFetching: false,
       isFirstLoad: true,
+      isDeleting: false,
+      deleteError: null,
     };
   }
 
@@ -143,6 +144,7 @@ class MyEquipments extends PureComponent {
   _handleDeleteEquipment = async id => {
     this.setState({
       isDeleting: true,
+      deleteError: null,
     });
 
     try {

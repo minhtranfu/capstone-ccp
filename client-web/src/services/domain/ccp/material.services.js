@@ -39,3 +39,7 @@ export const postMaterial = material => {
 export const updateMaterial = (id, material) => {
   return DataAccessService.put(`/materials/${id}`, material);
 };
+
+export const deleteMaterial = id => {
+  return DataAccessService.delete(`/materials/${id}`);
+};
