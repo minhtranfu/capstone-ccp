@@ -31,4 +31,5 @@ export default {
   loading: 'Đang tải',
   all: 'Tất cả',
   deleting: 'Đang xóa...',
+  processing: 'Đang xử lý...',
 };

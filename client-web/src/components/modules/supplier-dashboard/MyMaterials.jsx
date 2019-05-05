@@ -146,9 +146,9 @@ class MyMaterials extends PureComponent {
           <div className="action-area p-2">
             <Link
               to={getRoutePath(routeConsts.MATERIAL_EDIT, { id: material.id })}
-              className="btn btn-outline-success btn-sm"
+              className="btn btn-outline-primary btn-sm"
             >
-              <i className="fal fa-pencil" />
+              <i className="fal fa-edit" />
             </Link>
             <button id={`_${material.id}-delete`} className="btn btn-outline-danger btn-sm ml-2">
               <i className="fal fa-trash" />

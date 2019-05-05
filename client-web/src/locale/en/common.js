@@ -31,4 +31,5 @@ export default {
   loading: 'Loading',
   all: 'All',
   deleting: 'Deleting...',
+  processing: 'Processing...',
 };

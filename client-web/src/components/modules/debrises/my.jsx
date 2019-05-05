@@ -184,14 +184,14 @@ class MyDebrises extends Component {
         {isDeleting && <ComponentBlocking message={t('common.deleting')} />}
         <div className="row">
           <div className="col-md-9">
-            <h2 className="my-3">
+            <h4 className="my-3">
               My debris requests
               <Link to={getRoutePath(routeConsts.DEBRIS_ADD)} className="float-right">
                 <button className="btn btn-success">
                   <i className="fal fa-plus" /> New request
                 </button>
               </Link>
-            </h2>
+            </h4>
             <div className="clearfix" />
             {deleteError && (
               <div className="my-2 alert alert-warning">
