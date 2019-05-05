@@ -72,6 +72,10 @@ class MyRequests extends Component {
     };
     confirm.title = this.confirmMessages[status];
 
+    if (status === TRANSACTION_STATUSES.ACCEPTED) {
+      confirm.message = 'You would deny all pending transaction with intersected timerange';
+    }
+
     this.setState({
       confirm
     });
