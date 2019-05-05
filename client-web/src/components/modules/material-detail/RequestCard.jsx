@@ -75,7 +75,7 @@ class RequestCard extends Component {
     const { isFetching, material, quantity, isRequestNow } = this.state;
 
     return (
-      <div className="request-card bg-white shadow border-primary">
+      <div className="request-card bg-white shadow-sm border-primary">
         {isRequestNow &&
           <Redirect push to={`${getRoutePath(routeConsts.MATERIAL_CART)}?itemId=${material.id}`} />
         }

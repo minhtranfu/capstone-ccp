@@ -101,7 +101,7 @@ class MaterialDetail extends Component {
         {material.id &&
           authentication.isAuthenticated &&
           material.contractor.id == contractor.id && (
-            <div className="shadow bg-white rounded p-2">
+            <div className="shadow-sm bg-white rounded p-2">
               <h5>Current transactions</h5>
               <p>&nbsp;</p>
               <p>&nbsp;</p>

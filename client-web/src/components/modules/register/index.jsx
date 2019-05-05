@@ -225,7 +225,7 @@ class Register extends Component {
               }
               {avatar &&
                 <div>
-                  <img src={avatar} alt="Preview avatar" width="170" height="170" className="rounded-circle shadow"/>
+                  <img src={avatar} alt="Preview avatar" width="170" height="170" className="rounded-circle shadow-sm"/>
                   <div>
                     <button className="btn btn-outline-primary mt-2" onClick={this._clearAvatar}><i className="fal fa-times"></i> Remove</button>
                   </div>

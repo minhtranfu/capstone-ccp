@@ -8,6 +8,7 @@ const Popover = ({ title, children, target, ...popProps }) => {
       placement="auto"
       delay={0}
       target={target}
+      className="shadow"
       {...popProps}
     >
       <PopoverHeader>{title}</PopoverHeader>

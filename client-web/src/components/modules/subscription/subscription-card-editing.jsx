@@ -243,7 +243,7 @@ class SubscriptionCardEditing extends Component {
     });
 
     return (
-      <div className="subscription-card bg-white shadow p-3 my-2 position-relative">
+      <div className="subscription-card bg-white shadow-sm p-3 my-2 position-relative">
         {isFetching &&
           <ComponentBlocking />
         }

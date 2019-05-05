@@ -639,7 +639,7 @@ class EquipmentTransactionDetail extends PureComponent {
     }
 
     return (
-      <div className="bg-white shadow-sm my-2 p-2">
+      <div className="bg-white shadow-sm my-2 p-3">
         <h5>Extend time request</h5>
         {dateChangeError && (
           <div className="alert alert-warning my-3">

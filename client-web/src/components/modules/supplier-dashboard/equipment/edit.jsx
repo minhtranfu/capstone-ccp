@@ -288,7 +288,7 @@ class EditEquipment extends Component {
                 {image.id !== thumbnailImage.id &&
                   <button
                     id={`set_as_thumnail_${image.id}`}
-                    className="btn btn-sm btn-primary shadow mr-2"
+                    className="btn btn-sm btn-primary shadow-sm mr-2"
                     onClick={() => this._handleSetImageAsThumbnail(image.id)}
                     >
                     <i className="fas fa-thumbtack"></i>
@@ -301,7 +301,7 @@ class EditEquipment extends Component {
                 }
                 {image.id !== thumbnailImage.id &&
                   <button
-                    className="btn btn-sm btn-outline-danger shadow bg-white text-danger"
+                    className="btn btn-sm btn-outline-danger shadow-sm bg-white text-danger"
                     id={`delete_image_${image.id}`}
                     onClick={() => this._showConfirmDeleteImage(image.id)}
                   >

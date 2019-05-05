@@ -75,7 +75,7 @@ class EquipDetail extends Component {
 
     if (!equipment.activeHiringTransactions || equipment.activeHiringTransactions.length === 0) {
       return (
-        <div className="shadow bg-white rounded p-2">
+        <div className="shadow-sm bg-white rounded p-2">
           <h5>Current transactions</h5>
           <div className="alert alert-info my-3">
             <i className="fal fa-info-circle" /> There is no transaction!
@@ -85,7 +85,7 @@ class EquipDetail extends Component {
     }
 
     return (
-      <div className="shadow bg-white rounded p-2">
+      <div className="shadow-sm bg-white rounded p-2">
         <h5>Current transactions</h5>
         {equipment.activeHiringTransactions.map((transaction, index) => {
           return (
