@@ -99,7 +99,7 @@ class EquipDetail extends Component {
                 })}
               >
                 <h6>
-                  #{transaction.id} - {formatPrice(0)}
+                  #{transaction.id} - {formatPrice(transaction.dailyPrice)}/day
                 </h6>
               </Link>
               <div className="my-">
@@ -198,7 +198,9 @@ class EquipDetail extends Component {
   };
 
   render() {
-    const { equipment } = this.state;
+    const { equipment, isFetching } = this.state;
+    const { authentication } = this.props;
+    const { contractor } = authentication;
 
     return (
       <div className="container">
@@ -291,6 +293,23 @@ class EquipDetail extends Component {
                   )}
                 </div>
               </div>
+
+              {!isFetching &&
+                authentication.isAuthenticated &&
+                equipment.contractor.id == contractor.id &&
+                <div className="py-2">
+                  <h5 className="mt-3">Available time ranges:</h5>
+                  <ul>
+                    {equipment.availableTimeRanges && equipment.availableTimeRanges.map((range, index) => {
+                      return (
+                        <li key={index}>
+                          {formatDate(range.beginDate)} <span className="text-muted">to</span> {formatDate(range.endDate)}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              }
 
               <h5 className="mt-3">Additional information:</h5>
               <div className="my-2 row">
