@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
-import {
-  CSSTransition
-} from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import { Redirect } from 'react-router-dom';
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
 import Step1 from './Step1';
 import Step2 from './Step2';
 import Step3 from './Step3';
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
+import ccpApiService from 'Services/domain/ccp-api-service';
 import { getRoutePath, getErrorMessage } from 'Utils/common.utils';
 import { routeConsts, CONTRACTOR_STATUSES } from 'Common/consts';
 import ComponentBlocking from 'Components/common/component-blocking';
@@ -22,25 +20,24 @@ class AddEquipment extends Component {
 
     this.state = {
       activeStep: null,
-      data: {}
+      data: {},
     };
 
-    this.data = {
-    };
+    this.data = {};
 
     this.steps = [
       {
         name: 'General Information',
-        component: Step1
+        component: Step1,
       },
       {
         name: 'Specs Information',
-        component: Step2
+        component: Step2,
       },
       {
         name: 'More Information',
-        component: Step3
-      }
+        component: Step3,
+      },
     ];
   }
 
@@ -51,7 +48,7 @@ class AddEquipment extends Component {
   toggle = tab => {
     if (this.state.activeStep !== tab) {
       this.setState({
-        activeStep: tab
+        activeStep: tab,
       });
     }
   };
@@ -59,24 +56,24 @@ class AddEquipment extends Component {
   _handleStepDone = async result => {
     this.data = {
       ...this.data,
-      ...result.data
+      ...result.data,
     };
 
     let { activeStep } = this.state;
     if (activeStep < this.steps.length - 1) {
       activeStep++;
       this.setState({
-        activeStep
+        activeStep,
       });
       return;
     }
 
     const { equipmentTypeId, constructionId } = this.data;
     this.data.equipmentType = {
-      id: +equipmentTypeId
+      id: +equipmentTypeId,
     };
     this.data.construction = {
-      id: +constructionId
+      id: +constructionId,
     };
     this.data.equipmentTypeId = undefined;
     this.data.constructionId = undefined;
@@ -84,14 +81,14 @@ class AddEquipment extends Component {
     this.data.categories = undefined;
 
     this.setState({
-      isFetching: true
+      isFetching: true,
     });
     try {
       const data = await ccpApiService.postEquipment(this.data);
       if (data && data.id) {
         this.setState({
           equipmentId: data.id,
-          isFetching: false
+          isFetching: false,
         });
 
         return;
@@ -99,13 +96,13 @@ class AddEquipment extends Component {
 
       this.setState({
         errorMessage: 'An unknown error occured!',
-        isFetching: false
+        isFetching: false,
       });
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       this.setState({
         errorMessage,
-        isFetching: false
+        isFetching: false,
       });
     }
   };
@@ -119,9 +116,9 @@ class AddEquipment extends Component {
 
     activeStep--;
     this.setState({
-      activeStep
+      activeStep,
     });
-  }
+  };
 
   _renderSteps = () => {
     const tabs = [];
@@ -131,8 +128,13 @@ class AddEquipment extends Component {
       tabs.push(
         <NavItem key={index} className="flex-fill text-center">
           <NavLink
-            className={classnames('disabled', { active: this.state.activeStep === index, pass: this.state.activeStep > index })}
-            onClick={() => { this.toggle(index); }}
+            className={classnames('disabled', {
+              active: this.state.activeStep === index,
+              pass: this.state.activeStep > index,
+            })}
+            onClick={() => {
+              this.toggle(index);
+            }}
           >
             {step.name}
           </NavLink>
@@ -141,14 +143,15 @@ class AddEquipment extends Component {
 
       tabPanes.push(
         <TabPane tabId={index} className="p-1" key={index}>
-          <CSSTransition
-            in={this.state.activeStep === index}
-            timeout={500}
-            classNames="fade"
-          >
+          <CSSTransition in={this.state.activeStep === index} timeout={500} classNames="fade">
             <Row>
               <Col sm="12">
-                <step.component onStepDone={this._handleStepDone} onBackStep={this._handleBackStep} currentState={this.data} />
+                <step.component
+                  onStepDone={this._handleStepDone}
+                  onBackStep={this._handleBackStep}
+                  currentState={this.data}
+                  isShown={this.state.activeStep === index}
+                />
               </Col>
             </Row>
           </CSSTransition>
@@ -158,50 +161,47 @@ class AddEquipment extends Component {
 
     return (
       <div>
-        {this.state.equipmentId &&
-          <Redirect to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, {id: this.state.equipmentId})} />
-        }
-        <Nav tabs>
-          {tabs}
-        </Nav>
-        <TabContent activeTab={this.state.activeStep}>
-          {tabPanes}
-        </TabContent>
+        {this.state.equipmentId && (
+          <Redirect
+            to={getRoutePath(routeConsts.EQUIPMENT_DETAIL, { id: this.state.equipmentId })}
+          />
+        )}
+        <Nav tabs>{tabs}</Nav>
+        <TabContent activeTab={this.state.activeStep}>{tabPanes}</TabContent>
       </div>
     );
   };
 
   render() {
-    
     const { isFetching, errorMessage } = this.state;
     const { contractor } = this.props;
 
     if (contractor.status !== CONTRACTOR_STATUSES.ACTIVATED) {
       return (
         <div className="container">
-          <h1 className="text-center my-3 alert alert-warning">Your account must be activated to post new equipment!</h1>
+          <h1 className="text-center my-3 alert alert-warning">
+            Your account must be activated to post new equipment!
+          </h1>
         </div>
       );
     }
 
     return (
       <div className="container pb-5 wizard">
-        {isFetching &&
-          <ComponentBlocking/>
-        }
+        {isFetching && <ComponentBlocking />}
         <div className="row">
           <div className="col-12">
             <h2 className="my-4 text-center">Post equipment</h2>
-            {errorMessage &&
+            {errorMessage && (
               <div className="alert alert-warning shadown-sm">
-                <i className="fal fa-info-circle"></i> {errorMessage}
+                <i className="fal fa-info-circle" /> {errorMessage}
               </div>
-            }
+            )}
             <hr />
           </div>
         </div>
         {this._renderSteps()}
-      </div >
+      </div>
     );
   }
 }
@@ -211,7 +211,7 @@ const mapStateToProps = state => {
   const { contractor } = authentication;
 
   return {
-    contractor
+    contractor,
   };
 };
 

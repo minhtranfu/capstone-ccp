@@ -1,16 +1,16 @@
 import React, { PureComponent } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import 'bootstrap-daterangepicker/daterangepicker.css'
+import 'bootstrap-daterangepicker/daterangepicker.css';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import SweetAlert from 'react-bootstrap-sweetalert/lib/dist/SweetAlert';
 import { formatDate } from 'Utils/format.utils';
 import { equipmentTransactionServices } from 'Services/domain/ccp';
 import { getErrorMessage } from 'Utils/common.utils';
+import { ComponentBlocking } from 'Components/common';
 
 class ExtendTimeModal extends PureComponent {
   state = {
-    isSending: false,
     isSubmitSuccess: false,
     request: null,
     requestedEndDate: null,
@@ -20,45 +20,12 @@ class ExtendTimeModal extends PureComponent {
    * Check date is invalid for disabling date of date range picker
    */
   _isInvalidDate = date => {
-    const { transaction } = this.props;
-    const { equipment } = transaction;
+    const { extendableTimeRange } = this.props;
 
-    // Check the date is not in any date range
-    let inAvailableTimeRange = false;
-    equipment.availableTimeRanges.forEach(range => {
-      if (date.isAfter(range.beginDate) && date.isBefore(range.endDate)) {
-        inAvailableTimeRange = true;
-        return;
-      }
-    });
-
-    if (!inAvailableTimeRange) {
-      return true;
-    }
-
-    if (equipment.activeHiringTransactions && equipment.activeHiringTransactions.length > 0) {
-      let inHiringTimeRange = false;
-      equipment.activeHiringTransactions.forEach(hiringTransaction => {
-        if ((date.isAfter(hiringTransaction.beginDate) || date.isSame(hiringTransaction.beginDate, 'day'))
-          && (date.isBefore(hiringTransaction.endDate) || date.isSame(hiringTransaction.endDate, 'day'))) {
-          inHiringTimeRange = true;
-          return;
-        }
-      });
-
-      if (inHiringTimeRange) {
-        return inHiringTimeRange;
-      }
-    }
-
-    if (equipment.processingHiringTransaction) {
-      if ((date.isAfter(equipment.processingHiringTransaction.beginDate) || date.isSame(equipment.processingHiringTransaction.beginDate, 'day'))
-        && (date.isBefore(equipment.processingHiringTransaction.endDate) || date.isSame(equipment.processingHiringTransaction.endDate, 'day'))) {
-        return true;
-      }
-    }
-
-    return false;
+    return !extendableTimeRange || (
+      date.isBefore(extendableTimeRange.beginDate) ||
+      date.isAfter(extendableTimeRange.endDate)
+    );
   };
 
   /**
@@ -71,9 +38,7 @@ class ExtendTimeModal extends PureComponent {
       return null;
     }
 
-    return (
-      <span className="text-danger mr-auto">{errorMessage}</span>
-    );
+    return <span className="text-danger mr-auto">{errorMessage}</span>;
   };
 
   /**
@@ -87,6 +52,8 @@ class ExtendTimeModal extends PureComponent {
     this.setState({
       validateResult: {},
       requestedEndDate: null,
+      request: null,
+      isSubmitSuccess: null,
     });
 
     onClose && onClose(request, isSubmitSuccess);
@@ -108,11 +75,10 @@ class ExtendTimeModal extends PureComponent {
         focusConfirmBtn
         confirmBtnText="OK"
         confirmBtnBsStyle="primary"
-        title="Send feedback successfully!"
+        title="Request to extend hiring time successfully!"
         onConfirm={this._closeSuccessAlert}
         onCancel={this._closeSuccessAlert}
-      >
-      </SweetAlert>
+      />
     );
   };
 
@@ -120,7 +86,6 @@ class ExtendTimeModal extends PureComponent {
    * Handle changing date range
    */
   _onChangeDateRanage = (e, picker) => {
-    console.log(picker);
 
     this.setState({
       requestedEndDate: picker.startDate,
@@ -144,23 +109,33 @@ class ExtendTimeModal extends PureComponent {
    * Close success alert
    */
   _closeSuccessAlert = () => {
-
-    this.setState({
-      isSubmitSuccess: undefined,
-    }, () => {
-      this._handleCloseModal();
-    });
+    this.setState(
+      {
+        isSubmitSuccess: undefined,
+      },
+      () => {
+        this._handleCloseModal();
+      }
+    );
   };
 
   _renderForm = () => {
     const { transaction } = this.props;
 
+    if (!transaction) {
+      return null;
+    }
+
     return (
       <div>
         <h6>Current hiring time:</h6>
-        <div>{formatDate(transaction.beginDate)} - {formatDate(transaction.endDate)}</div>
+        <div>
+          {formatDate(transaction.beginDate)} - {formatDate(transaction.endDate)}
+        </div>
         <div className="form-group">
-          <label htmlFor="extend_end_date">Extend hiring time to: <i className="text-danger">*</i></label>
+          <label htmlFor="extend_end_date">
+            Extend hiring time to: <i className="text-danger">*</i>
+          </label>
           <DateRangePicker
             singleDatePicker
             isInvalidDate={this._isInvalidDate}
@@ -169,9 +144,17 @@ class ExtendTimeModal extends PureComponent {
             containerClass="w-100"
           >
             <div className="input-group date-range-picker">
-              <input type="text" id="timeRange" className="form-control" readOnly value={this._getLabelOfRange() || ''} />
+              <input
+                type="text"
+                id="timeRange"
+                className="form-control"
+                readOnly
+                value={this._getLabelOfRange() || ''}
+              />
               <div className="input-group-append">
-                <button className="input-group-text bg-primary text-white" id="basic-addon2"><i className="fal fa-calendar"></i></button>
+                <button className="input-group-text bg-primary text-white" id="basic-addon2">
+                  <i className="fal fa-calendar" />
+                </button>
               </div>
             </div>
           </DateRangePicker>
@@ -186,9 +169,13 @@ class ExtendTimeModal extends PureComponent {
     const { transaction } = this.props;
 
     try {
+      this.setState({
+        isFetching: true,
+      });
+
       const data = {
         hiringTransactionEntity: {
-          id: transaction.id
+          id: transaction.id,
         },
         requestedEndDate: requestedEndDate.format('YYYY-MM-DD'),
       };
@@ -197,8 +184,8 @@ class ExtendTimeModal extends PureComponent {
       this.setState({
         request: requestResult,
         isSubmitSuccess: true,
+        isFetching: false,
       });
-      
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       this.setState({
@@ -210,23 +197,37 @@ class ExtendTimeModal extends PureComponent {
 
   render() {
     const { isOpen, className } = this.props;
-    const { isSending } = this.state;
+    const { isFetching } = this.state;
 
     return (
       <div>
         {this._renderAlert()}
+        {isFetching &&
+          <ComponentBlocking message="Sending" />
+        }
         <Modal isOpen={isOpen} toggle={this._handleCloseModal} className={className} size="md">
           <form onSubmit={this._hanleSubmit}>
             <ModalHeader toggle={this._handleCloseModal}>Extend hiring time</ModalHeader>
-            <ModalBody>
-              {this._renderForm()}
-            </ModalBody>
+            <ModalBody>{this._renderForm()}</ModalBody>
             <ModalFooter>
               {this._renderError()}
-              <button type="submit" className="btn btn-primary" disabled={!!isSending}>
-                {isSending && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>} Send
+              <button type="submit" className="btn btn-primary" disabled={!!isFetching}>
+                {isFetching && (
+                  <span
+                    className="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                )}{' '}
+                Send
               </button>
-              <button type="button" className="btn btn-outline-info" onClick={this._handleCloseModal}>Cancel</button>
+              <button
+                type="button"
+                className="btn btn-outline-info"
+                onClick={this._handleCloseModal}
+              >
+                Cancel
+              </button>
             </ModalFooter>
           </form>
         </Modal>

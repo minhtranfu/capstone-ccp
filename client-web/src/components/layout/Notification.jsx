@@ -18,7 +18,15 @@ class Notification extends PureComponent {
     return (
       <div className="toast show" role="alert" aria-live="assertive" aria-atomic="true">
         <div className="toast-header">
-          <svg className="bd-placeholder-img rounded mr-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
+          <svg
+            className="bd-placeholder-img rounded mr-2"
+            width="20"
+            height="20"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid slice"
+            focusable="false"
+            role="img"
+          >
             <rect fill="#007aff" width="100%" height="100%" />
           </svg>
           <strong className="mr-auto">{notification.title}</strong>
@@ -27,9 +35,7 @@ class Notification extends PureComponent {
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div className="toast-body">
-          {notification.body}
-        </div>
+        <div className="toast-body">{notification.body}</div>
       </div>
     );
   }
@@ -37,7 +43,7 @@ class Notification extends PureComponent {
 
 Notification.props = {
   onClose: PropTypes.func,
-  notification: PropTypes.object
+  notification: PropTypes.object,
 };
 
 export default Notification;

@@ -9,7 +9,7 @@ import Sweetalert from 'react-bootstrap-sweetalert';
 import { debrisTransactionServices } from 'Services/domain/ccp';
 import { getErrorMessage, getRoutePath } from 'Utils/common.utils';
 import { routeConsts, DEBRIS_POST_STATUSES, DEBRIS_POST_STATUS_COLORS } from 'Common/consts';
-import { ComponentBlocking } from 'Components/common';
+import { ComponentBlocking, Image, StarRatings } from 'Components/common';
 import { RatingModal } from 'Components/common';
 import { formatPrice } from 'Utils/format.utils';
 
@@ -180,11 +180,33 @@ class DebriseTransactionsRequest extends Component {
         return null;
       }
 
-      const { debrisPost:debris } = transaction;
+      const { debrisPost:debris, supplier } = transaction;
       const { debrisBids, debrisServiceTypes } = debris;
       const services = debrisServiceTypes.map(type => type.name).join(', ');
       return (
         <div key={transaction.id} className="my-2 p-3 bg-white shadow-sm d-flex">
+          <div className="contractor-info text-center pr-2" style={{width: 160}}>
+            <Image
+              circle
+              className="rounded-circle"
+              width={50}
+              height={50}
+              src={supplier.thumbnailImageUrl}
+            />
+            <div>
+              <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: supplier.id })}>
+                {supplier.name}
+              </Link>
+            </div>
+            <div className="mt-n2">
+              <StarRatings rating={supplier.averageDebrisRating} starDimension="15px" />
+            </div>
+            <div>
+              <a className="text-muted" href={`tel:${supplier.phoneNumber}`}>
+                <i className="fal fa-phone" /> {supplier.phoneNumber}
+              </a>
+            </div>
+          </div>
           <div className="flex-fill">
             <Link to={getRoutePath(routeConsts.DEBRIS_DETAIL, { id: debris.id })}>
               <h6>
@@ -193,10 +215,9 @@ class DebriseTransactionsRequest extends Component {
             </Link>
             <div className="text-muted"><small><i className="fal fa-tags"></i></small> {services}</div>
             <div className="text-muted"><i className="fal fa-map-marker"></i> {debris.address}</div>
-            <div className="description">{debris.description}</div>
             <div><i className="fas fa-gavel"></i> Bid: {debrisBids.length}</div>
           </div>
-          <div className="d-flex px-3 flex-md-column">
+          <div className="d-flex pl-3 flex-md-column">
             <div className="price text-large mb-auto ml-auto">
               {formatPrice(transaction.price)}
             </div>
@@ -369,6 +390,7 @@ class DebriseTransactionsRequest extends Component {
 
     if (feedback && feedback.id) {
       const { feedbackingTransaction, transactions } = this.state;
+      newState.transactions = {};
       newState.transactions.items = transactions.items.map(transaction => {
         if (transaction.id !== feedbackingTransaction.id) {
           return transaction;
@@ -389,16 +411,16 @@ class DebriseTransactionsRequest extends Component {
     const transactionCards = this._renderTransactions();
 
     return (
-      <div className="container">
+      <div className="container py-3">
         <RatingModal isOpen={!!feedbackingTransaction} transaction={feedbackingTransaction} onClose={this._closeRatingModal} />
         {this._renderAlert()}
         {isChangingStatus &&
           <ComponentBlocking/>
         }
-        <h1 className="my-3">
+        <h4 className="my-3">
           Debris transactions are requested by me
           <button className="btn btn-outline-primary float-right" onClick={this._loadData}><i className="fal fa-sync"></i></button>
-        </h1>
+        </h4>
         <div className="row">
           <div className="col-md-3">
             <div className="border-right border-primary h-100">

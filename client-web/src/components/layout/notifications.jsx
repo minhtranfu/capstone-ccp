@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 import { ENTITY_KEY } from 'Common/app-const';
 import { fetchNotifications } from 'Redux/actions/thunks';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import { userServices } from 'Services/domain/ccp';
-import { getErrorMessage, getRoutePath } from 'Utils/common.utils';
+import { getErrorMessage, getRoutePath, getRouteFromClickAction } from 'Utils/common.utils';
 import classnames from 'classnames';
 import { authActions } from 'Redux/actions';
 import { routeConsts } from 'Common/consts';
 
 class Notifications extends Component {
-
   state = {};
 
   limit = 10;
@@ -22,13 +21,13 @@ class Notifications extends Component {
    * Capture event scroll
    * If scroll reach bottom call load more data
    */
-  _handleScroll = (e) => {
-
-    const bottom = e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + this.scrollBuffer;
+  _handleScroll = e => {
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + this.scrollBuffer;
     if (bottom) {
       this._loadMore();
     }
-  }
+  };
 
   /**
    * Load more notification
@@ -49,7 +48,7 @@ class Notifications extends Component {
 
     fetchNotifications({
       limit: this.limit,
-      offset: offset
+      offset: offset,
     });
   };
 
@@ -71,7 +70,7 @@ class Notifications extends Component {
       setNotificationsCount({
         totalUnreadNotifications: 0,
         readNotificationIds,
-        unreadNotificationIds: []
+        unreadNotificationIds: [],
       });
       this.markingAllAsRead = false;
     } catch (error) {
@@ -84,7 +83,10 @@ class Notifications extends Component {
    * Request to mark notification as read or unread
    */
   _toggleReadStatus = async (e, notification) => {
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+
     if (this.changingNotificationIds.includes(notification.id)) {
       return;
     }
@@ -93,37 +95,31 @@ class Notifications extends Component {
 
     this.changingNotificationIds.push(notification.id);
     try {
-      const isUnread = (!notification.read && !readNotificationIds.includes(notification.id)) || (unreadNotificationIds.includes(notification.id));
+      const isUnread =
+        (!notification.read && !readNotificationIds.includes(notification.id)) ||
+        unreadNotificationIds.includes(notification.id);
       const result = await userServices.updateNotificationStatus(notification.id, isUnread);
       this._removeIdFromChangingList(notification.id);
 
       if (result.read) {
-        readNotificationIds = [
-          ...readNotificationIds,
-          notification.id
-        ];
+        readNotificationIds = [...readNotificationIds, notification.id];
         if (unreadNotificationIds.includes(notification.id)) {
           unreadNotificationIds = unreadNotificationIds.filter(id => id !== notification.id);
         }
 
         minusNotificationsCount({
           readNotificationIds,
-          unreadNotificationIds
+          unreadNotificationIds,
         });
-
       } else {
-
-        unreadNotificationIds = [
-          ...unreadNotificationIds,
-          notification.id
-        ];
+        unreadNotificationIds = [...unreadNotificationIds, notification.id];
         if (readNotificationIds.includes(notification.id)) {
           readNotificationIds = readNotificationIds.filter(id => id !== notification.id);
         }
 
         addNotificationsCount({
           unreadNotificationIds,
-          readNotificationIds
+          readNotificationIds,
         });
       }
     } catch (error) {
@@ -150,17 +146,22 @@ class Notifications extends Component {
     if (!notifications.data && !notifications.isFetching) {
       fetchNotifications({
         limit: this.limit,
-        offset: this.offset
+        offset: this.offset,
       });
     }
-
   }
 
   /**
    * Render list of notification
    */
   _renderListNotifications = () => {
-    const { notifications, authentication, readNotificationIds, unreadNotificationIds } = this.props;
+    const {
+      notifications,
+      authentication,
+      readNotificationIds,
+      unreadNotificationIds,
+      toggle,
+    } = this.props;
 
     if (!authentication.isAuthenticated) {
       return null;
@@ -174,7 +175,7 @@ class Notifications extends Component {
       return (
         <div className="py-3 text-center">
           <div>
-            <i className="fal fa-envelope-open fa-6x text-muted mb-3"></i>
+            <i className="fal fa-envelope-open fa-6x text-muted mb-3" />
           </div>
           No result!
         </div>
@@ -182,21 +183,39 @@ class Notifications extends Component {
     }
 
     return notifications.data.map(notification => {
-      const isUnread = (!notification.read && !readNotificationIds.includes(notification.id)) ||  (unreadNotificationIds.includes(notification.id));
+      const isUnread =
+        (!notification.read && !readNotificationIds.includes(notification.id)) ||
+        unreadNotificationIds.includes(notification.id);
       return (
-        <div key={notification.id} className={classnames('dropdown-item', 'd-flex', {'unread': isUnread})}>
-          <a href="/" className="flex-fill">
+        <div
+          key={notification.id}
+          className={classnames('dropdown-item', 'd-flex', { unread: isUnread })}
+        >
+          <Link
+            to={getRouteFromClickAction(notification.clickAction)}
+            onClick={() => {
+              toggle();
+              if (isUnread) {
+                this._toggleReadStatus(null, notification);
+              }
+            }}
+            className="flex-fill"
+          >
             <div className="align-items-center">
               <div className={classnames('title', { 'font-weight-bold': isUnread })}>
                 {notification.title}
               </div>
-              <div className="title text-muted">
-                {notification.content}
-              </div>
+              <div className="title text-muted">{notification.content}</div>
             </div>
-          </a>
-          <button className="btn btn-sm mark-as-read btn-link" onClick={e => this._toggleReadStatus(e, notification)} title={isUnread ? "Mark as unread" : "Mark as read"}>
-            <i className={classnames('fa-circle', 'text-primary', {fas: isUnread, far: !isUnread})}></i>
+          </Link>
+          <button
+            className="btn btn-sm mark-as-read btn-link"
+            onClick={e => this._toggleReadStatus(e, notification)}
+            title={isUnread ? 'Mark as unread' : 'Mark as read'}
+          >
+            <i
+              className={classnames('fa-circle', 'text-primary', { fas: isUnread, far: !isUnread })}
+            />
           </button>
         </div>
       );
@@ -211,28 +230,35 @@ class Notifications extends Component {
     }
 
     return (
-      <div className="dropdown-menu shadow mt-2 rounded-top-0 show">
+      <div className="dropdown-menu shadow mt-2 rounded-top-0 show dropdown-menu-right">
         <div className="dropdown-item px-1 border-bottom">
           <h6 className="d-inline">Notifications</h6>
-          <button className="btn btn-link float-right py-0" onClick={this._markAllAsRead}>Mark all as read</button>
-          <div className="clearfix"></div>
+          <button className="btn btn-link float-right py-0" onClick={this._markAllAsRead}>
+            Mark all as read
+          </button>
+          <div className="clearfix" />
         </div>
         <div className="list-notifications custom-scrollbar" onScroll={this._handleScroll}>
           {this._renderListNotifications()}
-          {notifications.isFetching &&
+          {notifications.isFetching && (
             <div className="dropdown-item text-center">
               <div className="spinner-grow text-primary" role="status">
                 <span className="sr-only">Loading...</span>
               </div>
             </div>
-          }
+          )}
         </div>
-        <Link className="dropdown-item text-center border-top" onClick={() => this.props.toggle()} to={getRoutePath(routeConsts.NOTIFICATIONS)}>View all <i className="fal fa-chevron-right"></i></Link>
+        <Link
+          className="dropdown-item text-center border-top"
+          onClick={() => this.props.toggle()}
+          to={getRoutePath(routeConsts.NOTIFICATIONS)}
+        >
+          View all <i className="fal fa-chevron-right" />
+        </Link>
       </div>
     );
   }
 }
-
 
 const mapStateToProps = state => {
   const { authentication, entities } = state;
@@ -243,7 +269,7 @@ const mapStateToProps = state => {
     authentication,
     notifications,
     unreadNotificationIds,
-    readNotificationIds
+    readNotificationIds,
   };
 };
 
@@ -251,7 +277,10 @@ const mapDispatchToProps = {
   fetchNotifications: fetchNotifications,
   minusNotificationsCount: authActions.minusNotificationsCount,
   addNotificationsCount: authActions.addNotificationsCount,
-  setNotificationsCount: authActions.setUnreadNotificationsCount
+  setNotificationsCount: authActions.setUnreadNotificationsCount,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Notifications);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Notifications);

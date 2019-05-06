@@ -39,7 +39,9 @@ class MaterialCart extends Component {
       <li className="nav-item">
         <Link to={getRoutePath(routeConsts.MATERIAL_CART)} className="text-dark d-flex h-100 align-items-center px-3">
           <i className="fal fa-shopping-cart"></i>
-          <span className={`badge badge-pill badge-danger ${isChanged ? 'heartBeat' : ''}`}>{materialCart.count}</span>
+          {materialCart.count > 0 &&
+            <span className={`badge badge-pill badge-danger ${isChanged ? 'heartBeat' : ''}`}>{materialCart.count}</span>
+          }
         </Link>
       </li>
     );

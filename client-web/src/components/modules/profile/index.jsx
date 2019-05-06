@@ -404,11 +404,11 @@ class Profile extends Component {
                     }
                     {!item.verified &&
                       <span className="infos">
-                        <span className="badge badge-info badge-pill"><i className="fal fa-info-circle"></i> Not virified</span>
+                        <span className="badge badge-info badge-pill"><i className="fal fa-info-circle"></i> Not verified</span>
                       </span>
                     }
                     {/* <span className="actions">
-                      <button onClick={() => console.log('asdasd')} className="btn btn-sm bg-light btn-outline-danger shadow">
+                      <button onClick={() => console.log('asdasd')} className="btn btn-sm bg-light btn-outline-danger shadow-sm">
                         <i className="fas fa-times"></i>
                       </button>
                     </span> */}

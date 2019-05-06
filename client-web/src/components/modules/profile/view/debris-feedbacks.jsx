@@ -1,38 +1,17 @@
-import React, { PureComponent } from 'react';
-import { CSSTransition } from 'react-transition-group';
-import PropTypes from 'prop-types';
+import { withRouter } from "react-router-dom";
 
-class DebrisFeebacks extends PureComponent {
+import { debrisFeedbackServices } from 'Services/domain/ccp';
+import Feedbacks from './feedbacks';
 
-  state = {
-    isShow: false,
+class DebrisFeebacks extends Feedbacks {
+
+  _requestDataFromService = async (contractorId, criteria) => {
+    return await debrisFeedbackServices.getFeedbackBySupplierId(contractorId, criteria);
   };
-
-  componentDidMount() {
-    this.setState({
-      isShow: true
-    });
-  }
-
-  render() {
-    const { isShow } = this.state;
-    return (
-      <CSSTransition
-        in={isShow}
-        timeout={500}
-        classNames="fade"
-      >
-        <div>
-          <strong>Debris Feedbacks</strong>
-          <p>With supporting text below as a natural lead-in to additional content. With supporting text below as a natural lead-in to additional content.</p>
-        </div>
-      </CSSTransition>
-    );
-  }
 }
 
-DebrisFeebacks.props = {
-  contractorId: PropTypes.number.isRequired
+DebrisFeebacks.defaultProps = {
+  feedbackType: 'debris',
 };
 
-export default DebrisFeebacks;
+export default withRouter(DebrisFeebacks);

@@ -210,85 +210,87 @@ class Register extends Component {
         {isFetching &&
           <ComponentBlocking/>
         }
-        <h1 className="text-center my-3 pb-2 border-bottom">Sign Up</h1>
+        <h4 className="text-center my-3 pb-2 border-bottom">Sign Up</h4>
         {message &&
           <div className="alert alert-warning">
             {message}
           </div>
         }
-        <div className="row">
-          <div className="col-md-4 offset-md-4 mb-4 text-center">
-            <h5>Avatar</h5>
-            {!avatar &&
-              <DropzoneUploadImage onChange={this._onSelectAvatar} multiple={false} />
-            }
-            {avatar &&
-              <div>
-                <img src={avatar} alt="Preview avatar" width="170" height="170" className="rounded-circle shadow"/>
+        <div className="bg-white p-3 shadow-sm">
+          <div className="row">
+            <div className="col-md-4 offset-md-4 mb-4 text-center">
+              <h5>Avatar</h5>
+              {!avatar &&
+                <DropzoneUploadImage onChange={this._onSelectAvatar} multiple={false} />
+              }
+              {avatar &&
                 <div>
-                  <button className="btn btn-outline-primary mt-2" onClick={this._clearAvatar}><i className="fal fa-times"></i> Remove</button>
+                  <img src={avatar} alt="Preview avatar" width="170" height="170" className="rounded-circle shadow-sm"/>
+                  <div>
+                    <button className="btn btn-outline-primary mt-2" onClick={this._clearAvatar}><i className="fal fa-times"></i> Remove</button>
+                  </div>
                 </div>
+              }
+            </div>
+            <div className="col-md-6 border-right">
+              <h5>Login information</h5>
+              <div className="form-group">
+                <label htmlFor="register_username">Username: <i className="text-danger">*</i></label>
+                <input type="text" className="form-control" id="register_username" name="username"
+                  onChange={this._handleFieldChanged}
+                />
+                {this._getValidateFeedback('username')}
               </div>
-            }
-          </div>
-          <div className="col-md-6 border-right">
-            <h5>Login information</h5>
-            <div className="form-group">
-              <label htmlFor="register_username">Username: <i className="text-danger">*</i></label>
-              <input type="text" className="form-control" id="register_username" name="username"
-                onChange={this._handleFieldChanged}
-              />
-              {this._getValidateFeedback('username')}
-            </div>
-            <div className="form-group">
-              <label htmlFor="register_password">Password: <i className="text-danger">*</i></label>
-              <input type="password" className="form-control" id="register_password" name="password"
-                onChange={this._handleFieldChanged}
-              />
-              {this._getValidateFeedback('password')}
-            </div>
-            <div className="form-group">
-              <label htmlFor="register_password_confirm">Confirm password: <i className="text-danger">*</i></label>
-              <input type="password" className="form-control" id="register_password_confirm" name="confirmPassword"
-                onChange={this._handleFieldChanged}
-              />
-              {this._getValidateFeedback('confirmPassword')}
-            </div>
-          </div>
-          <div className="col-md-6">
-            <h5>Contact information</h5>
-            <div className="form-group">
-              <label htmlFor="register_name">Full name: <i className="text-danger">*</i></label>
-              <input type="text" className="form-control" id="register_name" name="name"
-                onChange={this._handleFieldChanged}
-              />
-              {this._getValidateFeedback('name')}
-            </div>
-            <div className="form-group">
-              <label htmlFor="register_email">Email: <i className="text-danger">*</i></label>
-              <input type="email" className="form-control" id="register_email" name="email"
-                onChange={this._handleFieldChanged}
-              />
-              {this._getValidateFeedback('email')}
-            </div>
-            <div className="form-group">
-              <label htmlFor="register_phone">Phone: <i className="text-danger">*</i></label>
-              <input type="tel" className="form-control" id="register_phone" name="phone"
-                onChange={this._handleFieldChanged}
-              />
-              {this._getValidateFeedback('phone')}
-            </div>
-          </div>
-          <div className="col-md-12">
-            <div className="form-group text-center mt-3">
-              <div className="mb-2">
-                By clicking sign up button, you agreed with <Link to="#" target="_blank">our terms and conditions</Link>
+              <div className="form-group">
+                <label htmlFor="register_password">Password: <i className="text-danger">*</i></label>
+                <input type="password" className="form-control" id="register_password" name="password"
+                  onChange={this._handleFieldChanged}
+                />
+                {this._getValidateFeedback('password')}
               </div>
-              <button className="btn btn-primary"
-                onClick={this._handleSubmitForm}
-              >
-                Sign Up
-              </button>
+              <div className="form-group">
+                <label htmlFor="register_password_confirm">Confirm password: <i className="text-danger">*</i></label>
+                <input type="password" className="form-control" id="register_password_confirm" name="confirmPassword"
+                  onChange={this._handleFieldChanged}
+                />
+                {this._getValidateFeedback('confirmPassword')}
+              </div>
+            </div>
+            <div className="col-md-6">
+              <h5>Contact information</h5>
+              <div className="form-group">
+                <label htmlFor="register_name">Full name: <i className="text-danger">*</i></label>
+                <input type="text" className="form-control" id="register_name" name="name"
+                  onChange={this._handleFieldChanged}
+                />
+                {this._getValidateFeedback('name')}
+              </div>
+              <div className="form-group">
+                <label htmlFor="register_email">Email: <i className="text-danger">*</i></label>
+                <input type="email" className="form-control" id="register_email" name="email"
+                  onChange={this._handleFieldChanged}
+                />
+                {this._getValidateFeedback('email')}
+              </div>
+              <div className="form-group">
+                <label htmlFor="register_phone">Phone: <i className="text-danger">*</i></label>
+                <input type="tel" className="form-control" id="register_phone" name="phone"
+                  onChange={this._handleFieldChanged}
+                />
+                {this._getValidateFeedback('phone')}
+              </div>
+            </div>
+            <div className="col-md-12">
+              <div className="form-group text-center mt-3">
+                <div className="mb-2">
+                  By clicking sign up button, you agreed with <Link to="#" target="_blank">our terms and conditions</Link>
+                </div>
+                <button className="btn btn-primary"
+                  onClick={this._handleSubmitForm}
+                >
+                  Sign Up
+                </button>
+              </div>
             </div>
           </div>
         </div>

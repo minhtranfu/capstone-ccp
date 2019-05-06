@@ -241,13 +241,16 @@ class RatingEquipmentModal extends Component {
    */
   _handleCloseModal = () => {
     const { onClose } = this.props;
+    const { isSubmitSuccess } = this.state;
+
+    onClose && onClose(isSubmitSuccess);
+
     // Reset form
     this.data = {};
     this.setState({
-      validateResult: {}
+      validateResult: {},
+      isSubmitSuccess: undefined,
     });
-
-    onClose && onClose();
   };
 
   /**
@@ -267,22 +270,11 @@ class RatingEquipmentModal extends Component {
         confirmBtnText="OK"
         confirmBtnBsStyle="primary"
         title="Send feedback successfully!"
-        onConfirm={this._closeSuccessAlert}
-        onCancel={this._closeSuccessAlert}
+        onConfirm={this._handleCloseModal}
+        onCancel={this._handleCloseModal}
       >
       </SweetAlert>
     );
-  };
-
-  /**
-   * Close success alert
-   */
-  _closeSuccessAlert = () => {
-    this.setState({
-      isSubmitSuccess: undefined
-    }, () => {
-      this._handleCloseModal();
-    });
   };
 
   _changeRating = rating => {
@@ -304,7 +296,7 @@ class RatingEquipmentModal extends Component {
             <ModalHeader toggle={this._handleCloseModal}>Feedback transaction</ModalHeader>
             <ModalBody>
               {/* {this._renderTransactionInfo()} */}
-              {this._renderForm()}
+              {isOpen && this._renderForm()}
             </ModalBody>
             <ModalFooter>
               {this._renderError()}

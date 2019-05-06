@@ -4,13 +4,14 @@ const config = require('./config/config');
 const NodeService = require('./src/services/common/node-service');
 const path = require('path');
 
-const { example } = config;
-if (!example) throw new Error('configuration cannot be null/undefined');
+const { ccp } = config;
+if (!ccp) throw new Error('configuration cannot be null/undefined');
 
-const PORT = example.port;
+const PORT = ccp.port;
+
+const express = require('express');
 
 if (NodeService.isProduction()) {
-    const express = require('express');
 
     const app = express();
 
@@ -42,8 +43,11 @@ if (NodeService.isProduction()) {
     new WebpackDevServer(webpack(config), {
         hot               : true,
         historyApiFallback: true,
-        // contentBase       : path.join(__dirname, "/public"),
+        contentBase: false,
         open: true,
+        before: (app) => {
+          app.use('/public', express.static('public'));
+        },
     }).listen(PORT, 'localhost', error => {
         console.log(error || `Started WebpackDevServer on port ${PORT}`);
     });

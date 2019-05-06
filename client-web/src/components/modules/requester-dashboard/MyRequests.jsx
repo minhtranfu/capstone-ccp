@@ -13,9 +13,9 @@ import {
   EQUIPMENT_SHOWABLE_STATUSES,
   routeConsts
 } from 'Common/consts';
-import { RatingEquipmentTransaction, Image } from "Components/common";
+import { RatingEquipmentTransaction, Image, StarRatings } from "Components/common";
 import ccpApiService from 'Services/domain/ccp-api-service';
-import { getRoutePath } from 'Utils/common.utils';
+import { getRoutePath, getExtendableTimeRange } from 'Utils/common.utils';
 import { formatPrice } from 'Utils/format.utils';
 import ExtendTimeModal from './extend-time-modal';
 
@@ -170,15 +170,22 @@ class MyRequests extends Component {
    */
   _toggleRatingEquipmentTransaction = (feedbackTransaction) => {
     const { isShowRatingEquipmentTransaction } = this.state;
+
+    if (feedbackTransaction === true) {
+      const { feedbackTransaction: feedbackTransactionState } = this.state;
+      feedbackTransactionState.feedbacked = true;
+    }
+
     this.setState({
       isShowRatingEquipmentTransaction: !isShowRatingEquipmentTransaction,
       feedbackTransaction
     });
   };
 
-  _handleAdjustTime = transactionToExtend => {
+  _handleAdjustTime = (transactionToExtend, extendableTimeRange) => {
     this.setState({
       transactionToExtend,
+      extendableTimeRange,
       isOpenExtendTimeModal: true,
     });
   };
@@ -206,10 +213,15 @@ class MyRequests extends Component {
       case TRANSACTION_STATUSES.ACCEPTED:
         statusClasses += 'badge-success';
         this._countNeedActionForStatus(transaction.status);
+
+        const extendableTimeRange = getExtendableTimeRange(transaction);
+
         changeStatusButtons = (
           <div className="mt-2">
             <button className="btn btn-sm btn-outline-danger" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.CANCELED)}>Cancel</button>
-            <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction)}>Extend hiring time</button>
+            {extendableTimeRange &&
+              <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction, extendableTimeRange)}>Extend hiring time</button>
+            }
           </div>
         );
         break;
@@ -225,17 +237,26 @@ class MyRequests extends Component {
       case TRANSACTION_STATUSES.PROCESSING:
         if (transaction.equipment.status === EQUIPMENT_STATUSES.DELIVERING) {
           this._countNeedActionForStatus(transaction.status);
+
+          const extendableTimeRange = getExtendableTimeRange(transaction);
+
           changeStatusButtons = (
             <div className="mt-2">
               <button className="btn btn-sm btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction, EQUIPMENT_STATUSES.RENTING)}>Receive</button>
-              <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction)}>Extend hiring time</button>
+              {extendableTimeRange &&
+                <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction, extendableTimeRange)}>Extend hiring time</button>
+              }
             </div>
           );
         } else if (transaction.equipment.status === EQUIPMENT_STATUSES.RENTING) {
+          const extendableTimeRange = getExtendableTimeRange(transaction);
+
           changeStatusButtons = (
             <div className="mt-2">
               <button className="btn btn-sm btn-success" onClick={() => this._handleChangeEquipmentStatus(transaction, EQUIPMENT_STATUSES.WAITING_FOR_RETURNING)}>Return equipment</button>
-              <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction)}>Extend hiring time</button>
+              {extendableTimeRange &&
+                <button className="ml-2 btn btn-sm btn-outline-info" onClick={() => this._handleAdjustTime(transaction, extendableTimeRange)}>Extend hiring time</button>
+              }
             </div>
           );
         }
@@ -249,15 +270,18 @@ class MyRequests extends Component {
       case TRANSACTION_STATUSES.FINISHED:
         statusClasses += 'badge-success';
         // TODO: Feedback function
-        changeStatusButtons = (
-          <div className="mt-2">
-            <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingEquipmentTransaction(transaction)}>Feedback</button>
-          </div>
-        );
+        if (!transaction.feedbacked) {
+          changeStatusButtons = (
+            <div className="mt-2">
+              <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingEquipmentTransaction(transaction)}>Feedback</button>
+            </div>
+          );
+        }
         break;
     }
 
     const thumbnail = transaction.equipment.thumbnailImage ? transaction.equipment.thumbnailImage.url : '/public/upload/product-images/unnamed-19-jpg.jpg';
+    const supplier = transaction.equipment.contractor;
 
     return (
       <CSSTransition
@@ -277,23 +301,35 @@ class MyRequests extends Component {
               <span>Days: {days}</span>
               <span className="ml-2 text-muted">({transaction.beginDate} to {transaction.endDate})</span>
             </div>
-            <div>
+            <div className="flex-wrap">
               <span className="">Daily Price: {formatPrice(equipment.dailyPrice)}</span>
               <span className="ml-2 pl-2 border-left">Total fee: <strong>{formatPrice(equipment.dailyPrice * days)}</strong></span>
             </div>
             {changeStatusButtons}
           </div>
-          <div className="contractor-detail flex-fill p-2 text-center">
-            <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: transaction.equipment.contractor.id })} >
-              <img
+          <div className="contractor-detail p-2 text-center d-flex flex-row flex-sm-column">
+            <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: supplier.id })} >
+              <Image
+                circle
                 className="rounded-circle"
-                style={{width: '50px', height: '50px'}}
-                src={transaction.equipment.contractor.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
+                width={50}
+                height={50}
+                src={supplier.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
               />
             </Link>
-            <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: transaction.equipment.contractor.id })} >
-              <p>{transaction.equipment.contractor.name}</p>
-            </Link>
+            <div className="text-left text-sm-center mx-2">
+              <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: supplier.id })} >
+                <span>{supplier.name}</span>
+              </Link>
+              <div className="mt-n2">
+                <StarRatings rating={supplier.averageEquipmentRating} starDimension="15px" />
+              </div>
+              <div>
+                <a className="text-muted" href={`tel:${supplier.phoneNumber}`}>
+                  <i className="fal fa-phone"></i> {supplier.phoneNumber}
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </CSSTransition>
@@ -309,6 +345,7 @@ class MyRequests extends Component {
     const confirm = {
       status,
       transactionId,
+      input: status === TRANSACTION_STATUSES.CANCELED,
       show: true,
       onConfirm: this._handleChangeStatusConfirm,
       confirmText: 'Yes',
@@ -344,12 +381,13 @@ class MyRequests extends Component {
    * Start change status when user confirmed
    * BUG HEREEEEE
    */
-  _handleChangeStatusConfirm = async () => {
+  _handleChangeStatusConfirm = async (cancelReason) => {
     const { confirm } = this.state;
 
     this._showLoadingConfirm();
     const data = {
-      status: confirm.status
+      cancelReason,
+      status: confirm.status,
     };
 
     let transaction = null;
@@ -479,6 +517,7 @@ class MyRequests extends Component {
    */
   _handleChangeEquipmentStatusConfirm = async (transaction, status) => {
     try {
+      this._showLoadingConfirm();
       const res = await ccpApiService.updateEquipmentStatus(transaction.equipment.id, status);
 
       // check if error
@@ -529,16 +568,18 @@ class MyRequests extends Component {
    */
   _renderAlert = () => {
     const { confirm, alert } = this.state;
+    console.log('confirm', confirm);
 
     return (
       <div>
         {confirm.title &&
           <SweetAlert
-            info
+            info={!confirm.input}
             showCancel={confirm.showCancel}
             confirmBtnText={confirm.confirmText}
             confirmBtnBsStyle={confirm.confirmStyle}
             confirmBtnCssclassName={confirm.confirmClass}
+            input={confirm.input}
             title={confirm.title}
             onConfirm={confirm.onConfirm}
             onCancel={confirm.onCancel}
@@ -563,6 +604,8 @@ class MyRequests extends Component {
 
     const newState = {
       isOpenExtendTimeModal: false,
+      transactionToExtend: undefined,
+      extendableTimeRange: undefined,
       transaction: {},
     };
 
@@ -586,16 +629,17 @@ class MyRequests extends Component {
   };
 
   render() {
-    const { isShowRatingEquipmentTransaction, feedbackTransaction, isOpenExtendTimeModal, transactionToExtend } = this.state;
+    const { isShowRatingEquipmentTransaction, feedbackTransaction, isOpenExtendTimeModal, transactionToExtend, extendableTimeRange } = this.state;
+    
     this._renderTabContents();
 
     return (
       <div className="container py-3 user-dashboard">
         {this._renderAlert()}
-        <ExtendTimeModal isOpen={isOpenExtendTimeModal} transaction={transactionToExtend} onClose={this._handleCloseExtendTimeModal}/>
+        <ExtendTimeModal isOpen={isOpenExtendTimeModal} transaction={transactionToExtend} extendableTimeRange={extendableTimeRange} onClose={this._handleCloseExtendTimeModal}/>
         <RatingEquipmentTransaction
           isOpen={isShowRatingEquipmentTransaction}
-          onClose={() => this._toggleRatingEquipmentTransaction()}
+          onClose={this._toggleRatingEquipmentTransaction}
           transaction={feedbackTransaction}
         />
         <div className="row">

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import { withTranslation } from "react-i18next";
 
 import { getRoutePath } from 'Utils/common.utils';
 import { routeConsts } from 'Common/consts';
@@ -10,64 +11,64 @@ class SubHeader extends Component {
   equipmentMenu = [
     {
       to: getRoutePath(routeConsts.EQUIPMENTS),
-      name: 'Find equipments',
+      name: 'equipments.find',
       exact: true
     },
     {
       to: getRoutePath(routeConsts.EQUIPMENT_MY),
-      name: 'My equipments'
+      name: 'equipments.my'
     },
     {
       to: getRoutePath(routeConsts.EQUIPMENT_SUPPLY),
-      name: 'Equipments supply'
+      name: 'equipments.supply'
     },
     {
       to: getRoutePath(routeConsts.EQUIPMENT_REQUEST),
-      name: 'Equipment requests'
+      name: 'equipments.hiring'
     },
     {
       to: getRoutePath(routeConsts.SUBSCRIPTION_REQUEST),
-      name: 'Subscriptions'
+      name: 'equipments.subscriptions'
     },
   ];
 
   materialMenu = [
     {
       to: getRoutePath(routeConsts.MATERIALS),
-      name: 'Find materials',
+      name: 'materials.find',
       exact: true
     },
     {
       to: getRoutePath(routeConsts.MATERIAL_MY),
-      name: 'My materials'
+      name: 'materials.my'
     },
     {
       to: getRoutePath(routeConsts.MATERIAL_SUPPLY),
-      name: 'Transaction as supplier'
+      name: 'materials.selling'
     },
     {
       to: getRoutePath(routeConsts.MATERIAL_REQUEST),
-      name: 'Transaction as requester'
+      name: 'materials.buying'
     },
   ];
 
   debrisMenu = [
     {
       to: getRoutePath(routeConsts.DEBRISES),
-      name: 'Find debrises',
+      name: 'debrises.find',
       exact: true
     },
     {
       to: getRoutePath(routeConsts.DEBRIS_MY),
-      name: 'My debrises'
+      name: 'debrises.my'
     },
     {
       to: getRoutePath(routeConsts.DEBRIS_SUPPLY),
-      name: 'Debris supply'
+      name: 'debrises.serving'
     },
     {
       to: getRoutePath(routeConsts.DEBRIS_REQUEST),
-      name: 'Debris transaction'
+      name: 'debrises.hiring'
     },
   ];
 
@@ -91,7 +92,7 @@ class SubHeader extends Component {
   };
 
   render() {
-    const { location } = this.props;
+    const { location, t } = this.props;
 
     let menus = null;
     if (location.pathname.indexOf('/equipments') === 0) {
@@ -117,7 +118,7 @@ class SubHeader extends Component {
           {menus.map(menu => {
             return (
               <li key={menu.name} className={`nav-item ${this._isMenuActive(menu) ? 'active' : ''}`}>
-                <Link className="nav-link" to={menu.to}>{menu.name}</Link>
+                <Link className="nav-link" to={menu.to}>{t(`menu.${menu.name}`)}</Link>
               </li>
             );
           })}
@@ -130,4 +131,4 @@ class SubHeader extends Component {
   }
 }
 
-export default withRouter(SubHeader);
+export default withRouter(withTranslation()(SubHeader));

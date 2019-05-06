@@ -39,7 +39,7 @@ class MaterialDetail extends Component {
     for (let i = 0; i < numOfPlaceholder; i++) {
       placeholders.push(
         <div key={i} className="col-md-12">
-            <div className="my-2 shadow lh-1">
+            <div className="my-2 shadow-sm lh-1">
               <Skeleton height={200} />
             </div>
         </div>
@@ -59,7 +59,7 @@ class MaterialDetail extends Component {
             <i className="fal fa-chevron-left"></i> Back to list
           </Link>
         </h4>
-        <div className="d-flex flex-row bg-white shadow">
+        <div className="d-flex flex-row bg-white shadow-sm">
           <Image src="http://localhost:3060/public/upload/product-images/unnamed-19-jpg.jpg" style={{maxHeight: '250px'}} />
           <div className="flex-fill p-2">
             <h6>{material.name}</h6>

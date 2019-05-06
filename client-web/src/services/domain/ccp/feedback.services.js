@@ -1,11 +1,11 @@
 import DataAccessService from '../../data/data-access-service';
 
 export const getFeebackTypes = () => {
-  return DataAccessService.get('/feedbackTypes');
+  return DataAccessService.get('/reportTypes');
 };
 
 export const getFeebackTypeById = id => {
-  return DataAccessService.get(`/feedbackTypes/${id}`);
+  return DataAccessService.get(`/reportTypes/${id}`);
 };
 
 export const postFeedback = ({toContractorId, feedbackTypeId, content}) => {

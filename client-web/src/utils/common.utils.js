@@ -1,5 +1,9 @@
 import React from 'react';
-import { modules } from "Src/components/modules/Routes";
+import { modules } from "Components/modules/Routes";
+import qs from 'query-string';
+import moment from 'moment';
+import ConfigService from 'Services/common/config-service';
+import { routeConsts } from 'Common/consts';
 
 export const getRoutePath = (name, data) => {
     const route = modules.find(route => route.name === name);
@@ -41,7 +45,7 @@ export const getErrorMessage = error => {
   return 'Unknown error occurr!';
 };
 
-export const toQueryString = data => {
+export const toQueryStringOld = data => {
   if (typeof data !== 'object' || data === null) {
     return '';
   }
@@ -51,6 +55,14 @@ export const toQueryString = data => {
   });
 
   return params.join('&');
+};
+
+export const toQueryString = data => {
+  return qs.stringify(data);
+};
+
+export const parseQueryString = queryString => {
+  return qs.parse(queryString);
 };
 
 /**
@@ -68,4 +80,141 @@ export const getValidateFeedback = (fieldName, validateResult) => {
       {validateResult[fieldName]}
     </div>
   );
+};
+
+const actionRouteMapping = {
+  materialTransactions: routeConsts.MATERIAL_TRANSACTION_DETAIL,
+  hiringTransactions: routeConsts.EQUIPMENT_TRANSACTION_DETAIL,
+  debrisTransactions: routeConsts.DEBRIS_REQUEST_DETAIL,
+  equipments: routeConsts.EQUIPMENT_DETAIL,
+  debrisPost: routeConsts.DEBRIS_DETAIL,
+};
+
+export const getRouteFromClickAction = clickAction => {
+  if (!clickAction) {
+    return '';
+  }
+
+  const info = clickAction.split('/');
+  const action = info[0];
+  const id = info[1];
+
+  const routeConst = actionRouteMapping[action];
+  if (!routeConst) {
+    return '';
+  }
+
+  return getRoutePath(routeConst, { id });
+};
+
+/**
+ * Calculate distance
+ */
+const toRad = (value) => {
+  return value * Math.PI / 180;
+};
+
+//This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
+export const calcDistance = (lat1, lon1, lat2, lon2) => {
+  var R = 6371; // km
+  var dLat = toRad(lat2-lat1);
+  var dLon = toRad(lon2-lon1);
+  var lat1 = toRad(lat1);
+  var lat2 = toRad(lat2);
+
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var d = R * c;
+  return d.toFixed(1);
+};
+
+export const getRefreshToken = () => {
+  const key = ConfigService.getRefreshTokenKey();
+
+  return localStorage.getItem(key);
+};
+
+export const setRefreshToken = value => {
+  const key = ConfigService.getRefreshTokenKey();
+
+  return localStorage.setItem(key, value);
+};
+
+export const getJwtToken = () => {
+  const key = ConfigService.getJwtKey();
+
+  return localStorage.getItem(key);
+};
+
+export const setJwtToken = value => {
+  const key = ConfigService.getJwtKey();
+
+  return localStorage.setItem(key, value);
+};
+
+export const setTokens = (jwt, refresh) => {
+  setJwtToken(jwt);
+  setRefreshToken(refresh);
+};
+
+// Get extendable time range of a transaction
+export const getExtendableTimeRange = transaction => {
+  const { equipment } = transaction;
+
+  const tBeginDate = moment(transaction.beginDate);
+  const tEndDate = moment(transaction.endDate);
+
+  const currentAvailableRange = equipment.availableTimeRanges.find(range => {
+    return (
+      !tBeginDate.isBefore(range.beginDate) &&
+      !tEndDate.isAfter(range.endDate)
+    );
+  });
+
+  if (!currentAvailableRange) {
+    return null;
+  }
+
+  let lastAvailabelDate = moment(currentAvailableRange.endDate);
+  let toCheckRanges = [];
+
+  if (equipment.processingHiringTransaction) {
+    toCheckRanges.push(equipment.processingHiringTransaction);
+  }
+
+  if (equipment.activeHiringTransactions && equipment.activeHiringTransactions.length > 0) {
+    toCheckRanges = [...toCheckRanges, ...equipment.activeHiringTransactions];
+  }
+
+  // Check with active hiring and processing transaction
+  if (toCheckRanges.length > 0) {
+    const sortedRange = toCheckRanges.sort((a, b) => {
+      return moment(a.beginDate).isBefore(b.beginDate) ? 1 : -1;
+    });
+
+    const nearestHiringRange = sortedRange.find(hiring => {
+      const momentBeginDate = moment(hiring.beginDate);
+      return (
+        !momentBeginDate.isBefore(currentAvailableRange.beginDate) &&
+        !moment(hiring.endDate).isAfter(currentAvailableRange.endDate) &&
+        momentBeginDate.isAfter(transaction.endDate)
+      );
+    });
+
+    if (nearestHiringRange) {
+      lastAvailabelDate = moment(nearestHiringRange.beginDate).subtract(1, 'day');
+    }
+  }
+
+  const beginDate = moment(transaction.endDate).add(1, 'day');
+
+  if (beginDate.isAfter(lastAvailabelDate)) {
+    return null;
+  }
+
+  return {
+    beginDate,
+    endDate: lastAvailabelDate,
+  };
 };

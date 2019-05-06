@@ -76,7 +76,7 @@ class AddEquipmentSpecs extends Step {
         <div className="col-12 text-center">
           <div className="form-group">
             <button className="btn btn-outline-primary mr-2" onClick={this._handleBackStep}><i className="fal fa-chevron-left"></i> PREVIOUS STEP</button>
-            <button className="btn btn-success ml-2" onClick={this._handleSubmitForm}>NEXT STEP <i className="fal fa-chevron-right"></i></button>
+            <button className="btn btn-success ml-2" onClick={this._handleSubmitForm}>POST <i className="fal fa-chevron-right"></i></button>
           </div>
         </div>
       </div>

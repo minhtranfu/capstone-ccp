@@ -10,13 +10,14 @@ export default (state = INITIAL_STATE.materialCart, action) => {
       let itemIds = [
         ...state.itemIds
       ];
+      
       if (state.itemIds.includes(action.item.id)) {
         items = state.items.map(item => {
           if (item.id !== action.item.id) {
             return item;
           }
 
-          item.quantity += action.item.quantity;
+          item.quantity += +action.item.quantity;
 
           return item;
         });
@@ -32,18 +33,22 @@ export default (state = INITIAL_STATE.materialCart, action) => {
         ...state,
         items,
         itemIds,
-        count: state.count + action.item.quantity,
+        count: +action.item.quantity + state.count,
       };
     }
 
-    // Remove one item by Id
+    // Remove one item by Ids
+    case materialCartActionTypes.MATERIAL_CART_ITEMS_REMOVE: {
+      return removeItems(state, action);
+    }
+
     case materialCartActionTypes.MATERIAL_CART_ITEM_REMOVE: {
       let minusCount = 0;
       return {
         ...state,
         items: state.items.filter(item => {
           if (item.id === action.itemId) {
-            minusCount = item.quantity;
+            minusCount = +item.quantity;
           }
 
           return item.id !== action.itemId;
@@ -62,7 +67,7 @@ export default (state = INITIAL_STATE.materialCart, action) => {
           if (item.id !== action.item.id) {
             return item;
           }
-          countChange = action.item.quantity - item.quantity;
+          countChange = +action.item.quantity - item.quantity;
 
           return action.item;
         }),
@@ -83,4 +88,22 @@ export default (state = INITIAL_STATE.materialCart, action) => {
 
 function addItem(state, action) {
   
+}
+
+function removeItems(state, action) {
+  let minusCount = 0;
+  
+  return {
+    ...state,
+    items: state.items.filter(item => {
+      const isIncludes = action.itemIds.includes(item.id);
+      if (isIncludes) {
+        minusCount = item.quantity;
+      }
+
+      return !isIncludes;
+    }),
+    itemIds: state.itemIds.filter(id => !action.itemIds.includes(id)),
+    count: state.count - minusCount,
+  };
 }

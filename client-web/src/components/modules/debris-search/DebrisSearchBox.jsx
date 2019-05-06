@@ -1,23 +1,33 @@
-import React, { PureComponent } from "react";
-import PropTypes from "prop-types";
-import moment from 'moment';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
+import { withTranslation } from 'react-i18next';
 
 import { debrisServices } from 'Services/domain/ccp';
 import { AddressInput } from 'Components/common';
 
 class DebrisSearchBox extends PureComponent {
-  state = {
-    typeOptions: [],
-    criteria: {
+  constructor(props) {
+    super(props);
+
+    let criteria = {};
+    if (props.criteria) {
+      criteria = {
+        ...props.criteria,
+      };
     }
-  };
+
+    this.state = {
+      criteria,
+      typeOptions: [],
+    };
+  }
 
   _loadData = async () => {
     const types = await debrisServices.getDebrisServiceTypes();
-    const typeOptions = types.map(type => ({ label: type.name, value: type.id, }));
+    const typeOptions = types.map(type => ({ label: type.name, value: type.id }));
     this.setState({
-      typeOptions
+      typeOptions,
     });
   };
 
@@ -37,11 +47,11 @@ class DebrisSearchBox extends PureComponent {
     let { criteria } = this.state;
     criteria = {
       ...criteria,
-      [name]: value
-    }
+      [name]: value,
+    };
 
     this.setState({
-      criteria
+      criteria,
     });
   };
 
@@ -52,8 +62,8 @@ class DebrisSearchBox extends PureComponent {
     this.setState({
       criteria: {
         ...criteria,
-        debrisTypeId
-      }
+        debrisTypeId,
+      },
     });
   };
 
@@ -61,43 +71,58 @@ class DebrisSearchBox extends PureComponent {
    * Handle user change location
    */
   _handleChangeLocation = location => {
-    const { latitude, longitude } = location;
+    const { latitude, longitude, address } = location;
     const { criteria } = this.state;
 
     this.setState({
       criteria: {
         ...criteria,
         latitude,
-        longitude
-      }
+        longitude,
+        address,
+      },
     });
   };
 
   render() {
-    const { typeOptions } = this.state;
-    const { isFetching } = this.props;
+    const { typeOptions, criteria } = this.state;
+    const { isFetching, t } = this.props;
 
     return (
       <form onSubmit={this._search}>
         <div className="row">
           <div className="col-md-12 text-light">
-            <h3>Search</h3>
+            <h3>{t('debris.search')}</h3>
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="keyword" className="text-light">Keyword:</label>
-              <input type="text" name="q" onChange={this._handleChangeCriteria} id="keyword" className="form-control" />
+              <label htmlFor="keyword" className="text-light">
+                {t('common.keyword')}:
+              </label>
+              <input
+                type="text"
+                name="q"
+                id="keyword"
+                className="form-control"
+                value={criteria.q}
+                onChange={this._handleChangeCriteria}
+                placeholder={t('debris.keywordPlacholder')}
+              />
             </div>
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="location" className="text-light">Location:</label>
-              <AddressInput onSelect={this._handleChangeLocation} inputProps={{id: 'location'}} />
+              <label htmlFor="location" className="text-light">
+                {t('debris.searchAddress')}:
+              </label>
+              <AddressInput onSelect={this._handleChangeLocation} inputProps={{ id: 'location' }} />
             </div>
           </div>
           <div className="col-md-4">
             <div className="form-group">
-              <label htmlFor="service_types" className="text-light">Debris type:</label>
+              <label htmlFor="service_types" className="text-light">
+                {t('debris.type')}:
+              </label>
               <Select
                 isMulti
                 openMenuOnFocus
@@ -105,18 +130,19 @@ class DebrisSearchBox extends PureComponent {
                 closeMenuOnSelect={false}
                 tabSelectsValue={false}
                 inputId="service_types"
-                placeholder="Select some services you need..."
+                placeholder={t('debris.typePlaceholder')}
                 options={typeOptions}
                 onChange={this._handleSelectServiceTypes}
+                value={
+                  !typeOptions || !criteria.debrisTypeId
+                    ? []
+                    : typeOptions.filter(option => criteria.debrisTypeId.includes(option.value))
+                }
               />
             </div>
           </div>
           <div className="col-md-12">
-            <button
-              type="submit"
-              className="btn btn-success"
-              disabled={isFetching}
-            >
+            <button type="submit" className="btn btn-success" disabled={isFetching}>
               {isFetching && (
                 <span
                   className="spinner-border spinner-border-sm mr-1"
@@ -124,10 +150,9 @@ class DebrisSearchBox extends PureComponent {
                   aria-hidden="true"
                 />
               )}
-              Search
-              </button>
+              {t('common.search')}
+            </button>
           </div>
-
         </div>
       </form>
     );
@@ -136,7 +161,7 @@ class DebrisSearchBox extends PureComponent {
 
 DebrisSearchBox.propTypes = {
   onSearch: PropTypes.func.isRequired,
-  isFetching: PropTypes.bool.isRequired
+  isFetching: PropTypes.bool.isRequired,
 };
 
-export default DebrisSearchBox;
+export default withTranslation()(DebrisSearchBox);

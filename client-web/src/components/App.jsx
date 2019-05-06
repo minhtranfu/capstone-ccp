@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -14,19 +14,19 @@ import { authActions } from '../redux/actions';
 
 import PageLoader from './common/PageLoader';
 
-class App extends PureComponent {
+function App({ loadUserFromToken, authenticating, isAuthenticated, logout }) {
 
-  componentDidUpdate() {
+  window.logout = logout;
+
+  useEffect(() => {
     if (typeof window !== "undefined") {
       window.scrollTo(0, 0);
     }
-  }
+  });
 
-  componentWillMount() {
-    const { loadUserFromToken } = this.props;
-
+  useEffect(() => {
     loadUserFromToken();
-  }
+  }, []);
 
   // shouldComponentUpdate(nextProps) {
   //   const { location, isAuthenticated } = this.props;
@@ -42,26 +42,22 @@ class App extends PureComponent {
   //   return false;
   // }
 
-  render() {
-    const { authenticating, isAuthenticated } = this.props;
-
-    if (authenticating) {
-      return <PageLoader pastDelay />;
-    }
-
-    return (
-      <div className="d-flex flex-column min-vh-100">
-        <Header />
-        {isAuthenticated &&
-          <SubHeader />
-        }
-        {Routes}
-        <Footer />
-        <LoginModal />
-        <NotificationRoot />
-      </div>
-    );
+  if (authenticating) {
+    return <PageLoader pastDelay />;
   }
+
+  return (
+    <div className="d-flex flex-column min-vh-100">
+      <Header />
+      {isAuthenticated &&
+        <SubHeader />
+      }
+      {Routes}
+      <Footer />
+      <LoginModal />
+      <NotificationRoot />
+    </div>
+  );
 }
 
 App.propTypes = {
@@ -82,7 +78,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  loadUserFromToken: authActions.loadUserFromToken
+  loadUserFromToken: authActions.loadUserFromToken,
+  logout: authActions.logout,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

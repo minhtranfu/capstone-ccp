@@ -26,7 +26,7 @@ const config = {
     publicPath: '/',
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.json'],
+    extensions: ['.js', '.jsx', '.json', '.scss'],
     alias: {
       Src: path.resolve(__dirname, 'src'),
       Common: path.resolve(__dirname, 'src', 'common'),
@@ -35,6 +35,7 @@ const config = {
       Components: path.resolve(__dirname, 'src', 'components'),
       Utils: path.resolve(__dirname, 'src', 'utils'),
       Assets: path.resolve(__dirname, 'src', 'assets'),
+      Scss: path.resolve(__dirname, 'src', 'scss'),
     },
     modules: [path.resolve(__dirname, 'src'), 'node_modules']
   },
@@ -139,13 +140,16 @@ if (NodeUtils.isProduction()) {
   config.mode = 'development';
   config.entry = [
     'react-hot-loader/patch',
-    `webpack-dev-server/client?http://localhost:${appConfig.example.port}`,
+    `webpack-dev-server/client?http://localhost:${appConfig.ccp.port}`,
     'webpack/hot/only-dev-server',
     './src/Bootstrap'
   ];
   config.plugins.push(
     new webpack.HotModuleReplacementPlugin()
   );
+  config.devServer = {
+    open: true
+  };
 }
 
 module.exports = config;

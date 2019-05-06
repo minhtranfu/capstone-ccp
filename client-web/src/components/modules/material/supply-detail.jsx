@@ -46,7 +46,7 @@ class MaterialRequestDetail extends Component {
           <div className="flex-fill">
             <h6>{material.name}</h6>
             <div>
-              <img src={material.contractor.thumbnailImageUrl} className="rounded-circle" width="30" height="30" alt=""/> {material.contractor.name}
+              <img src={material.contractor.thumbnailImageUrl} className="rounded-circle" width="30" height="30" alt=""/> <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: material.contractor.id })}>{material.contractor.name}</Link>
             </div>
           </div>
           <div className="flex-fill">

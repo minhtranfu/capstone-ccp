@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react';
-import { withRouter } from "react-router-dom";
+import { withRouter } from 'react-router-dom';
 import classnames from 'classnames';
+import { UncontrolledTooltip } from 'reactstrap';
+import { connect } from 'react-redux';
 
-import { Image, StarRatings } from "Components/common";
+import { Image, StarRatings, ReportModal } from 'Components/common';
 import { userServices } from 'Services/domain/ccp';
 import { getErrorMessage } from 'Utils/common.utils';
 import { formatDate, formatFloat } from 'Utils/format.utils';
@@ -15,39 +17,48 @@ import IconEquipments from 'Assets/icons/equipments.svg';
 import IconDebris from 'Assets/icons/debris.svg';
 import { CONTRACTOR_STATUS_INFOS } from 'Common/consts';
 
-class ViewProfile extends PureComponent {
+import 'Scss/profile.scss';
 
-  state = {
-    errorMessage: null,
-    contractor: {},
-    isFetching: true,
-    activeFeedbackTab: 0,
-  };
+class ViewProfile extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    const { params } = this.props.match;
+    const { id } = params;
+
+    this.state = {
+      constructorId: id,
+      errorMessage: null,
+      contractor: {},
+      isFetching: true,
+      activeFeedbackTab: 0,
+      isShowReportModal: false,
+    };
+  }
 
   feedbackTabs = [
     {
       name: 'Equipment',
-      component: EquipmentFeebacks
+      component: EquipmentFeebacks,
     },
     {
       name: 'Material',
-      component: MaterialFeebacks
+      component: MaterialFeebacks,
     },
     {
       name: 'Debris',
-      component: DebrisFeebacks
-    }
+      component: DebrisFeebacks,
+    },
   ];
 
   /**
    * Load contractor detail
    */
   _loadData = async () => {
-    const { params } = this.props.match;
-    const { id } = params;
+    const { constructorId } = this.state;
 
     try {
-      const contractor = await userServices.getUserInfoById(id);
+      const contractor = await userServices.getUserInfoById(constructorId);
 
       this.setState({
         contractor,
@@ -81,28 +92,50 @@ class ViewProfile extends PureComponent {
     const { id: prevId } = prevParams;
 
     if (prevId !== id) {
-      this.setState({
-        isFeching: true,
-      }, () => {
-        this._loadData();
-      });
+      this.setState(
+        {
+          isFeching: true,
+          constructorId: id,
+        },
+        () => {
+          this._loadData();
+        }
+      );
     }
   };
 
   _renderContractorCard = () => {
     const { contractor } = this.state;
+    const { contractor: loggedContractor } = this.props;
 
-    const statusBsColor = contractor.status ? CONTRACTOR_STATUS_INFOS[contractor.status].bsColor : '';
+    const statusBsColor = contractor.status
+      ? CONTRACTOR_STATUS_INFOS[contractor.status].bsColor
+      : '';
     const statusName = contractor.status ? CONTRACTOR_STATUS_INFOS[contractor.status].name : '';
 
     return (
-      <div className="bg-white py-3 px-2 shadow-sm">
+      <div className="bg-white py-3 px-2 shadow-sm sticky-sidebar position-sticky">
         <div className="text-center">
-          <Image
-            width={200} height={200}
-            className="rounded-circle"
-            src={contractor.thumbnailImageUrl}
-          />
+          <div className="position-relative">
+            <Image
+              width={200}
+              height={200}
+              className="rounded-circle"
+              src={contractor.thumbnailImageUrl}
+            />
+            {loggedContractor.id !== contractor.id && (
+              <button
+                onClick={this._toggleReportModal}
+                id="report_contractor"
+                className="btn btn-sm btn-link position-absolute report-button text-muted"
+              >
+                <i className="fas fa-flag" />
+                <UncontrolledTooltip target="report_contractor">
+                  Report bad behavior
+                </UncontrolledTooltip>
+              </button>
+            )}
+          </div>
           <h5 className="mt-2">{contractor.name}</h5>
         </div>
         <div className="d-flex justify-content-between p-2">
@@ -131,12 +164,12 @@ class ViewProfile extends PureComponent {
     }
 
     this.setState({
-      activeFeedbackTab
+      activeFeedbackTab,
     });
   };
 
   _renderFeedbacksCard = () => {
-    const { activeFeedbackTab, contractor } = this.state;
+    const { activeFeedbackTab, contractor, constructorId } = this.state;
 
     let TabComponent = null;
     return (
@@ -150,7 +183,11 @@ class ViewProfile extends PureComponent {
               }
               return (
                 <li key={index} className="nav-item">
-                  <span className={classnames('nav-link', { 'active': isTabActive, 'cursor-poiner': !isTabActive })}
+                  <span
+                    className={classnames('nav-link', {
+                      active: isTabActive,
+                      'cursor-poiner': !isTabActive,
+                    })}
                     onClick={() => this._setActiveFeedbackTab(index)}
                   >
                     {tab.name}
@@ -161,9 +198,7 @@ class ViewProfile extends PureComponent {
           </ul>
         </div>
         <div className="card-body">
-          {TabComponent &&
-            <TabComponent contractorId={contractor.id} />
-          }
+          {TabComponent && <TabComponent contractorId={constructorId} />}
         </div>
       </div>
     );
@@ -181,73 +216,76 @@ class ViewProfile extends PureComponent {
               <div className="d-flex justify-content-center">
                 <Image src={IconEquipments} width={80} height={80} />
                 <div className="pl-2 text-tight">
-                  <div className="text-xx-large">
-                    {contractor.finishedHiringTransactionCount}
+                  <div className="text-xx-large">{contractor.finishedHiringTransactionCount}</div>
+                  <div className="lh-1 text-muted">
+                    <small>
+                      Finished <br /> transactions
+                    </small>
                   </div>
-                  <div className="lh-1 text-muted"><small>Finished <br /> transactions</small></div>
                 </div>
               </div>
-              <hr className="w-50"/>
+              <hr className="w-50" />
               <h6 className="mt-2 mb-1">Equipment</h6>
               <div className="mb-1">
-                <StarRatings
-                  rating={contractor.averageEquipmentRating}
-                />
+                <StarRatings rating={contractor.averageEquipmentRating} />
               </div>
               <div>
                 <span className="badge badge-pill badge-warning mr-1">
                   {formatFloat(contractor.averageEquipmentRating)}
-                </span> {contractor.equipmentFeedbacksCount} feedbacks
+                </span>{' '}
+                {contractor.equipmentFeedbacksCount} feedbacks
               </div>
-              <hr className="d-md-none my-4"/>
+              <hr className="d-md-none my-4" />
             </div>
             {/* Material */}
             <div className="col-md-4 text-center">
               <div className="d-flex justify-content-center">
                 <Image src={IconMaterials} width={80} height={80} />
                 <div className="pl-2 text-tight">
-                  <div className="text-xx-large">
-                    {contractor.finishedMaterialTransactionCount}
+                  <div className="text-xx-large">{contractor.finishedMaterialTransactionCount}</div>
+                  <div className="lh-1 text-muted">
+                    <small>
+                      Finished <br /> transactions
+                    </small>
                   </div>
-                  <div className="lh-1 text-muted"><small>Finished <br /> transactions</small></div>
                 </div>
               </div>
-              <hr className="w-50"/>
+              <hr className="w-50" />
               <h6 className="mt-2 mb-1">Material</h6>
               <div className="mb-1">
-                <StarRatings
-                  rating={contractor.averageMaterialRating}
-                />
+                <StarRatings rating={contractor.averageMaterialRating} />
               </div>
               <div>
                 <span className="badge badge-pill badge-warning mr-1">
                   {formatFloat(contractor.averageMaterialRating)}
-                </span> {contractor.materialFeedbacksCount} feedbacks
+                </span>{' '}
+                {contractor.materialFeedbacksCount} feedbacks
               </div>
-              <hr className="d-md-none my-4"/>
+              <hr className="d-md-none my-4" />
             </div>
             {/* Debris */}
             <div className="col-md-4 text-center">
               <div className="d-flex justify-content-center">
                 <Image src={IconDebris} width={80} height={80} />
                 <div className="pl-2 text-tight">
-                  <div className="text-xx-large">
-                    {contractor.finishedDebrisTransactionCount}
+                  <div className="text-xx-large">{contractor.finishedDebrisTransactionCount}</div>
+                  <div className="lh-1 text-muted">
+                    <small>
+                      Finished <br /> transactions
+                    </small>
                   </div>
-                  <div className="lh-1 text-muted"><small>Finished <br /> transactions</small></div>
                 </div>
               </div>
-              <hr className="w-50"/>
+              <hr className="w-50" />
               <h6 className="mt-2 mb-1">Debris</h6>
               <div className="mb-1">
-                <StarRatings
-                  rating={contractor.averageDebrisRating}
-                />
+                <StarRatings rating={contractor.averageDebrisRating} />
               </div>
               <div>
                 <span className="badge badge-pill badge-warning mr-1">
                   {formatFloat(contractor.averageDebrisRating)}
-                </span> {contractor.debrisFeedbacksCount} feedbacks
+                </span>{' '}
+                {contractor.debrisFeedbacksCount} feedbacks
               </div>
             </div>
           </div>
@@ -258,20 +296,39 @@ class ViewProfile extends PureComponent {
     );
   };
 
+  _toggleReportModal = () => {
+    const { isShowReportModal } = this.state;
+    this.setState({
+      isShowReportModal: !isShowReportModal,
+    });
+  };
+
   render() {
+    const { isShowReportModal, contractor } = this.state;
+
     return (
-      <div className="container">
+      <div className="container profile">
+        <ReportModal
+          contractor={contractor}
+          isOpen={isShowReportModal}
+          onClose={() => this._toggleReportModal()}
+        />
         <div className="row">
-          <div className="col-lg-3">
-            {this._renderContractorCard()}
-          </div>
-          <div className="col-lg-9">
-            {this._renderProfile()}
-          </div>
+          <div className="col-lg-3">{this._renderContractorCard()}</div>
+          <div className="col-lg-9">{this._renderProfile()}</div>
         </div>
       </div>
     );
   }
 }
 
-export default withRouter(ViewProfile);
+const mapStateToProps = state => {
+  const { authentication } = state;
+  const { contractor } = authentication;
+
+  return {
+    contractor,
+  };
+};
+
+export default connect(mapStateToProps)(withRouter(ViewProfile));

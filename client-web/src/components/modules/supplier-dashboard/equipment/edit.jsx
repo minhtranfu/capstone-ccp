@@ -288,7 +288,7 @@ class EditEquipment extends Component {
                 {image.id !== thumbnailImage.id &&
                   <button
                     id={`set_as_thumnail_${image.id}`}
-                    className="btn btn-sm btn-primary shadow mr-2"
+                    className="btn btn-sm btn-primary shadow-sm mr-2"
                     onClick={() => this._handleSetImageAsThumbnail(image.id)}
                     >
                     <i className="fas fa-thumbtack"></i>
@@ -301,7 +301,7 @@ class EditEquipment extends Component {
                 }
                 {image.id !== thumbnailImage.id &&
                   <button
-                    className="btn btn-sm btn-outline-danger shadow bg-white text-danger"
+                    className="btn btn-sm btn-outline-danger shadow-sm bg-white text-danger"
                     id={`delete_image_${image.id}`}
                     onClick={() => this._showConfirmDeleteImage(image.id)}
                   >
@@ -469,7 +469,7 @@ class EditEquipment extends Component {
     });
 
     return (
-      <div className="bg-white px-2 pt-3 pb-1 sticky-top sticky-sidebar mb-3">
+      <div className="bg-white px-2 pt-3 pb-1 sticky-top sticky-sidebar mb-3 shadow-sm">
         {/* TODO: Add back to list link */}
         <h4>Information: <Link to={getRoutePath(routeConsts.EQUIPMENT_MY)} className="btn btn-sm btn-outline-info float-right"><i className="fal fa-chevron-left"></i> Back to list</Link></h4>
         {isSuccess &&
@@ -572,7 +572,7 @@ class EditEquipment extends Component {
 
     return (
       <div className="container">
-        <h1 className="my-3">Edit equipment: {equipment.name}</h1>
+        <h4 className="my-3">Edit equipment: {equipment.name}</h4>
         {message &&
           <div className="alert alert-warning">{message}</div>
         }
@@ -581,7 +581,7 @@ class EditEquipment extends Component {
             {this._renderDetailForm()}
           </div>
           <div className="col-md-7">
-            <div className="bg-white px-2 py-3 position-relative">
+            <div className="bg-white px-2 py-3 position-relative shadow-sm">
               {isChangingImage &&
                 <ComponentBlocking />
               }

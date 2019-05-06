@@ -27,3 +27,7 @@ export const updateTransactionById = (transactionId, data) => {
 export const extendHiringTime = data => {
   return DataAccessService.post('/transactionDateChangeRequests', data);
 };
+
+export const updateStatusDateChangeRequest = (id, status) => {
+  return DataAccessService.put(`/transactionDateChangeRequests/${id}`, { status });
+};

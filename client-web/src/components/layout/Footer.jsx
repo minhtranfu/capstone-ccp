@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import LanguageMenu from './language-menu';
 
 const Footer = () => {
   return (
@@ -8,15 +9,24 @@ const Footer = () => {
         <div className="row">
           <div className="col-md-12 mt-md-0 mt-3 text-center">
             <h5 className="text-uppercase mb-3">A capstone project at</h5>
-            <img src="https://seeklogo.com/images/F/fpt-university-logo-B3B6D84292-seeklogo.com.png"
-              alt="FPT University logo" height="80"/>
+            <img
+              src="https://seeklogo.com/images/F/fpt-university-logo-B3B6D84292-seeklogo.com.png"
+              alt="FPT University logo"
+              height="80"
+            />
           </div>
         </div>
       </div>
-      <div className="footer-copyright text-center py-3 bg-black">
-        <hr/>
-      © 2019 Copyright
-        <a href="#"> CCP Project Team</a>
+      <div className="container">
+        <div className="footer-copyright text-center py-3 bg-black">
+          <hr />© 2019 Copyright
+          <a href="#"> CCP Project Team</a>
+          <span className="float-right">
+            <ul className="navbar-nav">
+              <LanguageMenu />
+            </ul>
+          </span>
+        </div>
       </div>
     </footer>
   );

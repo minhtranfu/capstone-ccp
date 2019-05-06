@@ -7,10 +7,11 @@ import Skeleton from 'react-loading-skeleton';
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
 
-import ccpApiService from '../../../services/domain/ccp-api-service';
-import { RatingEquipmentTransaction } from "../../common";
-import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES, routeConsts } from '../../../common/consts';
+import ccpApiService from 'Services/domain/ccp-api-service';
+import { RatingEquipmentTransaction, Image, StarRatings } from "Components/common";
+import { TRANSACTION_STATUSES, EQUIPMENT_STATUSES, routeConsts, EQUIPMENT_SHOWABLE_STATUSES } from 'Common/consts';
 import { getRoutePath } from 'Utils/common.utils';
+import { formatPrice } from 'Utils/format.utils';
 
 class MyRequests extends Component {
   state = {
@@ -23,7 +24,7 @@ class MyRequests extends Component {
     [TRANSACTION_STATUSES.ACCEPTED]: 'Are you sure to accept this transaction?',
     [TRANSACTION_STATUSES.CANCELED]: 'Are you sure to cancel this transaction?',
     [TRANSACTION_STATUSES.DENIED]: 'Are you sure to deny this transaction?',
-    [TRANSACTION_STATUSES.PROCESSING]: 'Are you going to delivery equipment of this transaction?',
+    [TRANSACTION_STATUSES.PROCESSING]: 'Are you going to deliver equipment of this transaction?',
     [TRANSACTION_STATUSES.FINISHED]: 'Have you received the equipment from requester?'
   };
 
@@ -70,6 +71,10 @@ class MyRequests extends Component {
       onCancel: this._removeConfirm
     };
     confirm.title = this.confirmMessages[status];
+
+    if (status === TRANSACTION_STATUSES.ACCEPTED) {
+      confirm.message = 'You would deny all pending transaction with intersected timerange';
+    }
 
     this.setState({
       confirm
@@ -298,16 +303,16 @@ class MyRequests extends Component {
     const days = moment(transaction.endDate).diff(moment(transaction.beginDate), 'days') + 1;
 
     let statusClasses = 'badge ';
-    let changeStatusButtons = '';
+    const changeStatusButtons = [];
     switch (transaction.status) {
       case TRANSACTION_STATUSES.PENDING:
         this._countNeedActionForStatus(TRANSACTION_STATUSES.PENDING);
         statusClasses += ' badge-info';
-        changeStatusButtons = (
-          <div className="mt-2">
-            <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.ACCEPTED)}>Accept</button>
-            <button className="btn btn-sm btn-outline-danger ml-2" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.DENIED)}>Deny</button>
-          </div>
+        changeStatusButtons.push(
+          <button key={`${transaction.id}-accept`} className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.ACCEPTED)}>Accept</button>
+        );
+        changeStatusButtons.push(
+          <button key={`${transaction.id}-deny`} className="btn btn-sm btn-outline-danger ml-2" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.DENIED)}>Deny</button>
         );
         break;
 
@@ -315,10 +320,8 @@ class MyRequests extends Component {
         this._countNeedActionForStatus(TRANSACTION_STATUSES.ACCEPTED);
         statusClasses += ' badge-success';
         if (transaction.equipment.status === EQUIPMENT_STATUSES.AVAILABLE) {
-          changeStatusButtons = (
-            <div className="mt-2">
-              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.PROCESSING)}>Deliver</button>
-            </div>
+          changeStatusButtons.push(
+            <button key={`${transaction.id}-deliver`} className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.PROCESSING)}>Deliver</button>
           );
         }
         break;
@@ -337,10 +340,8 @@ class MyRequests extends Component {
         if (transaction.equipment.status === EQUIPMENT_STATUSES.WAITING_FOR_RETURNING) {
           this._countNeedActionForStatus(TRANSACTION_STATUSES.PROCESSING);
 
-          changeStatusButtons = (
-            <div className="mt-2">
-              <button className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.FINISHED)}>Receive</button>
-            </div>
+          changeStatusButtons.push(
+            <button key={`${transaction.id}-receive`} className="btn btn-sm btn-success" onClick={() => this._handleChangeStatus(transaction.id, TRANSACTION_STATUSES.FINISHED)}>Receive</button>
           );
         }
 
@@ -348,16 +349,11 @@ class MyRequests extends Component {
 
       case TRANSACTION_STATUSES.FINISHED:
         statusClasses += 'badge-success';
-        // TODO: use or remove comment
-        // changeStatusButtons = (
-        //   <div className="mt-2">
-        //     <button className="btn btn-sm btn-success" onClick={() => this._toggleRatingEquipmentTransaction(transaction)}>Feedback</button>
-        //   </div>
-        // );
         break;
     }
 
     const thumbnail = transaction.equipment.thumbnailImage ? transaction.equipment.thumbnailImage.url : '/public/upload/product-images/unnamed-19-jpg.jpg';
+    const { requester } = transaction;
 
     return (
       <CSSTransition
@@ -378,19 +374,45 @@ class MyRequests extends Component {
               <span className="ml-2 text-muted">({transaction.beginDate} to {transaction.endDate})</span>
             </div>
             <div>
-              <span className="">Daily Price: ${equipment.dailyPrice}</span>
-              <span className="ml-2 pl-2 border-left">Total fee: ${equipment.dailyPrice * days}</span>
-              <div className="">Equipment: {equipment.status}</div>
+              <span className="">Daily Price: {formatPrice(equipment.dailyPrice)}</span>
+              <span className="ml-2 pl-2 border-left">Total fee: {formatPrice(equipment.dailyPrice * days)}</span>
+              <div className="">Equipment: {EQUIPMENT_SHOWABLE_STATUSES[equipment.status]}</div>
             </div>
-            {changeStatusButtons}
+            {transaction.hasPendingTransactionDateChangeRequest &&
+              <div className="text-primary"><i className="fal fa-info-circle"></i> Requesting to extend</div>
+            }
+            <div className="mt-2">
+              <Link
+                to={getRoutePath(routeConsts.EQUIPMENT_TRANSACTION_DETAIL, { id: transaction.id })}
+                className="btn btn-sm btn-link mr-2">
+                Detail
+              </Link>
+              {changeStatusButtons}
+            </div>
           </div>
-          <div className="contractor-detail flex-fill p-2 text-center">
-            <img
-              className="rounded-circle"
-              style={{width: '50px', height: '50px'}}
-              src={transaction.requester.thumbnailImage || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
-            />
-            <p>{transaction.requester.name}</p>
+          <div className="contractor-detail p-2 text-center">
+            <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: requester.id })} >
+              <Image
+                circle
+                className="rounded-circle"
+                width={50}
+                height={50}
+                src={requester.thumbnailImageUrl || 'https://www.shareicon.net/download/2016/04/10/747369_man.svg'}
+              />
+            </Link>
+            <div className="text-left text-sm-center mx-2">
+              <Link to={getRoutePath(routeConsts.PROFILE_CONTRACTOR, { id: requester.id })} >
+                <span>{requester.name}</span>
+              </Link>
+              <div className="mt-n2">
+                <StarRatings rating={requester.averageEquipmentRating} starDimension="15px" />
+              </div>
+              <div>
+                <a className="text-muted" href={`tel:${requester.phoneNumber}`}>
+                  <i className="fal fa-phone"></i> {requester.phoneNumber}
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </CSSTransition>

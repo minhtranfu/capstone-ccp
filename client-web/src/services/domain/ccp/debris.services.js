@@ -1,3 +1,4 @@
+import qs from 'query-string';
 import DataAccessService from '../../data/data-access-service';
 
 export const postDebris = data => {
@@ -12,8 +13,9 @@ export const getDebrisById = id => {
   return DataAccessService.get(`/debrisPosts/${id}`);
 };
 
-export const getMyDebrises = ({ limit, offset }) => {
-  return DataAccessService.get(`/debrisPosts/requester?limit=${limit}&offset=${offset}`);
+export const getMyDebrises = (params) => {
+  const queryString = qs.stringify(params);
+  return DataAccessService.get(`/debrisPosts/requester?${queryString}`);
 };
 
 export const getDebrisServiceTypes = () => {
@@ -44,4 +46,8 @@ export const uploadImages = formData => {
       'Content-Type': 'multipart/form-data'
     }
   });
+};
+
+export const deleteDebris = id => {
+  return DataAccessService.delete(`/debrisPosts/${id}`);
 };

@@ -11,3 +11,7 @@ export const updateConstruction = (constractorId, constructionId, data) => {
 export const getConstructionsByContractorId = constractorId => {
   return DataAccessService.get(`contractors/${constractorId}/constructions`);
 };
+
+export const deleteConstruction = (contractorId, id) => {
+  return DataAccessService.delete(`contractors/${contractorId}/constructions/${id}`);
+};

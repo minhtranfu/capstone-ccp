@@ -11,6 +11,15 @@ export const TRANSACTION_STATUSES = {
   FINISHED: 'FINISHED'
 };
 
+export const TRANSACTION_STATUS_CLASSES = {
+  PENDING: 'info',
+  ACCEPTED: 'success',
+  DENIED: 'danger',
+  PROCESSING: 'warning',
+  CANCELED: 'danger',
+  FINISHED: 'success'
+};
+
 export const EQUIPMENT_STATUSES = {
   AVAILABLE: 'AVAILABLE',
   DELIVERING: 'DELIVERING',
@@ -35,6 +44,15 @@ export const MATERIAL_TRANSACTION_STATUSES = {
   DELIVERING: 'DELIVERING',
   CANCELED: 'CANCELED',
   FINISHED: 'FINISHED'
+};
+
+export const MATERIAL_TRANSACTION_STATUS_COLORS = {
+  PENDING: 'info',
+  ACCEPTED: 'success',
+  DENIED: 'danger',
+  DELIVERING: 'warning',
+  CANCELED: 'danger',
+  FINISHED: 'success'
 };
 
 /**
@@ -84,4 +102,22 @@ export const CONTRACTOR_STATUS_INFOS = {
     name: 'Deactivated',
     bsColor: 'danger',
   },
+};
+
+
+/**
+ * Date change request statuses
+ */
+export const DATE_CHANGE_REQUEST_STATUSES = {
+  PENDING: 'PENDING',
+  CANCELED: 'CANCELED',
+  ACCEPTED: 'ACCEPTED',
+  DENIED: 'DENIED',
+};
+
+export const DATE_CHANGE_REQUEST_STATUS_COLORS = {
+  PENDING: 'info',
+  CANCELED: 'danger',
+  DENIED: 'danger',
+  ACCEPTED: 'success',
 };
