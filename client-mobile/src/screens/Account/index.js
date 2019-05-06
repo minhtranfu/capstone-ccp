@@ -13,10 +13,12 @@ import {
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { SafeAreaView } from "react-navigation";
 import axios from "axios";
 import { Notifications, Permissions, Camera } from "expo";
 import { Ionicons } from "@expo/vector-icons";
+import i18n from "i18n-js";
 
 import {
   getConstructionList,
@@ -47,32 +49,37 @@ import { ACTION_NIGHT_DISPLAY_SETTINGS } from "expo/build/IntentLauncherAndroid"
 const SETTING_ITEMS_VALUE = [
   {
     id: 1,
-    value: "Edit profile",
+    value: "EditProfile",
     code: "Profile"
   },
   {
     id: 2,
-    value: "Change password",
+    value: "ChangePassword",
     code: "ChangePassword"
   },
-  // {
-  //   id: 3,
-  //   value: "NOT_VERIFIED",
-  //   code: "Verify"
-  // },
+  {
+    id: 3,
+    value: "ChangeLanguage",
+    code: "ChangeLanguage"
+  },
   {
     id: 4,
-    value: "My constructions",
-    code: "Construction"
+    value: "MyFeedback",
+    code: "MyFeedback"
   },
   {
     id: 5,
-    value: "My subscription",
-    code: "Subcription"
+    value: "MyConstruction",
+    code: "Construction"
   },
   {
     id: 6,
-    value: "Push notifications",
+    value: "MySubscription",
+    code: "Subscription"
+  },
+  {
+    id: 7,
+    value: "Notifications",
     code: "Notifications"
   }
 ];
@@ -84,26 +91,21 @@ const SETTING_ITEMS_VALUE = [
       contractor: state.contractor.detail,
       loading: state.contractor.loading,
       user: state.auth.data,
-      allowPushNotification: state.notification.allowPushNotification
+      allowPushNotification: state.notification.allowPushNotification,
+      language: state.contractor.language
     };
   },
-  dispatch => ({
-    fetchLogout: () => {
-      dispatch(logOut());
-    },
-    fetchGetConstructionList: userId => {
-      dispatch(getConstructionList(userId));
-    },
-    fetchGetContractorDetail: userId => {
-      dispatch(getContractorDetail(userId));
-    },
-    fetchRemoveNotiToken: token => {
-      dispatch(deleteNoticationToken(token));
-    },
-    fetchAllowPushNotification: () => {
-      dispatch(allowPushNotification());
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      {
+        fetchLogout: logOut,
+        fetchGetConstructionList: getConstructionList,
+        fetchGetContractorDetail: getContractorDetail,
+        fetchRemoveNotiToken: deleteNoticationToken,
+        fetchAllowPushNotification: allowPushNotification
+      },
+      dispatch
+    )
 )
 class Account extends Component {
   constructor(props) {
@@ -152,7 +154,7 @@ class Account extends Component {
     if (this.props.isLoggedIn && this.state.switchValue === true) {
       await this._handlePermissionNotification();
       await this._registerForPushNotificationsAsync();
-    } else {
+    } else if (this.props.isLoggedIn && this.state.switchValue === false) {
       this._handleRemoveToken();
     }
   }
@@ -219,6 +221,7 @@ class Account extends Component {
   _handleLogout = async () => {
     await this._handleRemoveToken();
     await AsyncStorage.removeItem("userToken");
+    await AsyncStorage.removeItem("userRefreshToken");
     this.props.fetchLogout();
   };
 
@@ -283,7 +286,7 @@ class Account extends Component {
         >
           <Header style={{ position: "relative" }}>
             <Left />
-            <Body title="Settings" />
+            <Body title={i18n.t("Settings")} />
             <Right>
               <TouchableOpacity onPress={this._handleLogout}>
                 <RNImage
@@ -306,12 +309,26 @@ class Account extends Component {
               <View>
                 {this._renderImageProfile(contractor.thumbnailImageUrl)}
                 <View style={styles.nameWrapper}>
-                  <Text style={styles.name}>{contractor.name}</Text>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Text style={styles.name}>{contractor.name}</Text>
+                    {contractor.status === "ACTIVATED" ? (
+                      <RNImage
+                        source={require("../../../assets/icons/icons8-checked.png")}
+                        style={{ marginLeft: 5, width: 20, height: 20 }}
+                      />
+                    ) : (
+                      <RNImage
+                        source={require("../../../assets/icons/icons8-warning.png")}
+                        style={{ marginLeft: 5, width: 20, height: 20 }}
+                      />
+                    )}
+                  </View>
                   {contractor.status !== "ACTIVATED" ? (
-                    <Text style={styles.text}>WAITING_FOR_VERIFFY</Text>
+                    <Text style={styles.text}>Waiting For Verify</Text>
                   ) : null}
                   <Text style={styles.text}>
-                    Joined {this._dateConverter(contractor.createdTime)}
+                    {i18n.t("Joined")}{" "}
+                    {this._dateConverter(contractor.createdTime)}
                   </Text>
                 </View>
                 <View style={styles.contentWrapper}>
@@ -337,7 +354,7 @@ class Account extends Component {
                       //     contractorId: contractor.id
                       //   })
                       // }
-                      value={item.value}
+                      value={i18n.t(item.value)}
                       onSwitchValue={this.state.switchValue}
                       onSwitchChange={this._handleOnSwitchChange}
                       onPress={() =>

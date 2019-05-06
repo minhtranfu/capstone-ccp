@@ -5,7 +5,10 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Animated,
+  Dimensions,
+  Alert
 } from "react-native";
 import { Image as ImageCache } from "react-native-expo-image-cache";
 import { connect } from "react-redux";
@@ -14,6 +17,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { updateEquipmentStatus } from "../../redux/actions/equipment";
 import { cancelTransaction } from "../../redux/actions/transaction";
 import moment from "moment";
+import Swiper from "react-native-swiper";
 
 import ParallaxList from "../../components/ParallaxList";
 import Title from "../../components/Title";
@@ -60,6 +64,8 @@ const EQUIPMENT_IN_PROGRESS = {
 
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+const { width } = Dimensions.get("window");
+
 @connect(
   (state, ownProps) => {
     const { id } = ownProps.navigation.state.params;
@@ -68,7 +74,8 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         item => item.id === id
       ),
       feedbackLoading: state.transaction.feedbackLoading,
-      user: state.auth.data
+      user: state.auth.data,
+      adjustLoading: state.transaction.adjustLoading
     };
   },
   dispatch => ({
@@ -89,6 +96,12 @@ class EquipmentDetail extends Component {
       endDate: null
     };
   }
+
+  _showAlert = msg => {
+    Alert.alert("Error", msg, [{ text: "OK" }], {
+      cancelable: true
+    });
+  };
 
   //Count total day from begin date to end date
   _countTotalDay = (fromDate, toDate) => {
@@ -132,33 +145,49 @@ class EquipmentDetail extends Component {
     this.setState({ calendarVisible: visible });
   };
 
-  _handleSelectDate = (beginDate, endDate, visible) => {
-    this.setState({
-      beginDate,
-      endDate: newToDate,
-      calendarVisible: visible
-    });
-  };
-
-  _renderCalendar = dateRange => (
-    <Calendar
-      animationType={"slide"}
-      transparent={false}
-      minDate={moment(Date.now()).format("YYYY-MM-DD")}
-      visible={this.state.calendarVisible}
-      onLeftButtonPress={() => this._setCalendarVisible(false)}
-      onSelectDate={this._handleSelectDate}
-      notAvailableDateRange={dateRange}
-    />
+  _renderSlideItem = (uri, key, loaded) => (
+    <View style={styles.slide} key={key}>
+      <ImageCache
+        style={styles.imageSlide}
+        uri={
+          uri ||
+          "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+        }
+        resizeMode={"contain"}
+      />
+    </View>
   );
 
-  _handleSelectDate = (beginDate, endDate, visible) => {
+  _renderCalendar = dateRange => {
+    const newBeginDate =
+      new Date(dateRange.beginDate) < new Date(Date.now)
+        ? Date.now()
+        : dateRange.beginDate;
+    if (new Date(dateRange.endDate) <= new Date(Date.now())) {
+      console.log("ahihi");
+    }
+    return (
+      <Calendar
+        animationType={"slide"}
+        transparent={false}
+        minDate={moment(newBeginDate).format("YYYY-MM-DD")}
+        maxDate={moment(dateRange.endDate).format("YYYY-MM-DD")}
+        visible={this.state.calendarVisible}
+        onLeftButtonPress={() => this._setCalendarVisible(false)}
+        onSelectDate={this._handleSelectDate}
+        single={true}
+      />
+    );
+  };
+
+  _handleSelectDate = (date, visible) => {
     const { id } = this.props.navigation.state.params;
-    this.setState({ calendarVisible: visible });
-    const newEndDate = endDate ? endDate : moment(beginDate).add(30, "days");
+    const { detail } = this.props;
+    this.setState({
+      calendarVisible: visible
+    });
     this.props.navigation.navigate("ConfirmAdjustDate", {
-      beginDate,
-      endDate: newEndDate,
+      date,
       id
     });
   };
@@ -196,7 +225,8 @@ class EquipmentDetail extends Component {
     status,
     equipmentStatus,
     transactionId,
-    hasFeedback
+    hasFeedback,
+    dateRange
   ) => {
     switch (status) {
       case "FINISHED":
@@ -230,8 +260,14 @@ class EquipmentDetail extends Component {
         return (
           <View style={styles.columnWrapper}>
             <Button
-              text={"Extend Time Range"}
-              onPress={() => this._setCalendarVisible(true)}
+              text={"Extend hiring time to"}
+              disabled={!!this.props.adjustLoading}
+              style={{ opacity: this.props.adjustLoading ? 0.5 : 1 }}
+              onPress={() =>
+                dateRange
+                  ? this._setCalendarVisible(true)
+                  : this._showAlert("No time range available")
+              }
               wrapperStyle={{ marginTop: 15, marginBottom: 15 }}
             />
           </View>
@@ -239,8 +275,14 @@ class EquipmentDetail extends Component {
       case "PROCESSING":
         return equipmentStatus === "WAITING_FOR_RETURNING" ? (
           <Button
-            text={"Extend Time Range"}
-            onPress={() => this._setCalendarVisible(true)}
+            text={"Extend hiring time to"}
+            disabled={!!this.props.adjustLoading}
+            style={{ opacity: this.props.adjustLoading ? 0.5 : 1 }}
+            onPress={() =>
+              dateRange
+                ? this._setCalendarVisible(true)
+                : this._showAlert("No time range available")
+            }
             wrapperStyle={{ marginTop: 15, marginBottom: 15 }}
           />
         ) : (
@@ -248,8 +290,14 @@ class EquipmentDetail extends Component {
             {equipmentStatus === "RENTING" ? (
               <View>
                 <Button
-                  text={"Extend Time Range"}
-                  onPress={() => this._setCalendarVisible(true)}
+                  text={"Extend hiring time to"}
+                  disabled={!!this.props.adjustLoading}
+                  style={{ opacity: this.props.adjustLoading ? 0.5 : 1 }}
+                  onPress={() =>
+                    dateRange
+                      ? this._setCalendarVisible(true)
+                      : this._showAlert("No time range available")
+                  }
                   wrapperStyle={{ marginTop: 15 }}
                 />
                 <Button
@@ -267,8 +315,14 @@ class EquipmentDetail extends Component {
             ) : (
               <View>
                 <Button
-                  text={"Extend Time Range"}
-                  onPress={() => this._setCalendarVisible(true)}
+                  text={"Extend hiring time to"}
+                  disabled={!!this.props.adjustLoading}
+                  style={{ opacity: this.props.adjustLoading ? 0.5 : 1 }}
+                  onPress={() =>
+                    dateRange
+                      ? this._setCalendarVisible(true)
+                      : this._showAlert("No time range available")
+                  }
                   wrapperStyle={{ marginTop: 15 }}
                 />
                 <Button
@@ -293,26 +347,102 @@ class EquipmentDetail extends Component {
     return null;
   };
 
-  _renderScrollViewItem = detail => {
+  _findTimeRange = (timeRange, beginDate, endDate, activeHiringTimeRange) => {
+    console.log("a", timeRange);
+    for (var i = 0; i < timeRange.length; i++) {
+      if (
+        new Date(timeRange[i].beginDate) <= new Date(beginDate) &&
+        new Date(timeRange[i].endDate) >= new Date(endDate)
+      ) {
+        //let variable;
+        // for (var z = 0; z < activeHiringTimeRange.length; z++) {
+        //   if (
+        //     new Date(timeRange[i].beginDate) <=
+        //       new Date(activeHiringTimeRange[z].beginDate) &&
+        //     new Date(timeRange[i].endDate) >=
+        //       new Date(activeHiringTimeRange[z].endDate)
+        //   ) {
+        //     if (
+        //       !variable &&
+        //       new Date(endDate) <= new Date(activeHiringTimeRange[z].beginDate)
+        //     ) {
+        //       variable = {
+        //         beginDate: endDate,
+        //         endDate: activeHiringTimeRange[z].beginDate
+        //       };
+        //       if (
+        //         variable.beginDate <=
+        //         new Date(activeHiringTimeRange[z].beginDate)
+        //       ) {
+        //         variable = {
+        //           beginDate: endDate,
+        //           endDate: activeHiringTimeRange[z].beginDate
+        //         };
+        //       }
+        //     }
+        //   }
+        //   if (variable) {
+        //     return {
+        //       beginDate: moment(variable.beginDate)
+        //         .add(1, "days")
+        //         .format("YYYY-MM-DD"),
+        //       endDate: variable.endDate
+        //     };
+        //   }
+        // }
+        const newActiveHiringRange = activeHiringTimeRange.sort(
+          (a, b) => new Date(a.beginDate) - new Date(b.beginDate)
+        );
+        for (var z = 0; z < newActiveHiringRange.length; z++) {
+          if (
+            new Date(timeRange[i].beginDate) <=
+              new Date(newActiveHiringRange[z].beginDate) &&
+            new Date(timeRange[i].endDate) >=
+              new Date(newActiveHiringRange[z].endDate)
+          ) {
+            if (
+              new Date(endDate) <= new Date(newActiveHiringRange[z].beginDate)
+            ) {
+              const newDateRange = {
+                beginDate: moment(endDate)
+                  .add(1, "days")
+                  .format("YYYY-MM-DD"),
+                endDate: newActiveHiringRange[z].beginDate
+              };
+            }
+          }
+        }
+        if (new Date(timeRange[i].beginDate) <= new Date(endDate)) {
+          const newDateRange = {
+            beginDate: moment(endDate)
+              .add(1, "days")
+              .format("YYYY-MM-DD"),
+            endDate: timeRange[i].endDate
+          };
+          return newDateRange;
+        }
+      }
+    }
+    return null;
+  };
+
+  _renderScrollViewItem = () => {
+    const { detail } = this.props;
     const end = moment(detail.endDate);
     const begin = moment(detail.beginDate);
     const duration = moment.duration(end.diff(begin));
     const days = duration.asDays() + 1;
     const totalPrice = days * detail.dailyPrice;
-    const dateRange = detail.equipment.activeHiringTransactions.map(item => ({
-      beginDate: item.beginDate,
-      endDate: item.endDate
-    }));
+
+    const dateRange = this._findTimeRange(
+      detail.equipment.availableTimeRanges,
+      detail.beginDate,
+      detail.endDate,
+      detail.equipment.activeHiringTransactions
+    );
     console.log(detail);
     return (
-      <View style={{ paddingHorizontal: 15 }}>
-        <ImageCache
-          uri={
-            "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
-          }
-          resizeMode={"cover"}
-          style={styles.image}
-        />
+      <View style={{ paddingHorizontal: 15, paddingTop: 20 }}>
         <Text style={styles.title}>{detail.equipment.name}</Text>
         <Text
           style={{ fontSize: fontSize.secondaryText, color: colors.text50 }}
@@ -345,51 +475,70 @@ class EquipmentDetail extends Component {
             <Text style={styles.price}>{totalPrice} K</Text>
           </View>
         </View>
-        <View>
-          <Title title={"Contractor"} />
-          <TouchableOpacity
-            style={styles.rowWrapper}
-            onPress={() =>
-              this.props.navigation.navigate("ContractorProfile", {
-                id: detail.equipment.contractor.id
-              })
-            }
+        <Title title={"Images list"} />
+        {detail.equipment.equipmentImages.length > 0 ? (
+          <Swiper
+            style={styles.slideWrapper}
+            loop={false}
+            loadMinimal
+            loadMinimalSize={1}
+            activeDotColor={colors.secondaryColor}
+            activeDotStyle={{ width: 30 }}
           >
-            <View>
-              <ImageCache
-                uri={
-                  "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
-                }
-                style={styles.avatar}
-                resizeMode={"cover"}
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: "column",
-                paddingLeft: 15
-              }}
-            >
-              <Text style={styles.text}>
-                Name: {detail.equipment.contractor.name}
-              </Text>
-              <Text style={styles.text}>
-                Phone: {detail.equipment.contractor.phoneNumber}
-              </Text>
-              <Text style={styles.text}>
-                Email: {detail.equipment.contractor.email}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        {this._renderCalendar(dateRange)}
+            {detail.equipment.equipmentImages
+              .slice(0, 4)
+              .map((item, index) => this._renderSlideItem(item.url, index))}
+          </Swiper>
+        ) : (
+          <Text style={styles.text}>No images available</Text>
+        )}
+
+        <Title title={"Contractor"} />
+        <TouchableOpacity
+          style={styles.rowWrapper}
+          onPress={() =>
+            this.props.navigation.navigate("ContractorProfile", {
+              id: detail.equipment.contractor.id
+            })
+          }
+        >
+          <View>
+            <ImageCache
+              uri={
+                detail.equipment.contractor.thumbnailImageUrl ||
+                "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
+              }
+              style={styles.avatar}
+              resizeMode={"cover"}
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: "column",
+              paddingLeft: 15
+            }}
+          >
+            <Text style={styles.text}>
+              Name: {detail.equipment.contractor.name}
+            </Text>
+            <Text style={styles.text}>
+              Phone: {detail.equipment.contractor.phoneNumber}
+            </Text>
+            <Text style={styles.text}>
+              Email: {detail.equipment.contractor.email}
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {dateRange ? this._renderCalendar(dateRange) : null}
         {this._renderStepProgress(detail.status, detail.equipment.status)}
         {this._renderBottomButton(
           detail.equipment.id,
           detail.status,
           detail.equipment.status,
           detail.id,
-          detail.feedbacked
+          detail.feedbacked,
+          dateRange
         )}
       </View>
     );
@@ -402,21 +551,20 @@ class EquipmentDetail extends Component {
         style={styles.container}
         forceInset={{ bottom: "never", top: "always" }}
       >
-        <Header
-          renderLeftButton={() => (
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.goBack();
-              }}
-            >
-              <Feather name="chevron-left" size={24} />
-            </TouchableOpacity>
-          )}
-        >
-          <Text style={styles.header}>Equipment request</Text>
-        </Header>
         {detail ? (
-          <ScrollView>{this._renderScrollViewItem(detail)}</ScrollView>
+          <ParallaxList
+            title={detail.equipment.name}
+            removeTitle={true}
+            hasThumbnail={true}
+            imageURL={
+              detail.equipment.thumbnailImage
+                ? detail.equipment.thumbnailImage.url
+                : "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
+            }
+            hasLeft={true}
+            scrollElement={<Animated.ScrollView />}
+            renderScrollItem={this._renderScrollViewItem}
+          />
         ) : (
           <Loading />
         )}
@@ -487,6 +635,19 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginLeft: 15 + 3,
     marginTop: 3
+  },
+  slideWrapper: {
+    height: 200
+  },
+  slide: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "transparent"
+  },
+  imageSlide: {
+    width: width,
+    height: 200,
+    backgroundColor: "transparent"
   }
 });
 

@@ -84,3 +84,19 @@ export function deleteNoticationToken(tokenId) {
     });
   };
 }
+
+export function countNotification() {
+  return dispatch => {
+    dispatch({
+      type: Actions.COUNT_NOTIFICATION
+    });
+  };
+}
+
+export function countTotalNotification() {
+  return dispatch => {
+    dispatch({
+      type: Actions.COUNT_TOTAL_NOTIFICATION
+    });
+  };
+}

@@ -11,14 +11,16 @@ import {
   InteractionManager
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
+import { Image as ImageCache } from "react-native-expo-image-cache";
 import MapView, { Marker } from "react-native-maps";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import Calendar from "react-native-calendar-select";
+import Calendar from "../../components/Calendar";
 import Swiper from "react-native-swiper";
 import { getEquipmentDetail } from "../../redux/actions/equipment";
 import moment from "moment";
+import { Rating } from "react-native-ratings";
 
 import WithRangeCalendar from "../../components/WithRangeCalendar";
 import CustomFlatList from "../../components/CustomFlatList";
@@ -49,16 +51,7 @@ class SearchDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      modalVisible: false,
       selectedDate: "",
-      startDate: "",
-      endDate: "",
-      minDate: "",
-      maxDate: "",
-      loadQueue: [0, 0, 0, 0],
-      fromDate: "",
-      toDate: "",
-      calendarVisible: false,
       isModalOpen: false,
       date: {},
       finishedAnimation: false
@@ -89,11 +82,7 @@ class SearchDetail extends Component {
 
   _renderSlideItem = (uri, key, loaded) => (
     <View style={styles.slide} key={key}>
-      <Image
-        style={styles.imageSlide}
-        source={{ uri: uri }}
-        resizeMode={"contain"}
-      />
+      <ImageCache style={styles.imageSlide} uri={uri} resizeMode={"contain"} />
     </View>
   );
 
@@ -107,10 +96,9 @@ class SearchDetail extends Component {
     return this._formatDate(result);
   };
 
-  _handleDateChanged = (id, selectedDate) => {
+  _handleDateChanged = (id, price, selectedDate) => {
     const { name } = this.props.detail.equipmentEntity;
     const { query } = this.props.navigation.state.params;
-    console.log(id);
     let newToDate = selectedDate.endDate
       ? selectedDate.endDate
       : this._handleAddMoreMonth(selectedDate.startDate, 3);
@@ -122,12 +110,25 @@ class SearchDetail extends Component {
     this.props.navigation.navigate("ConfirmTransaction", {
       equipment: equipment,
       name: name,
-      query: query
+      query: query,
+      price
     });
   };
 
-  renderDateTimeModal = (id, dateRange) => {
+  _renderDateTimeModal = (id, price, dateRange) => {
     const { isModalOpen } = this.state;
+    const { beginDate, endDate } = this.props.navigation.state.params;
+    const selectedDate = {
+      beginDate,
+      endDate
+    };
+    const newDateRange = dateRange
+      .filter(item => new Date(item.endDate) > new Date(Date.now()))
+      .map(item =>
+        new Date(item.beginDate) <= new Date(Date.now())
+          ? { ...item, beginDate: moment(Date.now()).format("YYYY-MM-DD") }
+          : item
+      );
     return (
       <Modal visible={isModalOpen}>
         <View
@@ -135,44 +136,20 @@ class SearchDetail extends Component {
         >
           <WithRangeCalendar
             onConfirm={date => {
-              this._handleDateChanged(id, date);
+              this._handleDateChanged(id, price, date);
               this.setState(() => ({ isModalOpen: false }));
             }}
             onClose={() => this.setState(() => ({ isModalOpen: false }))}
             single={true}
-            availableDateRange={dateRange}
+            availableDateRange={newDateRange}
+            selectedDate={selectedDate}
           />
         </View>
       </Modal>
     );
   };
 
-  _onSelectDate = (fromDate, toDate, modalVisible) => {
-    const { id } = this.props.detail.equipmentEntity;
-    let newToDate = toDate ? toDate : this._handleAddMoreMonth(fromDate, 3);
-    const cart = {
-      equipment: {
-        id: id
-      },
-      beginDate: fromDate,
-      endDate: newToDate
-    };
-    this.props.navigation.navigate("ConfirmCart", { cart });
-  };
-  _onAddToCart = ({ startDate, endDate }) => {
-    const { id } = this.props.detail.equipmentEntity;
-    // this.setState({ fromDate, toDate, calendarVisible: false });
-    const cart = {
-      equipment: {
-        id: id
-      },
-      beginDate: this._handleFormatDate(startDate),
-      endDate: this._handleFormatDate(endDate)
-    };
-    this.props.navigation.navigate("ConfirmCart", { cart });
-  };
-
-  _showAvailableTimeRange = (item, index) => {
+  _showAvailableTimeRange = (index, item) => {
     return (
       <View key={index} style={styles.dateBoxWrapper}>
         <View>
@@ -205,18 +182,13 @@ class SearchDetail extends Component {
     const {
       name,
       contractor,
-      location,
-      available,
       availableTimeRanges,
       status,
       address,
       dailyPrice,
-      deliveryPrice,
       description,
-      thumbnailImage,
       equipmentImages,
-      latitude,
-      longitude
+      construction
     } = this.props.detail.equipmentEntity;
     console.log(this.props.detail);
     return (
@@ -242,10 +214,41 @@ class SearchDetail extends Component {
             >
               {status}
             </Text>
-            <Text style={[styles.text, { fontWeight: "600", marginBottom: 5 }]}>
-              {contractor.name}
-            </Text>
-            <Text style={styles.text}>Phone: {contractor.phoneNumber}</Text>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center" }}
+              onPress={() =>
+                this.props.navigation.navigate("ContractorProfile", {
+                  id: contractor.id
+                })
+              }
+            >
+              <ImageCache
+                uri={contractor.thumbnailImageUrl}
+                resizeMode={"contain"}
+                style={{ width: 50, height: 50, borderRadius: 25 }}
+              />
+              <View
+                style={{
+                  paddingLeft: 15,
+                  flexDirection: "column"
+                }}
+              >
+                <Text
+                  style={[styles.text, { fontWeight: "600", marginBottom: 5 }]}
+                >
+                  {contractor.name}
+                </Text>
+                <Text style={styles.text}>Phone: {contractor.phoneNumber}</Text>
+                <Rating
+                  readonly={true}
+                  ratingCount={5}
+                  fractions={1}
+                  startingValue={contractor.averageEquipmentRating}
+                  imageSize={20}
+                  style={{ alignSelf: "flex-start" }}
+                />
+              </View>
+            </TouchableOpacity>
           </View>
           <View
             style={{
@@ -292,20 +295,23 @@ class SearchDetail extends Component {
           style={[styles.text, { color: colors.text68, alignItems: "center" }]}
         >
           <MaterialIcons name={"location-on"} size={15} color={colors.text68} />
-          {address}
+          {construction.address}
         </Text>
         {this.state.finishedAnimation && (
           <MapView
             style={styles.mapWrapper}
             initialRegion={{
-              latitude: latitude,
-              longitude: longitude,
+              latitude: construction.latitude,
+              longitude: construction.longitude,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421
             }}
           >
             <Marker
-              coordinate={{ latitude: latitude, longitude: longitude }}
+              coordinate={{
+                latitude: construction.latitude,
+                longitude: construction.longitude
+              }}
               title={"Contractor location"}
               image={require("../../../assets/icons/icon8-marker-96.png")}
             />
@@ -338,8 +344,9 @@ class SearchDetail extends Component {
           renderScrollItem={this._renderScrollItem}
         />
 
-        {this.renderDateTimeModal(
+        {this._renderDateTimeModal(
           detail.equipmentEntity.id,
+          detail.equipmentEntity.dailyPrice,
           detail.equipmentEntity.availableTimeRanges
         )}
         <SafeAreaView

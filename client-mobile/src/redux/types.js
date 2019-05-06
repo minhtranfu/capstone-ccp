@@ -91,6 +91,9 @@ export const SEND_ADJUST_TRANSACTION = renderActions(
 export const REQUEST_ADJUST_TRANSACTION = renderActions(
   "@@transaction/REQUEST_ADJUST_TRANSACTION"
 );
+export const RESPONSE_ADJUST_TRANSACTION = renderActions(
+  "@@transaction/RESPONSE_ADJUST_TRANSACTION"
+);
 export const DELETE_ADJUST_TRANSACTION = renderActions(
   "@@transaction/DELETE_ADJUST_TRANSACTION"
 );
@@ -303,3 +306,7 @@ export const REGISTER = renderActions("@@auth/REGISTER");
 
 //UPLOAD
 export const RESET_EQUIPMENT_IMAGE = "@@equip/RESET_EQUIPMENT_IMAGE";
+
+export const COUNT_NOTIFICATION = "@@notification/COUNT_NOTIFICATION";
+export const COUNT_TOTAL_NOTIFICATION =
+  "@@notification/COUNT_TOTAL_NOTIFICATION";

@@ -128,8 +128,8 @@ class AddConstruction extends Component {
       <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
         <Header
           renderLeftButton={() => (
-            <TouchableOpacity onPress={() => this._setModalVisible(false)}>
-              <Feather name="x" size={24} />
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+              <Feather name="chevron-left" size={24} />
             </TouchableOpacity>
           )}
         >

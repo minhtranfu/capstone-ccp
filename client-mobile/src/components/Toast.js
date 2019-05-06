@@ -11,12 +11,21 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { goToNotification } from "../Utils/Helpers";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { countNotification } from "../redux/actions/notification";
+import { SafeAreaView } from "react-navigation";
 
 import fontSize from "../config/fontSize";
 import colors from "../config/colors";
 
 const { width } = Dimensions.get("window");
 
+@connect(
+  state => ({}),
+  dispatch =>
+    bindActionCreators({ fetchCountNotification: countNotification }, dispatch)
+)
 class ShowToast extends Component {
   static propTypes = {
     message: PropTypes.object
@@ -31,12 +40,11 @@ class ShowToast extends Component {
 
   show = () => {
     Animated.spring(this.state.y, {
-      tension: 10,
       toValue: 5
     }).start();
-    this.setState({
-      visible: true
-    });
+    // this.setState({
+    //   visible: true
+    // });
   };
 
   hide = () => {
@@ -50,16 +58,18 @@ class ShowToast extends Component {
   };
 
   componentDidMount() {
+    this.props.fetchCountNotification();
     setTimeout(() => this.show(), 1000); // show toast after 1s
 
-    setTimeout(() => this.hide(), 4000); // hide toast after 4s
+    setTimeout(() => this.hide(), 4000); // hide toast after 3s
   }
 
   componentDidUpdate(prevProp) {
     if (prevProp.message !== this.props.message) {
+      this.props.fetchCountNotification();
       setTimeout(() => this.show(), 1000); // show toast after 1s
 
-      setTimeout(() => this.hide(), 4000); // hide toast after 4s
+      setTimeout(() => this.hide(), 3000); // hide toast after 3s
     }
   }
 
@@ -69,46 +79,49 @@ class ShowToast extends Component {
 
   render() {
     const { message } = this.props;
+    console.log(message);
     let parts = message.clickAction.split("/");
     return (
-      <Modal transparent={true} visible={this.state.visible}>
-        <Animated.View
-          style={[
-            styles.container,
-            {
-              transform: [
-                {
-                  translateY: this.state.y
-                }
-              ]
-            }
-          ]}
+      // <Modal transparent={false} visible={this.state.visible}>
+      <Animated.View
+        style={[
+          styles.container,
+          {
+            transform: [
+              {
+                translateY: this.state.y
+              }
+            ]
+          }
+        ]}
+      >
+        <TouchableOpacity
+          style={{
+            flexDirection: "row",
+            alignItems: "center"
+          }}
+          onPress={() => goToNotification()}
         >
-          <TouchableOpacity
-            style={{
-              flexDirection: "row",
-              alignItems: "center"
-            }}
-            onPress={() => goToNotification()}
-          >
-            <View>
-              <Text style={styles.title}>
-                {this._capitializeLetter(parts[0])} #{parts[1]}
-              </Text>
-              <Text style={styles.text}>{message.title}</Text>
-              <Text style={styles.content}>{message.body}</Text>
-            </View>
-          </TouchableOpacity>
-        </Animated.View>
-      </Modal>
+          <View>
+            <Text style={styles.title}>
+              {this._capitializeLetter(parts[0])} #{parts[1]}
+            </Text>
+            <Text style={styles.text}>{message.title}</Text>
+            <Text style={styles.content}>{message.body}</Text>
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+
+      // </Modal>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    position: "absolute",
     width: width - 6,
-    height: 80,
+    height: 100,
     backgroundColor: "#c8e6c9",
     borderRadius: 8,
     marginHorizontal: 3,

@@ -11,13 +11,24 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import {
   listTransactionByRequester,
   listMaterialTransactionByRequester,
   listDebrisTransactionByRequester
 } from "../../redux/actions/transaction";
+import {
+  countTotalNotification,
+  getAllNotification
+} from "../../redux/actions/notification";
 import RequireLogin from "../Login/RequireLogin";
 import Feather from "@expo/vector-icons/Feather";
+import i18n from "i18n-js";
+import {
+  DROPDOWN_OPTIONS,
+  TRANSACTION_STATUSES,
+  TABS
+} from "../../Utils/Constants";
 
 import DebrisTab from "./DebrisTab";
 import MaterialTab from "./MaterialTab";
@@ -37,62 +48,6 @@ import DebrisItem from "../../components/DebrisItem";
 import DebrisSearchItem from "../../components/DebrisSearchItem";
 import { COLORS } from "../../Utils/Constants";
 
-const DROPDOWN_OPTIONS = [
-  {
-    id: 0,
-    name: "All Statuses",
-    value: "All Statuses"
-  },
-  {
-    id: 1,
-    name: "Pending",
-    value: "Pending"
-  },
-  {
-    id: 2,
-    name: "Accepted",
-    value: "Accepted"
-  },
-  {
-    id: 3,
-    name: "Processing",
-    value: "Processing"
-  },
-  {
-    id: 4,
-    name: "Finished",
-    value: "Finished"
-  },
-  {
-    id: 5,
-    name: "Denied",
-    value: "Denied"
-  }
-];
-
-const TRANSACTION_STATUSES = [
-  {
-    code: "PENDING",
-    title: "Pending"
-  },
-  {
-    code: "ACCEPTED",
-    title: "Accepted"
-  },
-  {
-    code: "PROCESSING",
-    title: "Processing"
-  },
-  {
-    code: "FINISHED",
-    title: "Finished"
-  },
-  {
-    code: "DENIED",
-    title: "Denied"
-  }
-];
-
 const EQUIPMENT_STATUS = {
   AVAILABLE: "Available",
   PENDING: "Pending",
@@ -108,6 +63,7 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 @connect(
   state => {
+    console.log(state.notification);
     return {
       isLoggedIn: state.auth.userIsLoggin,
       loading: state.transaction.loading,
@@ -115,20 +71,19 @@ const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       listMaterial: state.transaction.listRequesterMaterial,
       listDebrisTransaction: state.transaction.listRequesterDebris,
       user: state.auth.data,
-      token: state.auth.token
+      token: state.auth.token,
+      countNotification: state.notification.countNotification
     };
   },
-  dispatch => ({
-    fetchRequesterTransaction: contractorId => {
-      dispatch(listTransactionByRequester(contractorId));
-    },
-    fetchRequesterMaterial: contractorId => {
-      dispatch(listMaterialTransactionByRequester(contractorId));
-    },
-    fetchGetRequesterDebris: () => {
-      dispatch(listDebrisTransactionByRequester());
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      {
+        fetchRequesterTransaction: listTransactionByRequester,
+        fetchRequesterMaterial: listMaterialTransactionByRequester,
+        fetchGetRequesterDebris: listDebrisTransactionByRequester
+      },
+      dispatch
+    )
 )
 class MyRequest extends Component {
   constructor(props) {
@@ -263,7 +218,7 @@ class MyRequest extends Component {
           label={"Filter"}
           defaultText={"All Statuses"}
           onSelectValue={value => this.setState({ status: value })}
-          options={DROPDOWN_OPTIONS}
+          options={DROPDOWN_OPTIONS.REQUEST}
           isHorizontal={true}
         />
         <View>
@@ -271,7 +226,6 @@ class MyRequest extends Component {
             const equipmentList = this._handleFilterStatusResult(status.code);
             //Hide section if there is no equipment
             if (equipmentList.length === 0) return null;
-
             // Otherwise, display the whole list
             return (
               <View key={`sec_${idx}`}>
@@ -303,6 +257,7 @@ class MyRequest extends Component {
                           : "https://www.extremesandbox.com/wp-content/uploads/Extreme-Sandbox-Corportate-Events-Excavator-Lifting-Car.jpg"
                       }
                       avatarURL={
+                        item.equipment.contractor.thumbnailImageUrl ||
                         "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
                       }
                       status={this._capitalizeCharacter(item.status)}
@@ -316,10 +271,6 @@ class MyRequest extends Component {
                       hasEquipmentStatus={true}
                       hasStatus={true}
                     />
-                    {/* {this._renderBottomStatus(
-                      item.status,
-                      item.equipment.status
-                    )} */}
                   </View>
                 ))}
               </View>
@@ -343,25 +294,53 @@ class MyRequest extends Component {
     }
   };
 
+  _showNotificationIcon = () => {
+    console.log(this.props.user);
+    return (
+      <TouchableOpacity
+        onPress={() => this.props.navigation.navigate("Notification")}
+      >
+        <Feather name="bell" size={20} />
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#FF0000",
+            borderRadius: 5,
+            width: 13,
+            position: "absolute",
+            top: 1,
+            right: 1,
+            margin: -1
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+
+              textAlign: "center",
+              fontSize: 9
+            }}
+          >
+            {this.props.user.contractor.totalUnreadNotifications}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   render() {
     const { navigation, isLoggedIn, loading, status } = this.props;
     const { activeTab } = this.state;
+    console.log(this.props.countNotification);
     if (isLoggedIn) {
       return (
         <SafeAreaView style={styles.container} forceInset={{ top: "always" }}>
-          <Header
-            renderRightButton={() => (
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("Notification")}
-              >
-                <Feather name="bell" size={20} />
-              </TouchableOpacity>
-            )}
-          >
-            <Text style={styles.header}>My Request</Text>
+          <Header renderRightButton={this._showNotificationIcon}>
+            <Text style={styles.header}>{i18n.t("MyRequest.Name")}</Text>
           </Header>
           <TabView
-            tabs={["Equipments", "Material", "Debris"]}
+            tabs={TABS.transaction.map(item => i18n.t(`MyRequest.${item}`))}
             onChangeTab={this._onChangeTab}
             activeTab={activeTab}
           />

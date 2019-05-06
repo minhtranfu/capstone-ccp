@@ -15,7 +15,7 @@ const persistConfig = {
     "upload",
     "debris",
     "subscription",
-    "cart"
+    "notification"
   ]
 };
 

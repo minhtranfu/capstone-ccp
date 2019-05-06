@@ -5,12 +5,27 @@ const INITIAL_STATE = {
   readNoti: false,
   listNotification: [],
   token: {},
-  allowPushNotification: false
+  allowPushNotification: false,
+  countNotification: 0
 };
 
 export default function notificationReducer(state = INITIAL_STATE, action) {
   const { type, payload } = action;
   switch (type) {
+    case Actions.COUNT_NOTIFICATION: {
+      return {
+        ...state,
+        countNotification: state.countNotification + 1
+      };
+    }
+    case Actions.COUNT_TOTAL_NOTIFICATION: {
+      return {
+        ...state,
+        countNotification: state.listNotification.filter(
+          item => item.read === false
+        ).length
+      };
+    }
     case Actions.ALLOW_PUSH_NOTIFICATION.SUCCESS: {
       return {
         ...state,

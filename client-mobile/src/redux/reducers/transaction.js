@@ -86,7 +86,14 @@ export default function transactionReducer(state = initialState, action) {
         loading: false,
         listRequesterTransaction: state.listRequesterTransaction.map(item =>
           item.id === payload.transactionId
-            ? (item.equipment.status = payload.data.data.status)
+            ? {
+                ...item,
+                status: payload.data.data.processingHiringTransaction.status,
+                equipment: {
+                  ...item.equipment,
+                  status: payload.data.data.status
+                }
+              }
             : item
         )
       };
@@ -130,7 +137,7 @@ export default function transactionReducer(state = initialState, action) {
       return {
         ...state,
         adjustLoading: false,
-        adjustTransaction: payload.data
+        adjustTransaction: payload.data.items
       };
     case Actions.SEND_ADJUST_TRANSACTION.REQUEST:
       return {
@@ -153,6 +160,31 @@ export default function transactionReducer(state = initialState, action) {
         ...state,
         adjustLoading: false,
         adjustTransaction: payload.data
+      };
+    case Actions.REQUEST_ADJUST_TRANSACTION.ERROR:
+      return {
+        ...state,
+        adjustLoading: false
+      };
+    case Actions.RESPONSE_ADJUST_TRANSACTION.REQUEST:
+      return {
+        ...state,
+        adjustLoading: true
+      };
+    case Actions.RESPONSE_ADJUST_TRANSACTION.SUCCESS:
+      return {
+        ...state,
+        adjustLoading: false,
+        adjustTransaction: state.adjustTransaction.map(item =>
+          item.id == payload.id
+            ? { ...item, status: payload.data.data.status }
+            : item
+        )
+      };
+    case Actions.RESPONSE_ADJUST_TRANSACTION.ERROR:
+      return {
+        ...state,
+        adjustLoading: false
       };
     case Actions.DELETE_ADJUST_TRANSACTION.REQUEST:
       return {

@@ -22,7 +22,7 @@ class SettingItem extends PureComponent {
       status,
       onVerifyPress
     } = this.props;
-    if (value === "Push notifications")
+    if (value === "Push notifications" || value === "Gửi thông báo")
       return (
         <View style={styles.container}>
           <Text style={styles.text}>{value}</Text>

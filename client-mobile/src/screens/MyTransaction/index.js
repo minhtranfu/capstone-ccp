@@ -19,6 +19,8 @@ import {
   listDebrisTransactionBySupplier,
   clearSupplierTransactionList
 } from "../../redux/actions/transaction";
+import i18n from "i18n-js";
+import { TABS, TRANSACTION_STATUSES } from "../../Utils/Constants";
 
 import DebrisTab from "./DebrisTab";
 import MaterialTab from "./MaterialTab";
@@ -35,33 +37,6 @@ import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
 import Loading from "../../components/Loading";
 import { COLORS } from "../../Utils/Constants";
-
-const TRANSACTION_STATUSES = [
-  {
-    code: "PENDING",
-    title: "Pending" // On Waiting,
-  },
-  {
-    code: "ACCEPTED",
-    title: "Accepted"
-  },
-  {
-    code: "PROCESSING",
-    title: "Processing"
-  },
-  {
-    code: "FINISHED",
-    title: "Finished"
-  },
-  {
-    code: "DENIED",
-    title: "Denied"
-  },
-  {
-    code: "CANCEL",
-    title: "Cancel"
-  }
-];
 
 const DROPDOWN_OPTIONS = [
   {
@@ -246,6 +221,7 @@ class MyTransaction extends Component {
                       : null
                   }
                   avatarURL={
+                    item.requester.thumbnailImageUrl ||
                     "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
                   }
                   status={this._capitalizeCharacter(item.status)}
@@ -313,10 +289,10 @@ class MyTransaction extends Component {
         forceInset={{ bottom: "never", top: "always" }}
       >
         <Header>
-          <Text style={styles.header}>Contracts</Text>
+          <Text style={styles.header}>{i18n.t("Contract.Name")}</Text>
         </Header>
         <TabView
-          tabs={["Equipments", "Materials", "Debris"]}
+          tabs={TABS.transaction.map(item => i18n.t(`Contract.${item}`))}
           onChangeTab={this._onChangeTab}
           activeTab={activeTab}
         />

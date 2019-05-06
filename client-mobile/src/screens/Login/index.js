@@ -71,14 +71,14 @@ class Login extends Component {
         forceInset={{ bottom: "always", top: "always" }}
       >
         <StatusBar barStyle="dark-content" />
-        {navigation.state.params && navigation.state.params.isModal && (
+        {/* {navigation.state.params && navigation.state.params.isModal && (
           <TouchableOpacity
             style={{ marginRight: 30, alignSelf: "flex-end", zIndex: 100 }}
             onPress={() => this.props.navigation.goBack()}
           >
             <Feather name="x" size={22} color={colors.primaryColor} />
           </TouchableOpacity>
-        )}
+        )} */}
 
         <ScrollView
           contentContainerStyle={{

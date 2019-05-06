@@ -6,10 +6,13 @@ import {
   TouchableOpacity,
   Animated,
   Alert,
-  ScrollView
+  ScrollView,
+  TextInput
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { Feather, Ionicons } from "@expo/vector-icons";
+import axios from "axios";
+import moment from "moment";
 
 import Calendar from "../../../components/Calendar";
 import Loading from "../../../components/Loading";
@@ -29,9 +32,34 @@ class AddDuration extends PureComponent {
       calendarIndex: 0,
       fromDate: "",
       toDate: "",
-      endDateRange: ""
+      endDateRange: "",
+      dailyPrice: 0,
+      suggestPrice: 0,
+      loading: false
     };
   }
+
+  componentDidMount() {
+    this._handleLoadSuggestPrice();
+  }
+
+  _handleLoadSuggestPrice = async () => {
+    const { data } = this.props.navigation.state.params;
+    const type = {
+      equipmentType: data.equipmentType,
+      additionalSpecsValues: data.additionalSpecsValues
+    };
+    this.setState({ loading: true });
+    const res = await axios.post("equipments/suggestedPrice", type);
+    if (res) {
+      this.setState({
+        suggestPrice: res.data.suggestedPrice,
+        loading: false
+      });
+    } else {
+      this.setState({ loading: false });
+    }
+  };
 
   _handleAddMore = () => {
     const { beginDate, endDate, index } = this.state;
@@ -96,6 +124,7 @@ class AddDuration extends PureComponent {
 
   _renderCalendar = (id, beginDate, endDate) => {
     const { timeRanges } = this.state;
+    console.log("asd", this._formatDate(beginDate));
     return (
       <Calendar
         visible={this.state.calendarVisible}
@@ -123,7 +152,8 @@ class AddDuration extends PureComponent {
     let month = newDate.getMonth() + 1;
     let newMonth = month < 10 ? "0" + month : month;
     let day = newDate.getDate();
-    return year + "-" + newMonth + "-" + day;
+    let newDay = day < 10 ? "0" + day : day;
+    return year + "-" + newMonth + "-" + newDay;
   };
 
   _handleAddMoreDay = (date, day) => {
@@ -164,7 +194,7 @@ class AddDuration extends PureComponent {
               }}
             >
               {timeRanges[index].beginDate
-                ? timeRanges[index].beginDate
+                ? moment(timeRanges[index].beginDate).format("DD-MM-YYYY")
                 : "Begin Date"}
             </Text>
           </View>
@@ -178,7 +208,7 @@ class AddDuration extends PureComponent {
               }}
             >
               {timeRanges[index].endDate
-                ? timeRanges[index].endDate
+                ? moment(timeRanges[index].endDate).format("DD-MM-YYYY")
                 : "End Date"}
             </Text>
           </View>
@@ -222,7 +252,8 @@ class AddDuration extends PureComponent {
             availableTimeRanges: timeRanges.map(item => {
               delete item.id;
               return item;
-            })
+            }),
+            dailyPrice: parseInt(this.state.dailyPrice)
           })
         })
       }
@@ -240,7 +271,7 @@ class AddDuration extends PureComponent {
   render() {
     const { beginDate, endDate, timeRanges, calendarIndex } = this.state;
     const { data } = this.props.navigation.state.params;
-    console.log(timeRanges);
+    const upperPrice = this.state.suggestPrice * 1.15;
     return (
       <SafeAreaView
         style={styles.container}
@@ -256,22 +287,39 @@ class AddDuration extends PureComponent {
           <Text style={styles.header}>Available time range</Text>
         </Header>
         <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
-          {this.state.timeRanges.map((item, index) =>
-            this._renderDateRange(item, index)
-          )}
-          {this._renderCalendar(
-            calendarIndex,
-            Date.now(),
-            this._handleAddMoreMonth(Date.now(), 3)
-          )}
+          {!this.state.loading ? (
+            <View style={{ paddingTop: 10 }}>
+              <Text style={styles.price}>Price per day (K):</Text>
+              <Text style={styles.price}>
+                Suggested price: {Math.round(this.state.suggestPrice)} ~{" "}
+                {Math.round(upperPrice)}
+              </Text>
+              <TextInput
+                placeholder={"Input your price"}
+                keyboardType={"numeric"}
+                onChangeText={value => this.setState({ dailyPrice: value })}
+                style={styles.placeholder}
+              />
+              {this.state.timeRanges.map((item, index) =>
+                this._renderDateRange(item, index)
+              )}
+              {this._renderCalendar(
+                calendarIndex,
+                Date.now(),
+                this._handleAddMoreMonth(Date.now(), 3)
+              )}
 
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.buttonPlus}
-            onPress={this._handleAddMore}
-          >
-            <Feather name="plus" size={24} color={"white"} />
-          </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.buttonPlus}
+                onPress={this._handleAddMore}
+              >
+                <Feather name="plus" size={24} color={"white"} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <Loading />
+          )}
         </ScrollView>
         <View style={styles.bottomWrapper}>
           {this._renderBottomButton(data, timeRanges)}
@@ -303,7 +351,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     marginRight: 15,
     paddingVertical: 5,
-    width: 80,
+    width: 90,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
@@ -345,6 +393,22 @@ const styles = StyleSheet.create({
     height: 15,
     fontWeight: "500",
     marginBottom: 5
+  },
+  price: {
+    fontSize: fontSize.secondaryText,
+    fontWeight: "500",
+    marginBottom: 5,
+    color: colors.primaryColor
+  },
+  placeholder: {
+    fontSize: fontSize.bodyText,
+    color: colors.text,
+    fontWeight: "500",
+    paddingBottom: 10,
+    borderBottomColor: colors.text25,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    marginTop: 10,
+    marginBottom: 15
   }
 });
 

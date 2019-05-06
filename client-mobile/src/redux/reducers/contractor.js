@@ -5,12 +5,20 @@ const initialState = {
   detail: {},
   constructionList: [],
   feedbackList: [],
-  feedbackTypes: []
+  feedbackTypes: [],
+  language: "en"
 };
 
 export default function contractorReducer(state = initialState, action) {
   const { type, payload } = action;
   switch (action.type) {
+    case "CHANGE_LANGUAGE": {
+      console.log(payload);
+      return {
+        ...state,
+        language: payload
+      };
+    }
     case Actions.GET_CONTRACTOR.REQUEST: {
       return {
         ...state,

@@ -21,8 +21,9 @@ import {
   requestTransaction,
   cancelTransaction,
   getAdjustTransaction,
-  requestAdjustTransaction
+  responseAdjustTransaction
 } from "../../redux/actions/transaction";
+import axios from "axios";
 
 import Item from "./components/Item";
 import InputField from "../../components/InputField";
@@ -71,27 +72,21 @@ const COLORS = {
       adjustTransactionList: state.transaction.adjustTransaction
     };
   },
-  dispatch => ({
-    fetchRequestTransaction: (id, transactionStatus) => {
-      dispatch(requestTransaction(id, transactionStatus));
-    },
-    fetchCancelTransaction: id => {
-      dispatch(cancelTransaction(id));
-    },
-    fetchGetAdjustTransaction: id => {
-      dispatch(getAdjustTransaction(id));
-    },
-    fetchRequestAdjustTransaction: (id, status) => {
-      dispatch(requestAdjustTransaction(id, status));
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      {
+        fetchRequestTransaction: requestTransaction,
+        fetchCancelTransaction: cancelTransaction,
+        fetchGetAdjustTransaction: getAdjustTransaction,
+        fetchResponseAdjustTransaction: responseAdjustTransaction
+      },
+      dispatch
+    )
 )
 class MyTransactionDetail extends Component {
   componentDidMount() {
     const { id } = this.props.navigation.state.params;
     this.props.fetchGetAdjustTransaction(id);
-    if (!this.props.transactionDetail) {
-    }
   }
 
   _handleRequestButton = (id, status) => {
@@ -198,38 +193,66 @@ class MyTransactionDetail extends Component {
     );
   };
 
-  _handleRequestAdjustTransaction = (transactionId, status) => {
-    this.props.fetchRequestAdjustTransaction(transactionId, { status: status });
+  _handleRequestAdjustTransaction = (alertTitle, transactionId, status) => {
+    Alert.alert(alertTitle, undefined, [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel"
+      },
+      {
+        text: "OK",
+        onPress: () =>
+          this.props.fetchResponseAdjustTransaction(transactionId, {
+            status: status
+          })
+      }
+    ]);
   };
 
   _renderAdjustDateTransaction = (id, equipmentStatus) => {
     const { adjustTransactionList } = this.props;
-    // console.log(adjustTransactionList);
-    if (equipmentStatus === "RENTING" && adjustTransactionList.length > 0) {
+    if (
+      (equipmentStatus !== "FINISHED" || equipmentStatus !== "PENDING") &&
+      adjustTransactionList.length > 0
+    ) {
       return (
         <View>
           <Text>New Adjust Transaction Request</Text>
-          <Text>{adjustTransactionList.requestedBeginDate}</Text>
-          <Text>{adjustTransactionList.requestedEndDate}</Text>
-          <Text>Status: {adjustTransactionList.status}</Text>
-          {adjustTransactionList.status === "PENDING" ? (
+          {adjustTransactionList.map(item => (
             <View>
-              <TouchableOpacity
-                onPress={() =>
-                  this._handleRequestAdjustTransaction(id, "ACCEPTED")
-                }
-              >
-                <Text>Accept</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  this._handleRequestAdjustTransaction(id, "DENIED")
-                }
-              >
-                <Text>Deny</Text>
-              </TouchableOpacity>
+              <Text>{item.id}</Text>
+              <Text>{item.requestedEndDate}</Text>
+              <Text>{item.createdTime}</Text>
+              <Text>Status: {item.status}</Text>
+              {item.status === "PENDING" ? (
+                <View>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this._handleRequestAdjustTransaction(
+                        "Are you sure to accept adjust date?",
+                        item.id,
+                        "ACCEPTED"
+                      )
+                    }
+                  >
+                    <Text>Accept</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this._handleRequestAdjustTransaction(
+                        "Are you sure to deny requester adjust date?",
+                        item.id,
+                        "DENIED"
+                      )
+                    }
+                  >
+                    <Text>Deny</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null}
             </View>
-          ) : null}
+          ))}
         </View>
       );
     }
@@ -264,35 +287,32 @@ class MyTransactionDetail extends Component {
     }
   };
 
-  _renderContractor = detail => (
+  _renderContractor = requester => (
     <View style={styles.columnWrapper}>
-      <Text style={styles.title}>Contractor</Text>
+      <Text style={styles.title}>Requester</Text>
       <View style={styles.rowWrapper}>
         <TouchableOpacity
           onPress={() =>
             this.props.navigation.navigate("ContractorProfile", {
-              id: detail.equipment.contractor.id
+              id: requester.id
             })
           }
+          style={{ flexDirection: "row", alignItems: "center" }}
         >
           <ImageCache
             uri={
+              requester.thumbnailImageUrl ||
               "https://cdn.iconscout.com/icon/free/png-256/avatar-369-456321.png"
             }
             style={styles.avatar}
             resizeMode={"cover"}
           />
-        </TouchableOpacity>
-        <TouchableOpacity style={{ flexDirection: "column", paddingLeft: 15 }}>
-          <Text style={styles.text}>
-            Name: {detail.equipment.contractor.name}
-          </Text>
-          <Text style={styles.text}>
-            Phone: {detail.equipment.contractor.phoneNumber}
-          </Text>
-          <Text style={styles.text}>
-            Email: {detail.equipment.contractor.email}
-          </Text>
+
+          <View style={{ flexDirection: "column", paddingLeft: 15 }}>
+            <Text style={styles.text}>Name: {requester.name}</Text>
+            <Text style={styles.text}>Phone: {requester.phoneNumber}</Text>
+            <Text style={styles.text}>Email: {requester.email}</Text>
+          </View>
         </TouchableOpacity>
       </View>
     </View>
@@ -368,7 +388,7 @@ class MyTransactionDetail extends Component {
             <Text style={styles.text}>{totalPrice} K</Text>
           </View>
         </View>
-        {this._renderContractor(detail)}
+        {this._renderContractor(detail.requester)}
         {this._renderTransactionOnProcess(detail.status, detail.equipment)}
         {this._renderAdjustDateTransaction(id, detail.equipment.status)}
         {this._renderBottomButton(detail.status, id, detail.equipment.status)}

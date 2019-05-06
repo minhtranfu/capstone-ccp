@@ -9,7 +9,9 @@ export function listTransactionBySupplier(contractorId) {
       type: Actions.LIST_SUPPLIER_TRANSACTION.REQUEST
     });
     try {
-      const res = await axios.get(`transactions/supplier/${contractorId}`);
+      const res = await axios.get(
+        `transactions/supplier/${contractorId}?orderBy=createdTime.desc`
+      );
       dispatch({
         type: Actions.LIST_SUPPLIER_TRANSACTION.SUCCESS,
         payload: res
@@ -29,7 +31,9 @@ export function listTransactionByRequester(contractorId) {
       type: Actions.LIST_REQUESTER_TRANSACTION.REQUEST
     });
     try {
-      const res = await axios.get(`transactions/requester/${contractorId}`);
+      const res = await axios.get(
+        `transactions/requester/${contractorId}?orderBy=createdTime.desc`
+      );
       dispatch({
         type: Actions.LIST_REQUESTER_TRANSACTION.SUCCESS,
         payload: res
@@ -49,7 +53,12 @@ export function sendTransactionRequest(transaction) {
       type: Actions.SEND_TRANSACTION_REQUEST.SUCCESS,
       payload: res
     });
-    dispatch(StatusAction.success("Send success"));
+    dispatch(
+      StatusAction.success(
+        "Your booking has been sent successfully",
+        Date.now()
+      )
+    );
   };
 }
 
@@ -62,7 +71,7 @@ export function requestTransaction(id, transactionStatus) {
         type: Actions.REQUEST_TRANSACTION.SUCCESS,
         payload: { data: res, id: id }
       });
-      // dispatch(StatusAction.success("Request success"));
+      dispatch(StatusAction.success("Request success", Date.now()));
     } catch (error) {
       dispatch({ type: Actions.REQUEST_TRANSACTION.ERROR });
     }
@@ -115,33 +124,54 @@ export function sendAdjustTransaction(transactionId, date) {
   };
 }
 
-export function requestAdjustTransaction(date) {
+export function requestAdjustTransaction(date, transactionId) {
   return async dispatch => {
     console.log(date);
-    dispatch({
-      type: Actions.REQUEST_ADJUST_TRANSACTION.REQUEST
-    });
-    const res = await axios.post(`transactionDateChangeRequests`, date);
-    dispatch({
-      type: Actions.REQUEST_ADJUST_TRANSACTION.SUCCESS,
-      payload: { data: res, id: transactionId }
-    });
+    try {
+      dispatch({
+        type: Actions.REQUEST_ADJUST_TRANSACTION.REQUEST,
+        payload: { id: transactionId }
+      });
+      const res = await axios.post(`transactionDateChangeRequests`, date);
+      dispatch({
+        type: Actions.REQUEST_ADJUST_TRANSACTION.SUCCESS,
+        payload: { data: res, id: transactionId }
+      });
+      dispatch(StatusAction.success("Request success", Date.now()));
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: Actions.REQUEST_ADJUST_TRANSACTION.ERROR
+      });
+    }
   };
 }
 
-export function responseAdjustTransaction(transactionId, status) {
+export function responseAdjustTransaction(adjustTransactionId, status) {
   return async dispatch => {
-    dispatch({
-      type: Actions.RESPONSE_ADJUST_TRANSACTION.REQUEST
-    });
-    const res = await axios.put(
-      `transactions/${transactionId}/adjustDateRequests`,
-      status
-    );
-    dispatch({
-      type: Actions.RESPONSE_ADJUST_TRANSACTION.SUCCESS,
-      payload: { data: res, id: transactionId }
-    });
+    try {
+      dispatch({
+        type: Actions.RESPONSE_ADJUST_TRANSACTION.REQUEST
+      });
+      const res = await axios.put(
+        `transactionDateChangeRequests/${adjustTransactionId}`,
+        status
+      );
+      dispatch({
+        type: Actions.RESPONSE_ADJUST_TRANSACTION.SUCCESS,
+        payload: { data: res, id: adjustTransactionId }
+      });
+      dispatch(
+        StatusAction.success(
+          "Your adjust transaction date has been updated!!",
+          Date.now()
+        )
+      );
+    } catch (error) {
+      dispatch({
+        type: Actions.RESPONSE_ADJUST_TRANSACTION.ERROR
+      });
+    }
   };
 }
 
@@ -167,7 +197,7 @@ export function cancelTransaction(id) {
       type: Actions.CANCEL_TRANSACTION.SUCCESS,
       payload: { id }
     });
-    dispatch(StatusAction.success("Send success"));
+    dispatch(StatusAction.success("Send success", Date.now()));
   };
 }
 
@@ -184,7 +214,7 @@ export function listMaterialTransactionBySupplier(supplierId) {
         type: Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.REQUEST
       });
       const res = await axios.get(
-        `materialTransactions/supplier/${supplierId}`
+        `materialTransactions/supplier/${supplierId}?orderBy=createdTime.desc`
       );
       dispatch({
         type: Actions.LIST_SUPPLIER_MATERIAL_TRANSACTION.SUCCESS,
@@ -206,7 +236,7 @@ export function listMaterialTransactionByRequester(requesterId) {
     });
     try {
       const res = await axios.get(
-        `materialTransactions/requester/${requesterId}`
+        `materialTransactions/requester/${requesterId}?orderBy=createdTime.desc`
       );
       dispatch({
         type: Actions.LIST_REQUESTER_MATERIAL_TRANSACTION.SUCCESS,
@@ -231,7 +261,7 @@ export function requestMaterialTransaction(material) {
       type: Actions.SEND_MATERIAL_TRANSACTION_REQUEST.SUCCESS,
       payload: res
     });
-    dispatch(StatusAction.success("Success"));
+    dispatch(StatusAction.success("Success", Date.now()));
   };
 }
 
@@ -255,7 +285,9 @@ export function listDebrisTransactionBySupplier() {
       dispatch({
         type: Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.REQUEST
       });
-      const res = await axios.get("debrisTransactions/supplier");
+      const res = await axios.get(
+        "debrisTransactions/supplier?orderBy=createdTime.desc"
+      );
       dispatch({
         type: Actions.GET_DEBRIS_TRANSACTION_BY_SUPPLIER.SUCCESS,
         payload: res
@@ -270,7 +302,9 @@ export function listDebrisTransactionBySupplier() {
 
 export function listDebrisTransactionByRequester() {
   return async dispatch => {
-    const res = await axios.get("debrisTransactions/requester");
+    const res = await axios.get(
+      "debrisTransactions/requester?orderBy=createdTime.desc"
+    );
     dispatch({
       type: Actions.GET_DEBRIS_TRANSACTION_BY_REQUESTER.SUCCESS,
       payload: res
@@ -285,7 +319,7 @@ export function sendRequestDebrisTransaction(transaction) {
       type: Actions.SEND_REQUEST_DEBRIS_TRANSACTION.SUCCESS,
       payload: res
     });
-    dispatch(StatusAction.success("Success"));
+    dispatch(StatusAction.success("Success", Date.now()));
   };
 }
 
@@ -296,7 +330,7 @@ export function updateDebrisTransactionStatus(transactionId, status) {
       type: Actions.UPDATE_DEBRIS_TRANSACTION_STATUS.SUCCESS,
       payload: { data: res, id: transactionId }
     });
-    dispatch(StatusAction.success("Cancel success"));
+    dispatch(StatusAction.success("Cancel success", Date.now()));
   };
 }
 
@@ -308,6 +342,7 @@ export function sendEquipmentFeedback(transactionId, feedback) {
         payload: { id: transactionId }
       });
       const res = await axios.post(`equipmentFeedbacks`, feedback);
+      dispatch(StatusAction.success("Send feedback success", Date.now()));
       dispatch({
         type: Actions.SEND_EQUIPMENT_FEEDBACK.SUCCESS,
         payload: res
@@ -317,6 +352,7 @@ export function sendEquipmentFeedback(transactionId, feedback) {
       dispatch({
         type: Actions.SEND_EQUIPMENT_FEEDBACK.ERROR
       });
+      dispatch(StatusAction.success("Send feedback fail", Date.now()));
     }
   };
 }

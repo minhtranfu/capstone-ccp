@@ -118,8 +118,8 @@ class MaterialTab extends PureComponent {
                   contractor={item.supplier.name}
                   phone={item.supplier.phoneNumber}
                   avatarURL={
-                    item.supplier.thumbnailImage
-                      ? item.supplier.thumbnailImage
+                    item.supplier.thumbnailImageUrl
+                      ? item.supplier.thumbnailImageUrl
                       : "http://bootstraptema.ru/snippets/icons/2016/mia/2.png"
                   }
                   totalPrice={item.totalPrice}

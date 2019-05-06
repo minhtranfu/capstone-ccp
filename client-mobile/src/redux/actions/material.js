@@ -9,7 +9,7 @@ export function searchMaterial(text, id, offset) {
           type: Actions.SEARCH_MATERIAL.REQUEST
         });
       }
-      const url = `materials?q=${text}&limit=10&orderBy=createdTime.desc&materialTypeId=${id}&offset=${offset}`;
+      const url = `materials?q=${text}&limit=10&orderBy=created_time.desc&materialTypeId=${id}&offset=${offset}`;
       const res = await axios.get(url);
       dispatch({
         type: Actions.SEARCH_MATERIAL.SUCCESS,
@@ -76,7 +76,7 @@ export function getMaterialListFromContractor(contractorId) {
     dispatch({
       type: Actions.GET_MATERIAL_LIST_BY_CONTRACTOR.REQUEST
     });
-    const res = await axios.get(`materials/supplier`);
+    const res = await axios.get(`materials/supplier?orderBy=createdTime.desc`);
     dispatch({
       type: Actions.GET_MATERIAL_LIST_BY_CONTRACTOR.SUCCESS,
       payload: res

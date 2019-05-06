@@ -11,6 +11,10 @@ export function logIn(user) {
         "userToken",
         res.data.tokenWrapper.accessToken
       );
+      await AsyncStorage.setItem(
+        "userRefreshToken",
+        res.data.tokenWrapper.refreshToken
+      );
       dispatch({
         type: Actions.LOGIN_SUCCESS,
         payload: {
@@ -25,9 +29,21 @@ export function logIn(user) {
   };
 }
 
+export function updateToken(token) {
+  return dispatch => {
+    dispatch({
+      type: "UPDATE_TOKEN",
+      payload: {
+        token
+      }
+    });
+  };
+}
+
 export function logOut() {
   return async dispatch => {
-    AsyncStorage.removeItem("userToken");
+    await AsyncStorage.removeItem("userToken");
+    await AsyncStorage.removeItem("userRefreshToken");
     dispatch({
       type: Actions.LOGOUT_SUCCESS,
       payload: { signIn: false }

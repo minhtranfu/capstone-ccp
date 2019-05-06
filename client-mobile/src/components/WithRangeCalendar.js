@@ -20,9 +20,13 @@ class WithRangeCalendar extends PureComponent {
     super(props);
     const availableDateRange = this.props.availableDateRange;
     console.log(availableDateRange);
-
+    console.log(this.props.selectedDate);
+    const defaultSelectedDate = this.getDaysArray(
+      new Date(this.props.selectedDate.beginDate),
+      new Date(this.props.selectedDate.endDate)
+    );
     this.state = {
-      selectedDate: [],
+      selectedDate: defaultSelectedDate || [],
       clickedTime: 0
     };
 

@@ -1,6 +1,21 @@
 import axios from "axios";
 import StatusAction from "./status";
 import * as Actions from "../types";
+import i18n from "i18n-js";
+
+export function updateLanguage(language) {
+  console.log(language);
+
+  return dispatch => {
+    if (language !== undefined) {
+      i18n.locale = language;
+    }
+    dispatch({
+      type: "CHANGE_LANGUAGE",
+      payload: language
+    });
+  };
+}
 
 export function register(contractor) {
   return async dispatch => {
@@ -121,6 +136,7 @@ export function listFeedbackTypes() {
 }
 
 export function createNewFeedback(report) {
+  console.log(report);
   return async dispatch => {
     const res = await axios.post(`reports`, report);
     dispatch({

@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   header: {
-    flex: 4,
+    flex: 3,
     alignItems: "center",
     justifyContent: "center"
   }

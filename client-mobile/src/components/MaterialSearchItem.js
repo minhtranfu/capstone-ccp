@@ -74,7 +74,7 @@ class MaterialSearchItem extends PureComponent {
                   { color: colors.secondaryColor, fontWeight: "600" }
                 ]}
               >
-                {price}k VND
+                {price}K
               </Text>
             </View>
             <Text

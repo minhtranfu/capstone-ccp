@@ -4,13 +4,18 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Animated,
+  Dimensions
 } from "react-native";
 import { connect } from "react-redux";
+import { Image as ImageCache } from "react-native-expo-image-cache";
 import { SafeAreaView } from "react-navigation";
 import { updateDebrisTransactionStatus } from "../../redux/actions/transaction";
 import Feather from "@expo/vector-icons/Feather";
+import Swiper from "react-native-swiper";
 
+import ParallaxList from "../../components/ParallaxList";
 import Title from "../../components/Title";
 import Bidder from "../../components/Bidder";
 import DebrisBid from "./components/DebrisBid";
@@ -31,6 +36,8 @@ const STATUS = {
   FINISHED: "COMPLETED",
   CANCELED: "DONE"
 };
+
+const { width } = Dimensions.get("window");
 
 @connect(
   (state, ownProps) => {
@@ -60,6 +67,16 @@ class DebrisDetail extends Component {
   _setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
+
+  _capitializeLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  _renderSlideItem = (uri, key, loaded) => (
+    <View style={styles.slide} key={key}>
+      <ImageCache style={styles.imageSlide} uri={uri} resizeMode={"contain"} />
+    </View>
+  );
 
   _handleChangeStatus = (transactionId, status) => {
     this.props.fetchUpdateStatus(transactionId, { status: status });
@@ -107,13 +124,10 @@ class DebrisDetail extends Component {
 
   _renderContent = () => {
     const { detail } = this.props;
-    console.log(detail);
     const { isCancel } = this.state;
     return (
-      <View>
-        <Text style={[styles.header, { paddingBottom: 5 }]}>
-          {detail.debrisPost.title}
-        </Text>
+      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
+        <Text style={styles.header}>{detail.debrisPost.title}</Text>
         <Text style={styles.title}>{STATUS[detail.status]}</Text>
         <Text style={styles.description}>
           Address: {detail.debrisPost.address}
@@ -139,18 +153,40 @@ class DebrisDetail extends Component {
                 key={`${item.name || Math.random()}`}
                 style={styles.description}
               >
-                - {item.name}
+                - {this._capitializeLetter(item.name)}
               </Text>
             ))}
         </View>
+        <Title title={"Images"} />
+        {detail.debrisPost.debrisImages.length > 0 ? (
+          <Swiper
+            style={styles.slideWrapper}
+            loop={false}
+            loadMinimal
+            loadMinimalSize={1}
+            activeDotColor={colors.secondaryColor}
+            activeDotStyle={{ width: 30 }}
+          >
+            {detail.debrisPost.debrisImages
+              .slice(0, 4)
+              .map((item, index) => this._renderSlideItem(item.url, index))}
+          </Swiper>
+        ) : (
+          <Text style={styles.text}>No image </Text>
+        )}
         <Title title={"Employee"} />
         <Bidder
+          onPress={() =>
+            this.props.navigation.navigate("ContractorProfile", {
+              id: detail.debrisPost.requester.id
+            })
+          }
           feedbackCount={detail.debrisBid.supplier.debrisFeedbacksCount}
           createdTime={detail.debrisBid.createdTime}
           description={detail.debrisBid.description}
           price={detail.debrisBid.price}
           rating={detail.debrisBid.supplier.averageDebrisRating}
-          imageUrl={detail.debrisBid.supplier.thumbnailImage}
+          imageUrl={detail.debrisBid.supplier.thumbnailImageUrl}
           name={detail.debrisBid.supplier.name}
         />
         {/* <Text>Total bids {detail.debrisPost.debrisBids.length}</Text>
@@ -194,13 +230,14 @@ class DebrisDetail extends Component {
   };
 
   render() {
-    const { navigation } = this.props;
+    const { navigation, detail } = this.props;
+    console.log(detail);
     return (
       <SafeAreaView
         style={styles.container}
         forceInset={{ bottom: "always", top: "always" }}
       >
-        <Header
+        {/* <Header
           renderLeftButton={() => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Feather name={"chevron-left"} size={24} />
@@ -208,10 +245,23 @@ class DebrisDetail extends Component {
           )}
         >
           <Text style={styles.header}>Debris Detail</Text>
-        </Header>
-        <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
+        </Header> */}
+        <ParallaxList
+          title={detail.debrisPost.title}
+          removeTitle={true}
+          hasThumbnail={true}
+          imageURL={
+            detail.debrisPost.thumbnailImage
+              ? detail.debrisPost.thumbnailImage.url
+              : "null"
+          }
+          hasLeft={true}
+          scrollElement={<Animated.ScrollView />}
+          renderScrollItem={this._renderContent}
+        />
+        {/* <ScrollView contentContainerStyle={{ paddingHorizontal: 15 }}>
           {this._renderContent()}
-        </ScrollView>
+        </ScrollView> */}
       </SafeAreaView>
     );
   }
@@ -236,6 +286,19 @@ const styles = StyleSheet.create({
     fontSize: fontSize.secondaryText,
     color: colors.text68,
     paddingBottom: 5
+  },
+  slideWrapper: {
+    height: 200
+  },
+  slide: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "transparent"
+  },
+  imageSlide: {
+    width: width,
+    height: 200,
+    backgroundColor: "transparent"
   }
 });
 

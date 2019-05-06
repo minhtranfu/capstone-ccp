@@ -17,7 +17,9 @@ import {
   getCurrentLocation,
   autoCompleteSearch
 } from "../../../redux/actions/location";
-//import Autocomplete from "react-native-autocomplete-input";
+import { bindActionCreators } from "redux";
+import { getConstructionList } from "../../../redux/actions/contractor";
+import axios from "axios";
 import AutoComplete from "../../../components/AutoComplete";
 
 import Loading from "../../../components/Loading";
@@ -64,23 +66,24 @@ const DROPDOWN_CONSTRUCTION_OPTIONS = [
     return {
       loading: state.type.loading,
       generalType: state.type.listGeneralEquipmentType,
-      construction: state.contractor.constructionList
+      construction: state.contractor.constructionList,
+      user: state.auth.data
     };
   },
-  dispatch => ({
-    fetchGeneralType: () => {
-      dispatch(getGeneralEquipmentType());
-    }
-  })
+  dispatch =>
+    bindActionCreators(
+      {
+        fetchGeneralType: getGeneralEquipmentType,
+        fetchGetContrusction: getConstructionList
+      },
+      dispatch
+    )
 )
 class AddDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      equipmentImage: config.image,
-      pickerValue: "Select an option",
       name: null,
-      dailyPrice: null,
       generalTypeIndex: 0,
       generalType: null,
       typeIndex: 0,
@@ -90,7 +93,6 @@ class AddDetail extends Component {
       description: "",
       additionalSpecsFields: [],
       location: [],
-      hideResults: false,
       address: null,
       lat: null,
       lng: null
@@ -99,6 +101,7 @@ class AddDetail extends Component {
 
   componentDidMount() {
     this.props.fetchGeneralType();
+    this.props.fetchGetContrusction(this.props.user.contractor.id);
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -112,12 +115,13 @@ class AddDetail extends Component {
         };
       }
     }
+    return null;
   }
 
   //All data must be fill before move to next screen
   _validateEnableButton = () => {
-    const { name, dailyPrice, type, generalType, address } = this.state;
-    if (name && dailyPrice && type && generalType && address) {
+    const { name, type, generalType, address } = this.state;
+    if (name && type && generalType && address) {
       return false;
     }
     return true;
@@ -155,6 +159,7 @@ class AddDetail extends Component {
       }));
       return [...DROPDOWN_TYPES_OPTIONS, ...newEquipmentTypeArray];
     }
+
     return DROPDOWN_TYPES_OPTIONS;
   };
 
@@ -175,8 +180,9 @@ class AddDetail extends Component {
   _handleAdditionalSpecsField = () => {
     const { generalTypeIndex, typeIndex } = this.state;
     const newTypeOptions = this._handleEquipmentType(generalTypeIndex);
+    // console.log(newTypeOptions[typeIndex]);
     if (
-      newTypeOptions[typeIndex].additionalSpecsFields &&
+      newTypeOptions[typeIndex] &&
       newTypeOptions[typeIndex].additionalSpecsFields.length > 0
     ) {
       return (
@@ -228,9 +234,9 @@ class AddDetail extends Component {
   _handleSubmit = () => {
     const {
       name,
-      dailyPrice,
       typeIndex,
       generalTypeIndex,
+      constructionIndex,
       description,
       construction,
       additionalSpecsFields,
@@ -243,15 +249,18 @@ class AddDetail extends Component {
     const findAddressByCons = this.props.construction.find(
       item => item.address === address
     );
+
     if (!address) {
       this._showAlert("Address must be not null");
     } else {
       const equipment = {
         name: name,
-        dailyPrice: parseInt(dailyPrice),
         description: description,
         equipmentType: type,
         address: address,
+        construction: {
+          id: findAddressByCons.id
+        },
         longitude: findAddressByCons ? findAddressByCons.longitude : lng,
         latitude: findAddressByCons ? findAddressByCons.latitude : lat,
         additionalSpecsValues:
@@ -259,22 +268,16 @@ class AddDetail extends Component {
             ? additionalSpecsFields.filter(item => item !== null)
             : []
       };
+      console.log(equipment);
       this.props.navigation.navigate("AddDuration", {
         data: equipment
       });
     }
   };
 
-  _handleAddressChange = async address => {
-    this.setState({
-      location: await autoCompleteSearch(address, null, null)
-    });
-  };
-
   _renderScrollViewItem = () => {
     const {
       name,
-      dailyPrice,
       typeIndex,
       generalTypeIndex,
       description,
@@ -287,7 +290,6 @@ class AddDetail extends Component {
     const NEW_DROPDOWN_TYPES_OPTIONS = this._handleEquipmentType(
       generalTypeIndex
     );
-    console.log(this.state.additionalSpecsFields);
     return (
       <View>
         <InputField
@@ -299,22 +301,12 @@ class AddDetail extends Component {
           value={name}
           returnKeyType={"next"}
         />
-        <InputField
-          label={"Daily price"}
-          placeholder={"VND"}
-          customWrapperStyle={{ marginBottom: 20 }}
-          inputType="text"
-          onChangeText={value => this.setState({ dailyPrice: value })}
-          value={this._formatNumber(dailyPrice)}
-          keyboardType={"numeric"}
-          returnKeyType={"next"}
-        />
         <Dropdown
-          label={"General Equipment Type"}
+          label={"Categories"}
           defaultText={NEW_DROPDOWN_GENERAL_TYPES_OPTIONS[0].name}
-          onSelectValue={(value, index) =>
-            this.setState({ generalTypeIndex: index, generalType: value })
-          }
+          onSelectValue={(value, index) => {
+            this.setState({ generalTypeIndex: index, generalType: value });
+          }}
           options={NEW_DROPDOWN_GENERAL_TYPES_OPTIONS}
           style={{ marginBottom: 20 }}
         />
@@ -324,6 +316,7 @@ class AddDetail extends Component {
           onSelectValue={(value, index) =>
             this.setState({ type: value, typeIndex: index })
           }
+          value={generalTypeIndex == 0 ? DROPDOWN_TYPES_OPTIONS[0].value : null}
           options={NEW_DROPDOWN_TYPES_OPTIONS}
           style={{ marginBottom: 20 }}
         />
@@ -331,7 +324,9 @@ class AddDetail extends Component {
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate("AddConstruction")}
         >
-          <Text style={styles.text}>Do you want to build a snow man? </Text>
+          <Text style={[styles.text, { color: colors.secondaryColor }]}>
+            Create new address
+          </Text>
         </TouchableOpacity>
         <Dropdown
           label={"Construction"}
@@ -424,12 +419,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  autocompleteWrapper: {
-    paddingBottom: 10,
-    marginVertical: 5,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.text25
-  },
   scrollWrapper: {
     flex: 1,
     paddingHorizontal: 15
@@ -443,7 +432,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     marginRight: 15,
     paddingVertical: 5,
-    width: 80,
+    width: 90,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
@@ -476,11 +465,6 @@ const styles = StyleSheet.create({
     fontSize: fontSize.bodyText,
     fontWeight: "500",
     paddingVertical: 15
-  },
-  addressMainText: {
-    fontSize: fontSize.secondaryText,
-    color: colors.text,
-    fontWeight: "500"
   },
   caption: {
     fontSize: fontSize.caption,

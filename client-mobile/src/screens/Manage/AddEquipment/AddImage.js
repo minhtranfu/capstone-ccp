@@ -256,15 +256,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
-  buttonEnable: {
-    marginTop: 20,
-    marginHorizontal: 15,
-    height: 40,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.primaryColor
-  },
+  // buttonEnable: {
+  //   marginTop: 20,
+  //   marginHorizontal: 15,
+  //   height: 40,
+  //   borderRadius: 10,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   backgroundColor: colors.primaryColor
+  // },
   iconDelete: {
     position: "absolute",
     bottom: 5,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     color: "white"
   },
   buttonEnable: {
-    backgroundColor: colors.primaryColor
+    backgroundColor: colors.secondaryColor
   },
   buttonDisable: {
     backgroundColor: colors.text25

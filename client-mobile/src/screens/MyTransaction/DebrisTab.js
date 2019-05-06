@@ -105,6 +105,7 @@ class DebrisTab extends Component {
           item => item.status === status.code.toUpperCase()
         );
         if (debrisList.length === 0) return null;
+
         return (
           <View key={`sec_${idx}`}>
             <EquipmentStatus
@@ -121,7 +122,11 @@ class DebrisTab extends Component {
                 description={item.debrisPost.description}
                 title={item.debrisPost.title}
                 debrisServiceTypes={item.debrisPost.debrisServiceTypes}
-                itemUrl={item.debrisPost.debrisImages[0]}
+                itemUrl={
+                  item.debrisPost.thumbnailImage
+                    ? item.debrisPost.thumbnailImage.url
+                    : ""
+                }
                 onPress={() =>
                   this.props.navigation.navigate("SupplierDebrisDetail", {
                     id: item.id

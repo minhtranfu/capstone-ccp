@@ -45,7 +45,7 @@ class MaterialDetail extends PureComponent {
   };
 
   _showAlert = (title, msg) => {
-    Alert.alert(title, msg, [{ text: "Ờ" }], {
+    Alert.alert(title, msg, [{ text: "OK" }], {
       cancelable: true
     });
   };
@@ -55,14 +55,49 @@ class MaterialDetail extends PureComponent {
     if (Object.keys(user).length !== 0) {
       if (user.contractor.status === "NOT_VERIFIED") {
         this._showAlert(
-          "Sad :(",
+          "Sorry!",
           "Your account is not verified to access this action"
         );
       } else {
         this.props.navigation.navigate("Cart");
       }
     } else {
-      this._showAlert("Sad :(", "You must login to access this action");
+      this._showAlert("Sorry!", "You must login to access this action");
+    }
+  };
+
+  _handleBook = () => {
+    const { user } = this.props;
+    if (Object.keys(user).length !== 0) {
+      if (user.contractor.status === "NOT_VERIFIED") {
+        this._showAlert(
+          "Sorry!",
+          "Your account is not verified to access this action"
+        );
+      } else {
+        this.props.navigation.navigate("ConfirmMaterial", {
+          material: detail
+        });
+      }
+    } else {
+      this._showAlert("Sorry!", "You must login to access this action");
+    }
+  };
+
+  _handleAddToCart = () => {
+    const { user } = this.props;
+    if (Object.keys(user).length !== 0) {
+      if (user.contractor.status === "NOT_VERIFIED") {
+        this._showAlert(
+          "Sorry!",
+          "Your account is not verified to access this action"
+        );
+      } else {
+        this.props.fetchAddItemToCart(detail.contractor.id, detail);
+        this._showAlert("Success", "Add to cart success");
+      }
+    } else {
+      this._showAlert("Sorry!", "You must login to access this action");
     }
   };
 
@@ -162,20 +197,13 @@ class MaterialDetail extends PureComponent {
         >
           <Button
             text={"Book"}
-            onPress={() =>
-              this.props.navigation.navigate("ConfirmMaterial", {
-                material: detail
-              })
-            }
+            onPress={this._handleBook}
             wrapperStyle={{ flex: 1 }}
             bordered={false}
           />
           <Button
             text={"Add to cart"}
-            onPress={() => {
-              this.props.fetchAddItemToCart(detail.contractor.id, detail);
-              this._showAlert("Success", "Add to cart success");
-            }}
+            onPress={this._handleAddToCart}
             buttonStyle={{ backgroundColor: colors.lightGreen }}
             wrapperStyle={{ flex: 1 }}
             bordered={false}
@@ -211,7 +239,8 @@ const styles = StyleSheet.create({
   description: {
     color: colors.text50,
     fontSize: fontSize.secondaryText,
-    fontWeight: "600"
+    fontWeight: "600",
+    marginBottom: 10
   },
   price: {
     color: colors.secondaryColor,

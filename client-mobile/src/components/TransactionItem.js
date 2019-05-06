@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   avatar: {
     height: 36,
     aspectRatio: 1,
-    borderRadius: 15
+    borderRadius: 18
   },
   contractorName: {
     fontSize: fontSize.caption,

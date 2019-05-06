@@ -25,8 +25,8 @@ import fontSize from "../../config/fontSize";
     loading: state.debris.loading
   }),
   dispatch => ({
-    fetchSearchDebris: debrisTypeId => {
-      dispatch(searchDebris(debrisTypeId));
+    fetchSearchDebris: data => {
+      dispatch(searchDebris(data));
     }
   })
 )
@@ -37,18 +37,20 @@ class BidResult extends Component {
   }
 
   componentDidMount() {
-    const { typeId } = this.props.navigation.state.params;
-    this.props.fetchSearchDebris(typeId);
+    const { data } = this.props.navigation.state.params;
+    console.log("h", data);
+    this.props.fetchSearchDebris(data);
   }
 
   _renderContent = () => {
     const { results, navigation } = this.props;
+    console.log(results);
     return (
       <View>
         {results.map(item => (
           <DebrisSearchItem
             key={item.id}
-            imageUrl={item.debrisImages[0].url}
+            imageUrl={item.thumbnailImage ? item.thumbnailImage.url : ""}
             address={item.address}
             debrisServiceTypes={item.debrisServiceTypes}
             debrisBids={item.debrisBids}

@@ -5,7 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  RefreshControl
+  RefreshControl,
+  Dimensions
 } from "react-native";
 import { Image } from "react-native-expo-image-cache";
 import { SafeAreaView } from "react-navigation";
@@ -18,12 +19,14 @@ import {
 import Feather from "@expo/vector-icons/Feather";
 import { Rating } from "react-native-ratings";
 import moment from "moment";
+import Swiper from "react-native-swiper";
 
 import PlaceBid from "./component/PlaceBid";
 import Bidder from "../../components/Bidder";
 import SearchBar from "../../components/SearchBar";
 import Loading from "../../components/Loading";
 import Header from "../../components/Header";
+import Button from "../../components/Button";
 
 import colors from "../../config/colors";
 import fontSize from "../../config/fontSize";
@@ -33,6 +36,8 @@ const STATUS = {
   PENDING: "OPENING",
   ACCEPTED: "IN PROGRESS"
 };
+
+const { width } = Dimensions.get("window");
 
 @connect(
   (state, ownProps) => {
@@ -64,6 +69,16 @@ class BidDetail extends Component {
     };
   }
 
+  _renderSlideItem = (uri, key, loaded) => (
+    <View style={styles.slide} key={key}>
+      <Image style={styles.imageSlide} uri={uri} resizeMode={"contain"} />
+    </View>
+  );
+
+  _capitializeLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   _setModalVisible = visible => {
     this.setState({ modalVisible: visible });
   };
@@ -71,7 +86,7 @@ class BidDetail extends Component {
   _renderContractorBid = () => {
     const { detail } = this.props;
     return (
-      <View
+      <TouchableOpacity
         style={{
           paddingBottom: 5,
           paddingTop: 15,
@@ -82,6 +97,11 @@ class BidDetail extends Component {
           marginBottom: 15,
           marginTop: 5
         }}
+        onPress={() =>
+          this.props.navigation.navigate("ContractorProfile", {
+            id: detail.requester.id
+          })
+        }
       >
         <View
           style={{
@@ -93,7 +113,7 @@ class BidDetail extends Component {
           <Image
             uri={detail.requester.thumbnailImageUrl}
             resizeMode={"cover"}
-            style={{ width: 40, height: 40, borderRadius: 20 }}
+            style={{ width: 40, height: 40, borderRadius: 20, marginRight: 10 }}
           />
           <View style={{ flex: 1, marginRight: 8 }}>
             <Text style={styles.bidSupplierName}>{detail.requester.name}</Text>
@@ -117,7 +137,7 @@ class BidDetail extends Component {
         {detail.description ? (
           <Text style={styles.bidDescription}>{detail.description}</Text>
         ) : null}
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -127,77 +147,131 @@ class BidDetail extends Component {
       item => item.supplier.id === contractorId
     );
     console.log(bidDetail);
-    if (bidDetail) {
-      return (
-        <View>
-          <PlaceBid
-            visible={this.state.modalVisible}
-            price={bidDetail.price}
-            description={bidDetail.description}
-            bidId={bidDetail.id}
-            postId={detail.id}
-            title={detail.title}
-            setModalVisible={this._setModalVisible}
-            isEdited={true}
-          />
-          <TouchableOpacity onPress={() => this._setModalVisible(true)}>
-            <Text style={styles.text}>Edit bid</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    } else {
-      return (
-        <View>
-          <PlaceBid
-            visible={this.state.modalVisible}
-            postId={this.props.detail.id}
-            title={detail.title}
-            setModalVisible={this._setModalVisible}
-          />
-          <TouchableOpacity onPress={() => this._setModalVisible(true)}>
-            <Text style={styles.text}>Place a bid</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
+    return (
+      <SafeAreaView
+        forceInset={{ bottom: "always" }}
+        style={styles.bottomWrapper}
+      >
+        {bidDetail ? (
+          <View>
+            <PlaceBid
+              visible={this.state.modalVisible}
+              price={bidDetail.price}
+              description={bidDetail.description}
+              bidId={bidDetail.id}
+              postId={detail.id}
+              title={detail.title}
+              setModalVisible={this._setModalVisible}
+              isEdited={true}
+            />
+            <Button
+              text={"Edit bid"}
+              onPress={() => this._setModalVisible(true)}
+              buttonStyle={{
+                marginTop: 0,
+                backgroundColor: colors.secondaryColor
+              }}
+              bordered={false}
+            />
+          </View>
+        ) : (
+          <View>
+            <PlaceBid
+              visible={this.state.modalVisible}
+              postId={this.props.detail.id}
+              title={detail.title}
+              setModalVisible={this._setModalVisible}
+            />
+            <Button
+              text={"Place a bid"}
+              onPress={() => this._setModalVisible(true)}
+              buttonStyle={{
+                marginTop: 0,
+                backgroundColor: colors.secondaryColor
+              }}
+              bordered={false}
+            />
+          </View>
+        )}
+      </SafeAreaView>
+    );
   };
 
   _renderContent = detail => {
     console.log(detail);
     return (
       <View>
+        <Image
+          uri={detail.thumbnailImage ? detail.thumbnailImage.url : ""}
+          resizeMode={"cover"}
+          style={{ height: 200, marginHorizontal: -15, marginBottom: 15 }}
+        />
         <Text style={styles.title}>{detail.title}</Text>
         <Text style={styles.status}>{STATUS[detail.status]}</Text>
         {detail.description ? (
           <Text style={styles.text}>Description: {detail.description}</Text>
         ) : null}
-        <Title title={"Services required"} />
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          {detail.debrisServiceTypes.map(item => (
-            <Text style={styles.text}>{item.name}</Text>
+        <Text style={styles.subTitle}>Images list</Text>
+        {detail.debrisImages.length > 0 ? (
+          <Swiper
+            style={styles.slideWrapper}
+            loop={false}
+            loadMinimal
+            loadMinimalSize={1}
+            activeDotColor={colors.secondaryColor}
+            activeDotStyle={{ width: 30 }}
+          >
+            {detail.debrisImages
+              .slice(0, 4)
+              .map((item, index) => this._renderSlideItem(item.url, index))}
+          </Swiper>
+        ) : (
+          <Text style={styles.text}>No images</Text>
+        )}
+        <Text style={[styles.subTitle, { marginTop: 5 }]}>
+          Services require
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            flexWrap: "wrap"
+          }}
+        >
+          {detail.debrisServiceTypes.map((item, index) => (
+            <Text key={item.id} style={styles.text}>
+              {this._capitializeLetter(item.name)}{" "}
+              {index == detail.debrisServiceTypes.length - 1 ? null : "- "}
+            </Text>
           ))}
         </View>
         <View style={styles.divider} />
         <Text style={styles.text}>Requester</Text>
         {this._renderContractorBid()}
         <View style={styles.divider} />
-        <Text style={[styles.text, { marginBottom: 15 }]}>Bids</Text>
-        {detail.debrisBids.length > 0 ? (
-          detail.debrisBids.map(item => (
-            <View>
+        <Text style={[styles.text, { marginBottom: 15 }]}>
+          Bids ({detail.debrisBids.length})
+        </Text>
+        <View style={{ marginBottom: 10 }}>
+          {detail.debrisBids.length > 0 ? (
+            detail.debrisBids.map(item => (
               <Bidder
-                imageUrl={item.supplier.thumbnailImage}
+                key={item.supplier.id}
+                imageUrl={item.supplier.thumbnailImageUrl}
                 name={item.supplier.name}
-                rating={item.supplier.averageDebrisRating}
+                rating={
+                  Math.round(item.supplier.averageDebrisRating * 100) / 100
+                }
                 phone={item.supplier.phoneNumber}
                 price={item.price}
                 description={item.description}
+                feedbackCount={item.supplier.debrisFeedbacksCount}
               />
-            </View>
-          ))
-        ) : (
-          <Text style={styles.text}>No bids yet</Text>
-        )}
+            ))
+          ) : (
+            <Text style={[styles.text, { marginBottom: 10 }]}>No bids yet</Text>
+          )}
+        </View>
       </View>
     );
   };
@@ -205,6 +279,7 @@ class BidDetail extends Component {
   render() {
     const { detail, user, navigation, loading } = this.props;
     console.log(loading);
+    console.log(user);
     return (
       <SafeAreaView
         style={styles.container}
@@ -228,11 +303,15 @@ class BidDetail extends Component {
             }
           >
             {this._renderContent(detail)}
-            <View>{this._renderBottomButton(user.contractor.id)}</View>
           </ScrollView>
         ) : (
           <Loading />
         )}
+        {Object.keys(user).length > 0
+          ? !loading
+            ? this._renderBottomButton(user.contractor.id)
+            : null
+          : null}
       </SafeAreaView>
     );
   }
@@ -252,6 +331,12 @@ const styles = StyleSheet.create({
     fontSize: fontSize.bodyText,
     fontWeight: "bold",
     color: colors.text,
+    marginBottom: 5
+  },
+  subTitle: {
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: colors.primaryColor,
     marginBottom: 5
   },
   status: {
@@ -284,6 +369,19 @@ const styles = StyleSheet.create({
     fontSize: fontSize.bodyText,
     color: colors.secondaryColor,
     fontWeight: "700"
+  },
+  slideWrapper: {
+    height: 200
+  },
+  slide: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "transparent"
+  },
+  imageSlide: {
+    width: width,
+    height: 200,
+    backgroundColor: "transparent"
   }
 });
 

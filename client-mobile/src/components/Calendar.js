@@ -30,49 +30,12 @@ class Calendar extends PureComponent {
       isFromDatePicked: false,
       isToDatePicked: false,
       markedDates: {},
+      singleDate: "",
       //Add from date range to make user only click from date to date
       fromDate: this._handleDateFormat(props.fromDate) || "",
       endDate: this._handleDateFormat(props.endDate) || ""
     };
 
-    // if (availableDateRange) {
-    //   const availableDate = availableDateRange.reduce((acc, cur) => {
-    //     const dateList = this.getDaysArray(
-    //       new Date(cur.beginDate),
-    //       new Date(cur.endDate)
-    //     );
-    //     return acc.concat(dateList);
-    //   }, []);
-
-    //   availableDate.sort((a, b) => compareAsc(new Date(a), new Date(b)));
-    //   //remove duplicate date if has
-    //   this.uniqueAvailableDate = [...new Set(availableDate)];
-    //   const firstAvailableDate = this.uniqueAvailableDate[0];
-    //   const lastAvailableDate = this.uniqueAvailableDate[
-    //     this.uniqueAvailableDate.length - 1
-    //   ];
-    //   const allDateList = this.getDaysArray(
-    //     new Date(firstAvailableDate),
-    //     new Date(lastAvailableDate)
-    //   );
-
-    //   this.notAvailableDate = allDateList.filter(
-    //     date => !this.uniqueAvailableDate.includes(date)
-    //   );
-
-    //   this.notAvailableDateStyle = this.notAvailableDate.reduce(
-    //     (acc, cur) => ({
-    //       ...acc,
-    //       [cur]: {
-    //         selected: false,
-    //         selectedColor: "#9b9b9b",
-    //         disabled: true,
-    //         disableTouchEvent: true
-    //       }
-    //     }),
-    //     {}
-    //   );
-    // }
     if (notAvailableDateRange) {
       const notAvailableDate = notAvailableDateRange.reduce((acc, cur) => {
         const dateList = this.getDaysArray(
@@ -81,35 +44,6 @@ class Calendar extends PureComponent {
         );
         return acc.concat(dateList);
       }, []);
-      console.log(notAvailableDate);
-      // availableDate.sort((a, b) => compareAsc(new Date(a), new Date(b)));
-      // //remove duplicate date if has
-      // this.uniqueAvailableDate = [...new Set(availableDate)];
-      // const firstAvailableDate = this.uniqueAvailableDate[0];
-      // const lastAvailableDate = this.uniqueAvailableDate[
-      //   this.uniqueAvailableDate.length - 1
-      // ];
-      // const allDateList = this.getDaysArray(
-      //   new Date(firstAvailableDate),
-      //   new Date(lastAvailableDate)
-      // );
-
-      // this.notAvailableDate = allDateList.filter(
-      //   date => !this.uniqueAvailableDate.includes(date)
-      // );
-
-      this.notAvailableDateStyle = notAvailableDate.reduce(
-        (acc, cur) => ({
-          ...acc,
-          [cur]: {
-            selected: false,
-            selectedColor: "#9b9b9b",
-            disabled: true,
-            disableTouchEvent: true
-          }
-        }),
-        {}
-      );
     }
   }
 
@@ -227,6 +161,12 @@ class Calendar extends PureComponent {
     }
   };
 
+  _handleSingleDateSelect = day => {
+    this.setState({
+      singleDate: day.dateString
+    });
+  };
+
   _handleClearDate = () => {
     this.setState({
       isFromDatePicked: false,
@@ -246,10 +186,10 @@ class Calendar extends PureComponent {
       transparent,
       visible,
       onLeftButtonPress,
-      timeRange
+      timeRange,
+      single
     } = this.props;
-    const { fromDate, endDate } = this.state;
-
+    const { fromDate, endDate, singleDate } = this.state;
     return (
       <Modal
         style={{ margin: 0, padding: 0, flex: 1 }}
@@ -276,7 +216,9 @@ class Calendar extends PureComponent {
           <CalendarPeriod
             // disabledByDefault={true}
             onDayPress={day => {
-              this._handleDateRangeSelect(day);
+              single
+                ? this._handleSingleDateSelect(day)
+                : this._handleDateRangeSelect(day);
             }}
             hideArrows={true}
             style={styles.calendar}
@@ -304,10 +246,20 @@ class Calendar extends PureComponent {
               textDayHeaderFontSize: fontSize.secondaryText,
               textDayHeaderFontWeight: "600"
             }}
-            markedDates={{
-              ...this.state.markedDates,
-              ...this.notAvailableDateStyle
-            }}
+            markedDates={
+              single
+                ? {
+                    [this.state.singleDate]: {
+                      startingDay: true,
+                      endingDay: true,
+                      color: colors.secondaryColor,
+                      textColor: "white"
+                      // color: colors.secondaryColor,
+                      // textColor: "white"
+                    }
+                  }
+                : { ...this.state.markedDates }
+            }
             {...this.props}
           />
           <SafeAreaView
@@ -327,8 +279,10 @@ class Calendar extends PureComponent {
                 right: 0
               }}
               onPress={() => {
-                onSelectDate(fromDate, endDate, false);
-                this.setState({ markedDates: {} });
+                single
+                  ? onSelectDate(singleDate, false)
+                  : onSelectDate(fromDate, endDate, false);
+                this.setState({ markedDates: {}, singleDate: "" });
               }}
             />
           </SafeAreaView>

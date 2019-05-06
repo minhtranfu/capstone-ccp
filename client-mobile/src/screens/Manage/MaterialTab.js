@@ -1,10 +1,11 @@
 import React, { PureComponent } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, FlatList } from "react-native";
 import { withNavigation } from "react-navigation";
+import { connect } from "react-redux";
 
-import MaterialSearchItem from "../../../components/MaterialSearchItem";
-import colors from "../../../config/colors";
-import fontSize from "../../../config/fontSize";
+import MaterialSearchItem from "../../components/MaterialSearchItem";
+import colors from "../../config/colors";
+import fontSize from "../../config/fontSize";
 
 class MaterialTab extends PureComponent {
   render() {

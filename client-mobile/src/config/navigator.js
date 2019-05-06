@@ -8,6 +8,7 @@ import {
 } from "react-navigation";
 import DismissableStackNav from "../Utils/DismissableStackNav";
 import colors from "./colors";
+import i18n from "i18n-js";
 
 import Discover from "../screens/Discover";
 import Account from "../screens/Account";
@@ -67,6 +68,8 @@ import MaterialCartDetail from "../screens/Cart/Detail";
 import UploadImage from "../screens/Login/UploadImage";
 import VerifyAccount from "../screens/Account/VerifyAccount";
 import AddConstruction from "../screens/Account/AddConstruction";
+import MyFeedback from "../screens/Account/Feedback";
+import ChangeLanguage from "../screens/Account/ChangeLanguage";
 // import MaterialTransactionDetail from "../components/MaterialTransactionDetail";
 
 const DiscoverStack = createStackNavigator(
@@ -87,7 +90,8 @@ const DiscoverStack = createStackNavigator(
     BidDetail: BidDetail,
     ConfirmBid: ConfirmBid,
     ConfirmMaterial: MaterialTransaction,
-    AddSubscription: AddSubscription
+    AddSubscription: AddSubscription,
+    ContractorProfile: ContractorProfile
   },
   {
     headerMode: "none"
@@ -103,7 +107,8 @@ DiscoverStack.navigationOptions = ({ navigation }) => {
     routeName == "SearchDetail" ||
     routeName == "MaterialDetail" ||
     routeName == "BidDetail" ||
-    routeName == "ConfirmBid"
+    routeName == "ConfirmBid" ||
+    routeName == "Cart"
   ) {
     tabBarVisible = false;
   }
@@ -130,15 +135,17 @@ const AccountStack = createStackNavigator(
     AboutUs: AboutUs,
     Construction: Construction,
     ConstructionDetail: ConstructionDetail,
-    Subcription: Subscription,
+    Subscription: Subscription,
     AddSubscription: AddSubscription,
     EditSubscription: EditSubscription,
     Register: Register,
     UploadImage: UploadImage,
     VerifyAccount: VerifyAccount,
-    AddConstruction: AddConstruction
+    AddConstruction: AddConstruction,
+    MyFeedback: MyFeedback,
+    ChangeLanguage: ChangeLanguage
     // AuthLoading: AuthLoading,
-    // Auth: AuthStack
+    //Auth: AuthStack
   },
   {
     initialRouteName: "Account",
@@ -185,7 +192,8 @@ const MyEquipmentStack = createStackNavigator(
     AddDebrisPost: AddDebrisPost,
     AddServicesTypes: AddServicesTypes,
     ManageImages: ManageImages,
-    Login
+    ContractorProfile: ContractorProfile
+    // Login
   },
   {
     headerMode: "none",
@@ -214,7 +222,7 @@ const MyTransactionStack = createStackNavigator(
     MaterialSupplierDetail: MaterialSupplierDetail,
     ContractorProfile: ContractorProfile,
     SupplierDebrisDetail: SupplierDebrisDetail,
-    Login,
+    // Login,
     Feedback: Feedback,
     CancelBid: CancelBid
   },
@@ -233,7 +241,7 @@ const MyRequestStack = createStackNavigator(
     ContractorProfile: ContractorProfile,
     MaterialRequesterDetail: MaterialRequesterDetail,
     DebrisDetail: DebrisDetail,
-    LoginModal: Login,
+    // LoginModal: Login,
     Feedback: Feedback,
     CancelBid: CancelBid
   },
@@ -245,14 +253,14 @@ const MyRequestStack = createStackNavigator(
 
 const TabNavigator = createBottomTabNavigator(
   {
-    Discover: DiscoverStack,
+    Search: DiscoverStack,
     MyRequest: MyRequestStack,
-    Equipment: MyEquipmentStack,
+    Storage: MyEquipmentStack,
     Transaction: MyTransactionStack,
     Account: AccountStack
   },
   {
-    initialRouteName: "Discover",
+    initialRouteName: "Search",
     defaultNavigationOptions: ({ navigation }) => {
       const { routeName, index, routes } = navigation.state;
       let tabBarVisible = true;
@@ -270,11 +278,11 @@ const TabNavigator = createBottomTabNavigator(
         tabBarIcon: ({ focused, horizontal, tintColor }) => {
           const { routeName } = navigation.state;
           let icon;
-          if (routeName === "Discover") {
+          if (routeName === "Search") {
             icon = require("../../assets/icons/icons8-compass.png");
           } else if (routeName === "MyRequest") {
             icon = require("../../assets/icons/icons8-activity.png");
-          } else if (routeName === "Equipment") {
+          } else if (routeName === "Storage") {
             icon = require("../../assets/icons/icons8-garage.png");
           } else if (routeName === "Transaction") {
             icon = require("../../assets/icons/icons8-transaction.png");

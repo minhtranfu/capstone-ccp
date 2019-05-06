@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Alert
+  Alert,
+  Image
 } from "react-native";
 import { SafeAreaView, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
@@ -16,6 +17,7 @@ import {
   getCurrentLocation,
   autoCompleteSearch
 } from "../../redux/actions/location";
+import moment from "moment";
 
 import AutoComplete from "../../components/AutoComplete";
 import Dropdown from "../../components/Dropdown";
@@ -154,10 +156,14 @@ class ConfirmTransaction extends Component {
   );
 
   render() {
-    const { equipment, name } = this.props.navigation.state.params;
+    const { equipment, name, price } = this.props.navigation.state.params;
     const { address, location, construction } = this.state;
     console.log(equipment);
-
+    const end = moment(equipment.endDate);
+    const begin = moment(equipment.beginDate);
+    const duration = moment.duration(end.diff(begin));
+    const days = duration.asDays() + 1;
+    const totalPrice = days * price;
     return (
       <SafeAreaView
         style={styles.container}
@@ -175,9 +181,22 @@ class ConfirmTransaction extends Component {
         {equipment ? (
           <ScrollView style={{ paddingHorizontal: 15 }}>
             <Text style={styles.text}>Name: {name}</Text>
-            <Text style={styles.text}>Begin date: {equipment.beginDate}</Text>
-            <Text style={styles.text}>End date:{equipment.endDate}</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Image
+                source={require("../../../assets/icons/icons8-calendar.png")}
+                style={styles.calendarIcon}
+                resizeMode={"contain"}
+              />
+              <Text style={styles.duration}>
+                {`${days} ${days > 1 ? "days" : "day"}`}
+              </Text>
+            </View>
+            <Text style={styles.startEndDate}>
+              {begin.format("DD/MM/YY")} - {end.format("DD/MM/YY")}
+            </Text>
+            <Text style={styles.text}>Total price: {totalPrice}K</Text>
             <Dropdown
+              style={{ marginVertical: 10 }}
               label={"Construction"}
               defaultText={"Select your construction"}
               onSelectValue={(value, index) => {
@@ -204,6 +223,7 @@ class ConfirmTransaction extends Component {
               }}
               renderItem={item => this._renderAutoCompleteItem(item)}
             />
+
             <Button
               text={"Confirm Booking"}
               wrapperStyle={{ marginTop: 15 }}
@@ -232,12 +252,15 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.text25
   },
   header: {
-    fontSize: fontSize.h4,
-    fontWeight: "600"
+    fontSize: fontSize.bodyText,
+    fontWeight: "500",
+    color: colors.primaryColor
   },
   text: {
     fontSize: fontSize.bodyText,
-    fontWeight: "500"
+    fontWeight: "500",
+    marginBottom: 5,
+    color: colors.primaryColor
   },
   addressMainText: {
     fontSize: fontSize.secondaryText,
@@ -248,6 +271,25 @@ const styles = StyleSheet.create({
     fontSize: fontSize.caption,
     color: colors.text50,
     fontWeight: "600"
+  },
+  calendarIcon: {
+    width: 15,
+    aspectRatio: 1,
+    tintColor: colors.text50,
+    marginRight: 3
+  },
+  duration: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text68,
+    fontWeight: "500"
+  },
+  startEndDate: {
+    fontSize: fontSize.secondaryText,
+    color: colors.text,
+    fontWeight: "600",
+    marginLeft: 15 + 3,
+    marginTop: 5,
+    marginBottom: 5
   }
 });
 

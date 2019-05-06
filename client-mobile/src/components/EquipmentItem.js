@@ -2,6 +2,7 @@ import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { Image as ImageCache } from "react-native-expo-image-cache";
+import { Rating } from "react-native-ratings";
 
 import colors from "../config/colors";
 import fontSize from "../config/fontSize";
@@ -14,7 +15,9 @@ class EquipmentItem extends PureComponent {
     construction: PropTypes.string,
     address: PropTypes.string,
     requesterThumbnail: PropTypes.string,
-    price: PropTypes.number
+    price: PropTypes.number,
+    rating: PropTypes.number,
+    contractorThumbnail: PropTypes.string
   };
 
   static defaultProps = {
@@ -36,7 +39,9 @@ class EquipmentItem extends PureComponent {
       onPress,
       requesterThumbnail,
       contractor,
-      timeRange
+      contractorThumbnail,
+      timeRange,
+      rating
     } = this.props;
     return (
       <View style={styles.container}>
@@ -58,12 +63,43 @@ class EquipmentItem extends PureComponent {
             }}
           />
           <View style={styles.titleWrapper}>
-            <View style={{ flexDirection: "column", flex: 1 }}>
+            <View style={{ flexDirection: "column" }}>
               <Text style={styles.equipmentName}>{name}</Text>
               {contractor ? (
-                <Text style={styles.text}>Contractor: {contractor}</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginVertical: 5
+                  }}
+                >
+                  <ImageCache
+                    uri={contractorThumbnail || requesterThumbnail}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      ...colors.shadow,
+                      backgroundColor: "white"
+                    }}
+                    resizeMode={"cover"}
+                  />
+                  <View style={{ marginLeft: 10 }}>
+                    <Text style={[styles.text, { marginBottom: 5 }]}>
+                      {" "}
+                      {contractor}
+                    </Text>
+                    <Rating
+                      readonly={true}
+                      ratingCount={5}
+                      fractions={1}
+                      startingValue={rating}
+                      imageSize={20}
+                      style={{ paddingBottom: 10 }}
+                    />
+                  </View>
+                </View>
               ) : null}
-
               {timeRange ? (
                 <Text style={styles.text}>
                   {timeRange.beginDate} ▶ {timeRange.endDate}
@@ -91,7 +127,8 @@ const styles = StyleSheet.create({
   },
   titleWrapper: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 15,
     paddingVertical: 8,
     backgroundColor: "white"

@@ -24,7 +24,8 @@ class DebrisSearchItem extends Component {
     debrisServiceTypes: PropTypes.array,
     debrisBids: PropTypes.array,
     title: PropTypes.string,
-    description: PropTypes.string
+    description: PropTypes.string,
+    itemUrl: PropTypes.string
   };
 
   static defaultProps = {
@@ -34,7 +35,7 @@ class DebrisSearchItem extends Component {
 
   render() {
     const {
-      imageUrl,
+      itemUrl,
       address,
       debrisServiceTypes,
       debrisBids,
@@ -47,11 +48,7 @@ class DebrisSearchItem extends Component {
       <TouchableOpacity style={styles.container} onPress={onPress}>
         <View style={styles.wrapper}>
           <Image
-            uri={
-              imageUrl
-                ? imageUrl
-                : "https://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg"
-            }
+            uri={itemUrl ? itemUrl : this.props.imageUrl}
             resizeMode={"contain"}
             style={{
               height: 140,
