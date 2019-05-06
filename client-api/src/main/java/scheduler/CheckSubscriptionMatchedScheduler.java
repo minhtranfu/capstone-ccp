@@ -38,24 +38,45 @@ public class CheckSubscriptionMatchedScheduler {
 	@Inject
 	SubscriptionMatchedLogDAO subscriptionMatchedLogDAO;
 
+	boolean isRunning = false;
+	private static final Object LOCK = new Object();
 
-//	@Schedule(hour = "*", minute = "30", second = "0")
+	//	@Schedule(hour = "*", minute = "30", second = "0")
 	@Schedule(hour = "*", minute = "*", second = "0/10")
-	public void checkMatchedEquipments() {
+	public void checkMatchedEquipments() throws InterruptedException {
+		if (isRunning) {
+			LOGGER.info("isRunning in another THREAD, skip the transaction");
+			return;
+		}
 
-		int timeOffset = 30 * 60; // 30 mins
+//		synchronized (LOCK) {
+//			isRunning = true;
+//		}
+//		int timeOffset = 30 * 60; // 30 mins
 //		int timeOffset = 2 * 60; // 2 mins
-//		int timeOffset = 30 * 60 * 60 * 60*60;
+		int timeOffset = 30 * 60 * 60; // 30 hours
+
 		LOGGER.info("CheckSubscriptionMatchedScheduler checking subscriptions");
 		//  4/28/19 filter result list remove the notified information
 		List<MatchedSubscriptionResult> matchedSubscriptionResults = equipmentDAO.getMatchedEquipmentForSubscription(timeOffset);
+		if (matchedSubscriptionResults.isEmpty()) {
+			synchronized (LOCK) {
+				isRunning = false;
+			}
+			return;
+		}
 
+		LOGGER.info("matchedSubscriptionResults="+matchedSubscriptionResults.toString());
 		for (MatchedSubscriptionResult matchedSubscriptionResult : matchedSubscriptionResults) {
 			// 3/14/19 notify to contractor
 			sendNotification(matchedSubscriptionResult);
 			// TODO: 4/28/19 log matched subscription to database
 			logMatchedSubscriptionToDatabase(matchedSubscriptionResult);
 		}
+
+//		synchronized (LOCK) {
+//			isRunning = false;
+//		}
 	}
 
 	private void logMatchedSubscriptionToDatabase(MatchedSubscriptionResult matchedSubscriptionResult) {
@@ -79,7 +100,7 @@ public class CheckSubscriptionMatchedScheduler {
 		String clickAction = NotificationDTO.makeClickAction(NotificationDTO.ClickActionDestination.EQUIPMENTS, equipmentId);
 
 		NotificationDTO notificationDTO = new NotificationDTO("Subscribed equipment found!",
-				"We have found the equipment that you've subscribed for! id=" + equipmentId
+				String.format("We have found the equipment that you've subscribed for! equipment #%s for subscription #%s", equipmentId,subscriptionId)
 				, contractorId, clickAction);
 
 

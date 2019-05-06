@@ -9,9 +9,7 @@ import dtos.requests.EquipmentPutRequest;
 import dtos.validationObjects.LocationValidator;
 import dtos.requests.EquipmentPostRequest;
 import dtos.requests.EquipmentRequest;
-import entities.ContractorAccountEntity;
-import entities.EquipmentEntity;
-import entities.EquipmentTypeEntity;
+import entities.*;
 import managers.ElasticSearchManager;
 import managers.EmailManager;
 import managers.FirebaseMessagingManager;
@@ -321,6 +319,7 @@ public class TestResource {
 	public Response testElasticSearch() {
 		return Response.ok(elasticSearchManager.searchElastic()).build();
 	}
+
 	@GET
 	@Path("elasticSearch/testEquipment")
 	public Response testElasticSearchForEquipment() {
@@ -329,6 +328,7 @@ public class TestResource {
 
 	@Inject
 	DebrisPostDAO debrisPostDAO;
+
 	@GET
 	@Path("searchOptimize/debrisPost/get/{id:\\d+}")
 	public Response searchOptimizeGetDebrisPostById(@PathParam("id") long debrisPostId) {
@@ -350,7 +350,44 @@ public class TestResource {
 		return Response.ok(materialDAO.findByIdWithValidation(materialId)).build();
 	}
 
+	@Inject
+	DebrisImageDAO debrisImageDAO;
 
 
+	final String DEFAULT_EQUIPMENT_IMAGE_URL = "https://www.googleapis.com/download/storage/v1/b/sonic-arcadia-97210.appspot.com/o/2019%2F05%2F04%2F1556976694232-06faf282-5bee-4c6d-8838-db73c373dc3c.jpg?generation=1556976695082205&alt=media";
+	final String DEFAULT_DEBRIS_POST_IMAGE_URL = "https://www.googleapis.com/download/storage/v1/b/sonic-arcadia-97210.appspot.com/o/2019%2F05%2F04%2F1556976692804-9ef43181-990c-4ea0-98d1-11192d3d21fb.jpg?generation=1556976693729047&alt=media";
+
+	@GET
+	@Path("data/addMissingThumbnailToDebris")
+	public Response addMissingThumbnailToDebris() {
+		List<DebrisPostEntity> missingThumbnailDebrisPosts = debrisPostDAO.getMissingThumbnailDebrisPosts();
+		for (DebrisPostEntity missingThumbnailDebrisPost : missingThumbnailDebrisPosts) {
+			DebrisImageEntity debrisImageEntity = new DebrisImageEntity();
+			debrisImageEntity.setDebrisPost(missingThumbnailDebrisPost);
+			debrisImageEntity.setUrl(DEFAULT_DEBRIS_POST_IMAGE_URL);
+			debrisImageDAO.persist(debrisImageEntity);
+			missingThumbnailDebrisPost.setThumbnailImage(debrisImageEntity);
+			debrisPostDAO.merge(missingThumbnailDebrisPost);
+		}
+		return Response.ok(missingThumbnailDebrisPosts).build();
+	}
+
+	@Inject
+	EquipmentImageDAO equipmentImageDAO;
+	@GET
+	@Path("data/addMissingThumbnailToEquipment")
+	public Response addMissingThumbnailToEquipment() {
+		List<EquipmentEntity> missingThumnailEquipments = equipmentDAO.getMissingThumbnailEquipments();
+
+		for (EquipmentEntity missingThumnailEquipment : missingThumnailEquipments) {
+			EquipmentImageEntity equipmentImageEntity = new EquipmentImageEntity();
+			equipmentImageEntity.setEquipment(missingThumnailEquipment);
+			equipmentImageEntity.setUrl(DEFAULT_EQUIPMENT_IMAGE_URL);
+			equipmentImageDAO.persist(equipmentImageEntity);
+			missingThumnailEquipment.setThumbnailImage(equipmentImageEntity);
+			equipmentDAO.merge(missingThumnailEquipment);
+		}
+		return Response.ok(missingThumnailEquipments).build();
+	}
 
 }

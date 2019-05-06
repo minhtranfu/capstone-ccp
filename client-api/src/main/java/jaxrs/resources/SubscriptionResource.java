@@ -49,7 +49,7 @@ public class SubscriptionResource {
 	@GET
 	@Path("{id:\\d+}")
 	public Response getSubscriptionById(@PathParam("id") long id) {
-		return Response.ok(subscriptionDAO.findByID(id)).build();
+		return Response.ok(subscriptionDAO.findByIdWithValidation(id,false)).build();
 //		return Response.ok(entityManager.find(FeedbackEntity.class,id)).build();
 	}
 
@@ -96,7 +96,8 @@ public class SubscriptionResource {
 		if (getClaimContractorId() != managedSubscription.getContractor().getId()) {
 			throw new BadRequestException("You cannot edit other people's subsription");
 		}
-		subscriptionDAO.delete(managedSubscription);
+		managedSubscription.setDeleted(true);
+		subscriptionDAO.merge(managedSubscription);
 		return Response.ok().build();
 	}
 

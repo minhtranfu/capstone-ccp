@@ -22,4 +22,13 @@ public class MatchedSubscriptionResult {
 	public long getContractorId() {
 		return contractorId;
 	}
+
+	@Override
+	public String toString() {
+		return "MatchedSubscriptionResult{" +
+				"equipmentId=" + equipmentId +
+				", subscriptionId=" + subscriptionId +
+				", contractorId=" + contractorId +
+				'}';
+	}
 }

@@ -92,7 +92,6 @@ public class EquipmentResource {
 	private static final String DEFAULT_LONG = "106.676364";
 	private static final String DEFAULT_RESULT_LIMIT = "50";
 
-
 	private void validateBeginEndDate(List<AvailableTimeRangeEntity> availableTimeRangeEntities) {
 		for (AvailableTimeRangeEntity availableTimeRangeEntity : availableTimeRangeEntities) {
 			if (availableTimeRangeEntity.getBeginDate().isAfter(availableTimeRangeEntity.getEndDate())) {
@@ -172,6 +171,8 @@ public class EquipmentResource {
 			);
 			result.add(equipmentResponse);
 		}
+
+
 		return Response.ok(result).build();
 	}
 
@@ -513,12 +514,18 @@ public class EquipmentResource {
 
 		double suggestedPrice = 0;
 		EquipmentTypeEntity equipmentTypeEntity = equipmentTypeDAO.findByIdWithValidation(priceSuggestionRequest.getEquipmentType().getId());
+		suggestedPrice += equipmentTypeEntity.getPriceWeight();
 		for (AdditionalSpecsValueRequest additionalValue : priceSuggestionRequest.getAdditionalSpecsValues()) {
 			AdditionalSpecsFieldEntity field = additionalSpecsFieldDAO.findByIdWithValidation(additionalValue.additionalSpecsField.getId());
 			if (field.getDataType().isNumbericType()) {
 				double parsedValue = Double.parseDouble(additionalValue.value);
 				suggestedPrice += parsedValue * field.getPriceWeight();
 			}
+		}
+
+
+		if (suggestedPrice < 0) {
+			suggestedPrice = 0;
 		}
 
 		EquipmentPriceSuggestionResponse response = new EquipmentPriceSuggestionResponse();

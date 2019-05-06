@@ -271,6 +271,7 @@ public class ContractorEntity {
 
 	@JsonbTransient
 	@OneToMany(mappedBy = "contractor")
+	@Where(clause = " is_deleted=0")
 	public List<SubscriptionEntity> getSubscriptionEntities() {
 		return subscriptionEntities;
 	}

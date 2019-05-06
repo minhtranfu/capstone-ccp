@@ -5,6 +5,7 @@ import daos.EquipmentDAO;
 import daos.EquipmentTypeDAO;
 import daos.PriceSuggestionModelTrainingLogDAO;
 import entities.*;
+import org.apache.commons.lang3.ArrayUtils;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.inverse.InvertMatrix;
@@ -13,9 +14,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.InternalServerErrorException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -41,6 +41,9 @@ public class PriceSuggestionCalculator {
 
 	private INDArray calculateTheta(double[][] xTrainInput, double[] yTrainInput) {
 
+		LOGGER.info("xTrain=" + Arrays.deepToString(xTrainInput));
+		LOGGER.info("yTrain=" + Arrays.toString(yTrainInput));
+
 		INDArray xTrain = Nd4j.create(xTrainInput);
 		INDArray yTrain = Nd4j.create(yTrainInput).transpose();
 		int n = xTrain.rows();
@@ -60,7 +63,7 @@ public class PriceSuggestionCalculator {
 
 	public INDArray calculateTheta(long equipmentTypeId) {
 		LOGGER.info("training model for equipmentTypeId=" + equipmentTypeId);
-		List<EquipmentEntity> equipments = equipmentDAO.getEquipmentsByEquipmentTypeId(equipmentTypeId, true);
+		List<EquipmentEntity> equipments = equipmentDAO.getEquipmentsByEquipmentTypeIdForTraining(equipmentTypeId, true);
 
 		//excluded deleted fields
 		List<AdditionalSpecsFieldEntity> fields = additionalSpecsFieldDAO.getFieldsByEquipmentType(equipmentTypeId,false);
@@ -90,12 +93,13 @@ public class PriceSuggestionCalculator {
 
 		}
 
-
+		LOGGER.info("fields="+ ArrayUtils.toString(fields));
 		INDArray theta = calculateTheta(xTrain, yTrain);
 
 		double testRate = testRate(theta, equipments,fields);
 
 		double[] thetaVector = theta.toDoubleVector();
+		LOGGER.info("theta="+Arrays.toString(thetaVector));
 		// TODO: 4/23/19 insert theta to db
 		PriceSuggestionModelTrainingLogEntity logEntity = new PriceSuggestionModelTrainingLogEntity();
 		logEntity.setEquipmentTypeId(equipmentTypeId);
@@ -143,7 +147,7 @@ public class PriceSuggestionCalculator {
 	}
 
 	public double testRate(INDArray theta,List<EquipmentEntity> equipments , List<AdditionalSpecsFieldEntity> fields) {
-//		List<EquipmentEntity> equipments = equipmentDAO.getEquipmentsByEquipmentTypeId(equipmentTypeId);
+//		List<EquipmentEntity> equipments = equipmentDAO.getEquipmentsByEquipmentTypeIdForTraining(equipmentTypeId);
 //		List<AdditionalSpecsFieldEntity> fields = additionalSpecsFieldDAO.getFieldsByEquipmentType(equipmentTypeId);
 		if (equipments.isEmpty()) {
 			return 0;

@@ -47,7 +47,7 @@ import java.util.logging.Logger;
 public class AuthenticationResource {
 	public static final Logger LOGGER = Logger.getLogger(AuthenticationResource.class.toString());
 
-	private static final long DEFAULT_ACCESS_TOKEN_EXPIRATION_TIME = 60 * 5; // 5 mins
+	private static final long DEFAULT_ACCESS_TOKEN_EXPIRATION_TIME = 60*60*24; // 1 days
 	private static final long DEFAULT_REFRESH_TOKEN_EXPIRE_TIME = 60 * 60 * 24 * 90; // 90 days
 	private static final long DEFAULT_EMAIL_VERIFICATION_EXPIRE_TIME = 60 * 60 * 24; // 1 days
 
@@ -141,7 +141,7 @@ public class AuthenticationResource {
 
 		List<ContractorAccountEntity> accountsByUsernamePassword = contractorAccountDAO.findByUsername(username);
 		if (accountsByUsernamePassword == null || accountsByUsernamePassword.size() == 0) {
-			throw new ForbiddenException(String.format("incorrect username=%s", username));
+			throw new ForbiddenException(String.format("Incorrect username or password"));
 		}
 		for (ContractorAccountEntity contractorAccountEntity : accountsByUsernamePassword) {
 			if (BCrypt.checkpw(password, contractorAccountEntity.getPassword())) {
@@ -150,7 +150,7 @@ public class AuthenticationResource {
 			}
 		}
 
-		throw new ForbiddenException("Password not correct");
+		throw new ForbiddenException("Incorrect username or password");
 	}
 
 
